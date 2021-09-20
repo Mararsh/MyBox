@@ -33,7 +33,6 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
     protected ControlMatricesList manager;
     protected TableMatrixCell tableMatrixCell;
     protected BaseTable tableMatrix;
-    protected boolean isMainMatrix;
 
     @FXML
     protected TextField nameInput, idInput;
@@ -57,30 +56,6 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
         } catch (Exception e) {
             return AppValues.InvalidDouble;
         }
-    }
-
-    @Override
-    public synchronized void sheetChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        super.sheetChanged(changed);
-        updateStatus();
-    }
-
-    protected void updateStatus() {
-        if (!isMainMatrix || getMyStage() == null) {
-            return;
-        }
-        String title = manager.baseTitle;
-        String name = nameInput.getText();
-        if (name != null && !name.isBlank()) {
-            title += " - " + name.trim();
-        }
-        if (dataChangedNotify.get()) {
-            title += " *";
-        }
-        myStage.setTitle(title);
     }
 
     @FXML
@@ -240,9 +215,9 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
         for (int j = 0; j < rowsNumber; ++j) {
             for (int i = 0; i < colsNumber; ++i) {
                 if (i == j) {
-                    sheetInputs[j][i].setText(1d + "");
+                    sheetInputs[j][i].setText("1");
                 } else {
-                    sheetInputs[j][i].setText(0d + "");
+                    sheetInputs[j][i].setText("0");
                 }
             }
         }
@@ -255,10 +230,12 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
 
     public void upperTriangleMatrix() {
         isSettingValues = true;
-        for (int j = 0; j < rowsNumber; ++j) {
-            for (int i = 0; i < colsNumber; ++i) {
-                if (i < j) {
-                    sheetInputs[j][i].setText(0d + "");
+        for (int r = 0; r < rowsNumber; ++r) {
+            for (int c = 0; c < colsNumber; ++c) {
+                if (r <= c) {
+                    sheetInputs[r][c].setText("1");
+                } else {
+                    sheetInputs[r][c].setText("0");
                 }
             }
         }
@@ -271,10 +248,12 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
 
     public void lowerTriangleMatrix() {
         isSettingValues = true;
-        for (int j = 0; j < rowsNumber; ++j) {
-            for (int i = 0; i < colsNumber; ++i) {
-                if (i > j) {
-                    sheetInputs[j][i].setText(0d + "");
+        for (int r = 0; r < rowsNumber; ++r) {
+            for (int c = 0; c < colsNumber; ++c) {
+                if (r >= c) {
+                    sheetInputs[r][c].setText("1");
+                } else {
+                    sheetInputs[r][c].setText("0");
                 }
             }
         }

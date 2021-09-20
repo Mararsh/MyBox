@@ -58,7 +58,6 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
 
     public ControlDataClipboard() {
         baseTitle = message("DataClipboard");
-        TipsLabelKey = "DataClipboardTips";
     }
 
     @Override

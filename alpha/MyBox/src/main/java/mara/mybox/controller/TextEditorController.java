@@ -4,10 +4,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.ContextMenuEvent;
+import mara.mybox.data.FileEditInformation;
+import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -24,6 +27,38 @@ public class TextEditorController extends BaseFileEditorController {
     @Override
     public void setFileType() {
         setTextType();
+    }
+
+    @Override
+    protected void initLineBreakGroup() {
+        try {
+            String savedLB = UserConfig.getString(baseName + "LineBreak", Line_Break.LF.toString());
+            if (savedLB.equals(FileEditInformation.Line_Break.CR.toString())) {
+                crRadio.fire();
+            } else if (savedLB.equals(FileEditInformation.Line_Break.CRLF.toString())) {
+                crlfRadio.fire();
+            } else {
+                lfRadio.fire();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    protected void checkLineBreakGroup() {
+        try {
+            if (crRadio.isSelected()) {
+                lineBreak = Line_Break.CR;
+            } else if (crlfRadio.isSelected()) {
+                lineBreak = Line_Break.CRLF;
+            } else {
+                lineBreak = Line_Break.LF;
+            }
+            UserConfig.setString(baseName + "LineBreak", lineBreak.toString());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override

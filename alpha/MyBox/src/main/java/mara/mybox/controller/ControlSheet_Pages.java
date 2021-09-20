@@ -159,7 +159,11 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
     }
 
     protected void updateLabel() {
-        totalLabel.setText(message("Total") + ":" + rowsTotal());
+        if (pagesNumber <= 1) {
+            totalLabel.setText(message("RowsNumber") + ":" + (sheetInputs == null ? 0 : sheetInputs.length));
+        } else {
+            totalLabel.setText(message("LinesNumberInFile") + ":" + totalSize);
+        }
     }
 
     protected boolean checkCurrentPage() {

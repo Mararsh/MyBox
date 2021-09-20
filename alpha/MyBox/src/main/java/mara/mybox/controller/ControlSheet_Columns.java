@@ -343,13 +343,14 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
         try {
             StringTable validateTable = ColumnDefinition.validate(columns);
-            if (validateTable != null && validateTable.isEmpty()) {
-                return true;
-            }
             if (validateTable != null) {
-                Platform.runLater(() -> {
-                    validateTable.htmlTable();
-                });
+                if (validateTable.isEmpty()) {
+                    return true;
+                } else {
+                    Platform.runLater(() -> {
+                        validateTable.htmlTable();
+                    });
+                }
             }
             if (task != null) {
                 task.setError(message("InvalidColumns"));

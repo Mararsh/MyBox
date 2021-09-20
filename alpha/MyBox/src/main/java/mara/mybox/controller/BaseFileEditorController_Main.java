@@ -309,9 +309,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             locatePane.getContent().setDisable(changed);
             filterPane.getContent().setDisable(changed);
         }
-        if (editType != Edit_Type.Bytes) {
-            charsetSelector.setDisable(sourceInformation.isWithBom());
-        }
         if (filterController != null) {
             filterController.isBytes = editType == Edit_Type.Bytes;
             filterController.maxLen = pageSize;

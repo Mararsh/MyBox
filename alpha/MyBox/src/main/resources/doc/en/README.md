@@ -3,20 +3,15 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
-## Alpha Version
-2021-8-20 a6.4.8  
-[MyBox-a6.4.8-win10-x64.zip](https://github.com/Mararsh/MyBox/releases/download/alpha/MyBox-a6.4.8-win10-x64.zip)       
-[MyBox-a6.4.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/alpha/MyBox-a6.4.8-win-jar.zip)
-
 
 ## What's New            
-2021-8-17 v6.4.7         
+2021-9-20 v6.4.8         
 
-* Improve interfaces. Consistent context menus of image/html/text. Better clipboards of image/text/data. Easier editor of Markdown/html/note/image. Integrated PDF viewer.      
-* Optimize codes. Split big classes. Adjust shortcuts. Correct colors of icons.          
-* Solved problems.  Very slow reading of jpg file. Transparency does not work for pen and eraser in Image Manufacture.            
-
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.7)        
+* Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
+* Popped text/image/html can be synchronized with source. Query Color.          
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.              
+       
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
    
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -24,7 +19,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.4.7-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.7/MyBox-6.4.7-src.zip)   39M(approximation)        
+[MyBox-6.4.8-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-src.zip)   39M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -35,9 +30,9 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.4.7-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.7/MyBox-6.4.7-win10-x64.zip)  | 231MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.4.7-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.7/MyBox-6.4.7-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac | [MyBox-6.4.7-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.7/MyBox-6.4.7-mac.dmg)  | 245MB  |  MyBox-6.4.7.app   |        
+| win10 x64 | [MyBox-6.4.8-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-win10-x64.zip)  | 231MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.4.8-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.4.8-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-mac.dmg)  | 245MB  |  MyBox-6.4.8.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)        
@@ -47,16 +42,16 @@ When JRE or JDK 16 or higher([Oracle jdk](https://www.oracle.com/technetwork/jav
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.4.7-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.7/MyBox-6.4.7-win-jar.zip)  | 168MB | Java 16 or higher |
-| linux | [MyBox-6.4.7-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.7/MyBox-6.4.7-linux-jar.zip)  | 176MB  | Java 16 or higher |
-| mac | [MyBox-6.4.7-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.7/MyBox-6.4.7-mac-jar.zip)  |  173MB  | Java 16 or higher |        
+| win | [MyBox-6.4.8-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-win-jar.zip)  | 168MB | Java 16 or higher |
+| linux | [MyBox-6.4.8-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-linux-jar.zip)  | 176MB  | Java 16 or higher |
+| mac | [MyBox-6.4.8-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-mac-jar.zip)  |  173MB  | Java 16 or higher |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.4.7.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.8.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.4.7.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.8.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -77,9 +72,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.4.7.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.4.7.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.4.7.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.4.8.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.4.8.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.4.8.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -99,8 +94,8 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.4.7 | 2021-8-17 | [html](#devLog) |
-| Shortcuts | 6.3.9 | 2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs | 6.4.8 | 2021-9-20 | [html](#devLog) |
+| Shortcuts | 6.4.7 | 2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
@@ -155,6 +150,9 @@ MyBox is based on following open sources:
 | JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |
 | Website | Color data | https://tool.lanrentuku.com/color/china.html |
 | Book | Materials | https://book.douban.com/subject/3894923/ |
+| National Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.tional Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.://github.com/CSSEGISandData/COVID-19 |
+| Website | Color data | https://tool.lanrentuku.com/color/china.html |
+| Book | Materials | https://book.douban.com/subject/3894923/ |
 | National Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |
 | movebank | Location data | https://www.datarepository.movebank.org |
 | CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |
@@ -169,7 +167,7 @@ MyBox is based on following open sources:
 | jsoup | DOM | https://jsoup.org/ |        
 
 # Current Version        
-Current version is 6.4.7. Its features are mentioned below in summary:          
+Current version is 6.4.8. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
@@ -680,6 +678,7 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
                  rgba  or rgb        
 	-  Following fields are optional:        
                  name
+8. Query color.
 
 [Web Colors](http://mararsh.github.io/MyBox_data/colors/WebColors.html)        
 
@@ -768,54 +767,44 @@ Load/Refresh/Delete image in System Clipboard:
 
 ### Data File<a id="dataFiles" />
 1. Edit data file:
-	- To CSV file
- 		- Options include charset, whether has first line as field names, and delimiter of data.
+	- Options of CSV file and text data file include charset, whether has first line as field names, and delimiter of data.
 	- To Excel file:
  		- Options include sheet number and whether has first line as field names.
 		- Add/Delete/Rename sheets.
  		- Tool can only handle base data in Excel file. If file includes format, style, formula, or chart, suggest to save changes as new file to avoid data loss.
 	- Data in file should be in same width. That is all rows have equal number of columns.
-	- Data are loaded in sheet:
- 		- Edit values in sheet cells.
- 		- Move mouse upon column/row header to pop functions menu of this column/row.
- 		- Move mouse upon buttons to pop functions menu of all/selected columns/rows.
- 		- Functions include: set column width, select/set/copy/paste/insert/delete/sort columns and rows.
+	- Edit data:
+ 		- Change values in sheet cells. Functions include: set column width, set/copy/paste/insert/delete/sort/export columns and rows.
+ 		- Values can be modified in text format with delimiter selections.
 	- Data are paginated. When pages number is larger than 1:
  		- Changes of current page should be saved before run some functions.
  		- Changes are written in file directly and can not be undone. (Can recover if backup)
 	- Data Definition is to describe and constrain data:
  		- Column name should not be null nor duplicate.
  		- Data type and "Not Null" are to validate data value.
- 		- Definitions are saved in database whatever file has or has not header line.
- 		- Click "Clear" button to remove data definitions in database. File will be reloaded.
 	- Text format and html are displayed synchronously:
- 		- Delimiter can be choiced for text format.
- 		- Input/modify data by data clipboard.
+	- Options:
+ 		- Decimal scale and maximum value of random.
+ 		- Click or move mouse upon column/row header to pop functions menu of this column/row.
 2. Convert/Split data files in batch:
-	- Source files' formats can be csv and excel. Options of source files can be set.
-	- Target files' formats include csv, excel, xml, json, html, pdf. Options of target files can be set.
+	- Source files' formats can be csv, excel, and text. Options of source files can be set.
+	- Target files' formats include csv, text, excel, xml, json, html, pdf. Options of target files can be set.
 	- Split files as maximum lines.
-3. Merge csv/excel files.
+3. Merge csv/excel/text data files.
 
 ### Data Clipboard<a id="dataClipboard" />
-1. Paste or input text, and tool parses the data as defined delimiter line by line.
-2. Edit data in sheet.
-3. Text format and html are displayed synchronously.
-4. Delimiter can be set for parsed text data.
+1. Copy, edit, and save data in database.   
+2. Paste data in data clipboard into target sheet at selected location.
+
+
+![snap-dataClipboard](https://mararsh.github.io/MyBox/snap-dataClipboard.jpg)    
 
 
 ### Matrix<a id="matrix"></a>
-1. Edit matrix:
-	- Define matrix attributes including name, rows number, columns number, scale, decription.
-	- Modify values in sheet cells.
-	- Move mouse upon column/row header to pop functions menu of this column/row.
-	- Move mouse upon buttons to pop functions menu of all/selected columns/rows.
-	- Functions include: set column width, select/set/copy/paste/insert/delete/sort columns and rows.
-	- Text format and html are displayed synchronously.
-	- Input/modify data by data clipboard. Special characters can be ignored.
-2. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Multiply Number, Divide By Number, Power.
-3. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
-4. Save matrix. Matrix after edited or calculated can be saved and reused.
+1. Edit matrix.  Same as editing of data file.      
+2. Matix can be saved and reused.
+3. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Multiply Number, Divide By Number, Power.
+4. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
 
 
 ### Common Data Management<a id="dataManage" />
@@ -1029,15 +1018,7 @@ Load/Refresh/Delete image in System Clipboard:
  	- Time tree(Start time).   Multiple nodes can be selected.
 4. Map data:
   	- At beginning, the first data is made as map center.
-  	- Location Distribution: All data are displayed in map.
-  	- Time Sequence:
- 	  	- Data are displayed in frames as "Start Time" in ascending order.
- 	  	- Options:
- 	  	  	- When "Accumulated" is selected, drawn points will not be erased and points are shown more and more.
- 	  	  	- When "Time Overlay" is selected, all data whose duration(between "start time" and "end time") has intersection with duration of current frame will be treated as valid points of current frame.       
-                           Example, current frame has "start time" of "1044 BC" and "end time" of "221 BC", then all data who or part of who appears in this duration will be displayed in current frame.       
- 	  	  	- When "Move Center" is selected, each frame will adjust its map center.
- 	  	  	- When "Link" is selected, lines between adjacent 2 points will be shown.       
+  	- Location Distribution: All data are displayed in malines between adjacent 2 points will be shown.       
                            Notice: Lines only work for China addresses in TianDiTu.       
  	  	- Control frames:
  	  	  	- Set interval.
@@ -1482,6 +1463,14 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
+2021-9-20 v6.4.8         
+
+* Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
+* Popped text/image/html can be synchronized with source. Query Color.          
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.              
+       
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
+
 2021-8-17 v6.4.7         
 
 * Improve interfaces. Consistent context menus of image/html/text. Better clipboards of image/text/data. Easier editor of Markdown/html/note/image. Integrated PDF viewer.      

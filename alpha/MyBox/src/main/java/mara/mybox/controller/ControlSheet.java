@@ -207,7 +207,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             copyToMyBoxClipboardButton.setDisable(noRows);
             equalSheetButton.setDisable(noRows);
             sortSheetButton.setDisable(noRows);
-            calculateSheetButton.setDisable(noRows);
+//            calculateSheetButton.setDisable(noRows);
 
             BaseDataOperationController.update();
         } catch (Exception e) {

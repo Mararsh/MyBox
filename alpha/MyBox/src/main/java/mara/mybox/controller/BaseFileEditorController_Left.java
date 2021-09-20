@@ -8,7 +8,7 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
+import javafx.scene.control.Toggle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.StringTools;
@@ -155,6 +155,20 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
+
+            if (lineBreakGroup != null) {
+                initLineBreakGroup();
+                lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+                        if (!isSettingValues) {
+                            checkLineBreakGroup();
+                        }
+                    }
+                });
+                checkLineBreakGroup();
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -194,6 +208,22 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             MyBoxLog.error(e.toString());
         }
 
+    }
+
+    protected void initLineBreakGroup() {
+        try {
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void checkLineBreakGroup() {
+        try {
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     protected void initFilterTab() {

@@ -12,7 +12,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
-import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -173,16 +172,8 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             } else {
                 targetInformation.setWithBom(sourceInformation.isWithBom());
             }
-            Line_Break lb;
-            if (crRadio.isSelected()) {
-                lb = Line_Break.CR;
-            } else if (crlfRadio.isSelected()) {
-                lb = Line_Break.CRLF;
-            } else {
-                lb = Line_Break.LF;
-            }
-            targetInformation.setLineBreak(lb);
-            targetInformation.setLineBreakValue(TextTools.lineBreakValue(lb));
+            targetInformation.setLineBreak(lineBreak);
+            targetInformation.setLineBreakValue(TextTools.lineBreakValue(lineBreak));
             task = new SingletonTask<Void>() {
 
                 @Override
@@ -193,11 +184,17 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 @Override
                 protected void whenSucceeded() {
                     recordFileWritten(file);
+                    BaseFileEditorController controller = null;
                     if (saveAsType == SaveAsType.Load) {
-                        sourceFileChanged(file);
+                        controller = (BaseFileEditorController) myController;
                     } else if (saveAsType == SaveAsType.Open) {
-                        BaseFileEditorController controller = openNewStage();
-                        controller.sourceFileChanged(file);
+                        controller = openNewStage();
+                    }
+                    if (controller != null) {
+                        controller.editType = editType;
+                        controller.sourceInformation = targetInformation;
+                        controller.sourceInformation.setCharsetDetermined(true);
+                        controller.openFile(file);
                     }
                     popSaved();
                 }
@@ -213,9 +210,9 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         } else {
             switch (editType) {
                 case Text:
-                    return (BaseFileEditorController) openStage(Fxmls.TextEditorFxml);
+                    return (TextEditorController) openStage(Fxmls.TextEditorFxml);
                 case Bytes:
-                    return (BaseFileEditorController) openStage(Fxmls.BytesEditorFxml);
+                    return (BytesEditorController) openStage(Fxmls.BytesEditorFxml);
                 case Markdown:
                     return (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
                 default:

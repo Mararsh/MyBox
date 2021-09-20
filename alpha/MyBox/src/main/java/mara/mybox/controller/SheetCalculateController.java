@@ -1,10 +1,15 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -17,17 +22,48 @@ public class SheetCalculateController extends BaseDataOperationController {
     protected String value;
 
     @FXML
-    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, setRadio;
+    protected ToggleGroup calGroup;
     @FXML
-    protected TextField valueInput;
+    protected RadioButton transposeRadio, sumRadio, addRadio, subRadio, multiplyRadio,
+            ascendingRadio, descendingRadio, mergeRadio, copyRadio;
     @FXML
-    protected Button exampleCalculationColumnsButton, exampleDisplayColumnsButton, calculatorButton;
+    protected ControlListCheckBox calColsListController;
+    @FXML
+    protected Button calculatorButton;
 
     @Override
     public void setParameters(ControlSheet sheetController, int row, int col) {
         try {
             super.setParameters(sheetController, row, col);
 
+            calColsListController.setParent(sheetController);
+
+            calGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public boolean isNumberOperation() {
+        return sumRadio.isSelected() || addRadio.isSelected() || subRadio.isSelected() || multiplyRadio.isSelected();
+    }
+
+    public void checkOperation() {
+        try {
+            List<String> cols = new ArrayList<>();
+            if (sheetController.columns != null) {
+                for (ColumnDefinition c : sheetController.columns) {
+                    if (!isNumberOperation() || c.isNumberType()) {
+                        cols.add(c.getName());
+                    }
+                }
+            }
+            calColsListController.setValues(cols);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -36,9 +72,6 @@ public class SheetCalculateController extends BaseDataOperationController {
     @FXML
     public void calculationAction() {
         try {
-            if (randomRadio.isSelected()) {
-                value = null;
-            }
 
             List<Integer> cols = cols();
             if (rowAllRadio.isSelected()) {

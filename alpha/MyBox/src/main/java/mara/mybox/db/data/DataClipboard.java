@@ -159,14 +159,15 @@ public class DataClipboard extends DataDefinition {
             tableDataDefinition.insertData(conn, def);
             if (columns != null && !columns.isEmpty()) {
                 StringTable validateTable = ColumnDefinition.validate(columns);
-                if (validateTable != null && validateTable.isEmpty()) {
-                    tableDataColumn.save(conn, def.getDfid(), columns);
-                    conn.commit();
-                }
                 if (validateTable != null) {
-                    Platform.runLater(() -> {
-                        validateTable.htmlTable();
-                    });
+                    if (validateTable.isEmpty()) {
+                        tableDataColumn.save(conn, def.getDfid(), columns);
+                        conn.commit();
+                    } else {
+                        Platform.runLater(() -> {
+                            validateTable.htmlTable();
+                        });
+                    }
                 }
             }
         } catch (Exception e) {

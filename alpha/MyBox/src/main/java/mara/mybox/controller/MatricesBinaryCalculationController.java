@@ -127,9 +127,9 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         super.afterSceneLoaded();
 
         loadTableData();
-        editController.setManager(this, false);
-        edit2Controller.setManager(this, false);
-        resultTableController.setManager(this, false);
+        editController.setManager(this);
+        edit2Controller.setManager(this);
+        resultTableController.setManager(this);
         editController.sheetChangedNotify.addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     checkMatrices();

@@ -48,14 +48,14 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
         }
     }
 
-    public void setManager(ControlMatricesList manager, boolean isMainMatrix) {
+    public void setManager(ControlMatricesList manager) {
         this.manager = manager;
         this.parentController = manager;
         baseTitle = manager.baseTitle;
         baseName = manager.baseName;
         tableMatrix = manager.tableDefinition;
-        this.isMainMatrix = isMainMatrix;
         setControls();
+        newSheet(3, 3);
     }
 
     @Override

@@ -232,7 +232,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             return;
         }
         if (sourceFile == null || pagesNumber <= 1) {
-            addCols(col, left, number);
+            super.addCols(col, left, number);
             return;
         }
         if (!checkBeforeNextAction()) {

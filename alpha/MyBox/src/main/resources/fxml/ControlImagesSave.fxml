@@ -6,27 +6,28 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesSave">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesSave">
     <children>
         <TitledPane fx:id="savePane" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" text="%SaveAs">
             <content>
-                <VBox fx:id="saveBox" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                <VBox fx:id="saveBox" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0">
                     <children>
-                        <FlowPane hgap="5.0" vgap="5.0">
+                        <FlowPane hgap="2.0" vgap="2.0">
                             <children>
                                 <RadioButton fx:id="imagesRadio" mnemonicParsing="false" selected="true" text="%ImageFiles">
                                     <toggleGroup>
@@ -56,7 +57,7 @@ License:    Apache License Version 2.0
         </TitledPane>
         <TitledPane fx:id="convertPane" expanded="true" layoutX="10.0" layoutY="224.0" minHeight="-Infinity" text="%ImagesOptions">
             <content>
-                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" >
+                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
                         <fx:include fx:id="format" source="ControlImageFormat.fxml" />
                     </content>
@@ -65,40 +66,36 @@ License:    Apache License Version 2.0
         </TitledPane>
         <TitledPane fx:id="gifPane" expanded="false" layoutX="10.0" layoutY="224.0" minHeight="-Infinity" text="%AnimatedGifFileOptions">
             <content>
-                <VBox minHeight="-Infinity" spacing="5.0">
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0">
                     <children>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                        <RadioButton mnemonicParsing="false" selected="true" text="%KeepImagesSize">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="gifSizeGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <FlowPane hgap="2.0" vgap="2.0">
                             <children>
-                                <RadioButton mnemonicParsing="false" selected="true" text="%KeepImagesSize">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="gifSizeGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <FlowPane hgap="5.0" vgap="5.0">
-                                    <children>
-                                        <RadioButton mnemonicParsing="false" text="%Width" toggleGroup="$gifSizeGroup" />
-                                        <TextField fx:id="gifWidthInput" prefWidth="100.0" promptText="%Width" />
-                                    </children>
-                                </FlowPane>
-                                <CheckBox fx:id="gifLoopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
+                                <RadioButton mnemonicParsing="false" text="%Width" toggleGroup="$gifSizeGroup" />
+                                <TextField fx:id="gifWidthInput" prefWidth="100.0" promptText="%Width" />
                             </children>
-                        </VBox>
+                        </FlowPane>
+                        <CheckBox fx:id="gifLoopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
                     </children>
                 </VBox>
             </content>
         </TitledPane>
         <TitledPane fx:id="pptPane" expanded="false" layoutX="10.0" layoutY="224.0" minHeight="-Infinity" text="%PptOptions">
             <content>
-                <VBox minHeight="-Infinity" spacing="5.0">
+                <VBox minHeight="-Infinity" spacing="2.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <children>
                                 <Label text="%Margin" />
                                 <TextField fx:id="pptMarginInput" prefWidth="100.0" />
                             </children>
                         </HBox>  
                         <Separator />
-                        <FlowPane hgap="5.0" vgap="5.0">
+                        <FlowPane hgap="2.0" vgap="2.0">
                             <children>
                                 <Label text="%Width" />
                                 <TextField fx:id="pptWidthInput" prefWidth="100.0" />
@@ -106,7 +103,7 @@ License:    Apache License Version 2.0
                                 <TextField fx:id="pptHeightInput" prefWidth="100.0" />
                             </children>
                         </FlowPane>
-                        <FlowPane hgap="5.0" vgap="5.0">
+                        <FlowPane hgap="2.0" vgap="2.0">
                             <children>
                                 <Button fx:id="pptMaxButton" mnemonicParsing="false" onAction="#pptMaxSize" text="%MaximumOfSelected" />   
                                 <CheckBox fx:id="pptMarginCheck" mnemonicParsing="false" selected="true" text="%PlusMargins" />
@@ -126,7 +123,4 @@ License:    Apache License Version 2.0
             </content>
         </TitledPane>
     </children>
-    <BorderPane.margin>
-        <Insets />
-    </BorderPane.margin>
 </VBox>

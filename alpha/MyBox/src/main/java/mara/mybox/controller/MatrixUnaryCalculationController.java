@@ -256,7 +256,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
 
-        resultTableController.setManager(listController, false);
+        resultTableController.setManager(listController);
 
         editController.sheetChangedNotify.addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {

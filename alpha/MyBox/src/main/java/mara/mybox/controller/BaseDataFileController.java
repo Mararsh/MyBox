@@ -31,6 +31,7 @@ public abstract class BaseDataFileController extends BaseController {
     protected Label fileInfoLabel;
 
     public BaseDataFileController() {
+        TipsLabelKey = "DataFileTips";
     }
 
     @Override
@@ -189,7 +190,6 @@ public abstract class BaseDataFileController extends BaseController {
     }
 
     protected void updateInfoLabel() {
-
     }
 
     @FXML

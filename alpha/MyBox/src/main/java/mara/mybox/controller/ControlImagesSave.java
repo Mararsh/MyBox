@@ -391,12 +391,21 @@ public class ControlImagesSave extends BaseController {
 
     protected BufferedImage image(int index) {
         try {
+            if (images == null || index < 0 || index >= images.size()) {
+                return null;
+            }
             ImageInformation info = images.get(index);
+            if (info == null) {
+                return null;
+            }
             Image image;
             if (info.getRegion() != null) {
                 image = info.loadRegion(-1);
             } else {
                 image = info.loadImage();
+            }
+            if (image == null) {
+                return null;
             }
             return SwingFXUtils.fromFXImage(image, null);
         } catch (Exception e) {
@@ -447,6 +456,9 @@ public class ControlImagesSave extends BaseController {
                             BufferedImage bufferedImage = image(i);
                             if (task == null || task.isCancelled()) {
                                 return false;
+                            }
+                            if (bufferedImage == null) {
+                                continue;
                             }
                             String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
                             BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);

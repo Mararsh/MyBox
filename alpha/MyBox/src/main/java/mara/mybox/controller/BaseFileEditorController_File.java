@@ -165,6 +165,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 sourceInformation.setLineBreak(existedInfo.getLineBreak());
                 sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
                 sourceInformation.setCurrentPage(existedInfo.getCurrentPage());
+                sourceInformation.setCharsetDetermined(existedInfo.isCharsetDetermined());
             } else {
                 sourceInformation.setCurrentPage(1);
             }
@@ -180,26 +181,9 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             selectionLabel.setText("");
             if (charsetSelector != null) {
                 charsetSelector.getSelectionModel().select(defaultCharset().name());
-                charsetSelector.setDisable(false);
             }
             if (bomLabel != null) {
                 bomLabel.setText("");
-            }
-            if (currentLineBreak != null) {
-                switch (System.lineSeparator()) {
-                    case "\r\n":
-                        crlfRadio.fire();
-                        currentLineBreak.setText("CRLF");
-                        break;
-                    case "\r":
-                        crRadio.fire();
-                        currentLineBreak.setText("CR");
-                        break;
-                    default:
-                        lfRadio.fire();
-                        currentLineBreak.setText("LF");
-                        break;
-                }
             }
             if (filterConditionsLabel != null) {
                 filterConditionsLabel.setText("");

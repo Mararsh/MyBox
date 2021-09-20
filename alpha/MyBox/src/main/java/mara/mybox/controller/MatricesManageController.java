@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
@@ -40,8 +41,27 @@ public class MatricesManageController extends BaseController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        editController.setManager(listController, true);
+        editController.setManager(listController);
+        editController.sheetChangedNotify.addListener(
+                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    updateStatus();
+                });
         listController.loadTableData();
+    }
+
+    protected void updateStatus() {
+        if (getMyStage() == null) {
+            return;
+        }
+        String title = baseTitle;
+        String name = editController.nameInput.getText();
+        if (name != null && !name.isBlank()) {
+            title += " - " + name.trim();
+        }
+        if (editController.dataChangedNotify.get()) {
+            title += " *";
+        }
+        getMyStage().setTitle(title);
     }
 
     @Override

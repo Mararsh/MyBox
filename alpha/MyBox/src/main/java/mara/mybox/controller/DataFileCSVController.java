@@ -34,7 +34,6 @@ public class DataFileCSVController extends BaseDataFileController {
 
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
-        TipsLabelKey = "DataFileCSVTips";
     }
 
     @Override
@@ -91,28 +90,30 @@ public class DataFileCSVController extends BaseDataFileController {
 
     @Override
     protected void updateInfoLabel() {
-        if (sourceFile == null) {
-            fileInfoLabel.setText("");
-        } else {
-            String info;
+        String info = "";
+        if (sourceFile != null) {
             info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
                     + message("Charset") + ": " + sheetController.sourceCharset + "\n"
                     + message("Delimiter") + ": " + TextTools.delimiterMessage(sheetController.sourceDelimiterName) + "\n"
-                    + message("RowsNumber") + ": " + sheetController.rowsTotal() + "\n"
-                    + (sheetController.columns == null ? "" : message("ColumnsNumber") + ": " + sheetController.columns.size() + "\n")
-                    + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n"
-                    + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage)
-                    + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
-            if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
-                info += message("RowsRangeInPage")
-                        + ": " + StringTools.format(sheetController.currentPageStart) + " - "
-                        + StringTools.format(sheetController.currentPageStart + sheetController.sheetInputs.length - 1)
-                        + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
-            }
-            info += message("PageModifyTime") + ": " + DateTools.nowString();
-            fileInfoLabel.setText(info);
+                    + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n";
         }
+        if (sheetController.pagesNumber <= 1) {
+            info += message("RowsNumber") + ":" + (sheetController.sheetInputs == null ? 0 : sheetController.sheetInputs.length) + "\n";
+        } else {
+            info += message("LinesNumberInFile") + ":" + sheetController.totalSize + "\n";
+        }
+        info += message("ColumnsNumber") + ": " + (sheetController.columns == null ? "0" : sheetController.columns.size()) + "\n"
+                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage)
+                + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
+        if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
+            info += message("RowsRangeInPage")
+                    + ": " + StringTools.format(sheetController.currentPageStart) + " - "
+                    + StringTools.format(sheetController.currentPageStart + sheetController.sheetInputs.length - 1)
+                    + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
+        }
+        info += message("PageModifyTime") + ": " + DateTools.nowString();
+        fileInfoLabel.setText(info);
     }
 
     @FXML

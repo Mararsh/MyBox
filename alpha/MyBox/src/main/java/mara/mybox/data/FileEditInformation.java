@@ -15,7 +15,7 @@ import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import thridparty.EncodingDetect;
 
 /**
@@ -331,7 +331,7 @@ public abstract class FileEditInformation extends FileInformation {
     }
 
     public String filterTypeName() {
-        return Languages.message(filterType.name());
+        return message(filterType.name());
     }
 
     public String lineBreakName() {
@@ -340,15 +340,15 @@ public abstract class FileEditInformation extends FileInformation {
         }
         switch (lineBreak) {
             case Width:
-                return Languages.message("BytesNumber") + lineBreakWidth;
+                return message("BytesNumber") + lineBreakWidth;
             case Value:
-                return Languages.message("BytesHex") + lineBreakWidth;
+                return message("BytesHex") + lineBreakWidth;
             case LF:
-                return Languages.message("LFHex");
+                return message("LFHex");
             case CR:
-                return Languages.message("CRHex");
+                return message("CRHex");
             case CRLF:
-                return Languages.message("CRLFHex");
+                return message("CRLFHex");
             default:
                 return "";
         }

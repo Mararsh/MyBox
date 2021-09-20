@@ -6,23 +6,23 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" minHeight="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageFormat">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageFormat">
     <children>
-        <VBox fx:id="formatBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+        <VBox fx:id="formatBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <Label fx:id="formatLabel" text="%FileFormat" />
                 <FlowPane fx:id="formatPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
@@ -44,7 +44,7 @@ License:    Apache License Version 2.0
                 </FlowPane>
             </children>
         </VBox>
-        <VBox fx:id="colorspaceBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+        <VBox fx:id="colorspaceBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <Label fx:id="csLabel" text="%ColorSpace" />
                 <FlowPane fx:id="colorspacePane" hgap="5.0" vgap="5.0" />
@@ -65,7 +65,7 @@ License:    Apache License Version 2.0
                 <CheckBox fx:id="embedProfileCheck" mnemonicParsing="false" text="%EmbedIccProfile" />
             </children>
         </VBox>
-        <FlowPane fx:id="alphaPane" hgap="5.0" layoutX="10.0" layoutY="189.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0">
+        <FlowPane fx:id="alphaPane" hgap="2.0" layoutX="10.0" layoutY="189.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
             <children>
                 <Label text="%AlphaChannel" />
                 <RadioButton fx:id="alphaKeepRadio" mnemonicParsing="false" selected="true" text="%Keep">
@@ -78,14 +78,14 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="alphaPreReomveRadio" layoutX="10.0" layoutY="68.0" mnemonicParsing="false" text="%PremultipliedAndRemove" toggleGroup="$alphaGroup" />
             </children>
         </FlowPane>
-        <FlowPane fx:id="dpiPane" hgap="5.0" layoutX="10.0" layoutY="194.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0">
+        <FlowPane fx:id="dpiPane" hgap="2.0" layoutX="10.0" layoutY="194.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
             <children>
                 <Label text="%Density" />
                 <ComboBox fx:id="dpiSelector" editable="true" prefWidth="120.0" />
                 <Label text="dpi" />
             </children>
         </FlowPane>
-        <VBox fx:id="compressBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+        <VBox fx:id="compressBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
                 <Label text="%CompressionType" />
                 <FlowPane fx:id="compressPane" hgap="5.0" layoutX="10.0" layoutY="194.0" vgap="5.0" />
@@ -98,7 +98,7 @@ License:    Apache License Version 2.0
                 </FlowPane>
             </children>
         </VBox>
-        <VBox fx:id="binaryBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+        <VBox fx:id="binaryBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
                 <Label text="%BinaryAlgorithm" />
                 <RadioButton mnemonicParsing="false" selected="true" text="%OTSU">
@@ -120,7 +120,7 @@ License:    Apache License Version 2.0
                 </HBox>
             </children>
         </VBox>
-        <FlowPane fx:id="icoPane" hgap="5.0" layoutX="20.0" layoutY="523.0" vgap="5.0">
+        <FlowPane fx:id="icoPane" hgap="2.0" layoutX="20.0" layoutY="523.0" vgap="2.0">
             <children>
                 <Label text="%Width" />
                 <ComboBox fx:id="icoWidthSelector" editable="true" prefWidth="120.0" />
@@ -128,6 +128,6 @@ License:    Apache License Version 2.0
         </FlowPane>
     </children>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
     </padding>
 </VBox>
