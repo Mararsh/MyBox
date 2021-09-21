@@ -9,7 +9,7 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 * Data file: Optimize operations of sheet. Data text can be edited. Support text data file.              
 * Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix on Linux.            
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matrix.  Fail to open file without suffix on Linux.            
        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
 
@@ -807,7 +807,7 @@ Load/Refresh/Delete image in System Clipboard:
 
 ### Matrix<a id="matrix"></a>
 1. Edit matrix.  Same as editing of data file.      
-2. Matix can be saved and reused.
+2. matrix can be saved and reused.
 3. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Multiply Number, Divide By Number, Power.
 4. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
 
@@ -1474,7 +1474,7 @@ Decoding does reverse conversion.
 
 * Data file: Optimize operations of sheet. Data text can be edited. Support text data file.              
 * Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix on Linux.                     
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matrix.  Fail to open file without suffix on Linux.                     
        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
 
