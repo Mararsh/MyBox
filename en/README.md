@@ -7,9 +7,9 @@ This is desktop application based on JavaFx to provide simple and easy functions
 ## What's New            
 2021-9-21 v6.4.8         
 
-* Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
+* Data file: Optimize operations of sheet. Data text can be edited. Support text data file.              
 * Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix.            
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix on Linux.            
        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
 
@@ -1472,9 +1472,9 @@ Decoding does reverse conversion.
 # Development Logs <a id="devLog"></a>           
 2021-9-21 v6.4.8         
 
-* Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
+* Data file: Optimize operations of sheet. Data text can be edited. Support text data file.              
 * Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix.                     
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix on Linux.                     
        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
 
