@@ -1,16 +1,14 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -37,7 +35,8 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
     public final TableDataColumn defineColumns() {
         addColumn(new ColumnDefinition("dcid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("dataid", ColumnType.Long, true)
-                .setForeignName("Data_Column_dataid_fk").setForeignTable("Data_Definition").setForeignColumn("dfid"));
+                .setForeignName("Data_Column_dataid_fk").setForeignTable("Data_Definition").setForeignColumn("dfid")
+                .setOnDelete(ColumnDefinition.OnDelete.Cascade));
         addColumn(new ColumnDefinition("column_type", ColumnType.Short, true));
         addColumn(new ColumnDefinition("column_name", ColumnType.String, true).setLength(1024));
         addColumn(new ColumnDefinition("index", ColumnType.Integer));

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" alignment="CENTER"  prefHeight="650.0" prefWidth="650.0" spacing="10.0" 
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLoadingController">
+    <children>
+        <ImageView fx:id="imageView" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../img/jade.png" />
+            </image>
+        </ImageView>
+        <ProgressIndicator fx:id="progressIndicator" VBox.vgrow="NEVER">
+            <VBox.margin>
+                <Insets bottom="20.0" top="10.0" />
+            </VBox.margin>
+        </ProgressIndicator>
+        <Label fx:id="infoLabel" minHeight="-Infinity" text="Loading..." wrapText="true" VBox.vgrow="NEVER">
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </Label>
+    </children>
+</VBox>

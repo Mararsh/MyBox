@@ -70,9 +70,9 @@ public class NodeStyleTools {
     }
 
     public static void refreshStyle(Parent node) {
+        applyStyle(node);
         node.applyCss();
         node.layout();
-        applyStyle(node);
     }
 
     public static boolean setStyle(Pane pane, String nodeId, String style) {

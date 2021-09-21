@@ -18,6 +18,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -27,6 +29,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
@@ -38,12 +41,11 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileNameTools;
@@ -57,7 +59,6 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-5-20
- * @Description
  * @License Apache License Version 2.0
  */
 public class ChromaticityDiagramController extends ImageViewerController {
@@ -69,6 +70,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
     protected ObservableList<CIEData> degree2nm1Data, degree10nm1Data, degree2nm5Data, degree10nm5Data;
     protected double X, Y = 1, Z, x = 0.4, y = 0.5;
 
+    @FXML
+    protected TabPane displayPane;
+    @FXML
+    protected Tab diaTab, cie21Tab, cie25Tab, cie101Tab, cie105Tab;
     @FXML
     protected ComboBox<String> fontSelector;
     @FXML
@@ -573,11 +578,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -623,11 +624,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -906,11 +903,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -955,17 +948,61 @@ public class ChromaticityDiagramController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
     @FXML
     public void aboutColor() {
         openLink(ChromaticityBaseController.aboutColorHtml());
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab currentTab = displayPane.getSelectionModel().getSelectedItem();
+        if (currentTab == cie21Tab) {
+            d2n1Controller.webViewController.popAction();
+            return true;
+
+        } else if (currentTab == cie25Tab) {
+            d2n5Controller.webViewController.popAction();
+            return true;
+
+        } else if (currentTab == cie101Tab) {
+            d10n1Controller.webViewController.popAction();
+            return true;
+
+        } else if (currentTab == cie105Tab) {
+            d10n5Controller.webViewController.popAction();
+            return true;
+
+        }
+        return super.popAction();
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab currentTab = displayPane.getSelectionModel().getSelectedItem();
+        if (currentTab == cie21Tab) {
+            d2n1Controller.webViewController.menuAction();
+            return true;
+
+        } else if (currentTab == cie25Tab) {
+            d2n5Controller.webViewController.menuAction();
+            return true;
+
+        } else if (currentTab == cie101Tab) {
+            d10n1Controller.webViewController.menuAction();
+            return true;
+
+        } else if (currentTab == cie105Tab) {
+            d10n5Controller.webViewController.menuAction();
+            return true;
+
+        }
+        return super.menuAction();
     }
 
 }

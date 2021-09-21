@@ -86,11 +86,7 @@ public class WebFavoriteAddController extends BaseTreeNodeSelector {
                     closeStage();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

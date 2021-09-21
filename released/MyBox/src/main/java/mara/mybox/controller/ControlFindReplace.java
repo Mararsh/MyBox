@@ -14,7 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
@@ -25,12 +24,8 @@ import mara.mybox.data.LongIndex;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ByteTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -455,11 +450,7 @@ public class ControlFindReplace extends BaseController {
                 }
 
             };
-            editerController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            editerController.start(task);
         }
     }
 
@@ -632,12 +623,10 @@ public class ControlFindReplace extends BaseController {
 
             };
             if (editerController != null) {
-                editerController.handling(task);
+                editerController.start(task);
+            } else {
+                start(task, false);
             }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
         }
     }
 

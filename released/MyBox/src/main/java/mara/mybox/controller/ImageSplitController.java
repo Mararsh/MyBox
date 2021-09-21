@@ -192,6 +192,8 @@ public class ImageSplitController extends ImageViewerController {
             }
         }
         sizeLabel.setText("");
+        saveController.setImages(null);
+
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
         if (Languages.message("Predefined").equals(selected.getText())) {
             splitMethod = SplitMethod.Predefined;
@@ -222,7 +224,6 @@ public class ImageSplitController extends ImageViewerController {
             checkSizeValues();
         }
         refreshStyle(splitOptionsBox);
-
     }
 
     protected void checkNumberValues() {
@@ -360,6 +361,7 @@ public class ImageSplitController extends ImageViewerController {
     @Override
     public boolean afterImageLoaded() {
         try {
+            saveController.setImages(null);
             if (!super.afterImageLoaded()) {
                 return false;
             }
@@ -553,10 +555,6 @@ public class ImageSplitController extends ImageViewerController {
 
     protected void indicateSplit() {
         try {
-            if (image == null) {
-                checkImages();
-                return;
-            }
             List<Node> nodes = new ArrayList<>();
             nodes.addAll(maskPane.getChildren());
             for (Node node : nodes) {
@@ -565,12 +563,12 @@ public class ImageSplitController extends ImageViewerController {
                     node = null;
                 }
             }
+            saveController.setImages(null);
             if (rows == null || cols == null
                     || rows.size() < 2 || cols.size() < 2
                     || (rows.size() == 2 && cols.size() == 2)) {
                 imageView.setImage(image);
                 splitValid.set(false);
-                checkImages();
                 return;
             }
             Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
@@ -684,10 +682,12 @@ public class ImageSplitController extends ImageViewerController {
                     ImageInformation info;
                     if (imageInformation != null) {
                         info = (ImageInformation) (imageInformation.clone());
+                        if (info.isIsSampled() || info.isIsScaled()) {
+                            info.setImage(null);
+                        }
                     } else {
                         info = new ImageInformation(image);
                     }
-                    info.setImage(null);
                     info.setRegion(new Rectangle(x1, y1, Math.abs(x2 - x1 + 1), Math.abs(y2 - y1 + 1)));
                     infos.add(info);
                 }

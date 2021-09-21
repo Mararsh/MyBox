@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WhitePointController">
+    <children>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+                <RadioButton mnemonicParsing="false" selected="true" text="%RelativeValues">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="valueGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="%NormalizedValuesCC" toggleGroup="$valueGroup" />
+                <RadioButton mnemonicParsing="false" text="%Tristimulus" toggleGroup="$valueGroup" />
+         </children>
+      </VBox>
+      <Label fx:id="commentsLabel" />
+      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+         <children>
+                <RadioButton fx:id="standardRadio" mnemonicParsing="false" selected="true" text="%StandardIlluminant">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="sourceGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <ComboBox fx:id="wpSelector" prefWidth="180.0" />
+         </children>
+      </FlowPane>
+          <RadioButton fx:id="inputRadio" mnemonicParsing="false" text="%Input" toggleGroup="$sourceGroup" />
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+                <Label text="X" fx:id="xLabel" />
+                <TextField prefWidth="150.0" fx:id="xInput" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="333.0" spacing="5.0">
+         <children>
+                <Label fx:id="yLabel" text="Y" />
+                <TextField fx:id="yInput" prefWidth="150.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="449.0" spacing="5.0">
+         <children>
+                <Label fx:id="zLabel" text="Z" />
+                <TextField fx:id="zInput" prefWidth="150.0" />
+         </children>
+      </HBox>
+    </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

@@ -8,7 +8,6 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
@@ -16,7 +15,6 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -139,15 +137,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                     treeView.setSelection();
                 }
             };
-            if (parentController != null) {
-                loading = parentController.handling(task);
-            } else {
-                loading = handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
     }
 
@@ -301,15 +291,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                     addNodes(parent, nodes, haveChildren, haveLevels);
                 }
             };
-            if (parentController != null) {
-                loading = parentController.handling(task);
-            } else {
-                loading = handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
     }
 

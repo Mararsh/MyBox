@@ -21,7 +21,6 @@ import mara.mybox.db.data.VisitHistory.ResourceType;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -94,6 +93,8 @@ public class VisitHistoryTools {
             return FileFilters.PPTXExtensionFilter;
         } else if (fileType == VisitHistory.FileType.PPTS) {
             return FileFilters.PPTSExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.ImagesList) {
+            return FileFilters.ImagesListExtensionFilter;
         } else {
             return FileFilters.AllExtensionFilter;
         }

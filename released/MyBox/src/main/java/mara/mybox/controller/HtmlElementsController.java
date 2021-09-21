@@ -35,7 +35,7 @@ import org.w3c.dom.html.HTMLDocument;
  * @CreateDate 2021-5-5
  * @License Apache License Version 2.0
  */
-public class HtmlElementsController extends BaseWebViewController {
+public class HtmlElementsController extends WebAddressController {
 
     protected int foundCount;
     protected HTMLDocument loadedDoc;
@@ -198,6 +198,7 @@ public class HtmlElementsController extends BaseWebViewController {
     @FXML
     @Override
     public void recoverAction() {
+        String address = getAddress();
         if (address != null && !address.isBlank()) {
             loadAddress(address);
         } else {

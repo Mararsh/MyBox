@@ -146,11 +146,7 @@ public class MyBoxDataController extends BaseDataTableController<BaseTable> {
                     tablesList.getItems().setAll(tables);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

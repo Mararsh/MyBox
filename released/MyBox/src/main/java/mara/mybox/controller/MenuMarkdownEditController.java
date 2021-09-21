@@ -24,6 +24,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -63,7 +64,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
             List<javafx.scene.Node> aNodes = new ArrayList<>();
 
-            Button blank4 = new Button(Languages.message("Blank4"));
+            Button blank4 = new Button(message("Blank4"));
             blank4.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -72,7 +73,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             });
             aNodes.add(blank4);
 
-            Button br = new Button(Languages.message("BreakLine"));
+            Button br = new Button(message("BreakLine"));
             br.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -81,89 +82,63 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             });
             aNodes.add(br);
 
-            Button p = new Button(Languages.message("Paragraph"));
+            Button p = new Button(message("Paragraph"));
             p.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("    \n" + Languages.message("Paragraph") + "    \n");
+                    insertText("    \n" + message("Paragraph") + "    \n");
                 }
             });
             aNodes.add(p);
 
-            Button table = new Button(Languages.message("Table"));
+            Button table = new Button(message("Table"));
             table.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    TableSizeController sizeController = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
-                    sizeController.setParameters(parentController);
-                    sizeController.notify.addListener(new ChangeListener<Boolean>() {
+                    TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
+                    controller.setParameters(parentController, message("Table"));
+                    controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            String s = "\n|";
-                            for (int j = 1; j <= sizeController.colsNumber; j++) {
-                                s += " col" + j + " |";
-                            }
-                            s += "    \n|";
-                            for (int j = 1; j <= sizeController.colsNumber; j++) {
-                                s += " --- |";
-                            }
-                            s += "    \n";
-                            for (int i = 1; i <= sizeController.rowsNumber; i++) {
-                                s += "|";
-                                for (int j = 1; j <= sizeController.colsNumber; j++) {
-                                    s += " v" + i + "-" + j + " |";
-                                }
-                                s += "    \n";
-                            }
-                            insertText(s);
-                            sizeController.closeStage();
+                            addTable(controller.rowsNumber, controller.colsNumber, true);
+                            controller.closeStage();
                         }
                     });
                 }
             });
             aNodes.add(table);
 
-            Button tableRow = new Button(Languages.message("TableRow"));
+            Button tableRow = new Button(message("TableRow"));
             tableRow.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    String value = PopTools.askValue(baseTitle, "", Languages.message("ColumnsNumber"), "3");
-                    if (value == null) {
-                        return;
-                    }
-                    try {
-                        int colsNumber = Integer.valueOf(value);
-                        if (colsNumber > 0) {
-                            String s = "| ";
-                            for (int j = 1; j <= colsNumber; j++) {
-                                s += " v" + j + " |";
-                            }
-                            s += "\n";
-                            insertText(s);
-                        } else {
-                            popError(Languages.message("InvalidData"));
+                    TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
+                    controller.setParameters(parentController, message("TableRow"));
+                    controller.notify.addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                            addTable(controller.rowsNumber, controller.colsNumber, false);
+                            controller.closeStage();
                         }
-                    } catch (Exception e) {
-                        popError(Languages.message("InvalidData"));
-                    }
+                    });
                 }
             });
             aNodes.add(tableRow);
 
-            Button image = new Button(Languages.message("Image"));
+            Button image = new Button(message("Image"));
             image.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("![" + Languages.message("Name") + "](http://" + Languages.message("Address") + ")");
+                    insertText("![" + message("Name") + "](http://" + message("Address") + ")");
                 }
             });
             aNodes.add(image);
 
-            Button link = new Button(Languages.message("Link"));
+            Button link = new Button(message("Link"));
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("[" + Languages.message("Name") + "](http://" + Languages.message("Address") + ")");
+                    insertText("[" + message("Name") + "](http://" + message("Address") + ")");
                 }
             });
             aNodes.add(link);
@@ -172,7 +147,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
             List<javafx.scene.Node> headNodes = new ArrayList<>();
             for (int i = 1; i <= 6; i++) {
-                String name = Languages.message("Headings") + " " + i;
+                String name = message("Headings") + " " + i;
                 String value = "";
                 for (int h = 0; h < i; h++) {
                     value += "#";
@@ -191,7 +166,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             addFlowPane(headNodes);
 
             List<javafx.scene.Node> listNodes = new ArrayList<>();
-            Button numberedList = new Button(Languages.message("NumberedList"));
+            Button numberedList = new Button(message("NumberedList"));
             numberedList.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -226,7 +201,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             });
             listNodes.add(numberedList);
 
-            Button bulletedList = new Button(Languages.message("BulletedList"));
+            Button bulletedList = new Button(message("BulletedList"));
             bulletedList.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -239,31 +214,31 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
             List<Node> codeNodes = new ArrayList<>();
 
-            Button SeparatorLine = new Button(Languages.message("SeparateLine"));
+            Button SeparatorLine = new Button(message("SeparateLine"));
             SeparatorLine.setOnAction((ActionEvent event) -> {
                 insertText("\n---\n");
             });
             codeNodes.add(SeparatorLine);
 
-            Button Quote = new Button(Languages.message("Quote"));
+            Button Quote = new Button(message("Quote"));
             Quote.setOnAction((ActionEvent event) -> {
                 insertText("\n\n>");
             });
             codeNodes.add(Quote);
 
-            Button Codes = new Button(Languages.message("Codes"));
+            Button Codes = new Button(message("Codes"));
             Codes.setOnAction((ActionEvent event) -> {
                 addTextAround("`");
             });
             codeNodes.add(Codes);
 
-            Button CodesBlock = new Button(Languages.message("CodesBlock"));
+            Button CodesBlock = new Button(message("CodesBlock"));
             CodesBlock.setOnAction((ActionEvent event) -> {
                 addTextAround("\n```\n", "\n```\n");
             });
             codeNodes.add(CodesBlock);
 
-            Button ReferLocalFile = new Button(Languages.message("ReferLocalFile"));
+            Button ReferLocalFile = new Button(message("ReferLocalFile"));
             ReferLocalFile.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.selectFile(myController, VisitHistory.FileType.All);
                 if (file == null) {
@@ -277,19 +252,19 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
             List<javafx.scene.Node> otherNodes = new ArrayList<>();
 
-            Button Bold = new Button(Languages.message("Bold"));
+            Button Bold = new Button(message("Bold"));
             Bold.setOnAction((ActionEvent event) -> {
                 addTextAround("**");
             });
             otherNodes.add(Bold);
 
-            Button Italic = new Button(Languages.message("Italic"));
+            Button Italic = new Button(message("Italic"));
             Italic.setOnAction((ActionEvent event) -> {
                 addTextAround("*");
             });
             otherNodes.add(Italic);
 
-            Button BoldItalic = new Button(Languages.message("BoldItalic"));
+            Button BoldItalic = new Button(message("BoldItalic"));
             BoldItalic.setOnAction((ActionEvent event) -> {
                 addTextAround("***");
             });
@@ -297,7 +272,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
             addFlowPane(otherNodes);
 
-            Hyperlink about = new Hyperlink(Languages.message("AboutMarkdown"));
+            Hyperlink about = new Hyperlink(message("AboutMarkdown"));
             about.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -382,15 +357,38 @@ public class MenuMarkdownEditController extends MenuTextEditController {
         }
         IndexRange range = textInput.getSelection();
         if (range.getLength() == 0) {
-            String s = prefix + Languages.message("Text") + suffix;
+            String s = prefix + message("Text") + suffix;
             textInput.insertText(range.getStart(), s);
             textInput.selectRange(range.getStart() + prefix.length(),
-                    range.getStart() + prefix.length() + Languages.message("Text").length());
+                    range.getStart() + prefix.length() + message("Text").length());
         } else {
             textInput.insertText(range.getStart(), prefix);
             textInput.insertText(range.getEnd() + prefix.length(), suffix);
         }
         textInput.requestFocus();
+    }
+
+    public void addTable(int rowsNumber, int colsNumber, boolean withHeader) {
+        String s = "    \n";
+        if (withHeader) {
+            s += "|";
+            for (int j = 1; j <= colsNumber; j++) {
+                s += " col" + j + " |";
+            }
+            s += "    \n|";
+            for (int j = 1; j <= colsNumber; j++) {
+                s += " --- |";
+            }
+            s += "    \n";
+        }
+        for (int i = 1; i <= rowsNumber; i++) {
+            s += "|";
+            for (int j = 1; j <= colsNumber; j++) {
+                s += " v" + i + "-" + j + " |";
+            }
+            s += "    \n";
+        }
+        insertText(s);
     }
 
     @FXML
@@ -406,7 +404,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
         if (textInput == null) {
             return false;
         }
-        MarkdownPopController.open(parentController, textInput.getText());
+        MarkdownPopController.open(parentController, textInput);
         return true;
     }
 

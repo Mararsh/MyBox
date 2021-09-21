@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.4.7</version>
+    <version>6.4.8</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -226,7 +226,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.13.1</version>
+            <version>1.14.2</version>
         </dependency>
     </dependencies>
 

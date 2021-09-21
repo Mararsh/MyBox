@@ -4,9 +4,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import org.apache.commons.io.FileUtils;
 
@@ -61,10 +59,7 @@ public class FilesDeleteSysTempController extends BaseController {
                 }
 
             };
-            countTask.setSelf(countTask);
-            Thread thread = new Thread(countTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(countTask, false);
         }
     }
 
@@ -127,11 +122,7 @@ public class FilesDeleteSysTempController extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

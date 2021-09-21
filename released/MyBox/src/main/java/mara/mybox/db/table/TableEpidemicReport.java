@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,7 +16,7 @@ import static mara.mybox.db.DerbyBase.protocol;
 import static mara.mybox.db.DerbyBase.stringValue;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;

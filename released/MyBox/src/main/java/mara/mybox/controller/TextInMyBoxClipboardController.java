@@ -145,13 +145,29 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
     @FXML
     @Override
     public void copyToMyBoxClipboard() {
-        TextClipboardTools.copyToMyBoxClipboard(myController, textArea);
+        String s = textArea.getSelectedText();
+        if (s == null || s.isEmpty()) {
+            s = textArea.getText();
+        }
+        if (s == null || s.isEmpty()) {
+            popError(Languages.message("CopyNone"));
+            return;
+        }
+        TextClipboardTools.copyToMyBoxClipboard(myController, s);
     }
 
     @FXML
     @Override
     public void copyToSystemClipboard() {
-        TextClipboardTools.copyToSystemClipboard(myController, textArea);
+        String s = textArea.getSelectedText();
+        if (s == null || s.isEmpty()) {
+            s = textArea.getText();
+        }
+        if (s == null || s.isEmpty()) {
+            popError(Languages.message("CopyNone"));
+            return;
+        }
+        TextClipboardTools.copyToSystemClipboard(myController, s);
     }
 
     @FXML
@@ -200,6 +216,7 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
             if (object instanceof TextInMyBoxClipboardController) {
                 controller = (TextInMyBoxClipboardController) object;
                 controller.toFront();
+                controller.refreshAction();
                 break;
             }
         }

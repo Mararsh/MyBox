@@ -13,14 +13,14 @@ public class FileFilters {
 
     public static List<FileChooser.ExtensionFilter> AllExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 
     public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.csv", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
             add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
             add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             add(new FileChooser.ExtensionFilter("xml", "*.xml"));
@@ -120,7 +120,7 @@ public class FileFilters {
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
             add(new FileChooser.ExtensionFilter("m4a", "*.m4a"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 
@@ -129,7 +129,7 @@ public class FileFilters {
             add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3"));
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 
@@ -153,7 +153,7 @@ public class FileFilters {
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("aiff", "*.aif", "*.aiff"));
             add(new FileChooser.ExtensionFilter("hls", "*.m3u8", "*.*"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 
@@ -175,7 +175,7 @@ public class FileFilters {
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("aiff", "*.aif", "*.aiff"));
             add(new FileChooser.ExtensionFilter("hls", "*.m3u8", "*.*"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 
@@ -187,13 +187,13 @@ public class FileFilters {
             add(new FileChooser.ExtensionFilter("PEM", "*.pem"));
             add(new FileChooser.ExtensionFilter("PKCS10", "*.p10", "*.csr"));
             add(new FileChooser.ExtensionFilter("SPC", "*.pvk", "*.spc"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 
     public static List<FileChooser.ExtensionFilter> KeyStoreExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
             add(new FileChooser.ExtensionFilter("JKS", "*.jks", "*.ks"));
             add(new FileChooser.ExtensionFilter("JCEKS", "*.jce"));
             add(new FileChooser.ExtensionFilter("PKCS12", "*.p12", "*.pfx"));
@@ -223,7 +223,7 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> CsvExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("csv", "*.csv"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 
@@ -231,7 +231,7 @@ public class FileFilters {
         {
             add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
             add(new FileChooser.ExtensionFilter("csv", "*.csv"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
         }
     };
 

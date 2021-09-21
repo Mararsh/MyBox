@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.tools.TextTools.delimiterText;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -853,19 +851,19 @@ public class MatrixDoubleTools {
         return matrix;
     }
 
-    public static String dataText(double[][] data, String delimiter) {
-        if (data == null || data.length == 0 || delimiter == null) {
+    public static String dataText(double[][] data, String delimiterName) {
+        if (data == null || data.length == 0 || delimiterName == null) {
             return null;
         }
         StringBuilder s = new StringBuilder();
-        String p = delimiterText(delimiter);
+        String delimiter = TextTools.delimiterValue(delimiterName);
         int rowsNumber = data.length;
         int colsNumber = data[0].length;
         for (int i = 0; i < rowsNumber; i++) {
             for (int j = 0; j < colsNumber; j++) {
                 s.append(data[i][j]);
                 if (j < colsNumber - 1) {
-                    s.append(p);
+                    s.append(delimiter);
                 }
             }
             s.append("\n");

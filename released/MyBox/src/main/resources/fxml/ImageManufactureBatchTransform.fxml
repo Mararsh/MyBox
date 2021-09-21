@@ -119,7 +119,11 @@ License:    Apache License Version 2.0
                                                         <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                                     </children>
                                                 </HBox>
-                                                <fx:include fx:id="format" source="ControlImageFormat.fxml" />
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" vbarPolicy="ALWAYS">
+                                                    <content>
+                                                        <fx:include fx:id="format" source="ControlImageFormat.fxml" /> 
+                                                    </content>
+                                                </ScrollPane>
                                             </children>
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

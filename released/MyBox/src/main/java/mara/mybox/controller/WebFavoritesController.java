@@ -265,10 +265,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                     conditionBox.applyCss();
                 }
             };
-            bookTask.setSelf(bookTask);
-            Thread thread = new Thread(bookTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(bookTask, false);
         }
 
     }
@@ -392,14 +389,14 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
     public void itemDoubleClicked() {
         currentAddress = tableView.getSelectionModel().getSelectedItem();
         if (currentAddress != null) {
-            WebBrowserController.oneOpen(currentAddress.getAddress());
+            WebBrowserController.oneOpen(currentAddress.getAddress(), true);
         }
     }
 
     @FXML
     @Override
     public void goAction() {
-        WebBrowserController.oneOpen(addressInput.getText());
+        WebBrowserController.oneOpen(addressInput.getText(), true);
     }
 
     @Override
@@ -515,10 +512,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                     addressLabel.setText(chainName);
                 }
             };
-            updateTask.setSelf(updateTask);
-            Thread thread = new Thread(updateTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(updateTask, false);
         }
     }
 
@@ -559,11 +553,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                     iconController.input(iconFile.getAbsolutePath());
                 }
             };
-            updateTask.setSelf(updateTask);
-            handling(updateTask);
-            Thread thread = new Thread(updateTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(updateTask);
         }
     }
 
@@ -628,10 +618,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                 }
 
             };
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false);
         }
     }
 

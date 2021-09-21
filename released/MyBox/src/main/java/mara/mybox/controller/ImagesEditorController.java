@@ -98,11 +98,10 @@ public class ImagesEditorController extends BaseController {
             List<ImageInformation> infos = new ArrayList<>();
             if (selected != null) {
                 for (ImageInformation info : selected) {
-                    infos.add(info.base());
+                    infos.add(info.cloneAttributes());
                 }
             }
-            ImagesPlayController controller
-                    = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
+            ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
             controller.loadImages(infos);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -251,11 +251,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 }
 
             };
-            loadingController = handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loadingController = start(task);
         }
     }
 
@@ -1387,11 +1383,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {

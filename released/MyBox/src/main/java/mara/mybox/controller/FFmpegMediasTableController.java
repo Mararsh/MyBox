@@ -7,13 +7,11 @@ import com.github.kokorin.jaffree.ffprobe.Format;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.stage.Modality;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 
@@ -128,11 +126,7 @@ public class FFmpegMediasTableController extends ControlMediaTable {
                         updateLabel();
                     }
                 };
-                parentController.handling(task, Modality.WINDOW_MODAL, msg);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                parentController.start(task, msg);
             }
 
         } catch (Exception e) {

@@ -18,6 +18,7 @@ import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 import thridparty.EncodingDetect;
 
 /**
@@ -488,12 +489,12 @@ public class TextTools {
         return ByteTools.bytesToHexFormat(lineBreakBytes(lb, charset));
     }
 
-    public static String delimiterText(String delimiter) {
-        if (delimiter == null) {
+    public static String delimiterValue(String delimiterName) {
+        if (delimiterName == null) {
             return null;
         }
         String text;
-        switch (delimiter.toLowerCase()) {
+        switch (delimiterName.toLowerCase()) {
             case "tab":
                 text = "\t";
                 break;
@@ -506,47 +507,88 @@ public class TextTools {
             case "blank8":
                 text = "        ";
                 break;
+            case "blanks":
+                text = " ";
+                break;
             default:
-                text = delimiter;
+                text = delimiterName;
                 break;
         }
         return text;
     }
 
-    public static String dataText(Object[][] data, String delimiter) {
-        return dataText(data, delimiter, null, null);
+    public static String delimiterMessage(String delimiterName) {
+        if (delimiterName == null) {
+            return null;
+        }
+        String msg;
+        switch (delimiterName.toLowerCase()) {
+            case "tab":
+            case "\t":
+                msg = message("Tab");
+                break;
+            case "blank":
+            case " ":
+                msg = message("Blank");
+                break;
+            case "blank4":
+            case "    ":
+                msg = message("Blank4");
+                break;
+            case "blank8":
+            case "        ":
+                msg = message("Blank8");
+                break;
+            case "blanks":
+                msg = message("BlankCharacters");
+                break;
+            default:
+                if (delimiterName.isBlank()) {
+                    msg = message("BlankCharacters");
+                } else {
+                    msg = delimiterName;
+                }
+                break;
+        }
+        return msg;
     }
 
-    public static String dataText(Object[][] data, String delimiter,
+    public static String dataText(Object[][] data, String delimiterName) {
+        return dataText(data, delimiterName, null, null);
+    }
+
+    public static String dataText(Object[][] data, String delimiterName,
             List<String> colsNames, List<String> rowsNames) {
-        if (data == null || data.length == 0 || delimiter == null) {
+        if (data == null || data.length == 0 || delimiterName == null) {
             return "";
         }
         try {
             StringBuilder s = new StringBuilder();
-            String p = delimiterText(delimiter);
+            String delimiter = delimiterValue(delimiterName);
             int rowsNumber = data.length;
             int colsNumber = data[0].length;
             if (colsNames != null && colsNames.size() >= colsNumber) {
                 if (rowsNames != null) {
-                    s.append(p);
+                    s.append(delimiter);
                 }
-                for (int j = 0; j < colsNumber; j++) {
-                    s.append(colsNames.get(j));
-                    if (j < colsNumber - 1) {
-                        s.append(p);
+                int end = colsNumber - 1;
+                for (int c = 0; c <= end; c++) {
+                    s.append(colsNames.get(c));
+                    if (c < end) {
+                        s.append(delimiter);
                     }
                 }
                 s.append("\n");
             }
             for (int i = 0; i < rowsNumber; i++) {
                 if (rowsNames != null) {
-                    s.append(rowsNames.get(i)).append(p);
+                    s.append(rowsNames.get(i)).append(delimiter);
                 }
-                for (int j = 0; j < colsNumber; j++) {
-                    s.append(data[i][j]);
-                    if (j < colsNumber - 1) {
-                        s.append(p);
+                int end = colsNumber - 1;
+                for (int c = 0; c <= end; c++) {
+                    s.append(data[i][c]);
+                    if (c < end) {
+                        s.append(delimiter);
                     }
                 }
                 s.append("\n");
@@ -555,6 +597,77 @@ public class TextTools {
         } catch (Exception e) {
             MyBoxLog.console(e);
             return "";
+        }
+    }
+
+    public static List<String> parseLine(String line, String delimiterName) {
+        try {
+            if (line == null || delimiterName == null) {
+                return null;
+            }
+            String[] values;
+            switch (delimiterName.toLowerCase()) {
+                case "tab":
+                case "\t":
+                    values = line.split("\t");
+                    break;
+                case "blank":
+                case " ":
+                    values = line.split("\\s");
+                    break;
+                case "blank4":
+                case "    ":
+                    values = line.split("\\s{4}");
+                    break;
+                case "blank8":
+                case "        ":
+                    values = line.split("\\s{8}");
+                    break;
+                case "blanks":
+                    values = line.split("\\s+");
+                    break;
+                case "|":
+                    values = line.split("\\|");
+                    break;
+                default:
+                    if (delimiterName.isBlank()) {
+                        values = line.split("\\s+");
+                    } else {
+                        values = line.split(delimiterName);
+                    }
+                    break;
+
+            }
+            if (values == null || values.length == 0) {
+                return null;
+            }
+            List<String> row = new ArrayList<>();
+            for (String value : values) {
+                row.add(value);
+            }
+            return row;
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return null;
+        }
+    }
+
+    public static String[][] toArray(List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                return null;
+            }
+            String[][] array = new String[data.size()][data.get(0).size()];
+            for (int r = 0; r < data.size(); r++) {
+                List<String> row = data.get(r);
+                for (int c = 0; c < row.size(); c++) {
+                    array[r][c] = row.get(c);
+                }
+            }
+            return array;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
         }
     }
 

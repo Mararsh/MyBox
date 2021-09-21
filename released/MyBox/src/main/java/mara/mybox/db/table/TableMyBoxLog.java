@@ -1,6 +1,7 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**

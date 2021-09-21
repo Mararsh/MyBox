@@ -7,8 +7,8 @@ package mara.mybox.value;
  */
 public class AppValues {
 
-    public static final String AppVersion = "6.4.7";
-    public static final String AppVersionDate = "2021-8-17";
+    public static final String AppVersion = "6.4.8";
+    public static final String AppVersionDate = "2021-9-21";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 
@@ -30,6 +30,8 @@ public class AppValues {
     public static final long InvalidLong = Long.MIN_VALUE;
     public static final double InvalidDouble = Double.MAX_VALUE;
     public static final int InvalidInteger = Integer.MIN_VALUE;
+
+    public static final String MyBoxRandomFlag = "MyBox##random#MyBox";
 
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";

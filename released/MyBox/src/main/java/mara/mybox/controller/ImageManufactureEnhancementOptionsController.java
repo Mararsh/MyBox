@@ -24,7 +24,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution.SharpenAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution.SmoothAlgorithm;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.table.TableConvolutionKernel;
@@ -134,12 +133,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
         try {
             if (imageController != null) {
                 imageController.resetImagePane();
-                if (scopeController != null && scopeController.scope != null
-                        && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                    imageController.scopeTab();
-                } else {
-                    imageController.imageTab();
-                }
+                imageController.imageTab();
             }
 
             clearValues();
@@ -158,12 +152,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
             } else {
                 if (imageController != null) {
-                    if (scopeController != null && scopeController.scope != null
-                            && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                        imageController.scopeTab();
-                    } else {
-                        imageController.imageTab();
-                    }
+                    imageController.scopeTab();
                     commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
                 }
 
@@ -379,11 +368,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                     }
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 

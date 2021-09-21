@@ -5,7 +5,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -35,7 +34,7 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
                     setGraphic(null);
                     return;
                 }
-                imageview.setImage(item.loadThumbnail());
+                imageview.setImage(item.loadThumbnail(thumbWidth));
                 imageview.setRotate(item.getThumbnailRotation());
                 setGraphic(imageview);
             }

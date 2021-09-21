@@ -153,7 +153,19 @@ public class ImageOCRProcessController extends ImageViewerController {
     @FXML
     @Override
     public void recoverAction() {
-        loadImage(OCRController.imageView.getImage());
+        loadImage(OCRController.sourceFile, OCRController.imageInformation, OCRController.imageView.getImage(), false);
+    }
+
+    @FXML
+    @Override
+    public void previousAction() {
+        OCRController.previousAction();
+    }
+
+    @FXML
+    @Override
+    public void nextAction() {
+        OCRController.nextAction();
     }
 
     @FXML
@@ -187,11 +199,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -228,11 +236,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            OCRController.task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -392,11 +396,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -565,10 +565,7 @@ public class ImageOCRProcessController extends ImageViewerController {
             }
 
         };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
-
+        start(demoTask, false);
     }
 
     @FXML
@@ -603,11 +600,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -686,11 +679,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 

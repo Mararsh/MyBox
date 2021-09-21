@@ -9,10 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -30,23 +27,17 @@ public class ControlStringSelector extends BaseController {
     protected ComboBox<String> selector;
 
     public void init(BaseController parent, String name, String defaultValue, int defaultMax) {
-        this.name = name;
+        this.name = name == null ? name : parent.baseName;
         this.defaultValue = defaultValue;
         this.defaultMax = defaultMax;
-        selector.setValue(defaultValue);
-        init(parent);
-        refreshList();
-    }
+        this.defaultMax = defaultMax > 0 ? defaultMax : 20;
 
-    public void init(BaseController parent) {
         parentController = parent;
         setting = "... " + Languages.message("MaxSaved");
         baseName = parent.baseName;
         baseTitle = parent.baseTitle;
-        defaultMax = defaultMax > 0 ? defaultMax : 20;
-        if (name == null) {
-            name = baseName;
-        }
+
+        selector.setValue(defaultValue);
         selector.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
@@ -74,6 +65,7 @@ public class ControlStringSelector extends BaseController {
             }
         });
 
+        refreshList();
     }
 
     protected void refreshList(String name, String defaultValue) {
@@ -139,15 +131,13 @@ public class ControlStringSelector extends BaseController {
                 }
 
             };
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false);
         }
 
     }
 
     public String value() {
+        selector.commitValue();
         String value = selector.getEditor().getText();
         if (value == null || value.isBlank()) {
             return null;

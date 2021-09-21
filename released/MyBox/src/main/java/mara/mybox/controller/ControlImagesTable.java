@@ -24,8 +24,8 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableImageInfoCell;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
@@ -85,7 +85,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Image);
+        setFileType(VisitHistory.FileType.ImagesList, VisitHistory.FileType.Image);
     }
 
     @Override
@@ -187,6 +187,30 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     }
 
     @Override
+    protected void checkButtons() {
+        super.checkButtons();
+        try {
+            ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+            if (info == null) {
+                return;
+            }
+            String suffix = FileNameTools.getFileSuffix(info.getFileName());
+            if (suffix == null) {
+                return;
+            }
+            boolean notImageFile = suffix.equalsIgnoreCase("ppt")
+                    || suffix.equalsIgnoreCase("pptx")
+                    || suffix.equalsIgnoreCase("pdf");
+            editFileButton.setDisable(notImageFile);
+            infoButton.setDisable(notImageFile);
+            metaButton.setDisable(notImageFile);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void updateLabel() {
         if (tableLabel == null) {
             return;
@@ -245,7 +269,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(file);
+                        ImageFileInformation finfo = ImageFileInformation.create(file);
                         infos.addAll(finfo.getImagesInformation());
                     }
                     return true;
@@ -267,15 +291,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 }
 
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -287,7 +303,18 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null) {
                 return;
             }
-            ControllerTools.openImageViewer(info);
+            String suffix = FileNameTools.getFileSuffix(info.getFileName());
+            if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
+                PdfViewController controller = (PdfViewController) openStage(Fxmls.PdfViewFxml);
+                controller.loadFile(info.getFile(), null, info.getIndex());
+
+            } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
+                PptViewController controller = (PptViewController) openStage(Fxmls.PptViewFxml);
+                controller.loadFile(info.getFile(), info.getIndex());
+
+            } else {
+                ControllerTools.openImageViewer(info);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -301,9 +328,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null) {
                 return;
             }
-            ImageManufactureController controller
-                    = (ImageManufactureController) openStage(Fxmls.ImageManufactureFxml);
-            controller.loadImageInfo(info);
+            ControllerTools.openImageManufacture(null, info);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

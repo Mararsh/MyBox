@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,15 +54,14 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -170,21 +170,22 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
             });
 
-            palettesController.palettesList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends ColorPaletteName> ov, ColorPaletteName t, ColorPaletteName t1) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
-                boolean isAll = isAllColors();
-                deletePaletteButton.setDisable(isAll);
-                renamePaletteButton.setDisable(isAll);
-                copyPaletteButton.setDisable(isAll);
-                trimButton.setDisable(isAll);
-                if (!isAll) {
-                    UserConfig.setString(baseName + "Palette", currentPalette.getName());
-                }
-                refreshPalette();
-            });
+            palettesController.palettesList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends ColorPaletteName> ov, ColorPaletteName t, ColorPaletteName t1) -> {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
+                        boolean isAll = isAllColors();
+                        deletePaletteButton.setDisable(isAll);
+                        renamePaletteButton.setDisable(isAll);
+                        copyPaletteButton.setDisable(isAll);
+                        trimButton.setDisable(isAll);
+                        if (!isAll) {
+                            UserConfig.setString(baseName + "Palette", currentPalette.getName());
+                        }
+                        refreshPalette();
+                    });
 
             paletteTabPane.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) -> {
@@ -453,11 +454,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -502,11 +499,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -563,11 +556,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -670,11 +659,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -720,11 +705,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -877,16 +858,11 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 protected void whenSucceeded() {
                     if (file.exists()) {
                         recordFileWritten(file, FileType.Text);
-                        DataFileCSVController controller = (DataFileCSVController) openStage(Fxmls.DataFileCSVFxml);
-                        controller.setFile(file, true);
+                        DataFileCSVController.open(file, Charset.forName("UTF-8"), true, ',');
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -938,11 +914,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                                 displayHtml(atitle, data);
                             }
                         };
-                        handling(task);
-                        task.setSelf(task);
-                        Thread thread = new Thread(task);
-                        thread.setDaemon(false);
-                        thread.start();
+                        start(task);
                     }
                 }
             }
@@ -1009,9 +981,9 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                         row.add(data.getLchuv());
                     } else if (column.equals(dataColumn)) {
                         if (allColumnsCheck.isSelected()) {
-                            row.add(data.htmlDisplay());
+                            row.add(ColorData.htmlValue(data));
                         } else {
-                            row.add(data.htmlSimpleDisplay());
+                            row.add(ColorData.htmlSimpleValue(data));
                         }
                     }
                 }
@@ -1059,11 +1031,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                         }
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
         }
     }
@@ -1106,12 +1074,13 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
+    }
+
+    @FXML
+    public void queryAction() {
+        openStage(Fxmls.ColorQueryFxml);
     }
 
     /*
@@ -1216,11 +1185,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -1287,10 +1252,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     colorsPane.setVisible(true);
                 }
             };
-            colorsTask.setSelf(colorsTask);
-            Thread thread = new Thread(colorsTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(colorsTask, false);
         }
     }
 
@@ -1487,11 +1449,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

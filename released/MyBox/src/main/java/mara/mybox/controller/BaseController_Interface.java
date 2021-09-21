@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,9 +28,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.web.WebView;
 import javafx.stage.Popup;
-import javafx.stage.Screen;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import mara.mybox.dev.MyBoxLog;
@@ -44,7 +41,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -54,7 +51,9 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseController_Interface extends BaseController_Files {
 
+    protected final int minSize = 200;
     protected ChangeListener<Number> leftDividerListener, rightDividerListener;
+
 
     /*
         open fxml
@@ -225,7 +224,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     }
                 });
                 isSettingValues = true;
-                NodeTools.setRadioSelected(targetExistGroup, UserConfig.getString(baseName + "TargetExistType", Languages.message("Replace")));
+                NodeTools.setRadioSelected(targetExistGroup, UserConfig.getString(baseName + "TargetExistType", message("Replace")));
                 if (targetAppendInput != null) {
                     targetAppendInput.textProperty().addListener(new ChangeListener<String>() {
                         @Override
@@ -243,12 +242,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (dpiSelector != null) {
                 List<String> dpiValues = new ArrayList();
                 dpiValues.addAll(Arrays.asList("96", "72", "300", "160", "240", "120", "600", "400"));
-                String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
+                String sValue = (int) NodeTools.screenResolution() + "";
                 if (dpiValues.contains(sValue)) {
                     dpiValues.remove(sValue);
                 }
                 dpiValues.add(0, sValue);
-                sValue = (int) Screen.getPrimary().getDpi() + "";
+                sValue = (int) NodeTools.screenDpi() + "";
                 if (dpiValues.contains(sValue)) {
                     dpiValues.remove(sValue);
                 }
@@ -325,10 +324,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (cb.isEditable()) {
                 makeEditContextMenu(cb, cb.getEditor());
             }
-        } else if (node instanceof WebView && !(this instanceof FunctionsListController)) {
-            if (!(this instanceof BaseWebViewController) || !"webView".equals(node.getId())) {
-                new BaseWebViewController().setParent(myController, (WebView) node);
-            }
         } else if (node instanceof SplitPane) {
             for (Node child : ((SplitPane) node).getItems()) {
                 initNodes(child);
@@ -390,31 +385,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
             getMyScene();
             getMyStage();
 
-            int minSize = 200;
             myStage.setMinWidth(minSize);
             myStage.setMinHeight(minSize);
 
-            if (AppVariables.restoreStagesSize) {
-                String prefix = interfaceKeysPrefix();
-                setStageStatus(prefix, minSize);
-
-                myStage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                        UserConfig.setBoolean(prefix + "FullScreen", myStage.isFullScreen());
-                    }
-                });
-                myStage.maximizedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                        UserConfig.setBoolean(prefix + "Maximized", myStage.isMaximized());
-                    }
-                });
-
-            } else {
-                myStage.sizeToScene();
-                myStage.centerOnScreen();
-            }
+            setStageStatus();
 
             Rectangle2D screen = NodeTools.getScreen();
             if (myStage.getHeight() > screen.getHeight()) {
@@ -433,6 +407,86 @@ public abstract class BaseController_Interface extends BaseController_Files {
             refreshStyle();
             toFront();
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public String interfaceKeysPrefix() {
+        return "Interface_" + baseName + (isPop ? "_Pop" : "");
+    }
+
+    public void setStageStatus() {
+        try {
+            isPop = false;
+            if (AppVariables.restoreStagesSize) {
+                String prefix = interfaceKeysPrefix();
+                if (UserConfig.getBoolean(prefix + "FullScreen", false)) {
+                    myStage.setFullScreen(true);
+
+                } else if (UserConfig.getBoolean(prefix + "Maximized", false)) {
+                    NodeTools.setMaximized(myStage, true);
+
+                } else {
+                    int mw = UserConfig.getInt(prefix + "StageWidth", -1);
+                    int mh = UserConfig.getInt(prefix + "StageHeight", -1);
+                    int mx = UserConfig.getInt(prefix + "StageX", -1);
+                    int my = UserConfig.getInt(prefix + "StageY", -1);
+                    if (mw > minSize && mh > minSize) {
+                        myStage.setWidth(mw);
+                        myStage.setHeight(mh);
+                    }
+                    if (mx >= 0 && my >= 0) {
+                        myStage.setX(mx);
+                        myStage.setY(my);
+                    }
+                }
+
+                myStage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                        UserConfig.setBoolean(prefix + "FullScreen", myStage.isFullScreen());
+                    }
+                });
+                myStage.maximizedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                        UserConfig.setBoolean(prefix + "Maximized", myStage.isMaximized());
+                    }
+                });
+
+            } else {
+                myStage.sizeToScene();
+                myStage.centerOnScreen();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setAsPopup(String baseName) {
+        try {
+            isPop = true;
+            this.baseName = baseName;
+            String prefix = interfaceKeysPrefix();
+            int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
+            int mh = UserConfig.getInt(prefix + "StageHeight", Math.min(500, (int) myStage.getHeight()));
+            int mx = UserConfig.getInt(prefix + "StageX", (int) myStage.getX());
+            int my = UserConfig.getInt(prefix + "StageY", (int) myStage.getY());
+            if (mw > minSize && mh > minSize) {
+                myStage.setWidth(mw);
+                myStage.setHeight(mh);
+            }
+            if (mx >= 0 && my >= 0) {
+                myStage.setX(mx);
+                myStage.setY(my);
+            }
+            if (topCheck != null) {
+                topCheck.setVisible(true);
+                checkAlwaysTop();
+            } else {
+                myStage.setAlwaysOnTop(true);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -460,47 +514,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void setStageStatus(String prefix, int minSize) {
-        setStageStatus(prefix, minSize, -1, -1, -1, -1);
-    }
-
-    public void setStageStatus(String prefix, int minSize, int initX, int initY, int initW, int initH) {
-        if (UserConfig.getBoolean(prefix + "FullScreen", false)) {
-            myStage.setFullScreen(true);
-
-        } else if (UserConfig.getBoolean(prefix + "Maximized", false)) {
-            NodeTools.setMaximized(myStage, true);
-
-        } else {
-            int mw = UserConfig.getInt(prefix + "StageWidth", initW);
-            int mh = UserConfig.getInt(prefix + "StageHeight", initH);
-            int mx = UserConfig.getInt(prefix + "StageX", initX);
-            int my = UserConfig.getInt(prefix + "StageY", initY);
-            if (mw > minSize && mh > minSize) {
-                myStage.setWidth(mw);
-                myStage.setHeight(mh);
-            }
-            if (mx >= 0 && my >= 0) {
-                myStage.setX(mx);
-                myStage.setY(my);
-            }
-        }
-    }
-
-    public void setAsPopup(String baseName) {
-        isPop = true;
-        this.baseName = baseName;
-        setStageStatus(interfaceKeysPrefix(), 200, 0, 0, 600, 500);
-//        hideLeftPane();
-//        hideRightPane();
-        if (topCheck != null) {
-            topCheck.setVisible(true);
-            checkAlwaysTop();
-        } else {
-            myStage.setAlwaysOnTop(true);
         }
     }
 
@@ -555,7 +568,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
         myStage.setAlwaysOnTop(topCheck.isSelected());
         if (topCheck.isSelected()) {
-            popWarn(Languages.message("AlwaysTopWarning"));
+            popWarn(message("AlwaysTopWarning"));
             FadeTransition fade = new FadeTransition(Duration.millis(300));
             fade.setFromValue(1.0);
             fade.setToValue(0f);
@@ -564,10 +577,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             fade.setNode(topCheck);
             fade.play();
         }
-    }
-
-    public String interfaceKeysPrefix() {
-        return "Interface_" + baseName;
     }
 
     // Do not call "refreshStyle" in this method, or else endless loop happens
@@ -580,28 +589,28 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 NodeStyleTools.setTooltip(rightPaneControl, new Tooltip("F5"));
             }
             if (tipsLabel != null && TipsLabelKey != null) {
-                NodeStyleTools.setTooltip(tipsLabel, new Tooltip(Languages.message(TipsLabelKey)));
+                NodeStyleTools.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));
             }
             if (tipsView != null && TipsLabelKey != null) {
-                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message(TipsLabelKey)));
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
             }
             if (rightTipsView != null && TipsLabelKey != null) {
-                NodeStyleTools.setTooltip(rightTipsView, new Tooltip(Languages.message(TipsLabelKey)));
+                NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
             }
 
             if (copyButton == null) {
                 if (copyToSystemClipboardButton != null) {
-                    NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
                 } else if (copyToMyBoxClipboardButton != null) {
-                    NodeStyleTools.setTooltip(copyToMyBoxClipboardButton, new Tooltip(Languages.message("CopyToMyBoxClipboard") + "\nCTRL+c / ALT+c"));
+                    NodeStyleTools.setTooltip(copyToMyBoxClipboardButton, new Tooltip(message("CopyToMyBoxClipboard") + "\nCTRL+c / ALT+c"));
                 }
             }
 
             if (pasteButton == null) {
                 if (pasteContentInSystemClipboardButton != null) {
-                    NodeStyleTools.setTooltip(pasteContentInSystemClipboardButton, new Tooltip(Languages.message("PasteContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
+                    NodeStyleTools.setTooltip(pasteContentInSystemClipboardButton, new Tooltip(message("PasteContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
                 } else if (loadContentInSystemClipboardButton != null) {
-                    NodeStyleTools.setTooltip(loadContentInSystemClipboardButton, new Tooltip(Languages.message("LoadContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
+                    NodeStyleTools.setTooltip(loadContentInSystemClipboardButton, new Tooltip(message("LoadContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
                 }
             }
 
@@ -890,49 +899,56 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             if (closeRightPaneCheck != null) {
                 closeRightPaneCheck.setSelected(UserConfig.getBoolean(baseName + "CloseRightPane", false));
-                closeRightPaneCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setBoolean(baseName + "CloseRightPane", closeRightPaneCheck.isSelected());
-                    checkRightPaneClose();
-                });
+                closeRightPaneCheck.selectedProperty().addListener(
+                        (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                            if (isSettingValues) {
+                                return;
+                            }
+                            UserConfig.setBoolean(baseName + "CloseRightPane", closeRightPaneCheck.isSelected());
+                            checkRightPaneClose();
+                        });
                 checkRightPaneClose();
             }
-
             checkRightPaneHide();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     public void checkRightPaneClose() {
-        if (isSettingValues || splitPane == null || rightPane == null
-                || closeRightPaneCheck == null || rightPaneControl == null) {
-            return;
-        }
-        if (closeRightPaneCheck.isSelected()) {
-            hideRightPane();
-            rightPaneControl.setVisible(false);
-        } else {
-            rightPaneControl.setVisible(true);
-            showRightPane();
+        try {
+            if (isSettingValues || splitPane == null || rightPane == null
+                    || closeRightPaneCheck == null || rightPaneControl == null) {
+                return;
+            }
+            if (closeRightPaneCheck.isSelected()) {
+                hideRightPane();
+                rightPaneControl.setVisible(false);
+            } else {
+                rightPaneControl.setVisible(true);
+                showRightPane();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
     public void checkRightPaneHide() {
-        if (isSettingValues || splitPane == null || rightPane == null
-                || rightPaneControl == null || !rightPaneControl.isVisible()
-                || !splitPane.getItems().contains(rightPane)
-                || splitPane.getItems().size() == 1) {
-            return;
+        try {
+            if (isSettingValues || splitPane == null || rightPane == null
+                    || rightPaneControl == null || !rightPaneControl.isVisible()
+                    || !splitPane.getItems().contains(rightPane)
+                    || splitPane.getItems().size() == 1) {
+                return;
+            }
+            if (!UserConfig.getBoolean(baseName + "ShowRightControl", true)) {
+                hideRightPane();
+            }
+            setSplitDividerPositions();
+            refreshStyle(splitPane);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        if (!UserConfig.getBoolean(baseName + "ShowRightControl", true)) {
-            hideRightPane();
-        }
-        setSplitDividerPositions();
-        refreshStyle(splitPane);
     }
 
     public void setSplitDividerPositions() {
@@ -1066,18 +1082,22 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public void showRightPane() {
-        if (isSettingValues || splitPane == null || rightPane == null
-                || rightPaneControl == null || !rightPaneControl.isVisible()
-                || splitPane.getItems().contains(rightPane)) {
-            return;
+        try {
+            if (isSettingValues || splitPane == null || rightPane == null
+                    || rightPaneControl == null || !rightPaneControl.isVisible()
+                    || splitPane.getItems().contains(rightPane)) {
+                return;
+            }
+            isSettingValues = true;
+            splitPane.getItems().add(rightPane);
+            isSettingValues = false;
+            setSplitDividerPositions();
+            refreshStyle(splitPane);
+            UserConfig.setBoolean(baseName + "ShowRightControl", true);
+            StyleTools.setIconName(rightPaneControl, "iconDoubleRight.png");
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        isSettingValues = true;
-        splitPane.getItems().add(rightPane);
-        isSettingValues = false;
-        setSplitDividerPositions();
-        refreshStyle(splitPane);
-        UserConfig.setBoolean(baseName + "ShowRightControl", true);
-        StyleTools.setIconName(rightPaneControl, "iconDoubleRight.png");
     }
 
 }

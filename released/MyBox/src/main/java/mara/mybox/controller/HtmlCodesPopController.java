@@ -1,38 +1,34 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker.State;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2021-8-8
  * @License Apache License Version 2.0
  */
-public class HtmlCodesPopController extends BaseController {
+public class HtmlCodesPopController extends TextPopController {
 
+    protected WebView sourceWebView;
     protected String separateLine;
     protected Clipboard clipboard;
-
-    @FXML
-    protected TextArea textArea;
-    @FXML
-    protected CheckBox wrapCheck, openCheck;
 
     public HtmlCodesPopController() {
         baseTitle = message("HtmlCodes");
@@ -55,26 +51,18 @@ public class HtmlCodesPopController extends BaseController {
                 }
             });
 
-            editButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
-            saveAsButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
 
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
-            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    textArea.setWrapText(newValue);
-                }
-            });
-            textArea.setWrapText(wrapCheck.isSelected());
+    public void setWebView(String baseName, WebView sourceWebView) {
+        try {
+            this.baseName = baseName;
+            this.sourceWebView = sourceWebView;
+            refreshAction();
 
-            openCheck.setSelected(UserConfig.getBoolean(baseName + "Open", true));
-            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Open", newValue);
-                }
-            });
+            setControls();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -82,15 +70,45 @@ public class HtmlCodesPopController extends BaseController {
     }
 
     @Override
-    public void setStageStatus(String prefix, int minSize) {
-        setAsPopup(baseName);
-    }
-
-    public void loadText(String text) {
-        textArea.setText(text);
+    public void checkSychronize() {
+        if (sourceWebView != null) {
+            if (listener == null) {
+                listener = new ChangeListener<State>() {
+                    @Override
+                    public void changed(ObservableValue ov, State oldv, State newv) {
+                        if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                            refreshAction();
+                        }
+                    }
+                };
+            }
+            if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                sourceWebView.getEngine().getLoadWorker().stateProperty().addListener(listener);
+            } else {
+                sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
+            }
+        } else {
+            super.checkSychronize();
+        }
     }
 
     @FXML
+    @Override
+    public void refreshAction() {
+        if (sourceInput != null) {
+            textArea.setText(sourceInput.getText());
+
+        } else if (sourceWebView != null) {
+            textArea.setText(WebViewTools.getHtml(sourceWebView));
+
+        } else {
+            sychronizedCheck.setVisible(false);
+            refreshButton.setVisible(false);
+        }
+    }
+
+    @FXML
+    @Override
     public void editAction() {
         HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
         controller.loadContents(textArea.getText());
@@ -124,30 +142,38 @@ public class HtmlCodesPopController extends BaseController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    if (openCheck.isSelected()) {
-                        HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-                        controller.sourceFileChanged(file);
-                    }
+                    HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
+                    controller.sourceFileChanged(file);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
     /*
         static methods
      */
-    public static HtmlCodesPopController open(BaseController parent, String text) {
+    public static HtmlCodesPopController openInput(BaseController parent, TextInputControl textInput) {
         try {
-            if (text == null) {
+            if (textInput == null) {
                 return null;
             }
             HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
-            controller.loadText(text);
+            controller.setSourceInput(parent.baseName, textInput);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static HtmlCodesPopController openWebView(BaseController parent, WebView srcWebView) {
+        try {
+            if (srcWebView == null) {
+                return null;
+            }
+            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
+            controller.setWebView(parent.baseName, srcWebView);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

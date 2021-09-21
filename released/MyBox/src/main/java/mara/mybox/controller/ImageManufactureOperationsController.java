@@ -193,7 +193,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         try {
             if (titledPane.getContent() == null) {
                 ImageManufactureOperationController controller
-                        = (ImageManufactureOperationController) WindowTools.setScene(fxml);
+                        = (ImageManufactureOperationController) WindowTools.loadFxml(fxml);
                 titledPane.setContent(controller.getMyScene().getRoot());
                 controller.imageController = imageController;
                 controller.scopeController = imageController.scopeController;

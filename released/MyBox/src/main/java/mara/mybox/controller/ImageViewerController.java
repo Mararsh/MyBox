@@ -37,7 +37,6 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -375,6 +374,7 @@ public class ImageViewerController extends BaseImageController {
             if (imageFile() != null && nextButton != null) {
                 makeImageNevigator();
             }
+            refinePane();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -391,9 +391,13 @@ public class ImageViewerController extends BaseImageController {
             File currentfile = imageFile();
             if (currentfile == null) {
                 previousFile = null;
-                previousButton.setDisable(true);
+                if (previousButton != null) {
+                    previousButton.setDisable(true);
+                }
                 nextFile = null;
-                nextButton.setDisable(true);
+                if (nextButton != null) {
+                    nextButton.setDisable(true);
+                }
                 return;
             }
             File path = currentfile.getParentFile();
@@ -411,26 +415,38 @@ public class ImageViewerController extends BaseImageController {
                     if (pathFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
                         if (i < pathFiles.size() - 1) {
                             nextFile = pathFiles.get(i + 1);
-                            nextButton.setDisable(false);
+                            if (nextButton != null) {
+                                nextButton.setDisable(false);
+                            }
                         } else {
                             nextFile = null;
-                            nextButton.setDisable(true);
+                            if (nextButton != null) {
+                                nextButton.setDisable(true);
+                            }
                         }
                         if (i > 0) {
                             previousFile = pathFiles.get(i - 1);
-                            previousButton.setDisable(false);
+                            if (previousButton != null) {
+                                previousButton.setDisable(false);
+                            }
                         } else {
                             previousFile = null;
-                            previousButton.setDisable(true);
+                            if (previousButton != null) {
+                                previousButton.setDisable(true);
+                            }
                         }
                         return;
                     }
                 }
             }
             previousFile = null;
-            previousButton.setDisable(true);
+            if (previousButton != null) {
+                previousButton.setDisable(true);
+            }
             nextFile = null;
-            nextButton.setDisable(true);
+            if (nextButton != null) {
+                nextButton.setDisable(true);
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -477,15 +493,13 @@ public class ImageViewerController extends BaseImageController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (nextFile != null) {
-            if (nextFile.exists()) {
-                loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
-            } else {
-                makeImageNevigator();
-                if (nextFile != null) {
-                    loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
-                }
-            }
+        if (nextFile == null || !nextFile.exists()) {
+            makeImageNevigator();
+        }
+        if (nextFile != null && nextFile.exists()) {
+            loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
+        } else {
+            popInformation(message("NoMore"));
         }
     }
 
@@ -495,15 +509,13 @@ public class ImageViewerController extends BaseImageController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (previousFile != null) {
-            if (previousFile.exists()) {
-                loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
-            } else {
-                makeImageNevigator();
-                if (previousFile != null) {
-                    loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
-                }
-            }
+        if (previousFile == null || !previousFile.exists()) {
+            makeImageNevigator();
+        }
+        if (previousFile != null && previousFile.exists()) {
+            loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
+        } else {
+            popInformation(message("NoMore"));
         }
     }
 
@@ -536,11 +548,7 @@ public class ImageViewerController extends BaseImageController {
                     }
 
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -645,7 +653,7 @@ public class ImageViewerController extends BaseImageController {
                         if (!ok || task == null || isCancelled()) {
                             return false;
                         }
-                        ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(imageFile);
+                        ImageFileInformation finfo = ImageFileInformation.create(imageFile);
                         if (finfo == null || finfo.getImageInformation() == null) {
                             return false;
                         }
@@ -662,11 +670,7 @@ public class ImageViewerController extends BaseImageController {
                     }
 
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -729,7 +733,6 @@ public class ImageViewerController extends BaseImageController {
                         return false;
                     }
                     boolean multipleFrames = imageFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
-                    MyBoxLog.console(multipleFrames);
                     if (formatController != null) {
                         if (multipleFrames) {
                             error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, targetFile, formatController.attributes);
@@ -762,11 +765,7 @@ public class ImageViewerController extends BaseImageController {
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

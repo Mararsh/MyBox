@@ -9,10 +9,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -60,13 +58,16 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         String result;
-        String filePrefix = FileNameTools.getFilePrefix(srcFile.getName());
+        String filePrefix = filePrefix(srcFile);
         try ( Workbook wb = WorkbookFactory.create(srcFile)) {
             for (int s = 0; s < wb.getNumberOfSheets(); s++) {
                 Sheet sheet = wb.getSheetAt(s);
                 updateLogs(Languages.message("Reading") + " " + Languages.message("Sheet") + ":" + sheet.getSheetName());
                 convertController.names = new ArrayList<>();
                 for (Row row : sheet) {
+                    if (task == null || task.isCancelled()) {
+                        return message("Cancelled");
+                    }
                     if (row == null) {
                         continue;
                     }
@@ -77,7 +78,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                     if (convertController.names.isEmpty()) {
                         if (withNamesCheck.isSelected()) {
                             convertController.names.addAll(rowData);
-                            convertController.openWriters(filePrefix + "_" + sheet.getSheetName());
+                            convertController.openWriters(filePrefix);
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {

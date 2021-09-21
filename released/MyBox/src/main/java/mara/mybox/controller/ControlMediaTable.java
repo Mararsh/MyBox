@@ -18,7 +18,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.Track;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import static mara.mybox.controller.MediaPlayerController.MiaoGuaiGuaiBenBen;
@@ -186,7 +185,6 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
                     } catch (Exception e) {
                         error = e.toString();
-                        MyBoxLog.debug(error);
                         return false;
                     }
 
@@ -201,11 +199,8 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
             };
             Platform.runLater(() -> {
-                parentController.handling(infoTask, Modality.WINDOW_MODAL, msg);
+                parentController.start(infoTask, msg);
             });
-            Thread thread = new Thread(infoTask);
-            thread.setDaemon(false);
-            thread.start();
         }
     }
 
@@ -687,11 +682,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                     }
 
                 };
-                parentController.handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                parentController.start(task);
 
             } catch (Exception e) {
                 popError(message("FailOpenMedia"));

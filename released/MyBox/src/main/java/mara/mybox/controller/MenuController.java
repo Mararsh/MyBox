@@ -15,7 +15,7 @@ import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -57,7 +57,7 @@ public class MenuController extends BaseController {
     }
 
     @Override
-    public void setStageStatus(String prefix, int minSize) {
+    public void setStageStatus() {
         setAsPopup(baseName);
     }
 
@@ -94,7 +94,7 @@ public class MenuController extends BaseController {
         if (id == null || id.isBlank()) {
             return;
         }
-        titleLabel.setText(Languages.message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
+        titleLabel.setText(message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
     }
 
     public void addNode(Node node) {

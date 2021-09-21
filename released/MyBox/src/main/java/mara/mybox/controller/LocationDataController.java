@@ -231,11 +231,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -369,11 +365,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     backgroundTask = null;
                 }
             };
-            handling(backgroundTask);
-            backgroundTask.setSelf(backgroundTask);
-            Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(backgroundTask);
         }
     }
 
@@ -576,11 +568,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     controller.startFile(file, true, true);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -652,11 +640,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     controller.startFile(file, true, true);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -728,11 +712,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     controller.startFile(file, true, true);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }

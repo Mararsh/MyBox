@@ -161,7 +161,7 @@ public class MenuBytesEditController extends MenuTextEditController {
         if (textInput == null) {
             return false;
         }
-        BytesPopController.open(parentController, textInput.getText());
+        BytesPopController.open(parentController, textInput);
         return true;
     }
 

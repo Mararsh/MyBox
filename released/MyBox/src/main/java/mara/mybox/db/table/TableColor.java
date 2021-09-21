@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

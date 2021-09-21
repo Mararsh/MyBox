@@ -19,7 +19,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.QueryCondition.DataOperation;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -751,11 +751,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -798,11 +794,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

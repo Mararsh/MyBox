@@ -356,11 +356,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -768,11 +764,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     refreshAction();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

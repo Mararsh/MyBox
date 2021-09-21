@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,13 +27,10 @@ import mara.mybox.bufferedimage.ImageCombine.ArrayType;
 import mara.mybox.bufferedimage.ImageCombine.CombineSizeType;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -470,11 +465,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -503,51 +494,6 @@ public class ImagesSpliceController extends ImageViewerController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
-        }
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        if (image == null) {
-            return;
-        }
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                null, targetExtensionFilter);
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file);
-        targetFile = file;
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private String filename;
-
-                @Override
-                protected boolean handle() {
-                    filename = targetFile.getAbsolutePath();
-                    String format = FileNameTools.getFileSuffix(filename);
-                    final BufferedImage bufferedImage = FxImageTools.toBufferedImage(image);
-                    return ImageFileWriters.writeImageFile(bufferedImage, format, filename);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    ControllerTools.openImageViewer(targetFile);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
         }
     }
 

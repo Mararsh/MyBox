@@ -90,12 +90,12 @@ public class MenuHtmlCodesController extends MenuTextEditController {
                 @Override
                 public void handle(ActionEvent event) {
                     TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
-                    controller.setParameters(parentController);
+                    controller.setParameters(parentController, message("Table"));
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            addTable(controller.rowsNumber, controller.colsNumber);
-                            closeStage();
+                            addTable(controller.rowsNumber, controller.colsNumber, true);
+                            controller.closeStage();
                         }
                     });
                 }
@@ -106,25 +106,15 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             tableRow.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    String value = PopTools.askValue(baseTitle, "", message("ColumnsNumber"), "3");
-                    if (value == null) {
-                        return;
-                    }
-                    try {
-                        int colsNumber = Integer.valueOf(value);
-                        if (colsNumber > 0) {
-                            String s = "    <tr>";
-                            for (int j = 1; j <= colsNumber; j++) {
-                                s += "<td> v" + j + " </td>";
-                            }
-                            s += "</tr>\n";
-                            insertText(s);
-                        } else {
-                            popError(message("InvalidData"));
+                    TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
+                    controller.setParameters(parentController, message("TableRow"));
+                    controller.notify.addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                            addTable(controller.rowsNumber, controller.colsNumber, false);
+                            controller.closeStage();
                         }
-                    } catch (Exception e) {
-                        popError(message("InvalidData"));
-                    }
+                    });
                 }
             });
             aNodes.add(tableRow);
@@ -394,12 +384,15 @@ public class MenuHtmlCodesController extends MenuTextEditController {
         textInput.requestFocus();
     }
 
-    public void addTable(int rowsNumber, int colsNumber) {
-        String s = "<table>\n    <tr>";
-        for (int j = 1; j <= colsNumber; j++) {
-            s += "<th> col" + j + " </th>";
+    public void addTable(int rowsNumber, int colsNumber, boolean withHeader) {
+        String s = "\n";
+        if (withHeader) {
+            s += "<table>\n    <tr>";
+            for (int j = 1; j <= colsNumber; j++) {
+                s += "<th> col" + j + " </th>";
+            }
+            s += "</tr>\n";
         }
-        s += "</tr>\n";
         for (int i = 1; i <= rowsNumber; i++) {
             s += "    <tr>";
             for (int j = 1; j <= colsNumber; j++) {
@@ -407,7 +400,9 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             }
             s += "</tr>\n";
         }
-        s += "</table>\n";
+        if (withHeader) {
+            s += "</table>\n";
+        }
         insertText(s);
     }
 
@@ -424,7 +419,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
         if (textInput == null) {
             return false;
         }
-        HtmlCodesPopController.open(parentController, textInput.getText());
+        HtmlCodesPopController.openInput(parentController, textInput);
         return true;
     }
 

@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageEditHistory;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.tools.DateTools;
@@ -17,6 +18,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -247,7 +249,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                     FileDeleteTools.delete(results.getString("history_location"));
                 }
             }
-            String imageHistoriesPath = AppVariables.getImageHisPath();
+            String imageHistoriesPath = AppPaths.getImageHisPath();
             File path = new File(imageHistoriesPath);
             if (path.exists()) {
                 File[] files = path.listFiles();

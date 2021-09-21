@@ -27,17 +27,11 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.NodeStyleTools;
-
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -553,7 +547,7 @@ public class ControlOCROptions extends BaseController {
         TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.hideLeftPane();
         controller.hideRightPane();
-        controller.openTextFile(help);
+        controller.sourceFileChanged(help);
     }
 
 }

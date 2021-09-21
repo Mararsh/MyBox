@@ -653,7 +653,7 @@ public class ControlFFmpegOptions extends BaseController {
                     }
                     if (newValue == null || newValue.isEmpty()
                             || Languages.message("NotSetting").equals(newValue)) {
-                        videoBitrate = 5000 * 1000;
+                        videoBitrate = 1800;
                         return;
                     }
                     try {
@@ -684,7 +684,7 @@ public class ControlFFmpegOptions extends BaseController {
                         videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 });
-                videoBitrateSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultVideoBitrate", "5mbps"));
+                videoBitrateSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultVideoBitrate", "1800kbps"));
             }
 
             if (crfSelector != null) {
@@ -930,7 +930,7 @@ public class ControlFFmpegOptions extends BaseController {
                 videoFrameRateSelector.getSelectionModel().select("ntsc  30000/1001");
             }
             if (videoBitrateSelector != null) {
-                videoBitrateSelector.getSelectionModel().select("5mbps");
+                videoBitrateSelector.getSelectionModel().select("1800kbps");
             }
             if (audioBitrateSelector != null) {
                 audioBitrateSelector.getSelectionModel().select("192kbps");

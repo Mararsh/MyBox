@@ -5,19 +5,13 @@ import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.web.WebView;
-import javafx.stage.Modality;
-import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.color.Illuminant;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -34,8 +28,6 @@ public class IlluminantsController extends ChromaticityBaseController {
     public XYZController sourceColorController;
     @FXML
     public WhitePointController sourceWPController, targetWPController;
-    @FXML
-    protected WebView webView;
     @FXML
     protected Button calculateButton;
     @FXML
@@ -107,11 +99,7 @@ public class IlluminantsController extends ChromaticityBaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

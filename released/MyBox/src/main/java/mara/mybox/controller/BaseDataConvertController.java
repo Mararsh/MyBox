@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.util.Date;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -43,6 +45,13 @@ public abstract class BaseDataConvertController extends BaseBatchFileController 
             return false;
         }
         return super.makeMoreParameters();
+    }
+
+    public String filePrefix(File srcFile) {
+        if (srcFile == null) {
+            return null;
+        }
+        return FileNameTools.getFilePrefix(srcFile.getName()) + "_" + new Date().getTime();
     }
 
     @Override

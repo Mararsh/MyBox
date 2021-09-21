@@ -8,8 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -83,6 +81,15 @@ public class ColorsManageController extends BaseController {
         addController.setValues(manageController, colors);
         addController.toFront();
         return manageController;
+    }
+
+    public static ColorsManageController addColor(Color color) {
+        if (color == null) {
+            return null;
+        }
+        List<Color> colors = new ArrayList<>();
+        colors.add(color);
+        return addColors(colors);
     }
 
 }

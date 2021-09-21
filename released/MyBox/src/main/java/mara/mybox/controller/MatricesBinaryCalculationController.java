@@ -25,7 +25,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -38,7 +38,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     protected double[][] result;
 
     @FXML
-    protected ControlMatrix edit2Controller, resultTableController;
+    protected ControlMatrixEdit edit2Controller, resultTableController;
     @FXML
     protected ToggleGroup opGroup;
     @FXML
@@ -56,7 +56,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     protected ScrollPane listPane;
 
     public MatricesBinaryCalculationController() {
-        baseTitle = Languages.message("MatricesBinaryCalculation");
+        baseTitle = message("MatricesBinaryCalculation");
     }
 
     @Override
@@ -95,13 +95,13 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(plusRadio, new Tooltip(Languages.message("MatricesPlusComments")));
-            NodeStyleTools.setTooltip(minusRadio, new Tooltip(Languages.message("MatricesMinusComments")));
-            NodeStyleTools.setTooltip(multiplyRadio, new Tooltip(Languages.message("MatricesMultiplyComments")));
-            NodeStyleTools.setTooltip(hadamardProductRadio, new Tooltip(Languages.message("HadamardProductComments")));
-            NodeStyleTools.setTooltip(kroneckerProductRadio, new Tooltip(Languages.message("KroneckerProductComments")));
-            NodeStyleTools.setTooltip(verticalMergeRadio, new Tooltip(Languages.message("VerticalMergeComments")));
-            NodeStyleTools.setTooltip(horizontalMergeRadio, new Tooltip(Languages.message("HorizontalMergeComments")));
+            NodeStyleTools.setTooltip(plusRadio, new Tooltip(message("MatricesPlusComments")));
+            NodeStyleTools.setTooltip(minusRadio, new Tooltip(message("MatricesMinusComments")));
+            NodeStyleTools.setTooltip(multiplyRadio, new Tooltip(message("MatricesMultiplyComments")));
+            NodeStyleTools.setTooltip(hadamardProductRadio, new Tooltip(message("HadamardProductComments")));
+            NodeStyleTools.setTooltip(kroneckerProductRadio, new Tooltip(message("KroneckerProductComments")));
+            NodeStyleTools.setTooltip(verticalMergeRadio, new Tooltip(message("VerticalMergeComments")));
+            NodeStyleTools.setTooltip(horizontalMergeRadio, new Tooltip(message("HorizontalMergeComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -127,14 +127,14 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         super.afterSceneLoaded();
 
         loadTableData();
-        editController.initManager(this);
-        edit2Controller.initManager(this);
-        resultTableController.initManager(this);
-        editController.notify.addListener(
+        editController.setManager(this);
+        edit2Controller.setManager(this);
+        resultTableController.setManager(this);
+        editController.sheetChangedNotify.addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     checkMatrices();
                 });
-        edit2Controller.notify.addListener(
+        edit2Controller.sheetChangedNotify.addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     checkMatrices();
                 });
@@ -149,7 +149,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         deleteButton.setDisable(selection == 0);
         matrixAButton.setDisable(selection == 0);
         matrixBButton.setDisable(selection == 0);
-        selectedLabel.setText(Languages.message("Selected") + ": " + selection);
+        selectedLabel.setText(message("Selected") + ": " + selection);
         return selection;
     }
 
@@ -159,13 +159,13 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(Languages.message("SetAsMatrixA"));
+            menu = new MenuItem(message("SetAsMatrixA"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 matrixAAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("SetAsMatrixB"));
+            menu = new MenuItem(message("SetAsMatrixB"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 matrixBAction();
             });
@@ -225,28 +225,28 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         if (plusRadio.isSelected() || minusRadio.isSelected() || hadamardProductRadio.isSelected()) {
             if (editController.colsNumber != edit2Controller.colsNumber
                     || editController.rowsNumber != edit2Controller.rowsNumber) {
-                checkLabel.setText(Languages.message("MatricesCannotCalculateShouldSame"));
+                checkLabel.setText(message("MatricesCannotCalculateShouldSame"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (multiplyRadio.isSelected()) {
             if (editController.colsNumber != edit2Controller.rowsNumber) {
-                checkLabel.setText(Languages.message("MatricesCannotCalculateMultiply"));
+                checkLabel.setText(message("MatricesCannotCalculateMultiply"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (verticalMergeRadio.isSelected()) {
             if (editController.colsNumber != edit2Controller.colsNumber) {
-                checkLabel.setText(Languages.message("MatricesCannotCalculateShouldSameCols"));
+                checkLabel.setText(message("MatricesCannotCalculateShouldSameCols"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (horizontalMergeRadio.isSelected()) {
             if (editController.rowsNumber != edit2Controller.rowsNumber) {
-                checkLabel.setText(Languages.message("MatricesCannotCalculateShouldSameRows"));
+                checkLabel.setText(message("MatricesCannotCalculateShouldSameRows"));
                 calculateButton.setDisable(true);
                 return false;
             }
@@ -272,25 +272,25 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                 protected boolean handle() {
                     try {
                         if (plusRadio.isSelected()) {
-                            result = MatrixDoubleTools.add(editController.matrix(), edit2Controller.matrix());
+                            result = MatrixDoubleTools.add(editController.matrixDouble(), edit2Controller.matrixDouble());
 
                         } else if (minusRadio.isSelected()) {
-                            result = MatrixDoubleTools.subtract(editController.matrix(), edit2Controller.matrix());
+                            result = MatrixDoubleTools.subtract(editController.matrixDouble(), edit2Controller.matrixDouble());
 
                         } else if (multiplyRadio.isSelected()) {
-                            result = MatrixDoubleTools.multiply(editController.matrix(), edit2Controller.matrix());
+                            result = MatrixDoubleTools.multiply(editController.matrixDouble(), edit2Controller.matrixDouble());
 
                         } else if (hadamardProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.hadamardProduct(editController.matrix(), edit2Controller.matrix());
+                            result = MatrixDoubleTools.hadamardProduct(editController.matrixDouble(), edit2Controller.matrixDouble());
 
                         } else if (kroneckerProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.kroneckerProduct(editController.matrix(), edit2Controller.matrix());
+                            result = MatrixDoubleTools.kroneckerProduct(editController.matrixDouble(), edit2Controller.matrixDouble());
 
                         } else if (verticalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.vertivalMerge(editController.matrix(), edit2Controller.matrix());
+                            result = MatrixDoubleTools.vertivalMerge(editController.matrixDouble(), edit2Controller.matrixDouble());
 
                         } else if (horizontalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.horizontalMerge(editController.matrix(), edit2Controller.matrix());
+                            result = MatrixDoubleTools.horizontalMerge(editController.matrixDouble(), edit2Controller.matrixDouble());
 
                         }
                     } catch (Exception e) {
@@ -304,7 +304,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                 protected void whenSucceeded() {
                     cost = new Date().getTime() - startTime.getTime();
                     String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
-                    resultLabel.setText(op + "  " + Languages.message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
+                    resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
                     resultTableController.idInput.clear();
                     resultTableController.loadMatrix(result);
                     if (resultTableController.autoNameCheck.isSelected()) {
@@ -313,11 +313,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

@@ -4,13 +4,15 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2021-9-20 版本6.4.8         
+2021-9-21 版本6.4.8         
 
-* 数据文件：完善表单操作；可编辑数据文本；支持文本数据文件。       
-* 改进：弹出的文本/图像/网页可与原内容同步；可查询颜色。          
-* 解决的主要问题：PDF的OCR无法刷新；矩阵右键菜单时会内存溢出。        
+* 数据：完善表单操作；可编辑数据文本；支持文本数据文件；数据粘贴板可保存和管理。       
+* 改进：弹出的文本/图像/网页可与原内容同步；可查询颜色；图像列表支持PDF和PPT。          
+* 解决的主要问题：PDF的OCR无法刷新；矩阵右键菜单时会内存溢出；Linux上无法选择无后缀的文件。               
 
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)          
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)           
+
+中秋节快乐！       
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
@@ -57,6 +59,7 @@
 * 自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)       
 * 在某个输入法运行时，MyBox的窗口经常僵住。解决办法：禁用/卸载此输入法。       
+* 版本6.4.3以后在Linux上用MyBox播放媒体将导致MyBox崩溃。
 
 ## 版本迁移
 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
@@ -543,6 +546,8 @@ MyBox v5.3以前的版本均基于Java 8。
 1. 可以添加：
 	-  动态gif文件，每一帧都被加到列表中
 	-  多帧tif文件，每一帧都被加到列表中
+	-  PDF文件，每一页被转换为图片并被加到列表中
+	-  PPT文件，每一页被转换为图片并被加到列表中
 	-  系统粘贴板中的图像
 	-  所有支持的图像格式文件      
 2. 移动图像以设置顺序。
@@ -581,9 +586,10 @@ MyBox v5.3以前的版本均基于Java 8。
 8. 批量转换。
 
 ### 识别图像中的文字<a id="imageOCR" />
-1. 对图像预处理：
+1. 对图像预处理：   
 	-  多种图像算法
-	-  伸缩比例	-  黑白阈值
+	-  伸缩比例
+	-  黑白阈值
 	-  旋转角度。
 	-  是否自动矫正偏斜
 	-  是否反色
@@ -769,7 +775,7 @@ MyBox v5.3以前的版本均基于Java 8。
 2. 选择数据粘贴板中的数据，粘贴到目标表单的指定位置。
 
 
-![截屏-dataClipboard](https://mararsh.github.io/MyBox/snap-dataClipboard.jpg)         
+![截屏-dataSheet](https://mararsh.github.io/MyBox/snap-dataSheet.jpg)         
 
 
 ### 矩阵<a id="matrix" />
@@ -1171,7 +1177,9 @@ MyBox v5.3以前的版本均基于Java 8。
 
 ## 媒体工具<a id="MediaTools" />
 
-### 播放视频/音频<a id="mediaPlayer" />
+### 播放视频/音频<a id="mediaPlayer" />              
+注意：版本6.4.3以后在Linux上用MyBox播放媒体将导致MyBox崩溃。            
+
 1. 创建/加载播放列表
 2. 选项：自动播放、显示毫秒、循环次数、随机顺序
 3. 设置：音量、速度（0~8倍）
@@ -1394,13 +1402,15 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 
 # 开发日志<a id="devLog" />          
-2021-9-20 版本6.4.8         
+2021-9-21 版本6.4.8         
 
-* 数据文件：完善表单操作；可编辑数据文本；支持文本数据文件。       
-* 改进：弹出的文本/图像/网页可与原内容同步；可查询颜色。          
-* 解决的主要问题：PDF的OCR无法刷新；矩阵右键菜单时会内存溢出。        
+* 数据：完善表单操作；可编辑数据文本；支持文本数据文件；数据粘贴板可保存和管理。       
+* 改进：弹出的文本/图像/网页可与原内容同步；可查询颜色；图像列表支持PDF和PPT。          
+* 解决的主要问题：PDF的OCR无法刷新；矩阵右键菜单时会内存溢出；Linux上无法选择无后缀的文件。       
 
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)        
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)          
+
+中秋节快乐！       
 
 2021-8-17 版本6.4.7         
 

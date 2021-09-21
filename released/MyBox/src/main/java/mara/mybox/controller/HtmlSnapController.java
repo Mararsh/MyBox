@@ -23,6 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.TmpFileTools;
@@ -34,7 +35,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-20
  * @License Apache License Version 2.0
  */
-public class HtmlSnapController extends BaseWebViewController {
+public class HtmlSnapController extends WebAddressController {
 
     protected int delay, orginalStageWidth, orginalStageHeight, orginalStageX, orginalStageY;
     protected int lastHtmlLen, lastCodesLen;
@@ -182,11 +183,11 @@ public class HtmlSnapController extends BaseWebViewController {
             snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
             snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
             snapHeight = 0;
-            webViewLabel.setText(message("SnapingImage..."));
+            setWebViewLabel(message("SnapingImage..."));
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
-            snapScale = dpi / Screen.getPrimary().getDpi();
+            snapScale = NodeTools.dpiScale(dpi);
             snapScale = snapScale > 1 ? snapScale : 1;
             snapImageWidth = (int) Math.round(bounds.getWidth() * snapScale);
             snapImageHeight = (int) Math.round(bounds.getHeight() * snapScale);
@@ -303,7 +304,7 @@ public class HtmlSnapController extends BaseWebViewController {
         snaps = null;
         webEngine.getLoadWorker().cancel();
         webEngine.executeScript("window.scrollTo(0,0 );");
-        webViewLabel.setText("");
+        setWebViewLabel("");
         myStage.setX(orginalStageX);
         myStage.setY(orginalStageY);
         myStage.setWidth(orginalStageWidth);

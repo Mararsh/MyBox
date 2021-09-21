@@ -8,7 +8,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeTools;
 
 /**
  * @Author Mara
@@ -41,11 +40,11 @@ public class ImageViewTools {
             double ratioW = bounds.getWidth() / iView.getImage().getWidth();
             double ratioH = bounds.getHeight() / iView.getImage().getHeight();
             if (ratioW < ratioH) {
-                double w = bounds.getWidth() - 40;
+                double w = bounds.getWidth() - 10;
                 iView.setFitHeight(iView.getImage().getHeight() * w / iView.getImage().getWidth());
                 iView.setFitWidth(w);
             } else {
-                double h = bounds.getHeight() - 40;
+                double h = bounds.getHeight() - 10;
                 iView.setFitWidth(iView.getImage().getWidth() * h / iView.getImage().getHeight());
                 iView.setFitHeight(h);
             }

@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**

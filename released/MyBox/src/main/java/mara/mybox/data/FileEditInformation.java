@@ -16,8 +16,6 @@ import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
-
-import mara.mybox.value.Languages;
 import thridparty.EncodingDetect;
 
 /**
@@ -28,7 +26,7 @@ import thridparty.EncodingDetect;
 public abstract class FileEditInformation extends FileInformation {
 
     protected Edit_Type editType;
-    protected boolean withBom, totalNumberRead;
+    protected boolean withBom, totalNumberRead, charsetDetermined;
     protected Charset charset;
     protected Line_Break lineBreak;
     protected String lineBreakValue;
@@ -72,7 +70,7 @@ public abstract class FileEditInformation extends FileInformation {
 
     protected final void initValues() {
         filterType = StringFilterType.IncludeOne;
-        withBom = totalNumberRead = false;
+        withBom = totalNumberRead = charsetDetermined = false;
         charset = defaultCharset();
         objectsNumber = linesNumber = 0;
         currentPage = pagesNumber = 1;  // 1-based
@@ -333,7 +331,7 @@ public abstract class FileEditInformation extends FileInformation {
     }
 
     public String filterTypeName() {
-        return Languages.message(filterType.name());
+        return message(filterType.name());
     }
 
     public String lineBreakName() {
@@ -342,15 +340,15 @@ public abstract class FileEditInformation extends FileInformation {
         }
         switch (lineBreak) {
             case Width:
-                return Languages.message("BytesNumber") + lineBreakWidth;
+                return message("BytesNumber") + lineBreakWidth;
             case Value:
-                return Languages.message("BytesHex") + lineBreakWidth;
+                return message("BytesHex") + lineBreakWidth;
             case LF:
-                return Languages.message("LFHex");
+                return message("LFHex");
             case CR:
-                return Languages.message("CRHex");
+                return message("CRHex");
             case CRLF:
-                return Languages.message("CRLFHex");
+                return message("CRLFHex");
             default:
                 return "";
         }
@@ -557,6 +555,14 @@ public abstract class FileEditInformation extends FileInformation {
 
     public void setFilesWithoutSubdir(long filesWithoutSubdir) {
         this.filesWithoutSubdir = filesWithoutSubdir;
+    }
+
+    public boolean isCharsetDetermined() {
+        return charsetDetermined;
+    }
+
+    public void setCharsetDetermined(boolean charsetDetermined) {
+        this.charsetDetermined = charsetDetermined;
     }
 
 }

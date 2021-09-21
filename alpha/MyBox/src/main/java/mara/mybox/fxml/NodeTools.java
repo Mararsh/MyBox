@@ -209,23 +209,21 @@ public class NodeTools {
         }
     }
 
-    // Not work~
-//    public static void fireMouseRightClicked(Node node) {
-//        try {
-////            MyBoxLog.console(node.getScene().getWindow().getX() + " " + node.getScene().getWindow().getY());
-////            MyBoxLog.console(node.getScene().getX() + " " + node.getScene().getY());
-////            MyBoxLog.console(getX(node) + " " + getY(node));
-//            node.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED,
-//                    node.getScene().getX() + 20, node.getScene().getY() + 20, getX(node) + 20, getY(node) + 20,
-//                    MouseButton.SECONDARY, 1,
-//                    false, false, false, false, false, false, true, false, false, false, null));
-//        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-//        }
-//    }
+    public static double screenDpi() {
+        return Screen.getPrimary().getDpi();
+    }
+
+    public static double screenResolution() {
+        return Toolkit.getDefaultToolkit().getScreenResolution();
+    }
+
     public static double dpiScale() {
+        return dpiScale(screenResolution());
+    }
+
+    public static double dpiScale(double dpi) {
         try {
-            double scale = Toolkit.getDefaultToolkit().getScreenResolution() / Screen.getPrimary().getDpi();
+            double scale = dpi / screenDpi();
             return scale > 1 ? scale : 1;
         } catch (Exception e) {
             return 1;

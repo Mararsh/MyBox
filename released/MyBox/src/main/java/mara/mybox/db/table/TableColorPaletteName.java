@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +9,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
 import mara.mybox.db.data.ColorPaletteName;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.value.Languages.message;

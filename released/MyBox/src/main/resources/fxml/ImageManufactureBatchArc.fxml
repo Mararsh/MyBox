@@ -127,7 +127,12 @@ License:    Apache License Version 2.0
                                                         <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
                                                         <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                                     </children>
-                                                </HBox>
+                                                </HBox> 
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" vbarPolicy="ALWAYS">
+                                                    <content>
+                                                        <fx:include fx:id="format" source="ControlImageFormat.fxml" /> 
+                                                    </content>
+                                                </ScrollPane>
                                                 <fx:include fx:id="format" source="ControlImageFormat.fxml" />
                                             </children>
                                             <padding>

@@ -931,7 +931,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     protected void initWebview() {
         try {
-            HtmlPopController controller = HtmlPopController.address(this, "https://weibo.com");
+            HtmlPopController controller = HtmlPopController.openAddress(this, "https://weibo.com");
             controller.handling(message("FirstRunInfo"));
             new Timer().schedule(new TimerTask() {
                 @Override

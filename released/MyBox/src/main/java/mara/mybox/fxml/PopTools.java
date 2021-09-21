@@ -24,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
@@ -191,7 +192,7 @@ public class PopTools {
 
     public static Popup makePopWindow(BaseController parent, String fxml) {
         try {
-            BaseController controller = WindowTools.setScene(fxml);
+            BaseController controller = WindowTools.loadFxml(fxml);
             if (controller == null) {
                 return null;
             }
@@ -294,7 +295,8 @@ public class PopTools {
             values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z", TimeZone.getDefault()));
             values.addAll(Arrays.asList("2020-07-15T36:55:09", "960-01-23", "581", "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"));
             if (Languages.isChinese()) {
-                values.addAll(Arrays.asList("\u516c\u5143960", "\u516c\u5143960-01-23", "\u516c\u51432020-07-10 10:10:10", "\u516c\u5143\u524d202", "\u516c\u5143\u524d770-12-11", "\u516c\u5143\u524d1046-03-10 10:10:10"));
+                values.addAll(Arrays.asList("\u516c\u5143960", "\u516c\u5143960-01-23", "\u516c\u51432020-07-10 10:10:10",
+                        "\u516c\u5143\u524d202", "\u516c\u5143\u524d770-12-11", "\u516c\u5143\u524d1046-03-10 10:10:10"));
             }
             values.addAll(Arrays.asList("202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC", "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"));
             MenuItem menu;
@@ -395,6 +397,49 @@ public class PopTools {
         }
     }
 
+    public static void popColorExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+        try {
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                }
+            });
+
+            List<String> values = new ArrayList<>();
+            values.addAll(Arrays.asList(
+                    "orange", "pink", "lightblue", "wheat",
+                    "0xff668840", "0x5f86df", "#226688", "#68f",
+                    "rgb(255,102,136)", "rgb(100%,60%,50%)",
+                    "rgba(102,166,136,0.25)", "rgba(155,20%,70%,0.25)",
+                    "hsl(240,70%,80%)", "hsla(60,50%,60%,0.25)"
+            ));
+
+            boolean isTextArea = input instanceof TextArea;
+            List<Node> nodes = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (isTextArea) {
+                            input.appendText(value + "\n");
+                        } else {
+                            input.setText(value);
+                        }
+                        input.requestFocus();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public static ContextMenu popMenuStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
         try {
             ContextMenu popMenu = new ContextMenu();
@@ -454,4 +499,5 @@ public class PopTools {
             }
         }
     }
+
 }

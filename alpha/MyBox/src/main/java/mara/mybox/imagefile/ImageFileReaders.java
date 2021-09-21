@@ -671,11 +671,8 @@ public class ImageFileReaders {
             int num = reader.getNumImages(true);
             fileInfo.setNumberOfImages(num);
             List<ImageInformation> imagesInfo = new ArrayList<>();
-            ImageInformation imageInfo = null;
+            ImageInformation imageInfo;
             for (int i = 0; i < num; ++i) {
-                if (imageInfo != null) {
-                    imageInfo.setIsMultipleFrames(true);
-                }
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);

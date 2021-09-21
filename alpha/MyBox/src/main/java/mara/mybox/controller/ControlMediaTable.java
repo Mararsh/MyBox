@@ -124,8 +124,8 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         }
     }
 
-    protected synchronized void readMediaInfo(MediaInformation info, String msg) {
-        Platform.runLater(() -> {
+    protected void readMediaInfo(MediaInformation info, String msg) {
+        synchronized (this) {
             SingletonTask infoTask = new SingletonTask<Void>() {
 
                 @Override
@@ -198,8 +198,10 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                 }
 
             };
-            parentController.start(infoTask, msg);
-        });
+            Platform.runLater(() -> {
+                parentController.start(infoTask, msg);
+            });
+        }
     }
 
     public boolean readMediaInfo(final MediaInformation info, Media media) {

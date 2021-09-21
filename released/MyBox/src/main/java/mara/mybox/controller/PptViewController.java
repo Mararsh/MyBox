@@ -13,14 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Modality;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
@@ -39,7 +35,7 @@ public class PptViewController extends BaseFileImagesViewController {
     protected Label notesLabel, slideLabel;
 
     public PptViewController() {
-        baseTitle = Languages.message("PptView");
+        baseTitle = message("PptView");
     }
 
     @Override
@@ -106,11 +102,7 @@ public class PptViewController extends BaseFileImagesViewController {
                 }
 
             };
-            handling(task, Modality.WINDOW_MODAL, Languages.message("LoadingFileInfo"));
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, message("LoadingFileInfo"));
         }
     }
 
@@ -167,16 +159,12 @@ public class PptViewController extends BaseFileImagesViewController {
                 protected void whenSucceeded() {
                     setImage(image, percent);
                     notesArea.setText(notes);
-                    notesLabel.setText(Languages.message("Count") + ": " + notes.length());
+                    notesLabel.setText(message("Count") + ": " + notes.length());
                     slideArea.setText(slideTexts);
-                    slideLabel.setText(Languages.message("Count") + ": " + slideTexts.length());
+                    slideLabel.setText(message("Count") + ": " + slideTexts.length());
                 }
             };
-            handling(task, Modality.WINDOW_MODAL, MessageFormat.format(Languages.message("LoadingPageNumber"), (frameIndex + 1) + ""));
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
         }
     }
 

@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -21,10 +20,10 @@ public class StyleImageView {
             return new StyleData(id, "", "", "iconSampled.png");
         }
         if (id.startsWith("leftPane")) {
-            return new StyleData(id, "", "", "iconDoubleLeft.png");
+            return new StyleData(id, "", "F4", "iconDoubleLeft.png");
         }
         if (id.startsWith("rightPane")) {
-            return new StyleData(id, "", "", "iconDoubleRight.png");
+            return new StyleData(id, "", "F5", "iconDoubleRight.png");
         }
         if (id.startsWith("scopePane")) {
             return new StyleData(id, "", "", "iconDoubleLeft.png");

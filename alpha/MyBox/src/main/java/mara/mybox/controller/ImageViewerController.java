@@ -37,7 +37,6 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -654,7 +653,7 @@ public class ImageViewerController extends BaseImageController {
                         if (!ok || task == null || isCancelled()) {
                             return false;
                         }
-                        ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(imageFile);
+                        ImageFileInformation finfo = ImageFileInformation.create(imageFile);
                         if (finfo == null || finfo.getImageInformation() == null) {
                             return false;
                         }

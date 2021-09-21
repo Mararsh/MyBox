@@ -12,22 +12,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.fxml.WindowTools;
+import mara.mybox.bufferedimage.AlphaTools;
+import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.AlphaTools;
-import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.bufferedimage.ScaleTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -157,11 +154,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageController.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -313,10 +306,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
             }
 
         };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
-
+        start(demoTask, false);
     }
 
 }

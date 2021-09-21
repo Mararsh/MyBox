@@ -40,7 +40,6 @@ import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
-import javafx.stage.Modality;
 import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
@@ -666,11 +665,7 @@ public class MediaPlayerController extends BaseController {
                     }
 
                 };
-                handling(task, Modality.WINDOW_MODAL, message("ReadingMedia..."));
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task, message("ReadingMedia..."));
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
             }
@@ -803,11 +798,7 @@ public class MediaPlayerController extends BaseController {
                     }
 
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
             }

@@ -20,7 +20,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
@@ -197,7 +196,6 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
         synchronized (this) {
             if (ocrTask != null) {
                 ocrTask.cancel();
-                return;
             }
             ocrTask = new SingletonTask<Void>() {
 
@@ -247,11 +245,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     tabPane.getSelectionModel().select(ocrTab);
                 }
             };
-            handling(ocrTask, Modality.WINDOW_MODAL,
-                    MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-            Thread thread = new Thread(ocrTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(ocrTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
         }
 
     }

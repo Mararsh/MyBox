@@ -156,7 +156,7 @@ public class ImageOCRController extends ImageViewerController {
         } else if (rightPane.isFocused() || ocrTabPane.isFocused()) {
 
             if (txtTab.isSelected()) {
-                TextPopController.open(this, textArea.getText());
+                TextPopController.openInput(this, textArea);
                 return true;
 
             } else if (htmlTab.isSelected()) {
@@ -476,11 +476,7 @@ public class ImageOCRController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }

@@ -25,8 +25,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -265,10 +263,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                         updateInterface("Failed");
                     }
                 };
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task, false);
             }
 
         } catch (Exception e) {

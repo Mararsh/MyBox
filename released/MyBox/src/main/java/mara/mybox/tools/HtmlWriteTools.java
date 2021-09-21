@@ -211,7 +211,10 @@ public class HtmlWriteTools {
                     head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
                 }
             }
-            html = preHtml + "<html>\n" + "    <head>\n" + head + "\n" + "        <style type=\"text/css\">/>\n" + css + "        </style>/>\n" + "    </head>\n" + HtmlReadTools.body(html, true) + "\n" + "</html>";
+            html = preHtml + "<html>\n" + "    <head>\n"
+                    + head + "\n" + "        <style type=\"text/css\">/>\n"
+                    + css + "        </style>/>\n" + "    </head>\n"
+                    + HtmlReadTools.body(html, true) + "\n" + "</html>";
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e);

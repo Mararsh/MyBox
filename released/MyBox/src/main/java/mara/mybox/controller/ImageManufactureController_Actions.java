@@ -22,9 +22,7 @@ import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -228,14 +226,11 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
                 @Override
                 protected void whenSucceeded() {
-                    ImagePopController.open(myController, hisImage);
+                    ImagePopController.openImage(myController, hisImage);
                 }
 
             };
-            Thread thread = new Thread(viewTask);
-            handling(viewTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(viewTask);
         }
     }
 
@@ -245,12 +240,11 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
-                controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+                ImagePopController.openView(myController, imageView);
                 return true;
 
             } else if (tab == scopeTab) {
-                scopeController.popScope();
+                ImageScopePopController.open(scopeController);
                 return true;
 
             } else if (tab == hisTab) {
@@ -306,14 +300,11 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
                 @Override
                 protected void whenSucceeded() {
-                    ImagePopController.open(myController, backImage);
+                    ImagePopController.openImage(myController, backImage);
                 }
 
             };
-            Thread thread = new Thread(viewTask);
-            handling(viewTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(viewTask);
         }
     }
 

@@ -52,14 +52,14 @@ public class BaseTaskController extends BaseController {
     @FXML
     @Override
     public void startAction() {
-        if (!checkOptions()) {
-            return;
-        }
         if (startButton.getUserData() != null) {
             StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
             cancelAction();
+            return;
+        }
+        if (!checkOptions()) {
             return;
         }
         synchronized (this) {
@@ -73,9 +73,13 @@ public class BaseTaskController extends BaseController {
             if (tabPane != null && logsTab != null) {
                 tabPane.getSelectionModel().select(logsTab);
             }
+            beforeTask();
             startTask();
         }
 
+    }
+
+    protected void beforeTask() {
     }
 
     public void startTask() {
@@ -104,12 +108,10 @@ public class BaseTaskController extends BaseController {
                 startButton.setUserData(null);
                 updateLogs(Languages.message("Completed") + " " + Languages.message("Cost")
                         + " " + DateTools.datetimeMsDuration(new Date(), startTime));
+                afterTask();
             }
         };
-        task.setSelf(task);
-        Thread thread = new Thread(task);
-        thread.setDaemon(false);
-        thread.start();
+        start(task, false, null);
     }
 
     protected boolean doTask() {
@@ -125,6 +127,9 @@ public class BaseTaskController extends BaseController {
             task.cancel();
             task = null;
         }
+    }
+
+    protected void afterTask() {
     }
 
     @FXML

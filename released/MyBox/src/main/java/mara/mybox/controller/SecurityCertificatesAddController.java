@@ -136,11 +136,7 @@ public class SecurityCertificatesAddController extends BaseController {
                         }
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -190,11 +186,7 @@ public class SecurityCertificatesAddController extends BaseController {
                         }
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {

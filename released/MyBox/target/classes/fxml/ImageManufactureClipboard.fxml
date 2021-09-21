@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureClipboardController">
+    <children>
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab fx:id="imagesPane" text="%Images">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="644.0" prefViewportWidth="445.0">
+                            <content>
+                                <fx:include fx:id="clips" source="ControlImagesClipboard.fxml" />
+                            </content>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="setPane" text="%Settings">
+                    <content>
+                        <VBox minHeight="-Infinity" spacing="5.0">
+                            <children>
+                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                    <children>
+                                        <CheckBox fx:id="enlargeCheck" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EnlargeImageWhenClipOut" wrapText="true" VBox.vgrow="NEVER" />
+                                        <CheckBox fx:id="keepRatioCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%KeepRatio" wrapText="true" VBox.vgrow="NEVER" />
+                                        <ComboBox fx:id="ratioBox" prefWidth="150.0" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Label fx:id="blendLabel" minHeight="-Infinity" text="%BlendMode" wrapText="true">
+                                                    <FlowPane.margin>
+                                                        <Insets left="20.0" />
+                                                    </FlowPane.margin>
+                                                </Label>
+                                                <ComboBox fx:id="blendBox" prefWidth="140.0" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Label text="%Opacity">
+                                                    <FlowPane.margin>
+                                                        <Insets left="20.0" />
+                                                    </FlowPane.margin>
+                                                </Label>
+                                                <ComboBox fx:id="opacityBox" editable="true" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                        <CheckBox fx:id="clipTopCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ClipOnTop" wrapText="true" />
+                              <CheckBox fx:id="ignoreTransparentCheck" layoutX="15.0" layoutY="71.0" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" wrapText="true" />
+                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDemo.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Label text="%Rotate" />
+                                                <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" />
+                                            </children>
+                                        </HBox>
+                                        <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                                            <children>
+                                                <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
+                                                <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconRotateLeft.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconRotateRight.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </FlowPane>
+                                    </children>
+                                </VBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Button fx:id="okButton" onAction="#okAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconOK.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="cancelButton" onAction="#cancelAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconCancel.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <Label minHeight="-Infinity" prefWidth="240.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PasteComments" wrapText="true" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets bottom="20.0" />
+                                    </VBox.margin>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

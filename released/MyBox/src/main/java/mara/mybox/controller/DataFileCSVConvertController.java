@@ -3,18 +3,16 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -42,6 +40,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
     public void initOptionsSection() {
         try {
             super.initOptionsSection();
+
             csvReadController.setControls(baseName + "Read");
             convertController.setControls(this, pdfOptionsController);
 
@@ -82,9 +81,12 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         try ( CSVParser parser = CSVParser.parse(srcFile, fileCharset, csvFormat)) {
             List<String> names = parser.getHeaderNames();
             convertController.names = names;
-            String filePrefix = FileNameTools.getFilePrefix(srcFile.getName());
+            String filePrefix = FileNameTools.getFilePrefix(srcFile.getName()) + "_" + new Date().getTime();
             convertController.openWriters(filePrefix);
             for (CSVRecord record : parser) {
+                if (task == null || task.isCancelled()) {
+                    return message("Cancelled");
+                }
                 List<String> rowData = new ArrayList<>();
                 for (String name : names) {
                     rowData.add(record.get(name));
@@ -113,14 +115,16 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         try ( CSVParser parser = CSVParser.parse(srcFile, fileCharset, csvFormat)) {
             List<String> names = null;
             for (CSVRecord record : parser) {
+                if (task == null || task.isCancelled()) {
+                    return message("Cancelled");
+                }
                 if (names == null) {
                     names = new ArrayList<>();
                     for (int i = 1; i <= record.size(); i++) {
-                        names.add(Languages.message("col") + i);
+                        names.add(message("col") + i);
                     }
                     convertController.names = names;
-                    String filePrefix = FileNameTools.getFilePrefix(srcFile.getName());
-                    convertController.openWriters(filePrefix);
+                    convertController.openWriters(filePrefix(srcFile));
                 }
                 List<String> rowData = new ArrayList<>();
                 for (int i = 0; i < record.size(); i++) {

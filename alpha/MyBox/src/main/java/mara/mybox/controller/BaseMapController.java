@@ -31,7 +31,6 @@ import javafx.scene.transform.Transform;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import javafx.stage.Screen;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -39,6 +38,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -580,7 +580,7 @@ public abstract class BaseMapController extends BaseController {
         }
         recordFileWritten(file, VisitHistory.FileType.Image);
 
-        double scale = dpi / Screen.getPrimary().getDpi();
+        double scale = NodeTools.dpiScale(dpi);
         scale = scale > 1 ? scale : 1;
         SnapshotParameters snapPara = new SnapshotParameters();
         snapPara.setFill(Color.TRANSPARENT);
@@ -634,7 +634,7 @@ public abstract class BaseMapController extends BaseController {
         }
         recordFileWritten(htmlFile, VisitHistory.FileType.Html);
 
-        double scale = dpi / Screen.getPrimary().getDpi();
+        double scale = NodeTools.dpiScale(dpi);
         scale = scale > 1 ? scale : 1;
         SnapshotParameters snapPara = new SnapshotParameters();
         snapPara.setFill(Color.TRANSPARENT);

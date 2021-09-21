@@ -280,12 +280,12 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
     // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
     private static Image snap(WebView node, boolean keepScale) {
-        if (Screen.getPrimary().getDpi() == 96) {
+        if (NodeTools.screenDpi() == 96) {
             SnapshotParameters spa = new SnapshotParameters();
             spa.setFill(Color.TRANSPARENT);
             return node.snapshot(spa, null);
         }
-        double scale = Screen.getPrimary().getDpi() / 96;
+        double scale = NodeTools.screenDpi() / 96;
         WritableImage image = new WritableImage(
                 (int) Math.round(node.getWidth() * scale),
                 (int) Math.round(node.getHeight() * scale));

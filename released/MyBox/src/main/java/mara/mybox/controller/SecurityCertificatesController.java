@@ -251,11 +251,7 @@ public class SecurityCertificatesController extends BaseController {
                         backupController.loadBackups(sourceFile);
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -328,11 +324,7 @@ public class SecurityCertificatesController extends BaseController {
 
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -397,11 +389,7 @@ public class SecurityCertificatesController extends BaseController {
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -430,11 +418,7 @@ public class SecurityCertificatesController extends BaseController {
                     loadAll(null);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

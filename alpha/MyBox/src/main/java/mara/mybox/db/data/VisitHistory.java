@@ -66,6 +66,7 @@ public class VisitHistory {
         public static int PPTS = 27;
         public static int WordX = 28;
         public static int WordS = 29;
+        public static int ImagesList = 30;
 
         public static int None = 100;
     }
@@ -96,6 +97,10 @@ public class VisitHistory {
 
         } else if (fileType == FileType.Sheet) {
             int[] types = {FileType.Sheet, FileType.Excel, FileType.CSV};
+            return types;
+
+        } else if (fileType == FileType.ImagesList) {
+            int[] types = {FileType.Image, FileType.PDF, FileType.PPT};
             return types;
 
         } else {

@@ -92,10 +92,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 }
 
             };
-            handling(loadTask);
-            Thread thread = new Thread(loadTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(loadTask);
         }
     }
 
@@ -131,10 +128,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 }
 
             };
-            loadingController = handling(loadTask);
-            Thread thread = new Thread(loadTask);
-            thread.setDaemon(false);
-            thread.start();
+            loadingController = start(loadTask);
         }
     }
 

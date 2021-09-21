@@ -250,11 +250,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     }
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -422,10 +418,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             }
 
         };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
-
+        start(demoTask, false);
     }
 
     public void addColors() {

@@ -2,22 +2,14 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
@@ -25,13 +17,9 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -74,47 +62,7 @@ public class ColorInputController extends BaseController {
 
     @FXML
     public void popExamples(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
-                    "orange", "pink", "lightblue", "wheat",
-                    "0xff668840", "0xff6688", "#ff6688", "#f68",
-                    "rgb(255,102,136)", "rgb(100%,50%,50%)",
-                    "rgba(255,102,136,0.25)", "rgba(255,50%,50%,0.25)",
-                    "hsl(240,100%,100%)", "hsla(120,0%,0%,0.25)"
-            ));
-
-            MenuItem menu;
-            for (String value : values) {
-                menu = new MenuItem(value);
-                menu.setOnAction((ActionEvent event) -> {
-                    valuesArea.appendText(value + "\n");
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        PopTools.popColorExamples(this, valuesArea, mouseEvent);
     }
 
     @FXML
@@ -156,10 +104,6 @@ public class ColorInputController extends BaseController {
                             if (color.getSrgb() == null) {
                                 continue;
                             }
-                            if (!value.startsWith("#") && !value.startsWith("0x")
-                                    && !value.startsWith("rgb") && !value.startsWith("hsl")) {
-                                color.setColorName(value);
-                            }
                             tableColor.write(conn, color, true);
                             if (paletteid >= 0) {
                                 tableColorPalette.findAndCreate(conn, paletteid, color, false);
@@ -184,12 +128,13 @@ public class ColorInputController extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
+    }
+
+    @FXML
+    public void queryAction() {
+        openStage(Fxmls.ColorQueryFxml);
     }
 
     @FXML

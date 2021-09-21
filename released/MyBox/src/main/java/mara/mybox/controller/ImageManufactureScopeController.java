@@ -3,9 +3,7 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -66,19 +64,6 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                             UserConfig.setString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
                         }
                     });
-
-            // https://stackoverflow.com/questions/40707295/how-to-add-listener-to-divider-position?r=SearchResults
-            splitPane.requestLayout();
-            splitPane.applyCss();
-            for (Node node : splitPane.lookupAll(".split-pane-divider")) {
-                node.setOnMouseReleased(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        MyBoxLog.console("paneSize");
-                        paneSize();
-                    }
-                });
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

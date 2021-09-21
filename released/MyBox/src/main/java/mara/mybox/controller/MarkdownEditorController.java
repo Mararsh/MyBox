@@ -41,6 +41,7 @@ import mara.mybox.value.UserConfig;
  */
 public class MarkdownEditorController extends TextEditorController {
 
+    protected WebView webView;
     protected WebEngine webEngine;
     protected MutableDataSet htmlOptions;
     protected Parser htmlParser;
@@ -60,7 +61,7 @@ public class MarkdownEditorController extends TextEditorController {
     @FXML
     protected TextField titleInput;
     @FXML
-    protected WebView webView;
+    protected ControlWebView webViewController;
 
     public MarkdownEditorController() {
         baseTitle = Languages.message("MarkdownEditer");
@@ -103,7 +104,9 @@ public class MarkdownEditorController extends TextEditorController {
                 }
             });
 
-            webEngine = webView.getEngine();
+            webViewController.setParent(this);
+            webView = webViewController.webView;
+            webEngine = webViewController.webEngine;
 
             wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             wrapCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
@@ -338,10 +341,7 @@ public class MarkdownEditorController extends TextEditorController {
                 }
 
             };
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false);
         }
     }
 
@@ -358,15 +358,15 @@ public class MarkdownEditorController extends TextEditorController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == markdownTab) {
-                MarkdownPopController.open(this, mainArea.getText());
+                MarkdownPopController.open(this, mainArea);
                 return true;
 
             } else if (tab == htmlTab) {
-                HtmlPopController.html(myController, webView);
+                HtmlPopController.openWebView(myController, webView);
                 return true;
 
             } else if (tab == codesTab) {
-                HtmlCodesPopController.open(myController, codesArea.getText());
+                HtmlCodesPopController.openInput(myController, codesArea);
                 return true;
 
             }
@@ -389,7 +389,7 @@ public class MarkdownEditorController extends TextEditorController {
 
             } else if (tab == htmlTab) {
                 Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-                MenuWebviewController.pop(webView, null, localToScreen.getX(), localToScreen.getY());
+                MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (tab == codesTab) {

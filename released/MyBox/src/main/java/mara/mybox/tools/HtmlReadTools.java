@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import javafx.scene.control.IndexRange;
-import javafx.scene.web.WebView;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import mara.mybox.controller.HtmlTableController;
@@ -22,7 +21,6 @@ import mara.mybox.data.Link;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.AppVariables.HttpUserAgent;
 import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
@@ -38,16 +36,8 @@ import org.w3c.dom.NodeList;
  */
 public class HtmlReadTools {
 
-    public static String httpUserAgent() {
-        if (HttpUserAgent == null) {
-            try {
-                HttpUserAgent = new WebView().getEngine().getUserAgent();
-            } catch (Exception e) {
-                HttpUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0";
-            }
-        }
-        return HttpUserAgent;
-    }
+    public final static String httpUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0";
+
 
     /*
      read html
@@ -69,7 +59,7 @@ public class HtmlReadTools {
                 connection.setSSLSocketFactory(sc.getSocketFactory());
                 connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
-                connection.setRequestProperty("User-Agent", httpUserAgent());
+                connection.setRequestProperty("User-Agent", httpUserAgent);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
                     try (final BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
@@ -93,7 +83,7 @@ public class HtmlReadTools {
             } else if ("http".equalsIgnoreCase(url.getProtocol())) {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 //                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", httpUserAgent());
+                connection.setRequestProperty("User-Agent", httpUserAgent);
                 connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
                 connection.setUseCaches(false);

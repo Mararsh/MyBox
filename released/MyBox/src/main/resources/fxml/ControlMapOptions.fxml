@@ -6,24 +6,24 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMapOptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMapOptions">
     <children>
-        <HBox alignment="CENTER_LEFT">
+        <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
                 <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>
@@ -34,9 +34,9 @@ License:    Apache License Version 2.0
                 <Hyperlink onAction="#aboutCoordinateSystem" text="%AboutCoordinateSystem" />
             </children>
         </HBox>
-        <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
-                <VBox fx:id="dataBox" layoutX="10.0" layoutY="224.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                <VBox fx:id="dataBox" layoutX="10.0" layoutY="224.0" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                     <children>
                         <FlowPane fx:id="dataPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
                             <children>
@@ -57,7 +57,7 @@ License:    Apache License Version 2.0
                         </FlowPane>
                     </children>
                 </VBox>
-                <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                <VBox layoutX="10.0" layoutY="10.0" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                     <children>
                         <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
                             <children>
@@ -94,7 +94,7 @@ License:    Apache License Version 2.0
                         </FlowPane>
                     </children>
                 </VBox>
-                <VBox fx:id="sizeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                <VBox fx:id="sizeBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                     <children>
                         <CheckBox fx:id="fitViewCheck" mnemonicParsing="false" text="%FitView" />
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -105,7 +105,7 @@ License:    Apache License Version 2.0
                         </HBox>
                     </children>
                 </VBox>
-                <VBox fx:id="markerImageBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                <VBox fx:id="markerImageBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                     <children>
                         <Label text="%MarkerImage">
                             <VBox.margin>
@@ -148,7 +148,7 @@ License:    Apache License Version 2.0
                         </FlowPane>
                     </children>
                 </VBox>
-                <VBox fx:id="markerTextBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                <VBox fx:id="markerTextBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                     <children>
                         <Label text="%MarkerText">
                             <VBox.margin>
@@ -197,7 +197,7 @@ License:    Apache License Version 2.0
                     </children>
                 </VBox>
                 <CheckBox fx:id="popInfoCheck" mnemonicParsing="false" text="%PopInformation" />
-                <VBox fx:id="layersBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                <VBox fx:id="layersBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                     <children>
                         <Label text="%MapLayers" />
                         <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
@@ -230,7 +230,7 @@ License:    Apache License Version 2.0
                         </FlowPane>
                     </children>
                 </VBox>
-                <VBox fx:id="languageBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                <VBox fx:id="languageBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                     <children>
                         <Label text="%Language" />
                         <FlowPane hgap="5.0" vgap="5.0">
@@ -246,7 +246,7 @@ License:    Apache License Version 2.0
                         </FlowPane>
                     </children>
                 </VBox>
-                <VBox fx:id="controlsBox" layoutX="10.0" layoutY="1034.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                <VBox fx:id="controlsBox" layoutX="10.0" layoutY="1034.0" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                     <children>
                         <Label text="%Controls" />
                         <FlowPane hgap="5.0" vgap="5.0">

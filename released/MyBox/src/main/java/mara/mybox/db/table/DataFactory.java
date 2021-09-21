@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;

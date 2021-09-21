@@ -91,10 +91,16 @@ public class ColorData extends BaseData {
     // https://openjfx.io/javadoc/14/javafx.graphics/javafx/scene/paint/Color.html#web(java.lang.String)
     final public void setWeb(String web) {
         try {
-            color = Color.web(web);
+            String value = web.trim();
+            color = Color.web(value);
             rgba = FxColorTools.color2rgba(color);
             rgb = FxColorTools.color2rgb(color);
             colorValue = FxColorTools.color2Value(color);
+
+            if (!value.startsWith("#") && !value.startsWith("0x")
+                    && !value.startsWith("rgb") && !value.startsWith("hsl")) {
+                colorName = value;
+            }
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
         }
@@ -233,10 +239,6 @@ public class ColorData extends BaseData {
         return colorDisplay;
     }
 
-    public String htmlDisplay() {
-        return display().replaceAll("\n", "</br>");
-    }
-
     public String simpleDisplay() {
         if (colorSimpleDisplay == null) {
             if (colorName != null) {
@@ -252,10 +254,6 @@ public class ColorData extends BaseData {
                     + "HSB: " + hsb;
         }
         return colorSimpleDisplay;
-    }
-
-    public String htmlSimpleDisplay() {
-        return simpleDisplay().replaceAll("\n", "</br>");
     }
 
     /*
@@ -391,6 +389,13 @@ public class ColorData extends BaseData {
         return data != null && data.getRgba() != null;
     }
 
+    public static String htmlValue(ColorData data) {
+        return data.display().replaceAll("\n", "</br>");
+    }
+
+    public static String htmlSimpleValue(ColorData data) {
+        return data.simpleDisplay().replaceAll("\n", "</br>");
+    }
 
     /*
         get/set

@@ -1,8 +1,9 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.util.List;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 
 /**
  * @Author Mara

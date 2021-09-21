@@ -23,6 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.TmpFileTools;
@@ -186,7 +187,7 @@ public class HtmlSnapController extends WebAddressController {
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
-            snapScale = dpi / Screen.getPrimary().getDpi();
+            snapScale = NodeTools.dpiScale(dpi);
             snapScale = snapScale > 1 ? snapScale : 1;
             snapImageWidth = (int) Math.round(bounds.getWidth() * snapScale);
             snapImageHeight = (int) Math.round(bounds.getHeight() * snapScale);

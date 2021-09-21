@@ -54,6 +54,7 @@ public class Fxmls {
     public static final String HtmlTableFxml = "/fxml/HtmlTable.fxml";
     public static final String HtmlPopFxml = "/fxml/HtmlPop.fxml";
     public static final String HtmlCodesPopFxml = "/fxml/HtmlCodesPop.fxml";
+    public static final String WebAddressFxml = "/fxml/WebAddress.fxml";
 
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
     public static final String MarkdownToHtmlFxml = "/fxml/MarkdownToHtml.fxml";
@@ -140,6 +141,7 @@ public class Fxmls {
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
     public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";
+    public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
 
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
@@ -157,6 +159,7 @@ public class Fxmls {
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
 
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
+    public static final String ImageScopePopFxml = "/fxml/ImageScopePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";
@@ -164,7 +167,21 @@ public class Fxmls {
     /*
         data
      */
+    public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
+    public static final String DataClipboardPopFxml = "/fxml/DataClipboardPop.fxml";
+    public static final String SheetCopyToSystemClipboardFxml = "/fxml/SheetCopyToSystemClipboard.fxml";
+    public static final String SheetCopyToMyBoxClipboardFxml = "/fxml/SheetCopyToMyBoxClipboard.fxml";
+    public static final String SheetPasteFxml = "/fxml/SheetPaste.fxml";
+    public static final String SheetEqualFxml = "/fxml/SheetEqual.fxml";
+    public static final String SheetColumnsAddFxml = "/fxml/SheetColumnsAdd.fxml";
+    public static final String SheetColumnsDeleteFxml = "/fxml/SheetColumnsDelete.fxml";
+    public static final String SheetRowsDeleteFxml = "/fxml/SheetRowsDelete.fxml";
+    public static final String SheetRowsAddFxml = "/fxml/SheetRowsAdd.fxml";
+    public static final String SheetSortFxml = "/fxml/SheetSort.fxml";
+    public static final String SheetWidthFxml = "/fxml/SheetWidth.fxml";
+    public static final String SheetCalculateFxml = "/fxml/SheetCalculate.fxml";
+    public static final String SheetExportFxml = "/fxml/SheetExport.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -174,6 +191,10 @@ public class Fxmls {
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelExtractTextsFxml = "/fxml/DataFileExcelExtractTexts.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
+
+    public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
+    public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
+    public static final String DataFileTextMergeFxml = "/fxml/DataFileTextMerge.fxml";
 
     public static final String MatricesManageFxml = "/fxml/MatricesManage.fxml";
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
@@ -274,7 +295,6 @@ public class Fxmls {
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
 
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
-    public static final String ControlWebViewFxml = "/fxml/ControlWebView.fxml";
 
     public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
 

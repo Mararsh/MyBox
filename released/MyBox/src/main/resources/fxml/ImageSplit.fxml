@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
                 <SplitPane fx:id="splitPane" dividerPositions="0.25, 0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
@@ -43,9 +43,9 @@ License:    Apache License Version 2.0
                                     <children>
                                         <TitledPane fx:id="filePane" maxWidth="1.7976931348623157E308" text="%File">
                                             <content>
-                                                <VBox spacing="5.0">
+                                                <VBox spacing="2.0">
                                                     <children>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                        <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
                                                                     <graphic>
@@ -77,15 +77,15 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </HBox>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                             <children>
                                                                 <Label text="%LoadWidth" />
                                                                 <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
                                                             </children>
                                                         </HBox>
-                                                        <VBox fx:id="fileBox" spacing="5.0" VBox.vgrow="NEVER">
+                                                        <VBox fx:id="fileBox" spacing="2.0" VBox.vgrow="NEVER">
                                                             <children>
-                                                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
+                                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                                                                     <children>
                                                                         <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                                                             <graphic>
@@ -107,7 +107,6 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="68.0" vgap="5.0" />
                                                             </children>
                                                         </VBox>
                                                         <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
@@ -117,16 +116,16 @@ License:    Apache License Version 2.0
                                         </TitledPane>
                                         <TitledPane fx:id="framePane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%Frame">
                                             <content>
-                                                <VBox spacing="5.0" VBox.vgrow="NEVER">
+                                                <VBox spacing="2.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <FlowPane fx:id="frameSelectorPane" alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
+                                                        <FlowPane fx:id="frameSelectorPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                                                             <children>
                                                                 <Label text="%Frame" />
                                                                 <ComboBox fx:id="frameSelector" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                                                 <Label fx:id="framesLabel" layoutX="10.0" layoutY="19.0" />
                                                             </children>
                                                         </FlowPane>
-                                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="10.0" vgap="5.0">
+                                                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="10.0" layoutY="10.0" vgap="2.0">
                                                             <children>
                                                                 <Button fx:id="playFramesButton" mnemonicParsing="false" onAction="#playAction">
                                                                     <graphic>
@@ -157,16 +156,15 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </FlowPane>
-                                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
                                         <TitledPane fx:id="viewPane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%View">
                                             <content>
-                                                <VBox spacing="5.0">
+                                                <VBox spacing="2.0">
                                                     <children>
-                                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
+                                                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                                                             <children>
                                                                 <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                                                                     <graphic>
@@ -206,12 +204,13 @@ License:    Apache License Version 2.0
                                                                 </CheckBox>
                                                             </children>
                                                         </FlowPane>
-                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                        <FlowPane hgap="2.0" vgap="2.0">
                                                             <children>
                                                                 <Label text="%ZoomStep" />
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="150.0" />
                                                             </children>
                                                         </FlowPane>
+                                          <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true" text="%ContextMenu" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -220,9 +219,9 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </ScrollPane>
-                        <VBox spacing="5.0">
+                        <VBox spacing="2.0">
                             <children>
-                                <HBox fx:id="operationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <HBox fx:id="operationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -327,17 +326,20 @@ License:    Apache License Version 2.0
                                     </content>
                                 </ScrollPane>
                                 <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" />
-                            </children> 
+                            </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding> 
                         </VBox>
-                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="536.0" prefViewportWidth="580.0">
+                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
                                 <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <TitledPane minHeight="-Infinity" text="%SplitOptions" VBox.vgrow="ALWAYS">
+                                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SplitOptions">
                                             <content>
-                                                <VBox minHeight="-Infinity" spacing="5.0">
+                                                <VBox minHeight="-Infinity" spacing="2.0">
                                                     <children>
-                                                        <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                        <FlowPane hgap="2.0" vgap="2.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <RadioButton mnemonicParsing="false" selected="true" text="%Predefined">
                                                                     <toggleGroup>
@@ -352,9 +354,9 @@ License:    Apache License Version 2.0
                                                                 <Insets bottom="10.0" />
                                                             </VBox.margin>
                                                         </FlowPane>
-                                                        <VBox fx:id="splitOptionsBox" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
+                                                        <VBox fx:id="splitOptionsBox" minHeight="-Infinity" spacing="2.0" VBox.vgrow="NEVER">
                                                             <children>
-                                                                <FlowPane fx:id="splitPredefinedPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                <FlowPane fx:id="splitPredefinedPane" hgap="2.0" vgap="2.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <Button mnemonicParsing="false" onAction="#do33Action" text="3*3" />
                                                                         <Button mnemonicParsing="false" onAction="#do22Action" text="2*2" />
@@ -373,7 +375,7 @@ License:    Apache License Version 2.0
                                                                         <Button mnemonicParsing="false" onAction="#do21Action" text="2*1" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane fx:id="splitSizePane" hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="splitSizePane" hgap="2.0" vgap="2.0">
                                                                     <children>
                                                                         <Label fx:id="rowsLabel1" text="%Width" />
                                                                         <TextField fx:id="widthInput" prefWidth="60.0" />
@@ -381,7 +383,7 @@ License:    Apache License Version 2.0
                                                                         <TextField fx:id="heightInput" prefWidth="60.0" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane fx:id="splitNumberPane" hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="splitNumberPane" hgap="2.0" vgap="2.0">
                                                                     <children>
                                                                         <Label fx:id="rowsLabel" text="%RowsNumber" />
                                                                         <TextField fx:id="rowsInput" prefWidth="60.0" />
@@ -389,7 +391,7 @@ License:    Apache License Version 2.0
                                                                         <TextField fx:id="colsInput" prefWidth="60.0" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane fx:id="splitCustomized1Pane" hgap="5.0" prefWrapLength="200.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                <FlowPane fx:id="splitCustomized1Pane" hgap="2.0" prefWrapLength="200.0" vgap="2.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <Label text="%SplittingRows" />
                                                                         <TextField fx:id="customizedRowsInput" prefWidth="200.0" promptText="%SplitByComma" />
@@ -404,7 +406,7 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane fx:id="splitCustomized2Pane" hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="splitCustomized2Pane" hgap="2.0" vgap="2.0">
                                                                     <children>
                                                                         <Label text="%SplittingColumns" />
                                                                         <TextField fx:id="customizedColsInput" prefWidth="200.0" promptText="%SplitByComma" />
@@ -435,8 +437,12 @@ License:    Apache License Version 2.0
                                                     </children>
                                                 </VBox>
                                             </content>
-                                        </TitledPane> 
-                                        <fx:include fx:id="save" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" source="ControlImagesSave.fxml" />
+                                        </TitledPane>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+                                 <content> 
+                                              <fx:include fx:id="save" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesSave.fxml" />
+                                 </content>
+                              </ScrollPane>
                                     </children>
                                 </VBox>
                             </content>
@@ -445,11 +451,8 @@ License:    Apache License Version 2.0
                 </SplitPane>
             </children>
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets />
             </BorderPane.margin>
         </VBox>
     </center>
-    <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-    </padding>
 </BorderPane>

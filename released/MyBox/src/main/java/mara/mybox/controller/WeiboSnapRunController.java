@@ -48,6 +48,7 @@ import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
@@ -60,7 +61,6 @@ import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.HttpUserAgent;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -249,10 +249,6 @@ public class WeiboSnapRunController extends BaseController {
     public void initWebView() {
         try {
             webEngine = webView.getEngine();
-            if (HttpUserAgent == null) {
-                HttpUserAgent = webEngine.getUserAgent();
-            }
-
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
 
@@ -1239,7 +1235,7 @@ public class WeiboSnapRunController extends BaseController {
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
-            snapScale = dpi / Screen.getPrimary().getDpi();
+            snapScale = NodeTools.dpiScale(dpi);
             snapScale = snapScale > 1 ? snapScale : 1;
             snapImageWidth = (int) Math.round(bounds.getWidth() * snapScale);
             snapImageHeight = (int) Math.round(bounds.getHeight() * snapScale);

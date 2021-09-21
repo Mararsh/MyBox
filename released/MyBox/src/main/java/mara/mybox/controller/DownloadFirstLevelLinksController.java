@@ -85,7 +85,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-11
  * @License Apache License Version 2.0
  */
-public class DownloadFirstLevelLinksController extends BaseController {
+public class DownloadFirstLevelLinksController extends WebAddressController {
 
     protected final ObservableList<Link> linksData, downloadingData, failedData;
     protected int maxThreadsNumber, maxLogs, maxRetries;
@@ -551,11 +551,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     setValues(title);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -620,11 +616,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -679,11 +671,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     return true;
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -929,10 +917,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             }
 
         };
-        Thread thread = new Thread(infoTask);
-        handling(infoTask);
-        thread.setDaemon(false);
-        thread.start();
+        start(infoTask);
     }
 
     @FXML

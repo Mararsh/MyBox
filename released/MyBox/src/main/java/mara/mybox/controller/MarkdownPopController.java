@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
@@ -79,30 +80,24 @@ public class MarkdownPopController extends TextPopController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    if (openCheck.isSelected()) {
-                        MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
-                        controller.sourceFileChanged(file);
-                    }
+                    MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
+                    controller.sourceFileChanged(file);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
     /*
         static methods
      */
-    public static MarkdownPopController open(BaseController parent, String text) {
+    public static MarkdownPopController open(BaseController parent, TextInputControl textInput) {
         try {
-            if (text == null) {
+            if (textInput == null) {
                 return null;
             }
             MarkdownPopController controller = (MarkdownPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.MarkdownPopFxml, false);
-            controller.loadText(text);
+            controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

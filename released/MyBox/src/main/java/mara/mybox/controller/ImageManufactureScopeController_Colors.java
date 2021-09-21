@@ -223,11 +223,7 @@ public class ImageManufactureScopeController_Colors extends ImageManufactureScop
                 }
 
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 
@@ -248,11 +244,7 @@ public class ImageManufactureScopeController_Colors extends ImageManufactureScop
                 }
 
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 

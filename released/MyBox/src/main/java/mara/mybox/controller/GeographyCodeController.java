@@ -234,11 +234,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                     backgroundTask = null;
                 }
             };
-            handling(backgroundTask);
-            backgroundTask.setSelf(backgroundTask);
-            Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(backgroundTask);
         }
     }
 
@@ -408,11 +404,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                     refreshAction();
                 }
             };
-            loading = handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
     }
 
@@ -436,11 +428,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                     refreshAction();
                 }
             };
-            loading = handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
     }
 
@@ -513,11 +501,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                     refreshAction();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

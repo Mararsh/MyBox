@@ -1,10 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.stage.Modality;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -39,8 +38,7 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
 
                 @Override
                 public Void call() {
-                    ImageFileInformation imageFileInformation
-                            = ImageInformation.readImageFileInformation(file);
+                    ImageFileInformation imageFileInformation = ImageFileInformation.create(file);
                     if (imageFileInformation == null
                             || imageFileInformation.getImageInformation() == null) {
                         return null;

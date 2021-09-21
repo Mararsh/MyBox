@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +29,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
-import javafx.stage.Screen;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import mara.mybox.dev.MyBoxLog;
@@ -244,12 +242,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (dpiSelector != null) {
                 List<String> dpiValues = new ArrayList();
                 dpiValues.addAll(Arrays.asList("96", "72", "300", "160", "240", "120", "600", "400"));
-                String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
+                String sValue = (int) NodeTools.screenResolution() + "";
                 if (dpiValues.contains(sValue)) {
                     dpiValues.remove(sValue);
                 }
                 dpiValues.add(0, sValue);
-                sValue = (int) Screen.getPrimary().getDpi() + "";
+                sValue = (int) NodeTools.screenDpi() + "";
                 if (dpiValues.contains(sValue)) {
                     dpiValues.remove(sValue);
                 }

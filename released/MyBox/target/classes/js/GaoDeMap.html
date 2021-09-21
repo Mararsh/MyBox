@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=06b9e078a51325a843dfefd57ffd876c"></script>
+        <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+        <title>Map</title>
+        <style>
+            html,
+            body,
+            #container {
+                width: 100%;
+                height: 100%;
+            }
+
+            .amap-marker-label {
+                position: absolute;
+                border: 0;
+                background-color: transparent;
+                white-space: nowrap;
+                padding: 1px;
+                font-size: 14px;
+            }
+
+        </style>
+    </head>
+    <body >
+        <div id="container"></div>
+        <script  type="text/javascript">
+            var standardLayer, satelliteLayer, roadLayer, trafficLayer;
+            var infoWindow;
+            var map, mapTitle;
+
+            map = new AMap.Map('container', {
+                resizeEnable: true,
+                center: [116.397428, 39.90923],
+                zooms: [3, 18],
+                zoom: 11
+            });
+            standardLayer = map.getLayers()[0];
+            map.on('complete', loadComplete);
+            map.on('click', showInfoClick);
+            map.on('mousemove', showInfoMove);
+            map.on('zoomend', zoomChanged);
+
+            mapTitle = new AMap.Text();
+            map.add(mapTitle);
+
+            function loadComplete() {
+                alert("Loaded");
+            }
+
+            function showInfoClick(e) {
+                var text = 'click:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
+                alert(text);
+            }
+
+            function showInfoMove(e) {
+                var text = 'move:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
+                alert(text);
+            }
+
+            function zoomChanged(e) {
+                alert("zoomSize:" + map.getZoom());
+            }
+
+
+            function setCenter(longtitude, latitude) {
+                map.setCenter(new AMap.LngLat(longtitude, latitude));
+            }
+
+            function setZoom(size) {
+                map.setZoom(size);
+            }
+
+            function setLanguage(language) {
+                map.setLang(language);
+            }
+
+            function clearMap() {
+                map.clearMap();
+            }
+
+
+            function setTitle(title) {
+                titleWindow.setContent(title);
+                titleWindow.open(map, map.getCenter());
+            }
+
+            function setTitle(title) {
+                var labelString = "<DIV style=\"color:blue;background-color: transparent;font-size:24px;px;line-height:1;font-weight: bold;\">";
+                labelString = labelString + title + "</DIV>";
+                mapTitle.setText(labelString);
+                mapTitle.setPosition(map.containerToLngLat(new AMap.Pixel(50, 150)));
+                mapTitle.setAnchor('top-left');
+                map.add(mapTitle);
+            }
+
+
+            function replaceAll(string, oldSub, newSub) {
+                if (string !== null && oldSub !== null && newSub !== null) {
+                    return string.replace(new RegExp(oldSub, 'gm'), newSub);
+                }
+            }
+
+            function drawLine(longitude1, latitude1, longitude2, latitude2, color) {
+                var path = [
+                    [longitude1, latitude1],
+                    [longitude2, latitude2]
+                ];
+                var polyline = new AMap.Polyline({
+                    path: path,
+                    strokeColor: color
+//                    isOutline: true,
+//                    outlineColor: '#ffeeff',
+//                    borderWeight: 3,
+
+//                    strokeOpacity: 1,
+//                    strokeWeight: 6,
+                            // 折线样式还支持 'dashed'
+//                    strokeStyle: "solid",
+                            // strokeStyle是dashed时有效
+//                    strokeDasharray: [10, 5],
+//                    lineJoin: 'round',
+//                    lineCap: 'round'
+                });
+                polyline.setMap(map);
+                // 缩放地图到合适的视野级别
+                map.setFitView([polyline]);
+            }
+
+            function addMarker(longtitude, latitude, label, info, image, markerSize, textSize, textColor, bold) {
+                var marker;
+                if (image === null) {
+                    marker = new AMap.CircleMarker({
+                        center: [longtitude, latitude],
+                        radius: markerSize, //3D视图下，CircleMarker半径不要超过64px
+                        strokeColor: 'white',
+                        strokeWeight: 2,
+                        strokeOpacity: 0.5,
+//                        fillColor: label,
+//                        fillOpacity: 0.5,
+                        zIndex: 10,
+                        bubble: true,
+                        cursor: 'pointer',
+                        clickable: true
+                    });
+                } else {
+                    marker = new AMap.Marker({
+                        content: '<img src="file:///' + image + '" width=' + markerSize + '>',
+                        position: [longtitude, latitude],
+                        offset: new AMap.Pixel(-markerSize / 2, -markerSize / 2)
+                    });
+                }
+                if (label !== null && label.length > 0) {
+                    var labelString = "<div style=\"font-size:" + textSize + "px;";
+                    if (textColor !== null) {
+                        labelString = labelString + "color:" + textColor + ";";
+                    }
+                    if (bold) {
+                        labelString = labelString + "font-weight: bold;";
+                    }
+                    labelString = labelString + "\">" + label.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>";
+                    marker.setLabel({
+                        content: labelString,
+                        offset: new AMap.Pixel(-30, markerSize + 5)
+//                        direction: 'top'
+                    });
+                }
+                map.add(marker);
+                if (info !== null && info.length > 0) {
+                    marker.on('mousemove', function () {
+                        infoWindow = new AMap.InfoWindow({
+                            content: "<div style=\"font-size:" + textSize + "px\">" + info.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>"
+                        });
+                        infoWindow.open(map, [longtitude, latitude]);
+                    });
+                    marker.on('mouseout', function () {
+                        infoWindow.close();
+                    });
+                }
+            }
+
+
+
+            function hideStandardLayer() {
+                if (standardLayer !== undefined)
+                    map.remove(standardLayer);
+                standardLayer = undefined;
+            }
+
+
+            function setStandardLayerOpacity(v) {
+                if (standardLayer === undefined) {
+                    standardLayer = new AMap.TileLayer({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v,
+                        zIndex: 0
+                    });
+                    map.add(standardLayer);
+                } else {
+                    standardLayer.setOpacity(v);
+                }
+            }
+
+            function hideSatelliteLayer() {
+                if (satelliteLayer !== undefined)
+                    map.remove(satelliteLayer);
+                satelliteLayer = undefined;
+            }
+
+
+            function setSatelliteLayerOpacity(v) {
+                if (satelliteLayer === undefined) {
+                    satelliteLayer = new AMap.TileLayer.Satellite({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(satelliteLayer);
+                } else {
+                    satelliteLayer.setOpacity(v);
+                }
+            }
+
+
+            function hideRoadLayer() {
+                if (roadLayer !== undefined)
+                    map.remove(roadLayer);
+                roadLayer = undefined;
+            }
+
+
+            function setRoadLayerOpacity(v) {
+                if (roadLayer === undefined) {
+                    roadLayer = new AMap.TileLayer.RoadNet({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(roadLayer);
+                } else {
+                    roadLayer.setOpacity(v);
+                }
+            }
+
+
+            function hideTrafficLayer() {
+                if (trafficLayer !== undefined) {
+                    trafficLayer.hide();
+                    map.remove(trafficLayer);
+                }
+                trafficLayer = undefined;
+            }
+
+            function setTrafficLayerOpacity(v) {
+                if (trafficLayer === undefined) {
+                    trafficLayer = new AMap.TileLayer.Traffic({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(trafficLayer);
+                } else {
+                    trafficLayer.setOpacity(v);
+                }
+            }
+
+        </script>
+
+    </body>
+</html>

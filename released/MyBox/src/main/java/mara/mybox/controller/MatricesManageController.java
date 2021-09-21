@@ -2,12 +2,11 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -18,7 +17,7 @@ import mara.mybox.value.Languages;
  */
 public class MatricesManageController extends BaseController {
 
-    protected ControlMatrix editController;
+    protected ControlMatrixEdit editController;
 
     @FXML
     protected ControlMatricesList listController;
@@ -31,6 +30,8 @@ public class MatricesManageController extends BaseController {
     public void initValues() {
         try {
             super.initValues();
+            listController.baseTitle = baseTitle;
+            listController.baseName = baseName;
             editController = listController.editController;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -40,9 +41,27 @@ public class MatricesManageController extends BaseController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-
+        editController.setManager(listController);
+        editController.sheetChangedNotify.addListener(
+                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    updateStatus();
+                });
         listController.loadTableData();
-//        editController.setManager(listController);
+    }
+
+    protected void updateStatus() {
+        if (getMyStage() == null) {
+            return;
+        }
+        String title = baseTitle;
+        String name = editController.nameInput.getText();
+        if (name != null && !name.isBlank()) {
+            title += " - " + name.trim();
+        }
+        if (editController.dataChangedNotify.get()) {
+            title += " *";
+        }
+        getMyStage().setTitle(title);
     }
 
     @Override

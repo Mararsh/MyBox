@@ -35,7 +35,7 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -230,10 +230,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                 }
 
             };
-            Thread thread = new Thread(loadTask);
-//        handling(loadTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(loadTask, false, null);
         }
     }
 
@@ -252,7 +249,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                 return;
             }
             if (imageHistoriesPath == null) {
-                imageHistoriesPath = AppVariables.getImageHisPath();
+                imageHistoriesPath = AppPaths.getImageHisPath();
             }
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
@@ -339,11 +336,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                         }
                     }
                 };
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-//            handling(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task, false, null);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -425,10 +418,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                 }
 
             };
-            Thread thread = new Thread(loadTask);
-            handling(loadTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(loadTask);
         }
     }
 
@@ -521,10 +511,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                 }
 
             };
-            Thread thread = new Thread(viewTask);
-            handling(viewTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(viewTask);
         }
     }
 

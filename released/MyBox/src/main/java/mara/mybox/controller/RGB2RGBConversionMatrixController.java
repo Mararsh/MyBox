@@ -9,8 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import mara.mybox.color.RGB2RGBConversionMatrix;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.RGBColorSpace.ColorSpaceType;
@@ -19,10 +17,7 @@ import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.MatrixDoubleTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -37,8 +32,6 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     public RGBColorSpaceController sourceController, targetController;
     @FXML
     protected TextArea textsArea;
-    @FXML
-    protected WebView webView;
     @FXML
     protected TextField scaleMatricesInput;
     @FXML
@@ -248,11 +241,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

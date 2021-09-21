@@ -5,13 +5,15 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 
 ## What's New            
-2021-9-20 v6.4.8         
+2021-9-21 v6.4.8         
 
 * Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
-* Popped text/image/html can be synchronized with source. Query Color.          
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.              
+* Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix.            
        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
+
+Happy Moon Festival!                
    
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -63,6 +65,7 @@ Download from sourceforge: [https://sourceforge.net/projects/mara-mybox/files/](
 A bug has been reported to jpackage dev team:
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)        
 * MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
+* Since v6.4.3, Mybox will crash when play media on Linux.           
 
 ## Migration
 Each version has itself's configuration file. New version can copy parameters from existed versions.        
@@ -570,8 +573,10 @@ Load/Refresh/Delete text in System Clipboard:
 
 ### Edit Images<a id="imagesList" />
 1. Add following：
-	-  Animated gif file. All frames in it will be added into list. 
-	-  Multiple-frames tif file. All frames in it will be added into list. 
+	-  Animated gif file. All frames are added into list. 
+	-  Multiple-frames tif file. All frames are added into list.   
+	-  PDF file. All pages are converted as images and added into list.       
+	-  PPT file. All pages are converted as images and added into list.        
 	-  Image in system clipboard. 
 	-  Any supported image files.     
 2. Move images to set their orders.
@@ -797,7 +802,7 @@ Load/Refresh/Delete image in System Clipboard:
 2. Paste data in data clipboard into target sheet at selected location.
 
 
-![snap-dataClipboard](https://mararsh.github.io/MyBox/snap-dataClipboard.jpg)    
+![snap-dataSheet](https://mararsh.github.io/MyBox/snap-dataSheet-en.jpg)    
 
 
 ### Matrix<a id="matrix"></a>
@@ -1242,7 +1247,9 @@ Load/Refresh/Delete image in System Clipboard:
 
 ## Media Tools <a id="MediaTools"></a>
 
-### Play Videos/Audios<a id="mediaPlayer" />
+### Play Videos/Audios<a id="mediaPlayer" />                   
+Notice: Since v6.4.3, Mybox will crash when play media on Linux.           
+
 1. Create/load playlist
 2. Options:  auto-play,  display milliseconds, loop number, random order
 3. Set: volumn, speed(0~8 times)
@@ -1463,13 +1470,15 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
-2021-9-20 v6.4.8         
+2021-9-21 v6.4.8         
 
 * Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
-* Popped text/image/html can be synchronized with source. Query Color.          
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.              
+* Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix.                     
        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
+
+Happy Moon Festival!              
 
 2021-8-17 v6.4.7         
 

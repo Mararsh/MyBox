@@ -391,12 +391,21 @@ public class ControlImagesSave extends BaseController {
 
     protected BufferedImage image(int index) {
         try {
+            if (images == null || index < 0 || index >= images.size()) {
+                return null;
+            }
             ImageInformation info = images.get(index);
+            if (info == null) {
+                return null;
+            }
             Image image;
             if (info.getRegion() != null) {
                 image = info.loadRegion(-1);
             } else {
                 image = info.loadImage();
+            }
+            if (image == null) {
+                return null;
             }
             return SwingFXUtils.fromFXImage(image, null);
         } catch (Exception e) {
@@ -448,6 +457,9 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
+                            if (bufferedImage == null) {
+                                continue;
+                            }
                             String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
                             BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
                             ImageFileWriters.writeImageFile(converted, formatController.attributes, filename);
@@ -476,11 +488,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -526,11 +534,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -602,10 +606,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -637,6 +638,7 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
+                            MyBoxLog.console(i + " " + (bufferedImage != null));
                             IIOMetadata metaData = ImageTiffFile.getWriterMeta(null, bufferedImage, writer, param);
                             writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                             if (task == null || task.isCancelled()) {
@@ -666,10 +668,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -735,10 +734,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -795,10 +791,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 

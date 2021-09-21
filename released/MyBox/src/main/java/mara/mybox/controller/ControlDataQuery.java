@@ -23,14 +23,11 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.QueryCondition.DataOperation;
-import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -295,7 +292,6 @@ public class ControlDataQuery extends BaseController {
 
             MenuController controller = MenuController.open(this, textArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addFlowPane(buttons);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

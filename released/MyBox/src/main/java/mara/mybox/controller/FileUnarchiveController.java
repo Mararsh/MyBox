@@ -66,7 +66,7 @@ public class FileUnarchiveController extends FilesTreeController {
     long totalFiles, totalSize;
 
     @FXML
-    protected ComboBox<String> encodeSelector;
+    protected ComboBox<String> charsetSelector;
     @FXML
     protected Label sourceLabel;
     @FXML
@@ -126,9 +126,9 @@ public class FileUnarchiveController extends FilesTreeController {
             filesTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
             List<String> setNames = TextTools.getCharsetNames();
-            encodeSelector.getItems().addAll(setNames);
-            encodeSelector.getSelectionModel().select(UserConfig.getString("FilesUnarchiveEncoding", Charset.defaultCharset().name()));
-            encodeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            charsetSelector.getItems().addAll(setNames);
+            charsetSelector.getSelectionModel().select(UserConfig.getString("FilesUnarchiveEncoding", Charset.defaultCharset().name()));
+            charsetSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldItem, String newItem) {
@@ -184,7 +184,7 @@ public class FileUnarchiveController extends FilesTreeController {
                 protected boolean handle() {
                     try {
                         Map<String, Object> archive
-                                = CompressTools.readEntries(sourceFile, archiver, encodeSelector.getValue());
+                                = CompressTools.readEntries(sourceFile, archiver, charsetSelector.getValue());
                         if (archive == null) {
                             return true;
                         }
@@ -233,11 +233,7 @@ public class FileUnarchiveController extends FilesTreeController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -384,11 +380,7 @@ public class FileUnarchiveController extends FilesTreeController {
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -400,7 +392,7 @@ public class FileUnarchiveController extends FilesTreeController {
                 return;
             }
             try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(sourceFile));
-                     ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, encodeSelector.getValue())) {
+                     ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, charsetSelector.getValue())) {
                 ArchiveEntry entry;
                 File file;
                 while ((entry = in.getNextEntry()) != null) {
@@ -472,7 +464,7 @@ public class FileUnarchiveController extends FilesTreeController {
     }
 
     protected void unarchiveZip() {
-        try ( ZipFile zipFile = new ZipFile(sourceFile, encodeSelector.getValue())) {
+        try ( ZipFile zipFile = new ZipFile(sourceFile, charsetSelector.getValue())) {
             Enumeration<ZipArchiveEntry> zEntries = zipFile.getEntries();
             File file;
             while (zEntries.hasMoreElements()) {

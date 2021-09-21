@@ -22,15 +22,15 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
             <children>
                 <SplitPane fx:id="splitPane" dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items> 
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                                <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                                             <children>
                                                 <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
                                                     <graphic>
@@ -54,16 +54,23 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="table" source="ControlImagesDurationTable.fxml" />
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                 <content>
+                                              <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesDurationTable.fxml" />
+                                 </content>
+                              </ScrollPane>
                                     </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                        <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -73,12 +80,15 @@ License:    Apache License Version 2.0
                                     <Label minHeight="-Infinity" text="%SelectImagesSave" wrapText="true" />
                                             </children>
                                         </HBox>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
                                             <content> 
-                                                <fx:include fx:id="save" source="ControlImagesSave.fxml" />
+                                                <fx:include fx:id="save" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesSave.fxml" />
                                             </content>
                                         </ScrollPane>
                                     </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -88,12 +98,6 @@ License:    Apache License Version 2.0
             <BorderPane.margin>
                 <Insets />
             </BorderPane.margin>
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </padding>
         </VBox>
     </center>
-    <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-    </padding>
 </BorderPane>

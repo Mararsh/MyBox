@@ -10,8 +10,6 @@ import static mara.mybox.fxml.WindowTools.reloadAll;
 import static mara.mybox.fxml.WindowTools.styleAll;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -242,7 +240,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.hideLeftPane();
         controller.hideRightPane();
-        controller.openTextFile(AppVariables.MyboxConfigFile);
+        controller.sourceFileChanged(AppVariables.MyboxConfigFile);
         controller.popInformation(Languages.message("TakeEffectWhenReboot"));
     }
 

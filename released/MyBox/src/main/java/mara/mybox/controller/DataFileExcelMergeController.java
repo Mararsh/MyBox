@@ -15,10 +15,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -76,6 +74,9 @@ public class DataFileExcelMergeController extends FilesMergeController {
         try ( Workbook sourceBook = WorkbookFactory.create(srcFile)) {
             List<String> rowData = new ArrayList<>();
             for (int s = 0; s < sourceBook.getNumberOfSheets(); s++) {
+                if (task == null || task.isCancelled()) {
+                    return message("Cancelled");
+                }
                 Sheet sourceSheet = sourceBook.getSheetAt(s);
                 String sheetName = sourceSheet.getSheetName();
                 updateLogs(Languages.message("Reading") + " " + Languages.message("Sheet") + ":" + sheetName);
@@ -88,6 +89,9 @@ public class DataFileExcelMergeController extends FilesMergeController {
                     targetIndex = sheetsIndex.get(sheetName);
                 }
                 for (Row sourceRow : sourceSheet) {
+                    if (task == null || task.isCancelled()) {
+                        return message("Cancelled");
+                    }
                     if (sourceRow == null) {
                         continue;
                     }

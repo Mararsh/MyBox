@@ -4,25 +4,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -39,6 +33,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
     protected Charset sourceCharset, targetCharset;
     protected CSVPrinter csvPrinter;
     protected List<String> headers;
+    protected boolean sourceWithName, targetWithName;
 
     @FXML
     protected ControlCsvOptions csvSourceController, csvTargetController;
@@ -89,20 +84,23 @@ public class DataFileCSVMergeController extends FilesMergeController {
                     || (!csvSourceController.autoDetermine && csvSourceController.charset == null)) {
                 return false;
             }
+            sourceCharset = csvSourceController.charset;
+            sourceWithName = csvSourceController.withNamesCheck.isSelected();
             sourceFormat = CSVFormat.DEFAULT.withDelimiter(csvSourceController.delimiter)
                     .withIgnoreEmptyLines().withTrim().withNullString("");
-            if (csvSourceController.withNamesCheck.isSelected()) {
+            if (sourceWithName) {
                 sourceFormat = sourceFormat.withFirstRecordAsHeader();
             }
-            sourceCharset = csvSourceController.charset;
 
+            targetCharset = csvTargetController.charset;
+            targetWithName = csvTargetController.withNamesCheck.isSelected();
             targetFormat = CSVFormat.DEFAULT
                     .withDelimiter(csvTargetController.delimiter)
                     .withIgnoreEmptyLines().withTrim().withNullString("");
-            if (csvTargetController.withNamesCheck.isSelected()) {
+            if (targetWithName) {
                 targetFormat = targetFormat.withFirstRecordAsHeader();
             }
-            targetCharset = csvTargetController.charset;
+
             csvPrinter = new CSVPrinter(new FileWriter(targetFile, targetCharset), targetFormat);
 
             headers = null;
@@ -119,18 +117,20 @@ public class DataFileCSVMergeController extends FilesMergeController {
         }
         String result;
         try ( CSVParser parser = CSVParser.parse(srcFile, sourceCharset, sourceFormat)) {
-            if (csvTargetController.withNamesCheck.isSelected() && headers == null
-                    && csvSourceController.withNamesCheck.isSelected()) {
+            if (headers == null && targetWithName && sourceWithName) {
                 headers = new ArrayList<>();
                 headers.addAll(parser.getHeaderNames());
                 csvPrinter.printRecord(headers);
             }
             List<String> rowData = new ArrayList<>();
             for (CSVRecord record : parser) {
+                if (task == null || task.isCancelled()) {
+                    return message("Cancelled");
+                }
                 for (int i = 0; i < record.size(); i++) {
                     rowData.add(record.get(i));
                 }
-                if (csvTargetController.withNamesCheck.isSelected() && headers == null) {
+                if (headers == null && targetWithName) {
                     headers = new ArrayList<>();
                     for (int i = 0; i < rowData.size(); i++) {
                         headers.add(Languages.message("Field") + i);

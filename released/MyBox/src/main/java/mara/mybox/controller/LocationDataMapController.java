@@ -26,8 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
 import mara.mybox.controller.ControlMapOptions.MapName;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.Location;
@@ -38,6 +36,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DateTools;
@@ -280,15 +279,7 @@ public class LocationDataMapController extends BaseMapController {
                         }, 0, 1); // Interface may be blocked if put all points in map altogether.
                     }
                 };
-                if (parentController != null) {
-                    parentController.handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                } else {
-                    handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                }
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -514,15 +505,7 @@ public class LocationDataMapController extends BaseMapController {
                         drawFrames();
                     }
                 };
-                if (parentController != null) {
-                    parentController.handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                } else {
-                    handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                }
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -770,7 +753,7 @@ public class LocationDataMapController extends BaseMapController {
             String rformat = format.equals("gif") ? "png" : format;
             final SnapshotParameters snapPara;
             final double scale;
-            double scalev = dpi / Screen.getPrimary().getDpi();
+            double scalev = NodeTools.dpiScale(dpi);
             scale = scalev > 1 ? scalev : 1;
             snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);

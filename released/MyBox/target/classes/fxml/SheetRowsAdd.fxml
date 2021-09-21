@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SheetRowsAddController">
+    <children>
+        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%AddRows" textAlignment="CENTER" VBox.vgrow="NEVER" />
+            </children>
+        </HBox>
+        <Label fx:id="targetLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="%Target" textAlignment="CENTER" wrapText="true" />
+        <VBox fx:id="rowsBox" spacing="10.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                    <children>
+                        <RadioButton fx:id="aboveRadio" mnemonicParsing="false" selected="true" text="%Above">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="locationGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton layoutX="63.0" layoutY="10.0" mnemonicParsing="false" text="%Below" toggleGroup="$locationGroup" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                    <children>
+                        <Label text="%Row" />
+                        <ComboBox fx:id="rowSelector" prefWidth="150.0" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="55.0" spacing="2.0">
+            <children>
+                <Label minWidth="-Infinity" text="%RowsNumber" />
+                <TextField fx:id="numberInput" prefWidth="100.0" />
+                <Button fx:id="plusButton" mnemonicParsing="false" onAction="#plusAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconPlus.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="minusButton" mnemonicParsing="false" onAction="#minusAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMinus.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="refreshButton" layoutX="338.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconRefresh.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>

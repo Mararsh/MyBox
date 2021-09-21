@@ -1,15 +1,12 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -36,7 +33,7 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
         addColumn(new ColumnDefinition("data_type", ColumnType.Short, true));
         addColumn(new ColumnDefinition("data_name", ColumnType.String, true).setLength(32672));
         addColumn(new ColumnDefinition("charset", ColumnType.String).setLength(32));
-        addColumn(new ColumnDefinition("delimiter", ColumnType.String).setLength(4));
+        addColumn(new ColumnDefinition("delimiter", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("has_header", ColumnType.Boolean));
         return this;
     }
@@ -46,6 +43,9 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
 
     public static final String Query_unique
             = "SELECT * FROM Data_Definition WHERE data_type=? AND data_name=?";
+
+    public static final String Query_Type
+            = "SELECT * FROM Data_Definition WHERE data_type=?";
 
     public static final String DeleteID
             = "DELETE FROM Data_Definition WHERE dfid=?";

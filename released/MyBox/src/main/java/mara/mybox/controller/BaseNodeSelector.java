@@ -21,14 +21,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -280,15 +277,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     select(selectNode == null ? rootItem.getValue() : selectNode);
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -472,11 +461,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -547,11 +532,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -595,11 +576,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -681,15 +658,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     treeView.refresh();
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -729,15 +698,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     treeView.refresh();
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

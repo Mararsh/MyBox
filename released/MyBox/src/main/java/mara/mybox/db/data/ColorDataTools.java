@@ -89,7 +89,7 @@ public class ColorDataTools {
     }
 
     public static void exportCSV(List<ColorData> dataList, File file, boolean orderNumber) {
-        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CSVFormat.DEFAULT)) {
             printHeader(printer, orderNumber);
             List<String> row = new ArrayList<>();
             for (ColorData data : dataList) {

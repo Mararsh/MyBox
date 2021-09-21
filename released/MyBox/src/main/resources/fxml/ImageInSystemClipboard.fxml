@@ -32,17 +32,17 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
                 <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <VBox spacing="5.0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                     <children>
                                                         <Label text="%MonitorInterval">
                                                             <padding>
@@ -52,32 +52,20 @@ License:    Apache License Version 2.0
                                                         <ComboBox fx:id="intervalSelector" editable="true" prefWidth="100.0" />
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                    <children>
-                                                        <Label text="%WhenNewImageInSystemBoard" />
-                                                    </children>
-                                                </HBox>
-                                                <FlowPane hgap="5.0" prefWrapLength="1000.0" vgap="5.0">
-                                                    <children>
-                                                        <CheckBox fx:id="saveCheck" mnemonicParsing="false" text="%SaveAsFile" />
-                                                    </children>
-                                                </FlowPane> 
-                                                <FlowPane hgap="5.0" layoutX="10.0" layoutY="55.0" prefWrapLength="1000.0" vgap="5.0">
-                                                    <children>
-                                                        <CheckBox fx:id="copyCheck" mnemonicParsing="false" text="%CopyToMyBoxClipboard" />
-                                                    </children>
-                                                </FlowPane>
-                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="228.0" spacing="5.0">
-                                                    <children>
+                                                  <Label text="%WhenNewImageInSystemBoard" />
+                                                  <CheckBox fx:id="saveCheck" mnemonicParsing="false" text="%SaveAsFile" />
+                                                  <CheckBox fx:id="copyCheck" mnemonicParsing="false" text="%CopyToMyBoxClipboard" />
+                                                <FlowPane hgap="2.0" prefWrapLength="1000.0" vgap="2.0">
+                                       <children>
                                                         <Label text="%ScaledWidth">
                                                             <padding>
                                                                 <Insets right="10.0" />
                                                             </padding>
                                                         </Label>
                                                         <ComboBox fx:id="widthSelector" editable="true" prefWidth="100.0" />
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       </children>
+                                                </FlowPane>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children> 
                                                         <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
                                                             <graphic>
@@ -108,48 +96,51 @@ License:    Apache License Version 2.0
                                                 <Separator prefWidth="200.0" />
                                                 <Label fx:id="recordLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
                                             </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
                                         </VBox>
-                                        <TitledPane fx:id="targetPane" maxHeight="1.7976931348623157E308" text="%ImagesOptions">
+                                        <TitledPane fx:id="targetPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%ImagesOptions" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <Label text="%TargetPath" />
-                                                                <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openTargetPath">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconOpen2.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <Label text="%TargetFilePrefix" />
-                                                                <TextField fx:id="targetPrefixInput" HBox.hgrow="ALWAYS" />
-                                                            </children>
-                                                        </HBox>
-                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                            <content>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
+                                       <content>
+                                                      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                          <children>
+                                                              <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                                                                  <children>
+                                                                      <Label text="%TargetPath" />
+                                                                      <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
+                                                                      <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                                          <graphic>
+                                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                  <image>
+                                                                                      <Image url="@../buttons/Red/iconFolderImage.png" />
+                                                                                  </image>
+                                                                              </ImageView>
+                                                                          </graphic>
+                                                                      </Button>
+                                                                      <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openTargetPath">
+                                                                          <graphic>
+                                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                  <image>
+                                                                                      <Image url="@../buttons/Red/iconOpen2.png" />
+                                                                                  </image>
+                                                                              </ImageView>
+                                                                          </graphic>
+                                                                      </Button>
+                                                                  </children>
+                                                              </HBox>
+                                                              <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                                                                  <children>
+                                                                      <Label text="%TargetFilePrefix" />
+                                                                      <TextField fx:id="targetPrefixInput" HBox.hgrow="ALWAYS" />
+                                                                  </children>
+                                                              </HBox>
                                                                 <fx:include fx:id="format" source="ControlImageFormat.fxml" />
-                                                            </content>
-                                                        </ScrollPane>
-                                                    </children>
-                                                </VBox>
+                                                          </children>
+                                                      </VBox>
+                                       </content>
+                                    </ScrollPane>
                                             </content>
                                             <VBox.margin>
                                                 <Insets top="5.0" />
@@ -159,16 +150,16 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </ScrollPane>
-                        <VBox fx:id="mainBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <VBox fx:id="mainBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <HBox fx:id="operationBox1" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <HBox fx:id="operationBox1" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="1000.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                             <children>
                                                 <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
                                                     <graphic>
@@ -295,7 +286,7 @@ License:    Apache License Version 2.0
                                         </FlowPane>
                                     </children>
                                 </HBox>
-                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0" VBox.vgrow="ALWAYS">
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
                                         <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
                                             <children>
@@ -358,19 +349,16 @@ License:    Apache License Version 2.0
                                 </ScrollPane>
                                 <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" />
                             </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
                         </VBox>
                     </items>
                 </SplitPane>
             </children>
             <BorderPane.margin>
-                <Insets />
+                <Insets bottom="5.0" />
             </BorderPane.margin>
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </padding>
         </VBox>
     </center>
-    <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-    </padding>
 </BorderPane>

@@ -16,7 +16,7 @@ public class DataDefinition extends BaseData {
     protected boolean hasHeader;
 
     public static enum DataType {
-        InternalTable, DataFile, Matrix, UserTable
+        InternalTable, DataFile, Matrix, UserTable, DataClipboard
     }
 
     private void init() {
