@@ -24,13 +24,10 @@ import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -53,7 +50,7 @@ public class TextFilesMergeController extends FilesMergeController {
     protected CheckBox targetBomCheck;
 
     public TextFilesMergeController() {
-        baseTitle = Languages.message("TextFilesMerge");
+        baseTitle = message("TextFilesMerge");
     }
 
     @Override
@@ -65,7 +62,7 @@ public class TextFilesMergeController extends FilesMergeController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
+            NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(message("BOMcomments")));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -128,7 +125,7 @@ public class TextFilesMergeController extends FilesMergeController {
 
     protected void checkSourceEncoding() {
         RadioButton selected = (RadioButton) sourceEncodingGroup.getSelectedToggle();
-        if (Languages.message("DetermainAutomatically").equals(selected.getText())) {
+        if (message("DetermainAutomatically").equals(selected.getText())) {
             sourceEncodingAutoDetermine = true;
             sourceEncodingBox.setDisable(true);
         } else {
@@ -140,11 +137,11 @@ public class TextFilesMergeController extends FilesMergeController {
 
     protected void checkLineBreak() {
         RadioButton selected = (RadioButton) lbGroup.getSelectedToggle();
-        if (Languages.message("LF").equals(selected.getText())) {
+        if (message("LF").equals(selected.getText())) {
             targetLineBreak = Line_Break.LF;
-        } else if (Languages.message("CR").equals(selected.getText())) {
+        } else if (message("CR").equals(selected.getText())) {
             targetLineBreak = Line_Break.CR;
-        } else if (Languages.message("CRLF").equals(selected.getText())) {
+        } else if (message("CRLF").equals(selected.getText())) {
             targetLineBreak = Line_Break.CRLF;
         }
     }
@@ -172,13 +169,13 @@ public class TextFilesMergeController extends FilesMergeController {
             if (sourceEncodingAutoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInfo);
                 if (!ok) {
-                    return Languages.message("Failed") + ": " + file;
+                    return message("Failed") + ": " + file;
                 }
             } else {
                 sourceInfo.setCharset(sourceCharset);
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, sourceInfo.getCharset()))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, sourceInfo.getCharset()))) {
                 if (sourceInfo.isWithBom()) {
                     inputStream.skip(bomSize(sourceInfo.getCharset().name()));
                 }
@@ -189,7 +186,7 @@ public class TextFilesMergeController extends FilesMergeController {
             } catch (Exception e) {
                 return e.toString();
             }
-            return Languages.message("Handled") + ": " + file;
+            return message("Handled") + ": " + file;
         } catch (Exception e) {
             return file + " " + e.toString();
         }

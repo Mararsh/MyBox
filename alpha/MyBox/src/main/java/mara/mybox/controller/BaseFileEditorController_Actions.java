@@ -42,7 +42,6 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     public void refreshAction() {
         try {
             if (!isSettingValues && sourceFile != null) {
-                recordCursor();
                 sourceInformation.setCharsetDetermined(true);
                 sourceInformation.setCharset(Charset.forName(charsetSelector.getSelectionModel().getSelectedItem()));
                 openFile(sourceFile);
@@ -225,62 +224,40 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
     @FXML
     protected void locateLine() {
-        sourceInformation.setCurrentLine(-1);
+        if (locateLine < 0 || locateLine >= sourceInformation.getLinesNumber()) {
+            popError(message("InvalidParameters"));
+            return;
+        }
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            String[] lines = mainArea.getText().split("\n");
-            if (lineLocation > lines.length) {
-                popError(message("NoData"));
-                return;
-            }
-            mainArea.requestFocus();
-            mainArea.deselect();
-            int index = 0;
-            for (int i = 0; i < lineLocation - 1; ++i) {
-                index += lines[i].length() + 1;
-            }
-            mainArea.selectRange(index, index);
-
+            selectLine(locateLine);
         } else {
-            if (lineLocation > sourceInformation.getLinesNumber()) {
-                popError(message("NoData"));
-                return;
-            }
-            if (sourceInformation.getCurrentPageLineStart() <= lineLocation
-                    && sourceInformation.getCurrentPageLineEnd() > lineLocation) {
-                String[] lines = mainArea.getText().split("\n");
-                mainArea.requestFocus();
-                mainArea.deselect();
-                int index = 0, end = (int) (lineLocation - sourceInformation.getCurrentPageLineStart());
-                for (int i = 0; i < end; ++i) {
-                    index += lines[i].length() + 1;
-                }
-                mainArea.selectRange(index, index);
-
+            if (locateLine >= sourceInformation.getCurrentPageLineStart()
+                    && locateLine < sourceInformation.getCurrentPageLineEnd()) {
+                selectLine(locateLine);
             } else {
-                sourceInformation.setCurrentLine(lineLocation);
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
                 synchronized (this) {
                     if (task != null && !task.isQuit()) {
                         return;
                     }
                     task = new SingletonTask<Void>() {
 
-                        private String text;
+                        String text;
 
                         @Override
                         protected boolean handle() {
-                            text = sourceInformation.locateLine();
+                            text = sourceInformation.locateLine(locateLine);
                             return text != null;
                         }
 
                         @Override
                         protected void whenSucceeded() {
-                            isSettingValues = true;
-                            mainArea.setText(text);
-                            isSettingValues = false;
-
-                            sourceInformation.setCurrentLine(lineLocation);
-                            updateInterface(false);
+                            loadText(text, false);
+                            selectLine(locateLine);
                         }
+
                     };
                     start(task);
                 }
@@ -290,29 +267,46 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
     @FXML
     protected void locateObject() {
+        if (locateObject < 0 || locateObject >= sourceInformation.getObjectsNumber()) {
+            popError(message("InvalidParameters"));
+            return;
+        }
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            mainArea.requestFocus();
-            mainArea.deselect();
-            int start = (int) ((objectLocation - 1) * sourceInformation.getObjectUnit());
-            mainArea.selectRange(start, start);
-            lastCursor = start;
+            selectObject(locateObject, 1);
 
         } else {
-            long pageSize = sourceInformation.getPageSize();
-            if (sourceInformation.getCurrentPageObjectStart() <= objectLocation - 1
-                    && sourceInformation.getCurrentPageObjectEnd() > objectLocation) {
-                mainArea.requestFocus();
-                mainArea.deselect();
-                int pLocation = (int) ((objectLocation - 1 - sourceInformation.getCurrentPageObjectStart())
-                        * sourceInformation.getObjectUnit());
-                mainArea.selectRange(pLocation, pLocation);
+            if (locateObject >= sourceInformation.getCurrentPageObjectStart()
+                    && locateObject < sourceInformation.getCurrentPageObjectEnd()) {
+                selectObject(locateObject, 1);
 
             } else {
-                int page = (int) ((objectLocation - 1) / pageSize + 1);
-                int pLocation = (int) ((objectLocation - 1) % pageSize);
-                sourceInformation.setCurrentPage(page);
-                lastCursor = pLocation * sourceInformation.getObjectUnit();
-                loadPage();
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
+                synchronized (this) {
+                    if (task != null && !task.isQuit()) {
+                        return;
+                    }
+                    task = new SingletonTask<Void>() {
+
+                        String text;
+
+                        @Override
+                        protected boolean handle() {
+                            text = sourceInformation.locateObject(locateObject);
+                            return text != null;
+                        }
+
+                        @Override
+                        protected void whenSucceeded() {
+                            loadText(text, false);
+                            selectObject(locateObject, 1);
+                        }
+
+                    };
+                    start(task);
+                }
+
             }
         }
     }

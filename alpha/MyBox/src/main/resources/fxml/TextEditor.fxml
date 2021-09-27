@@ -367,7 +367,7 @@ License:    Apache License Version 2.0
                         </Label>
                         <HBox fx:id="pageBox" alignment="CENTER_LEFT" minWidth="-Infinity" spacing="2.0">
                             <children>
-                                <Label text="%PageSizeCharacters" /> 
+                                <Label text="%LinesPerPage" /> 
                                 <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
                                 <Label minWidth="-Infinity" text="%Page" />
                                 <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" HBox.hgrow="NEVER" />

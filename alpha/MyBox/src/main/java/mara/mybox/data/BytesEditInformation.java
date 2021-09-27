@@ -38,7 +38,9 @@ public class BytesEditInformation extends FileEditInformation {
             if (file == null) {
                 return false;
             }
-            objectsNumber = file.length();
+            objectsNumber = 0;
+            linesNumber = 0;
+            pagesNumber = 1;
             int bufSize = FileTools.bufSize(file, 16);
             if (lineBreak == Line_Break.Width && lineBreakWidth > 0) {
                 try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
@@ -70,11 +72,13 @@ public class BytesEditInformation extends FileEditInformation {
                     linesNumber = totalLines;
                 }
             }
+            objectsNumber = file.length();
             pagesNumber = objectsNumber / pageSize;
             if (objectsNumber % pageSize > 0) {
                 pagesNumber++;
             }
             totalNumberRead = true;
+//            MyBoxLog.debug(objectsNumber + "   " + pageSize + " " + pagesNumber);
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -83,64 +87,39 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public String readPage() {
-        return readPage(currentPage);
-    }
-
-    @Override
     public String readPage(long pageNumber) {
         try {
+            if (file == null || pageSize <= 0 || pageNumber < 0) {
+                return null;
+            }
             boolean byWidth = lineBreak == Line_Break.Width && lineBreakWidth > 0;
             if (!byWidth && lineBreakValue == null) {
                 return null;
             }
-            long startPosition = pageSize * (pageNumber - 1);
-            if (file == null || pageSize <= 0 || pageNumber < 1
-                    || (objectsNumber > 0 && startPosition >= objectsNumber)) {
+            if (objectsNumber > 0 && pageSize * (pageNumber - 1) >= objectsNumber) {
                 return null;
             }
-            long pageStart = 0, pageEnd = 0, lineEnd = 1, lineStart = 1, pageIndex = 1;
+            long pageStart = 0, pageEnd = 0, lineIndex = 0, lineStart = 0, pageIndex = 0;
             String pageHex = null;
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
-                int pageLen, findLen, hexStart, hexEnd = 0;
-                long findStart = -1, findEnd = -1;
-                if (findReplace != null && findReplace.getFileRange() != null) {
-                    findStart = findReplace.getFileRange().getStart();
-                    findEnd = findReplace.getFileRange().getEnd();
-                }
-                while ((pageLen = inputStream.read(buf)) > 0) {
-                    if (pageLen < pageSize) {
-                        buf = ByteTools.subBytes(buf, 0, pageLen);
+                int bytesLen;
+                while ((bytesLen = inputStream.read(buf)) > 0) {
+                    if (bytesLen < pageSize) {
+                        buf = ByteTools.subBytes(buf, 0, bytesLen);
                     }
                     pageStart = pageEnd;
-                    pageEnd += pageLen;
+                    pageEnd += bytesLen;
                     pageHex = ByteTools.bytesToHexFormat(buf);
-                    hexStart = hexEnd;
-                    hexEnd += pageHex.length();
-                    lineStart = lineEnd;
-                    if (pageIndex == pageNumber) {
-                        if (findStart >= hexStart && findStart < hexEnd && findEnd > hexEnd) {
-                            int findSize = (int) (findEnd - hexEnd) / 3;
-                            byte[] findBuf = new byte[findSize];
-                            if ((findLen = inputStream.read(findBuf)) > 0) {
-                                if (findLen < findSize) {
-                                    findBuf = ByteTools.subBytes(findBuf, 0, findLen);
-                                }
-                                String findText = ByteTools.bytesToHexFormat(findBuf);
-                                pageHex += findText;
-                            }
-                        }
-                    }
+                    lineStart = lineIndex;
                     if (byWidth) {
-                        lineEnd += pageLen / lineBreakWidth;
+                        lineIndex += bytesLen / lineBreakWidth;
                     } else {
-                        lineEnd += FindReplaceString.count(pageHex, lineBreakValue);
+                        lineIndex += FindReplaceString.count(pageHex, lineBreakValue);
                     }
-                    if (pageIndex == pageNumber) {
+                    if (pageIndex++ == pageNumber) {
                         break;
                     }
-                    pageIndex++;
                 }
             }
             if (pageHex == null) {
@@ -150,16 +129,196 @@ public class BytesEditInformation extends FileEditInformation {
             currentPageObjectStart = pageStart;
             currentPageObjectEnd = pageEnd;
             currentPageLineStart = lineStart;
-            currentPageLineEnd = lineEnd;
-            if (findReplace != null && findReplace.getFileRange() != null) {
-                findReplace.setPageReloaded(true);
-                FindReplaceFile.bytesRange(findReplace, pageHex);
-            }
+            currentPageLineEnd = lineIndex;
             return pageHex;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
+    }
+
+    @Override
+    public String locateLine(long line) {
+        try {
+            if (file == null || line < 0) {
+                return null;
+            }
+            boolean byWidth = (lineBreak == Line_Break.Width && lineBreakWidth > 0);
+            if (!byWidth && lineBreakValue == null) {
+                return null;
+            }
+            long pageStart = 0, pageEnd = 0, lineEnd = 0, lineStart = 0, pageIndex = 0;
+            String pageText = null;
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+                byte[] buf = new byte[(int) pageSize];
+                int bufLen;
+                String pageHex;
+                while ((bufLen = inputStream.read(buf)) > 0) {
+                    if (bufLen < pageSize) {
+                        buf = ByteTools.subBytes(buf, 0, bufLen);
+                    }
+                    pageStart = pageEnd;
+                    pageEnd += bufLen;
+                    pageHex = ByteTools.bytesToHexFormat(buf);
+                    lineStart = lineEnd;
+                    if (byWidth) {
+                        lineEnd += bufLen / lineBreakWidth;
+                    } else {
+                        lineEnd += FindReplaceString.count(pageHex, lineBreakValue);
+                    }
+                    if (line >= lineStart && line < lineEnd) {
+                        pageText = pageHex;
+                        break;
+                    }
+                    pageIndex++;
+                }
+            }
+            if (pageText == null) {
+                return null;
+            }
+            currentPage = pageIndex;
+            currentPageObjectStart = pageStart;
+            currentPageObjectEnd = pageEnd;
+            currentPageLineStart = lineStart;
+            currentPageLineEnd = lineEnd;
+            return pageText;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+
+    }
+
+    @Override
+    public String locateObject(long index) {
+        try {
+            if (file == null || index < 0 || index >= objectsNumber) {
+                return null;
+            }
+            return readPage(index / pageSize);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    @Override
+    public String locateRange(LongIndex range) {
+        try {
+            if (file == null || range == null || range.start >= objectsNumber || range.start >= range.end) {
+                return null;
+            }
+            boolean byWidth = lineBreak == Line_Break.Width && lineBreakWidth > 0;
+            if (!byWidth && lineBreakValue == null) {
+                return null;
+            }
+            long pageStartByte = 0, bytesIndex = 0, lineIndex = 0, lineStart = 0, pageStartLine = 0, hexIndex = 0;
+            String bufHex = "", pageHex = null;
+            int hexLen;
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+                byte[] buf = new byte[(int) pageSize];
+                int bytesLen;
+                boolean found = false;
+                while ((bytesLen = inputStream.read(buf)) > 0) {
+                    if (bytesLen < pageSize) {
+                        buf = ByteTools.subBytes(buf, 0, bytesLen);
+                    }
+                    if (!found) {
+                        lineStart = lineIndex;
+                        pageStartByte = bytesIndex;
+                    }
+                    bytesIndex += bytesLen;
+                    bufHex = ByteTools.bytesToHexFormat(buf);
+                    hexLen = bufHex.length();
+                    hexIndex += hexLen;
+                    if (byWidth) {
+                        lineIndex += bytesLen / lineBreakWidth;
+                    } else {
+                        lineIndex += FindReplaceString.count(bufHex, lineBreakValue);
+                    }
+                    if (!found && hexIndex >= range.start) {
+                        found = true;
+                    }
+                    if (found) {
+                        int extra = (int) (hexIndex - range.end);
+                        if (extra > 0) {
+                            pageHex += bufHex.substring(0, hexLen - extra);
+                        } else {
+                            pageHex += bufHex;
+                        }
+                        if (extra >= 0) {
+                            break;
+                        }
+                    } else {
+                        pageHex = "";
+                    }
+                }
+            }
+            if (pageHex == null) {
+                return null;
+            }
+            currentPage = pageStartLine;
+            currentPageObjectStart = pageStartByte;
+            currentPageObjectEnd = bytesIndex;
+            currentPageLineStart = lineStart;
+            currentPageLineEnd = lineIndex;
+            return pageHex;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    @Override
+    public File filter(boolean recordLineNumbers) {
+        try {
+            if (file == null || filterStrings == null || filterStrings.length == 0) {
+                return file;
+            }
+            boolean lbWidth = (lineBreak == Line_Break.Width && lineBreakWidth > 0);
+            if (!lbWidth && lineBreakValue == null) {
+                return null;
+            }
+            File targetFile = TmpFileTools.getTempFile();
+            int lineEnd = 0, lineStart = 0;
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
+                byte[] buf = new byte[(int) pageSize];
+                int bufLen;
+                String pageHex;
+                while ((bufLen = inputStream.read(buf)) > 0) {
+                    if (bufLen < pageSize) {
+                        buf = ByteTools.subBytes(buf, 0, bufLen);
+                    }
+                    pageHex = ByteTools.bytesToHexFormat(buf);
+                    pageHex = ByteTools.formatHex(pageHex, lineBreak, lineBreakWidth, lineBreakValue);
+                    String[] lines = pageHex.split("\n");
+                    lineEnd = lineStart + lines.length - 1;
+                    for (int i = 0; i < lines.length; ++i) {
+                        lines[i] += " ";
+                        if (isMatchFilters(lines[i])) {
+                            if (recordLineNumbers) {
+                                String lineNumber = StringTools.fillRightBlank(lineStart + i, 15);
+                                writer.write(lineNumber + "    " + lines[i] + System.lineSeparator());
+                            } else {
+                                writer.write(lines[i] + System.lineSeparator());
+                            }
+                        }
+                    }
+                    if (lbWidth) {
+                        lineStart = lineEnd + 1;
+                    } else {
+                        lineStart = lineEnd;
+                    }
+                }
+            }
+            return targetFile;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+
     }
 
     @Override
@@ -189,7 +348,7 @@ public class BytesEditInformation extends FileEditInformation {
         try {
             if (file == null || hex == null || hex.isEmpty()
                     || sourceInfo.getFile() == null || sourceInfo.getCharset() == null
-                    || sourceInfo.getPageSize() <= 0 || pageNumber < 1) {
+                    || sourceInfo.getPageSize() <= 0 || pageNumber < 0) {
                 return false;
             }
             File targetFile = file;
@@ -200,9 +359,9 @@ public class BytesEditInformation extends FileEditInformation {
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
                 int bufSize = (int) sourceInfo.getPageSize();
                 byte[] buf = new byte[bufSize];
-                int bufLen, pageIndex = 1;
+                int bufLen, pageIndex = 0;
                 while ((bufLen = inputStream.read(buf)) > 0) {
-                    if (pageIndex == pageNumber) {
+                    if (pageIndex++ == pageNumber) {
                         outputStream.write(ByteTools.hexFormatToBytes(hex));
                     } else {
                         if (bufLen < bufSize) {
@@ -210,7 +369,6 @@ public class BytesEditInformation extends FileEditInformation {
                         }
                         outputStream.write(buf);
                     }
-                    pageIndex++;
                 }
             }
             if (sourceInfo.getFile().equals(file)) {
@@ -221,110 +379,6 @@ public class BytesEditInformation extends FileEditInformation {
             MyBoxLog.debug(e.toString());
             return false;
         }
-    }
-
-    @Override
-    public String locateLine() {
-        try {
-            if (file == null || currentLine <= 0) {
-                return null;
-            }
-            boolean byWidth = (lineBreak == Line_Break.Width && lineBreakWidth > 0);
-            if (!byWidth && lineBreakValue == null) {
-                return null;
-            }
-            long pageStart = 0, pageEnd = 0, lineEnd = 1, lineStart = 1, pageIndex = 1;
-            String pageText = null;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-                byte[] buf = new byte[(int) pageSize];
-                int bufLen;
-                String bufHex;
-                while ((bufLen = inputStream.read(buf)) > 0) {
-                    if (bufLen < pageSize) {
-                        buf = ByteTools.subBytes(buf, 0, bufLen);
-                    }
-                    pageStart = pageEnd;
-                    pageEnd += bufLen;
-                    bufHex = ByteTools.bytesToHexFormat(buf);
-                    lineStart = lineEnd;
-                    if (byWidth) {
-                        lineEnd += bufLen / lineBreakWidth;
-                    } else {
-                        lineEnd += FindReplaceString.count(bufHex, lineBreakValue);
-                    }
-                    if (currentLine >= lineStart && currentLine <= lineEnd) {
-                        pageText = bufHex;
-                        break;
-                    }
-                    pageIndex++;
-                }
-            }
-            if (pageText == null) {
-                return null;
-            }
-            currentPage = pageIndex;
-            currentPageObjectStart = pageStart;
-            currentPageObjectEnd = pageEnd;
-            currentPageLineStart = lineStart;
-            currentPageLineEnd = lineEnd;
-            return pageText;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
-
-    }
-
-    @Override
-    public File filter(boolean recordLineNumbers) {
-        try {
-            if (file == null || filterStrings == null || filterStrings.length == 0) {
-                return file;
-            }
-            boolean lbWidth = (lineBreak == Line_Break.Width && lineBreakWidth > 0);
-            if (!lbWidth && lineBreakValue == null) {
-                return null;
-            }
-            File targetFile = TmpFileTools.getTempFile();
-            int lineEnd = 1, lineStart = 1;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
-                byte[] buf = new byte[(int) pageSize];
-                int bufLen;
-                String pageText;
-                while ((bufLen = inputStream.read(buf)) > 0) {
-                    if (bufLen < pageSize) {
-                        buf = ByteTools.subBytes(buf, 0, bufLen);
-                    }
-                    pageText = ByteTools.bytesToHexFormat(buf);
-                    pageText = ByteTools.formatHex(pageText, lineBreak, lineBreakWidth, lineBreakValue);
-                    String[] lines = pageText.split("\n");
-                    lineEnd = lineStart + lines.length - 1;
-                    for (int i = 0; i < lines.length; ++i) {
-                        lines[i] += " ";
-                        if (isMatchFilters(lines[i])) {
-                            if (recordLineNumbers) {
-                                String lineNumber = StringTools.fillRightBlank(lineStart + i, 15);
-                                writer.write(lineNumber + "    " + lines[i] + System.lineSeparator());
-                            } else {
-                                writer.write(lines[i] + System.lineSeparator());
-                            }
-                        }
-                    }
-                    if (lbWidth) {
-                        lineStart = lineEnd + 1;
-                    } else {
-                        lineStart = lineEnd;
-                    }
-                }
-            }
-            return targetFile;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
-
     }
 
 }

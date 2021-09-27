@@ -304,8 +304,11 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
             if (imageChanged) {
                 controller.loadImage(imageView.getImage());
+
             } else {
-                if (controller instanceof ImageSampleController || controller instanceof ImageSplitController) {
+                if (imageInformation.getRegion() != null) {
+                    controller.loadRegion(imageInformation);
+                } else if (controller instanceof ImageSampleController || controller instanceof ImageSplitController) {
                     controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
                 } else if (imageInformation != null && imageInformation.isIsScaled()) {
                     controller.loadImage(imageView.getImage());

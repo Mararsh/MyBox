@@ -290,7 +290,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             return;
         }
         if (cols == null || cols.isEmpty()) {
-            popError(message("NoSelection"));
+            popError(message("SelectToHandle"));
             return;
         }
         if (!checkBeforeNextAction()) {

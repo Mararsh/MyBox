@@ -5,26 +5,22 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.value.UserConfig;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
  * @CreateDate 2019-3-15 14:17:47
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
         implements Callback<TableColumn<T, ImageInformation>, TableCell<T, ImageInformation>> {
 
-    protected int thumbWidth = UserConfig.getInt("ThumbnailWidth", 100);
-
     @Override
     public TableCell<T, ImageInformation> call(TableColumn<T, ImageInformation> param) {
         final ImageView imageview = new ImageView();
         imageview.setPreserveRatio(true);
-        imageview.setFitWidth(thumbWidth);
-        imageview.setFitHeight(thumbWidth);
+        imageview.setFitWidth(AppVariables.thumbnailWidth);
+        imageview.setFitHeight(AppVariables.thumbnailWidth);
         TableCell<T, ImageInformation> cell = new TableCell<T, ImageInformation>() {
             @Override
             public void updateItem(ImageInformation item, boolean empty) {
@@ -34,7 +30,7 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
                     setGraphic(null);
                     return;
                 }
-                imageview.setImage(item.loadThumbnail(thumbWidth));
+                imageview.setImage(item.loadThumbnail(AppVariables.thumbnailWidth));
                 imageview.setRotate(item.getThumbnailRotation());
                 setGraphic(imageview);
             }

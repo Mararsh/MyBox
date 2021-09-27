@@ -12,29 +12,40 @@ import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -97,7 +108,7 @@ public class HtmlEditorController extends WebAddressController {
         }
     }
 
-    protected void initTabPane() {
+    public void initTabPane() {
         try {
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
@@ -105,6 +116,10 @@ public class HtmlEditorController extends WebAddressController {
                     TextClipboardPopController.closeAll();
                 }
             });
+
+            showTabs();
+
+            NodeStyleTools.refreshStyle(thisPane);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -271,6 +286,7 @@ public class HtmlEditorController extends WebAddressController {
             MyBoxLog.error(e.toString());
         }
     }
+
 
     /*
         file
@@ -900,6 +916,239 @@ public class HtmlEditorController extends WebAddressController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    /*
+        panes
+     */
+    public void showTabs() {
+        try {
+            if (!UserConfig.getBoolean(baseName + "ShowViewTab", true)) {
+                tabPane.getTabs().remove(viewTab);
+            }
+            viewTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(baseName + "ShowViewTab", false);
+                }
+            });
+
+            if (!UserConfig.getBoolean(baseName + "ShowCodesTab", true)) {
+                tabPane.getTabs().remove(codesTab);
+            }
+            codesTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(baseName + "ShowCodesTab", false);
+                }
+            });
+
+            if (!UserConfig.getBoolean(baseName + "ShowEditorTab", true)) {
+                tabPane.getTabs().remove(editorTab);
+            }
+            editorTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(editorTab + "ShowEditorTab", false);
+                }
+            });
+
+            if (!UserConfig.getBoolean(baseName + "ShowMarkdownTab", true)) {
+                tabPane.getTabs().remove(markdownTab);
+            }
+            markdownTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(markdownTab + "ShowMarkdownTab", false);
+                }
+            });
+
+            if (!UserConfig.getBoolean(baseName + "ShowTextsTab", true)) {
+                tabPane.getTabs().remove(textsTab);
+            }
+            textsTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(textsTab + "ShowTextsTab", false);
+                }
+            });
+
+            if (backupTab != null) {
+                if (!UserConfig.getBoolean(baseName + "ShowBackupTab", true)) {
+                    tabPane.getTabs().remove(backupTab);
+                }
+                backupTab.setOnClosed(new EventHandler<Event>() {
+                    @Override
+                    public void handle(Event event) {
+                        UserConfig.setBoolean(baseName + "ShowBackupTab", false);
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void popPanesMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            List<MenuItem> items = makePanesMenu(mouseEvent);
+            popMenu.getItems().addAll(items);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public List<MenuItem> makePanesMenu(MouseEvent mouseEvent) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            CheckMenuItem viewMenu = new CheckMenuItem(message("View"));
+            viewMenu.setSelected(tabPane.getTabs().contains(viewTab));
+            viewMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowViewTab", viewMenu.isSelected());
+                    if (viewMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(viewTab)) {
+                            tabPane.getTabs().add(viewTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(viewTab)) {
+                            tabPane.getTabs().remove(viewTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(thisPane);
+                }
+            });
+            items.add(viewMenu);
+
+            CheckMenuItem codesMenu = new CheckMenuItem(message("HtmlCodes"));
+            codesMenu.setSelected(tabPane.getTabs().contains(codesTab));
+            codesMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowCodesTab", codesMenu.isSelected());
+                    if (codesMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(codesTab)) {
+                            tabPane.getTabs().add(codesTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(codesTab)) {
+                            tabPane.getTabs().remove(codesTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(thisPane);
+                }
+            });
+            items.add(codesMenu);
+
+            CheckMenuItem editorMenu = new CheckMenuItem(message("RichText"));
+            editorMenu.setSelected(tabPane.getTabs().contains(editorTab));
+            editorMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowEditorTab", editorMenu.isSelected());
+                    if (editorMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(editorTab)) {
+                            tabPane.getTabs().add(editorTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(editorTab)) {
+                            tabPane.getTabs().remove(editorTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(thisPane);
+                }
+            });
+            items.add(editorMenu);
+
+            CheckMenuItem mdMenu = new CheckMenuItem("Markdown");
+            mdMenu.setSelected(tabPane.getTabs().contains(markdownTab));
+            mdMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowMarkdownTab", mdMenu.isSelected());
+                    if (mdMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(markdownTab)) {
+                            tabPane.getTabs().add(markdownTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(markdownTab)) {
+                            tabPane.getTabs().remove(markdownTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(thisPane);
+                }
+            });
+            items.add(mdMenu);
+
+            CheckMenuItem textsMenu = new CheckMenuItem(message("Texts"));
+            textsMenu.setSelected(tabPane.getTabs().contains(textsTab));
+            textsMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowTextsTab", textsMenu.isSelected());
+                    if (textsMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(textsTab)) {
+                            tabPane.getTabs().add(textsTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(textsTab)) {
+                            tabPane.getTabs().remove(textsTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(thisPane);
+                }
+            });
+            items.add(textsMenu);
+
+            if (backupTab != null) {
+                CheckMenuItem backupMenu = new CheckMenuItem(message("Backup"));
+                backupMenu.setSelected(tabPane.getTabs().contains(backupTab));
+                backupMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean(baseName + "ShowBackupTab", backupMenu.isSelected());
+                        if (backupMenu.isSelected()) {
+                            if (!tabPane.getTabs().contains(backupTab)) {
+                                tabPane.getTabs().add(backupTab);
+                            }
+                        } else {
+                            if (tabPane.getTabs().contains(backupTab)) {
+                                tabPane.getTabs().remove(backupTab);
+                            }
+                        }
+                        NodeStyleTools.refreshStyle(thisPane);
+                    }
+                });
+                items.add(backupMenu);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+        return items;
     }
 
     @Override

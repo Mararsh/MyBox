@@ -37,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.MenuController;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -435,6 +436,60 @@ public class PopTools {
                 nodes.add(button);
             }
             controller.addFlowPane(nodes);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name) {
+        try {
+            int max = UserConfig.getInt(name + "MaxSaved", 20);
+
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            List<Node> setButtons = new ArrayList<>();
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                }
+            });
+            setButtons.add(clearButton);
+
+            Button maxButton = new Button(message("MaxSaved"));
+            maxButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    String value = PopTools.askValue(parent.getTitle(), null, message("MaxSaved"), max + "");
+                    if (value == null) {
+                        return;
+                    }
+                    try {
+                        int v = Integer.parseInt(value);
+                        UserConfig.setInt(name + "MaxSaved", v);
+                    } catch (Exception e) {
+                        MyBoxLog.error(e);
+                    }
+                }
+            });
+            setButtons.add(maxButton);
+            controller.addFlowPane(setButtons);
+
+            List<String> values = TableStringValues.max(name, max);
+            List<Node> valueButtons = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.setText(value);
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

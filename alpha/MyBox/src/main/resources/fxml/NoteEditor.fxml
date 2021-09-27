@@ -20,14 +20,27 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NoteEditorController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NoteEditorController">
     <children>
-        <Label fx:id="notebookLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true">
-            <padding>
-                <Insets right="1.0" />
-            </padding>
-        </Label>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+              <Label fx:id="notebookLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">
+                  <padding>
+                      <Insets right="1.0" />
+                  </padding>
+              </Label>
+            <Button fx:id="panesMenuButton" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPanes.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
             <children>
                 <Label minHeight="-Infinity" text="%ID" wrapText="true">
                     <HBox.margin>
@@ -39,19 +52,19 @@ License:    Apache License Version 2.0
                 <TextField fx:id="timeInput" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+        <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
             <children>
                 <Label minHeight="-Infinity" text="%Title" wrapText="true" />
                 <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <children>
-                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
                     <tabs>
-                        <Tab fx:id="viewTab" closable="false" text="%View">
+                        <Tab fx:id="viewTab" text="%View">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <FlowPane alignment="TOP_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0">
                                             <children>
@@ -96,14 +109,14 @@ License:    Apache License Version 2.0
                                         <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </padding>
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="codesTab" closable="false" text="%HtmlCodes">
+                        <Tab fx:id="codesTab" text="%HtmlCodes">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <FlowPane alignment="TOP_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
                                             <children>
@@ -159,16 +172,16 @@ License:    Apache License Version 2.0
                                         <Label fx:id="codesLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                     </children>
                                     <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </padding>
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="editorTab" closable="false" text="%RichText">
+                        <Tab fx:id="editorTab" text="%RichText">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <FlowPane alignment="TOP_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0">
+                                        <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                             <children>
                                                 <Button fx:id="popButton2" mnemonicParsing="false" onAction="#popAction">
                                                     <graphic>
@@ -201,10 +214,13 @@ License:    Apache License Version 2.0
                                         </FlowPane>
                                         <fx:include fx:id="editor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlEditor.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="markdownTab" closable="false" text="Markdown">
+                        <Tab fx:id="markdownTab" text="Markdown">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
@@ -267,7 +283,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="textsTab" closable="false" text="%Texts">
+                        <Tab fx:id="textsTab" text="%Texts">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
@@ -334,51 +350,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="styleTab" closable="false" text="%Style">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding>
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popDefaultStyle">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconStyle.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="clearStyleButton" mnemonicParsing="false" onAction="#clearStyle">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconClear.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="okStyleButton" layoutX="576.0" layoutY="10.0" mnemonicParsing="false" onAction="#setStyle">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconOK.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
-                                        <TextArea fx:id="styleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                                    </children>
-                                </VBox>
-                            </content>
-                        </Tab>
-                        <Tab fx:id="tagsTab" closable="false" text="%Tags">
+                        <Tab fx:id="tagsTab" text="%Tags">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
@@ -440,12 +412,56 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
+                        <Tab fx:id="styleTab" text="%Style">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popDefaultStyle">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconStyle.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="clearStyleButton" mnemonicParsing="false" onAction="#clearStyle">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="okStyleButton" layoutX="576.0" layoutY="10.0" mnemonicParsing="false" onAction="#setStyle">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                        <TextArea fx:id="styleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
                     </tabs>
                 </TabPane>
             </children>
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </padding>
         </VBox>
     </children>
+   <padding>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </padding>
 </VBox>

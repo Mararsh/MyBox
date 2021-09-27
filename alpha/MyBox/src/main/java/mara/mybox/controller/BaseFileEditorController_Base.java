@@ -26,19 +26,18 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 public abstract class BaseFileEditorController_Base extends BaseController {
 
     protected Edit_Type editType;
-    protected long lineLocation, objectLocation;
     protected SimpleBooleanProperty fileChanged;
     protected FileEditInformation sourceInformation;
     protected String filterConditionsString = "";
     protected Line_Break lineBreak;
-    protected int defaultPageSize, lineBreakWidth, lastCursor, lastCaret, currentLine;
-    protected double lastScrollTop, lastScrollLeft;
+    protected int defaultPageSize, lineBreakWidth;
+    protected long locateLine, locateObject;  // 0-based
     protected String lineBreakValue;
     protected Timer autoSaveTimer;
 
     protected enum Action {
-        None, FindFirst, FindNext, FindPrevious, FindLast, Replace, ReplaceAll,
-        Filter, SetPageSize, NextPage, PreviousPage, FirstPage, LastPage, GoPage
+        OpenFile, LoadPage, FindReplace, FindFirst, FindNext, FindPrevious, FindLast, Replace, ReplaceAll,
+        LocateLine, LocateObject, Unknown
     }
 
     @FXML
@@ -73,7 +72,6 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     protected ControlFileBackup backupController;
 
     public BaseFileEditorController_Base() {
-        defaultPageSize = 50000;
     }
 
     protected abstract void updateInterface(boolean changed);

@@ -103,7 +103,7 @@ public class TextTools {
             }
             String setName;
             info.setWithBom(false);
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()))) {
                 byte[] header = new byte[4];
                 int bufLen;
                 if ((bufLen = inputStream.read(header, 0, 4)) > 0) {
@@ -191,8 +191,8 @@ public class TextTools {
                 return null;
             }
             StringBuilder text = new StringBuilder();
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()));
-                     InputStreamReader reader = new InputStreamReader(inputStream, info.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()));
+                    InputStreamReader reader = new InputStreamReader(inputStream, info.getCharset())) {
                 if (info.isWithBom()) {
                     inputStream.skip(bomSize(info.getCharset().name()));
                 }
@@ -210,8 +210,8 @@ public class TextTools {
     }
 
     public static boolean writeText(FileEditInformation info, String text) {
-        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
-                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
+                OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
             if (info.isWithBom()) {
                 byte[] bytes = bomBytes(info.getCharset().name());
                 outputStream.write(bytes);
@@ -233,10 +233,10 @@ public class TextTools {
                     || target.getCharset() == null) {
                 return false;
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
-                     InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                 if (source.isWithBom()) {
                     inputStream.skip(bomSize(source.getCharset().name()));
                 }
@@ -274,10 +274,10 @@ public class TextTools {
             if (source.getLineBreak() == target.getLineBreak()) {
                 return FileCopyTools.copyFile(source.getFile(), target.getFile(), true, true);
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
-                     InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                 char[] buf = new char[4096];
                 int count;
                 while ((count = reader.read(buf)) > 0) {
@@ -332,8 +332,8 @@ public class TextTools {
                 return null;
             }
             List<File> files = new ArrayList<>();
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
-                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, source.getCharset()))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, source.getCharset()))) {
                 if (source.isWithBom()) {
                     inputStream.skip(bomSize(source.getCharset().name()));
                 }
@@ -343,8 +343,8 @@ public class TextTools {
                         int linesNumber = 0;
                         String line = null;
                         File file = new File(FileNameTools.appendName(target.getFile().getAbsolutePath(), "-" + (++fileIndex)));
-                        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                                OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                             if (target.isWithBom()) {
                                 byte[] bytes = bomBytes(target.getCharset().name());
                                 outputStream.write(bytes);
@@ -369,8 +369,8 @@ public class TextTools {
                     }
                 } else {
                     File file = target.getFile();
-                    try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                             OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                    try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                            OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                         if (target.isWithBom()) {
                             byte[] bytes = bomBytes(target.getCharset().name());
                             outputStream.write(bytes);
@@ -398,8 +398,7 @@ public class TextTools {
         }
     }
 
-    public static IndexRange hexIndex(String text, Charset charset,
-            String lineBreakValue, IndexRange textRange) {
+    public static IndexRange hexIndex(String text, Charset charset, String lineBreakValue, IndexRange textRange) {
         int hIndex = 0;
         int hBegin = 0;
         int hEnd = 0;
@@ -433,7 +432,7 @@ public class TextTools {
     }
 
     public static Line_Break checkLineBreak(File file) {
-        try ( InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)))) {
+        try (InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)))) {
             int c;
             boolean cr = false;
             while ((c = reader.read()) > 0) {

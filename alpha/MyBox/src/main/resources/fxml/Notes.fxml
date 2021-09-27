@@ -11,7 +11,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -32,35 +31,35 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
                 <SplitPane fx:id="splitPane" dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
-                        <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="611.0" prefViewportWidth="574.0">
+                        <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
                                 <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <items>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                             <children>
                                                 <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                                     <tabs>
                                                         <Tab text="%Notebooks">
                                                             <content>
-                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                                     <children>
                                                                         <fx:include fx:id="notebooks" source="ControlNotebookSelector.fxml" />
                                                                     </children>
                                                                     <padding>
-                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                                     </padding>
                                                                 </VBox>
                                                             </content>
                                                         </Tab>
                                                         <Tab text="%Tags">
                                                             <content>
-                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                     <children>
-                                                                        <FlowPane fx:id="tagsPane" alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                        <FlowPane fx:id="tagsPane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <Button fx:id="refreshTagsButton" mnemonicParsing="false" onAction="#refreshTags">
                                                                                     <graphic>
@@ -136,32 +135,32 @@ License:    Apache License Version 2.0
                                                                                 </Button>
                                                                             </children>
                                                                         </FlowPane> 
-                                                                        <ListView fx:id="tagsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                                        <Label minHeight="-Infinity" text="%TagsQueryComments" wrapText="true" />
+                                                                        <fx:include fx:id="tagsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlListCheckBox.fxml" VBox.vgrow="ALWAYS" />
+                                                                        <Label minHeight="-Infinity" text="%NotesTagsComments" wrapText="true" />
                                                                     </children>
                                                                     <padding>
-                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                                     </padding>
                                                                 </VBox>
                                                             </content>
                                                         </Tab>
                                                         <Tab text="%Time">
                                                             <content>
-                                                                <VBox fx:id="timesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                <VBox fx:id="timesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                     <children>
                                                                         <fx:include fx:id="time" source="ControlTimeTree.fxml" />
                                                                     </children>
                                                                     <padding>
-                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                                     </padding>
                                                                 </VBox>
                                                             </content>
                                                         </Tab>
                                                         <Tab text="%Find">
                                                             <content>
-                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                     <children>
-                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <RadioButton fx:id="titleRadio" mnemonicParsing="false" selected="true" text="%Title">
                                                                                     <toggleGroup>
@@ -171,9 +170,9 @@ License:    Apache License Version 2.0
                                                                                 <RadioButton fx:id="contentsRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Contents" toggleGroup="$searchGroup" />
                                                                             </children>
                                                                         </HBox>
-                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                                          <Label minHeight="-Infinity" text="%Include" wrapText="true" />
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                                             <children>
-                                                                                <Label minHeight="-Infinity" text="%Include" wrapText="true" />
                                                                                 <fx:include fx:id="search" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
                                                                                 <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#search">
                                                                                     <graphic>
@@ -189,7 +188,7 @@ License:    Apache License Version 2.0
                                                                         <Label minHeight="-Infinity" text="%SeparateBySpace" wrapText="true" />
                                                                     </children>
                                                                     <padding>
-                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                                     </padding>
                                                                 </VBox>
                                                             </content>
@@ -197,13 +196,10 @@ License:    Apache License Version 2.0
                                                     </tabs>
                                                 </TabPane>
                                             </children>
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                            </padding>
                                         </VBox>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>
-                                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                     <children> 
                                                         <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="2000.0" vgap="5.0">
                                                             <children>
@@ -270,9 +266,9 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </children>
                                                 </HBox>
-                                                <VBox fx:id="notesConditionBox" spacing="5.0" VBox.vgrow="NEVER">
+                                                <VBox fx:id="notesConditionBox" spacing="2.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <FlowPane fx:id="namesPane" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="5.0" HBox.hgrow="ALWAYS" />
+                                                        <FlowPane fx:id="namesPane" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0" HBox.hgrow="ALWAYS" />
                                                         <CheckBox fx:id="subCheck" mnemonicParsing="false" text="%IncludeSubNodes" />
                                                         <Label fx:id="conditionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
@@ -284,9 +280,9 @@ License:    Apache License Version 2.0
                                                         <TableColumn fx:id="timeColumn" prefWidth="200.0" text="%UpdateTime" />
                                                     </columns>
                                                 </TableView>
-                                                <HBox fx:id="paginationBox" alignment="TOP_RIGHT" spacing="5.0">
+                                                <HBox fx:id="paginationBox" alignment="TOP_RIGHT" spacing="2.0">
                                                     <children>
-                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" HBox.hgrow="ALWAYS">
                                                             <children>
                                                                 <Label fx:id="dataSizeLabel" />
                                                                 <Label fx:id="selectedLabel" />
@@ -330,7 +326,7 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                                <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                                     <children>
                                                         <Label text="%PageSize" />
                                                         <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
@@ -348,32 +344,31 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" />
                                             </children>
                                             <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                             </padding>
                                         </VBox>
                                     </items>
                                 </SplitPane>
                             </content>
                         </ScrollPane>
-                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="611.0" prefViewportWidth="252.0">
+                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0">
                                             <children>
                                                 <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                                     </image>
                                                 </ImageView>
-                                    <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconTips.png" />
-                                       </image>
-                                    </ImageView>
+                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconTips.png" />
+                                                    </image>
+                                                </ImageView>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="addNoteButton" mnemonicParsing="false" onAction="#addNote">
                                                     <graphic>
@@ -413,10 +408,10 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="noteEditor" source="NoteEditor.fxml" />
+                                        <fx:include fx:id="noteEditor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="NoteEditor.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </padding>
                                 </VBox>
                             </content>
@@ -428,7 +423,7 @@ License:    Apache License Version 2.0
                 <Insets />
             </BorderPane.margin>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
             </padding>
         </VBox>
     </center>

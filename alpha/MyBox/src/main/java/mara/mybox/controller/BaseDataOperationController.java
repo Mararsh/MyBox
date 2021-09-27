@@ -63,7 +63,7 @@ public abstract class BaseDataOperationController extends BaseController {
                     rowSelector.setValue(row + "");
                 }
                 if (rowsListController != null) {
-                    rowsListController.selectIndex(Arrays.asList(row));
+                    rowsListController.setCheckIndices(Arrays.asList(row));
                 }
             }
 
@@ -75,7 +75,7 @@ public abstract class BaseDataOperationController extends BaseController {
                     colSelector.setValue(sheetController.columns.get(col).getName());
                 }
                 if (colsListController != null) {
-                    colsListController.selectIndex(Arrays.asList(col));
+                    colsListController.setCheckIndices(Arrays.asList(col));
                 }
             }
 
@@ -189,7 +189,7 @@ public abstract class BaseDataOperationController extends BaseController {
     }
 
     public List<Integer> selectedCols() {
-        return colsListController.getSelectedIndex();
+        return colsListController.checkedIndices();
     }
 
     public List<Integer> cols() {
@@ -205,7 +205,7 @@ public abstract class BaseDataOperationController extends BaseController {
     }
 
     public List<Integer> selectedRows() {
-        return rowsListController.getSelectedIndex();
+        return rowsListController.checkedIndices();
     }
 
     public List<Integer> rows() {

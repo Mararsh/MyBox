@@ -101,14 +101,14 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         controller.setParameters((BaseImageController) this, imageInfo);
     }
 
-    public void loadImage(File sourceFile, ImageInformation imageInformation) {
-        if (imageInformation == null) {
-            loadImageFile(sourceFile);
+    public void loadImage(File file, ImageInformation info) {
+        if (info == null) {
+            loadImageFile(file);
             return;
         }
-        boolean exist = this.sourceFile != null || image != null;
-        this.sourceFile = sourceFile;
-        this.imageInformation = imageInformation;
+        boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
+        sourceFile = file;
+        imageInformation = info;
         synchronized (this) {
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
@@ -117,7 +117,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
                 @Override
                 protected boolean handle() {
-                    image = imageInformation.loadThumbnail(loadWidth);
+                    image = info.loadThumbnail(loadWidth);
                     return image != null;
                 }
 
@@ -132,12 +132,47 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
     }
 
-    public void loadImageInfo(ImageInformation imageInformation) {
-        if (imageInformation == null) {
+    public void loadImageInfo(ImageInformation info) {
+        if (info == null) {
             loadImageFile(sourceFile);
             return;
         }
-        loadImage(imageInformation.getFile(), imageInformation);
+        if (info.getRegion() != null) {
+            loadRegion(info);
+            return;
+        }
+        loadImage(info.getFile(), info);
+    }
+
+    public void loadRegion(ImageInformation info) {
+        if (info == null) {
+            loadImageFile(sourceFile);
+            return;
+        }
+        if (info.getRegion() == null) {
+            loadImageInfo(info);
+            return;
+        }
+        synchronized (this) {
+            if (loadTask != null && !loadTask.isQuit()) {
+                return;
+            }
+            loadTask = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    image = info.loadThumbnail(loadWidth);
+                    return image != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    loadImage(image);
+                }
+
+            };
+            loadingController = start(loadTask);
+        }
     }
 
     public void loadImage(Image inImage) {

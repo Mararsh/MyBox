@@ -348,7 +348,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
     @Override
     public void deleteRows(List<Integer> rows) {
         if (rows == null || rows.isEmpty()) {
-            popError(message("NoSelection"));
+            popError(message("SelectToHandle"));
             return;
         }
         if (rowsCheck == null || columns == null || columns.isEmpty()) {
@@ -395,7 +395,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
     @Override
     public void deleteCols(List<Integer> cols) {
         if (cols == null || cols.isEmpty() || columns == null || columns.isEmpty()) {
-            popError(message("NoSelection"));
+            popError(message("SelectToHandle"));
             return;
         }
         if (autoNameCheck.isSelected()) {

@@ -71,53 +71,53 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </FlowPane>
-                                          <CheckBox fx:id="closeRightPaneCheck" mnemonicParsing="false" text="%CloseRightPane" />
-                                          <Separator prefWidth="200.0" />
+                                                        <CheckBox fx:id="closeRightPaneCheck" mnemonicParsing="false" text="%CloseRightPane" />
+                                                        <Separator prefWidth="200.0" />
                                                         <Label fx:id="fileLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                              <TitledPane fx:id="formatPane" maxWidth="1.7976931348623157E308" text="%Format">
-                                 <content>
-                                    <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                       <children>
-                                                      <VBox spacing="2.0">
-                                                          <children>
-                                                              <FlowPane hgap="2.0" vgap="2.0">
-                                                                  <children>
-                                                                      <RadioButton fx:id="lbWidthRadio" mnemonicParsing="false" selected="true" text="%BytesNumber">
-                                                                          <toggleGroup>
-                                                                              <ToggleGroup fx:id="lineBreakGroup" />
-                                                                          </toggleGroup>
-                                                                      </RadioButton>
-                                                                      <TextField fx:id="lbWidthInput" prefWidth="80.0" text="30" />
-                                                                  </children>
-                                                              </FlowPane>
-                                                              <RadioButton fx:id="lbLFRadio" mnemonicParsing="false" text="%LFHex" toggleGroup="$lineBreakGroup" />
-                                                              <RadioButton fx:id="lbCRRadio" mnemonicParsing="false" text="%CRHex" toggleGroup="$lineBreakGroup" />
-                                                              <RadioButton fx:id="lbCRLFRsadio" mnemonicParsing="false" text="%CRLFHex" toggleGroup="$lineBreakGroup" />
-                                                              <FlowPane hgap="2.0" layoutX="32.0" layoutY="32.0" vgap="2.0">
-                                                                  <children>
-                                                                      <RadioButton fx:id="bytesRadio" mnemonicParsing="false" text="%BytesHex" toggleGroup="$lineBreakGroup" />
-                                                                      <TextField fx:id="lbBytesInput" prefWidth="150.0" text="0D 0A" />
-                                                                  </children>
-                                                              </FlowPane>
-                                                          </children>
-                                                      </VBox>
-                                          <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconRefresh.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
+                                        <TitledPane fx:id="formatPane" maxWidth="1.7976931348623157E308" text="%Format">
+                                            <content>
+                                                <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                    <children>
+                                                        <VBox spacing="2.0">
+                                                            <children>
+                                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                                    <children>
+                                                                        <RadioButton fx:id="lbWidthRadio" mnemonicParsing="false" selected="true" text="%BytesNumber">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="lineBreakGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <TextField fx:id="lbWidthInput" prefWidth="80.0" text="30" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <RadioButton fx:id="lbLFRadio" mnemonicParsing="false" text="%LFHex" toggleGroup="$lineBreakGroup" />
+                                                                <RadioButton fx:id="lbCRRadio" mnemonicParsing="false" text="%CRHex" toggleGroup="$lineBreakGroup" />
+                                                                <RadioButton fx:id="lbCRLFRsadio" mnemonicParsing="false" text="%CRLFHex" toggleGroup="$lineBreakGroup" />
+                                                                <FlowPane hgap="2.0" layoutX="32.0" layoutY="32.0" vgap="2.0">
+                                                                    <children>
+                                                                        <RadioButton fx:id="bytesRadio" mnemonicParsing="false" text="%BytesHex" toggleGroup="$lineBreakGroup" />
+                                                                        <TextField fx:id="lbBytesInput" prefWidth="150.0" text="0D 0A" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                            </children>
+                                                        </VBox>
+                                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
                                         <TitledPane fx:id="savePane" expanded="false" text="%Save">
                                             <content>
                                                 <VBox spacing="2.0">
@@ -126,8 +126,8 @@ License:    Apache License Version 2.0
                                                         <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <CheckBox fx:id="autoSaveCheck" layoutX="32.0" layoutY="32.0" mnemonicParsing="false" selected="true" text="%AutoSave" />
-                                                                  <Label text="%IntervalSeconds" />
-                                                                  <fx:include fx:id="autoSaveDuration" source="ControlTimeLength.fxml" />
+                                                                <Label text="%IntervalSeconds" />
+                                                                <fx:include fx:id="autoSaveDuration" source="ControlTimeLength.fxml" />
                                                             </children>
                                                         </VBox>
                                                         <!--                                          <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
@@ -307,19 +307,19 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </children>
                                 </HBox>
-                                  <AnchorPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                      <children>
-                                          <TextArea fx:id="lineArea" maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                          <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%EditHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                      </children>
-                           <VBox.margin>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </VBox.margin>
-                                  </AnchorPane>
+                                <AnchorPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <TextArea fx:id="lineArea" maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%EditHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                </AnchorPane>
                             </children>
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
                         </VBox>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
@@ -351,9 +351,9 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <TextArea fx:id="pairArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     </children>
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -369,7 +369,7 @@ License:    Apache License Version 2.0
                         </Label>
                         <HBox fx:id="pageBox" alignment="CENTER_LEFT" minWidth="-Infinity" spacing="2.0">
                             <children>
-                                <Label text="%PageSizeBytes" /> 
+                                <Label text="%BytesPerPage" /> 
                                 <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
                                 <Label minWidth="-Infinity" text="%Page" />
                                 <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" HBox.hgrow="NEVER" />

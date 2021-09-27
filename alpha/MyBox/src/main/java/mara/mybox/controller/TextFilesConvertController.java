@@ -18,12 +18,10 @@ import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -46,7 +44,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
     protected CheckBox targetBomCheck;
 
     public TextFilesConvertController() {
-        baseTitle = Languages.message("TextConvertSplit");
+        baseTitle = message("TextConvertSplit");
 
         sourceExtensionFilter = FileFilters.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -70,7 +68,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
+            NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(message("BOMcomments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -141,18 +139,18 @@ public class TextFilesConvertController extends BaseBatchFileController {
         checkLineBreak();
 
         maxLines = UserConfig.getInt(baseName + "LinesNumber", 1000);
-        splitSelector.getItems().addAll(Arrays.asList(Languages.message("NotSplit"), "1000", "2000", "500", "1500", "3000", "5000", "10000"
+        splitSelector.getItems().addAll(Arrays.asList(message("NotSplit"), "1000", "2000", "500", "1500", "3000", "5000", "10000"
         ));
         if (maxLines > 0) {
             splitSelector.setValue(maxLines + "");
         } else {
-            splitSelector.setValue(Languages.message("NotSplit"));
+            splitSelector.setValue(message("NotSplit"));
         }
         splitSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
             if (newValue == null || newValue.isEmpty()) {
                 return;
             }
-            if (Languages.message("NotSplit").equals(newValue)) {
+            if (message("NotSplit").equals(newValue)) {
                 maxLines = -1;
                 ValidationTools.setEditorNormal(splitSelector);
                 UserConfig.setInt(baseName + "LinesNumber", -1);
@@ -175,7 +173,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
 
     protected void checkSourceEncoding() {
         RadioButton selected = (RadioButton) sourceEncodingGroup.getSelectedToggle();
-        if (Languages.message("DetermainAutomatically").equals(selected.getText())) {
+        if (message("DetermainAutomatically").equals(selected.getText())) {
             sourceEncodingAutoDetermine = true;
             sourceEncodingBox.setDisable(true);
         } else {
@@ -187,7 +185,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
 
     protected void checkTargetEncoding() {
         RadioButton selected = (RadioButton) targetEncodingGroup.getSelectedToggle();
-        if (Languages.message("SameAsSourceFiles").equals(selected.getText())) {
+        if (message("SameAsSourceFiles").equals(selected.getText())) {
             sameEncoding = true;
             targetEncodingBox.setDisable(true);
         } else {
@@ -200,13 +198,13 @@ public class TextFilesConvertController extends BaseBatchFileController {
     protected void checkLineBreak() {
         RadioButton selected = (RadioButton) lbGroup.getSelectedToggle();
         sameBreak = false;
-        if (Languages.message("SameAsSourceFiles").equals(selected.getText())) {
+        if (message("SameAsSourceFiles").equals(selected.getText())) {
             sameBreak = true;;
-        } else if (Languages.message("LF").equals(selected.getText())) {
+        } else if (message("LF").equals(selected.getText())) {
             targetInformation.setLineBreak(FileEditInformation.Line_Break.LF);
-        } else if (Languages.message("CR").equals(selected.getText())) {
+        } else if (message("CR").equals(selected.getText())) {
             targetInformation.setLineBreak(FileEditInformation.Line_Break.CR);
-        } else if (Languages.message("CRLF").equals(selected.getText())) {
+        } else if (message("CRLF").equals(selected.getText())) {
             targetInformation.setLineBreak(FileEditInformation.Line_Break.CRLF);
         }
         if (!sameBreak) {
@@ -219,7 +217,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
             sourceInformation.setFile(srcFile);
             sourceInformation.setLineBreak(TextTools.checkLineBreak(srcFile));
@@ -227,7 +225,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
             if (sourceEncodingAutoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInformation);
                 if (!ok || sourceInformation == null) {
-                    return Languages.message("Failed");
+                    return message("Failed");
                 }
             }
             targetInformation.setFile(target);
@@ -243,13 +241,13 @@ public class TextFilesConvertController extends BaseBatchFileController {
             List<File> files = TextTools.convert(sourceInformation, targetInformation, maxLines);
             if (files != null && !files.isEmpty()) {
                 targetFileGenerated(files);
-                return Languages.message("Successful");
+                return message("Successful");
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

@@ -331,7 +331,7 @@ public class FileUnarchiveController extends FilesTreeController {
         selected = new ArrayList();
         checkSelection(filesTreeView.getRoot());
         if (selected.isEmpty()) {
-            popError(Languages.message("NoSelection"));
+            popError(Languages.message("SelectToHandle"));
             return;
         }
         charsetIncorrect = false;

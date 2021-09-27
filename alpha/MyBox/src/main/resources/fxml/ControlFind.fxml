@@ -27,11 +27,11 @@ License:    Apache License Version 2.0
                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                             <children>
                                 <Label text="%Find" />
-                                <Button fx:id="clearFindButton" mnemonicParsing="false" onAction="#clearFind">
+                                <Button fx:id="historyFindButton" layoutX="91.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popFindHistories">
                                     <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                <Image url="@../buttons/Red/iconHistory.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

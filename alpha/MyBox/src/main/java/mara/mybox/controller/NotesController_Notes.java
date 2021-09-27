@@ -1,20 +1,18 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Region;
@@ -25,28 +23,33 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2021-8-11
  * @License Apache License Version 2.0
  */
-public class NotesController_Notes extends NotesController_Notebooks {
+public abstract class NotesController_Notes extends NotesController_Tags {
 
-    @FXML
-    protected TableColumn<Note, Long> ntidColumn;
-    @FXML
-    protected TableColumn<Note, String> titleColumn;
-    @FXML
-    protected TableColumn<Note, Date> timeColumn;
-    @FXML
-    protected Button refreshNotesButton, clearNotesButton, deleteNotesButton, moveDataNotesButton, copyNotesButton,
-            addBookNoteButton, addNoteButton, queryTagsButton, deleteTagsButton, renameTagButton,
-            refreshTimesButton, queryTimesButton, refreshTagsButton;
-    @FXML
-    protected CheckBox subCheck;
-    @FXML
-    protected Label conditionLabel;
+    protected void initNotes() {
+        try {
+            noteEditorController.setParameters((NotesController) this);
+
+            subCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
+            subCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
+                    if (notebooksController.selectedNode != null) {
+                        loadTableData();
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
     @Override
     protected void initColumns() {
@@ -343,6 +346,27 @@ public class NotesController_Notes extends NotesController_Notebooks {
             makeConditionPane();
         }
         noteEditorController.bookChanged(book);
+    }
+
+    @FXML
+    protected void addNote() {
+        noteEditorController.addNote();
+    }
+
+    @FXML
+    protected void copyNote() {
+        noteEditorController.copyNote();
+    }
+
+    @FXML
+    protected void recoverNote() {
+        noteEditorController.recoverNote();
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        noteEditorController.saveAction();
     }
 
 }

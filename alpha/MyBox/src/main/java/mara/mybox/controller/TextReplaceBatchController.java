@@ -10,13 +10,10 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -31,7 +28,7 @@ public class TextReplaceBatchController extends BaseBatchFileController {
     protected TextReplaceBatchOptions optionsController;
 
     public TextReplaceBatchController() {
-        baseTitle = Languages.message("TextReplaceBatch");
+        baseTitle = message("TextReplaceBatch");
     }
 
     @Override
@@ -56,14 +53,12 @@ public class TextReplaceBatchController extends BaseBatchFileController {
         try {
             String findString = optionsController.findArea.getText();
             if (findString.isEmpty()) {
-                popError(Languages.message("EmptyValue"));
+                popError(message("EmptyValue"));
                 return false;
             }
             String replaceString = optionsController.replaceArea.getText();
 
-            replace = new FindReplaceFile()
-                    .setMultiplePages(true)
-                    .setPosition(0);
+            replace = new FindReplaceFile().setPosition(0);
             replace.setOperation(FindReplaceString.Operation.ReplaceAll)
                     .setFindString(findString)
                     .setAnchor(0)
@@ -94,32 +89,33 @@ public class TextReplaceBatchController extends BaseBatchFileController {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
             File tmpFile = TmpFileTools.getTempFile();
             Files.copy(srcFile, tmpFile);
             TextEditInformation fileInfo = new TextEditInformation(tmpFile);
             if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
             fileInfo.setLineBreak(TextTools.checkLineBreak(srcFile));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
+            fileInfo.setPagesNumber(2);
             fileInfo.setFindReplace(replace);
             replace.setFileInfo(fileInfo);
 
             if (!replace.file() || !tmpFile.exists()) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
             if (FileTools.rename(tmpFile, target)) {
                 targetFileGenerated(target);
-                return MessageFormat.format(Languages.message("ReplaceAllOk"), replace.getCount());
+                return MessageFormat.format(message("ReplaceAllOk"), replace.getCount());
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

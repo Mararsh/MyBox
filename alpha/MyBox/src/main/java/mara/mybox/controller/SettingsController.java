@@ -34,8 +34,6 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -45,11 +43,8 @@ import static mara.mybox.fxml.WindowTools.styleAll;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -149,7 +144,7 @@ public class SettingsController extends BaseController {
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
 
-            thumbnailWidthInput.setText(UserConfig.getInt("ThumbnailWidth", 100) + "");
+            thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
 
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
@@ -999,6 +994,7 @@ public class SettingsController extends BaseController {
                         int v = Integer.valueOf(thumbnailWidthInput.getText());
                         if (v > 0) {
                             UserConfig.setInt("ThumbnailWidth", v);
+                            AppVariables.thumbnailWidth = v;
                             thumbnailWidthInput.setStyle(null);
                             popSuccessful();
                         } else {

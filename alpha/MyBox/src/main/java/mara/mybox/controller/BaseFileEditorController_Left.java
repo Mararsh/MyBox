@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Toggle;
+import mara.mybox.data.FileEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.StringTools;
@@ -254,6 +255,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     UserConfig.setBoolean(baseName + "LocatePane", locatePane.isExpanded());
                 });
             }
+            locateLine = -1;
             if (lineInput != null) {
                 lineInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -261,7 +263,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                         try {
                             int v = Integer.valueOf(lineInput.getText());
                             if (v > 0 && v <= sourceInformation.getLinesNumber()) {
-                                lineLocation = v;
+                                locateLine = v - 1;  // 0-based
                                 lineInput.setStyle(null);
                                 locateLineButton.setDisable(false);
                             } else {
@@ -276,6 +278,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 });
             }
 
+            locateObject = -1;
             if (objectNumberInput != null) {
                 objectNumberInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -283,7 +286,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                         try {
                             int v = Integer.valueOf(objectNumberInput.getText());
                             if (v > 0 && v <= sourceInformation.getObjectsNumber()) {
-                                objectLocation = v;
+                                locateObject = v - 1; // 0-based
                                 objectNumberInput.setStyle(null);
                                 locateObjectButton.setDisable(false);
                             } else {
@@ -319,22 +322,15 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
         }
     }
 
-    protected void initToolBar() {
-        try {
-            if (topCheck != null) {
-                topCheck.setVisible(false);
-                topCheck.setSelected(UserConfig.getBoolean(baseName + "Top", true));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected void initPageBar() {
         try {
             List<String> values = new ArrayList();
-            values.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
-                    "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
+            if (editType == FileEditInformation.Edit_Type.Bytes) {
+                values.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
+                        "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
+            } else {
+                values.addAll(Arrays.asList("200", "500", "100", "300", "600", "50", "20", "800", "1000", "2000"));
+            }
             pageSizeSelector.getItems().addAll(values);
             int pageSize = UserConfig.getInt(baseName + "PageSize", defaultPageSize);
             if (pageSize <= 0) {

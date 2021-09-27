@@ -30,9 +30,9 @@ import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -42,7 +42,7 @@ import mara.mybox.value.UserConfig;
 public class ControlImagesClipboard extends BaseDataTableController<ImageClipboard> {
 
     protected Image lastSystemClip;
-    protected int thumbWidth = UserConfig.getInt("ThumbnailWidth", 100);
+    protected int thumbWidth = AppVariables.thumbnailWidth;
 
     @FXML
     protected HBox buttonsBox;
@@ -198,7 +198,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
 
     @Override
     public List<ImageClipboard> readPageData() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             ((TableImageClipboard) tableDefinition).validateData(conn);
             return tableDefinition.queryConditions(conn, queryConditions, currentPageStart - 1, currentPageSize);
         } catch (Exception e) {

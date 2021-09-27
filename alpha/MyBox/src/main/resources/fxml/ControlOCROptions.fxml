@@ -12,7 +12,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -23,8 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" 
-      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlOCROptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlOCROptions">
     <children>
         <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
@@ -63,36 +61,9 @@ License:    Apache License Version 2.0
                             <children>
                                 <Label text="%OCRDataPath" VBox.vgrow="NEVER" />
                                 <fx:include fx:id="dataPath" source="ControlFileInput.fxml" VBox.vgrow="NEVER" />
-                                <Label fx:id="currentOCRFilesLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDown.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#upAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconUp.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="moveTopButton" mnemonicParsing="false" onAction="#topAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDoubleUp.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
+                                      <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="refreshButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -104,7 +75,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                <ListView fx:id="languageList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="languageList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlListCheckBox.fxml" VBox.vgrow="ALWAYS" />
                                 <Label minHeight="-Infinity" text="%OCRLanguagesComments" wrapText="true" />
                             </children>
                             <padding>

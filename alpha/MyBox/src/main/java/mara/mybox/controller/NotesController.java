@@ -2,17 +2,8 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
-import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNoteTag;
@@ -23,12 +14,15 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2021-2-28
  * @License Apache License Version 2.0
+ *
+ * NotesController < NotesController_Notes < NotesController_Tags <
+ * NotesController_Notebooks < NotesController_Base < BaseDataTableController
+ *
  */
 public class NotesController extends NotesController_Notes {
 
@@ -56,79 +50,12 @@ public class NotesController extends NotesController_Notes {
     @Override
     public void initControls() {
         try {
-            notebooksController.setParameters(this);
-            noteEditorController.setParameters(this);
-
-            timeController.setParent(this, false);
-            searchController.init(this, baseName + "Saved", Languages.message("Note"), 20);
+            initNotebooks();
+            initTimes();
+            initTags();
+            initNotes();
 
             super.initControls();
-
-            notebooksController.selectedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    loadBook(notebooksController.selectedNode);
-                }
-            });
-
-            subCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
-            subCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    if (notebooksController.selectedNode != null) {
-                        loadTableData();
-                    }
-                }
-            });
-
-            timeController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    queryTimes();
-                }
-            });
-            timeController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    refreshTimes();
-                }
-            });
-
-            tagsList.setCellFactory(p -> new ListCell<Tag>() {
-                @Override
-                public void updateItem(Tag item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setGraphic(null);
-                    if (empty || item == null) {
-                        setText(null);
-                        return;
-                    }
-                    setText(item.getTag());
-                }
-            });
-            tagsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tagsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tag>() {
-                @Override
-                public void changed(ObservableValue ov, Tag oldValue, Tag newValue) {
-                    queryTagsButton.setDisable(newValue == null);
-                    deleteTagsButton.setDisable(newValue == null);
-                    renameTagButton.setDisable(newValue == null);
-                }
-            });
-            tagsList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (popMenu != null && popMenu.isShowing()) {
-                        popMenu.hide();
-                    }
-                    Tag selected = tagsList.getSelectionModel().getSelectedItem();
-                    if (event.getButton() == MouseButton.SECONDARY) {
-                        popTagMenu(event, selected);
-                    } else if (event.getClickCount() > 1) {
-                        queryTags();
-                    }
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -150,27 +77,6 @@ public class NotesController extends NotesController_Notes {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-    }
-
-    @FXML
-    protected void addNote() {
-        noteEditorController.addNote();
-    }
-
-    @FXML
-    protected void copyNote() {
-        noteEditorController.copyNote();
-    }
-
-    @FXML
-    protected void recoverNote() {
-        noteEditorController.recoverNote();
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        noteEditorController.saveAction();
     }
 
     @Override

@@ -19,8 +19,6 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.AppPaths;
 
-import mara.mybox.value.UserConfig;
-
 /**
  * @Author Mara
  * @CreateDate 2019-9-3
@@ -193,8 +191,7 @@ public class ImageClipboard extends BaseData {
                 return null;
             }
             String thumbFile = prefix + "_thumbnail.png";
-            BufferedImage thumbnail = ScaleTools.scaleImageWidthKeep(image,
-                    UserConfig.getInt("ThumbnailWidth", 100));
+            BufferedImage thumbnail = ScaleTools.scaleImageWidthKeep(image, AppVariables.thumbnailWidth);
             if (thumbnail == null) {
                 return null;
             }
