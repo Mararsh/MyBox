@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -289,7 +288,6 @@ public abstract class NotesController_Notes extends NotesController_Tags {
     @FXML
     protected void clearNotes() {
         clearAction();
-        noteEditorController.editNote(null);
         refreshTimes();
     }
 
@@ -297,26 +295,6 @@ public abstract class NotesController_Notes extends NotesController_Tags {
     protected void deleteNotes() {
         deleteAction();
         refreshTimes();
-    }
-
-    @Override
-    protected int deleteData(List<Note> data) {
-        int ret = super.deleteData(data);
-        if (ret <= 0) {
-            return ret;
-        }
-        if (noteEditorController.currentNote == null || data == null || data.isEmpty()) {
-            return 0;
-        }
-        for (Note note : data) {
-            if (note.getNtid() == noteEditorController.currentNote.getNtid()) {
-                Platform.runLater(() -> {
-                    noteEditorController.editNote(null);
-                });
-                break;
-            }
-        }
-        return ret;
     }
 
     @FXML
@@ -328,6 +306,7 @@ public abstract class NotesController_Notes extends NotesController_Tags {
         }
     }
 
+    @Override
     protected void loadBook(Notebook book) {
         clearQuery();
         notebooksController.selectedNode = book;

@@ -233,7 +233,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         } else {
             if (locateLine >= sourceInformation.getCurrentPageLineStart()
                     && locateLine < sourceInformation.getCurrentPageLineEnd()) {
-                selectLine(locateLine);
+                selectLine(locateLine - sourceInformation.getCurrentPageLineStart());
             } else {
                 if (!checkBeforeNextAction()) {
                     return;
@@ -248,14 +248,14 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
                         @Override
                         protected boolean handle() {
-                            text = sourceInformation.locateLine(locateLine);
+                            text = sourceInformation.readLine(locateLine);
                             return text != null;
                         }
 
                         @Override
                         protected void whenSucceeded() {
                             loadText(text, false);
-                            selectLine(locateLine);
+                            selectLine(locateLine - sourceInformation.getCurrentPageLineStart());
                         }
 
                     };
@@ -271,13 +271,126 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             popError(message("InvalidParameters"));
             return;
         }
+        int unit = sourceInformation.getObjectUnit();
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            selectObject(locateObject, 1);
+            selectObjects(locateObject * unit, unit);
 
         } else {
             if (locateObject >= sourceInformation.getCurrentPageObjectStart()
                     && locateObject < sourceInformation.getCurrentPageObjectEnd()) {
-                selectObject(locateObject, 1);
+                selectObjects((locateObject - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
+                synchronized (this) {
+                    if (task != null && !task.isQuit()) {
+                        return;
+                    }
+                    task = new SingletonTask<Void>() {
+
+                        String text;
+
+                        @Override
+                        protected boolean handle() {
+                            text = sourceInformation.readObject(locateObject);
+                            return text != null;
+                        }
+
+                        @Override
+                        protected void whenSucceeded() {
+                            loadText(text, false);
+                            selectObjects((locateObject - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+                        }
+
+                    };
+                    start(task);
+                }
+
+            }
+        }
+    }
+
+    @FXML
+    protected void locateLinesRange() {
+        long from, to;  // 0-based, exlcuded end
+        try {
+            from = Long.valueOf(lineFromInput.getText()) - 1;
+            if (from < 0 || from >= sourceInformation.getLinesNumber()) {
+                popError(message("InvalidParameters") + ": " + message("From"));
+                return;
+            }
+            to = Long.valueOf(lineToInput.getText());
+            if (to < 0 || to > sourceInformation.getLinesNumber() || from > to) {
+                popError(message("InvalidParameters") + ": " + message("To"));
+                return;
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+            return;
+        }
+        int number = (int) (to - from);
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectLines(from, number);
+        } else {
+            if (from >= sourceInformation.getCurrentPageLineStart() && to <= sourceInformation.getCurrentPageLineEnd()) {
+                selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
+                synchronized (this) {
+                    if (task != null && !task.isQuit()) {
+                        return;
+                    }
+                    task = new SingletonTask<Void>() {
+
+                        String text;
+
+                        @Override
+                        protected boolean handle() {
+                            text = sourceInformation.readLines(from, number);
+                            return text != null;
+                        }
+
+                        @Override
+                        protected void whenSucceeded() {
+                            loadText(text, false);
+                            selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+                        }
+
+                    };
+                    start(task);
+                }
+            }
+        }
+    }
+
+    @FXML
+    protected void locateObjectsRange() {
+        long from, to;  // 0-based, exlcuded end
+        try {
+            from = Long.valueOf(objectFromInput.getText()) - 1;
+            if (from < 0 || from >= sourceInformation.getObjectsNumber()) {
+                popError(message("InvalidParameters") + ": " + message("From"));
+                return;
+            }
+            to = Long.valueOf(objectToInput.getText());
+            if (to < 0 || to > sourceInformation.getObjectsNumber() || from > to) {
+                popError(message("InvalidParameters") + ": " + message("To"));
+                return;
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+            return;
+        }
+        int len = (int) (to - from), unit = sourceInformation.getObjectUnit();
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectObjects(from * unit, len * unit);
+
+        } else {
+            if (from >= sourceInformation.getCurrentPageObjectStart() && to <= sourceInformation.getCurrentPageObjectEnd()) {
+                selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
 
             } else {
                 if (!checkBeforeNextAction()) {
@@ -293,14 +406,14 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
                         @Override
                         protected boolean handle() {
-                            text = sourceInformation.locateObject(locateObject);
+                            text = sourceInformation.readObjects(from, len);
                             return text != null;
                         }
 
                         @Override
                         protected void whenSucceeded() {
                             loadText(text, false);
-                            selectObject(locateObject, 1);
+                            selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
                         }
 
                     };

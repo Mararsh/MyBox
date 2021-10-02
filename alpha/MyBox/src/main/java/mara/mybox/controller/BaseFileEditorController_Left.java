@@ -301,6 +301,9 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 });
             }
 
+            linesRange = null;
+            objectsRange = null;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

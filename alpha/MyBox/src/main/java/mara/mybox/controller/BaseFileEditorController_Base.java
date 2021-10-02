@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import mara.mybox.data.LongRange;
 
 /**
  * @Author Mara
@@ -34,6 +35,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     protected long locateLine, locateObject;  // 0-based
     protected String lineBreakValue;
     protected Timer autoSaveTimer;
+    protected LongRange linesRange, objectsRange;
 
     protected enum Action {
         OpenFile, LoadPage, FindReplace, FindFirst, FindNext, FindPrevious, FindLast, Replace, ReplaceAll,
@@ -57,9 +59,9 @@ public abstract class BaseFileEditorController_Base extends BaseController {
             filterConditionsLabel;
     @FXML
     protected Button panesMenuButton, charactersButton, linesButton, exampleFilterButton,
-            filterButton, locateObjectButton, locateLineButton;
+            filterButton, locateObjectButton, locateLineButton, locateLinesRangeButton, locateObjectsRangeButton;
     @FXML
-    protected TextField fromInput, toInput, currentLineBreak, objectNumberInput, lineInput;
+    protected TextField objectNumberInput, lineInput, lineFromInput, lineToInput, objectFromInput, objectToInput;
     @FXML
     protected RadioButton crlfRadio, lfRadio, crRadio;
     @FXML

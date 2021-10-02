@@ -33,7 +33,7 @@ public abstract class FileEditInformation extends FileInformation implements Clo
     protected int objectUnit, pageSize, lineBreakWidth;// 1-based
     protected long objectsNumber, linesNumber, pagesNumber;// 1-based
     protected long currentPage, currentPageLineStart, currentPageLineEnd,
-            currentPageObjectStart, currentPageObjectEnd; // 0-based, exclude end
+            currentPageObjectStart, currentPageObjectEnd; // 0-based, excluded end
     protected String[] filterStrings;
     protected FindReplaceFile findReplace;
     protected StringFilterType filterType;
@@ -194,18 +194,22 @@ public abstract class FileEditInformation extends FileInformation implements Clo
 
     public abstract boolean writePage(FileEditInformation sourceInfo, String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo, long pageNumber, String text);
+    public abstract String readLines(long from, long number);
 
-    public abstract String locateLine(long line);
-
-    public abstract String locateObject(long index);
-
-    public abstract String locateRange(LongIndex range);
+    public abstract String readObjects(long from, long number);
 
     public abstract File filter(boolean recordLineNumbers);
 
     public String readPage() {
         return readPage(currentPage);
+    }
+
+    public String readLine(long line) {
+        return readLines(line, 1);
+    }
+
+    public String readObject(long index) {
+        return readObjects(index, 1);
     }
 
     public boolean isMatchFilters(String string) {

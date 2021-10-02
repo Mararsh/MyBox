@@ -5,21 +5,21 @@ package mara.mybox.data;
  * @CreateDate 2020-10-6
  * @License Apache License Version 2.0
  */
-public class LongIndex {
+public class LongRange {
 
     protected long start = -1, end = -1, length = -1;
 
-    public LongIndex() {
+    public LongRange() {
         start = -1;
         end = -1;
         length = -1;
     }
 
-    public LongIndex(long start) {
+    public LongRange(long start) {
         this.start = start;
     }
 
-    public LongIndex(long start, long end) {
+    public LongRange(long start, long end) {
         this.start = start;
         this.end = end;
     }

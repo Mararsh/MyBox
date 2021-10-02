@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -12,14 +13,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.BytesEditInformation;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
-import mara.mybox.data.LongIndex;
+import mara.mybox.data.LongRange;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -149,11 +152,33 @@ public class ControlFindReplace extends BaseController {
             dotallCheck.disableProperty().bind(regexCheck.selectedProperty().not());
             exampleFindButton.disableProperty().bind(regexCheck.selectedProperty().not());
 
+            findArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                @Override
+                public void handle(ContextMenuEvent event) {
+                    if (editerController != null && editerController.sourceInformation instanceof BytesEditInformation) {
+                        MenuBytesEditController.open(editerController, findArea, event);
+                    } else {
+                        MenuTextEditController.open(parentController, findArea, event);
+                    }
+                }
+            });
+
             if (replaceArea != null) {
                 replaceArea.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         checkReplaceInput(newValue);
+                    }
+                });
+
+                replaceArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                    @Override
+                    public void handle(ContextMenuEvent event) {
+                        if (editerController != null && editerController.sourceInformation instanceof BytesEditInformation) {
+                            MenuBytesEditController.open(editerController, replaceArea, event);
+                        } else {
+                            MenuTextEditController.open(parentController, replaceArea, event);
+                        }
                     }
                 });
             }
@@ -202,7 +227,9 @@ public class ControlFindReplace extends BaseController {
     protected boolean validateFind(String string) {
         if (editerController == null) {
             return true;
-        } else if (editerController.editType == Edit_Type.Bytes) {
+        }
+        sourceInformation = editerController.sourceInformation;
+        if (editerController.editType == Edit_Type.Bytes) {
             return validateFindBytes(string);
         } else {
             return validateFindText(string);
@@ -221,6 +248,7 @@ public class ControlFindReplace extends BaseController {
 
     protected boolean validateFindBytes(String string) {
         if (isSettingValues || regexCheck.isSelected()) {
+            findArea.setStyle(null);
             return true;
         }
         final String v = ByteTools.validateTextHex(string);
@@ -260,7 +288,9 @@ public class ControlFindReplace extends BaseController {
     protected boolean validateReplace(String string) {
         if (editerController == null) {
             return true;
-        } else if (editerController.editType == Edit_Type.Bytes) {
+        }
+        sourceInformation = editerController.sourceInformation;
+        if (editerController.editType == Edit_Type.Bytes) {
             return validateReplaceBytes(string);
         } else {
             return validateReplaceText(string);
@@ -273,6 +303,7 @@ public class ControlFindReplace extends BaseController {
 
     protected boolean validateReplaceBytes(String string) {
         if (isSettingValues || string.trim().isEmpty() || replaceArea == null) {
+            replaceArea.setStyle(null);
             return true;
         }
         final String v = ByteTools.validateTextHex(string);
@@ -280,6 +311,7 @@ public class ControlFindReplace extends BaseController {
             replaceArea.setStyle(NodeStyleTools.badStyle);
             return false;
         } else {
+            replaceArea.setStyle(null);
             return true;
         }
     }
@@ -340,7 +372,7 @@ public class ControlFindReplace extends BaseController {
         }
     }
 
-    protected boolean makeData(Operation operation) {
+    protected boolean makeParamters(Operation operation) {
         if (null == operation || textInput == null || sourceInformation == null) {
             popError(message("InvalidParameters"));
             return false;
@@ -359,7 +391,7 @@ public class ControlFindReplace extends BaseController {
         }
         TableStringValues.add(baseName + "FindString", findString);
         String pageText = textInput.getText();
-        if (pageText.isEmpty()) {
+        if (pageText == null || pageText.isEmpty()) {
             popError(message("EmptyValue"));
             return false;
         }
@@ -379,7 +411,7 @@ public class ControlFindReplace extends BaseController {
             }
         }
         int anchor = textInput.getAnchor(), unit = sourceInformation.getObjectUnit();
-        int position = 0, pageStart = (int) sourceInformation.getCurrentPageObjectStart() * unit;
+        long position = 0, pageStart = (int) sourceInformation.getCurrentPageObjectStart() * unit;
         String selectedText = textInput.getSelectedText();
         if (StringTools.match(selectedText, findString, regexCheck.isSelected(), dotallCheck.isSelected(),
                 multilineCheck.isSelected(), caseInsensitiveCheck.isSelected())) {
@@ -407,8 +439,6 @@ public class ControlFindReplace extends BaseController {
             findString = findString.replaceAll("\n", " ");
             replaceString = replaceString.replaceAll("\n", " ");
         }
-        MyBoxLog.console(findString);
-
         findReplace = new FindReplaceFile()
                 .setFileInfo(sourceInformation)
                 .setPosition(position);
@@ -418,7 +448,7 @@ public class ControlFindReplace extends BaseController {
         findReplace.setOperation(operation)
                 .setInputString(pageText)
                 .setFindString(findString)
-                .setAnchor(position)
+                .setAnchor((int) position)
                 .setReplaceString(replaceString)
                 .setUnit(unit)
                 .setIsRegex(regexCheck.isSelected())
@@ -431,7 +461,7 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected void editorFindReplace(Operation operation) {
-        if (editerController == null || !makeData(operation)) {
+        if (editerController == null || !makeParamters(operation)) {
             return;
         }
         synchronized (this) {
@@ -468,7 +498,6 @@ public class ControlFindReplace extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-//                    MyBoxLog.debug("(lastFileRange != null)：" + (lastFileRange != null) + " (lastStringRange != null)：" + (lastStringRange != null));
                     String info = "";
                     switch (operation) {
                         case Count: {
@@ -485,6 +514,7 @@ public class ControlFindReplace extends BaseController {
                             if (count > 0) {
                                 textInput.deselect();
                                 if (findReplace.isMultiplePages()) {
+                                    editerController.sourceInformation.setTotalNumberRead(false);
                                     editerController.loadPage();
                                 } else {
                                     editerController.loadText(findReplace.getOutputString(), true);
@@ -497,23 +527,20 @@ public class ControlFindReplace extends BaseController {
                         }
                         default:
                             if (lastStringRange != null) {
-                                MyBoxLog.debug("lastStringRange:" + lastStringRange.getStart() + "," + lastStringRange.getEnd()
-                                        + " findString" + findReplace.getFindString() + " replaceString" + findReplace.getReplaceString());
+                                int unit = findReplace.getUnit();
+                                long from = lastStringRange.getStart() - findReplace.getFileInfo().getCurrentPageLineStart();
                                 if (operation == Operation.FindNext || operation == Operation.FindPrevious) {
-                                    editerController.loadText(findReplace.getOutputString(), false);
-                                    editerController.selectObject(lastStringRange.getStart(), (int) lastStringRange.getLength());
+                                    editerController.loadText(findReplace.getOutputString(), editerController.fileChanged.getValue());
+                                    editerController.selectObjects(lastStringRange.getStart(), (int) lastStringRange.getLength());
                                 } else if (operation == Operation.ReplaceFirst) {
                                     editerController.loadText(findReplace.getOutputString(), true);
-                                    editerController.selectObject(lastStringRange.getStart(), findReplace.getReplaceString().length());
+                                    editerController.selectObjects(lastStringRange.getStart(), findReplace.getReplaceString().length());
                                 }
-                                LongIndex fileRange = findReplace.getFileRange();
+                                LongRange fileRange = findReplace.getFileRange();
                                 if (fileRange != null && findReplace.isMultiplePages()) {
-                                    info = message("RangeInFile") + ":"
-                                            + (fileRange.getStart() / findReplace.getUnit() + 1) + "-"
-                                            + (fileRange.getEnd() / findReplace.getUnit()) + "\n";
+                                    info = message("RangeInFile") + ":" + (fileRange.getStart() / unit + 1) + "-" + (fileRange.getEnd() / unit) + "\n";
                                 }
-                                info += message("RangeInPage") + ":" + (lastStringRange.getStart() + 1) + "-" + (lastStringRange.getEnd());
-//                                MyBoxLog.debug("lastStringRange:" + lastStringRange.getStart() + "," + lastStringRange.getEnd() + " anchor" + textInput.getAnchor());
+                                info += message("RangeInPage") + ":" + (lastStringRange.getStart() / unit + 1) + "-" + (lastStringRange.getEnd() / unit);
                             } else {
                                 info = message("NotFound");
                             }
@@ -541,7 +568,7 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected void inputFindReplace(Operation operation) {
-        if (textInput == null || !makeData(operation)) {
+        if (textInput == null || !makeParamters(operation)) {
             return;
         }
         synchronized (this) {
@@ -594,14 +621,17 @@ public class ControlFindReplace extends BaseController {
                         }
                         default:
                             if (lastStringRange != null) {
+                                int start = lastStringRange.getStart();
+                                int end = lastStringRange.getEnd();
                                 textInput.deselect();
                                 if (operation == Operation.FindNext || operation == Operation.FindPrevious) {
-                                    textInput.selectRange(lastStringRange.getEnd(), lastStringRange.getStart());
-                                    info = message("Found") + ": " + (lastStringRange.getStart() + 1) + "-" + (lastStringRange.getEnd());
+                                    textInput.selectRange(end, start);
+                                    info = message("Found") + ": " + (start + 1) + "-" + end;
+
                                 } else if (operation == Operation.ReplaceFirst) {
                                     textInput.replaceText(lastStringRange, findReplace.getReplaceString());
-                                    textInput.selectRange(lastStringRange.getStart() + findReplace.getReplaceString().length(), lastStringRange.getStart());
-                                    info = message("Replaced") + ": " + (lastStringRange.getStart() + 1) + "-" + (lastStringRange.getEnd());
+                                    textInput.selectRange(start + findReplace.getReplaceString().length(), start);
+                                    info = message("Replaced") + ": " + (start + 1) + "-" + end;
                                 }
                             } else {
                                 info = message("NotFound");

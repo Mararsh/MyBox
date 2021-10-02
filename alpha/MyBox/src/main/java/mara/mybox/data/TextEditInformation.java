@@ -63,171 +63,95 @@ public class TextEditInformation extends FileEditInformation {
 
     @Override
     public String readPage(long pageNumber) {
-        try {
-            if (file == null || pageSize <= 0 || pageNumber < 0) {
-                return null;
-            }
-            long lineIndex = 0, pageStartLine = pageNumber * pageSize, pageEndLine = pageStartLine + pageSize;
-            long charIndex = 0, pageStartChar = 0;
-            StringBuilder pageText = new StringBuilder();
-            boolean moreLine = false;
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
-                String line, fixedLine;
-                while ((line = reader.readLine()) != null) {
-                    if (lineIndex >= pageEndLine) {
-                        break;
-                    }
-                    if (lineIndex > 0) {
-                        fixedLine = "\n" + line;
-                    } else {
-                        fixedLine = line;
-                    }
-                    charIndex += fixedLine.length();
-                    if (lineIndex++ < pageStartLine) {
-                        continue;
-                    }
-                    if (moreLine) {
-                        pageText.append(fixedLine);
-                    } else {
-                        pageStartChar = charIndex - line.length();
-                        pageText.append(line);
-                        moreLine = true;
-                    }
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
-                return null;
-            }
-            currentPage = pageNumber;
-            currentPageObjectStart = pageStartChar;
-            currentPageObjectEnd = pageStartChar + pageText.length();
-            currentPageLineStart = pageStartLine;
-            currentPageLineEnd = lineIndex;
-//            MyBoxLog.console(currentPageObjectStart + "   " + currentPageObjectEnd + "    " + pageText.length());
-            return pageText.toString();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
+        return readLines(pageNumber * pageSize, pageSize);
     }
 
     @Override
-    public String locateLine(long line) {
-        try {
-            if (file == null || line < 0 || line >= linesNumber) {
-                return null;
-            }
-            return readPage(line / pageSize);
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+    public String readLines(long from, long number) {
+        if (file == null || from < 0 || number <= 0 || (linesNumber > 0 && from >= linesNumber)) {
             return null;
         }
-    }
-
-    @Override
-    public String locateObject(long index) {
-        try {
-            if (file == null || index < 0 || index >= objectsNumber) {
-                return null;
-            }
-            long lineIndex = 0, pageStartLine = 0, charIndex = 0, pageStartChar = 0;
-            StringBuilder pageText = new StringBuilder();
-            boolean found = false, moreLine = false;
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
-                String line, fixedLine;
-                while ((line = reader.readLine()) != null) {
-                    if (lineIndex++ > 0) {
-                        fixedLine = "\n" + line;
-                    } else {
-                        fixedLine = line;
-                    }
-                    charIndex += fixedLine.length();
-                    if (moreLine) {
-                        pageText.append(fixedLine);
-                    } else {
-                        pageStartChar = charIndex - line.length();
-                        pageText.append(line);
-                        moreLine = true;
-                    }
-                    if (!found && charIndex >= index) {
-                        found = true;
-                    }
-                    if (lineIndex == pageStartLine + pageSize) {
-                        if (found) {
-                            break;
-                        }
-                        pageStartLine = lineIndex;
-                        pageText = new StringBuilder();
-                        moreLine = false;
-                    }
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
-                return null;
-            }
-            if (!found) {
-                return null;
-            }
-            currentPage = pageStartLine / pageSize;;
-            currentPageObjectStart = pageStartChar;
-            currentPageObjectEnd = pageStartChar + pageText.length();
-            currentPageLineStart = pageStartLine;
-            currentPageLineEnd = lineIndex;
-            return pageText.toString();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
-    }
-
-    @Override
-    public String locateRange(LongIndex range) {
-        if (file == null || range == null || range.start >= objectsNumber || range.start >= range.end) {
-            return null;
-        }
-        long lineIndex = 0, pageStartLine = 0, charIndex = 0, pageStartChar = 0;
+        long lineIndex = 0, charIndex = 0, lineStart = 0;
         StringBuilder pageText = new StringBuilder();
-        boolean found = false, moreLine = false;
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            lineStart = (from / pageSize) * pageSize;
+            long lineEnd = Math.max(from + number, lineStart + pageSize);
             String line, fixedLine;
+            boolean moreLine = false;
             while ((line = reader.readLine()) != null) {
-                if (lineIndex++ > 0) {
+                if (lineIndex > 0) {
                     fixedLine = "\n" + line;
                 } else {
                     fixedLine = line;
                 }
                 charIndex += fixedLine.length();
+                if (lineIndex++ < lineStart) {
+                    continue;
+                }
                 if (moreLine) {
                     pageText.append(fixedLine);
                 } else {
-                    pageStartChar = charIndex - line.length();
                     pageText.append(line);
                     moreLine = true;
                 }
-                if (!found && charIndex >= range.start) {
-                    found = true;
-                }
-                if (found) {
-                    if (charIndex >= range.end && lineIndex >= pageStartLine + pageSize) {
-                        break;
-                    }
-                } else if (lineIndex == pageStartLine + pageSize) {
-                    pageStartLine = lineIndex;
-                    pageText = new StringBuilder();
-                    moreLine = false;
+                if (lineIndex >= lineEnd) {
+                    break;
                 }
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
-        if (!found) {
+        currentPage = lineStart / pageSize;
+        currentPageObjectStart = charIndex - pageText.length();
+        currentPageObjectEnd = charIndex;
+        currentPageLineStart = lineStart;
+        currentPageLineEnd = lineIndex;
+        return pageText.toString();
+    }
+
+    @Override
+    public String readObjects(long from, long number) {
+        if (file == null || from < 0 || number <= 0 || (objectsNumber > 0 && from >= objectsNumber)) {
             return null;
         }
-        currentPage = pageStartLine / pageSize;
-        currentPageObjectStart = pageStartChar;
-        currentPageObjectEnd = pageStartChar + pageText.length();
-        currentPageLineStart = pageStartLine;
+        long charIndex = 0, lineIndex = 0, lineStart = 0;
+        StringBuilder pageText = new StringBuilder();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            long to = from + number;
+            boolean moreLine = false;
+            String line, fixedLine;
+            while ((line = reader.readLine()) != null) {
+                if (lineIndex > 0) {
+                    fixedLine = "\n" + line;
+                } else {
+                    fixedLine = line;
+                }
+                if (moreLine) {
+                    pageText.append(fixedLine);
+                } else {
+                    pageText.append(line);
+                    moreLine = true;
+                }
+                charIndex += fixedLine.length();
+                if (++lineIndex == lineStart + pageSize && charIndex < from) {
+                    lineStart = lineIndex;
+                    pageText = new StringBuilder();
+                    moreLine = false;
+                }
+                if (charIndex >= to && lineIndex >= lineStart + pageSize) {
+                    break;
+                }
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+        currentPage = lineStart / pageSize;;
+        currentPageObjectStart = charIndex - pageText.length();
+        currentPageObjectEnd = charIndex;
+        currentPageLineStart = lineStart;
         currentPageLineEnd = lineIndex;
         return pageText.toString();
     }
@@ -287,16 +211,10 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean writePage(FileEditInformation sourceInfo, String text) {
-        return writePage(sourceInfo, sourceInfo.getCurrentPage(), text);
-    }
-
-    @Override
-    public boolean writePage(FileEditInformation sourceInfo, long pageNumber, String pageText) {
+    public boolean writePage(FileEditInformation sourceInfo, String pageText) {
         try {
             if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
-                    || sourceInfo.getPageSize() <= 0 || pageNumber < 0
-                    || pageText == null || pageText.isEmpty()
+                    || sourceInfo.getPageSize() <= 0 || pageText == null || pageText.isEmpty()
                     || file == null || charset == null || lineBreakValue == null) {
                 return false;
             }
@@ -304,7 +222,6 @@ public class TextEditInformation extends FileEditInformation {
             if (sourceInfo.getFile().equals(file)) {
                 targetFile = TmpFileTools.getTempFile();
             }
-            long lineIndex = 0, pageLineStart = pageNumber * pageSize, pageLineEnd = pageLineStart + pageSize;
             try ( BufferedReader reader = new BufferedReader(new FileReader(sourceInfo.getFile(), sourceInfo.charset));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
                      OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
@@ -313,6 +230,7 @@ public class TextEditInformation extends FileEditInformation {
                     outputStream.write(bytes);
                 }
                 String line, text;
+                long lineIndex = 0, pageLineStart = sourceInfo.getCurrentPageLineStart(), pageLineEnd = sourceInfo.getCurrentPageLineEnd();
                 while ((line = reader.readLine()) != null) {
                     text = null;
                     if (lineIndex < pageLineStart || lineIndex >= pageLineEnd) {

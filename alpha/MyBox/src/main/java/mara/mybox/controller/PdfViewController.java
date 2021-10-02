@@ -18,6 +18,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -29,6 +30,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -56,7 +58,8 @@ public class PdfViewController extends PdfViewController_Html {
     protected Task outlineTask;
 
     @FXML
-    protected CheckBox transparentBackgroundCheck, bookmarksCheck, wrapTextsCheck, wrapOCRCheck;
+    protected CheckBox transparentBackgroundCheck, bookmarksCheck, wrapTextsCheck, wrapOCRCheck,
+            ocrSynCheck, htmlSynCheck, textSynCheck;
     @FXML
     protected ScrollPane outlineScrollPane;
     @FXML
@@ -80,6 +83,19 @@ public class PdfViewController extends PdfViewController_Html {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            NodeStyleTools.setTooltip(ocrSynCheck, new Tooltip(message("AlwaysSynchronize")));
+            NodeStyleTools.setTooltip(htmlSynCheck, new Tooltip(message("AlwaysSynchronize")));
+            NodeStyleTools.setTooltip(textSynCheck, new Tooltip(message("AlwaysSynchronize")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     @Override
@@ -164,6 +180,30 @@ public class PdfViewController extends PdfViewController_Html {
                 }
             });
             ocrArea.setWrapText(wrapTextsCheck.isSelected());
+
+            ocrSynCheck.setSelected(UserConfig.getBoolean(baseName + "OcrSyn", false));
+            ocrSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "OcrSyn", newValue);
+                }
+            });
+
+            htmlSynCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlSyn", false));
+            htmlSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "HtmlSyn", newValue);
+                }
+            });
+
+            textSynCheck.setSelected(UserConfig.getBoolean(baseName + "TextSyn", false));
+            textSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "TextSyn", newValue);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -336,11 +376,11 @@ public class PdfViewController extends PdfViewController_Html {
         }
         super.setImage(image, percent);
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == ocrTab) {
+        if (ocrSynCheck.isSelected() || tab == ocrTab) {
             startOCR();
-        } else if (tab == textsTab) {
+        } else if (textSynCheck.isSelected() || tab == textsTab) {
             extractTexts();
-        } else if (tab == htmlTab) {
+        } else if (htmlSynCheck.isSelected() || tab == htmlTab) {
             convertHtml();
         }
     }

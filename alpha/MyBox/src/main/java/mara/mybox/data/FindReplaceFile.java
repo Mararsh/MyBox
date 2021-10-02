@@ -14,7 +14,7 @@ public class FindReplaceFile extends FindReplaceString {
     protected FileEditInformation fileInfo;
     protected String fileFindString, fileReplaceString;
     protected long position;
-    protected LongIndex fileRange;  // location in whole file
+    protected LongRange fileRange;  // location in whole file
     protected ControlFileBackup backupController;
 
     public FindReplaceFile() {
@@ -66,7 +66,7 @@ public class FindReplaceFile extends FindReplaceString {
                 outputString = findReplaceString.getOutputString();
                 lastReplacedLength = findReplaceString.getLastReplacedLength();
 //                MyBoxLog.debug("stringRange:" + stringRange.getStart() + " " + stringRange.getEnd());
-                fileRange = FindReplaceTextFile.fileRange(this, inputString);
+                fileRange = FindReplaceTextFile.fileRange(this);
 //                MyBoxLog.debug("fileRange:" + fileRange.getStart() + " " + fileRange.getEnd());
                 return true;
             }
@@ -149,11 +149,11 @@ public class FindReplaceFile extends FindReplaceString {
         return this;
     }
 
-    public LongIndex getFileRange() {
+    public LongRange getFileRange() {
         return fileRange;
     }
 
-    public FindReplaceFile setFileRange(LongIndex lastFound) {
+    public FindReplaceFile setFileRange(LongRange lastFound) {
         this.fileRange = lastFound;
         return this;
     }

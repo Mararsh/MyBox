@@ -2,9 +2,15 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.AnchorPane;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceString;
@@ -75,6 +81,28 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 }
             });
 
+            mainArea.widthProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    adjustLinesArea();
+                }
+            });
+
+            lineArea.scrollTopProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (UserConfig.getBoolean(baseName + "ScrollSynchronously", false)) {
+                        scrollTopPairArea(newValue.doubleValue());
+                    }
+                    isSettingValues = true;
+                    mainArea.setScrollTop(newValue.doubleValue());
+                    isSettingValues = false;
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -134,9 +162,32 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             lines.append(to);
             lineArea.setText(lines.toString());
         }
-        lineArea.setScrollTop(mainArea.getScrollTop());
-        AnchorPane.setLeftAnchor(mainArea, (to + "").length() * AppVariables.sceneFontSize + 20d);
         isSettingValues = false;
+        adjustLinesArea();
+    }
+
+    protected void adjustLinesArea() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    lineArea.setScrollTop(mainArea.getScrollTop());
+                    AnchorPane.setLeftAnchor(mainArea, (sourceInformation.getLinesNumber() + "").length() * AppVariables.sceneFontSize + 20d);
+
+                    // https://stackoverflow.com/questions/51075499/javafx-tableview-how-to-tell-if-scrollbar-is-visible
+                    double barHeight = 0;
+                    for (Node n : mainArea.lookupAll(".scroll-bar")) {
+                        ScrollBar bar = (ScrollBar) n;
+//                        MyBoxLog.console(bar.getWidth() + " " + bar.getHeight() + " " + bar.getOrientation() + " " + bar.isVisible());
+                        if (bar.getOrientation().equals(Orientation.HORIZONTAL) && bar.isVisible()) {
+                            barHeight = bar.getHeight();
+                            break;
+                        }
+                    }
+                    AnchorPane.setBottomAnchor(lineArea, barHeight);
+                });
+            }
+        }, 500);   // Wait for text loaded
     }
 
     protected boolean validMainArea() {
@@ -191,7 +242,13 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         if (saveAsButton != null) {
             saveAsButton.setDisable(false);
         }
+        if (locatePane != null) {
+            locatePane.setDisable(false);
+        }
         String pageText = mainArea.getText();
+        if (pageText == null) {
+            pageText = "";
+        }
         int pageLinesNumber = FindReplaceString.count(pageText, "\n") + 1;
         int pageObjectsNumber;
         if (editType == Edit_Type.Bytes) {
@@ -212,7 +269,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             }
             sourceInformation.setObjectsNumber(pageObjectsNumber);
             sourceInformation.setLinesNumber(pageLinesNumber);
-            writeLineNumbers(0, pageObjectEnd);
+            writeLineNumbers(0, pageLinesNumber);
         } else {
             pageLineStart = sourceInformation.getCurrentPageLineStart();
             pageLineEnd = pageLineStart + pageLinesNumber;
@@ -226,10 +283,8 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 if (saveAsButton != null) {
                     saveAsButton.setDisable(true);
                 }
-
-                if (locateObjectButton != null) {
-                    locateObjectButton.setDisable(true);
-                    locateLineButton.setDisable(true);
+                if (locatePane != null) {
+                    locatePane.setDisable(true);
                 }
                 fileInfo = message("CountingTotalNumber") + "\n\n";
             } else {
@@ -310,73 +365,71 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
     // 0-based
     protected void selectLine(long line) {
-        String text = mainArea.getText();
-        if (text == null || text.isEmpty()) {
-            return;
-        }
-        String[] lines = text.split("\n");
-        int linesNum = lines.length;
-
-        long tLine;
-        if (line >= sourceInformation.getCurrentPageLineStart()) {
-            tLine = line - sourceInformation.getCurrentPageLineStart();
-        } else {
-            tLine = line;
-        }
-        if (tLine < 0 || tLine >= linesNum) {
-            return;
-        }
-        int start = 0, end = 0;
-        for (int i = 0; i <= tLine; ++i) {
-            start = end;
-            end += lines[i].length() + 1;
-        }
-        mainArea.requestFocus();
-        mainArea.deselect();
-        mainArea.setScrollTop((tLine + 1) / linesNum);
-        mainArea.setScrollLeft(0);
-        mainArea.selectRange(end, start);
+        selectLines(line, 1);
     }
 
     // 0-based
-    protected void selectObject(long start, int len) {
-        String text = mainArea.getText();
-        if (text == null || text.isEmpty()) {
-            return;
-        }
-        String[] lines = text.split("\n");
-        int linesNum = lines.length;
-        int index;
-        if (start >= sourceInformation.getCurrentPageObjectStart()) {
-            index = (int) (start - sourceInformation.getCurrentPageObjectStart()) * sourceInformation.getObjectUnit();
-        } else {
-            index = (int) start * sourceInformation.getObjectUnit();
-        }
-        int textLen = text.length();
-        if (index < 0 || index >= textLen) {
-            return;
-        }
-        int end = 0, line = -1;
-        for (int i = 0; i < linesNum; ++i) {
-            if (end > 0) {
-                end++;
+    protected void selectObject(long index) {
+        selectObjects(index, 1);
+    }
+
+    // 0-based
+    protected void selectObjects(long from, int number) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    mainArea.requestFocus();
+                    mainArea.deselect();
+                    mainArea.selectRange(0, 0);
+                    int startIndex;
+                    if (from < 0) {
+                        startIndex = 0;
+                    } else {
+                        startIndex = (int) from;
+                    }
+                    String text = mainArea.getText();
+                    if (text == null || text.isEmpty()) {
+                        return;
+                    }
+                    mainArea.selectRange(Math.min(text.length(), startIndex + number), startIndex);
+                });
             }
-            end += lines[i].length();
-            if (end >= index) {
-                line = i;
-                break;
+        }, 500);  // wait for text loaded
+    }
+
+    // 0-based
+    protected void selectLines(long from, int number) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    mainArea.requestFocus();
+                    mainArea.deselect();
+                    mainArea.selectRange(0, 0);
+                    int startLine;
+                    if (from < 0) {
+                        startLine = 0;
+                    } else {
+                        startLine = (int) from;
+                    }
+                    String text = mainArea.getText();
+                    if (text == null || text.isEmpty()) {
+                        return;
+                    }
+                    String[] lines = text.split("\n", -1);
+                    int charIndex = 0, startIndex = 0;
+                    int endLine = Math.min(lines.length, startLine + number);
+                    for (int i = 0; i < endLine; ++i) {
+                        if (i == startLine) {
+                            startIndex = charIndex;
+                        }
+                        charIndex += lines[i].length() + 1;
+                    }
+                    mainArea.selectRange(charIndex, startIndex);
+                });
             }
-        }
-        if (line < 0) {
-            return;
-        }
-        mainArea.requestFocus();
-        mainArea.deselect();
-        mainArea.setScrollLeft(0);
-        mainArea.selectRange(Math.min(textLen, index + len), index);
-//        mainArea.selectRange(index, Math.min(textLen, index + len));
-//        double t = (line + 1) * 1d / linesNum + 0.1;
-//        mainArea.setScrollTop(t > 1 ? 1 : t);
+        }, 500); // wait for text loaded
     }
 
 }

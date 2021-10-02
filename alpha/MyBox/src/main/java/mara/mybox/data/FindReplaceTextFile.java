@@ -35,55 +35,53 @@ public class FindReplaceTextFile {
         int count = 0;
         File sourceFile = sourceInfo.getFile();
         int maxLen = FileTools.bufSize(sourceFile, 16);
-//            MyBoxLog.debug(availableMem + " " + sourceFile.length() + " " + pageSize);
         String findString = findReplaceFile.getFileFindString();
         FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                 .setFindString(findString).setAnchor(0).setWrap(false);
-//            MyBoxLog.debug("findString.length()：" + findString.length());
         int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
-        int crossFrom, textLen, crossLen = 0;
+        int backFrom, textLen, backLen = 0;
         StringBuilder s = new StringBuilder();
-        String text, checkedString, crossString = "";
+        String text, checkString, backString = "";
         boolean moreLine = false;
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceInfo.getCharset()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (moreLine) {
                     line = "\n" + line;
+                } else {
+                    moreLine = true;
                 }
                 s.append(line);
-                moreLine = true;
                 textLen = s.length();
-                if (textLen + crossLen < maxLen) {
+                if (textLen + backLen < maxLen) {    // read as more as possible
                     continue;
                 }
                 text = s.toString();
-                checkedString = crossString.concat(text);
-//                MyBoxLog.debug(pagelen + " " + checkedString.length());
-                findReplaceString.setInputString(checkedString).setAnchor(0).run();
+                checkString = backString.concat(text);
+                findReplaceString.setInputString(checkString).setAnchor(0).run();
                 IndexRange lastRange = findReplaceString.getStringRange();
                 if (lastRange != null) {
                     count += findReplaceString.getCount();
-                    if (lastRange.getEnd() == checkedString.length()) {
-                        crossString = "";
+                    if (lastRange.getEnd() == checkString.length()) {
+                        backString = "";
                     } else {
-                        crossFrom = Math.max(lastRange.getStart() - crossString.length() + 1,
+                        backFrom = Math.max(lastRange.getStart() - backLen + 1,
                                 Math.max(1, textLen - findLen + 1));
-                        crossString = text.substring(crossFrom, textLen);
+                        backString = text.substring(backFrom, textLen);
                     }
                 } else {
-                    crossFrom = Math.max(1, textLen - findLen + 1);
-                    crossString = text.substring(crossFrom, textLen);
+                    backFrom = Math.max(1, textLen - findLen + 1);
+                    backString = text.substring(backFrom, textLen);
                 }
-                crossLen = crossString.length();
+                backLen = backString.length();
                 s = new StringBuilder();
             }
-            text = s.toString();
-            checkedString = crossString.concat(text);
-            findReplaceString.setInputString(checkedString).run();
-            IndexRange lastRange = findReplaceString.getStringRange();
-            if (lastRange != null) {
-                count += findReplaceString.getCount();
+            if (!s.isEmpty()) {
+                findReplaceString.setInputString(backString.concat(s.toString())).run();
+                IndexRange lastRange = findReplaceString.getStringRange();
+                if (lastRange != null) {
+                    count += findReplaceString.getCount();
+                }
             }
             findReplaceFile.setCount(count);
             return true;
@@ -95,17 +93,16 @@ public class FindReplaceTextFile {
 
     public static boolean findNextText(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         try {
-            LongIndex found = findNextTextRange(sourceInfo, findReplaceFile);
+            LongRange found = findNextTextRange(sourceInfo, findReplaceFile);
             if (found == null) {
                 return findReplaceFile != null && findReplaceFile.getError() == null;
             }
-            String pageText = sourceInfo.locateRange(found);
-            IndexRange stringRange = stringRange(findReplaceFile, pageText);
+            String pageText = sourceInfo.readObjects(found.getStart(), found.getLength());
+            IndexRange stringRange = pageRange(findReplaceFile);
             if (stringRange == null) {
                 findReplaceFile.setError(message("InvalidData"));
                 return false;
             }
-//            MyBoxLog.debug("stringRange.getStart() :" + stringRange.getStart() + " stringRange.getEnd():" + stringRange.getEnd());
             findReplaceFile.setFileRange(found);
             findReplaceFile.setStringRange(stringRange);
             findReplaceFile.setOuputString(pageText);
@@ -117,7 +114,7 @@ public class FindReplaceTextFile {
         }
     }
 
-    public static LongIndex findNextTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static LongRange findNextTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
                 || findReplaceFile == null || findReplaceFile.getFileFindString() == null
@@ -150,7 +147,7 @@ public class FindReplaceTextFile {
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setAnchor(0).setWrap(false).setFindString(findString);
             int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
-            LongIndex found = findNextTextRange(sourceFile, charset, findReplaceString, startPosition, fileLength, maxLen, findLen);
+            LongRange found = findNextTextRange(sourceFile, charset, findReplaceString, startPosition, fileLength, findLen);
             if (found == null && findReplaceString.getError() != null) {
                 findReplaceFile.setError(findReplaceString.getError());
                 return null;
@@ -162,11 +159,11 @@ public class FindReplaceTextFile {
                 } else {
                     endPosition = startPosition + findLen;
                 }
-                found = findNextTextRange(sourceFile, charset, findReplaceString, 0, endPosition, maxLen, findLen);
-            }
-            if (found == null && findReplaceString.getError() != null) {
-                findReplaceFile.setError(findReplaceString.getError());
-                return null;
+                found = findNextTextRange(sourceFile, charset, findReplaceString, 0, endPosition, findLen);
+                if (found == null && findReplaceString.getError() != null) {
+                    findReplaceFile.setError(findReplaceString.getError());
+                    return null;
+                }
             }
             findReplaceFile.setFileRange(found);
             return found;
@@ -177,8 +174,8 @@ public class FindReplaceTextFile {
         }
     }
 
-    public static LongIndex findNextTextRange(File file, Charset charset, FindReplaceString findReplaceString,
-            long startPosition, long endPosition, long maxLen, int findLen) {
+    public static LongRange findNextTextRange(File file, Charset charset, FindReplaceString findReplaceString,
+            long startPosition, long endPosition, int findLen) {
         if (file == null || charset == null || findReplaceString == null || startPosition >= endPosition) {
             return null;
         }
@@ -186,62 +183,73 @@ public class FindReplaceTextFile {
         findReplaceString.setStringRange(null);
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
-            LongIndex found = null;
-            int crossFrom, textLen, crossLen = 0;
+            LongRange found = null;
+            int charIndex = 0, textLen, lineLen, backLen = 0, keepLen;
             StringBuilder s = new StringBuilder();
-            String text, crossString = "";
+            String text, backString = "";
             boolean moreLine = false, skipped = startPosition <= 0;
             long textStart = startPosition;
             IndexRange range;
             while ((line = reader.readLine()) != null) {
                 if (moreLine) {
                     line = "\n" + line;
+                } else {
+                    moreLine = true;
                 }
-                s.append(line);
-                moreLine = true;
-                textLen = s.length();
+                lineLen = line.length();
+                charIndex += lineLen;
                 if (!skipped) {
-                    if (textLen < startPosition) {
+                    keepLen = (int) (charIndex - startPosition);
+                    if (keepLen < 0) {
                         continue;
                     }
-                    s.delete(0, (int) startPosition);
+                    s = new StringBuilder();
+                    if (keepLen > 0) {                       // start from startPosition
+                        s.append(line.substring((int) (lineLen - keepLen), lineLen));
+                    }
                     textLen = s.length();
                     skipped = true;
+                } else {
+                    s.append(line);
+                    textLen = s.length();
                 }
-                long cEnd = textStart + textLen;
-                int extra = (int) (cEnd - endPosition);
-                if (extra < 0 && textLen + crossLen < maxLen) {
+                keepLen = (int) (charIndex - endPosition);
+                if (keepLen < 0 && textLen + backLen < findLen) {  // find as early as possible
                     continue;
                 }
-                if (extra > 0) {
-                    s.delete((int) (textLen - extra), textLen);
+                if (keepLen > 0) {                   // end at endPosition
+                    s.delete((int) (textLen - keepLen), textLen);
                     textLen = s.length();
                 }
                 text = s.toString();
-                findReplaceString.setInputString(crossString.concat(text)).setAnchor(0).run();
+                findReplaceString.setInputString(backString.concat(text)).setAnchor(0).run();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
-                    found = new LongIndex();
-                    found.setStart(textStart + range.getStart() - crossLen);
+                    found = new LongRange();
+                    found.setStart(textStart + range.getStart() - backLen);
                     found.setEnd(found.getStart() + range.getLength());
                     break;
-                } else {
-                    crossFrom = Math.max(1, textLen - findLen + 1);
-                    crossString = text.substring(crossFrom, textLen);
-                    crossLen = crossString.length();
+                } else {                            // backword some string to match each possible
+                    backString = text.substring(Math.max(1, textLen - findLen + 1), textLen);
+                    backLen = backString.length();
                 }
                 textStart += textLen;
                 s = new StringBuilder();
-                if (extra >= 0) {
+                if (keepLen >= 0) {
                     break;
                 }
             }
-            if (found == null) {
-                findReplaceString.setInputString(crossString.concat(s.toString())).setAnchor(0).run();
+            textLen = s.length();
+            if (found == null && textLen > 0 && charIndex >= startPosition && charIndex < endPosition) {
+                keepLen = (int) (charIndex - endPosition);
+                if (keepLen > 0) {
+                    s.delete((int) (textLen - keepLen), textLen);
+                }
+                findReplaceString.setInputString(backString.concat(s.toString())).setAnchor(0).run();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
-                    found = new LongIndex();
-                    found.setStart(textStart + range.getStart() - crossLen);
+                    found = new LongRange();
+                    found.setStart(textStart + range.getStart() - backLen);
                     found.setEnd(found.getStart() + range.getLength());
                 }
             }
@@ -255,12 +263,12 @@ public class FindReplaceTextFile {
 
     public static boolean findPreviousText(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         try {
-            LongIndex found = findPreviousTextRange(sourceInfo, findReplaceFile);
+            LongRange found = findPreviousTextRange(sourceInfo, findReplaceFile);
             if (found == null) {
                 return findReplaceFile != null && findReplaceFile.getError() == null;
             }
-            String pageText = sourceInfo.locateRange(found);
-            IndexRange stringRange = stringRange(findReplaceFile, pageText);
+            String pageText = sourceInfo.readObjects(found.getStart(), found.getLength());
+            IndexRange stringRange = pageRange(findReplaceFile);
             if (stringRange == null) {
                 findReplaceFile.setError(message("InvalidData"));
                 return false;
@@ -276,7 +284,7 @@ public class FindReplaceTextFile {
         }
     }
 
-    public static LongIndex findPreviousTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static LongRange findPreviousTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
                 || findReplaceFile == null || findReplaceFile.getFileFindString() == null
@@ -296,7 +304,6 @@ public class FindReplaceTextFile {
             Charset charset = sourceInfo.getCharset();
             long fileLength = sourceFile.length();
             long endPostion = findReplaceFile.getPosition();
-//            MyBoxLog.debug("getPosition:" + findReplaceFile.getPosition() + "   findEnd:" + findEnd + "   fileLength:" + fileLength);
             if (endPostion <= 0 || endPostion > fileLength) {
                 if (findReplaceFile.isWrap()) {
                     endPostion = fileLength;
@@ -305,15 +312,12 @@ public class FindReplaceTextFile {
                     return null;
                 }
             }
-//            MyBoxLog.debug("getPosition:" + findReplaceFile.getPosition() + "   findEnd:" + findEnd + "   fileLength:" + fileLength);
             int maxLen = FileTools.bufSize(sourceFile, 16);
-//            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
             int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
-            LongIndex found = findPreviousTextRange(sourceFile, charset, findReplaceString, 0, endPostion, maxLen, findLen);
-//            MyBoxLog.debug("(found != null):" + (found != null) + "   findReplaceString.getError():" + findReplaceString.getError());
+            LongRange found = findPreviousTextRange(sourceFile, charset, findReplaceString, 0, endPostion, maxLen, findLen);
             if (found == null && findReplaceString.getError() != null) {
                 findReplaceFile.setError(findReplaceString.getError());
                 return null;
@@ -325,7 +329,6 @@ public class FindReplaceTextFile {
                 } else {
                     startPosition = Math.max(0, endPostion - findLen);
                 }
-//                MyBoxLog.debug("pageStart:" + pageStart + "   findEnd:" + findEnd + "   maxLen:" + maxLen + "   findLen:" + findLen);
                 found = findPreviousTextRange(sourceFile, charset, findReplaceString, startPosition, fileLength, maxLen, findLen);
                 if (found == null && findReplaceString.getError() != null) {
                     findReplaceFile.setError(findReplaceString.getError());
@@ -341,7 +344,7 @@ public class FindReplaceTextFile {
         }
     }
 
-    public static LongIndex findPreviousTextRange(File file, Charset charset, FindReplaceString findReplaceString,
+    public static LongRange findPreviousTextRange(File file, Charset charset, FindReplaceString findReplaceString,
             long startPosition, long endPosition, long maxLen, int findLen) {
         if (file == null || charset == null || findReplaceString == null) {
             return null;
@@ -350,89 +353,87 @@ public class FindReplaceTextFile {
         findReplaceString.setStringRange(null);
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
-            LongIndex found = null;
-            int crossFrom, textLen, crossLen = 0, checkLen;
+            LongRange found = null;
+            int backFrom, textLen, backLen = 0, checkLen, lineLen, keepLen;
             StringBuilder s = new StringBuilder();
-            String text, crossString = "", checkString;
+            String text, backString = "", checkString;
             boolean moreLine = false, skipped = startPosition <= 0;
-            long textStart = startPosition;
+            long charIndex = 0, textStart = startPosition;
             IndexRange range;
             while ((line = reader.readLine()) != null) {
                 if (moreLine) {
                     line = "\n" + line;
+                } else {
+                    moreLine = true;
                 }
-                s.append(line);
-                moreLine = true;
-                textLen = s.length();
-                if (!skipped) {
-                    if (textLen < startPosition) {
+                lineLen = line.length();
+                charIndex += lineLen;
+                if (!skipped) {                     // start from startPosition
+                    keepLen = (int) (charIndex - startPosition);
+                    if (keepLen < 0) {
                         continue;
                     }
-                    s.delete(0, (int) startPosition);
+                    s = new StringBuilder();
+                    if (keepLen > 0) {
+                        s.append(line.substring((int) (lineLen - keepLen), lineLen));
+                    }
                     textLen = s.length();
                     skipped = true;
+                } else {
+                    s.append(line);
+                    textLen = s.length();
                 }
-                long totalLen = textStart + textLen;
-                int extra = (int) (totalLen - endPosition);
-                if (extra < 0 && textLen + crossLen < maxLen) {
+                keepLen = (int) (charIndex - endPosition);   // end at startPosition
+                if (keepLen < 0 && textLen + backLen < maxLen) {  // read as more as possible
                     continue;
                 }
-                if (extra > 0) {
-//                    MyBoxLog.debug("cEnd:" + cEnd + "   findEnd:" + findEnd + "   textLen:" + textLen + "   extra:" + extra);
-//                    MyBoxLog.debug("s:>>>>>" + s.toString() + "<<<<<");
-                    s.delete((int) (textLen - extra), textLen);
+                if (keepLen > 0) {
+                    s.delete((int) (textLen - keepLen), textLen);
                     textLen = s.length();
-//                    MyBoxLog.debug("s:>>>>>" + s.toString() + "<<<<<");
                 }
                 text = s.toString();
-//                    MyBoxLog.debug(checkedString + "\n--------------------\n ");
-                checkString = crossString.concat(text);
+                checkString = backString.concat(text);
                 checkLen = checkString.length();
-//                MyBoxLog.debug("textLen:" + textLen + "    checkLen:" + checkLen);
                 findReplaceString.setInputString(checkString).setAnchor(checkLen).run();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
-                    found = new LongIndex();
-//                        MyBoxLog.debug(range.getStart());
-                    found.setStart(textStart + range.getStart() - crossLen);
+                    found = new LongRange();
+                    found.setStart(textStart + range.getStart() - backLen);
                     found.setEnd(found.getStart() + range.getLength());
-//                    MyBoxLog.debug("foundStart:" + found.getStart() + "   foundEnd:" + found.getEnd());
                     if (range.getEnd() == checkLen) {
-                        crossString = "";
+                        backString = "";
                     } else {
-                        crossFrom = Math.max(1, textLen - findLen + 1);
-//                            MyBoxLog.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
-                        crossFrom = Math.max(range.getStart() - crossLen + 1, crossFrom);
-//                            MyBoxLog.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
-                        crossString = text.substring(crossFrom, textLen);
+                        backFrom = Math.max(1, textLen - findLen + 1);
+                        backFrom = Math.max(range.getStart() - backLen + 1, backFrom);
+                        backString = text.substring(backFrom, textLen);
                     }
                 } else {
-                    crossFrom = Math.max(1, textLen - findLen + 1);
-                    crossString = text.substring(crossFrom, textLen);
+                    backFrom = Math.max(1, textLen - findLen + 1);
+                    backString = text.substring(backFrom, textLen);
                 }
-                crossLen = crossString.length();
-//                MyBoxLog.debug("crossString:" + crossString + "   crossLen:" + crossLen);
+                backLen = backString.length();
                 textStart += textLen;
                 s = new StringBuilder();
-                if (extra >= 0) {
+                if (keepLen >= 0) {
                     break;
                 }
             }
-            if (found == null) {
-                checkString = crossString.concat(s.toString());
+            textLen = s.length();
+            if (found == null && textLen > 0 && charIndex >= startPosition && charIndex < endPosition) {
+                keepLen = (int) (charIndex - endPosition);
+                if (keepLen > 0) {
+                    s.delete((int) (textLen - keepLen), textLen);
+                }
+                checkString = backString.concat(s.toString());
                 checkLen = checkString.length();
-//                MyBoxLog.debug("checkedString:>>>>>" + checkedString + "<<<<<");
                 findReplaceString.setInputString(checkString).setAnchor(checkLen).run();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
-                    found = new LongIndex();
-//                        MyBoxLog.debug(range.getStart());
-                    found.setStart(textStart + range.getStart() - crossLen);
+                    found = new LongRange();
+                    found.setStart(textStart + range.getStart() - backLen);
                     found.setEnd(found.getStart() + range.getLength());
-//                    MyBoxLog.debug("foundStart:" + found.getStart() + "   foundEnd:" + found.getEnd());
                 }
             }
-//            MyBoxLog.debug("(found != null):" + (found != null));
             return found;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -446,6 +447,10 @@ public class FindReplaceTextFile {
             if (findReplaceFile == null) {
                 return false;
             }
+            String replaceString = findReplaceFile.getReplaceString();
+            if (replaceString == null) {
+                return false;
+            }
             findReplaceFile.setOperation(Operation.FindNext);
             findNextText(sourceInfo, findReplaceFile);
             IndexRange stringRange = findReplaceFile.getStringRange();
@@ -454,11 +459,13 @@ public class FindReplaceTextFile {
                 return false;
             }
             String pageText = findReplaceFile.getOutputString();
-            String replaceString = findReplaceFile.getReplaceString();
-            String output = pageText.substring(0, stringRange.getStart()).concat(replaceString);
-            if (stringRange.getEnd() < pageText.length()) {
-                output += pageText.substring(stringRange.getEnd(), pageText.length());
+            if (stringRange.getStart() < 0 || stringRange.getStart() > stringRange.getEnd()
+                    || stringRange.getEnd() > pageText.length()) {
+                return false;
             }
+            String output = pageText.substring(0, stringRange.getStart())
+                    + replaceString
+                    + pageText.substring(stringRange.getEnd(), pageText.length());
             findReplaceFile.setOuputString(output);
             return true;
         } catch (Exception e) {
@@ -498,96 +505,86 @@ public class FindReplaceTextFile {
                     .setAnchor(0).setWrap(false);
             int maxLen = FileTools.bufSize(sourceFile, 16);
             int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
-            int crossFrom, textLen, crossLen = 0, lastReplacedLength;
+            int backFrom, textLen, backLen = 0, lastReplacedLength;
             StringBuilder s = new StringBuilder();
             boolean moreLine = false;
-            String line, replacedString, text, crossString = "";
+            String line, replacedString, text, backString = "";
             IndexRange range;
             while ((line = reader.readLine()) != null) {
                 if (moreLine) {
                     line = "\n" + line;
+                } else {
+                    moreLine = true;
                 }
                 s.append(line);
-                moreLine = true;
                 textLen = s.length();
-                if (textLen + crossLen < maxLen) {
+                if (textLen + backLen < maxLen) {   // read as more as possible
                     continue;
                 }
                 text = s.toString();
-                findReplaceString.setInputString(crossString.concat(text)).setAnchor(0).run();
+                findReplaceString.setInputString(backString.concat(text)).setAnchor(0).run();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     replacedString = findReplaceString.getOutputString();
                     lastReplacedLength = findReplaceString.getLastReplacedLength();
                     writer.write(replacedString.substring(0, lastReplacedLength));
-                    crossString = replacedString.substring(lastReplacedLength, replacedString.length());
+                    backString = replacedString.substring(lastReplacedLength, replacedString.length());
                     total += findReplaceString.getCount();
                     break;
                 } else {
-                    if (!crossString.isEmpty()) {
-                        writer.write(crossString);
+                    if (!backString.isEmpty()) {
+                        writer.write(backString);
                     }
-                    crossFrom = Math.max(1, textLen - findLen + 1);
-                    crossString = text.substring(crossFrom, textLen);
-                    writer.write(text.substring(0, crossFrom));
+                    backFrom = Math.max(1, textLen - findLen + 1);
+                    backString = text.substring(backFrom, textLen);
+                    writer.write(text.substring(0, backFrom));
                 }
-                crossLen = crossString.length();
+                backLen = backString.length();
                 s = new StringBuilder();
             }
-            findReplaceString.setInputString(crossString.concat(s.toString())).setAnchor(0).run();
+            findReplaceString.setInputString(backString.concat(s.toString())).setAnchor(0).run();
             writer.write(findReplaceString.getOutputString());
             total += findReplaceString.getCount();
+            if (total > 0 && tmpFile != null && tmpFile.exists()) {
+                findReplaceFile.backup(sourceFile);
+                if (FileTools.rename(tmpFile, sourceFile)) {
+                    findReplaceFile.setCount(total);
+                    return true;
+                }
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
-            return false;
         }
-        findReplaceFile.setCount(total);
-        if (total > 0 && tmpFile != null && tmpFile.exists()) {
-            findReplaceFile.backup(sourceFile);
-            return FileTools.rename(tmpFile, sourceFile);
-        }
-        return true;
+        findReplaceFile.setCount(0);
+        return false;
     }
 
-    public static IndexRange stringRange(FindReplaceFile findReplace, String pageText) {
+    public static IndexRange pageRange(FindReplaceFile findReplace) {
         if (findReplace == null) {
             return null;
         }
-        IndexRange range = null;
-        try {
-            LongIndex fileRange = findReplace.getFileRange();
-            FileEditInformation fileInfo = findReplace.getFileInfo();
-            if (pageText != null && fileRange != null && fileInfo != null) {
-                long fileStart = fileRange.getStart();
-                if (fileStart >= fileInfo.getCurrentPageObjectStart() && fileStart < fileInfo.getCurrentPageObjectEnd()) {
-                    int pageStart = (int) (fileStart - fileInfo.getCurrentPageObjectStart());
-                    int pageEnd = (int) (pageStart + fileRange.getLength());
-                    range = new IndexRange(pageStart, pageEnd);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            findReplace.setError(e.toString());
+        IndexRange pageRange = null;
+        LongRange fileRange = findReplace.getFileRange();
+        FileEditInformation fileInfo = findReplace.getFileInfo();
+        if (fileRange != null && fileInfo != null) {
+            long pageStart = fileInfo.getCurrentPageObjectStart() * findReplace.getUnit();
+            pageRange = new IndexRange((int) (fileRange.getStart() - pageStart), (int) (fileRange.getEnd() - pageStart));
         }
-        findReplace.setStringRange(range);
-        return range;
+        findReplace.setStringRange(pageRange);
+        return pageRange;
     }
 
-    public static LongIndex fileRange(FindReplaceFile findReplace, String string) {
+    public static LongRange fileRange(FindReplaceFile findReplace) {
         if (findReplace == null) {
             return null;
         }
-        LongIndex fileRange = null;
-        IndexRange stringRange = findReplace.getStringRange();
-        if (string != null && stringRange != null && findReplace.getFileInfo() != null) {
-            int start = stringRange.getStart();
-            FileEditInformation fileInfo = findReplace.getFileInfo();
-//            MyBoxLog.debug("stringRange:" + stringRange.getStart() + " " + stringRange.getEnd() + " getCurrentPage:" + fileInfo.getCurrentPage());
-            long fileStart = start;
-            fileStart += fileInfo.getCurrentPageObjectStart() * findReplace.getUnit();
-            fileRange = new LongIndex(fileStart, fileStart + stringRange.getLength());
-//            MyBoxLog.debug("fileRange:" + fileRange.getStart() + " " + fileRange.getEnd());
+        LongRange fileRange = null;
+        IndexRange pageRange = findReplace.getStringRange();
+        FileEditInformation fileInfo = findReplace.getFileInfo();
+        if (pageRange != null && fileInfo != null) {
+            long pageStart = fileInfo.getCurrentPageObjectStart() * findReplace.getUnit();
+            fileRange = new LongRange(pageRange.getStart() + pageStart, pageRange.getEnd() + pageStart);
         }
         findReplace.setFileRange(fileRange);
         return fileRange;

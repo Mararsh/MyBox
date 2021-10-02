@@ -65,9 +65,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                     bottomLabel.setText("");
                     isSettingValues = true;
                     sourceInformation.setCharsetDetermined(true);
-                    if (currentLineBreak != null) {
-                        currentLineBreak.setText(sourceInformation.getLineBreak().toString());
-                    }
                     if (charsetSelector != null) {
                         charsetSelector.getSelectionModel().select(sourceInformation.getCharset().name());
                         if (sourceInformation.isWithBom()) {

@@ -227,6 +227,7 @@ public class NoteEditorController extends HtmlEditorController {
             notesController.rightPane.setDisable(true);
             SingletonTask saveTask = new SingletonTask<Void>() {
                 private Note note;
+                private boolean notExist = false;
 
                 @Override
                 protected boolean handle() {
@@ -236,13 +237,22 @@ public class NoteEditorController extends HtmlEditorController {
                         note.setHtml(HtmlReadTools.body(html, false));
                         note.setUpdateTime(new Date());
                         if (currentNote != null) {
-                            note.setNtid(currentNote.getNtid());
-                            note.setNotebook(currentNote.getNotebookid());
-                            currentNote = tableNote.updateData(conn, note);
-                        } else {
+                            currentNote = tableNote.readData(conn, currentNote);
+                            bookOfCurrentNote = tableNotebook.readData(conn, bookOfCurrentNote);
+                            if (currentNote == null || bookOfCurrentNote == null) {
+                                notExist = true;
+                                currentNote = null;
+                                return true;
+                            } else {
+                                note.setNtid(currentNote.getNtid());
+                                note.setNotebook(currentNote.getNotebookid());
+                                currentNote = tableNote.updateData(conn, note);
+                            }
+                        } else if (currentNote == null) {
                             if (bookOfCurrentNote == null) {
                                 bookOfCurrentNote = notebooksController.root(conn);
                             }
+                            note.setNtid(-1);
                             note.setNotebook(bookOfCurrentNote.getNbid());
                             currentNote = tableNote.insertData(conn, note);
                         }
@@ -255,16 +265,22 @@ public class NoteEditorController extends HtmlEditorController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSaved();
-                    idInput.setText(currentNote.getNtid() + "");
-                    timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
-                    updateBookOfCurrentNote();
-                    if (notebooksController.selectedNode != null
-                            && notebooksController.selectedNode.getNbid() == currentNote.getNotebookid()) {
-                        notesController.refreshNotes();
+                    if (notExist) {
+                        fileChanged = false;
+                        copyNote();
+                        popError(message("NotExist"));
+                    } else {
+                        popSaved();
+                        idInput.setText(currentNote.getNtid() + "");
+                        timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
+                        updateBookOfCurrentNote();
+                        if (notebooksController.selectedNode != null
+                                && notebooksController.selectedNode.getNbid() == currentNote.getNotebookid()) {
+                            notesController.refreshNotes();
+                        }
+                        notesController.refreshTimes();
+                        updateFileStatus(false);
                     }
-                    notesController.refreshTimes();
-                    updateFileStatus(false);
                 }
 
                 @Override

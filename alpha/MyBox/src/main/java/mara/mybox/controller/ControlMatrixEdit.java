@@ -238,6 +238,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
 
                 private Matrix matrix;
                 private long id = -1;
+                private boolean notExist = false;
 
                 @Override
                 protected boolean handle() {
@@ -264,6 +265,10 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                             }
                             matrix.setId(id);
                         } else {
+                            if (tableMatrix.readData(conn, matrix) == null) {
+                                notExist = true;
+                                return true;
+                            }
                             matrix.setId(id);
                             if (tableMatrix.updateData(conn, matrix) == null) {
                                 return false;
@@ -297,10 +302,16 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
 
                 @Override
                 protected void whenSucceeded() {
-                    manager.loadTableData();
-                    idInput.setText(id + "");
-                    sheetSaved();
-                    popSuccessful();
+                    if (notExist) {
+                        dataChangedNotify.set(false);
+                        copyMatrixAction();
+                        popError(message("NotExist"));
+                    } else {
+                        manager.loadTableData();
+                        idInput.setText(id + "");
+                        sheetSaved();
+                        popSuccessful();
+                    }
                 }
             };
             start(task);

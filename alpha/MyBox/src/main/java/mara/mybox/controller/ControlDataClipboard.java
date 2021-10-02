@@ -219,9 +219,20 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
     }
 
     @Override
+    protected void afterDeletion() {
+        refreshAction();
+        if (sheetController.sourceFile != null && !sheetController.sourceFile.exists()) {
+            loadNull();
+            sheetController.makeSheet(null, false);
+        }
+    }
+
+    @Override
     protected void afterClear() {
         FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
         refreshAction();
+        loadNull();
+        sheetController.makeSheet(null, false);
     }
 
     @Override
@@ -467,15 +478,6 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
 
             };
             start(task);
-        }
-    }
-
-    @Override
-    protected void afterDeletion() {
-        refreshAction();
-        if (sheetController.sourceFile != null && !sheetController.sourceFile.exists()) {
-            loadNull();
-            sheetController.makeSheet(null, false);
         }
     }
 
