@@ -16,7 +16,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefWidth="500.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuBytesEditController">
+<VBox fx:id="thisPane" prefWidth="500.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuBytesEditController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -142,6 +142,20 @@ License:    Apache License Version 2.0
                         </Button>
                     </children>
                 </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="76.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Button fx:id="hexButton" mnemonicParsing="false" onAction="#hexAction" >
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconHex.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" text="%Wrap" />
+                    </children>
+                </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Button fx:id="findButton" mnemonicParsing="false" onAction="#findAction">
@@ -180,7 +194,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                  <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" text="%Wrap" />
                     </children>
                 </HBox>
                 <HBox fx:id="fileBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">

@@ -2,23 +2,17 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import mara.mybox.data.DoubleStatistic;
+import mara.mybox.data.FloatStatistic;
+import mara.mybox.data.IntStatistic;
+import mara.mybox.data.LongStatistic;
+import mara.mybox.data.ShortStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -28,262 +22,161 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay {
 
-    protected List<ColumnDefinition> numberColumns;
-
-    @FXML
-    protected ToggleGroup calGroup;
-    @FXML
-    protected Label calColumnsLabel;
-    @FXML
-    protected ComboBox<String> rowFromSelector, rowToSelector;
-    @FXML
-    protected TextArea calculationColumnsArea, displayColumnsArea;
-    @FXML
-    protected Button exampleCalculationColumnsButton, exampleDisplayColumnsButton, calculatorButton;
-    @FXML
-    protected VBox calColumnsBox;
-
-    public void initCalculationControls() {
-        try {
-            calGroup.selectedToggleProperty().addListener((ChangeListener<Toggle>) (observable, ov, nv) -> {
-                checkCalculation();
-            });
-
-            calculatorButton.disableProperty().bind(calculationColumnsArea.textProperty().isEmpty());
-
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+    public String[][] transpose(List<Integer> rows, List<Integer> cols) {
+        if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty() || sheetInputs == null || columns == null) {
+            popError(message("NoData"));
+            return null;
         }
+        String[][] data = new String[cols.size()][rows.size()];
+        for (int r = 0; r < rows.size(); ++r) {
+            int row = rows.get(r);
+            for (int c = 0; c < cols.size(); ++c) {
+                data[c][r] = cellString(row, cols.get(c));
+            }
+        }
+        return data;
     }
 
-    protected void checkCalculation() {
+    public String[][] statistic(List<Integer> rows, List<Integer> calCols, List<Integer> disCols) {
         try {
-            if (isSettingValues) {
-                return;
+            if (rows == null || rows.isEmpty() || calCols == null || calCols.isEmpty() || sheetInputs == null || columns == null) {
+                popError(message("NoData"));
+                return null;
             }
-            calculationColumnsArea.clear();
-            displayColumnsArea.clear();
-
-            if (ascendingRadio.isSelected() || descendingRadio.isSelected()) {
-                calColumnsLabel.setText(message("OrderColumn"));
-            } else {
-                calColumnsLabel.setText(message("ColumnsCalculationSeparateByComma"));
-            }
-
-            calColumnsBox.setDisable(copyRadio.isSelected());
-
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
-    }
-
-    protected void updateCalculation() {
-        try {
-            if (rowFromSelector == null) {
-                return;
-            }
-            rowFromSelector.getItems().clear();
-            rowToSelector.getItems().clear();
-            long total = rowsTotal();
-            List<String> indices = new ArrayList<>();
-            long step = total > 1000 ? total / 1000 : 1;
-            for (long i = 1; i <= total; i += step) {
-                indices.add(i + "");
-            }
-            rowFromSelector.getItems().addAll(indices);
-            rowToSelector.getItems().addAll(indices);
-            selectAllRows();
-
-            numberColumns = new ArrayList<>();
-            if (columns != null) {
-                for (ColumnDefinition column : columns) {
-                    if (column.isNumberType()) {
-                        numberColumns.add(column);
+            int rowSize = rows.size();
+            String[][] data = new String[rowSize + 9][calCols.size() + disCols.size() + 1];
+            data[0][0] = message("Count");
+            data[1][0] = message("Summation");
+            data[2][0] = message("Mean");
+            data[3][0] = message("Variance");
+            data[4][0] = message("Skewness");
+            data[5][0] = message("Maximum");
+            data[6][0] = message("Minimum");
+            data[7][0] = message("Mode");
+            data[8][0] = message("Median");
+            int baseCol = 1;
+            for (int colIndex = baseCol; colIndex < calCols.size() + baseCol; colIndex++) {
+                int col = calCols.get(colIndex - baseCol);
+                ColumnDefinition column = columns.get(col);
+                switch (column.getType()) {
+                    case Double: {
+                        double[] colData = new double[rowSize];
+                        for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+                            int row = rows.get(rowIndex);
+                            String v = cellString(row, col);
+                            data[rowIndex + 9][colIndex] = v;
+                            colData[rowIndex] = Double.valueOf(v);
+                        }
+                        DoubleStatistic statistic = new DoubleStatistic(colData);
+                        data[0][colIndex] = StringTools.format(statistic.getCount());
+                        data[1][colIndex] = DoubleTools.format(statistic.getSum(), scale);
+                        data[2][colIndex] = DoubleTools.format(statistic.getMean(), scale);
+                        data[3][colIndex] = DoubleTools.format(statistic.getVariance(), scale);
+                        data[4][colIndex] = DoubleTools.format(statistic.getSkewness(), scale);
+                        data[5][colIndex] = DoubleTools.format(statistic.getMaximum(), scale);
+                        data[6][colIndex] = DoubleTools.format(statistic.getMinimum(), scale);
+                        data[7][colIndex] = DoubleTools.format(statistic.getMode(), scale);
+                        data[8][colIndex] = DoubleTools.format(statistic.getMedian(), scale);
+                        break;
                     }
+                    case Integer: {
+                        int[] colData = new int[rowSize];
+                        for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+                            int row = rows.get(rowIndex);
+                            String v = cellString(row, col);
+                            data[rowIndex + 9][colIndex] = v;
+                            colData[rowIndex] = Integer.valueOf(v);
+                        }
+                        IntStatistic statistic = new IntStatistic(colData);
+                        data[0][colIndex] = StringTools.format(statistic.getCount());
+                        data[1][colIndex] = DoubleTools.format(statistic.getSum(), scale);
+                        data[2][colIndex] = DoubleTools.format(statistic.getMean(), scale);
+                        data[3][colIndex] = DoubleTools.format(statistic.getVariance(), scale);
+                        data[4][colIndex] = DoubleTools.format(statistic.getSkewness(), scale);
+                        data[5][colIndex] = StringTools.format(statistic.getMaximum());
+                        data[6][colIndex] = StringTools.format(statistic.getMinimum());
+                        data[7][colIndex] = StringTools.format(statistic.getMode());
+                        data[8][colIndex] = StringTools.format(statistic.getMedian());
+                        break;
+                    }
+                    case Long: {
+                        long[] colData = new long[rowSize];
+                        for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+                            int row = rows.get(rowIndex);
+                            String v = cellString(row, col);
+                            data[rowIndex + 9][colIndex] = v;
+                            colData[rowIndex] = Long.valueOf(v);
+                        }
+                        LongStatistic statistic = new LongStatistic(colData);
+                        data[0][colIndex] = StringTools.format(statistic.getCount());
+                        data[1][colIndex] = DoubleTools.format(statistic.getSum(), scale);
+                        data[2][colIndex] = DoubleTools.format(statistic.getMean(), scale);
+                        data[3][colIndex] = DoubleTools.format(statistic.getVariance(), scale);
+                        data[4][colIndex] = DoubleTools.format(statistic.getSkewness(), scale);
+                        data[5][colIndex] = StringTools.format(statistic.getMaximum());
+                        data[6][colIndex] = StringTools.format(statistic.getMinimum());
+                        data[7][colIndex] = StringTools.format(statistic.getMode());
+                        data[8][colIndex] = StringTools.format(statistic.getMedian());
+                        break;
+                    }
+                    case Short: {
+                        short[] colData = new short[rowSize];
+                        for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+                            int row = rows.get(rowIndex);
+                            String v = cellString(row, col);
+                            data[rowIndex + 9][colIndex] = v;
+                            colData[rowIndex] = Short.valueOf(v);
+                        }
+                        ShortStatistic statistic = new ShortStatistic(colData);
+                        data[0][colIndex] = StringTools.format(statistic.getCount());
+                        data[1][colIndex] = DoubleTools.format(statistic.getSum(), scale);
+                        data[2][colIndex] = DoubleTools.format(statistic.getMean(), scale);
+                        data[3][colIndex] = DoubleTools.format(statistic.getVariance(), scale);
+                        data[4][colIndex] = DoubleTools.format(statistic.getSkewness(), scale);
+                        data[5][colIndex] = StringTools.format(statistic.getMaximum());
+                        data[6][colIndex] = StringTools.format(statistic.getMinimum());
+                        data[7][colIndex] = StringTools.format(statistic.getMode());
+                        data[8][colIndex] = StringTools.format(statistic.getMedian());
+                        break;
+                    }
+                    case Float: {
+                        float[] colData = new float[rowSize];
+                        for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+                            int row = rows.get(rowIndex);
+                            String v = cellString(row, col);
+                            data[rowIndex + 9][colIndex] = v;
+                            colData[rowIndex] = Float.valueOf(v);
+                        }
+                        FloatStatistic statistic = new FloatStatistic(colData);
+                        data[0][colIndex] = StringTools.format(statistic.getCount());
+                        data[1][colIndex] = DoubleTools.format(statistic.getSum(), scale);
+                        data[2][colIndex] = DoubleTools.format(statistic.getMean(), scale);
+                        data[3][colIndex] = DoubleTools.format(statistic.getVariance(), scale);
+                        data[4][colIndex] = DoubleTools.format(statistic.getSkewness(), scale);
+                        data[5][colIndex] = FloatTools.format(statistic.getMaximum(), scale);
+                        data[6][colIndex] = FloatTools.format(statistic.getMinimum(), scale);
+                        data[7][colIndex] = FloatTools.format(statistic.getMode(), scale);
+                        data[8][colIndex] = FloatTools.format(statistic.getMedian(), scale);
+                        break;
+                    }
+                    default:
+                        break;
                 }
             }
-            isSettingValues = true;
-            if (numberColumns.isEmpty()) {
-                sumRadio.setDisable(true);
-                addRadio.setDisable(true);
-                subRadio.setDisable(true);
-                multiplyRadio.setDisable(true);
-                ascendingRadio.fire();
-            } else {
-                sumRadio.setDisable(false);
-                addRadio.setDisable(false);
-                subRadio.setDisable(false);
-                multiplyRadio.setDisable(false);
-                sumRadio.fire();
-            }
-            isSettingValues = false;
-            checkCalculation();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void calculationAction() {
-        try {
-            int from = Integer.valueOf(rowFromSelector.getValue());
-            int to = Integer.valueOf(rowToSelector.getValue());
-            if (from > to) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-
-            String[] calCols = calculationColumnsArea.getText().split(",");
-            List<Integer> calculationColumns = new ArrayList<>();
-            for (String v : calCols) {
-                for (int c = 0; c < columns.size(); c++) {
-                    ColumnDefinition col = columns.get(c);
-                    if (col.getName().equals(v.trim())) {
-                        calculationColumns.add(c);
-                    }
+            baseCol = 1 + calCols.size();
+            for (int colIndex = baseCol; colIndex < disCols.size() + baseCol; colIndex++) {
+                int col = disCols.get(colIndex - baseCol);
+                for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+                    int row = rows.get(rowIndex);
+                    data[rowIndex + 9][colIndex] = cellString(row, col);
                 }
             }
-            if (calculationColumns.isEmpty()) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-
-            String[] disCols = displayColumnsArea.getText().split(",");
-            List<Integer> displayColumns = new ArrayList<>();
-            for (String v : disCols) {
-                for (int c = 0; c < columns.size(); c++) {
-                    ColumnDefinition col = columns.get(c);
-                    if (col.getName().equals(v.trim())) {
-                        displayColumns.add(c);
-                    }
-                }
-            }
-
-            if (sumRadio.isSelected()) {
-                sum(calculationColumns, displayColumns, from, to);
-            } else if (addRadio.isSelected()) {
-
-            }
-
+            return data;
         } catch (Exception e) {
             popError(e.toString());
-            MyBoxLog.error(e);
+            MyBoxLog.console(e);
+            return null;
         }
-    }
-
-    @FXML
-    public void selectAllRows() {
-        rowFromSelector.getSelectionModel().select("1");
-        rowToSelector.getSelectionModel().select(rowsTotal() + "");
-    }
-
-    @FXML
-    public void popCalculationColumn(MouseEvent mouseEvent) {
-        try {
-            List<Node> columButtons = new ArrayList<>();
-            List<ColumnDefinition> popColumns = columns;
-            if (sumRadio.isSelected() || addRadio.isSelected() || subRadio.isSelected() || multiplyRadio.isSelected()) {
-                popColumns = numberColumns;
-            }
-            if (popColumns == null || popColumns.isEmpty()) {
-                return;
-            }
-            for (ColumnDefinition column : popColumns) {
-                String name = column.getName();
-                Button button = new Button(name);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        if (ascendingRadio.isSelected() || descendingRadio.isSelected()) {
-                            calculationColumnsArea.setText(name);
-                        } else {
-                            calculationColumnsArea.insertText(calculationColumnsArea.getAnchor(), name);
-                        }
-                    }
-                });
-                columButtons.add(button);
-            }
-
-            List<Node> otherButtons = new ArrayList<>();
-            if (!ascendingRadio.isSelected() && !descendingRadio.isSelected()) {
-                Button commaButton = new Button(message("Comma"));
-                commaButton.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        calculationColumnsArea.insertText(calculationColumnsArea.getAnchor(), ",");
-                    }
-                });
-                otherButtons.add(commaButton);
-            }
-
-            Button clearTButton = new Button(message("Clear"));
-            clearTButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    calculationColumnsArea.clear();
-                }
-            });
-            otherButtons.add(clearTButton);
-
-            MenuController controller = MenuController.open(this, calculationColumnsArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            controller.addFlowPane(columButtons);
-            controller.addFlowPane(otherButtons);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void popDisplayColumn(MouseEvent mouseEvent) {
-        try {
-            List<Node> columButtons = new ArrayList<>();
-            for (ColumnDefinition column : columns) {
-                String name = column.getName();
-                Button button = new Button(name);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        displayColumnsArea.insertText(displayColumnsArea.getAnchor(), name);
-                    }
-                });
-                columButtons.add(button);
-            }
-
-            List<Node> otherButtons = new ArrayList<>();
-            Button commaButton = new Button(message("Comma"));
-            commaButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    displayColumnsArea.insertText(displayColumnsArea.getAnchor(), ",");
-                }
-            });
-            otherButtons.add(commaButton);
-
-            Button clearTButton = new Button(message("Clear"));
-            clearTButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    displayColumnsArea.clear();
-                }
-            });
-            otherButtons.add(clearTButton);
-
-            MenuController controller = MenuController.open(this, displayColumnsArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            controller.addFlowPane(columButtons);
-            controller.addFlowPane(otherButtons);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void copyCalculationResults() {
-
-    }
-
-    @FXML
-    public void editCalulationResults() {
-
     }
 
     // 1-based, include

@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
@@ -135,7 +136,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         selectionLabel.setText(info);
     }
 
-    protected boolean formatMainArea() {
+    protected boolean validateMainArea() {
         return true;
     }
 
@@ -190,7 +191,8 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         }, 500);   // Wait for text loaded
     }
 
-    protected boolean validMainArea() {
+    @FXML
+    protected boolean formatMainArea() {
         return true;
     }
 
@@ -218,7 +220,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             getMyStage().setTitle(t);
         }
 
-        if (changed && !validMainArea()) {
+        if (changed && !validateMainArea()) {
             if (editLabel != null) {
                 editLabel.setText(message("InvalidData"));
             }

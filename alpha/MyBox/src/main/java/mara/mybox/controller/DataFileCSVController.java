@@ -1,9 +1,15 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -11,9 +17,11 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -125,6 +133,63 @@ public class DataFileCSVController extends BaseDataFileController {
         sheetController.targetWithNames = csvWriteController.withNamesCheck.isSelected();
         sheetController.saveAsType = saveAsType;
         sheetController.saveAs();
+    }
+
+    public void loadData(String[][] data, List<ColumnDefinition> dataColumns) {
+        if (data == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private File tmpFile;
+                private boolean withName;
+
+                @Override
+                protected boolean handle() {
+                    tmpFile = TmpFileTools.getTempFile();
+                    CSVFormat csvFormat = CSVFormat.DEFAULT
+                            .withDelimiter(',')
+                            .withIgnoreEmptyLines().withTrim().withNullString("");
+                    List<String> names = null;
+                    if (dataColumns != null && !dataColumns.isEmpty()) {
+                        names = new ArrayList<>();
+                        for (ColumnDefinition col : dataColumns) {
+                            names.add(col.getName());
+                        }
+                        csvFormat = csvFormat.withFirstRecordAsHeader();
+                    }
+                    withName = names != null && !names.isEmpty();
+                    try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
+                        if (withName) {
+                            csvPrinter.printRecord(names);
+                        }
+                        for (int r = 0; r < data.length; r++) {
+                            csvPrinter.printRecord(Arrays.asList(data[r]));
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                        error = e.toString();
+                        return false;
+                    }
+                    if (names != null) {
+                        return sheetController.saveDefinition(tmpFile.getAbsolutePath(),
+                                DataType.DataFile, Charset.forName("UTF-8"), ",", true, dataColumns);
+                    } else {
+                        return tmpFile.exists();
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    setFile(tmpFile, Charset.forName("UTF-8"), withName, ',');
+                }
+
+            };
+            start(task);
+        }
     }
 
 

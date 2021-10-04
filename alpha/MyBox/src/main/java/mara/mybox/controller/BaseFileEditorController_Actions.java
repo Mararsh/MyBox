@@ -54,7 +54,8 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     @FXML
     @Override
     public void saveAction() {
-        if (!formatMainArea()) {
+        if (!validateMainArea()) {
+            popError(message("InvalidData"));
             return;
         }
         if (sourceFile == null) {
@@ -152,7 +153,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     @FXML
     @Override
     public void saveAsAction() {
-        if (!formatMainArea()) {
+        if (!validateMainArea()) {
             return;
         }
         final File file = chooseSaveFile();

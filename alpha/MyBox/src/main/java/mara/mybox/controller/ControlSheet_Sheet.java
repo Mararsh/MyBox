@@ -89,6 +89,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                 int rowsSize = data == null ? 0 : data.length;
                 int colsSize = data == null || rowsSize == 0 ? 0 : data[0].length;
                 if (colsSize > 0) {
+                    // Align columns as data
                     if (dataType != DataType.Matrix) {
                         if (columns == null) {
                             columns = new ArrayList<>();
@@ -96,7 +97,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                         if (columns.size() < colsSize) {
                             makeColumns(columns.size(), colsSize - columns.size());
                         } else if (columns.size() > colsSize) {
-                            for (int col = columns.size() - 1; col > colsSize; col--) {
+                            for (int col = columns.size() - 1; col >= colsSize; col--) {
                                 columns.remove(col);
                             }
                         }

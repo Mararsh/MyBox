@@ -251,7 +251,7 @@ public class ControlFindReplace extends BaseController {
             findArea.setStyle(null);
             return true;
         }
-        final String v = ByteTools.validateTextHex(string);
+        final String v = ByteTools.formatTextHex(string);
         if (v == null) {
             findArea.setStyle(NodeStyleTools.badStyle);
             return false;
@@ -306,7 +306,7 @@ public class ControlFindReplace extends BaseController {
             replaceArea.setStyle(null);
             return true;
         }
-        final String v = ByteTools.validateTextHex(string);
+        final String v = ByteTools.formatTextHex(string);
         if (v == null) {
             replaceArea.setStyle(NodeStyleTools.badStyle);
             return false;

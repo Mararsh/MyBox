@@ -10,6 +10,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -19,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-7-12
  * @License Apache License Version 2.0
  */
-public class ColumnDefinition extends BaseData {
+public class ColumnDefinition extends BaseData implements Cloneable {
 
     protected DataDefinition dataDefinition;
     protected long dcid, dataid;
@@ -261,14 +262,36 @@ public class ColumnDefinition extends BaseData {
         }
         switch (type) {
             case Double:
-            case Float:
                 return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+            case Float:
+                return FloatTools.format(random.nextFloat(maxRandom), scale);
             case Integer:
-            case Long:
-            case Short:
                 return StringTools.format(random.nextInt(maxRandom));
+            case Long:
+                return StringTools.format(random.nextLong(maxRandom));
+            case Short:
+                return StringTools.format((short) random.nextInt(maxRandom));
             default:
                 return (char) ('a' + random.nextInt(25)) + "";
+        }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        try {
+            ColumnDefinition newInfo = (ColumnDefinition) super.clone();
+            return newInfo;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public ColumnDefinition cloneBase() {
+        try {
+            return (ColumnDefinition) clone();
+        } catch (Exception e) {
+            return null;
         }
     }
 

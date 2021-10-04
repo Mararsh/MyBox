@@ -188,8 +188,23 @@ public abstract class BaseDataOperationController extends BaseController {
         updateControls();
     }
 
+    public List<Integer> selectedCols(ControlListCheckBox listController) {
+        List<String> names = listController.checkedValues();
+        if (names == null) {
+            return null;
+        }
+        List<Integer> indices = new ArrayList<>();
+        for (String name : names) {
+            int index = sheetController.colIndex(name);
+            if (index >= 0) {
+                indices.add((Integer) index);
+            }
+        }
+        return indices;
+    }
+
     public List<Integer> selectedCols() {
-        return colsListController.checkedIndices();
+        return selectedCols(colsListController);
     }
 
     public List<Integer> cols() {
@@ -237,14 +252,32 @@ public abstract class BaseDataOperationController extends BaseController {
     /*
         static
      */
-    public static void update() {
+    public static void update(ControlSheet sheetController) {
         try {
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
                 Object object = window.getUserData();
                 if (object != null && object instanceof BaseDataOperationController) {
-                    ((BaseDataOperationController) object).updateControls();
+                    BaseDataOperationController controller = (BaseDataOperationController) object;
+                    if (controller.sheetController == sheetController) {
+                        controller.updateControls();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void closeAll() {
+        try {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof BaseDataOperationController) {
+                    ((BaseDataOperationController) object).close();
                 }
             }
         } catch (Exception e) {

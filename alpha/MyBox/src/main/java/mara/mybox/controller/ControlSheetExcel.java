@@ -82,8 +82,7 @@ public class ControlSheetExcel extends ControlSheetFile {
 
     @Override
     protected boolean readDataDefinition() {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Workbook wb = WorkbookFactory.create(sourceFile)) {
+        try ( Connection conn = DerbyBase.getConnection();  Workbook wb = WorkbookFactory.create(sourceFile)) {
             int sheetsNumber = wb.getNumberOfSheets();
             sheetNames = new ArrayList<>();
             for (int i = 0; i < sheetsNumber; i++) {
@@ -305,10 +304,11 @@ public class ControlSheetExcel extends ControlSheetFile {
                 }
             }
             if (!rows.isEmpty() && maxCol > 0) {
-                data = new String[rows.size()][maxCol];
+                int colsSize = sourceWithNames ? columns.size() : maxCol;
+                data = new String[rows.size()][colsSize];
                 for (int row = 0; row < rows.size(); row++) {
                     List<String> rowData = rows.get(row);
-                    for (int col = 0; col < rowData.size(); col++) {
+                    for (int col = 0; col < Math.min(rowData.size(), colsSize); col++) {
                         data[row][col] = rowData.get(col);
                     }
                 }
@@ -333,8 +333,7 @@ public class ControlSheetExcel extends ControlSheetFile {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);  CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
             if (withNames) {
                 List<String> names = new ArrayList<>();
                 for (int c : cols) {
@@ -396,8 +395,7 @@ public class ControlSheetExcel extends ControlSheetFile {
         File tmpTargetFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);  Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet sourceSheet;
             if (currentSheetName != null) {
                 sourceSheet = sourceBook.getSheet(currentSheetName);
@@ -472,9 +470,7 @@ public class ControlSheetExcel extends ControlSheetFile {
         File tmpTargetFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( CSVParser csvParser = CSVParser.parse(sourceController.sourceFile, sourceController.sourceCharset, sourceController.sourceCsvFormat);
-                 Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( CSVParser csvParser = CSVParser.parse(sourceController.sourceFile, sourceController.sourceCharset, sourceController.sourceCsvFormat);  Workbook sourceBook = WorkbookFactory.create(sourceFile);  Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet sourceSheet;
             if (currentSheetName != null) {
                 sourceSheet = sourceBook.getSheet(currentSheetName);
@@ -626,8 +622,7 @@ public class ControlSheetExcel extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);  Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet sourceSheet;
             if (currentSheetName != null) {
                 sourceSheet = sourceBook.getSheet(currentSheetName);
@@ -703,8 +698,7 @@ public class ControlSheetExcel extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);  Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet sourceSheet;
             if (currentSheetName != null) {
                 sourceSheet = sourceBook.getSheet(currentSheetName);
@@ -779,8 +773,7 @@ public class ControlSheetExcel extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);  Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet sourceSheet;
             if (currentSheetName == null) {
                 sourceSheet = sourceBook.getSheetAt(0);
@@ -818,8 +811,7 @@ public class ControlSheetExcel extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);  Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet sourceSheet;
             if (currentSheetName != null) {
                 sourceSheet = sourceBook.getSheet(currentSheetName);

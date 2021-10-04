@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import mara.mybox.bufferedimage.ColorComponentTools.ColorComponent;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.ColorComponentTools.ColorComponent;
 
 /**
  * @Author Mara
@@ -198,23 +198,24 @@ public class ImageStatistic {
                 }
             }
 
-            redVariable = (int) Math.sqrt(redVariable / nonTransparent);
-            greenVariable = (int) Math.sqrt(greenVariable / nonTransparent);
-            blueVariable = (int) Math.sqrt(blueVariable / nonTransparent);
-            alphaVariable = (int) Math.sqrt(alphaVariable / nonTransparent);
-            hueVariable = (int) Math.sqrt(hueVariable / nonTransparent);
-            saturationVariable = (int) Math.sqrt(saturationVariable / nonTransparent);
-            brightnessVariable = (int) Math.sqrt(brightnessVariable / nonTransparent);
-            grayVariable = (int) Math.sqrt(grayVariable / nonTransparent);
+            double p = 1d / nonTransparent;
+            redVariable = (int) Math.sqrt(redVariable * p);
+            greenVariable = (int) Math.sqrt(greenVariable * p);
+            blueVariable = (int) Math.sqrt(blueVariable * p);
+            alphaVariable = (int) Math.sqrt(alphaVariable * p);
+            hueVariable = (int) Math.sqrt(hueVariable * p);
+            saturationVariable = (int) Math.sqrt(saturationVariable * p);
+            brightnessVariable = (int) Math.sqrt(brightnessVariable * p);
+            grayVariable = (int) Math.sqrt(grayVariable * p);
 
-            redSkewness = (int) Math.pow(redSkewness / nonTransparent, 1.0 / 3);
-            greenSkewness = (int) Math.pow(greenSkewness / nonTransparent, 1.0 / 3);
-            blueSkewness = (int) Math.pow(blueSkewness / nonTransparent, 1.0 / 3);
-            alphaSkewness = (int) Math.pow(alphaSkewness / nonTransparent, 1.0 / 3);
-            hueSkewness = (int) Math.pow(hueSkewness / nonTransparent, 1.0 / 3);
-            saturationSkewness = (int) Math.pow(saturationSkewness / nonTransparent, 1.0 / 3);
-            brightnessSkewness = (int) Math.pow(brightnessSkewness / nonTransparent, 1.0 / 3);
-            graySkewness = (int) Math.pow(graySkewness / nonTransparent, 1.0 / 3);
+            redSkewness = (int) Math.cbrt(redSkewness * p);
+            greenSkewness = (int) Math.cbrt(greenSkewness * p);
+            blueSkewness = (int) Math.cbrt(blueSkewness * p);
+            alphaSkewness = (int) Math.cbrt(alphaSkewness * p);
+            hueSkewness = (int) Math.cbrt(hueSkewness * p);
+            saturationSkewness = (int) Math.cbrt(saturationSkewness * p);
+            brightnessSkewness = (int) Math.cbrt(brightnessSkewness * p);
+            graySkewness = (int) Math.cbrt(graySkewness * p);
 
             IntStatistic grayStatistic = new IntStatistic(ColorComponent.Gray.name(),
                     graySum, grayMean, (int) grayVariable, (int) graySkewness,
@@ -292,7 +293,6 @@ public class ImageStatistic {
         ComponentStatistic s = data.get(component);
         return s.getStatistic();
     }
-
 
     public static int[] grayHistogram(BufferedImage image) {
         if (image == null) {

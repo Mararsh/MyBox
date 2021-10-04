@@ -375,6 +375,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
+    public void initControls() {
+
+    }
+
     /*
         show scene
      */

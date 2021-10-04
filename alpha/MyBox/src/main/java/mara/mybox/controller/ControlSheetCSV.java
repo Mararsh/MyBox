@@ -190,10 +190,11 @@ public class ControlSheetCSV extends ControlSheetFile {
                 }
             }
             if (!rows.isEmpty() && maxCol > 0) {
-                data = new String[rows.size()][maxCol];
+                int colsSize = sourceWithNames ? columns.size() : maxCol;
+                data = new String[rows.size()][colsSize];
                 for (int row = 0; row < rows.size(); row++) {
                     List<String> rowData = rows.get(row);
-                    for (int col = 0; col < rowData.size(); col++) {
+                    for (int col = 0; col < Math.min(rowData.size(), colsSize); col++) {
                         data[row][col] = rowData.get(col);
                     }
                 }

@@ -531,6 +531,9 @@ public class StyleButton {
                     return new StyleData(id, message("Set"), "", "iconEqual.png");
             }
         }
+        if (id.startsWith("hex")) {
+            return new StyleData(id, message("Hexadecimal"), "", "iconHex.png");
+        }
         return null;
     }
 

@@ -214,10 +214,11 @@ public class ControlSheetText extends ControlSheetFile {
                 }
             }
             if (!rows.isEmpty() && maxCol > 0) {
-                data = new String[rows.size()][maxCol];
+                int colsSize = sourceWithNames ? columns.size() : maxCol;
+                data = new String[rows.size()][colsSize];
                 for (int row = 0; row < rows.size(); row++) {
                     List<String> rowData = rows.get(row);
-                    for (int col = 0; col < rowData.size(); col++) {
+                    for (int col = 0; col < Math.min(rowData.size(), colsSize); col++) {
                         data[row][col] = rowData.get(col);
                     }
                 }
@@ -247,8 +248,7 @@ public class ControlSheetText extends ControlSheetFile {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));  CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
             if (sourceWithNames) {
                 readNames(reader);
             }
@@ -292,8 +292,7 @@ public class ControlSheetText extends ControlSheetFile {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
             String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             if (sourceWithNames) {
                 TextFileTools.writeLine(writer, readNames(reader), delimiter);
@@ -342,9 +341,7 @@ public class ControlSheetText extends ControlSheetFile {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( CSVParser sourceParser = CSVParser.parse(sourceController.sourceFile, sourceController.sourceCharset, sourceController.sourceCsvFormat);
-                 BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
+        try ( CSVParser sourceParser = CSVParser.parse(sourceController.sourceFile, sourceController.sourceCharset, sourceController.sourceCsvFormat);  BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
             String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             if (sourceWithNames) {
                 TextFileTools.writeLine(writer, readNames(reader), delimiter);
@@ -503,8 +500,7 @@ public class ControlSheetText extends ControlSheetFile {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
             String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             if (sourceWithNames) {
                 if (readNames(reader) != null) {
@@ -566,8 +562,7 @@ public class ControlSheetText extends ControlSheetFile {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
             String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             List<String> colsNames = columnNames();
             if (sourceWithNames) {
@@ -677,8 +672,7 @@ public class ControlSheetText extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         String delimiter = TextTools.delimiterValue(delimiterName);
         if (sourceFile != null) {
-            try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+            try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
                 List<String> colsNames = columnNames();
                 if (sourceWithNames) {
                     readNames(reader);

@@ -116,6 +116,30 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
     }
 
+    protected int colIndex(String name) {
+        try {
+            for (int i = 0; i < columns.size(); i++) {
+                if (columns.get(i).getName().equals(name)) {
+                    return i;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return -1;
+    }
+
+    protected ColumnDefinition col(String name) {
+        try {
+            for (ColumnDefinition col : columns) {
+                if (col.getName().equals(name)) {
+                    return col;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
     // 0=based
     public List<Integer> colsIndex(boolean isAll) {
         if (colsCheck == null) {

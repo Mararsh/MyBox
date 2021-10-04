@@ -218,50 +218,50 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </FlowPane>
-                                          <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                             <children>
-                                                <Label text="%LinesRange" />
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                   <children>
-                                                      <Label text="%From" />
-                                                      <TextField fx:id="lineFromInput" prefWidth="80.0" />
-                                                      <Label text="%To" />
-                                                      <TextField fx:id="lineToInput" prefWidth="90.0" />
-                                                   </children>
-                                                </FlowPane>
-                                                <Button fx:id="locateLinesRangeButton" mnemonicParsing="false" onAction="#locateLinesRange">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconGo.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </VBox>
-                                          <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                             <children>
-                                                <Label text="%BytesRange" />
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                   <children>
-                                                      <Label text="%From" />
-                                                      <TextField fx:id="objectFromInput" prefWidth="80.0" />
-                                                      <Label text="%To" />
-                                                      <TextField fx:id="objectToInput" prefWidth="90.0" />
-                                                   </children>
-                                                </FlowPane>
-                                                <Button fx:id="locateObjectsRangeButton" mnemonicParsing="false" onAction="#locateObjectsRange">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconGo.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </VBox>
+                                                        <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <Label text="%LinesRange" />
+                                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                                    <children>
+                                                                        <Label text="%From" />
+                                                                        <TextField fx:id="lineFromInput" prefWidth="80.0" />
+                                                                        <Label text="%To" />
+                                                                        <TextField fx:id="lineToInput" prefWidth="90.0" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <Button fx:id="locateLinesRangeButton" mnemonicParsing="false" onAction="#locateLinesRange">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconGo.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <Label text="%BytesRange" />
+                                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                                    <children>
+                                                                        <Label text="%From" />
+                                                                        <TextField fx:id="objectFromInput" prefWidth="80.0" />
+                                                                        <Label text="%To" />
+                                                                        <TextField fx:id="objectToInput" prefWidth="90.0" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <Button fx:id="locateObjectsRangeButton" mnemonicParsing="false" onAction="#locateObjectsRange">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconGo.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </VBox>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -299,6 +299,15 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView> 
                                         <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="hexButton" layoutX="437.0" layoutY="10.0" mnemonicParsing="false" onAction="#formatMainArea">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconHex.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -353,7 +362,7 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <AnchorPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                     <children>
-                                        <TextArea fx:id="lineArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <TextArea fx:id="lineArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                         <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%EditHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     </children>
                                     <VBox.margin>

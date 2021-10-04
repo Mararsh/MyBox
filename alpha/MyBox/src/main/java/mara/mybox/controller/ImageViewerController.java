@@ -756,7 +756,7 @@ public class ImageViewerController extends BaseImageController {
                     popInformation(message("Saved"));
                     recordFileWritten(targetFile);
 
-                    if (saveAsType == SaveAsType.Load) {
+                    if (imageFile() == null || saveAsType == SaveAsType.Load) {
                         sourceFileChanged(targetFile);
 
                     } else if (saveAsType == SaveAsType.Open) {

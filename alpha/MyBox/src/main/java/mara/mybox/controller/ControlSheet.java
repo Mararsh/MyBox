@@ -28,13 +28,13 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
  *
- * ControlSheet < ControlSheet_TextsDisplay < ControlSheet_Html <
- * ControlSheet_ColMenu < ControlSheet_RowMenu < ControlSheet_Buttons <
- * ControlSheet_Edit < ControlSheet_Pages < ControlSheet_Sheet <
- * ControlSheet_Columns < ControlSheet_Base
+ * ControlSheet < ControlSheet_Calculation < ControlSheet_TextsDisplay <
+ * ControlSheet_Html < ControlSheet_ColMenu < ControlSheet_RowMenu <
+ * ControlSheet_Buttons < ControlSheet_Edit < ControlSheet_Pages <
+ * ControlSheet_Sheet < ControlSheet_Columns < ControlSheet_Base
  *
  */
-public abstract class ControlSheet extends ControlSheet_TextsDisplay {
+public abstract class ControlSheet extends ControlSheet_Calculation {
 
     @Override
     public void initValues() {
@@ -207,9 +207,9 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             copyToMyBoxClipboardButton.setDisable(noRows);
             equalSheetButton.setDisable(noRows);
             sortSheetButton.setDisable(noRows);
-//            calculateSheetButton.setDisable(noRows);
+            calculateSheetButton.setDisable(noRows);
 
-            BaseDataOperationController.update();
+//            BaseDataOperationController.update(this);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }

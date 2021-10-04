@@ -49,7 +49,7 @@ public class BytesEditorController extends BaseFileEditorController {
     public void refreshAction() {
         try {
             if (sourceFile == null) {
-                validMainArea();
+                formatMainArea();
                 updateInterface(false);
             } else {
                 sourceInformation.setTotalNumberRead(false);
@@ -138,7 +138,7 @@ public class BytesEditorController extends BaseFileEditorController {
                 lbBytesInput.setStyle(null);
                 return;
             }
-            final String v = ByteTools.validateTextHex(lbBytesInput.getText());
+            final String v = ByteTools.formatTextHex(lbBytesInput.getText());
             if (v == null || v.isEmpty()) {
                 lbBytesInput.setStyle(NodeStyleTools.badStyle);
             } else {
@@ -183,14 +183,15 @@ public class BytesEditorController extends BaseFileEditorController {
     }
 
     @Override
-    protected boolean validMainArea() {
+    protected boolean validateMainArea() {
         return ByteTools.isBytesHex(mainArea.getText());
     }
 
+    @FXML
     @Override
     protected boolean formatMainArea() {
         String text = mainArea.getText();
-        text = ByteTools.validateTextHex(text);
+        text = ByteTools.formatTextHex(text);
         if (text != null) {
             if (text.isEmpty()) {
                 return true;
@@ -248,7 +249,8 @@ public class BytesEditorController extends BaseFileEditorController {
                         String[] lines = text.split("\n");
                         StringBuilder bytes = new StringBuilder();
                         String lineText;
-                        for (String line : lines) {
+                        for (String line
+                                : lines) {
                             byte[] hex = ByteTools.hexFormatToBytes(line);
                             if (hex == null) {
                                 error = message("InvalidData");

@@ -77,7 +77,7 @@ License:    Apache License Version 2.0
                                 <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                     <children>
                                         <Label fx:id="sheetLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
-                                        <!--                                        <Button fx:id="calculateSheetButton" mnemonicParsing="false" onAction="#calculateDataAction">
+                                        <Button fx:id="calculateSheetButton" mnemonicParsing="false" onAction="#calculateDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -85,7 +85,7 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                             </graphic>
-                                        </Button>-->
+                                        </Button>
                                         <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportSheetAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

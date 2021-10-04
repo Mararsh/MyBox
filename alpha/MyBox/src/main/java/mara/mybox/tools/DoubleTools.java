@@ -18,15 +18,16 @@ import java.util.Random;
 public class DoubleTools {
 
     public static String format(double data, int scale) {
-        String format = "#,###";
-        if (scale > 0) {
-            format += ".";
-            for (int i = 0; i < scale; i++) {
-                format += "#";
+        try {
+            String format = "#,###";
+            if (scale > 0) {
+                format += "." + "#".repeat(scale);
             }
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(scale(data, scale));
+        } catch (Exception e) {
+            return data + "";
         }
-        DecimalFormat df = new DecimalFormat(format);
-        return df.format(scale(data, scale));
     }
 
     /*
@@ -96,7 +97,13 @@ public class DoubleTools {
         Collections.sort(list, new Comparator<Double>() {
             @Override
             public int compare(Double p1, Double p2) {
-                return (int) (p1 - p2);
+                if (p1 > p2) {
+                    return 1;
+                } else if (p1 < p2) {
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
         double[] sorted = new double[numbers.length];

@@ -15,7 +15,7 @@ public class TmpFileTools {
     }
 
     public static String getTempFileName(String path) {
-        return path + File.separator + DateTools.nowFileString() + "_" + IntTools.getRandomInt(100);
+        return path + File.separator + DateTools.nowFileString() + "_" + IntTools.random(100);
     }
 
     public static File getTempFile() {

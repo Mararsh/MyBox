@@ -15,8 +15,6 @@ import mara.mybox.tools.TmpFileTools;
 /**
  * @Author Mara
  * @CreateDate 2018-12-10 13:06:33
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class BytesEditInformation extends FileEditInformation {
@@ -85,7 +83,8 @@ public class BytesEditInformation extends FileEditInformation {
 
     @Override
     public String readObjects(long from, long number) {
-        if (file == null || from < 0 || number < 0 || (objectsNumber > 0 && from >= objectsNumber)) {
+        if (file == null || pageSize <= 0 || from < 0 || number < 0
+                || (objectsNumber > 0 && from >= objectsNumber)) {
             return null;
         }
         boolean byWidth = lineBreak == Line_Break.Width && lineBreakWidth > 0;
@@ -240,7 +239,9 @@ public class BytesEditInformation extends FileEditInformation {
                     pageHex = ByteTools.formatHex(pageHex, lineBreak, lineBreakWidth, lineBreakValue);
                     String[] lines = pageHex.split("\n");
                     lineEnd = lineStart + lines.length - 1;
-                    for (int i = 0; i < lines.length; ++i) {
+                    for (int i = 0;
+                            i < lines.length;
+                            ++i) {
                         lines[i] += " ";
                         if (isMatchFilters(lines[i])) {
                             if (recordLineNumbers) {
@@ -287,8 +288,13 @@ public class BytesEditInformation extends FileEditInformation {
     public boolean writePage(FileEditInformation sourceInfo, String hex) {
         try {
             if (file == null || hex == null || hex.isEmpty()
-                    || sourceInfo.getFile() == null || sourceInfo.getCharset() == null
-                    || sourceInfo.getPageSize() <= 0) {
+                    || sourceInfo.getFile() == null || sourceInfo.getCharset() == null) {
+                return false;
+            }
+            int psize = sourceInfo.getPageSize();
+            long pageStartByte = sourceInfo.getCurrentPageObjectStart(),
+                    pLen = sourceInfo.getCurrentPageObjectEnd() - pageStartByte;
+            if (psize <= 0 || pageStartByte < 0 || pLen <= 0) {
                 return false;
             }
             File targetFile = file;
@@ -299,28 +305,28 @@ public class BytesEditInformation extends FileEditInformation {
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
                 int bufSize, bufLen;
                 byte[] buf;
-                long pageIndex = 0;
-                boolean isCurrentPage;
+                long byteIndex = 0;
                 while (true) {
-                    isCurrentPage = pageIndex++ == sourceInfo.getCurrentPage();
-                    if (isCurrentPage) {
-                        bufSize = (int) (sourceInfo.getCurrentPageObjectEnd() - sourceInfo.getCurrentPageObjectStart());
+                    if (byteIndex < pageStartByte) {
+                        bufSize = (int) Math.min(psize, pageStartByte - byteIndex);
+                    } else if (byteIndex == pageStartByte) {
+                        outputStream.write(ByteTools.hexFormatToBytes(hex));
+                        inputStream.skip(pLen);
+                        byteIndex += pLen;
+                        continue;
                     } else {
-                        bufSize = sourceInfo.getPageSize();
+                        bufSize = psize;
                     }
                     buf = new byte[bufSize];
                     bufLen = inputStream.read(buf);
                     if (bufLen <= 0) {
                         break;
                     }
-                    if (isCurrentPage) {
-                        outputStream.write(ByteTools.hexFormatToBytes(hex));
-                    } else {
-                        if (bufLen < bufSize) {
-                            buf = ByteTools.subBytes(buf, 0, bufLen);
-                        }
-                        outputStream.write(buf);
+                    if (bufLen < bufSize) {
+                        buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
+                    outputStream.write(buf);
+                    byteIndex += bufLen;
                 }
             }
             if (sourceInfo.getFile().equals(file)) {

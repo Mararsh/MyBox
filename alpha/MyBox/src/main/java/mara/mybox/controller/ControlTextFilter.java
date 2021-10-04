@@ -19,13 +19,9 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileEditInformation.StringFilterType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -173,7 +169,7 @@ public class ControlTextFilter extends BaseController {
         String[] strings = StringTools.splitByComma(filterInput.getText());
         List<String> vs = new ArrayList<>();
         for (String s : strings) {
-            String v = ByteTools.validateTextHex(s);
+            String v = ByteTools.formatTextHex(s);
             if (v == null) {
                 filterInput.setStyle(NodeStyleTools.badStyle);
                 return;

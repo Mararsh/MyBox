@@ -835,9 +835,9 @@ public class ImageAnalyseController extends ImageViewerController {
         StringBuilder s = new StringBuilder();
         s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
         s.append("<TD>").append(Languages.message(component.name())).append("</TD>");
-        s.append(componentColumn(component, d.getMean()));
-        s.append(componentColumn(component, d.getVariance()));
-        s.append(componentColumn(component, d.getSkewness()));
+        s.append(componentColumn(component, (int) d.getMean()));
+        s.append(componentColumn(component, (int) d.getVariance()));
+        s.append(componentColumn(component, (int) d.getSkewness()));
         s.append(componentColumn(component, d.getMode()));
         s.append(componentColumn(component, d.getMedian()));
         s.append(componentColumn(component, d.getMaximum()));
@@ -920,7 +920,8 @@ public class ImageAnalyseController extends ImageViewerController {
 
         colorsBarchart.getData().add(index, series);
         String colorString = FxColorTools.color2rgb(ColorComponentTools.color(component));
-        for (Node n : colorsBarchart.lookupAll(".default-color" + index + ".chart-bar")) {
+        for (Node n
+                : colorsBarchart.lookupAll(".default-color" + index + ".chart-bar")) {
             n.setStyle("-fx-bar-fill: " + colorString + "; ");
         }
 

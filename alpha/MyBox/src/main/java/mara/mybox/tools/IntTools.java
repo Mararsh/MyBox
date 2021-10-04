@@ -29,7 +29,7 @@ public class IntTools {
         return Math.round((value + zipStep / 2) / zipStep) * zipStep;
     }
 
-    public static int getRandomInt(int max) {
+    public static int random(int max) {
         Random r = new Random();
         return r.nextInt(max);
     }
@@ -42,7 +42,13 @@ public class IntTools {
         Collections.sort(list, new Comparator<Integer>() {
             @Override
             public int compare(Integer p1, Integer p2) {
-                return p1 - p2;
+                if (p1 > p2) {
+                    return 1;
+                } else if (p1 < p2) {
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
         int[] sorted = new int[numbers.length];

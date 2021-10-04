@@ -38,6 +38,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }
+        BaseDataOperationController.closeAll();
     }
 
     public void loadFile() {

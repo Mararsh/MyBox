@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.AppPaths;
 
@@ -61,17 +60,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         }
     }
 
-//    @Override
-//    public void afterSceneLoaded() {
-//        try {
-//            super.afterSceneLoaded();
-//
-//            scopeController.initSplitDivider();
-//
-//        } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
-//        }
-//    }
     @Override
     public boolean afterImageLoaded() {
         try {

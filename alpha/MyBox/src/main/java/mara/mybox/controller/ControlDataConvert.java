@@ -21,6 +21,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.HtmlStyles;
@@ -482,7 +483,7 @@ public class ControlDataConvert extends BaseController {
                     }
                     s.append(indent).append(indent)
                             .append("\"").append(names.get(i)).append("\": \"")
-                            .append(value).append("\"");
+                            .append(JsonTools.replaceSpecialChars(value)).append("\"");
                 }
                 s.append(indent).append("\n").append(indent).append("}");
                 jsonWriter.write(s.toString());

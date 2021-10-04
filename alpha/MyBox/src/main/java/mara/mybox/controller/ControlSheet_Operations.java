@@ -340,45 +340,50 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
     }
 
     protected void addRows(int row, boolean above, int number) {
-        if (number < 1 || columns == null || columns.isEmpty()) {
-            return;
-        }
-        String[][] current = pickData();
-        String[][] values;
-        int cNumber = columns.size();
-        if (current == null) {
-            values = new String[number][cNumber];
-            for (int r = 0; r < number; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = defaultColValue;
-                }
+        try {
+            if (number < 1 || columns == null || columns.isEmpty()) {
+                return;
             }
-        } else {
-            int rNumber = current.length;
-            values = new String[rNumber + number][cNumber];
-            int base;
-            if (row < 0) {
-                base = 0;
+            String[][] current = pickData();
+            String[][] values;
+            int cNumber = columns.size();
+            if (current == null) {
+                values = new String[number][cNumber];
+                for (int r = 0; r < number; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = defaultColValue;
+                    }
+                }
             } else {
-                base = row + (above ? 0 : 1);
-            }
-            for (int r = 0; r < base; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = current[r][c];
+                int rNumber = current.length;
+                values = new String[rowsNumber + number][cNumber];
+                int base;
+                if (row < 0) {
+                    base = 0;
+                } else {
+                    base = row + (above ? 0 : 1);
+                }
+                for (int r = 0; r < base; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = current[r][c];
+                    }
+                }
+                for (int r = base; r < base + number; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = defaultColValue;
+                    }
+                }
+                for (int r = base + number; r < rNumber + number; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = current[r - number][c];
+                    }
                 }
             }
-            for (int r = base; r < base + number; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = defaultColValue;
-                }
-            }
-            for (int r = base + number; r < rNumber + number; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = current[r - number][c];
-                }
-            }
+            makeSheet(values);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        makeSheet(values);
+
     }
 
     @FXML
@@ -605,8 +610,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                 @Override
                 protected boolean handle() {
                     tmpFile = TmpFileTools.getTempFile(".xlsx");
-                    try ( Workbook targetBook = new XSSFWorkbook();
-                             FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                    try ( Workbook targetBook = new XSSFWorkbook();  FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                         Sheet targetSheet = targetBook.createSheet();
                         int index = 0;
                         List<String> names = columnNames();
