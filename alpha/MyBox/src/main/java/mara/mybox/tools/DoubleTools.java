@@ -17,6 +17,16 @@ import java.util.Random;
  */
 public class DoubleTools {
 
+    public static String percentage(double data, double total) {
+        try {
+            String format = "#,###.##";
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(scale(data * 100 / total, 2));
+        } catch (Exception e) {
+            return data + "";
+        }
+    }
+
     public static String format(double data, int scale) {
         try {
             String format = "#,###";

@@ -63,7 +63,7 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -113,7 +113,7 @@ public class ImageAnalyseController extends ImageViewerController {
     protected Label actualLoopLabel;
 
     public ImageAnalyseController() {
-        baseTitle = Languages.message("ImageAnalyse");
+        baseTitle = message("ImageAnalyse");
     }
 
     @Override
@@ -165,11 +165,11 @@ public class ImageAnalyseController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(palette1Button, Languages.message("AddInColorPalette"));
-            NodeStyleTools.setTooltip(palette2Button, Languages.message("AddInColorPalette"));
+            NodeStyleTools.setTooltip(palette1Button, message("AddInColorPalette"));
+            NodeStyleTools.setTooltip(palette2Button, message("AddInColorPalette"));
             NodeStyleTools.setTooltip(tipsView, new Tooltip(
-                    Languages.message("ImageAnalyseTips") + "\n\n-------------------------\n"
-                    + Languages.message("QuantizationComments")));
+                    message("ImageAnalyseTips") + "\n\n-------------------------\n"
+                    + message("QuantizationComments")));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -296,7 +296,7 @@ public class ImageAnalyseController extends ImageViewerController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             imageView.setImage(null);
-            alertInformation(Languages.message("NotSupported"));
+            alertInformation(message("NotSupported"));
             return false;
         }
     }
@@ -519,7 +519,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        loadingController.setInfo(Languages.message("CalculatingDominantColors"));
+                        loadingController.setInfo(message("CalculatingDominantColors"));
                     }
                 });
             }
@@ -528,8 +528,7 @@ public class ImageAnalyseController extends ImageViewerController {
                             regionSize1, weight11, weight12, weight13,
                             true, true, true);
             quantization.getKmeans().setMaxIteration(kmeansLoop);
-            showDominantData(quantization, image,
-                    Languages.message("DominantKMeansComments"), dominantView1, dominantPie1);
+            showDominantData(quantization, image, message("DominantKMeansComments"), dominantView1, dominantPie1);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -542,7 +541,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        loadingController.setInfo(Languages.message("CalculatingDominantColors"));
+                        loadingController.setInfo(message("CalculatingDominantColors"));
                     }
                 });
             }
@@ -551,7 +550,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     regionSize2, weight21, weight22, weight23,
                     true, true, true);
             return showDominantData(quantization, image,
-                    Languages.message("DominantPopularityComments"), dominantView2, dominantPie2);
+                    message("DominantPopularityComments"), dominantView2, dominantPie2);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -585,7 +584,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         Color color = ColorConvertTools.converColor(count.color);
                         colors.add(color);
                         String name = "#" + FxColorTools.color2rgba(color).substring(2, 8) + "  "
-                                + (int) (count.count * 100 / total) + "%";
+                                + FloatTools.percentage(count.count, total) + "%";
                         pieChartData.add(new PieChart.Data(name, count.count));
                     }
                     pie.setData(pieChartData);
@@ -597,7 +596,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     }
                     if (quantization instanceof KMeansClusteringQuantization) {
                         kmeansColors = colors;
-                        actualLoopLabel.setText(Languages.message("ActualLoop") + ":"
+                        actualLoopLabel.setText(message("ActualLoop") + ":"
                                 + ((KMeansClusteringQuantization) quantization).getKmeans().getLoopCount());
                     } else {
                         popularityColors = colors;
@@ -757,7 +756,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        loadingController.setInfo(Languages.message("CalculatingImageComponents"));
+                        loadingController.setInfo(message("CalculatingImageComponents"));
                     }
                 });
             }
@@ -788,23 +787,23 @@ public class ImageAnalyseController extends ImageViewerController {
             }
             StringBuilder s = new StringBuilder();
             long imageSize = (long) (image.getWidth() * image.getHeight());
-            s.append("<P>").append(Languages.message("Pixels")).append(":").append(StringTools.format(imageSize)).append(" ")
-                    .append(Languages.message("NonTransparent")).append(":").append(StringTools.format(nonTransparent))
-                    .append("(").append(FloatTools.roundFloat2(nonTransparent * 100f / imageSize)).append("%)").append("</P>");
+            s.append("<P>").append(message("Pixels")).append(":").append(StringTools.format(imageSize)).append(" ")
+                    .append(message("NonTransparent")).append(":").append(StringTools.format(nonTransparent))
+                    .append("(").append(FloatTools.percentage(nonTransparent, imageSize)).append("%)").append("</P>");
             String indent = "    ";
             s.append(indent).append(indent).append("<DIV align=\"center\" >\n");
             s.append(indent).append(indent).append(indent).append("<TABLE >\n");
 
             s.append(indent).append(indent).append(indent).append(indent).
                     append("<TR  style=\"font-weight:bold; \">");
-            s.append("<TH>").append(Languages.message("ColorComponent")).append("</TH>");
-            s.append("<TH>").append(Languages.message("Mean")).append("</TH>");
-            s.append("<TH>").append(Languages.message("Variance")).append("</TH>");
-            s.append("<TH>").append(Languages.message("Skewness")).append("</TH>");
-            s.append("<TH>").append(Languages.message("Mode")).append("</TH>");
-            s.append("<TH>").append(Languages.message("Median")).append("</TH>");
-            s.append("<TH>").append(Languages.message("Maximum")).append("</TH>");
-            s.append("<TH>").append(Languages.message("Minimum")).append("</TH>");
+            s.append("<TH>").append(message("ColorComponent")).append("</TH>");
+            s.append("<TH>").append(message("Mean")).append("</TH>");
+            s.append("<TH>").append(message("Variance")).append("</TH>");
+            s.append("<TH>").append(message("Skewness")).append("</TH>");
+            s.append("<TH>").append(message("Mode")).append("</TH>");
+            s.append("<TH>").append(message("Median")).append("</TH>");
+            s.append("<TH>").append(message("Maximum")).append("</TH>");
+            s.append("<TH>").append(message("Minimum")).append("</TH>");
             s.append("</TR>\n");
 
             s.append(componentRow(ColorComponent.Gray, indent));
@@ -828,32 +827,42 @@ public class ImageAnalyseController extends ImageViewerController {
     }
 
     protected String componentRow(ColorComponent component, String indent) {
-        if (data == null) {
+        try {
+            if (data == null) {
+                return "";
+            }
+            IntStatistic d = data.statistic(component);
+            StringBuilder s = new StringBuilder();
+            s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
+            s.append("<TD>").append(message(component.name())).append("</TD>");
+            s.append(componentColumn(component, (int) d.getMean()));
+            s.append(componentColumn(component, (int) d.getVariance()));
+            s.append(componentColumn(component, (int) d.getSkewness()));
+            s.append(componentColumn(component, d.getMode()));
+            s.append(componentColumn(component, d.getMedian()));
+            s.append(componentColumn(component, d.getMaximum()));
+            s.append(componentColumn(component, d.getMinimum()));
+            s.append("</TR>\n");
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
             return "";
         }
-        IntStatistic d = data.statistic(component);
-        StringBuilder s = new StringBuilder();
-        s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
-        s.append("<TD>").append(Languages.message(component.name())).append("</TD>");
-        s.append(componentColumn(component, (int) d.getMean()));
-        s.append(componentColumn(component, (int) d.getVariance()));
-        s.append(componentColumn(component, (int) d.getSkewness()));
-        s.append(componentColumn(component, d.getMode()));
-        s.append(componentColumn(component, d.getMedian()));
-        s.append(componentColumn(component, d.getMaximum()));
-        s.append(componentColumn(component, d.getMinimum()));
-        s.append("</TR>\n");
-        return s.toString();
     }
 
     protected String componentColumn(ColorComponent component, int value) {
-        Color color = ColorConvertTools.converColor(ColorComponentTools.color(component, value));
-        String rgb = "#" + FxColorTools.color2rgba(color).substring(2, 8);
-        String v = StringTools.fillRightBlank(value + "", 3);
-        return "<TD align=\"center\"><DIV style=\"white-space:nowrap;\">"
-                + "<DIV style=\"display: inline-block; \">" + v + "&nbsp;&nbsp;</DIV>"
-                + "<DIV style=\"display: inline-block; width: 30px;  background-color:" + rgb
-                + "; \">&nbsp;&nbsp;&nbsp;</DIV></DIV></TD>";
+        try {
+            Color color = ColorConvertTools.converColor(ColorComponentTools.color(component, value));
+            String rgb = "#" + FxColorTools.color2rgba(color).substring(2, 8);
+            String v = StringTools.fillRightBlank(value + "", 3);
+            return "<TD align=\"center\"><DIV style=\"white-space:nowrap;\">"
+                    + "<DIV style=\"display: inline-block; \">" + v + "&nbsp;&nbsp;</DIV>"
+                    + "<DIV style=\"display: inline-block; width: 30px;  background-color:" + rgb
+                    + "; \">&nbsp;&nbsp;&nbsp;</DIV></DIV></TD>";
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return value + "";
+        }
     }
 
     protected void showComponentsHistogram() {
@@ -916,7 +925,7 @@ public class ImageAnalyseController extends ImageViewerController {
         for (int i = 0; i < histogram.length; ++i) {
             series.getData().add(new XYChart.Data(i + "", histogram[i]));
         }
-        series.setName(Languages.message(component.name()));
+        series.setName(message(component.name()));
 
         colorsBarchart.getData().add(index, series);
         String colorString = FxColorTools.color2rgb(ColorComponentTools.color(component));
@@ -1026,14 +1035,14 @@ public class ImageAnalyseController extends ImageViewerController {
     public void showColorData(ColorComponent component, WebView view, BarChart barchart) {
         try {
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(Languages.message("Value"), Languages.message("PixelsNumber"),
-                    Languages.message("Percentage"), Languages.message("Color"),
-                    Languages.message("Red"), Languages.message("Green"), Languages.message("Blue"), Languages.message("Opacity"),
-                    Languages.message("Hue"), Languages.message("Brightness"), Languages.message("Saturation")
+            names.addAll(Arrays.asList(message("Value"), message("PixelsNumber"),
+                    message("Percentage"), message("Color"),
+                    message("Red"), message("Green"), message("Blue"), message("Opacity"),
+                    message("Hue"), message("Brightness"), message("Saturation")
             ));
-            StringTable table = new StringTable(names, Languages.message(component.name()), 3);
-            long total = (long) (image.getWidth() * image.getHeight());
+            StringTable table = new StringTable(names, message(component.name()), 3);
             int[] histogram = data.histogram(component);
+
             for (int i = histogram.length - 1; i >= 0; --i) {
                 List<String> row = new ArrayList<>();
                 java.awt.Color aColor = ColorComponentTools.color(component, i);
@@ -1042,7 +1051,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 int blue = aColor.getBlue();
                 Color fColor = ColorConvertTools.converColor(aColor);
                 row.addAll(Arrays.asList(i + "", StringTools.format(histogram[i]),
-                        (int) (histogram[i] * 100 / total) + "%",
+                        FloatTools.percentage(histogram[i], nonTransparent) + "%",
                         FxColorTools.color2rgba(fColor), red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",
                         Math.round(fColor.getHue()) + " ",
@@ -1058,7 +1067,7 @@ public class ImageAnalyseController extends ImageViewerController {
             for (int i = 0; i < histogram.length; ++i) {
                 series.getData().add(new XYChart.Data(i + "", histogram[i]));
             }
-            series.setName(Languages.message(component.name()));
+            series.setName(message(component.name()));
 
             barchart.setAnimated(false);
             barchart.getData().clear();
@@ -1249,10 +1258,10 @@ public class ImageAnalyseController extends ImageViewerController {
                             (new File(path)).mkdirs();
 
                             StringBuilder s = new StringBuilder();
-                            s.append("<h1  class=\"center\">").append(Languages.message("ImageAnalyse")).append("</h1>\n");
+                            s.append("<h1  class=\"center\">").append(message("ImageAnalyse")).append("</h1>\n");
                             s.append("<hr>\n");
 
-                            s.append("<h2  class=\"center\">").append(Languages.message("Image")).append("</h2>\n");
+                            s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
                             if (sourceFile != null) {
                                 s.append("<h3  class=\"center\">").append(sourceFile).append("</h3>\n");
                             }
@@ -1265,7 +1274,7 @@ public class ImageAnalyseController extends ImageViewerController {
                             }
                             s.append("<hr>\n");
 
-                            s.append("<h2  class=\"center\">").append(Languages.message("Summary")).append("</h2>\n");
+                            s.append("<h2  class=\"center\">").append(message("Summary")).append("</h2>\n");
                             s.append(colorsViewHml);
                             bufferedImage = SwingFXUtils.fromFXImage(colorsBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "colorsBarchartImage.jpg");
@@ -1275,7 +1284,7 @@ public class ImageAnalyseController extends ImageViewerController {
                                 return false;
                             }
 
-                            s.append("\n<h2  class=\"center\">").append(Languages.message("DominantColors")).append("</h2>\n");
+                            s.append("\n<h2  class=\"center\">").append(message("DominantColors")).append("</h2>\n");
                             s.append(dominantView1Hml);
                             bufferedImage = SwingFXUtils.fromFXImage(dominantPie1Snap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "dominantPie1Image.jpg");

@@ -88,25 +88,28 @@ public class SheetCalculateController extends BaseDataOperationController {
         }
     }
 
-    public void checkOperation() {
+    public boolean checkOperation() {
         try {
             optionsBox.getChildren().clear();
             if (transposeRadio.isSelected()) {
                 optionsBox.getChildren().addAll(rowsBox, columnsBox);
                 colsLabel.setText(message("Columns"));
 
-            } else if (statisticRadio.isSelected()) {
+            } else if (statisticRadio.isSelected() || addRadio.isSelected()
+                    || subRadio.isSelected() || multiplyRadio.isSelected()) {
                 if (calColsListController.getValues().isEmpty()) {
                     popError(message("NoNumberColumns"));
-                    return;
+                    return false;
                 }
                 optionsBox.getChildren().addAll(rowsBox, calColumnsBox, columnsBox);
                 colsLabel.setText(message("ColumnsDisplay"));
 
             }
+            return true;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
@@ -127,42 +130,56 @@ public class SheetCalculateController extends BaseDataOperationController {
 
     @FXML
     public void calculationAction() {
+        List<Integer> cols = cols();
+        List<Integer> calCols = selectedCols(calColsListController);
+        List<Integer> rows = rows();
+        List<Integer> disCols = new ArrayList<>();
+        List<ColumnDefinition> dataColumns = new ArrayList<>();
+        if (statisticRadio.isSelected() || addRadio.isSelected()
+                || subRadio.isSelected() || multiplyRadio.isSelected()) {
+            if (calCols == null || calCols.isEmpty()) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            if (cols != null && !cols.isEmpty()) {
+                for (Integer i : cols) {
+                    if (!calCols.contains(i)) {
+                        disCols.add(i);
+                    }
+                }
+            }
+            // The column name can not start with "m_", or else errors popped by javafx class "CheckBoxSkin". I guess this is a bug of Javafx.
+            // https://github.com/Mararsh/MyBox/issues/1222
+            dataColumns.add(new ColumnDefinition("__" + message("CalculationName") + "__", ColumnType.String).setWidth(200));
+
+            for (Integer i : calCols) {
+                if (statisticRadio.isSelected()) {
+                    dataColumns.add(new ColumnDefinition("__" + message("CalculationValue") + "__" + sheetController.columns.get(i).getName() + "__",
+                            ColumnType.Double).setWidth(200));
+                }
+                dataColumns.add(sheetController.columns.get(i).cloneBase().setType(ColumnType.Double).setWidth(150));
+            }
+            for (Integer i : disCols) {
+                dataColumns.add(sheetController.columns.get(i).cloneBase());
+            }
+        }
         synchronized (this) {
             SingletonTask calTask = new SingletonTask<Void>() {
                 private String[][] data = null;
-                private List<ColumnDefinition> dataColumns = null;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        List<Integer> cols = cols();
-
                         if (rowAllRadio.isSelected()) {
 
                         } else {
-                            List<Integer> rows = rows();
+
                             if (transposeRadio.isSelected()) {
                                 data = sheetController.transpose(rows, cols);
 
                             } else if (statisticRadio.isSelected()) {
-                                List<Integer> calCols = selectedCols(calColsListController);
-                                List<Integer> disCols = new ArrayList<>();
-                                if (cols != null && !cols.isEmpty()) {
-                                    for (Integer i : cols) {
-                                        if (!calCols.contains(i)) {
-                                            disCols.add(i);
-                                        }
-                                    }
-                                }
                                 data = sheetController.statistic(rows, calCols, disCols);
-                                dataColumns = new ArrayList<>();
-                                dataColumns.add(new ColumnDefinition(message("Calculation"), ColumnType.String));
-                                for (Integer i : calCols) {
-                                    dataColumns.add(sheetController.columns.get(i).cloneBase().setType(ColumnType.Double));
-                                }
-                                for (Integer i : disCols) {
-                                    dataColumns.add(sheetController.columns.get(i).cloneBase());
-                                }
+
                             }
                         }
 

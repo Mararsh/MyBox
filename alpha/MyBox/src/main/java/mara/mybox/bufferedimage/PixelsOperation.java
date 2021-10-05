@@ -10,8 +10,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 
 /**
@@ -39,8 +37,7 @@ public abstract class PixelsOperation {
     public enum OperationType {
         Smooth, Denoise, Blur, Sharpen, Clarity, Emboss, EdgeDetect,
         Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
-        ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic,
-        FrostedGlass,
+        ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
         Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, ShowScope,
         Convolution, Contrast
     }
@@ -116,7 +113,8 @@ public abstract class PixelsOperation {
                 for (int x = 0; x < image.getWidth(); x++) {
                     pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
-                    if (pixel == 0 && skipTransparent) {  // pass transparency
+                    if (pixel == 0 && skipTransparent) {  // transparency  need write dithering lines while they affect nothing
+                        target.setRGB(x, y, pixel);
                         newColor = color;
 
                     } else {
@@ -274,6 +272,9 @@ public abstract class PixelsOperation {
 
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
         Color newColor = operateColor(color);
+        if (newColor == null) {
+            newColor = color;
+        }
         target.setRGB(x, y, newColor.getRGB());
         return newColor;
     }

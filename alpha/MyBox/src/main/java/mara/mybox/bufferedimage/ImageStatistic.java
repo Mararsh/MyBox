@@ -21,10 +21,6 @@ public class ImageStatistic {
     protected Map<ColorComponent, ComponentStatistic> data;
     protected long nonTransparent;
 
-    public static ImageStatistic create(BufferedImage image) {
-        return new ImageStatistic().setImage(image).setData(new HashMap<>());
-    }
-
     public ImageStatistic analyze() {
         try {
             if (image == null) {
@@ -151,10 +147,11 @@ public class ImageStatistic {
             int brightnessMean = (int) (brightnessSum / nonTransparent);
             int grayMean = (int) (graySum / nonTransparent);
 
-            long redVariable, greenVariable, blueVariable, alphaVariable, hueVariable, saturationVariable, brightnessVariable, grayVariable;
+            double redVariable, greenVariable, blueVariable, alphaVariable, hueVariable, saturationVariable, brightnessVariable, grayVariable;
             redVariable = greenVariable = blueVariable = alphaVariable = hueVariable = saturationVariable = brightnessVariable = grayVariable = 0;
-            long redSkewness, greenSkewness, blueSkewness, alphaSkewness, hueSkewness, saturationSkewness, brightnessSkewness, graySkewness;
+            double redSkewness, greenSkewness, blueSkewness, alphaSkewness, hueSkewness, saturationSkewness, brightnessSkewness, graySkewness;
             redSkewness = greenSkewness = blueSkewness = alphaSkewness = hueSkewness = saturationSkewness = brightnessSkewness = graySkewness = 0;
+            double d;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     int p = image.getRGB(x, y);
@@ -163,59 +160,59 @@ public class ImageStatistic {
                     }
                     color = new Color(p, true);
 
-                    v = color.getRed();
-                    redVariable += Math.pow(v - redMean, 2);
-                    redSkewness += Math.pow(v - redMean, 3);
+                    d = color.getRed();
+                    redVariable += Math.pow(d - redMean, 2);
+                    redSkewness += Math.pow(d - redMean, 3);
 
-                    v = color.getGreen();
-                    greenVariable += Math.pow(v - greenMean, 2);
-                    greenSkewness += Math.pow(v - greenMean, 3);
+                    d = color.getGreen();
+                    greenVariable += Math.pow(d - greenMean, 2);
+                    greenSkewness += Math.pow(d - greenMean, 3);
 
-                    v = color.getBlue();
-                    blueVariable += Math.pow(v - blueMean, 2);
-                    blueSkewness += Math.pow(v - blueMean, 3);
+                    d = color.getBlue();
+                    blueVariable += Math.pow(d - blueMean, 2);
+                    blueSkewness += Math.pow(d - blueMean, 3);
 
-                    v = color.getAlpha();
-                    alphaVariable += Math.pow(v - alphaMean, 2);
-                    alphaSkewness += Math.pow(v - alphaMean, 3);
+                    d = color.getAlpha();
+                    alphaVariable += Math.pow(d - alphaMean, 2);
+                    alphaSkewness += Math.pow(d - alphaMean, 3);
 
-                    v = (int) (ColorConvertTools.getHue(color) * 100);
-                    hueVariable += Math.pow(v - hueMean, 2);
-                    hueSkewness += Math.pow(v - hueMean, 3);
+                    d = ColorConvertTools.getHue(color) * 100;
+                    hueVariable += Math.pow(d - hueMean, 2);
+                    hueSkewness += Math.pow(d - hueMean, 3);
 
-                    v = (int) (ColorConvertTools.getSaturation(color) * 100);
-                    saturationVariable += Math.pow(v - saturationMean, 2);
-                    saturationSkewness += Math.pow(v - saturationMean, 3);
+                    d = ColorConvertTools.getSaturation(color) * 100;
+                    saturationVariable += Math.pow(d - saturationMean, 2);
+                    saturationSkewness += Math.pow(d - saturationMean, 3);
 
-                    v = (int) (ColorConvertTools.getBrightness(color) * 100);
-                    brightnessVariable += Math.pow(v - brightnessMean, 2);
-                    brightnessSkewness += Math.pow(v - brightnessMean, 3);
+                    d = ColorConvertTools.getBrightness(color) * 100;
+                    brightnessVariable += Math.pow(d - brightnessMean, 2);
+                    brightnessSkewness += Math.pow(d - brightnessMean, 3);
 
-                    v = ColorConvertTools.color2grayValue(color);
-                    grayVariable += Math.pow(v - grayMean, 2);
-                    graySkewness += Math.pow(v - grayMean, 3);
+                    d = ColorConvertTools.color2grayValue(color);
+                    grayVariable += Math.pow(d - grayMean, 2);
+                    graySkewness += Math.pow(d - grayMean, 3);
 
                 }
             }
 
             double p = 1d / nonTransparent;
-            redVariable = (int) Math.sqrt(redVariable * p);
-            greenVariable = (int) Math.sqrt(greenVariable * p);
-            blueVariable = (int) Math.sqrt(blueVariable * p);
-            alphaVariable = (int) Math.sqrt(alphaVariable * p);
-            hueVariable = (int) Math.sqrt(hueVariable * p);
-            saturationVariable = (int) Math.sqrt(saturationVariable * p);
-            brightnessVariable = (int) Math.sqrt(brightnessVariable * p);
-            grayVariable = (int) Math.sqrt(grayVariable * p);
+            redVariable = Math.sqrt(redVariable * p);
+            greenVariable = Math.sqrt(greenVariable * p);
+            blueVariable = Math.sqrt(blueVariable * p);
+            alphaVariable = Math.sqrt(alphaVariable * p);
+            hueVariable = Math.sqrt(hueVariable * p);
+            saturationVariable = Math.sqrt(saturationVariable * p);
+            brightnessVariable = Math.sqrt(brightnessVariable * p);
+            grayVariable = Math.sqrt(grayVariable * p);
 
-            redSkewness = (int) Math.cbrt(redSkewness * p);
-            greenSkewness = (int) Math.cbrt(greenSkewness * p);
-            blueSkewness = (int) Math.cbrt(blueSkewness * p);
-            alphaSkewness = (int) Math.cbrt(alphaSkewness * p);
-            hueSkewness = (int) Math.cbrt(hueSkewness * p);
-            saturationSkewness = (int) Math.cbrt(saturationSkewness * p);
-            brightnessSkewness = (int) Math.cbrt(brightnessSkewness * p);
-            graySkewness = (int) Math.cbrt(graySkewness * p);
+            redSkewness = Math.abs(Math.cbrt(redSkewness * p));
+            greenSkewness = Math.abs(Math.cbrt(greenSkewness * p));
+            blueSkewness = Math.abs(Math.cbrt(blueSkewness * p));
+            alphaSkewness = Math.abs(Math.cbrt(alphaSkewness * p));
+            hueSkewness = Math.abs(Math.cbrt(hueSkewness * p));
+            saturationSkewness = Math.abs(Math.cbrt(saturationSkewness * p));
+            brightnessSkewness = Math.abs(Math.cbrt(brightnessSkewness * p));
+            graySkewness = Math.abs(Math.cbrt(graySkewness * p));
 
             IntStatistic grayStatistic = new IntStatistic(ColorComponent.Gray.name(),
                     graySum, grayMean, (int) grayVariable, (int) graySkewness,
@@ -307,6 +304,28 @@ public class ImageStatistic {
             }
         }
         return histogram;
+    }
+
+    /*
+        static 
+     */
+    public static ImageStatistic create(BufferedImage image) {
+        return new ImageStatistic().setImage(image).setData(new HashMap<>());
+    }
+
+    public static long nonTransparent(BufferedImage image) {
+        if (image == null) {
+            return 0;
+        }
+        long nonTransparent = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                if (image.getRGB(x, y) == 0) {
+                    nonTransparent++;
+                }
+            }
+        }
+        return nonTransparent;
     }
 
     /*

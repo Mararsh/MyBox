@@ -62,7 +62,7 @@ public class MainMenuController extends MainMenuController_Help {
         List<MenuItem> items = new ArrayList();
         items.addAll(settingsMenu.getItems());
         int pos1 = items.indexOf(englishMenuItem);
-        int pos2 = items.indexOf(manageLanguagesMenuItem);
+        int pos2 = items.indexOf(languagesSperatorMenuItem);
         for (int i = pos2 - 1; i > pos1; --i) {
             items.remove(i);
         }

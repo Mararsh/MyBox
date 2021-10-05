@@ -335,7 +335,7 @@ License:    Apache License Version 2.0
                                     </toggleGroup>
                                 </RadioMenuItem>
                                 <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <SeparatorMenuItem fx:id="languagesSperatorMenuItem" mnemonicParsing="false" />
 
                                 <RadioMenuItem fx:id="font12MenuItem" mnemonicParsing="false" onAction="#setFont12" style="-fx-font-size: 12px;" text="%FontSize12">
                                     <toggleGroup>

@@ -14,6 +14,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
@@ -147,6 +148,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     sheetBox.getChildren().add(header);
                 }
                 col0Label.setPrefWidth(rowCheckWidth);
+                col0Label.setWrapText(true);
+                col0Label.setMinHeight(Region.USE_PREF_SIZE);
                 int currentRowsSize = sheetBox.getChildren().size() - 1;
                 int currentColsSize = header.getChildren().size() - 1;
                 if (currentColsSize > colsSize) {
@@ -191,6 +194,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                             header.getChildren().add(colCheck);
                         }
                         colCheck.setPrefWidth(columns.get(col).getWidth());
+                        colCheck.setWrapText(true);
+                        colCheck.setMinHeight(Region.USE_PREF_SIZE);
                         colCheck.setText(colName(col));
                         colCheck.setSelected(false);
                         colsCheck[col] = colCheck;
@@ -244,6 +249,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                             }
                             rowCheck.setText(rowName(row));
                             rowCheck.setPrefWidth(rowCheckWidth);
+                            rowCheck.setWrapText(true);
+                            rowCheck.setMinHeight(Region.USE_PREF_SIZE);
                             rowCheck.setSelected(false);
                             rowsCheck[row] = rowCheck;
                             for (int col = 0; col < colsSize; ++col) {
@@ -286,7 +293,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     noDataLabel.setAlignment(Pos.CENTER);
                     sheetBox.getChildren().add(noDataLabel);
                 }
-                refreshStyle(sheetBox);
+//                refreshStyle(sheetBox);
                 sheetChanged(changed);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
@@ -342,14 +349,18 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     }
 
     public synchronized void sheetChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            pickData();
+            dataChangedNotify.set(changed);
+            sheetChangedNotify.set(!sheetChangedNotify.get());
+            sheetTab.setText(message("Sheet") + (changed ? " *" : ""));
+            afterDataChanged();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        pickData();
-        dataChangedNotify.set(changed);
-        sheetChangedNotify.set(!sheetChangedNotify.get());
-        sheetTab.setText(message("Sheet") + (changed ? " *" : ""));
-        afterDataChanged();
     }
 
     public void sheetChanged() {
@@ -408,24 +419,29 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     }
 
     protected String[][] pickData() {
-        pageData = null;
-        rowsNumber = colsNumber = 0;
-        if (sheetInputs == null || sheetInputs.length == 0) {
-            return null;
-        }
-        rowsNumber = sheetInputs.length;
-        colsNumber = sheetInputs[0].length;
-        if (colsNumber == 0) {
-            return null;
-        }
-        String[][] data = new String[sheetInputs.length][sheetInputs[0].length];
-        for (int r = 0; r < rowsNumber; r++) {
-            for (int c = 0; c < colsNumber; c++) {
-                data[r][c] = cellString(r, c);
+        try {
+            pageData = null;
+            rowsNumber = colsNumber = 0;
+            if (sheetInputs == null || sheetInputs.length == 0) {
+                return null;
             }
+            rowsNumber = sheetInputs.length;
+            colsNumber = sheetInputs[0].length;
+            if (colsNumber == 0) {
+                return null;
+            }
+            String[][] data = new String[sheetInputs.length][sheetInputs[0].length];
+            for (int r = 0; r < rowsNumber; r++) {
+                for (int c = 0; c < colsNumber; c++) {
+                    data[r][c] = cellString(r, c);
+                }
+            }
+            pageData = data;
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        pageData = data;
-        return data;
     }
 
     @Override

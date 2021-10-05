@@ -721,8 +721,9 @@ public class ColumnDefinition extends BaseData implements Cloneable {
         return width;
     }
 
-    public void setWidth(int width) {
+    public ColumnDefinition setWidth(int width) {
         this.width = width;
+        return this;
     }
 
 }

@@ -14,10 +14,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SheetCalculateController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SheetCalculateController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -25,8 +26,8 @@ License:    Apache License Version 2.0
             </children>
         </HBox>
         <Label fx:id="targetLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="%Target" textAlignment="CENTER" wrapText="true" />
-        <HBox layoutX="30.0" layoutY="82.0" spacing="5.0">
-            <children>
+      <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="2000.0" vgap="2.0">
+         <children>
             <RadioButton fx:id="transposeRadio" mnemonicParsing="false" selected="true" text="%Transpose">
                <toggleGroup>
                   <ToggleGroup fx:id="calGroup" />
@@ -40,8 +41,8 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="descendingRadio" mnemonicParsing="false" text="%Descending" toggleGroup="$calGroup" />
                 <RadioButton fx:id="mergeRadio" mnemonicParsing="false" text="%Merge" toggleGroup="$calGroup" />
                 <RadioButton fx:id="copyRadio" mnemonicParsing="false" text="%Copy" toggleGroup="$calGroup" />
-            </children>
-        </HBox>
+         </children>
+      </FlowPane>
       <VBox fx:id="optionsBox" spacing="5.0">
          <children>
               <HBox fx:id="rowsBox" spacing="5.0">

@@ -51,7 +51,7 @@ public abstract class MainMenuController_Base extends BaseController {
     @FXML
     protected Menu settingsMenu, recentMenu, helpMenu;
     @FXML
-    protected MenuItem manageLanguagesMenuItem, makeIconsItem;
+    protected MenuItem languagesSperatorMenuItem, makeIconsItem;
 
     @Override
     public Stage getMyStage() {

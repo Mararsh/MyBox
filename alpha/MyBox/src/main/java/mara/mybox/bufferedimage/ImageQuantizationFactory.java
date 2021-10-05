@@ -11,7 +11,6 @@ import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -24,7 +23,8 @@ public class ImageQuantizationFactory {
     public static ImageQuantization create(Image image, ImageScope scope,
             ImageQuantization.QuantizationAlgorithm algorithm, int quantizationSize,
             int regionSize, int weight1, int weight2, int weight3,
-            boolean recordCount, boolean dithering, boolean ceil) throws Exception {
+            boolean recordCount, boolean dithering, boolean ceil) throws
+            Exception {
         return create(SwingFXUtils.fromFXImage(image, null), scope,
                 algorithm, quantizationSize, regionSize, weight1, weight2, weight3,
                 recordCount, dithering, ceil);
@@ -33,7 +33,8 @@ public class ImageQuantizationFactory {
     public static ImageQuantization create(BufferedImage image, ImageScope scope,
             ImageQuantization.QuantizationAlgorithm algorithm, int quantizationSize,
             int regionSize, int weight1, int weight2, int weight3,
-            boolean recordCount, boolean dithering, boolean ceil) throws Exception {
+            boolean recordCount, boolean dithering, boolean ceil) throws
+            Exception {
         ImageQuantization quantization;
         switch (algorithm) {
             case RGBUniformQuantization:
@@ -81,13 +82,13 @@ public class ImageQuantizationFactory {
             redWegiht = redWegiht / sum;
             greenWegiht = greenWegiht / sum;
             blueWegiht = blueWegiht / sum;
-            double x = Math.pow(quantizationSize * 1d / (redWegiht * greenWegiht * blueWegiht), 1d / 3d);
+            double x = Math.cbrt(quantizationSize / (redWegiht * greenWegiht * blueWegiht));
 
-            double redValue = 256d / (redWegiht * x);
+            double redValue = 256 / (redWegiht * x);
             redMod = ceil ? (int) (redValue) : (int) Math.ceil(redValue);
-            double greenValue = 256d / (greenWegiht * x);
+            double greenValue = 256 / (greenWegiht * x);
             greenMod = ceil ? (int) (greenValue) : (int) Math.ceil(greenValue);
-            double blueValue = 256d / (blueWegiht * x);
+            double blueValue = 256 / (blueWegiht * x);
             blueMod = ceil ? (int) (blueValue) : (int) Math.ceil(blueValue);
 
 //            MyBoxLog.console(redMod + " " + greenMod + " " + blueMod + " ");
@@ -150,13 +151,13 @@ public class ImageQuantizationFactory {
             hueWegiht = hueWegiht / sum;
             saturationWegiht = saturationWegiht / sum;
             brightnessWegiht = brightnessWegiht / sum;
-            double x = Math.pow(quantizationSize * 1d / (hueWegiht * saturationWegiht * brightnessWegiht), 1d / 3d);
+            double x = Math.cbrt(quantizationSize / (hueWegiht * saturationWegiht * brightnessWegiht));
 
-            double hueValue = 360d / (hueWegiht * x);
+            double hueValue = 360 / (hueWegiht * x);
             hueMod = ceil ? (int) (hueValue) : (int) Math.ceil(hueValue);
-            double saturationValue = 100d / (saturationWegiht * x);
+            double saturationValue = 100 / (saturationWegiht * x);
             saturationMod = ceil ? (int) (saturationValue) : (int) Math.ceil(saturationValue);
-            double brightnessValue = 100d / (brightnessWegiht * x);
+            double brightnessValue = 100 / (brightnessWegiht * x);
             brightnessMod = ceil ? (int) (brightnessValue) : (int) Math.ceil(brightnessValue);
 
             if (hueMod <= 0 || saturationMod <= 0 || brightnessMod <= 0) {

@@ -70,9 +70,13 @@ public class NodeStyleTools {
     }
 
     public static void refreshStyle(Parent node) {
-        applyStyle(node);
-        node.applyCss();
-        node.layout();
+        try {
+            applyStyle(node);
+            node.applyCss();
+            node.layout();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public static boolean setStyle(Pane pane, String nodeId, String style) {

@@ -589,13 +589,13 @@ public class ControlWebView extends BaseController {
 
         menu = new MenuItem(message("OpenLinkInNewTab"));
         menu.setOnAction((ActionEvent event) -> {
-            WebBrowserController.oneOpen(address, false);
+            WebBrowserController.oneOpen(finalAddress, false);
         });
         items.add(menu);
 
         menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
         menu.setOnAction((ActionEvent event) -> {
-            WebBrowserController.oneOpen(address, true);
+            WebBrowserController.oneOpen(finalAddress, true);
         });
         items.add(menu);
 

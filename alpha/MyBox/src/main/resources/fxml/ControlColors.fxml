@@ -32,9 +32,9 @@ License:    Apache License Version 2.0
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <FlowPane alignment="CENTER_RIGHT" hgap="5.0" vgap="5.0">
+                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
                                     <children>
                                         <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
                                             <graphic>
@@ -77,14 +77,14 @@ License:    Apache License Version 2.0
                                 <fx:include fx:id="palettes" source="ControlColorPaletteSelector.fxml" />
                             </children>
                             <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                         </VBox>
                     </content>
                 </ScrollPane>
-                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                             <children>
                                 <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -109,7 +109,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </children>
                         </HBox> 
-                        <FlowPane fx:id="buttonsPane" alignment="TOP_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="5.0">
+                        <FlowPane fx:id="buttonsPane" alignment="TOP_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0">
                             <children>
                                 <Button fx:id="queryButton" layoutX="924.0" layoutY="10.0" mnemonicParsing="false" onAction="#queryAction">
                                     <graphic>
@@ -189,11 +189,11 @@ License:    Apache License Version 2.0
                             <tabs>
                                 <Tab fx:id="dataTab" text="%Data">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Label fx:id="selectedLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                                                         <CheckBox fx:id="mergeCheck" mnemonicParsing="false" text="%Merge" />
                                                         <CheckBox fx:id="allColumnsCheck" mnemonicParsing="false" selected="true" text="%AllColumns" />
                                                         <Button fx:id="copyButton" layoutX="822.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyAction">
@@ -233,18 +233,17 @@ License:    Apache License Version 2.0
                                                         <TableColumn fx:id="LCHuvColumn" prefWidth="150.0" text="LCH(uv)" />
                                                         <TableColumn fx:id="dataColumn" prefWidth="150.0" text="%Data" />
                                                     </columns>
-                                                </TableView>
-                                                <Label fx:id="selectedLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
+                                                </TableView>                                              
                                             </children>
                                             <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                             </padding>
                                         </VBox>
                                     </content>
                                 </Tab>
                                 <Tab fx:id="colorsTab" text="%Colors">
                                     <content>
-                                        <VBox fx:id="colorsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox fx:id="colorsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>
                                                 <Label fx:id="colorsPaneLabel" maxWidth="1.7976931348623157E308" text="%ColorPaletteComments" VBox.vgrow="NEVER" />
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
@@ -254,14 +253,14 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </children>
                                             <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                             </padding>
                                         </VBox>
                                     </content>
                                 </Tab>
                             </tabs>
                         </TabPane>
-                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="2000.0" vgap="5.0">
+                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="2000.0" vgap="2.0">
                             <children>
                                 <Label minWidth="-Infinity" text="%PageSize" />
                                 <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="100.0" />
@@ -317,7 +316,7 @@ License:    Apache License Version 2.0
                         </FlowPane>
                     </children>
                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                     </padding>
                 </VBox>
                 <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">

@@ -191,12 +191,6 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
             return;
         }
         defBox.getChildren().clear();
-        if (sourceFile == null) {
-            if (tabPane.getTabs().contains(defTab)) {
-                tabPane.getTabs().remove(defTab);
-            }
-            return;
-        }
         if (!tabPane.getTabs().contains(defTab)) {
             tabPane.getTabs().add(4, defTab);
         }
@@ -223,7 +217,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
             nameInput.setMinWidth(Region.USE_PREF_SIZE);
 
             ComboBox<String> typeSelector = new ComboBox<>();
-            typeSelector.setPrefWidth(100);
+            typeSelector.setPrefWidth(150);
             for (ColumnDefinition.ColumnType type : ColumnDefinition.editTypes()) {
                 typeSelector.getItems().add(message(type.name()));
             }

@@ -506,11 +506,7 @@ public class ControlImagesSave extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     recordFileWritten(targetFile.getParent());
-                    if (spiceRadio.isSelected()) {
-                        ImagesSpliceController.open(imageInfos);
-                    } else {
-                        multipleFilesGenerated(fileNames);
-                    }
+                    multipleFilesGenerated(fileNames);
                 }
 
             };
@@ -629,7 +625,6 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
-                            MyBoxLog.console(i + " " + (bufferedImage != null));
                             IIOMetadata metaData = ImageTiffFile.getWriterMeta(null, bufferedImage, writer, param);
                             writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                             if (task == null || task.isCancelled()) {

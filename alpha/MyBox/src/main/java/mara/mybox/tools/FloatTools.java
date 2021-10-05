@@ -14,6 +14,16 @@ import java.util.Random;
  */
 public class FloatTools {
 
+    public static String percentage(float data, float total) {
+        try {
+            String format = "#,###.##";
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(scale(data * 100 / total, 2));
+        } catch (Exception e) {
+            return data + "";
+        }
+    }
+
     public static String format(float data, int scale) {
         try {
             String format = "#,###";

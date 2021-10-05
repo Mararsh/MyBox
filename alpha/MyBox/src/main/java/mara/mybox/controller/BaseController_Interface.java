@@ -530,8 +530,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public void refreshStyle(Parent node) {
-        NodeStyleTools.refreshStyle(node);
-        setControlsStyle();
+        try {
+            NodeStyleTools.refreshStyle(node);
+            setControlsStyle();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void toFront() {

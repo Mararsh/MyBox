@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorQueryController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorQueryController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -32,9 +32,7 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <Label text="%Color" wrapText="true" HBox.hgrow="NEVER" />
-                        <fx:include fx:id="value" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
-                  <ColorPicker fx:id="colorPicker" />
+                        <Label minHeight="-Infinity" text="%Color" wrapText="true" HBox.hgrow="NEVER" />
                         <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popExamples">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -44,6 +42,8 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
+                  <ColorPicker fx:id="colorPicker" />
+                        <fx:include fx:id="value" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
                         <Button fx:id="queryButton" layoutX="924.0" layoutY="10.0" mnemonicParsing="false" onAction="#queryAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
