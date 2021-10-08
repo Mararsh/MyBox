@@ -38,6 +38,8 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     protected char copyDelimiter = ',';
 
+    protected abstract String[][] allRows(List<Integer> cols);
+
     public abstract void copyCols(List<Integer> cols, boolean withNames, boolean toSystemClipboard);
 
     public abstract void setCols(List<Integer> cols, String value);
@@ -47,6 +49,27 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
     public abstract void pasteFile(ControlSheetCSV sourceController, int row, int col, boolean enlarge);
 
     public abstract boolean exportCols(SheetExportController exportController, List<Integer> cols);
+
+    public String[][] data(List<Integer> rows, List<Integer> cols) {
+        if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty() || sheetInputs == null || columns == null) {
+            popError(message("NoData"));
+            return null;
+        }
+        int rowSize = rows.size();
+        int colSize = cols.size();
+        String[][] data = new String[rowSize][colSize];
+        for (int r = 0; r < rows.size(); ++r) {
+            int row = rows.get(r);
+            for (int c = 0; c < cols.size(); ++c) {
+                data[r][c] = cellString(row, cols.get(c));
+            }
+        }
+        return data;
+    }
+
+    public String[][] data(List<Integer> cols) {
+        return data(rowsIndex(true), cols);
+    }
 
     @FXML
     @Override
@@ -610,7 +633,8 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                 @Override
                 protected boolean handle() {
                     tmpFile = TmpFileTools.getTempFile(".xlsx");
-                    try ( Workbook targetBook = new XSSFWorkbook();  FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                    try ( Workbook targetBook = new XSSFWorkbook();
+                             FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                         Sheet targetSheet = targetBook.createSheet();
                         int index = 0;
                         List<String> names = columnNames();

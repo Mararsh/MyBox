@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSheetExcel">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSheetExcel">
     <children>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
@@ -382,7 +382,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="50.0" />
                                                         <Label alignment="CENTER" minWidth="-Infinity" prefWidth="200.0" text="%ColumnName" />
-                                                        <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="%Type" />
+                                                        <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="%Type" />
                                                         <Label alignment="CENTER" layoutX="405.0" layoutY="10.0" minWidth="-Infinity" prefWidth="80.0" text="%NotNull" />
                                                         <Label alignment="CENTER" layoutX="449.0" layoutY="10.0" minWidth="-Infinity" prefWidth="120.0" text="%Length" />
                                                         <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="80.0" text="%Width" />

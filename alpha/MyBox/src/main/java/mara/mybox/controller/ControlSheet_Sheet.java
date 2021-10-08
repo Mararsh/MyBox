@@ -293,7 +293,10 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     noDataLabel.setAlignment(Pos.CENTER);
                     sheetBox.getChildren().add(noDataLabel);
                 }
-//                refreshStyle(sheetBox);
+                refreshStyle(sheetBox);
+                if (changed) {
+                    validateData();
+                }
                 sheetChanged(changed);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
@@ -418,6 +421,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         return values;
     }
 
+    @Override
     protected String[][] pickData() {
         try {
             pageData = null;

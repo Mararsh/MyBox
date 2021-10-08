@@ -121,7 +121,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         }
                     }
                 });
-                targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
+                targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", "mm"));
             }
 
             if (targetPathInput != null) {
@@ -417,7 +417,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public String interfaceKeysPrefix() {
-        return "Interface_" + baseName + (isPop ? "_Pop" : "");
+        return "Interface_" + interfaceName + (isPop ? "_Pop" : "");
     }
 
     public void setStageStatus() {
@@ -471,7 +471,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setAsPopup(String baseName) {
         try {
             isPop = true;
-            this.baseName = baseName;
+            this.interfaceName = baseName;
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
             int mh = UserConfig.getInt(prefix + "StageHeight", Math.min(500, (int) myStage.getHeight()));

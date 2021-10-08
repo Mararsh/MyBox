@@ -1,13 +1,13 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.db.data.ImageClipboard;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -41,25 +41,30 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
         return this;
     }
 
-    public void validateData(Connection conn) {
+    public int clearInvalid(Connection conn) {
+        int count = 0;
         try {
+            conn.setAutoCommit(true);
             List<ImageClipboard> invalid = new ArrayList<>();
             try ( PreparedStatement query = conn.prepareStatement(queryAllStatement());
                      ResultSet results = query.executeQuery()) {
                 while (results.next()) {
-                    ImageClipboard clip = readData(results);
-                    if (clip.getImageFile() == null || !clip.getImageFile().exists()) {
-                        invalid.add(clip);
+                    ImageClipboard data = readData(results);
+                    if (data.getImageFile() == null || !data.getImageFile().exists()) {
+                        invalid.add(data);
                     }
                 }
+
             } catch (Exception e) {
                 MyBoxLog.debug(e, tableName);
             }
+            count = invalid.size();
             deleteData(conn, invalid);
             conn.setAutoCommit(true);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
         }
+        return count;
     }
 
 }

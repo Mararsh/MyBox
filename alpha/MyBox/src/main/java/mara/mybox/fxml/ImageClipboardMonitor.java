@@ -93,7 +93,7 @@ public class ImageClipboardMonitor extends Timer {
                         lastImage = clip;
                         number++;
                         if (controller != null) {
-                            controller.loadClip(clip);
+                            controller.loadClip(clip, number);
                         }
                         if (ImageClipboardTools.isCopy()) {
                             copyToMyBoxClipboard(clip);

@@ -193,7 +193,6 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
         try {
             updateEdit();
             makeDefintionPane();
-            validateData(false);
             updateHtml();
             updateText();
 
@@ -209,7 +208,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             sortSheetButton.setDisable(noRows);
             calculateSheetButton.setDisable(noRows);
 
-//            BaseDataOperationController.update(this);
+            BaseDataOperationController.update(this);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }

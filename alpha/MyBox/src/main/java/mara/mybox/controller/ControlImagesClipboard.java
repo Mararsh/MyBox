@@ -199,7 +199,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     @Override
     public List<ImageClipboard> readPageData() {
         try (Connection conn = DerbyBase.getConnection()) {
-            ((TableImageClipboard) tableDefinition).validateData(conn);
+            ((TableImageClipboard) tableDefinition).clearInvalid(conn);
             return tableDefinition.queryConditions(conn, queryConditions, currentPageStart - 1, currentPageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);

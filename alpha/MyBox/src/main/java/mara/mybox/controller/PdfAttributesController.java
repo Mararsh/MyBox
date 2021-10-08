@@ -14,14 +14,11 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
@@ -29,8 +26,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -277,13 +272,11 @@ public class PdfAttributesController extends BaseController {
                 protected boolean handle() {
                     ok = false;
                     pop = false;
-                    try {
-                        try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
-                            pdfInfo.setUserPassword(password);
-                            pdfInfo.readInfo(doc);
-                            doc.close();
-                            ok = true;
-                        }
+                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                        pdfInfo.setUserPassword(password);
+                        pdfInfo.readInfo(doc);
+                        doc.close();
+                        ok = true;
                     } catch (InvalidPasswordException e) {
                         pop = true;
                         return false;

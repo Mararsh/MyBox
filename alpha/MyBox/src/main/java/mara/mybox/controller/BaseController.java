@@ -26,8 +26,10 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            baseName = NodeTools.getFxmlName(url);
-            myFxml = "/fxml/" + baseName + ".fxml";
+            interfaceName = NodeTools.getFxmlName(url);
+            baseName = interfaceName;
+
+            myFxml = "/fxml/" + interfaceName + ".fxml";
 
             initValues();
             monitorKeyEvents();

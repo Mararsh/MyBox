@@ -313,13 +313,7 @@ public class MyBoxLoadingController implements Initializable {
             }
 
             AppVariables.MyBoxTempPath = new File(AppVariables.MyboxDataPath + File.separator + "AppTemp");
-            if (AppVariables.MyBoxTempPath.exists()) {
-                try {
-                    FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
-                } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
-                }
-            } else {
+            if (!AppVariables.MyBoxTempPath.exists()) {
                 if (!AppVariables.MyBoxTempPath.mkdirs()) {
                     Platform.runLater(() -> {
                         PopTools.alertError(MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxTempPath));

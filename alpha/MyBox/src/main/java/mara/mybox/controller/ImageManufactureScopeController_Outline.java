@@ -34,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureScopeController_Outline extends ImageManufactureScopeController_Colors {
+public abstract class ImageManufactureScopeController_Outline extends ImageManufactureScopeController_Colors {
 
     public void initPixTab() {
         try {
@@ -230,6 +230,8 @@ public class ImageManufactureScopeController_Outline extends ImageManufactureSco
                         scope.setOutline(outline[1]);
                         scope.setRectangle(maskRectangleData.cloneValues());
                         displayOutline(outline[1]);
+
+                        popImage();
                     }
 
                 };

@@ -3,6 +3,7 @@ package mara.mybox.value;
 import java.io.File;
 import java.util.Date;
 import mara.mybox.db.table.TableStringValue;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 
 /**
@@ -12,31 +13,38 @@ import mara.mybox.tools.FileNameTools;
  */
 public class AppPaths {
 
-    public static String getImageClipboardPath() {
-        String imageClipboardPath = AppVariables.MyboxDataPath + File.separator + "imageClipboard";
-        File path = new File(imageClipboardPath);
-        if (!path.exists()) {
-            path.mkdirs();
+    public static String getPath(String name) {
+        try {
+            String pathString = AppVariables.MyboxDataPath + File.separator + name;
+            File path = new File(pathString);
+            if (!path.exists()) {
+                path.mkdirs();
+            }
+            return path.toString();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
         }
-        return imageClipboardPath;
+    }
+
+    public static String getImageClipboardPath() {
+        return getPath("imageClipboard");
     }
 
     public static String getDataClipboardPath() {
-        String dataClipboardPath = AppVariables.MyboxDataPath + File.separator + "dataClipboard";
-        File path = new File(dataClipboardPath);
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        return dataClipboardPath;
+        return getPath("dataClipboard");
     }
 
     public static String getImageHisPath() {
-        String imageHistoriesPath = AppVariables.MyboxDataPath + File.separator + "imageHistories";
-        File path = new File(imageHistoriesPath);
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        return imageHistoriesPath;
+        return getPath("imageHistories");
+    }
+
+    public static String getImageScopePath() {
+        return getPath("imageScopes");
+    }
+
+    public static String getLanguagesPath() {
+        return getPath("mybox_languages");
     }
 
     public static String getFileBackupsPath(File file) {
@@ -56,15 +64,6 @@ public class AppPaths {
             path.mkdirs();
         }
         return fileBackupsPath;
-    }
-
-    public static String getImageScopePath() {
-        String imageScopesPath = AppVariables.MyboxDataPath + File.separator + "imageScopes";
-        File path = new File(imageScopesPath);
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        return imageScopesPath;
     }
 
 }

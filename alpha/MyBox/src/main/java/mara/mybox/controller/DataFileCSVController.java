@@ -149,7 +149,7 @@ public class DataFileCSVController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    tmpFile = TmpFileTools.getTempFile();
+                    tmpFile = TmpFileTools.getTempFile(".csv");
                     CSVFormat csvFormat = CSVFormat.DEFAULT
                             .withDelimiter(',')
                             .withIgnoreEmptyLines().withTrim().withNullString("");

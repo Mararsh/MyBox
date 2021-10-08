@@ -47,7 +47,7 @@ public abstract class BaseController_Attributes {
     protected int SourceFileType = -1, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
-    protected String myFxml, parentFxml, currentStatus, baseTitle, baseName, TipsLabelKey;
+    protected String myFxml, parentFxml, currentStatus, baseTitle, baseName, interfaceName, TipsLabelKey;
     protected Stage myStage;
     protected Scene myScene;
     protected Window myWindow;

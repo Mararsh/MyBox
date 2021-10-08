@@ -1,15 +1,16 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
 import mara.mybox.db.data.ColorPaletteName;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
@@ -113,6 +114,9 @@ public class DataFactory {
         } else if (data instanceof TextClipboard) {
             return new TableTextClipboard();
 
+        } else if (data instanceof ImageScope) {
+            return new TableImageScope();
+
         }
         return null;
     }
@@ -189,6 +193,9 @@ public class DataFactory {
 
         } else if (data instanceof TextClipboard) {
             return TextClipboard.valid((TextClipboard) data);
+
+        } else if (data instanceof ImageScope) {
+            return ImageScope.valid((ImageScope) data);
 
         }
 
@@ -268,6 +275,9 @@ public class DataFactory {
         } else if (data instanceof TextClipboard) {
             return TextClipboard.getValue((TextClipboard) data, name);
 
+        } else if (data instanceof ImageScope) {
+            return ImageScope.getValue((ImageScope) data, name);
+
         }
 
         return null;
@@ -345,6 +355,9 @@ public class DataFactory {
 
         } else if (data instanceof TextClipboard) {
             return TextClipboard.setValue((TextClipboard) data, name, value);
+
+        } else if (data instanceof ImageScope) {
+            return ImageScope.setValue((ImageScope) data, name, value);
 
         }
         return false;

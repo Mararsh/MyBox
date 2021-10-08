@@ -21,7 +21,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2021-8-28
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
+public abstract class ControlSheetFile_Operations extends ControlSheetFile_File {
 
     protected abstract File fileCopyCols(List<Integer> cols, boolean withNames);
 
@@ -475,16 +475,43 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             if (csvPrinter == null || sheetInputs == null || cols == null || cols.isEmpty()) {
                 return;
             }
+            String d;
             for (int r = 0; r < sheetInputs.length; r++) {
                 List<String> values = new ArrayList<>();
                 int colsSize = sheetInputs[r].length;
                 for (int c : cols) {
                     if (c > colsSize) {
-                        break;
+                        d = defaultColValue;
+                    } else {
+                        d = cellString(r, c);
                     }
-                    values.add(cellString(r, c));
+                    values.add(d);
                 }
                 csvPrinter.printRecord(values);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
+    protected void copyPageData(List<List<String>> rows, List<Integer> cols) {
+        try {
+            if (rows == null || sheetInputs == null || cols == null || cols.isEmpty()) {
+                return;
+            }
+            String d;
+            for (int r = 0; r < sheetInputs.length; r++) {
+                List<String> row = new ArrayList<>();
+                int colsSize = sheetInputs[r].length;
+                for (int c : cols) {
+                    if (c > colsSize) {
+                        d = defaultColValue;
+                    } else {
+                        d = cellString(r, c);
+                    }
+                    row.add(d);
+                }
+                rows.add(row);
             }
         } catch (Exception e) {
             MyBoxLog.console(e);

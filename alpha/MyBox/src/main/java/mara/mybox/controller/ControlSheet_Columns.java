@@ -331,7 +331,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
         if (ok) {
             popSuccessful();
-            makeSheet(pageData, newValues);
+            makeSheet(pickData(), newValues);
         } else {
             popError(message("InvalidData"));
         }
@@ -381,10 +381,6 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
 
     @FXML
     public void validateData() {
-        validateData(true);
-    }
-
-    public void validateData(boolean reportValid) {
         try {
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Reason")));
@@ -407,7 +403,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
             }
             if (!table.isEmpty()) {
                 table.htmlTable();
-            } else if (reportValid) {
+            } else {
                 popInformation(message("DataAreValid"));
             }
         } catch (Exception e) {
@@ -470,6 +466,8 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
     protected boolean saveDefinition() {
         return true;
     }
+
+    protected abstract String[][] pickData();
 
     public abstract void makeSheet(String[][] data, List<ColumnDefinition> columns);
 

@@ -150,7 +150,7 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
             s = textArea.getText();
         }
         if (s == null || s.isEmpty()) {
-            popError(Languages.message("CopyNone"));
+            popError(Languages.message("SelectToHandle"));
             return;
         }
         TextClipboardTools.copyToMyBoxClipboard(myController, s);
@@ -164,7 +164,7 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
             s = textArea.getText();
         }
         if (s == null || s.isEmpty()) {
-            popError(Languages.message("CopyNone"));
+            popError(Languages.message("SelectToHandle"));
             return;
         }
         TextClipboardTools.copyToSystemClipboard(myController, s);

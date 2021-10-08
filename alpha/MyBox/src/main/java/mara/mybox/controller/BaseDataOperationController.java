@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -36,6 +37,8 @@ public abstract class BaseDataOperationController extends BaseController {
     @FXML
     protected RadioButton rowCheckedRadio, rowCurrentPageRadio, rowAllRadio, rowSelectRadio,
             colCheckedRadio, colAllRadio, colSelectRadio;
+    @FXML
+    protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
 
     @Override
     public void setStageStatus() {
@@ -84,9 +87,13 @@ public abstract class BaseDataOperationController extends BaseController {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                         rowsListController.listView.setDisable(!rowSelectRadio.isSelected());
+                        selectAllRowsButton.setDisable(!rowSelectRadio.isSelected());
+                        selectNoneRowsButton.setDisable(!rowSelectRadio.isSelected());
                     }
                 });
                 rowsListController.listView.setDisable(!rowSelectRadio.isSelected());
+                selectAllRowsButton.setDisable(!rowSelectRadio.isSelected());
+                selectNoneRowsButton.setDisable(!rowSelectRadio.isSelected());
             }
 
             if (colGroup != null && colsListController != null && colSelectRadio != null) {
@@ -94,9 +101,13 @@ public abstract class BaseDataOperationController extends BaseController {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                         colsListController.listView.setDisable(!colSelectRadio.isSelected());
+                        selectAllColsButton.setDisable(!colSelectRadio.isSelected());
+                        selectNoneColsButton.setDisable(!colSelectRadio.isSelected());
                     }
                 });
                 colsListController.listView.setDisable(!colSelectRadio.isSelected());
+                selectAllColsButton.setDisable(!colSelectRadio.isSelected());
+                selectNoneColsButton.setDisable(!colSelectRadio.isSelected());
             }
 
         } catch (Exception e) {
@@ -175,6 +186,26 @@ public abstract class BaseDataOperationController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void selectAllRows() {
+        rowsListController.checkAll();
+    }
+
+    @FXML
+    public void selectNoneRows() {
+        rowsListController.checkNone();
+    }
+
+    @FXML
+    public void selectAllCols() {
+        colsListController.checkAll();
+    }
+
+    @FXML
+    public void selectNoneCols() {
+        colsListController.checkNone();
     }
 
     @FXML
@@ -270,14 +301,17 @@ public abstract class BaseDataOperationController extends BaseController {
         }
     }
 
-    public static void closeAll() {
+    public static void closeAll(ControlSheet sheetController) {
         try {
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
                 Object object = window.getUserData();
                 if (object != null && object instanceof BaseDataOperationController) {
-                    ((BaseDataOperationController) object).close();
+                    BaseDataOperationController controller = (BaseDataOperationController) object;
+                    if (controller.sheetController == sheetController) {
+                        controller.close();
+                    }
                 }
             }
         } catch (Exception e) {

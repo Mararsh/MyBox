@@ -14,7 +14,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureScopeController_Points extends ImageManufactureScopeController_Area {
+public abstract class ImageManufactureScopeController_Points extends ImageManufactureScopeController_Area {
 
     public void initPointsTab() {
         try {

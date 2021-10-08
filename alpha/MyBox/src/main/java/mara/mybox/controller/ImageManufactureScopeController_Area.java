@@ -14,7 +14,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureScopeController_Area extends ImageManufactureScopeController_Base {
+public abstract class ImageManufactureScopeController_Area extends ImageManufactureScopeController_Base {
 
     @FXML
     public void okRectangle() {

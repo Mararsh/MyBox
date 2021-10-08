@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureScopeController_Base extends ImageViewerController {
+public abstract class ImageManufactureScopeController_Base extends ImageViewerController {
 
     protected TableColor tableColor;
     protected ImageManufactureController imageController;
@@ -121,7 +121,7 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
                 }
 
             };
-//            parentController.start(task);
+            parentController.start(task);
         }
     }
 

@@ -12,12 +12,15 @@ import mara.mybox.value.AppValues;
  */
 public class DoubleStatistic {
 
-    private String name;
-    private int count;
-    private double sum;
-    private double mean, variance, skewness, minimum, maximum, mode, median;
+    public String name;
+    public int count;
+    public double sum;
+    public double mean, variance, skewness, minimum, maximum, mode, median;
 
     public DoubleStatistic() {
+        sum = count = 0;
+        minimum = Double.MAX_VALUE;
+        maximum = -Double.MAX_VALUE;
     }
 
     public DoubleStatistic(double[] values) {
@@ -38,7 +41,7 @@ public class DoubleStatistic {
                 minimum = v;
             }
         }
-        mean = sum / values.length;
+        mean = sum / count;
         variance = 0;
         skewness = 0;
         mode = mode(values);

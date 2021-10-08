@@ -437,4 +437,14 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
         return exportRowsCols(exportController, rowsIndex(true), cols);
     }
 
+    @Override
+    protected String[][] allRows(List<Integer> cols) {
+        return data(rowsIndex(true), cols);
+    }
+
+    @Override
+    public void statistic(List<Integer> calCols, List<Integer> disCols, boolean mode, boolean median, boolean percentage) {
+        statistic(rowsIndex(true), calCols, disCols, mode, median, percentage);
+    }
+
 }

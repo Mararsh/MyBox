@@ -144,17 +144,17 @@ public class ColumnDefinition extends BaseData implements Cloneable {
                 case Image:
                     return length <= 0 || value.length() <= length;
                 case Double:
-                    Double.parseDouble(value);
+                    Double.parseDouble(value.replaceAll(",", ""));
                     return true;
                 case Float:
-                    Float.parseFloat(value);
+                    Float.parseFloat(value.replaceAll(",", ""));
                     return true;
                 case Long:
                 case Era:
                     Long.parseLong(value);
                     return true;
                 case Integer:
-                    Integer.parseInt(value);
+                    Integer.parseInt(value.replaceAll(",", ""));
                     return true;
                 case Boolean:
                     String v = value.toLowerCase();

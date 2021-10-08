@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -31,18 +34,26 @@ public class SheetCalculateController extends BaseDataOperationController {
     @FXML
     protected ToggleGroup calGroup;
     @FXML
-    protected RadioButton transposeRadio, statisticRadio, addRadio, subRadio, multiplyRadio,
-            ascendingRadio, descendingRadio, mergeRadio, copyRadio;
+    protected RadioButton transposeRadio, statisticRadio, concatRadio, sortRadio, formularRadio;
     @FXML
     protected ControlListCheckBox calColsListController;
     @FXML
     protected Button calculatorButton;
     @FXML
-    protected VBox optionsBox;
+    protected VBox optionsBox, formularBox, statisticBox;
     @FXML
     protected HBox rowsBox, calColumnBox, calColumnsBox, columnsBox;
     @FXML
     protected Label colsLabel;
+    @FXML
+    protected CheckBox percentageCheck, medianCheck, modeCheck;
+    @FXML
+    protected TextArea formularArea;
+
+    public SheetCalculateController() {
+        baseTitle = message("Calculation");
+        TipsLabelKey = "SheetCalculateTips";
+    }
 
     @Override
     public void setParameters(ControlSheet sheetController, int row, int col) {
@@ -79,9 +90,6 @@ public class SheetCalculateController extends BaseDataOperationController {
             }
             calColsListController.setValues(cols);
             statisticRadio.setDisable(cols.isEmpty());
-            addRadio.setDisable(cols.isEmpty());
-            subRadio.setDisable(cols.isEmpty());
-            multiplyRadio.setDisable(cols.isEmpty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -95,14 +103,21 @@ public class SheetCalculateController extends BaseDataOperationController {
                 optionsBox.getChildren().addAll(rowsBox, columnsBox);
                 colsLabel.setText(message("Columns"));
 
-            } else if (statisticRadio.isSelected() || addRadio.isSelected()
-                    || subRadio.isSelected() || multiplyRadio.isSelected()) {
+            } else if (statisticRadio.isSelected()) {
                 if (calColsListController.getValues().isEmpty()) {
                     popError(message("NoNumberColumns"));
                     return false;
                 }
-                optionsBox.getChildren().addAll(rowsBox, calColumnsBox, columnsBox);
+                optionsBox.getChildren().addAll(rowsBox, statisticBox, columnsBox);
                 colsLabel.setText(message("ColumnsDisplay"));
+                percentageCheck.setVisible(true);
+
+                colSelectRadio.fire();
+
+            } else if (formularRadio.isSelected()) {
+                optionsBox.getChildren().addAll(rowsBox, formularBox, columnsBox);
+                colsLabel.setText(message("ColumnsDisplay"));
+                percentageCheck.setVisible(true);
 
             }
             return true;
@@ -113,92 +128,76 @@ public class SheetCalculateController extends BaseDataOperationController {
         }
     }
 
-    public List<Integer> calCols() {
-        List<String> names = calColsListController.checkedValues();
-        if (names == null) {
-            return null;
-        }
-        List<Integer> indices = new ArrayList<>();
-        for (String name : names) {
-            int index = sheetController.colIndex(name);
-            if (index >= 0) {
-                indices.add((Integer) index);
-            }
-        }
-        return indices;
+    @FXML
+    public void selectAllCalCols() {
+        calColsListController.checkAll();
     }
 
     @FXML
-    public void calculationAction() {
-        List<Integer> cols = cols();
-        List<Integer> calCols = selectedCols(calColsListController);
-        List<Integer> rows = rows();
-        List<Integer> disCols = new ArrayList<>();
-        List<ColumnDefinition> dataColumns = new ArrayList<>();
-        if (statisticRadio.isSelected() || addRadio.isSelected()
-                || subRadio.isSelected() || multiplyRadio.isSelected()) {
+    public void selectNoneCalCols() {
+        calColsListController.checkNone();
+    }
+
+    @FXML
+    public void clearFormular() {
+        formularArea.clear();
+    }
+
+    @FXML
+    public void popColumns(MouseEvent mouseEvent) {
+        try {
+            List<Node> buttons = new ArrayList<>();
+            List<ColumnDefinition> columns = sheetController.columns;
+            for (ColumnDefinition column : columns) {
+                String name = column.getName();
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        formularArea.insertText(formularArea.getAnchor(), " " + name + " ");
+                    }
+                });
+                buttons.add(button);
+            }
+            MenuController controller = MenuController.open(this, formularArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            controller.addFlowPane(buttons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    // http://commons.apache.org/proper/commons-jexl/reference/syntax.html
+    @FXML
+    public void popOperators(MouseEvent mouseEvent) {
+        try {
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void startAction() {
+        if (transposeRadio.isSelected()) {
+            if (rowAllRadio.isSelected()) {
+                sheetController.transpose(cols());
+            } else {
+                sheetController.transpose(rows(), cols());
+            }
+
+        } else if (statisticRadio.isSelected()) {
+            List<Integer> calCols = selectedCols(calColsListController);
             if (calCols == null || calCols.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;
             }
-            if (cols != null && !cols.isEmpty()) {
-                for (Integer i : cols) {
-                    if (!calCols.contains(i)) {
-                        disCols.add(i);
-                    }
-                }
+            if (rowAllRadio.isSelected()) {
+                sheetController.statistic(calCols, cols(), modeCheck.isSelected(), medianCheck.isSelected(), percentageCheck.isSelected());
+            } else {
+                sheetController.statistic(rows(), calCols, cols(), modeCheck.isSelected(), medianCheck.isSelected(), percentageCheck.isSelected());
             }
-            // The column name can not start with "m_", or else errors popped by javafx class "CheckBoxSkin". I guess this is a bug of Javafx.
-            // https://github.com/Mararsh/MyBox/issues/1222
-            dataColumns.add(new ColumnDefinition("__" + message("CalculationName") + "__", ColumnType.String).setWidth(200));
 
-            for (Integer i : calCols) {
-                if (statisticRadio.isSelected()) {
-                    dataColumns.add(new ColumnDefinition("__" + message("CalculationValue") + "__" + sheetController.columns.get(i).getName() + "__",
-                            ColumnType.Double).setWidth(200));
-                }
-                dataColumns.add(sheetController.columns.get(i).cloneBase().setType(ColumnType.Double).setWidth(150));
-            }
-            for (Integer i : disCols) {
-                dataColumns.add(sheetController.columns.get(i).cloneBase());
-            }
-        }
-        synchronized (this) {
-            SingletonTask calTask = new SingletonTask<Void>() {
-                private String[][] data = null;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (rowAllRadio.isSelected()) {
-
-                        } else {
-
-                            if (transposeRadio.isSelected()) {
-                                data = sheetController.transpose(rows, cols);
-
-                            } else if (statisticRadio.isSelected()) {
-                                data = sheetController.statistic(rows, calCols, disCols);
-
-                            }
-                        }
-
-                        return data != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                    controller.loadData(data, dataColumns);
-                }
-
-            };
-            start(calTask, false);
         }
 
     }

@@ -46,7 +46,7 @@ public abstract class ControlSheet_Base extends BaseController {
     protected Label noDataLabel;
     protected String sourceDelimiterName, editDelimiterName, displayDelimiterName;
 
-    protected long totalSize, currentPageStart, currentPageEnd;   // // 1-based, excluded
+    protected long totalSize, currentPageStart, currentPageEnd;   // // 1-based, excluded end
     protected int pagesNumber, widthChange, currentPage, pageSize;// 1-based
 
     protected ControlFileBackup backupController;
