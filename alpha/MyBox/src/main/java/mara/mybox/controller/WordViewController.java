@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
@@ -23,6 +25,12 @@ public class WordViewController extends BaseWebViewController {
         setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
     }
 
+    @Override
+    public void sourceFileChanged(File file) {
+        loadFile(file);
+    }
+
+    @Override
     public boolean loadFile(File file) {
         if (file == null) {
             getMyStage().setTitle(getBaseTitle());
@@ -39,8 +47,9 @@ public class WordViewController extends BaseWebViewController {
                 @Override
                 protected boolean handle() {
                     String suffix = FileNameTools.getFileSuffix(file);
+                    Charset charset = getCharset();
                     if ("doc".equalsIgnoreCase(suffix)) {
-                        html = MicrosoftDocumentTools.word2html(file, getCharset());
+                        html = MicrosoftDocumentTools.word2html(file, charset);
                     } else if ("docx".equalsIgnoreCase(suffix)) {
                         String text = MicrosoftDocumentTools.extractText(file);
                         if (text == null) {
@@ -56,9 +65,9 @@ public class WordViewController extends BaseWebViewController {
 
                 @Override
                 protected void whenSucceeded() {
-                    setSourceFile(file);
+                    sourceFile = file;
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
-                    loadContents(html);
+                    webViewController.loadContents(null, html);
                 }
 
             };
@@ -67,4 +76,9 @@ public class WordViewController extends BaseWebViewController {
         }
     }
 
+    @FXML
+    @Override
+    public void refreshAction() {
+        loadFile(sourceFile);
+    }
 }

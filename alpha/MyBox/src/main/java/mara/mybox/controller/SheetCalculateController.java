@@ -108,7 +108,7 @@ public class SheetCalculateController extends BaseDataOperationController {
                     popError(message("NoNumberColumns"));
                     return false;
                 }
-                optionsBox.getChildren().addAll(rowsBox, statisticBox, columnsBox);
+                optionsBox.getChildren().addAll(statisticBox, rowsBox, columnsBox);
                 colsLabel.setText(message("ColumnsDisplay"));
                 percentageCheck.setVisible(true);
 

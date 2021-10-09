@@ -66,7 +66,7 @@ public class TextReplaceBatchOptions extends ControlFindReplace {
 
     protected void checkCharset() {
         RadioButton selected = (RadioButton) charsetGroup.getSelectedToggle();
-        if (Languages.message("DetermainAutomatically").equals(selected.getText())) {
+        if (Languages.message("DetermineAutomatically").equals(selected.getText())) {
             autoDetermine = true;
             encodeBox.setDisable(true);
         } else {

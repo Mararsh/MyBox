@@ -493,11 +493,9 @@ public class FindReplaceTextFile {
         File sourceFile = sourceInfo.getFile();
         File tmpFile = TmpFileTools.getTempFile();
         Charset charset = sourceInfo.getCharset();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceInfo.getCharset()));
+        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, charset));
                  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile));
                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
-            sourceInfo.setFindReplace(findReplaceFile);
-            findReplaceFile.setFileInfo(sourceInfo);
             String findString = findReplaceFile.getFileFindString();
             String replaceString = findReplaceFile.getFileReplaceString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
@@ -545,18 +543,20 @@ public class FindReplaceTextFile {
             findReplaceString.setInputString(backString.concat(s.toString())).setAnchor(0).run();
             writer.write(findReplaceString.getOutputString());
             total += findReplaceString.getCount();
-            if (total > 0 && tmpFile != null && tmpFile.exists()) {
-                findReplaceFile.backup(sourceFile);
-                if (FileTools.rename(tmpFile, sourceFile)) {
-                    findReplaceFile.setCount(total);
-                    return true;
-                }
-            }
+            findReplaceFile.setCount(total);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
+            return false;
         }
-        findReplaceFile.setCount(0);
+        if (tmpFile != null && tmpFile.exists()) {
+            if (total > 0) {
+                findReplaceFile.backup(sourceFile);
+                return FileTools.rename(tmpFile, sourceFile);
+            } else {
+                return true;
+            }
+        }
         return false;
     }
 

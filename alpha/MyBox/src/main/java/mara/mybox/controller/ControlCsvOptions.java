@@ -136,7 +136,7 @@ public class ControlCsvOptions extends BaseController {
             charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
         } else {
             RadioButton selected = (RadioButton) charsetGroup.getSelectedToggle();
-            if (Languages.message("DetermainAutomatically").equals(selected.getText())) {
+            if (Languages.message("DetermineAutomatically").equals(selected.getText())) {
                 autoDetermine = true;
                 charsetSelector.setDisable(true);
             } else {

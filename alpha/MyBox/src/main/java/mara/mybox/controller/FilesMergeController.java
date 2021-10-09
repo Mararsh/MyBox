@@ -5,14 +5,10 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -24,34 +20,7 @@ public class FilesMergeController extends BaseBatchFileController {
     protected BufferedOutputStream outputStream;
 
     public FilesMergeController() {
-        baseTitle = Languages.message("FilesMerge");
-
-    }
-
-    @Override
-    public void initTargetSection() {
-        targetFileInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    targetFile = new File(newValue);
-                    targetFileInput.setStyle(null);
-                } catch (Exception e) {
-                    targetFile = null;
-                    targetFileInput.setStyle(NodeStyleTools.badStyle);
-                }
-            }
-        });
-
-        operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-        );
-
-        startButton.disableProperty().unbind();
-        startButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                .or(Bindings.isEmpty(tableData))
-        );
+        baseTitle = message("FilesMerge");
 
     }
 
@@ -71,7 +40,17 @@ public class FilesMergeController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            if (targetFile == null || !openWriter()) {
+            if (targetFileController != null) {
+                targetFile = targetFileController.file;
+            }
+            if (targetFile == null) {
+                return false;
+            }
+            targetFile = makeTargetFile(targetFile.getName(), targetFile.getParentFile(), false);
+            if (targetFile == null) {
+                return false;
+            }
+            if (!openWriter()) {
                 return false;
             }
             return super.makeMoreParameters();
@@ -94,8 +73,11 @@ public class FilesMergeController extends BaseBatchFileController {
     @Override
     public String handleFile(File file) {
         try {
-            if (!match(file)) {
-                return Languages.message("Skip") + ": " + file;
+            if (task == null || task.isCancelled()) {
+                return message("Canceled");
+            }
+            if (file == null || !file.isFile() || !match(file)) {
+                return message("Skip" + ": " + file);
             }
             byte[] buf = new byte[AppValues.IOBufferLength];
             int bufLen;
@@ -105,10 +87,18 @@ public class FilesMergeController extends BaseBatchFileController {
                     outputStream.write(buf, 0, bufLen);
                 }
             }
-            return Languages.message("Handled") + ": " + file;
+            return message("Handled") + ": " + file;
         } catch (Exception e) {
             return file + " " + e.toString();
         }
+    }
+
+    @Override
+    public void donePost() {
+        if (closeWriter()) {
+            targetFileGenerated(targetFile);
+        }
+        super.donePost();
     }
 
     protected boolean closeWriter() {
@@ -119,14 +109,6 @@ public class FilesMergeController extends BaseBatchFileController {
             updateLogs(e.toString(), true, true);
             return false;
         }
-    }
-
-    @Override
-    public void donePost() {
-        if (closeWriter()) {
-            targetFileGenerated(targetFile);
-        }
-        super.donePost();
     }
 
 }

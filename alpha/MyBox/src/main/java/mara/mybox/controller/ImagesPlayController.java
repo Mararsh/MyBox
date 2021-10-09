@@ -53,7 +53,6 @@ public class ImagesPlayController extends BaseImagesListController {
 
     protected int queueSize, fromFrame, toFrame;
     protected String fileFormat;
-    protected boolean isTransparent;
     protected LoadingController loading;
     protected long memoryThreadhold;
     protected Thread loadThread;
@@ -115,12 +114,10 @@ public class ImagesPlayController extends BaseImagesListController {
             fromInput.setText("1");
             toInput.setText("-1");
 
-            isTransparent = UserConfig.getBoolean(baseName + "Transparent", false);
-            transparentBackgroundCheck.setSelected(isTransparent);
+            transparentBackgroundCheck.setSelected(UserConfig.getBoolean(baseName + "Transparent", false));
             transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    isTransparent = transparentBackgroundCheck.isSelected();
                     UserConfig.setBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
                     if (fileFormat != null && fileFormat.equalsIgnoreCase("pdf")) {
                         reloadImages();
@@ -238,7 +235,7 @@ public class ImagesPlayController extends BaseImagesListController {
         if (sourceFile == null) {
             return false;
         }
-        try (ImageInputStream iis = ImageIO.createImageInputStream(sourceFile)) {
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(sourceFile)) {
             ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(sourceFile));
             if (reader == null) {
                 return false;
@@ -340,7 +337,7 @@ public class ImagesPlayController extends BaseImagesListController {
         if (sourceFile == null) {
             return false;
         }
-        try (SlideShow ppt = SlideShowFactory.create(sourceFile)) {
+        try ( SlideShow ppt = SlideShowFactory.create(sourceFile)) {
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;
@@ -411,7 +408,7 @@ public class ImagesPlayController extends BaseImagesListController {
         if (sourceFile == null) {
             return false;
         }
-        try (PDDocument doc = PDDocument.load(sourceFile, AppVariables.pdfMemUsage)) {
+        try ( PDDocument doc = PDDocument.load(sourceFile, AppVariables.pdfMemUsage)) {
             framesNumber = doc.getNumberOfPages();
             for (int i = 0; i < framesNumber; i++) {
                 ImageInformation imageInfo = new ImageInformation(sourceFile);
@@ -422,7 +419,7 @@ public class ImagesPlayController extends BaseImagesListController {
             }
             PDFRenderer renderer = new PDFRenderer(doc);
             ImageType type = ImageType.RGB;
-            if (isTransparent) {
+            if (transparentBackgroundCheck.isSelected()) {
                 type = ImageType.ARGB;
             }
             int start = fromFrame;
@@ -704,7 +701,7 @@ public class ImagesPlayController extends BaseImagesListController {
             int imageWidth = imageInfo.getWidth();
             int targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
             File file = imageInfo.getFile();
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(file));
                 if (reader == null) {
                     return null;

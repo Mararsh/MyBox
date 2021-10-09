@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
         <VBox layoutX="32.0" layoutY="271.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <Label text="%Charset" />
-                <RadioButton fx:id="charsetAutoRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DetermainAutomatically" wrapText="true">
+                <RadioButton fx:id="charsetAutoRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DetermineAutomatically" wrapText="true">
                     <toggleGroup>
                         <ToggleGroup fx:id="charsetGroup" />
                     </toggleGroup>

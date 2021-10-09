@@ -192,6 +192,55 @@ public class BaseWebViewController extends BaseController {
     }
 
     @FXML
+    public void zoomIn() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.zoomIn();
+    }
+
+    @FXML
+    public void zoomOut() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.zoomOut();
+    }
+
+    @FXML
+    public void backAction() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.backAction();
+    }
+
+    @FXML
+    public void forwardAction() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.forwardAction();
+    }
+
+    @FXML
+    public void refreshAction() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.refreshAction();
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.cancelAction();
+    }
+
+    @FXML
     @Override
     public boolean popAction() {
         if (webViewController == null) {

@@ -350,8 +350,11 @@ public class TextTools {
                                 outputStream.write(bytes);
                             }
                             while ((line = bufferedReader.readLine()) != null) {
-                                writer.write(line + taregtLineBreak);
-                                linesNumber++;
+                                if (linesNumber++ > 0) {
+                                    writer.write(taregtLineBreak + line);
+                                } else {
+                                    writer.write(line);
+                                };
                                 if (linesNumber >= maxLines) {
                                     break;
                                 }
@@ -376,8 +379,11 @@ public class TextTools {
                             outputStream.write(bytes);
                         }
                         String line;
+                        if ((line = bufferedReader.readLine()) != null) {
+                            writer.write(line);
+                        }
                         while ((line = bufferedReader.readLine()) != null) {
-                            writer.write(line + taregtLineBreak);
+                            writer.write(taregtLineBreak + line);
                         }
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());

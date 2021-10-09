@@ -210,6 +210,33 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             });
             listNodes.add(bulletedList);
 
+            Button bulletedList2 = new Button(message("BulletedList") + " " + message("Level") + "2");
+            bulletedList2.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    addTextInFrontOfEachLine("    - ");
+                }
+            });
+            listNodes.add(bulletedList2);
+
+            Button bulletedList3 = new Button(message("BulletedList") + " " + message("Level") + "3");
+            bulletedList3.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    addTextInFrontOfEachLine("        - ");
+                }
+            });
+            listNodes.add(bulletedList3);
+
+            Button bulletedList4 = new Button(message("BulletedList") + " " + message("Level") + "4");
+            bulletedList4.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    addTextInFrontOfEachLine("            - ");
+                }
+            });
+            listNodes.add(bulletedList4);
+
             addFlowPane(listNodes);
 
             List<Node> codeNodes = new ArrayList<>();

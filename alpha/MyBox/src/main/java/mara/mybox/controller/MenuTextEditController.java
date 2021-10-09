@@ -30,7 +30,7 @@ public class MenuTextEditController extends MenuTextBaseController {
     @FXML
     protected HBox fileBox;
     @FXML
-    protected Button findButton, replaceButton;
+    protected Button findButton;
 
     public MenuTextEditController() {
         baseTitle = message("Texts");

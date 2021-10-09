@@ -129,12 +129,12 @@ public class ControlListCheckBox extends BaseController {
         change
      */
     public void clear() {
-        checkedOrders = null;
+        checkedOrders.clear();
         listView.getItems().clear();
     }
 
     public void setValues(List<String> values) {
-        checkedOrders = null;
+        checkedOrders.clear();
         listView.getItems().clear();
         if (values != null) {
             listView.getItems().setAll(values);
@@ -150,7 +150,7 @@ public class ControlListCheckBox extends BaseController {
         if (value == null) {
             return;
         }
-        if (checkedOrders == null) {
+        if (checkedOrders.isEmpty()) {
             if (!check) {
                 return;
             }
@@ -178,9 +178,6 @@ public class ControlListCheckBox extends BaseController {
         if (values == null || values.isEmpty()) {
             return;
         }
-        if (checkedOrders == null) {
-            checkedOrders = new ArrayList<>();
-        }
         List<String> items = listView.getItems();
         for (int i = 0; i < items.size(); i++) {
             Integer index = (Integer) i;
@@ -198,7 +195,7 @@ public class ControlListCheckBox extends BaseController {
         if (check) {
             newSelected.add((Integer) index);
         }
-        if (checkedOrders != null && !checkedOrders.isEmpty()) {
+        if (!checkedOrders.isEmpty()) {
             for (Integer i : checkedOrders) {
                 if (i >= index) {
                     newSelected.add((Integer) (i + 1));
@@ -224,7 +221,7 @@ public class ControlListCheckBox extends BaseController {
     }
 
     public void checkAll() {
-        checkedOrders = new ArrayList<>();
+        checkedOrders.clear();
         for (int i = 0; i < listView.getItems().size(); i++) {
             checkedOrders.add(i);
         }
@@ -232,7 +229,7 @@ public class ControlListCheckBox extends BaseController {
     }
 
     public void checkNone() {
-        checkedOrders = null;
+        checkedOrders.clear();
         listView.refresh();
     }
 

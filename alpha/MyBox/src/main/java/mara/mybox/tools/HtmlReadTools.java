@@ -381,7 +381,7 @@ public class HtmlReadTools {
             }
         }
         IndexRange end = null;
-        if (finder.setFindString("</body>").run()) {
+        if (finder.setFindString("</body>").setAnchor(from).run()) {
             end = finder.getStringRange();
         }
         if (end != null) {

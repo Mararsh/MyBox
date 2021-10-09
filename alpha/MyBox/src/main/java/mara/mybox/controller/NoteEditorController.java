@@ -536,25 +536,13 @@ public class NoteEditorController extends HtmlEditorController {
         panes
      */
     @Override
-    public void initTabPane() {
-        try {
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue ov, Tab oldTab, Tab newTab) {
-                    if (oldTab == styleTab) {
-                        webEngine.getLoadWorker().cancel();
-                        webEngine.loadContent(styleHtml(htmlInWebview()));
-                        htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
-                    }
-                }
-            });
-
-            showTabs();
-            NodeStyleTools.refreshStyle(thisPane);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void tabSelectionChanged(Tab oldTab) {
+        if (oldTab == styleTab) {
+            webEngine.getLoadWorker().cancel();
+            webEngine.loadContent(styleHtml(htmlInWebview()));
+            htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
         }
+        super.tabSelectionChanged(oldTab);
     }
 
     @Override
@@ -568,7 +556,7 @@ public class NoteEditorController extends HtmlEditorController {
             tagsTab.setOnClosed(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
-                    UserConfig.setBoolean(tagsTab + "ShowTagsTab", false);
+                    UserConfig.setBoolean(baseName + "ShowTagsTab", false);
                 }
             });
 
@@ -578,7 +566,7 @@ public class NoteEditorController extends HtmlEditorController {
             styleTab.setOnClosed(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
-                    UserConfig.setBoolean(styleTab + "ShowStyleTab", false);
+                    UserConfig.setBoolean(baseName + "ShowStyleTab", false);
                 }
             });
         } catch (Exception e) {

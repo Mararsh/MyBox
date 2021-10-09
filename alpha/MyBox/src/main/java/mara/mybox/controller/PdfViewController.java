@@ -54,7 +54,6 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfViewController extends PdfViewController_Html {
 
     protected SimpleBooleanProperty infoLoaded;
-    protected boolean isTransparent;
     protected Task outlineTask;
 
     @FXML
@@ -120,12 +119,10 @@ public class PdfViewController extends PdfViewController_Html {
             }
 
             if (transparentBackgroundCheck != null) {
-                isTransparent = UserConfig.getBoolean(baseName + "Transparent", false);
-                transparentBackgroundCheck.setSelected(isTransparent);
+                transparentBackgroundCheck.setSelected(UserConfig.getBoolean(baseName + "Transparent", false));
                 transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        isTransparent = transparentBackgroundCheck.isSelected();
                         UserConfig.setBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
                         loadPage();
                     }
@@ -357,11 +354,8 @@ public class PdfViewController extends PdfViewController_Html {
     @Override
     protected Image readPageImage() {
         try {
-            ImageType type = ImageType.RGB;
-            if (isTransparent) {
-                type = ImageType.ARGB;
-            }
-            BufferedImage bufferedImage = PdfTools.page2image(sourceFile, password, frameIndex, dpi, type);
+            BufferedImage bufferedImage = PdfTools.page2image(sourceFile, password, frameIndex, dpi,
+                    transparentBackgroundCheck.isSelected() ? ImageType.ARGB : ImageType.RGB);
             return SwingFXUtils.toFXImage(bufferedImage, null);
         } catch (Exception e) {
             MyBoxLog.console(e);

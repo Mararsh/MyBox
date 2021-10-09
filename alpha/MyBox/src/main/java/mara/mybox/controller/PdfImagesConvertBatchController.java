@@ -8,18 +8,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.cos.COSName;
@@ -67,12 +64,12 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
 
                 startButton.disableProperty().unbind();
                 startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                                .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                                .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                                .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                                .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                                .or(formatController.profileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                                .or(formatController.thresholdInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                        .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(formatController.profileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(formatController.thresholdInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 );
             }
         } catch (Exception e) {

@@ -238,6 +238,26 @@ public class MenuWebviewController extends MenuController {
         return true;
     }
 
+    public void zoomIn() {
+        webViewController.zoomIn();
+    }
+
+    public void zoomOut() {
+        webViewController.zoomOut();
+    }
+
+    public void refreshAction() {
+        webViewController.refreshAction();
+    }
+
+    public void backAction() {
+        webViewController.backAction();
+    }
+
+    public void forwardAction() {
+        webViewController.forwardAction();
+    }
+
     /*
         static methods
      */

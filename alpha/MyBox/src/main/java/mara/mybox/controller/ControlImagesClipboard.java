@@ -21,6 +21,7 @@ import javafx.stage.Window;
 import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageClipboard;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -56,6 +57,11 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     protected TableColumn<ImageClipboard, ImageClipboard> thumbColumn;
     @FXML
     protected TableColumn<ImageClipboard, Date> timeColumn;
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
+    }
 
     @Override
     public void setTableDefinition() {
@@ -198,7 +204,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
 
     @Override
     public List<ImageClipboard> readPageData() {
-        try (Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             ((TableImageClipboard) tableDefinition).clearInvalid(conn);
             return tableDefinition.queryConditions(conn, queryConditions, currentPageStart - 1, currentPageSize);
         } catch (Exception e) {

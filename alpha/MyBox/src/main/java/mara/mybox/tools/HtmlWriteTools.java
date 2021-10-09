@@ -194,27 +194,30 @@ public class HtmlWriteTools {
         return setCharset(htmlFile, Charset.forName("utf-8"), must);
     }
 
-    public static String setStyle(File htmlFile, String css, boolean ignoreOriginal) {
+    public static String setStyle(File htmlFile, Charset charset, String css, boolean ignoreOriginal) {
         try {
             if (htmlFile == null || css == null) {
                 return "InvalidData";
             }
-            Charset fileCharset = TextFileTools.charset(htmlFile);
-            String html = TextFileTools.readTexts(htmlFile, fileCharset);
+            if (charset == null) {
+                charset = TextFileTools.charset(htmlFile);
+            }
+            String html = TextFileTools.readTexts(htmlFile, charset);
             String preHtml = HtmlReadTools.preHtml(html);
             String head;
             if (ignoreOriginal) {
-                head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
+                head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n";
             } else {
                 head = HtmlReadTools.tag(html, "head", false);
                 if (head == null) {
-                    head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
+                    head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n";
                 }
             }
-            html = preHtml + "<html>\n" + "    <head>\n"
-                    + head + "\n" + "        <style type=\"text/css\">/>\n"
-                    + css + "        </style>/>\n" + "    </head>\n"
-                    + HtmlReadTools.body(html, true) + "\n" + "</html>";
+            String body = HtmlReadTools.body(html, true);
+            html = preHtml + "<html>\n    <head>\n"
+                    + head + "\n        <style type=\"text/css\">\n"
+                    + css + "        </style>\n    </head>\n"
+                    + body + "\n</html>";
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e);

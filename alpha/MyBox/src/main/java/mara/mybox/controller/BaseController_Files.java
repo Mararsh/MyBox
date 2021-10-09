@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javafx.event.ActionEvent;
@@ -908,13 +909,17 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     public File makeTargetFile(File sourceFile, File targetPath) {
         if (sourceFile.isDirectory()) {
-            return makeTargetFile(sourceFile.getName(), "", targetPath);
+            return makeTargetFile(sourceFile.getName(), "", targetPath, true);
         } else {
-            return makeTargetFile(sourceFile.getName(), targetPath);
+            return makeTargetFile(sourceFile.getName(), targetPath, true);
         }
     }
 
     public File makeTargetFile(String fileName, File targetPath) {
+        return makeTargetFile(fileName, targetPath, true);
+    }
+
+    public File makeTargetFile(String fileName, File targetPath, boolean appendTime) {
         try {
             if (fileName == null || targetPath == null) {
                 return null;
@@ -931,15 +936,23 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                     nameSuffix = "";
                 }
             }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
+            return makeTargetFile(namePrefix, nameSuffix, targetPath, appendTime);
         } catch (Exception e) {
             return null;
         }
     }
 
     public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
+        return makeTargetFile(namePrefix, nameSuffix, targetPath, true);
+    }
+
+    public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath, boolean appendTime) {
         try {
-            String targetPrefix = targetPath.getAbsolutePath() + File.separator + FileNameTools.filenameFilter(namePrefix);
+            String targetPrefix = targetPath.getAbsolutePath() + File.separator
+                    + FileNameTools.filenameFilter(namePrefix);
+            if (appendTime) {
+                targetPrefix += "_" + new Date().getTime();
+            }
             String targetSuffix = FileNameTools.filenameFilter(nameSuffix);
             File target = new File(targetPrefix + targetSuffix);
             if (target.exists()) {

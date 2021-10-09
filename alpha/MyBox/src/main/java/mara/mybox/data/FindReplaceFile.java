@@ -81,7 +81,7 @@ public class FindReplaceFile extends FindReplaceString {
             return false;
         }
         fileInfo.setFindReplace(this);
-//        MyBoxLog.debug("operation:" + operation + " isWhole:" + isWhole + " unit:" + unit
+//        MyBoxLog.debug("operation:" + operation + " unit:" + unit
 //                + " anchor:" + anchor + " position:" + position + " page:" + fileInfo.getCurrentPage());
         if (fileInfo.pagesNumber < 2) {
             return run();

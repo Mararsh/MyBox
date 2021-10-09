@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.FileTools;
@@ -36,6 +37,8 @@ public class TextReplaceBatchController extends BaseBatchFileController {
         try {
             super.initControls();
 
+            optionsController.setParent(this);
+
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
@@ -52,11 +55,16 @@ public class TextReplaceBatchController extends BaseBatchFileController {
     public boolean makeMoreParameters() {
         try {
             String findString = optionsController.findArea.getText();
-            if (findString.isEmpty()) {
+            if (findString == null || findString.isEmpty()) {
                 popError(message("EmptyValue"));
                 return false;
             }
+            TableStringValues.add(baseName + "FindString", findString);
+
             String replaceString = optionsController.replaceArea.getText();
+            if (replaceString != null && !replaceString.isEmpty()) {
+                TableStringValues.add(baseName + "ReplaceString", replaceString);
+            }
 
             replace = new FindReplaceFile().setPosition(0);
             replace.setOperation(FindReplaceString.Operation.ReplaceAll)
@@ -112,7 +120,6 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             } else {
                 return message("Failed");
             }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return message("Failed");

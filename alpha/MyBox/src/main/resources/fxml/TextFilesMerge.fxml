@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
                               <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                  <children>
                                     <Label text="%SourceCharset" />
-                                    <RadioButton mnemonicParsing="false" selected="true" text="%DetermainAutomatically">
+                                    <RadioButton mnemonicParsing="false" selected="true" text="%DetermineAutomatically">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="sourceEncodingGroup" />
                                        </toggleGroup>

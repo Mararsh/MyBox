@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
         </FlowPane>
       <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true">
          <content>
-              <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+              <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                   <children>
                       <HBox fx:id="rowsBox" spacing="5.0">
                           <children>
@@ -62,7 +62,7 @@ License:    Apache License Version 2.0
                               <RadioButton fx:id="rowCurrentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowGroup" />
                               <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowGroup" />
                               <RadioButton fx:id="rowSelectRadio" layoutX="77.0" layoutY="14.0" mnemonicParsing="false" text="%Select" toggleGroup="$rowGroup" />
-                              <fx:include fx:id="rowsList" prefHeight="150.0" prefWidth="100.0" source="ControlListCheckBox.fxml" />
+                              <fx:include fx:id="rowsList" minHeight="150.0" prefHeight="150.0" prefWidth="100.0" source="ControlListCheckBox.fxml" />
                               <VBox spacing="2.0">
                                   <children>
                                       <Button fx:id="selectAllRowsButton" mnemonicParsing="false" onAction="#selectAllRows">
@@ -93,12 +93,19 @@ License:    Apache License Version 2.0
                               <ComboBox fx:id="colSelector" prefWidth="200.0" />
                           </children>
                       </HBox>
-                  <VBox fx:id="statisticBox" spacing="2.0">
+                  <VBox fx:id="statisticBox" spacing="10.0">
                      <children>
+                        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="2000.0" vgap="2.0">
+                           <children>
+                              <CheckBox fx:id="modeCheck" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" text="%Mode" />
+                              <CheckBox fx:id="medianCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Median" />
+                                  <CheckBox fx:id="percentageCheck" mnemonicParsing="false" text="%Percentage" />
+                           </children>
+                        </FlowPane>
                             <HBox fx:id="calColumnsBox" spacing="5.0">
                                 <children>
                                     <Label minHeight="-Infinity" minWidth="-Infinity" text="%ColumnsCalculation" />
-                                    <fx:include fx:id="calColsList" prefHeight="150.0" prefWidth="300.0" source="ControlListCheckBox.fxml" />
+                                    <fx:include fx:id="calColsList" minHeight="150.0" prefHeight="150.0" prefWidth="300.0" source="ControlListCheckBox.fxml" />
                                     <VBox spacing="2.0">
                                         <children>
                                             <Button fx:id="selectAllCalColsButton" mnemonicParsing="false" onAction="#selectAllCalCols">
@@ -123,13 +130,6 @@ License:    Apache License Version 2.0
                                     </VBox>
                                 </children>
                             </HBox>
-                        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="2000.0" vgap="2.0">
-                           <children>
-                              <CheckBox fx:id="modeCheck" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" text="%Mode" />
-                              <CheckBox fx:id="medianCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Median" />
-                                  <CheckBox fx:id="percentageCheck" mnemonicParsing="false" text="%Percentage" />
-                           </children>
-                        </FlowPane>
                      </children>
                   </VBox>
                   <VBox fx:id="formularBox" spacing="2.0" VBox.vgrow="ALWAYS">
@@ -149,7 +149,7 @@ License:    Apache License Version 2.0
                               </Button>
                            </children>
                         </HBox>
-                        <TextArea fx:id="formularArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="formularArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="120.0" wrapText="true" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                       <HBox fx:id="columnsBox" spacing="5.0">
@@ -162,7 +162,7 @@ License:    Apache License Version 2.0
                               </RadioButton>
                               <RadioButton fx:id="colAllRadio" mnemonicParsing="false" text="%All" toggleGroup="$colGroup" />
                               <RadioButton fx:id="colSelectRadio" mnemonicParsing="false" text="%Select" toggleGroup="$colGroup" />
-                              <fx:include fx:id="colsList" prefHeight="150.0" prefWidth="300.0" source="ControlListCheckBox.fxml" />
+                              <fx:include fx:id="colsList" minHeight="150.0" prefHeight="150.0" prefWidth="300.0" source="ControlListCheckBox.fxml" />
                               <VBox spacing="2.0">
                                   <children>
                                       <Button fx:id="selectAllColsButton" mnemonicParsing="false" onAction="#selectAllCols">

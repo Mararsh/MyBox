@@ -173,7 +173,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
 
     protected void checkSourceEncoding() {
         RadioButton selected = (RadioButton) sourceEncodingGroup.getSelectedToggle();
-        if (message("DetermainAutomatically").equals(selected.getText())) {
+        if (message("DetermineAutomatically").equals(selected.getText())) {
             sourceEncodingAutoDetermine = true;
             sourceEncodingBox.setDisable(true);
         } else {

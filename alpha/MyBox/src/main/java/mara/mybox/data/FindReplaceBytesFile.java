@@ -460,11 +460,15 @@ public class FindReplaceBytesFile {
             return false;
         }
         findReplaceFile.setCount(total);
-        if (total > 0 && tmpFile != null && tmpFile.exists()) {
-            findReplaceFile.backup(sourceFile);
-            FileTools.rename(tmpFile, sourceFile);
+        if (tmpFile != null && tmpFile.exists()) {
+            if (total > 0) {
+                findReplaceFile.backup(sourceFile);
+                return FileTools.rename(tmpFile, sourceFile);
+            } else {
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
 }

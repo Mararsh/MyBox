@@ -113,7 +113,7 @@ public class HtmlEditorController extends WebAddressController {
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
                 public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                    TextClipboardPopController.closeAll();
+                    tabSelectionChanged(oldValue);
                 }
             });
 
@@ -124,6 +124,10 @@ public class HtmlEditorController extends WebAddressController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void tabSelectionChanged(Tab oldTab) {
+        TextClipboardPopController.closeAll();
     }
 
     protected void initEdtiorTab() {
@@ -949,7 +953,7 @@ public class HtmlEditorController extends WebAddressController {
             editorTab.setOnClosed(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
-                    UserConfig.setBoolean(editorTab + "ShowEditorTab", false);
+                    UserConfig.setBoolean(baseName + "ShowEditorTab", false);
                 }
             });
 
@@ -959,7 +963,7 @@ public class HtmlEditorController extends WebAddressController {
             markdownTab.setOnClosed(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
-                    UserConfig.setBoolean(markdownTab + "ShowMarkdownTab", false);
+                    UserConfig.setBoolean(baseName + "ShowMarkdownTab", false);
                 }
             });
 
@@ -969,7 +973,7 @@ public class HtmlEditorController extends WebAddressController {
             textsTab.setOnClosed(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
-                    UserConfig.setBoolean(textsTab + "ShowTextsTab", false);
+                    UserConfig.setBoolean(baseName + "ShowTextsTab", false);
                 }
             });
 

@@ -97,6 +97,16 @@ public class ControlFindReplace extends BaseController {
         }
     }
 
+    public void setParent(BaseController parent) {
+        try {
+            this.parentController = parent;
+            this.baseName = parent.baseName;
+            setControls();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void setControls() {
         try {
             findArea.textProperty().addListener(new ChangeListener<String>() {
@@ -403,7 +413,7 @@ public class ControlFindReplace extends BaseController {
             }
         }
         if (replaceString != null && !replaceString.isEmpty()) {
-            TableStringValues.add(baseName + "ReplaceString", findString);
+            TableStringValues.add(baseName + "ReplaceString", replaceString);
         }
         if (operation == Operation.ReplaceAll && multiplePages) {
             if (!PopTools.askSure(getMyStage().getTitle(), message("SureReplaceAll"))) {
@@ -528,7 +538,6 @@ public class ControlFindReplace extends BaseController {
                         default:
                             if (lastStringRange != null) {
                                 int unit = findReplace.getUnit();
-                                long from = lastStringRange.getStart() - findReplace.getFileInfo().getCurrentPageLineStart();
                                 if (operation == Operation.FindNext || operation == Operation.FindPrevious) {
                                     editerController.loadText(findReplace.getOutputString(), editerController.fileChanged.getValue());
                                     editerController.selectObjects(lastStringRange.getStart(), (int) lastStringRange.getLength());

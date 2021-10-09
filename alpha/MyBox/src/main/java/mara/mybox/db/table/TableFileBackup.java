@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,12 +7,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.FileBackup;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -112,7 +110,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
                 records = valid;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.error(e, filename);
         }
         return records;
     }
@@ -151,6 +149,36 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         }
     }
 
+    public int clearInvalid(Connection conn) {
+        int count = 0;
+        try {
+            conn.setAutoCommit(true);
+            List<FileBackup> invalid = new ArrayList<>();
+            try ( PreparedStatement query = conn.prepareStatement(queryAllStatement());
+                     ResultSet results = query.executeQuery()) {
+                while (results.next()) {
+                    FileBackup data = readData(results);
+                    if (data.getBackup() == null || !data.getBackup().exists()
+                            || data.getFile() == null || !data.getFile().exists()) {
+                        invalid.add(data);
+                    }
+                }
+
+            } catch (Exception e) {
+                MyBoxLog.debug(e, tableName);
+            }
+            count = invalid.size();
+            deleteData(conn, invalid);
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+        }
+        return count;
+    }
+
+    /*
+        static
+     */
     public static void deleteBackup(FileBackup record) {
         if (record == null) {
             return;
@@ -170,7 +198,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
     }
 
     public static void deleteBackup(Connection conn, String filename, String backup) {
-        if (conn == null || filename == null) {
+        if (conn == null || filename == null || backup == null) {
             return;
         }
         try ( PreparedStatement statement = conn.prepareStatement(DeleteBackup)) {
