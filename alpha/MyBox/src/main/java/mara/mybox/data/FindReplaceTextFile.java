@@ -24,7 +24,7 @@ public class FindReplaceTextFile {
     public static boolean countText(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
-                || findReplaceFile == null || findReplaceFile.getFileFindString() == null || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile == null || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -35,7 +35,7 @@ public class FindReplaceTextFile {
         int count = 0;
         File sourceFile = sourceInfo.getFile();
         int maxLen = FileTools.bufSize(sourceFile, 16);
-        String findString = findReplaceFile.getFileFindString();
+        String findString = findReplaceFile.getFindString();
         FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                 .setFindString(findString).setAnchor(0).setWrap(false);
         int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
@@ -117,8 +117,8 @@ public class FindReplaceTextFile {
     public static LongRange findNextTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
-                || findReplaceFile == null || findReplaceFile.getFileFindString() == null
-                || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile == null || findReplaceFile.getFindString() == null
+                || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -143,7 +143,7 @@ public class FindReplaceTextFile {
                 }
             }
             int maxLen = FileTools.bufSize(sourceFile, 16);
-            String findString = findReplaceFile.getFileFindString();
+            String findString = findReplaceFile.getFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setAnchor(0).setWrap(false).setFindString(findString);
             int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
@@ -287,8 +287,8 @@ public class FindReplaceTextFile {
     public static LongRange findPreviousTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
-                || findReplaceFile == null || findReplaceFile.getFileFindString() == null
-                || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile == null || findReplaceFile.getFindString() == null
+                || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -313,7 +313,7 @@ public class FindReplaceTextFile {
                 }
             }
             int maxLen = FileTools.bufSize(sourceFile, 16);
-            String findString = findReplaceFile.getFileFindString();
+            String findString = findReplaceFile.getFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
             int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
@@ -478,7 +478,7 @@ public class FindReplaceTextFile {
     public static boolean replaceAllText(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null || findReplaceFile == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
-                || findReplaceFile.getFileFindString() == null || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -496,8 +496,8 @@ public class FindReplaceTextFile {
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, charset));
                  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile));
                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
-            String findString = findReplaceFile.getFileFindString();
-            String replaceString = findReplaceFile.getFileReplaceString();
+            String findString = findReplaceFile.getFindString();
+            String replaceString = findReplaceFile.getReplaceString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setReplaceString(replaceString)
                     .setAnchor(0).setWrap(false);

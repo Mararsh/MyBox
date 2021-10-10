@@ -120,7 +120,7 @@ License:    Apache License Version 2.0
                                                                 </VBox>
                                                                 <VBox minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                                                                     <children>
-                                                      <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#allAction">
+                                                      <Button fx:id="selectAllChannelsButton" mnemonicParsing="false" onAction="#selectAllChannels">
                                                          <graphic>
                                                             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                <image>
@@ -129,7 +129,7 @@ License:    Apache License Version 2.0
                                                             </ImageView>
                                                          </graphic>
                                                       </Button>
-                                                      <Button fx:id="selectNoneButton" mnemonicParsing="false" onAction="#clearAction">
+                                                      <Button fx:id="selectNoneChannelsButton" mnemonicParsing="false" onAction="#selectNoneChannels">
                                                          <graphic>
                                                             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                <image>

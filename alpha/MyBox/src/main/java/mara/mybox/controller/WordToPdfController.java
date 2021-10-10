@@ -1,31 +1,35 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.TextFileTools;
+import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2020-10-17
+ * @CreateDate 2021-10-10
  * @License Apache License Version 2.0
  */
-public class HtmlToPdfController extends BaseBatchFileController {
+public class WordToPdfController extends BaseBatchFileController {
+
+    protected Charset charset;
 
     @FXML
     protected ControlHtml2PdfOptions optionsController;
 
-    public HtmlToPdfController() {
-        baseTitle = Languages.message("HtmlToPdf");
+    public WordToPdfController() {
+        baseTitle = Languages.message("WordToPdf");
         targetFileSuffix = "pdf";
+        charset = Charset.forName("UTf-8");
     }
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.PDF);
+        setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.PDF);
     }
 
     @Override
@@ -41,25 +45,15 @@ public class HtmlToPdfController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.getFileSuffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
-            String html = TextFileTools.readTexts(srcFile);
+            String html = MicrosoftDocumentTools.word2Html(srcFile, charset);
             String result = optionsController.html2pdf(html, target);
-            if (Languages.message("Successful").equals(result)) {
+            if (message("Successful").equals(result)) {
                 targetFileGenerated(target);
             }
             return result;

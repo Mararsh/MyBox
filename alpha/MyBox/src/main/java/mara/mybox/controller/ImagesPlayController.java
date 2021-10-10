@@ -93,6 +93,7 @@ public class ImagesPlayController extends BaseImagesListController {
                         setFileType(VisitHistory.FileType.PDF);
                         if (!fileVBox.getChildren().contains(pdfBox)) {
                             fileVBox.getChildren().add(3, pdfBox);
+                            NodeStyleTools.refreshStyle(pdfBox);
                         }
                     } else if (pptRadio.isSelected()) {
                         setFileType(VisitHistory.FileType.PPTS);

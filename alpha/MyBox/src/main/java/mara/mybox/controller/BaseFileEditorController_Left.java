@@ -265,14 +265,14 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                             if (v > 0 && v <= sourceInformation.getLinesNumber()) {
                                 locateLine = v - 1;  // 0-based
                                 lineInput.setStyle(null);
-                                locateLineButton.setDisable(false);
+                                goLineButton.setDisable(false);
                             } else {
                                 lineInput.setStyle(NodeStyleTools.badStyle);
-                                locateLineButton.setDisable(true);
+                                goLineButton.setDisable(true);
                             }
                         } catch (Exception e) {
                             lineInput.setStyle(NodeStyleTools.badStyle);
-                            locateLineButton.setDisable(true);
+                            goLineButton.setDisable(true);
                         }
                     }
                 });
@@ -288,14 +288,14 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                             if (v > 0 && v <= sourceInformation.getObjectsNumber()) {
                                 locateObject = v - 1; // 0-based
                                 objectNumberInput.setStyle(null);
-                                locateObjectButton.setDisable(false);
+                                goObjectButton.setDisable(false);
                             } else {
                                 objectNumberInput.setStyle(NodeStyleTools.badStyle);
-                                locateObjectButton.setDisable(true);
+                                goObjectButton.setDisable(true);
                             }
                         } catch (Exception e) {
                             objectNumberInput.setStyle(NodeStyleTools.badStyle);
-                            locateObjectButton.setDisable(true);
+                            goObjectButton.setDisable(true);
                         }
                     }
                 });

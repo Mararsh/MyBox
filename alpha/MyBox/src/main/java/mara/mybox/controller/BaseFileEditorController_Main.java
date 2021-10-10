@@ -383,7 +383,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 Platform.runLater(() -> {
                     mainArea.requestFocus();
                     mainArea.deselect();
-                    mainArea.selectRange(0, 0);
                     int startIndex;
                     if (from < 0) {
                         startIndex = 0;
@@ -397,7 +396,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                     mainArea.selectRange(Math.min(text.length(), startIndex + number), startIndex);
                 });
             }
-        }, 500);  // wait for text loaded
+        }, 300);  // wait for text loaded
     }
 
     // 0-based
@@ -408,7 +407,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 Platform.runLater(() -> {
                     mainArea.requestFocus();
                     mainArea.deselect();
-                    mainArea.selectRange(0, 0);
                     int startLine;
                     if (from < 0) {
                         startLine = 0;
@@ -431,7 +429,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                     mainArea.selectRange(charIndex, startIndex);
                 });
             }
-        }, 500); // wait for text loaded
+        }, 300); // wait for text loaded
     }
 
 }

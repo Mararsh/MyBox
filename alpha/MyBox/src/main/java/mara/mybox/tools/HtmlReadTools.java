@@ -18,6 +18,7 @@ import javax.net.ssl.SSLContext;
 import mara.mybox.controller.HtmlTableController;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.value.AppValues;
@@ -196,8 +197,7 @@ public class HtmlReadTools {
     }
 
     public static String htmlTitle(String html) {
-        FindReplaceString finder = FindReplaceString.finder(true, true);
-        return tag(finder, tag(finder, html, "head", true), "title", false);
+        return tag(tag(html, "head", true), "title", false);
     }
 
     public static String charsetNameInHead(String head) {
@@ -398,13 +398,21 @@ public class HtmlReadTools {
     }
 
     public static String tag(String string, String tag, boolean withTag) {
-        if (string == null || tag == null) {
+        try {
+            if (string == null || tag == null) {
+                return null;
+            }
+            IndexRange range = tagRange(FindReplaceString.finder(false, true), string, tag, withTag);
+            if (range == null) {
+                return null;
+            }
+            return string.substring(range.getStart(), range.getEnd());
+        } catch (Exception e) {
             return null;
         }
-        return tag(FindReplaceString.finder(true, true), string, tag, withTag);
     }
 
-    public static String tag(FindReplaceString finder, String string, String tag, boolean withTag) {
+    public static IndexRange tagRange(FindReplaceString finder, String string, String tag, boolean withTag) {
         if (finder == null || string == null || tag == null) {
             return null;
         }
@@ -435,7 +443,7 @@ public class HtmlReadTools {
             return null;
         }
         int to = withTag ? end.getEnd() : end.getStart();
-        return string.substring(from, to);
+        return new IndexRange(from, to);
     }
 
     public static String toc(Document doc, int indentSize) {
@@ -556,7 +564,8 @@ public class HtmlReadTools {
             String linkAddress = element.attr("href");
             try {
                 URL url = new URL(baseURL, linkAddress);
-                Link link = Link.create().setUrl(url).setAddress(url.toString()).setAddressOriginal(linkAddress).setName(element.text()).setTitle(element.attr("title")).setIndex(links.size());
+                Link link = Link.create().setUrl(url).setAddress(url.toString()).setAddressOriginal(linkAddress)
+                        .setName(element.text()).setTitle(element.attr("title")).setIndex(links.size());
                 links.add(link);
             } catch (Exception e) {
                 //                MyBoxLog.console(linkAddress);
@@ -593,6 +602,57 @@ public class HtmlReadTools {
                 validLinks.add(link);
             }
             return validLinks;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static List<StringTable> Tables(String html) {
+        try {
+            if (html == null || html.isBlank()) {
+                return null;
+            }
+            List<StringTable> tables = new ArrayList<>();
+            org.jsoup.nodes.Document doc = Jsoup.parse(html);
+            Elements tablesList = doc.getElementsByTag("table");
+            if (tablesList != null) {
+                for (org.jsoup.nodes.Element table : tablesList) {
+                    StringTable stringTable = new StringTable();
+                    List<List<String>> data = new ArrayList<>();
+                    List<String> names = null;
+                    Elements trList = table.getElementsByTag("tr");
+                    if (trList != null) {
+                        for (org.jsoup.nodes.Element tr : trList) {
+                            if (names == null) {
+                                Elements thList = tr.getElementsByTag("th");
+                                if (thList != null) {
+                                    names = new ArrayList<>();
+                                    for (org.jsoup.nodes.Element th : thList) {
+                                        names.add(th.text());
+                                    }
+                                    if (!names.isEmpty()) {
+                                        stringTable.setNames(names);
+                                    }
+                                }
+                            }
+                            Elements tdList = tr.getElementsByTag("td");
+                            if (tdList != null) {
+                                List<String> row = new ArrayList<>();
+                                for (org.jsoup.nodes.Element td : tdList) {
+                                    row.add(td.text());
+                                }
+                                if (!row.isEmpty()) {
+                                    data.add(row);
+                                }
+                            }
+                        }
+                    }
+                    stringTable.setData(data);
+                    tables.add(stringTable);
+                }
+            }
+            return tables;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

@@ -100,7 +100,8 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openTextMerge" text="%TextFilesMerge" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextReplaceBatch" text="%TextReplaceBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#TextFilterBatch" text="%TextFilterBatch" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openTextToHtml" text="%TextToHtml" />
+                                        <MenuItem mnemonicParsing="false" onAction="#textToHtml" text="%TextToHtml" />
+                                        <MenuItem mnemonicParsing="false" onAction="#textToPdf" text="%TextToPdf" />
                                     </items>
                                 </Menu>                              
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -108,9 +109,11 @@ License:    Apache License Version 2.0
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#WordView" text="%WordView" />
                                         <MenuItem mnemonicParsing="false" onAction="#WordToHtml" text="%WordToHtml" />
+                                        <MenuItem mnemonicParsing="false" onAction="#WordToPdf" text="%WordToPdf" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#PptView" text="%PptView" />
                                         <MenuItem mnemonicParsing="false" onAction="#PptToImages" text="%PptToImages" />
+                                        <MenuItem mnemonicParsing="false" onAction="#PptToPdf" text="%PptToPdf" />
                                         <MenuItem mnemonicParsing="false" onAction="#PptExtract" text="%PptExtract" />
                                         <MenuItem mnemonicParsing="false" onAction="#PptSplit" text="%PptSplit" />
                                         <MenuItem mnemonicParsing="false" onAction="#PptxMerge" text="%PptxMerge" />

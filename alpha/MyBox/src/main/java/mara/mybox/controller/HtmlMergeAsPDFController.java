@@ -1,43 +1,48 @@
 package mara.mybox.controller;
 
-import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
-import com.vladsch.flexmark.pdf.converter.PdfConverterExtension;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileInformation;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2020-10-21
  * @License Apache License Version 2.0
  */
-public class HtmlMergeAsPDFController extends HtmlToPdfController {
+public class HtmlMergeAsPDFController extends BaseBatchFileController {
 
-    protected FlexmarkHtmlConverter mdConverter;
     protected StringBuilder mergedHtml;
 
+    @FXML
+    protected ControlHtml2PdfOptions optionsController;
     @FXML
     protected CheckBox deleteCheck;
 
     public HtmlMergeAsPDFController() {
-        baseTitle = Languages.message("HtmlMergeAsPDF");
+        baseTitle = message("HtmlMergeAsPDF");
+        targetFileSuffix = "pdf";
     }
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.PDF);
+    }
 
-            mdConverter = FlexmarkHtmlConverter.builder(new MutableDataSet()).build();
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            optionsController.setControls(baseName, true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -75,13 +80,12 @@ public class HtmlMergeAsPDFController extends HtmlToPdfController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            String html = TextFileTools.readTexts(srcFile);
-            String body = HtmlReadTools.body(html);
+            String body = HtmlReadTools.body(TextFileTools.readTexts(srcFile), false);
             mergedHtml.append(body);
-            return Languages.message("Successful");
+            return message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
@@ -89,17 +93,10 @@ public class HtmlMergeAsPDFController extends HtmlToPdfController {
     public void afterHandleFiles() {
         try {
             mergedHtml.append("    </body>\n</html>\n");
-            String mergedString = mergedHtml.toString();
-            String css = cssArea.getText().trim();
-            if (!css.isBlank()) {
-                try {
-                    mergedString = PdfConverterExtension.embedCss(mergedString, css);
-                } catch (Exception e) {
-                }
-            }
-            try {
-                PdfConverterExtension.exportToPdf(targetFile.getAbsolutePath(), mergedString, "", pdfOptions);
-            } catch (Exception e) {
+            String result = optionsController.html2pdf(mergedHtml.toString(), targetFile);
+            if (!message("Successful").equals(result)) {
+                updateLogs(result, true, true);
+                return;
             }
             targetFileGenerated(targetFile);
             if (deleteCheck.isSelected()) {

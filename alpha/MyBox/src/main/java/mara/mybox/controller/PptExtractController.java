@@ -11,6 +11,7 @@ import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.poi.hslf.usermodel.HSLFObjectData;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
@@ -129,6 +130,9 @@ public class PptExtractController extends BaseBatchFileController {
             if (extractor != null || imagesCheck.isSelected() || wordCheck.isSelected() || excelCheck.isSelected()) {
                 int slideIndex = 0;
                 for (HSLFSlide slide : ppt.getSlides()) {
+                    if (task == null || task.isCancelled()) {
+                        return message("Cancelled");
+                    }
                     slideIndex++;
                     if (extractor != null) {
                         String texts = extractor.getText(slide);
@@ -141,6 +145,9 @@ public class PptExtractController extends BaseBatchFileController {
 
                     int pixIndex = 0, oleIndex = 0;
                     for (HSLFShape shape : slide.getShapes()) {
+                        if (task == null || task.isCancelled()) {
+                            return message("Cancelled");
+                        }
                         if (imagesCheck.isSelected() && (shape instanceof HSLFPictureShape)) {
                             HSLFPictureData pictData = ((HSLFPictureShape) shape).getPictureData();
                             targetFile = makeObjectFile(srcFile, slideIndex, ++pixIndex, pictData.getType().extension, targetPath);
@@ -186,10 +193,15 @@ public class PptExtractController extends BaseBatchFileController {
                     targetFileGenerated(targetFile);
                 }
             }
-
+            if (task == null || task.isCancelled()) {
+                return message("Cancelled");
+            }
             if (soundsCheck.isSelected()) {
                 int soundIndex = 0;
                 for (HSLFSoundData sound : ppt.getSoundData()) {
+                    if (task == null || task.isCancelled()) {
+                        return message("Cancelled");
+                    }
                     targetFile = makeObjectFile(srcFile, -1, ++soundIndex, sound.getSoundType(), targetPath);
                     if (ByteFileTools.writeFile(targetFile, sound.getData()) != null) {
                         targetFileGenerated(targetFile);
@@ -220,6 +232,9 @@ public class PptExtractController extends BaseBatchFileController {
             if (extractor != null || imagesCheck.isSelected() || wordCheck.isSelected() || excelCheck.isSelected()) {
                 int slideIndex = 0;
                 for (XSLFSlide slide : ppt.getSlides()) {
+                    if (task == null || task.isCancelled()) {
+                        return message("Cancelled");
+                    }
                     slideIndex++;
                     if (extractor != null) {
                         String texts = extractor.getText(slide);
@@ -232,6 +247,9 @@ public class PptExtractController extends BaseBatchFileController {
 
                     int pixIndex = 0, oleIndex = 0;
                     for (XSLFShape shape : slide.getShapes()) {
+                        if (task == null || task.isCancelled()) {
+                            return message("Cancelled");
+                        }
                         if (imagesCheck.isSelected() && (shape instanceof XSLFPictureShape)) {
                             XSLFPictureData pictData = ((XSLFPictureShape) shape).getPictureData();
                             targetFile = makeObjectFile(srcFile, slideIndex, ++pixIndex, pictData.getType().extension, targetPath);

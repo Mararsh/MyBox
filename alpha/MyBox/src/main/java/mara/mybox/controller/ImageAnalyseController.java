@@ -968,8 +968,7 @@ public class ImageAnalyseController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void clearAction() {
+    public void selectNoneChannels() {
         isSettingValues = true;
         grayHistCheck.setSelected(false);
         redHistCheck.setSelected(false);
@@ -986,8 +985,7 @@ public class ImageAnalyseController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void allAction() {
+    public void selectAllChannels() {
         isSettingValues = true;
         grayHistCheck.setSelected(true);
         redHistCheck.setSelected(true);

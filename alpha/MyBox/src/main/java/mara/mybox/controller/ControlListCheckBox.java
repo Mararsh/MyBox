@@ -36,15 +36,14 @@ public class ControlListCheckBox extends BaseController {
     public ControlListCheckBox() {
         checkedNotify = new SimpleBooleanProperty(false);
         rightClickedNotify = new SimpleBooleanProperty(false);
+        checkBoxs = new HashMap<>();
+        checkedOrders = new ArrayList<>();
     }
 
     public void setParent(BaseController parent) {
         try {
             this.parentController = parent;
             this.baseName = parent.baseName;
-
-            checkBoxs = new HashMap<>();
-            checkedOrders = new ArrayList<>();
 
             listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 

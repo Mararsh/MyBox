@@ -67,7 +67,8 @@ public class PopTools {
             // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
             try {
                 if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() > 0) {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
+                    Runtime.getRuntime().exec(new String[]{"xdg-open",
+                        uri.toString()});
                     return;
                 } else {
                 }
@@ -114,14 +115,14 @@ public class PopTools {
     public static Alert alert(BaseController controller, Alert.AlertType type, String information) {
         try {
             Alert alert = new Alert(type);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             if (controller != null) {
                 alert.setTitle(controller.getTitle());
             }
             alert.setHeaderText(null);
             alert.setContentText(information);
-            //            alert.getDialogPane().applyCss();
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().applyCss();
             // https://stackoverflow.com/questions/38799220/javafx-how-to-bring-dialog-alert-to-the-front-of-the-screen?r=SearchResults
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);

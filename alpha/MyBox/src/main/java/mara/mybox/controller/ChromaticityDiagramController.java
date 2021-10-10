@@ -674,8 +674,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void clearAction() {
+    public void noElements() {
         isSettingValues = true;
 
         cdProPhotoCheck.setSelected(false);
@@ -701,8 +700,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void allAction() {
+    public void allElements() {
         isSettingValues = true;
 
         cdProPhotoCheck.setSelected(true);

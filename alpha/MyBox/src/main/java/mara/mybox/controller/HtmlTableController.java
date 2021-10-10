@@ -10,12 +10,15 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -211,6 +214,23 @@ public class HtmlTableController extends BaseWebViewController {
             start(task);
         }
     }
+
+    @FXML
+    public void csvAction() {
+        if (html == null) {
+            popError(message("NoData"));
+            return;
+        }
+        List<StringTable> tables = HtmlReadTools.Tables(html);
+        if (tables == null || tables.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        c.loadData(tables);
+        c.toFront();
+    }
+
 
     /*
         get/set

@@ -662,7 +662,15 @@ public class TextTools {
             if (data == null || data.isEmpty()) {
                 return null;
             }
-            String[][] array = new String[data.size()][data.get(0).size()];
+            int rowSize = data.size();
+            int colSize = -1;
+            for (List<String> row : data) {
+                int len = row.size();
+                if (len > colSize) {
+                    colSize = len;
+                }
+            }
+            String[][] array = new String[rowSize][colSize];
             for (int r = 0; r < data.size(); r++) {
                 List<String> row = data.get(r);
                 for (int c = 0; c < row.size(); c++) {

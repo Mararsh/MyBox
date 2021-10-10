@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -47,6 +46,9 @@ public class PptxMergeController extends FilesMergeController {
         }
         try ( XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile))) {
             for (XSLFSlide srcSlide : ppt.getSlides()) {
+                if (task == null || task.isCancelled()) {
+                    return message("Cancelled");
+                }
                 try {
                     XSLFSlide targetSlide = targetPPT.createSlide();
                     targetSlide.importContent(srcSlide);

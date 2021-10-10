@@ -420,18 +420,24 @@ public class ControlFindReplace extends BaseController {
                 return false;
             }
         }
-        int anchor = textInput.getAnchor(), unit = sourceInformation.getObjectUnit();
-        long position = 0, pageStart = (int) sourceInformation.getCurrentPageObjectStart() * unit;
         String selectedText = textInput.getSelectedText();
+        if (sourceInformation.getEditType() == Edit_Type.Bytes) {
+            pageText = pageText.replaceAll("\n", " ");
+            findString = findString.replaceAll("\n", " ");
+            replaceString = replaceString.replaceAll("\n", " ");
+            selectedText = selectedText.replaceAll("\n", " ");
+        }
+        int anchor = textInput.getAnchor(), unit = sourceInformation.getObjectUnit();
+        long pageStart = (int) sourceInformation.getCurrentPageObjectStart() * unit;
         if (StringTools.match(selectedText, findString, regexCheck.isSelected(), dotallCheck.isSelected(),
                 multilineCheck.isSelected(), caseInsensitiveCheck.isSelected())) {
             IndexRange selectIndex = textInput.getSelection();
             switch (operation) {
                 case FindNext:
-                    position = selectIndex.getStart() + unit + pageStart;
+                    anchor = selectIndex.getStart() + unit;
                     break;
                 case FindPrevious:
-                    position = selectIndex.getEnd() - unit + pageStart;
+                    anchor = selectIndex.getEnd() - unit;
                     break;
                 case ReplaceFirst:
                     textInput.replaceText(selectIndex, findReplace.getReplaceString());
@@ -441,24 +447,17 @@ public class ControlFindReplace extends BaseController {
                     popInformation(info, textInput);
                     return false;
             }
-        } else if (operation == Operation.FindNext || operation == Operation.FindPrevious || operation == Operation.ReplaceFirst) {
-            position = anchor + pageStart;
-        }
-        if (sourceInformation.getEditType() == Edit_Type.Bytes) {
-            pageText = pageText.replaceAll("\n", " ");
-            findString = findString.replaceAll("\n", " ");
-            replaceString = replaceString.replaceAll("\n", " ");
         }
         findReplace = new FindReplaceFile()
                 .setFileInfo(sourceInformation)
-                .setPosition(position);
+                .setPosition(anchor + pageStart);
         if (editerController != null) {
             findReplace.setBackupController(editerController.backupController);
         }
         findReplace.setOperation(operation)
                 .setInputString(pageText)
                 .setFindString(findString)
-                .setAnchor((int) position)
+                .setAnchor(anchor)
                 .setReplaceString(replaceString)
                 .setUnit(unit)
                 .setIsRegex(regexCheck.isSelected())

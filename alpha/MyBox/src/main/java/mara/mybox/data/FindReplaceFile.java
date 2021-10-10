@@ -12,7 +12,6 @@ import mara.mybox.data.FileEditInformation.Edit_Type;
 public class FindReplaceFile extends FindReplaceString {
 
     protected FileEditInformation fileInfo;
-    protected String fileFindString, fileReplaceString;
     protected long position;
     protected LongRange fileRange;  // location in whole file
     protected ControlFileBackup backupController;
@@ -89,9 +88,6 @@ public class FindReplaceFile extends FindReplaceString {
 
 //        MyBoxLog.debug("findString.length()：" + findString.length());
 //        MyBoxLog.debug(fileInfo.getEditType());
-        fileFindString = findString;
-        fileReplaceString = replaceString;
-//        MyBoxLog.debug("findString.length()：" + findString.length());
         if (fileInfo.getEditType() != Edit_Type.Bytes) {
 //            MyBoxLog.debug("fileFindString.length()：" + fileFindString.length());
             switch (operation) {
@@ -155,24 +151,6 @@ public class FindReplaceFile extends FindReplaceString {
 
     public FindReplaceFile setFileRange(LongRange lastFound) {
         this.fileRange = lastFound;
-        return this;
-    }
-
-    public String getFileFindString() {
-        return fileFindString;
-    }
-
-    public FindReplaceFile setFileFindString(String fileFindString) {
-        this.fileFindString = fileFindString;
-        return this;
-    }
-
-    public String getFileReplaceString() {
-        return fileReplaceString;
-    }
-
-    public FindReplaceFile setFileReplaceString(String fileReplaceString) {
-        this.fileReplaceString = fileReplaceString;
         return this;
     }
 

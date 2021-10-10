@@ -192,7 +192,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label text="%LineNumber" />
                                                                 <TextField fx:id="lineInput" prefWidth="120.0" />
-                                                                <Button fx:id="locateLineButton" mnemonicParsing="false" onAction="#locateLine">
+                                                                <Button fx:id="goLineButton" mnemonicParsing="false" onAction="#locateLine">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -207,7 +207,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label text="%ByteLocation" />
                                                                 <TextField fx:id="objectNumberInput" prefWidth="120.0" />
-                                                                <Button fx:id="locateObjectButton" mnemonicParsing="false" onAction="#locateObject">
+                                                                <Button fx:id="goObjectButton" mnemonicParsing="false" onAction="#locateObject">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -229,7 +229,7 @@ License:    Apache License Version 2.0
                                                                         <TextField fx:id="lineToInput" prefWidth="90.0" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <Button fx:id="locateLinesRangeButton" mnemonicParsing="false" onAction="#locateLinesRange">
+                                                                <Button fx:id="goLinesRangeButton" mnemonicParsing="false" onAction="#locateLinesRange">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -251,7 +251,7 @@ License:    Apache License Version 2.0
                                                                         <TextField fx:id="objectToInput" prefWidth="90.0" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <Button fx:id="locateObjectsRangeButton" mnemonicParsing="false" onAction="#locateObjectsRange">
+                                                                <Button fx:id="goObjectsRangeButton" mnemonicParsing="false" onAction="#locateObjectsRange">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

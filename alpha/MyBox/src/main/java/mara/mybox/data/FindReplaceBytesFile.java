@@ -21,7 +21,7 @@ public class FindReplaceBytesFile {
 
     public static boolean countBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null || findReplaceFile == null
-                || findReplaceFile.getFileFindString() == null || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -34,7 +34,7 @@ public class FindReplaceBytesFile {
         try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile))) {
             int pageSize = FileTools.bufSize(sourceFile, 48);
             byte[] pageBytes = new byte[pageSize];
-            String findString = findReplaceFile.getFileFindString();
+            String findString = findReplaceFile.getFindString();
             int findLen = findReplaceFile.isIsRegex() ? pageSize * 3 : findString.length();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
@@ -97,7 +97,7 @@ public class FindReplaceBytesFile {
 
     public static LongRange findNextBytesRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null || findReplaceFile == null
-                || findReplaceFile.getFileFindString() == null || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -123,7 +123,7 @@ public class FindReplaceBytesFile {
                 }
             }
             int maxBytesLen = FileTools.bufSize(sourceFile, 48);
-            String findString = findReplaceFile.getFileFindString();
+            String findString = findReplaceFile.getFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
             // findString should have been in hex format
@@ -237,7 +237,7 @@ public class FindReplaceBytesFile {
 
     public static LongRange findPreviousBytesRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null || findReplaceFile == null
-                || findReplaceFile.getFileFindString() == null || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -260,7 +260,7 @@ public class FindReplaceBytesFile {
                 }
             }
             int maxBytesLen = FileTools.bufSize(sourceFile, 48);
-            String findString = findReplaceFile.getFileFindString();
+            String findString = findReplaceFile.getFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
             // findString should have been in hex format
@@ -395,7 +395,7 @@ public class FindReplaceBytesFile {
 
     public static boolean replaceAllBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
-                || findReplaceFile.getFileFindString() == null || findReplaceFile.getFileFindString().isEmpty()) {
+                || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
                 findReplaceFile.setError(message("InvalidParameters"));
             }
@@ -412,8 +412,8 @@ public class FindReplaceBytesFile {
         try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile));
                  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
             int pageSize = FileTools.bufSize(sourceFile, 48);
-            String findString = findReplaceFile.getFileFindString();
-            String replaceString = findReplaceFile.getFileReplaceString();
+            String findString = findReplaceFile.getFindString();
+            String replaceString = findReplaceFile.getReplaceString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setReplaceString(replaceString)
                     .setAnchor(0).setWrap(false);

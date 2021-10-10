@@ -532,7 +532,26 @@ public class StyleButton {
             }
         }
         if (id.startsWith("hex")) {
-            return new StyleData(id, message("Hexadecimal"), "", "iconHex.png");
+            return new StyleData(id, message("FormattedHexadecimal"), "", "iconHex.png");
+        }
+        if (id.startsWith("locate")) {
+            return new StyleData(id, message("Locate"), "", "iconLocate.png");
+        }
+        if (id.startsWith("imageSize")) {
+            switch (id) {
+                case "imageSizeButton":
+                    return new StyleData(id, message("LoadedSize"), "CTRL+1", "iconLoadSize.png");
+                default:
+                    return new StyleData(id, message("LoadedSize"), "", "iconLoadSize.png");
+            }
+        }
+        if (id.startsWith("paneSize")) {
+            switch (id) {
+                case "paneSizeButton":
+                    return new StyleData(id, message("PaneSize"), "CTRL+2", "iconPaneSize.png");
+                default:
+                    return new StyleData(id, message("PaneSize"), "", "iconPaneSize.png");
+            }
         }
         return null;
     }
@@ -571,10 +590,6 @@ public class StyleButton {
                 return new StyleData("redoButton", message("Redo"), "CTRL+y / ALT+y", "iconRedo.png");
             case "undoButton":
                 return new StyleData("undoButton", message("Undo"), "CTRL+z / ALT+z", "iconUndo.png");
-            case "imageSizeButton":
-                return new StyleData("imageSizeButton", message("LoadedSize"), "CTRL+1", "iconLoadSize.png");
-            case "paneSizeButton":
-                return new StyleData("paneSizeButton", message("PaneSize"), "CTRL+2", "iconPaneSize.png");
             case "moveLeftButton":
                 return new StyleData("moveLeftButton", message("MoveLeft"), "", "iconLeft.png");
             case "moveRightButton":
@@ -611,21 +626,8 @@ public class StyleButton {
                 return new StyleData("mirrorVButton", message("MirrorVertical"), "", "iconVertical.png");
             case "shearButton":
                 return new StyleData("shearButton", message("Shear"), "", "iconShear.png");
-
             case "testButton":
                 return new StyleData("testButton", message("Test"), "", "iconGo.png");
-            case "openForeImageButton":
-                return new StyleData("openForeImageButton", message("Select"), "", "iconOpen.png");
-            case "foreImagePaneSizeButton":
-                return new StyleData("foreImagePaneSizeButton", message("PaneSize"), "", "iconPaneSize.png");
-            case "foreImageImageSizeButton":
-                return new StyleData("foreImageImageSizeButton", message("ImageSize"), "", "iconLoadSize.png");
-            case "openBackImageButton":
-                return new StyleData("openBackImageButton", message("Select"), "", "iconOpen.png");
-            case "backImagePaneSizeButton":
-                return new StyleData("backImagePaneSizeButton", message("PaneSize"), "", "iconPaneSize.png");
-            case "backImageImageSizeButton":
-                return new StyleData("backImageImageSizeButton", message("ImageSize"), "", "iconLoadSize.png");
             case "openWindowButton":
                 return new StyleData("newWindowButton", message("OpenInNewWindow"), "", "iconWindow.png");
             case "newTabButton":
@@ -652,10 +654,6 @@ public class StyleButton {
                 return new StyleData("calculatorButton", message("PixelsCalculator"), "", "iconCalculator.png");
             case "filterButton":
                 return new StyleData("filterButton", message("Filter"), "", "iconFilter.png");
-            case "locateLineButton":
-                return new StyleData("locateLineButton", message("Go"), "", "iconGo.png");
-            case "locateObjectButton":
-                return new StyleData("locateObjectButton", message("Go"), "", "iconGo.png");
             case "pauseButton":
                 return new StyleData("pauseButton", message("Pause"), "", "iconPause.png");
             case "pixSelectButton":
@@ -702,7 +700,6 @@ public class StyleButton {
                 return new StyleData("blackwhiteButton", message("BlackOrWhite"), "", "iconBlackWhite.png");
             case "greyButton":
                 return new StyleData("greyButton", message("Greyscale"), "", "iconGreyscale.png");
-
             case "deskewButton":
                 return new StyleData("deskewButton", "", message("Deskew"), "", "iconShear.png");
             case "moveUpButton":
@@ -711,14 +708,6 @@ public class StyleButton {
                 return new StyleData("moveDownButton", message("MoveDown"), "", "iconDown.png");
             case "moveTopButton":
                 return new StyleData("moveTopButton", message("MoveTop"), "", "iconDoubleUp.png");
-            case "zoomIn2Button":
-                return new StyleData("zoomIn2Button", message("ZoomIn"), "", "iconZoomIn.png");
-            case "zoomOut2Button":
-                return new StyleData("zoomOut2Button", message("ZoomOut"), "", "iconZoomOut.png");
-            case "imageSize2Button":
-                return new StyleData("imageSize2Button", message("LoadedSize"), "", "iconLoadSize.png");
-            case "paneSize2Button":
-                return new StyleData("paneSize2Button", message("PaneSize"), "", "iconPaneSize.png");
             case "pagePreviousButton":
                 return new StyleData("pagePreviousButton", message("PreviousPage"), "ALT+PAGE_UP", "iconPrevious.png");
             case "pageNextButton":
@@ -741,8 +730,6 @@ public class StyleButton {
                 return new StyleData(id, message("HelpMe"), "", "iconCatFoot.png");
             case "pickColorButton":
                 return new StyleData(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
-            case "locationButton":
-                return new StyleData(id, message("Locate"), "", "iconLocation.png");
             case "footButton":
                 return new StyleData(id, message("Footprints"), "", "iconCatFoot.png");
             case "chinaButton":

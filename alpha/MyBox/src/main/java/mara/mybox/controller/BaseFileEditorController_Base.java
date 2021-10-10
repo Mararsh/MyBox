@@ -59,7 +59,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
             filterConditionsLabel;
     @FXML
     protected Button panesMenuButton, charactersButton, linesButton, exampleFilterButton,
-            filterButton, locateObjectButton, locateLineButton, locateLinesRangeButton, locateObjectsRangeButton;
+            filterButton, goObjectButton, goLineButton, goLinesRangeButton, goObjectsRangeButton;
     @FXML
     protected TextField objectNumberInput, lineInput, lineFromInput, lineToInput, objectFromInput, objectToInput;
     @FXML

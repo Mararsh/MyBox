@@ -1,10 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Languages;
 
@@ -42,38 +40,30 @@ public class WordViewController extends BaseWebViewController {
             }
             task = new SingletonTask<Void>() {
 
-                private String html;
+                private File htmlFile;
 
                 @Override
                 protected boolean handle() {
-                    String suffix = FileNameTools.getFileSuffix(file);
-                    Charset charset = getCharset();
-                    if ("doc".equalsIgnoreCase(suffix)) {
-                        html = MicrosoftDocumentTools.word2html(file, charset);
-                    } else if ("docx".equalsIgnoreCase(suffix)) {
-                        String text = MicrosoftDocumentTools.extractText(file);
-                        if (text == null) {
-                            return false;
-                        }
-                        html = text.replaceAll("\n", "<BR>\n");
-                    } else {
-                        error = Languages.message("NotSupport");
-                        return false;
-                    }
-                    return html != null;
+                    htmlFile = MicrosoftDocumentTools.word2HtmlFile(file, getCharset());
+                    return htmlFile != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     sourceFile = file;
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
-                    webViewController.loadContents(null, html);
+                    webViewController.loadFile(htmlFile);
                 }
 
             };
             start(task);
             return true;
         }
+    }
+
+    @Override
+    protected void afterPageLoaded() {
+
     }
 
     @FXML

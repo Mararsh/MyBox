@@ -987,6 +987,13 @@ public class ControlWebView extends BaseController {
                 Menu elementsMenu = new Menu(message("Extract"));
                 List<MenuItem> elementsItems = new ArrayList<>();
 
+                menu = new MenuItem(message("Table"));
+                menu.setOnAction((ActionEvent event) -> {
+                    tables(html);
+                });
+                menu.setDisable(isFrameset);
+                elementsItems.add(menu);
+
                 menu = new MenuItem(message("Texts"));
                 menu.setOnAction((ActionEvent event) -> {
                     texts(html);
@@ -1215,6 +1222,21 @@ public class ControlWebView extends BaseController {
         }
         TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         c.loadContents(texts);
+        c.toFront();
+    }
+
+    protected void tables(String html) {
+        if (html == null) {
+            popError(message("NoData"));
+            return;
+        }
+        List<StringTable> tables = HtmlReadTools.Tables(html);
+        if (tables == null || tables.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        c.loadData(tables);
         c.toFront();
     }
 
