@@ -23,7 +23,6 @@ import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
-import mara.mybox.db.data.DataClipboard;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableFileBackup;
@@ -451,13 +450,13 @@ public class WindowTools {
 
                 new TableImageClipboard().clearInvalid(conn);
 
-                DataClipboard.checkValid(conn, new TableDataDefinition());
-
                 new TableImageEditHistory().clearInvalid(conn);
 
                 new TableImageScope().clearInvalid(conn);
 
                 new TableFileBackup().clearInvalid(conn);
+
+                new TableDataDefinition().clearInvalid(conn);
 
             } catch (Exception e) {
                 MyBoxLog.error(e);

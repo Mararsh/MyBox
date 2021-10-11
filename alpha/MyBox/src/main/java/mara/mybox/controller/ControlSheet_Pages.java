@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -41,7 +40,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
                 try {
                     int v = Integer.parseInt(newValue.trim());
                     if (v <= 0) {
-                        pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                     } else {
                         pageSize = v;
                         UserConfig.setInt(baseName + "PageSize", pageSize);
@@ -51,7 +50,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
                         }
                     }
                 } catch (Exception e) {
-                    pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
 
@@ -61,9 +60,9 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
     }
 
     public void initCurrentPage() {
-        currentPage = 1;
-        currentPageStart = 1;
-        currentPageEnd = 1;
+        currentPage = 0;
+        currentPageStart = 0;
+        currentPageEnd = 0;
     }
 
     public void loadPage(int pageNumber) {
@@ -111,13 +110,13 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
             pagesNumber = (int) (totalSize % pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize + 1));
         }
         currentPage = pageNumber;
-        if (currentPage <= 0) {   // 1-based
-            currentPage = 1;
+        if (currentPage < 0) {
+            currentPage = 0;
         }
-        if (currentPage > pagesNumber) {
-            currentPage = pagesNumber;
+        if (currentPage > pagesNumber - 1) {
+            currentPage = pagesNumber - 1;
         }
-        currentPageStart = pageSize * (currentPage - 1) + 1; // 1-based
+        currentPageStart = pageSize * currentPage;
     }
 
     protected void setPagination() {
@@ -134,17 +133,17 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
             }
             pageSelector.getItems().clear();
             pageSelector.getItems().addAll(pages);
-            pageSelector.getSelectionModel().select(currentPage + "");
+            pageSelector.getSelectionModel().select((currentPage + 1) + "");
 
             pageLabel.setText("/" + pagesNumber);
-            if (currentPage > 1) {
+            if (currentPage > 0) {
                 pagePreviousButton.setDisable(false);
                 pageFirstButton.setDisable(false);
             } else {
                 pagePreviousButton.setDisable(true);
                 pageFirstButton.setDisable(true);
             }
-            if (currentPage >= pagesNumber) {
+            if (currentPage >= pagesNumber - 1) {
                 pageNextButton.setDisable(true);
                 pageLastButton.setDisable(true);
             } else {
@@ -173,16 +172,16 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
         String value = pageSelector.getEditor().getText();
         try {
             int v = Integer.parseInt(value);
-            if (v < 0) {
-                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            if (v < 1) {
+                pageSelector.getEditor().setStyle(UserConfig.badStyle());
                 return false;
             } else {
                 pageSelector.getEditor().setStyle(null);
-                loadPage(v);
+                loadPage(v - 1);
                 return true;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            pageSelector.getEditor().setStyle(UserConfig.badStyle());
             return false;
         }
     }
@@ -211,7 +210,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
     @FXML
     @Override
     public void pageFirstAction() {
-        loadPage(1);
+        loadPage(0);
     }
 
     @FXML

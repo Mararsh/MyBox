@@ -6,7 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -119,7 +119,7 @@ public class ControlTimeLength extends BaseController {
                             lengthSelector.getEditor().setStyle(null);
                             UserConfig.setString(name, "-1");
                         } else {
-                            lengthSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            lengthSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } else {
                         lengthSelector.getEditor().setStyle(null);

@@ -170,8 +170,8 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
 
     @Override
     protected String[][] readPageData() {
-        if (currentPageStart < 1) {
-            currentPageStart = 1;
+        if (currentPageStart < 0) {
+            currentPageStart = 0;
         }
         long end = currentPageStart + pageSize;
         String[][] data = null;
@@ -180,7 +180,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                 readNames(reader);
             }
             String line;
-            int rowIndex = 0, maxCol = 0;
+            int rowIndex = -1, maxCol = 0;
             List<List<String>> rows = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 List<String> row = parseFileLine(line);
@@ -217,7 +217,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
         if (data == null) {
             currentPageEnd = currentPageStart;
         } else {
-            currentPageEnd = currentPageStart + data.length;  // 1-based, excluded
+            currentPageEnd = currentPageStart + data.length;
         }
         return data;
 
@@ -313,20 +313,20 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                 if (withNames) {
                     TextFileTools.writeLine(writer, colsNames, delimiter);
                 }
-                long rowIndex = 0;
+                long rowIndex = -1;
                 String line;
                 while ((line = reader.readLine()) != null) {
                     List<String> row = TextTools.parseLine(line, sourceDelimiterName);
                     if (row == null || row.isEmpty()) {
                         continue;
                     }
-                    if (++rowIndex < currentPageStart || rowIndex >= currentPageEnd) {    // 1-based, excluded
+                    if (++rowIndex < currentPageStart || rowIndex >= currentPageEnd) {
                         TextFileTools.writeLine(writer, row, delimiter);
                     } else if (rowIndex == currentPageStart) {
                         writePageData(writer, delimiter);
                     }
                 }
-                if (rowIndex == 0) {
+                if (rowIndex < 0) {
                     writePageData(writer, delimiter);
                 }
                 writer.flush();
@@ -402,7 +402,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                 readNames(reader);
             }
             String line;
-            int fileIndex = 0, dataIndex = 0;
+            int fileIndex = -1, dataIndex = 0;
             while ((line = reader.readLine()) != null) {
                 List<String> row = TextTools.parseLine(line, sourceDelimiterName);
                 if (row == null || row.isEmpty()) {
@@ -414,7 +414,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                     dataIndex = pageText(s, dataIndex, delimiter);
                 }
             }
-            if (fileIndex == 0) {
+            if (fileIndex < 0) {
                 pageText(s, dataIndex, delimiter);
             }
         } catch (Exception e) {
@@ -448,7 +448,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                 readNames(reader);
             }
             String line;
-            int fileIndex = 0, dataIndex = 0;
+            int fileIndex = -1, dataIndex = 0;
             while ((line = reader.readLine()) != null) {
                 List<String> row = TextTools.parseLine(line, sourceDelimiterName);
                 if (row == null || row.isEmpty()) {
@@ -464,7 +464,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                     dataIndex = pageHtml(table, dataIndex);
                 }
             }
-            if (fileIndex == 0) {
+            if (fileIndex < 0) {
                 pageHtml(table, dataIndex);
             }
         } catch (Exception e) {

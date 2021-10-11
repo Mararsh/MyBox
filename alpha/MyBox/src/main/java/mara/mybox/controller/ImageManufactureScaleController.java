@@ -25,10 +25,10 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -155,9 +155,9 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             });
             scaleSelector.getSelectionModel().select(0);
 
-            okButton.disableProperty().bind(widthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                    .or(heightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(scaleSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+            okButton.disableProperty().bind(widthInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(heightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(scaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
             checkScaleType();
@@ -273,10 +273,10 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 widthInput.setStyle(null);
                 checkRatio();
             } else {
-                widthInput.setStyle(NodeStyleTools.badStyle);
+                widthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            widthInput.setStyle(NodeStyleTools.badStyle);
+            widthInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -291,10 +291,10 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 heightInput.setStyle(null);
                 checkRatio();
             } else {
-                heightInput.setStyle(NodeStyleTools.badStyle);
+                heightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            heightInput.setStyle(NodeStyleTools.badStyle);
+            heightInput.setStyle(UserConfig.badStyle());
         }
     }
 

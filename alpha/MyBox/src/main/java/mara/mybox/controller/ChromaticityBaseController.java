@@ -111,14 +111,14 @@ public class ChromaticityBaseController extends BaseWebViewController {
         try {
             int p = Integer.parseInt(scaleInput.getText());
             if (p < 0) {
-                scaleInput.setStyle(NodeStyleTools.badStyle);
+                scaleInput.setStyle(UserConfig.badStyle());
             } else {
                 scale = p;
                 scaleInput.setStyle(null);
                 UserConfig.setInt("MatrixDecimalScale", scale);
             }
         } catch (Exception e) {
-            scaleInput.setStyle(NodeStyleTools.badStyle);
+            scaleInput.setStyle(UserConfig.badStyle());
         }
     }
 

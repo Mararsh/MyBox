@@ -67,10 +67,10 @@ public class TextInSystemClipboardController extends BaseController {
                             intervalSelector.getEditor().setStyle(null);
                             TextClipboardTools.startTextClipboardMonitor(v);
                         } else {
-                            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            intervalSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        intervalSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -140,7 +140,7 @@ public class TextInSystemClipboardController extends BaseController {
                 separateLine = select + "\n";
             }
         } catch (Exception e) {
-            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            intervalSelector.getEditor().setStyle(UserConfig.badStyle());
         }
     }
 

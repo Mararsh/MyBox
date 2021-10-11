@@ -262,7 +262,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 popError(message("MayOutOfMemory"));
                 v = available;
             } else if (v <= 0) {
-                pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                 popError(message("InvalidParameters"));
                 return;
             }
@@ -277,7 +277,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 loadPage();
             }
         } catch (Exception e) {
-            pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
             popError(message("InvalidParameters"));
         }
     }
@@ -295,11 +295,11 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 loadPage();
                 return true;
             } else {
-                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                pageSelector.getEditor().setStyle(UserConfig.badStyle());
                 return false;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            pageSelector.getEditor().setStyle(UserConfig.badStyle());
             return false;
         }
     }

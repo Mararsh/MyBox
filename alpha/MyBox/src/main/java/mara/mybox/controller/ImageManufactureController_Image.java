@@ -25,6 +25,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     protected SimpleBooleanProperty imageLoaded;
     protected int newWidth, newHeight;
     protected ImageOperation operation;
+    protected ImagePopController imagePopController;
 
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,

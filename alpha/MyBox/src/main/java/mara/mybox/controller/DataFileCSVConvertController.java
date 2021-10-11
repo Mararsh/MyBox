@@ -8,11 +8,11 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -51,7 +51,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @Override
     public boolean makeMoreParameters() {
-        if (csvReadController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)
+        if (csvReadController.delimiterInput.getStyle().equals(UserConfig.badStyle())
                 || (!csvReadController.autoDetermine && csvReadController.charset == null)) {
             return false;
         }

@@ -48,7 +48,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                     while (iterator.hasNext() && (iterator.next() == null)) {
                     }
                 }
-                int sourceRowIndex = 0;
+                int sourceRowIndex = -1;
                 String d;
                 while (iterator.hasNext()) {
                     Row sourceRow = iterator.next();
@@ -125,7 +125,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                         currentSheetName = sourceSheet.getSheetName();
                     }
                     Iterator<Row> iterator = sourceSheet.iterator();
-                    int sourceRowIndex = 0, calLen = calCols.size(), dataIndex = 0;
+                    int sourceRowIndex = -1, calLen = calCols.size(), dataIndex = 0;
                     if (iterator != null && iterator.hasNext()) {
                         if (sourceWithNames) {
                             while (iterator.hasNext() && (iterator.next() == null)) {
@@ -213,7 +213,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                 currentSheetName = sourceSheet.getSheetName();
             }
             Iterator<Row> iterator = sourceSheet.iterator();
-            int sourceRowIndex = 0;
+            int sourceRowIndex = -1;
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {
                     while (iterator.hasNext() && (iterator.next() == null)) {
@@ -225,8 +225,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                     if (sourceRow == null) {
                         continue;
                     }
-                    sourceRowIndex++;
-                    if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                    if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
                         for (int c = 0; c < calSize; c++) {
                             sData[c].count++;
                             int cellIndex = calCols.get(c) + sourceRow.getFirstCellNum();
@@ -249,7 +248,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
             } else {
                 countPageData(sData, calCols);
             }
-            if (sourceRowIndex == 0) {
+            if (sourceRowIndex < 0) {
                 countPageData(sData, calCols);
             }
 
@@ -280,7 +279,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                 currentSheetName = sourceSheet.getSheetName();
             }
             Iterator<Row> iterator = sourceSheet.iterator();
-            int sourceRowIndex = 0;
+            int sourceRowIndex = -1;
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {
                     while (iterator.hasNext() && (iterator.next() == null)) {
@@ -292,8 +291,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                     if (sourceRow == null) {
                         continue;
                     }
-                    sourceRowIndex++;
-                    if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                    if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
                         for (int c = 0; c < calSize; c++) {
                             if (sData[c].count == 0) {
                                 continue;

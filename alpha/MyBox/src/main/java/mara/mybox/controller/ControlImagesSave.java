@@ -234,10 +234,10 @@ public class ControlImagesSave extends BaseController {
                 gifWidthInput.setStyle(null);
                 UserConfig.setInt(baseName + "GifWidth", v);
             } else {
-                gifWidthInput.setStyle(NodeStyleTools.badStyle);
+                gifWidthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            gifWidthInput.setStyle(NodeStyleTools.badStyle);
+            gifWidthInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -280,10 +280,10 @@ public class ControlImagesSave extends BaseController {
                 pptWidthInput.setStyle(null);
                 UserConfig.setInt(baseName + "PptWidth", v);
             } else {
-                pptWidthInput.setStyle(NodeStyleTools.badStyle);
+                pptWidthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            pptWidthInput.setStyle(NodeStyleTools.badStyle);
+            pptWidthInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -295,10 +295,10 @@ public class ControlImagesSave extends BaseController {
                 pptHeightInput.setStyle(null);
                 UserConfig.setInt(baseName + "PptHeight", v);
             } else {
-                pptHeightInput.setStyle(NodeStyleTools.badStyle);
+                pptHeightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            pptHeightInput.setStyle(NodeStyleTools.badStyle);
+            pptHeightInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -310,10 +310,10 @@ public class ControlImagesSave extends BaseController {
                 pptMarginInput.setStyle(null);
                 UserConfig.setInt(baseName + "PptMargin", v);
             } else {
-                pptMarginInput.setStyle(NodeStyleTools.badStyle);
+                pptMarginInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            pptMarginInput.setStyle(NodeStyleTools.badStyle);
+            pptMarginInput.setStyle(UserConfig.badStyle());
         }
     }
 

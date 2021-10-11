@@ -29,6 +29,7 @@ import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -119,16 +120,16 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                             ImageClipboardTools.setMonitorInterval(v);
                             startMonitor();
                         } else {
-                            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            intervalSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        intervalSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
 
             openPathButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

@@ -190,7 +190,7 @@ public class MessageDigestController extends BaseController {
     @Override
     public void startAction() {
         if (inputType == InputType.File) {
-            if (sourceFile == null || NodeStyleTools.badStyle.equals(sourceFileInput.getStyle())) {
+            if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
                 resultArea.clear();
                 popError(Languages.message("InvalidData"));
                 return;

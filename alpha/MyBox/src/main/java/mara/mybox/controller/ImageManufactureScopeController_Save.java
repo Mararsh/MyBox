@@ -11,6 +11,7 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -23,7 +24,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         try {
             saveScopeButton.disableProperty().bind(scopeNameInput.textProperty().isEmpty()
                     .or(scopeDistanceSelector.visibleProperty()
-                            .and(scopeDistanceSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)))
+                            .and(scopeDistanceSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())))
             );
 
         } catch (Exception e) {

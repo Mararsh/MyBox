@@ -201,10 +201,10 @@ public abstract class BaseImageController_ImageView extends BaseController {
                                 yZoomStep = zoomStep;
                                 zoomStepChanged();
                             } else {
-                                zoomStepSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                                zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            zoomStepSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     }
                 });

@@ -187,13 +187,13 @@ public class ImageViewerController extends BaseImageController {
                             }
                             int v = Integer.parseInt(frameSelector.getValue());
                             if (v < 1 || v > framesNumber) {
-                                frameSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                                frameSelector.getEditor().setStyle(UserConfig.badStyle());
                             } else {
                                 frameSelector.getEditor().setStyle(null);
                                 loadFrame(v - 1);
                             }
                         } catch (Exception e) {
-                            frameSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            frameSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     }
                 });

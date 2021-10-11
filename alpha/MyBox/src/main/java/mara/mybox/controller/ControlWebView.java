@@ -796,7 +796,9 @@ public class ControlWebView extends BaseController {
     }
 
     public void refreshAction() {
-        goAddress(address);
+        if (address != null) {
+            goAddress(address);
+        }
     }
 
     public void popFunctionsMenu(MouseEvent mouseEvent) {
@@ -989,7 +991,7 @@ public class ControlWebView extends BaseController {
 
                 menu = new MenuItem(message("Table"));
                 menu.setOnAction((ActionEvent event) -> {
-                    tables(html);
+                    tables(html, sourceFile != null ? sourceFile.getName() : "");
                 });
                 menu.setDisable(isFrameset);
                 elementsItems.add(menu);
@@ -1225,12 +1227,13 @@ public class ControlWebView extends BaseController {
         c.toFront();
     }
 
-    protected void tables(String html) {
+    protected void tables(String html, String title) {
         if (html == null) {
             popError(message("NoData"));
             return;
         }
-        List<StringTable> tables = HtmlReadTools.Tables(html);
+        popInformation(message("Handling..."));
+        List<StringTable> tables = HtmlReadTools.Tables(html, title);
         if (tables == null || tables.isEmpty()) {
             popError(message("NoData"));
             return;

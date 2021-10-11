@@ -196,6 +196,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.HtmlFindFxml);
         });
 
+        MenuItem HtmlExtractTables = new MenuItem(Languages.message("HtmlExtractTables"));
+        HtmlExtractTables.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.HtmlExtractTablesFxml);
+        });
+
         MenuItem WebElements = new MenuItem(Languages.message("WebElements"));
         WebElements.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.HtmlElementsFxml);
@@ -227,7 +232,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         htmlMenu.getItems().addAll(
-                htmlEditor, WebFind, WebElements, HtmlSnap, new SeparatorMenuItem(),
+                htmlEditor, WebFind, WebElements, HtmlSnap, HtmlExtractTables, new SeparatorMenuItem(),
                 htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );

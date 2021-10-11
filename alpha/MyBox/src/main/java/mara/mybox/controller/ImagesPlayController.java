@@ -585,13 +585,13 @@ public class ImagesPlayController extends BaseImagesListController {
             try {
                 int v = Integer.valueOf(value);
                 if (v < 0) {
-                    fromInput.setStyle(NodeStyleTools.badStyle);
+                    fromInput.setStyle(UserConfig.badStyle());
                 } else {
                     f = v - 1;
                     fromInput.setStyle(null);
                 }
             } catch (Exception e) {
-                fromInput.setStyle(NodeStyleTools.badStyle);
+                fromInput.setStyle(UserConfig.badStyle());
             }
         }
         int t = AppValues.InvalidInteger;
@@ -610,7 +610,7 @@ public class ImagesPlayController extends BaseImagesListController {
                     toInput.setStyle(null);
                 }
             } catch (Exception e) {
-                toInput.setStyle(NodeStyleTools.badStyle);
+                toInput.setStyle(UserConfig.badStyle());
             }
         }
         if (f == AppValues.InvalidInteger || t == AppValues.InvalidInteger

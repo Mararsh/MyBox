@@ -245,8 +245,8 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
 
     @Override
     protected String[][] readPageData() {
-        if (currentPageStart < 1) {
-            currentPageStart = 1;
+        if (currentPageStart < 0) {
+            currentPageStart = 0;
         }
         long end = currentPageStart + pageSize;
         String[][] data = null;
@@ -260,7 +260,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
             }
             List<List<String>> rows = new ArrayList<>();
             Iterator<Row> iterator = sheet.iterator();
-            int rowIndex = 0, maxCol = 0;
+            int rowIndex = -1, maxCol = 0;
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {
                     while (iterator.hasNext() && (iterator.next() == null)) {
@@ -271,8 +271,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                     if (fileRow == null) {
                         continue;
                     }
-                    ++rowIndex;
-                    if (rowIndex < currentPageStart) {
+                    if (++rowIndex < currentPageStart) {
                         continue;
                     }
                     if (rowIndex >= end) {
@@ -308,7 +307,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
         if (data == null) {
             currentPageEnd = currentPageStart;
         } else {
-            currentPageEnd = currentPageStart + data.length;  // 1-based, excluded
+            currentPageEnd = currentPageStart + data.length;
         }
         return data;
     }
@@ -437,14 +436,13 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                         while (iterator.hasNext() && (iterator.next() == null)) {
                         }
                     }
-                    int sourceRowIndex = 0;
+                    int sourceRowIndex = -1;
                     while (iterator.hasNext()) {
                         Row sourceRow = iterator.next();
                         if (sourceRow == null) {
                             continue;
                         }
-                        sourceRowIndex++;
-                        if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                        if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             MicrosoftDocumentTools.copyRow(sourceRow, targetRow);
                         } else if (sourceRowIndex == currentPageStart) {
@@ -591,7 +589,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                 currentSheetName = sourceSheet.getSheetName();
             }
             Iterator<Row> iterator = sourceSheet.iterator();
-            int fileIndex = 0, dataIndex = 0;
+            int fileIndex = -1, dataIndex = 0;
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {
                     while (iterator.hasNext() && (iterator.next() == null)) {
@@ -602,8 +600,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                     if (sourceRow == null) {
                         continue;
                     }
-                    fileIndex++;
-                    if (fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
                         List<String> values = new ArrayList<>();
                         for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                             String d = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
@@ -653,7 +650,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                 currentSheetName = sourceSheet.getSheetName();
             }
             Iterator<Row> iterator = sourceSheet.iterator();
-            int fileIndex = 0, dataIndex = 0;
+            int fileIndex = -1, dataIndex = 0;
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {
                     while (iterator.hasNext() && (iterator.next() == null)) {
@@ -664,8 +661,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                     if (sourceRow == null) {
                         continue;
                     }
-                    fileIndex++;
-                    if (fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
                         List<String> values = new ArrayList<>();
                         if (htmlRowCheck.isSelected()) {
                             values.add(message("Row") + (dataIndex + 1));

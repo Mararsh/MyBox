@@ -26,7 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.LocationTools;
@@ -214,10 +214,10 @@ public class ControlMapOptions extends BaseController {
                                 }
                             }
                         } else {
-                            dataMaximumSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        dataMaximumSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 });
             }
@@ -291,10 +291,10 @@ public class ControlMapOptions extends BaseController {
                                 drawPoints();
                             }
                         } else {
-                            markerSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            markerSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        markerSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        markerSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 });
             }
@@ -331,10 +331,10 @@ public class ControlMapOptions extends BaseController {
                                 drawPoints();
                             }
                         } else {
-                            textSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            textSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        textSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        textSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 });
             }

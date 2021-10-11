@@ -20,10 +20,10 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -198,7 +198,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
             for (int i = 0; i < colsNumber; ++i) {
                 double d = cellDouble(j, i);
                 if (d == AppValues.InvalidDouble) {
-                    sheetInputs[j][i].setStyle(NodeStyleTools.badStyle);
+                    sheetInputs[j][i].setStyle(UserConfig.badStyle());
                     popError(message("InvalidData"));
                     return;
                 }

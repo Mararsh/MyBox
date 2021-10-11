@@ -9,11 +9,11 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -52,7 +52,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
 
     @Override
     public boolean makeMoreParameters() {
-        if (readOptionsController.delimiterController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)
+        if (readOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())
                 || (!readOptionsController.autoDetermine && readOptionsController.charset == null)) {
             return false;
         }

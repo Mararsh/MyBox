@@ -150,41 +150,51 @@ public class UserConfig {
         }
     }
 
-    public static String getPopInfoColor() {
+    public static String infoColor() {
         String v = getString("PopInfoColor", "white");
         return v != null && v.startsWith("#") ? v : "white";
     }
 
-    public static String getPopTextSize() {
+    public static String textSize() {
         return getString("PopTextSize", "1.5") + "em";
     }
 
-    public static String getPopTextbgColor() {
+    public static String textBgColor() {
         String v = getString("PopTextBgColor", "black");
         return v != null && v.startsWith("#") ? v : "black";
     }
 
-    public static Color getAlphaColor() {
+    public static Color alphaColor() {
         String color = getString("AlphaAsColor", Color.WHITE.toString());
         return Color.web(color);
     }
 
-    public static String getPopErrorColor() {
+    public static String errorColor() {
         String v = getString("PopErrorColor", "aqua");
         return v != null && v.startsWith("#") ? v : "aqua";
     }
 
-    public static String getPopWarnColor() {
+    public static String warnColor() {
         String v = getString("PopWarnColor", "orange");
         return v != null && v.startsWith("#") ? v : "orange";
     }
 
-    public static int getPopTextDuration() {
+    public static int textDuration() {
         return getInt("PopTextDuration", 3000);
     }
 
     public static String getStyle() {
         return UserConfig.getString("InterfaceStyle", AppValues.MyBoxStyle);
+    }
+
+    public static String badStyle() {
+        String c = errorColor();
+        return "-fx-text-box-border: " + c + ";   -fx-text-fill: " + c + ";";
+    }
+
+    public static String warnStyle() {
+        String c = warnColor();
+        return "-fx-text-box-border: " + c + ";   -fx-text-fill: " + c + ";";
     }
 
     public static MemoryUsageSetting getPdfMem() {

@@ -364,31 +364,31 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         try {
             int v = Integer.parseInt(xInput.getText().trim());
             if (v < 0 || v >= imageView.getImage().getWidth()) {
-                xInput.setStyle(NodeStyleTools.badStyle);
+                xInput.setStyle(UserConfig.badStyle());
                 return false;
             } else {
                 x = v;
                 xInput.setStyle(null);
             }
         } catch (Exception e) {
-            xInput.setStyle(NodeStyleTools.badStyle);
+            xInput.setStyle(UserConfig.badStyle());
             return false;
         }
         try {
             int v = Integer.parseInt(yInput.getText().trim());
             if (v < 0 || v >= imageView.getImage().getHeight()) {
-                yInput.setStyle(NodeStyleTools.badStyle);
+                yInput.setStyle(UserConfig.badStyle());
                 return false;
             } else {
                 y = v;
                 yInput.setStyle(null);
             }
         } catch (Exception e) {
-            yInput.setStyle(NodeStyleTools.badStyle);
+            yInput.setStyle(UserConfig.badStyle());
             return false;
         }
         if (textInput.getText().isBlank()) {
-            textInput.setStyle(NodeStyleTools.badStyle);
+            textInput.setStyle(UserConfig.badStyle());
             return false;
         } else {
             textInput.setStyle(null);

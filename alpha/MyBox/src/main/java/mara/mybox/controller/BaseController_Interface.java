@@ -139,11 +139,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 if (operationBarController.openTargetButton != null) {
                     if (targetFileInput != null) {
                         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                         );
                     } else if (targetPathInput != null) {
                         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                                .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                         );
                     }
                 }
@@ -368,10 +368,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 UserConfig.setInt(baseName + "DPI", dpi);
                 dpiSelector.getEditor().setStyle(null);
             } else {
-                dpiSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                dpiSelector.getEditor().setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            dpiSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            dpiSelector.getEditor().setStyle(UserConfig.badStyle());
         }
     }
 

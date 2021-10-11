@@ -304,13 +304,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(tableView.getItems())
                                         .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                                        .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                        .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     } else {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(targetPathInput.textProperty())
-                                        .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                        .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     }
@@ -320,13 +320,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(tableView.getItems())
                                         .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                                        .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                        .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     } else {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(targetFileInput.textProperty())
-                                        .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                        .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     }

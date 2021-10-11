@@ -120,7 +120,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
         try {
             String filename = url.getFile().substring(url.getFile().lastIndexOf('/'));
             targetFile = new File(targetPath.getAbsolutePath() + File.separator
-                    + FileNameTools.filenameFilter(filename.trim()));
+                    + FileNameTools.filter(filename.trim()));
             connection = getConnection();
             connection.setRequestMethod("GET");
             responseCode = connection.getResponseCode();

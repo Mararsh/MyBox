@@ -18,7 +18,7 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
@@ -209,11 +209,11 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
-                            .or(versionInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(createTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(modifyTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(userPasswordInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(ownerPasswordInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(versionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(createTimeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(modifyTimeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(userPasswordInput2.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(ownerPasswordInput2.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -231,10 +231,10 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 versionInput.setStyle(null);
                 version = f;
             } else {
-                versionInput.setStyle(NodeStyleTools.badStyle);
+                versionInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            versionInput.setStyle(NodeStyleTools.badStyle);
+            versionInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -255,10 +255,10 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 createTimeInput.setStyle(null);
                 createTime = d;
             } else {
-                createTimeInput.setStyle(NodeStyleTools.badStyle);
+                createTimeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            createTimeInput.setStyle(NodeStyleTools.badStyle);
+            createTimeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -279,10 +279,10 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 modifyTimeInput.setStyle(null);
                 modifyTime = d;
             } else {
-                modifyTimeInput.setStyle(NodeStyleTools.badStyle);
+                modifyTimeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            modifyTimeInput.setStyle(NodeStyleTools.badStyle);
+            modifyTimeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -300,7 +300,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             userPasswordInput2.setStyle(null);
             newUserPassword = p1;
         } else {
-            userPasswordInput2.setStyle(NodeStyleTools.badStyle);
+            userPasswordInput2.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -318,7 +318,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             ownerPasswordInput2.setStyle(null);
             newOwnerPassword = p1;
         } else {
-            ownerPasswordInput2.setStyle(NodeStyleTools.badStyle);
+            ownerPasswordInput2.setStyle(UserConfig.badStyle());
         }
     }
 

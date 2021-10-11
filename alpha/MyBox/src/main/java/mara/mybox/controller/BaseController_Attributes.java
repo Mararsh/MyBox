@@ -418,19 +418,19 @@ public abstract class BaseController_Attributes {
     }
 
     public void popInformation(String text, int duration, String size) {
-        popText(text, duration, UserConfig.getPopTextbgColor(), UserConfig.getPopInfoColor(), size, null);
+        popText(text, duration, UserConfig.textBgColor(), UserConfig.infoColor(), size, null);
     }
 
     public void popInformation(String text, int duration) {
-        popInformation(text, duration, UserConfig.getPopTextSize());
+        popInformation(text, duration, UserConfig.textSize());
     }
 
     public void popInformation(String text, Region attach) {
-        popText(text, UserConfig.getPopTextDuration(), UserConfig.getPopTextbgColor(), UserConfig.getPopInfoColor(), UserConfig.getPopTextSize(), attach);
+        popText(text, UserConfig.textDuration(), UserConfig.textBgColor(), UserConfig.infoColor(), UserConfig.textSize(), attach);
     }
 
     public void popInformation(String text) {
-        popInformation(text, UserConfig.getPopTextDuration(), UserConfig.getPopTextSize());
+        popInformation(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 
     public void popSuccessful() {
@@ -446,11 +446,11 @@ public abstract class BaseController_Attributes {
     }
 
     public void popError(String text, int duration, String size) {
-        popText(text, duration, UserConfig.getPopTextbgColor(), UserConfig.getPopErrorColor(), size, null);
+        popText(text, duration, UserConfig.textBgColor(), UserConfig.errorColor(), size, null);
     }
 
     public void popError(String text) {
-        popError(text, UserConfig.getPopTextDuration(), UserConfig.getPopTextSize());
+        popError(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 
     public void popFailed() {
@@ -458,15 +458,15 @@ public abstract class BaseController_Attributes {
     }
 
     public void popWarn(String text, int duration, String size) {
-        popText(text, duration, UserConfig.getPopTextbgColor(), UserConfig.getPopWarnColor(), size, null);
+        popText(text, duration, UserConfig.textBgColor(), UserConfig.warnColor(), size, null);
     }
 
     public void popWarn(String text, int duration) {
-        popWarn(text, duration, UserConfig.getPopTextSize());
+        popWarn(text, duration, UserConfig.textSize());
     }
 
     public void popWarn(String text) {
-        popWarn(text, UserConfig.getPopTextDuration(), UserConfig.getPopTextSize());
+        popWarn(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 
     @FXML

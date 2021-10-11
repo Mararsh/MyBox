@@ -339,11 +339,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setEachWidthValue(-1);
-                eachWidthInput.setStyle(NodeStyleTools.badStyle);
+                eachWidthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
             imageCombine.setEachWidthValue(-1);
-            eachWidthInput.setStyle(NodeStyleTools.badStyle);
+            eachWidthInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -357,11 +357,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setEachHeightValue(-1);
-                eachHeightInput.setStyle(NodeStyleTools.badStyle);
+                eachHeightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
             imageCombine.setEachHeightValue(-1);
-            eachHeightInput.setStyle(NodeStyleTools.badStyle);
+            eachHeightInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -375,11 +375,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setTotalWidthValue(-1);
-                totalWidthInput.setStyle(NodeStyleTools.badStyle);
+                totalWidthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
             imageCombine.setTotalWidthValue(-1);
-            totalWidthInput.setStyle(NodeStyleTools.badStyle);
+            totalWidthInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -393,11 +393,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setTotalHeightValue(-1);
-                totalHeightInput.setStyle(NodeStyleTools.badStyle);
+                totalHeightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
             imageCombine.setTotalHeightValue(-1);
-            totalHeightInput.setStyle(NodeStyleTools.badStyle);
+            totalHeightInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -427,10 +427,10 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void combineImages() {
         if (tableData == null || tableData.isEmpty()
-                || totalWidthInput.getStyle().equals(NodeStyleTools.badStyle)
-                || totalHeightInput.getStyle().equals(NodeStyleTools.badStyle)
-                || eachWidthInput.getStyle().equals(NodeStyleTools.badStyle)
-                || eachHeightInput.getStyle().equals(NodeStyleTools.badStyle)) {
+                || totalWidthInput.getStyle().equals(UserConfig.badStyle())
+                || totalHeightInput.getStyle().equals(UserConfig.badStyle())
+                || eachWidthInput.getStyle().equals(UserConfig.badStyle())
+                || eachHeightInput.getStyle().equals(UserConfig.badStyle())) {
             image = null;
             imageView.setImage(null);
             imageLabel.setText("");

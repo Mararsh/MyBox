@@ -42,12 +42,12 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     public void checkSourceFileInput() {
         String v = sourceFileInput.getText();
         if (v == null || v.isEmpty()) {
-            sourceFileInput.setStyle(NodeStyleTools.badStyle);
+            sourceFileInput.setStyle(UserConfig.badStyle());
             return;
         }
         final File file = new File(v);
         if (!file.exists()) {
-            sourceFileInput.setStyle(NodeStyleTools.badStyle);
+            sourceFileInput.setStyle(UserConfig.badStyle());
             return;
         }
         UserConfig.setString(baseName + "SourceFile", file.getAbsolutePath());
@@ -66,7 +66,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try {
             final File file = new File(targetPathInput.getText());
             if (!file.exists() || !file.isDirectory()) {
-                targetPathInput.setStyle(NodeStyleTools.badStyle);
+                targetPathInput.setStyle(UserConfig.badStyle());
                 return;
             }
             targetPath = file;
@@ -80,7 +80,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try {
             final File file = new File(sourcePathInput.getText());
             if (!file.exists() || !file.isDirectory()) {
-                sourcePathInput.setStyle(NodeStyleTools.badStyle);
+                sourcePathInput.setStyle(UserConfig.badStyle());
                 return;
             }
             sourcePath = file;
@@ -98,7 +98,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             UserConfig.setString(baseName + "TargetFile", targetFile.getAbsolutePath());
         } catch (Exception e) {
             targetFile = null;
-            targetFileInput.setStyle(NodeStyleTools.badStyle);
+            targetFileInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -118,7 +118,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             targetExistType = BaseController.TargetExistType.Rename;
             if (targetAppendInput != null) {
                 if (targetAppendInput.getText() == null || targetAppendInput.getText().trim().isEmpty()) {
-                    targetAppendInput.setStyle(NodeStyleTools.badStyle);
+                    targetAppendInput.setStyle(UserConfig.badStyle());
                 } else {
                     UserConfig.setString(baseName + "TargetExistAppend", targetAppendInput.getText().trim());
                 }
@@ -864,7 +864,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             if (suffix != null && !suffix.isBlank()) {
                 name += "." + suffix;
             }
-            fileChooser.setInitialFileName(FileNameTools.filenameFilter(name));
+            fileChooser.setInitialFileName(FileNameTools.filter(name));
 
             File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -949,11 +949,11 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath, boolean appendTime) {
         try {
             String targetPrefix = targetPath.getAbsolutePath() + File.separator
-                    + FileNameTools.filenameFilter(namePrefix);
+                    + FileNameTools.filter(namePrefix);
             if (appendTime) {
                 targetPrefix += "_" + new Date().getTime();
             }
-            String targetSuffix = FileNameTools.filenameFilter(nameSuffix);
+            String targetSuffix = FileNameTools.filter(nameSuffix);
             File target = new File(targetPrefix + targetSuffix);
             if (target.exists()) {
                 if (targetExistType == TargetExistType.Skip) {

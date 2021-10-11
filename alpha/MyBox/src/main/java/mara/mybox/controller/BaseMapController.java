@@ -548,7 +548,7 @@ public abstract class BaseMapController extends BaseController {
             name += (!frameLabel.getText().isBlank() ? "_" + frameLabel.getText() : "");
         }
         name += "_dpi" + dpi;
-        return FileNameTools.filenameFilter(name);
+        return FileNameTools.filter(name);
     }
 
     protected void snapAllMenu() {

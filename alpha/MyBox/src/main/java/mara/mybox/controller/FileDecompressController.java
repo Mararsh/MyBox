@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -50,7 +50,7 @@ public class FileDecompressController extends BaseController {
     @FXML
     @Override
     public void startAction() {
-        if (targetPath == null || NodeStyleTools.badStyle.equals(targetPathInput.getStyle())) {
+        if (targetPath == null || UserConfig.badStyle().equals(targetPathInput.getStyle())) {
             popError(Languages.message("InvalidTargetPath"));
             return;
         }

@@ -16,9 +16,9 @@ import javax.imageio.ImageIO;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -81,7 +81,7 @@ public class WebAddressController extends BaseWebViewController {
         } catch (Exception e) {
             popError(message("InvalidLink"));
             if (urlSelector != null) {
-                urlSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                urlSelector.getEditor().setStyle(UserConfig.badStyle());
             }
             return false;
         }

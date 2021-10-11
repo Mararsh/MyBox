@@ -263,12 +263,12 @@ public class ControlFindReplace extends BaseController {
         }
         final String v = ByteTools.formatTextHex(string);
         if (v == null) {
-            findArea.setStyle(NodeStyleTools.badStyle);
+            findArea.setStyle(UserConfig.badStyle());
             return false;
         } else {
             if (sourceInformation != null && v.length() >= sourceInformation.getFile().length() * 3) {
                 popError(message("FindStringLimitation"));
-                findArea.setStyle(NodeStyleTools.badStyle);
+                findArea.setStyle(UserConfig.badStyle());
                 return false;
             }
             findArea.setStyle(null);
@@ -318,7 +318,7 @@ public class ControlFindReplace extends BaseController {
         }
         final String v = ByteTools.formatTextHex(string);
         if (v == null) {
-            replaceArea.setStyle(NodeStyleTools.badStyle);
+            replaceArea.setStyle(UserConfig.badStyle());
             return false;
         } else {
             replaceArea.setStyle(null);

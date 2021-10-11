@@ -21,7 +21,6 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -32,6 +31,7 @@ import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -78,9 +78,9 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetFileInput.textProperty())
-                            .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(tableView.getItems()))
-                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

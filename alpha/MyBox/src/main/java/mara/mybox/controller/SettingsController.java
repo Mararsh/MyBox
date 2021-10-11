@@ -558,11 +558,11 @@ public class SettingsController extends BaseController {
                             newJVM = v;
                             settingsJVMButton.setDisable(false);
                         } else {
-                            jvmInput.setStyle(NodeStyleTools.badStyle);
+                            jvmInput.setStyle(UserConfig.badStyle());
                             settingsJVMButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        jvmInput.setStyle(NodeStyleTools.badStyle);
+                        jvmInput.setStyle(UserConfig.badStyle());
                         settingsJVMButton.setDisable(true);
                     }
                 }
@@ -654,12 +654,12 @@ public class SettingsController extends BaseController {
                 MyBox.restart();
             } else {
                 popFailed();
-                dataDirInput.setStyle(NodeStyleTools.badStyle);
+                dataDirInput.setStyle(UserConfig.badStyle());
             }
 
         } catch (Exception e) {
             popFailed();
-            dataDirInput.setStyle(NodeStyleTools.badStyle);
+            dataDirInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -672,10 +672,10 @@ public class SettingsController extends BaseController {
                 webConnectTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
-                webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
+                webConnectTimeoutInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
+            webConnectTimeoutInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -688,10 +688,10 @@ public class SettingsController extends BaseController {
                 webReadTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
-                webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
+                webReadTimeoutInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
+            webReadTimeoutInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -999,10 +999,10 @@ public class SettingsController extends BaseController {
                             thumbnailWidthInput.setStyle(null);
                             popSuccessful();
                         } else {
-                            thumbnailWidthInput.setStyle(NodeStyleTools.badStyle);
+                            thumbnailWidthInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        thumbnailWidthInput.setStyle(NodeStyleTools.badStyle);
+                        thumbnailWidthInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1042,11 +1042,11 @@ public class SettingsController extends BaseController {
                 fileRecentInput.setStyle(null);
                 settingsRecentOKButton.setDisable(false);
             } else {
-                fileRecentInput.setStyle(NodeStyleTools.badStyle);
+                fileRecentInput.setStyle(UserConfig.badStyle());
                 settingsRecentOKButton.setDisable(true);
             }
         } catch (Exception e) {
-            fileRecentInput.setStyle(NodeStyleTools.badStyle);
+            fileRecentInput.setStyle(UserConfig.badStyle());
             settingsRecentOKButton.setDisable(true);
         }
     }

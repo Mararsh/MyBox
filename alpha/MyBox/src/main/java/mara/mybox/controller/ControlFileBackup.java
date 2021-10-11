@@ -94,11 +94,11 @@ public class ControlFileBackup extends BaseController {
                             maxBackupsInput.setStyle(null);
                             okMaxButton.setDisable(false);
                         } else {
-                            maxBackupsInput.setStyle(NodeStyleTools.badStyle);
+                            maxBackupsInput.setStyle(UserConfig.badStyle());
                             okMaxButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        maxBackupsInput.setStyle(NodeStyleTools.badStyle);
+                        maxBackupsInput.setStyle(UserConfig.badStyle());
                         okMaxButton.setDisable(true);
                     }
                 }

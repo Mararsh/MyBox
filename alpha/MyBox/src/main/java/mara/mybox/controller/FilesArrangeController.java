@@ -85,8 +85,8 @@ public class FilesArrangeController extends BaseBatchFileController {
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(sourcePathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
             operationBarController.openTargetButton.disableProperty().bind(

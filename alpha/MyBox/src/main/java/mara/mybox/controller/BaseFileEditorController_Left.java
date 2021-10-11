@@ -267,11 +267,11 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                                 lineInput.setStyle(null);
                                 goLineButton.setDisable(false);
                             } else {
-                                lineInput.setStyle(NodeStyleTools.badStyle);
+                                lineInput.setStyle(UserConfig.badStyle());
                                 goLineButton.setDisable(true);
                             }
                         } catch (Exception e) {
-                            lineInput.setStyle(NodeStyleTools.badStyle);
+                            lineInput.setStyle(UserConfig.badStyle());
                             goLineButton.setDisable(true);
                         }
                     }
@@ -290,11 +290,11 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                                 objectNumberInput.setStyle(null);
                                 goObjectButton.setDisable(false);
                             } else {
-                                objectNumberInput.setStyle(NodeStyleTools.badStyle);
+                                objectNumberInput.setStyle(UserConfig.badStyle());
                                 goObjectButton.setDisable(true);
                             }
                         } catch (Exception e) {
-                            objectNumberInput.setStyle(NodeStyleTools.badStyle);
+                            objectNumberInput.setStyle(UserConfig.badStyle());
                             goObjectButton.setDisable(true);
                         }
                     }

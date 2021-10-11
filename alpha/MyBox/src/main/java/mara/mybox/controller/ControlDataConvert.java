@@ -260,11 +260,11 @@ public class ControlDataConvert extends BaseController {
             if (toHtml && htmlCheck.isSelected()) {
                 UserConfig.setString(baseName + "Css", cssArea.getText());
             }
-            if (toCsv && csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)) {
+            if (toCsv && csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
                 return false;
             }
             if (toText && textCheck.isSelected()
-                    && textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)) {
+                    && textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
                 return false;
             }
             return true;

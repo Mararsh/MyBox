@@ -143,8 +143,8 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             });
 
-            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                    .or(colsInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(colsInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -237,10 +237,10 @@ public class ImageSplitController extends BaseImagesListController {
                 if (rowsNumber > 0) {
                     rowsInput.setStyle(null);
                 } else {
-                    rowsInput.setStyle(NodeStyleTools.badStyle);
+                    rowsInput.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                rowsInput.setStyle(NodeStyleTools.badStyle);
+                rowsInput.setStyle(UserConfig.badStyle());
             }
         }
 
@@ -254,10 +254,10 @@ public class ImageSplitController extends BaseImagesListController {
                 if (colsNumber > 0) {
                     colsInput.setStyle(null);
                 } else {
-                    colsInput.setStyle(NodeStyleTools.badStyle);
+                    colsInput.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                colsInput.setStyle(NodeStyleTools.badStyle);
+                colsInput.setStyle(UserConfig.badStyle());
             }
         }
     }
@@ -272,10 +272,10 @@ public class ImageSplitController extends BaseImagesListController {
                 widthInput.setStyle(null);
                 width = v;
             } else {
-                widthInput.setStyle(NodeStyleTools.badStyle);
+                widthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            widthInput.setStyle(NodeStyleTools.badStyle);
+            widthInput.setStyle(UserConfig.badStyle());
         }
         try {
             int v = Integer.valueOf(heightInput.getText());
@@ -283,10 +283,10 @@ public class ImageSplitController extends BaseImagesListController {
                 heightInput.setStyle(null);
                 height = v;
             } else {
-                heightInput.setStyle(NodeStyleTools.badStyle);
+                heightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            heightInput.setStyle(NodeStyleTools.badStyle);
+            heightInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -310,7 +310,7 @@ public class ImageSplitController extends BaseImagesListController {
                 try {
                     int value = Integer.valueOf(row.trim());
                     if (value < 0 || value > getOperationHeight() - 1) {
-                        customizedRowsInput.setStyle(NodeStyleTools.badStyle);
+                        customizedRowsInput.setStyle(UserConfig.badStyle());
                         isValidRows = false;
                         break;
                     }
@@ -318,7 +318,7 @@ public class ImageSplitController extends BaseImagesListController {
                         rows.add(value);
                     }
                 } catch (Exception e) {
-                    customizedRowsInput.setStyle(NodeStyleTools.badStyle);
+                    customizedRowsInput.setStyle(UserConfig.badStyle());
                     isValidRows = false;
                     break;
                 }
@@ -331,7 +331,7 @@ public class ImageSplitController extends BaseImagesListController {
                 try {
                     int value = Integer.valueOf(col.trim());
                     if (value <= 0 || value >= getOperationWidth() - 1) {
-                        customizedColsInput.setStyle(NodeStyleTools.badStyle);
+                        customizedColsInput.setStyle(UserConfig.badStyle());
                         isValidcols = false;
                         break;
                     }
@@ -339,7 +339,7 @@ public class ImageSplitController extends BaseImagesListController {
                         cols.add(value);
                     }
                 } catch (Exception e) {
-                    customizedColsInput.setStyle(NodeStyleTools.badStyle);
+                    customizedColsInput.setStyle(UserConfig.badStyle());
                     isValidcols = false;
                     break;
                 }

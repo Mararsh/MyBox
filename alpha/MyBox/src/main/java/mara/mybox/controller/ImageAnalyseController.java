@@ -366,10 +366,10 @@ public class ImageAnalyseController extends ImageViewerController {
                             regionSizeSelector1.getEditor().setStyle(null);
                             loadData(false, true, false);
                         } else {
-                            regionSizeSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
+                            regionSizeSelector1.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        regionSizeSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
+                        regionSizeSelector1.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -391,7 +391,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v2 = Integer.parseInt(values[1]);
                         int v3 = Integer.parseInt(values[2]);
                         if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            weightSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
+                            weightSelector1.getEditor().setStyle(UserConfig.badStyle());
                             return;
                         }
                         weight11 = v1;
@@ -401,7 +401,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         UserConfig.setString(baseName + "RGBWeights1", newValue);
                         loadData(false, true, false);
                     } catch (Exception e) {
-                        weightSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
+                        weightSelector1.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -467,10 +467,10 @@ public class ImageAnalyseController extends ImageViewerController {
                             regionSizeSelector2.getEditor().setStyle(null);
                             loadData(false, false, true);
                         } else {
-                            regionSizeSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
+                            regionSizeSelector2.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        regionSizeSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
+                        regionSizeSelector2.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -492,7 +492,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v2 = Integer.parseInt(values[1]);
                         int v3 = Integer.parseInt(values[2]);
                         if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            weightSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
+                            weightSelector2.getEditor().setStyle(UserConfig.badStyle());
                             return;
                         }
                         weight21 = v1;
@@ -502,7 +502,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         UserConfig.setString(baseName + "RGBWeights2", newValue);
                         loadData(false, false, true);
                     } catch (Exception e) {
-                        weightSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
+                        weightSelector2.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });

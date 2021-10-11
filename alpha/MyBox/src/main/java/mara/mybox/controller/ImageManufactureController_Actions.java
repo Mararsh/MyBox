@@ -59,10 +59,10 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                                 newWidth = v;
                                 newWidthInput.setStyle(null);
                             } else {
-                                newWidthInput.setStyle(NodeStyleTools.badStyle);
+                                newWidthInput.setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            newWidthInput.setStyle(NodeStyleTools.badStyle);
+                            newWidthInput.setStyle(UserConfig.badStyle());
                         }
                     });
             newHeightInput.textProperty().addListener(
@@ -73,10 +73,10 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                                 newHeight = v;
                                 newHeightInput.setStyle(null);
                             } else {
-                                newHeightInput.setStyle(NodeStyleTools.badStyle);
+                                newHeightInput.setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            newHeightInput.setStyle(NodeStyleTools.badStyle);
+                            newHeightInput.setStyle(UserConfig.badStyle());
                         }
                     });
             colorSetController.init(this, baseName + "NewBackgroundColor");
@@ -85,8 +85,8 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             newHeightInput.setText("500");
 
             createButton.disableProperty().bind(
-                    newWidthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                            .or(newHeightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    newWidthInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(newHeightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -165,6 +165,14 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
     public void pasteContentInSystemClipboard() {
         operationsController.clipboardPane.setExpanded(true);
         operationsController.clipboardController.pasteImageInSystemClipboard();
+    }
+
+    @FXML
+    protected void popImage() {
+        if (imagePopController != null && imagePopController.getMyWindow().isShowing()) {
+            return;
+        }
+        imagePopController = ImagePopController.openView(this, imageView);
     }
 
     public void applyKernel(ConvolutionKernel kernel) {

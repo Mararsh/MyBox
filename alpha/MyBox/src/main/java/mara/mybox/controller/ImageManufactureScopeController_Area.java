@@ -5,9 +5,9 @@ import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -27,28 +27,28 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 x1 = Double.parseDouble(rectLeftTopXInput.getText());
                 rectLeftTopXInput.setStyle(null);
             } catch (Exception e) {
-                rectLeftTopXInput.setStyle(NodeStyleTools.badStyle);
+                rectLeftTopXInput.setStyle(UserConfig.badStyle());
                 return;
             }
             try {
                 y1 = Double.parseDouble(rectLeftTopYInput.getText());
                 rectLeftTopYInput.setStyle(null);
             } catch (Exception e) {
-                rectLeftTopYInput.setStyle(NodeStyleTools.badStyle);
+                rectLeftTopYInput.setStyle(UserConfig.badStyle());
                 return;
             }
             try {
                 x2 = Double.parseDouble(rightBottomXInput.getText());
                 rightBottomXInput.setStyle(null);
             } catch (Exception e) {
-                rightBottomXInput.setStyle(NodeStyleTools.badStyle);
+                rightBottomXInput.setStyle(UserConfig.badStyle());
                 return;
             }
             try {
                 y2 = Double.parseDouble(rightBottomYInput.getText());
                 rightBottomYInput.setStyle(null);
             } catch (Exception e) {
-                rightBottomYInput.setStyle(NodeStyleTools.badStyle);
+                rightBottomYInput.setStyle(UserConfig.badStyle());
                 return;
             }
             DoubleRectangle rect = new DoubleRectangle(x1, y1, x2, y2);
@@ -91,21 +91,21 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 x = Double.parseDouble(circleCenterXInput.getText());
                 circleCenterXInput.setStyle(null);
             } catch (Exception e) {
-                circleCenterXInput.setStyle(NodeStyleTools.badStyle);
+                circleCenterXInput.setStyle(UserConfig.badStyle());
                 return;
             }
             try {
                 y = Double.parseDouble(circleCenterYInput.getText());
                 circleCenterYInput.setStyle(null);
             } catch (Exception e) {
-                circleCenterYInput.setStyle(NodeStyleTools.badStyle);
+                circleCenterYInput.setStyle(UserConfig.badStyle());
                 return;
             }
             try {
                 r = Double.parseDouble(circleRadiusInput.getText());
                 circleRadiusInput.setStyle(null);
             } catch (Exception e) {
-                circleRadiusInput.setStyle(NodeStyleTools.badStyle);
+                circleRadiusInput.setStyle(UserConfig.badStyle());
                 return;
             }
             DoubleCircle circle = new DoubleCircle(x, y, r);

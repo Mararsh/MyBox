@@ -1,6 +1,12 @@
 package mara.mybox.db.data;
 
 import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.util.List;
+import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.table.TableDataColumn;
+import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -114,6 +120,54 @@ public class DataDefinition extends BaseData {
             return DataType.DataFile;
         }
         return types[type];
+    }
+
+    public static StringTable saveDefinition(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
+            String dataName, DataDefinition.DataType dataType,
+            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
+        if (dataName == null) {
+            return null;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return saveDefinition(tableDataDefinition, tableDataColumn,
+                    conn, dataName, dataType, charset, delimiterName, withName, columns);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static StringTable saveDefinition(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
+            Connection conn, String dataName, DataDefinition.DataType dataType,
+            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
+        if (conn == null || dataName == null) {
+            return null;
+        }
+        try {
+            DataDefinition def = tableDataDefinition.read(conn, dataType, dataName);
+            if (def == null) {
+                def = DataDefinition.create()
+                        .setDataName(dataName).setDataType(dataType)
+                        .setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
+                tableDataDefinition.insertData(conn, def);
+            } else {
+                def.setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
+                tableDataDefinition.updateData(conn, def);
+                tableDataColumn.clear(conn, def.getDfid());
+            }
+            StringTable validateTable = null;
+            if (columns != null && !columns.isEmpty()) {
+                validateTable = ColumnDefinition.validate(columns);
+                if (validateTable != null && validateTable.isEmpty()) {
+                    tableDataColumn.save(conn, def.getDfid(), columns);
+                    conn.commit();
+                }
+            }
+            return validateTable;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     /*

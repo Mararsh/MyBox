@@ -89,11 +89,11 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                             maxHistoriesInput.setStyle(null);
                             okHistoriesSizeButton.setDisable(false);
                         } else {
-                            maxHistoriesInput.setStyle(NodeStyleTools.badStyle);
+                            maxHistoriesInput.setStyle(UserConfig.badStyle());
                             okHistoriesSizeButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        maxHistoriesInput.setStyle(NodeStyleTools.badStyle);
+                        maxHistoriesInput.setStyle(UserConfig.badStyle());
                         okHistoriesSizeButton.setDisable(true);
                     }
                 }

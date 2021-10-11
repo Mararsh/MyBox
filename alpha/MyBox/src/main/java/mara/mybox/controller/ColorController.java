@@ -21,7 +21,7 @@ import mara.mybox.color.ColorConversion.SpaceType;
 import mara.mybox.color.Illuminant;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
@@ -387,11 +387,11 @@ public class ColorController extends BaseController {
                     d1 = DoubleTools.scale(d, scale);
                     vInput1.setStyle(null);
                 } else {
-                    vInput1.setStyle(NodeStyleTools.badStyle);
+                    vInput1.setStyle(UserConfig.badStyle());
                     return;
                 }
             } catch (Exception e) {
-                vInput1.setStyle(NodeStyleTools.badStyle);
+                vInput1.setStyle(UserConfig.badStyle());
                 return;
             }
             try {
@@ -400,11 +400,11 @@ public class ColorController extends BaseController {
                     d2 = DoubleTools.scale(d, scale);
                     vInput2.setStyle(null);
                 } else {
-                    vInput2.setStyle(NodeStyleTools.badStyle);
+                    vInput2.setStyle(UserConfig.badStyle());
                     return;
                 }
             } catch (Exception e) {
-                vInput2.setStyle(NodeStyleTools.badStyle);
+                vInput2.setStyle(UserConfig.badStyle());
                 return;
             }
             try {
@@ -413,11 +413,11 @@ public class ColorController extends BaseController {
                     d3 = DoubleTools.scale(d, scale);
                     vInput3.setStyle(null);
                 } else {
-                    vInput3.setStyle(NodeStyleTools.badStyle);
+                    vInput3.setStyle(UserConfig.badStyle());
                     return;
                 }
             } catch (Exception e) {
-                vInput3.setStyle(NodeStyleTools.badStyle);
+                vInput3.setStyle(UserConfig.badStyle());
                 return;
             }
         } else {
@@ -427,10 +427,10 @@ public class ColorController extends BaseController {
                     d1 = DoubleTools.scale(v / 255.0d, scale);
                     vInput1.setStyle(null);
                 } else {
-                    vInput1.setStyle(NodeStyleTools.badStyle);
+                    vInput1.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                vInput1.setStyle(NodeStyleTools.badStyle);
+                vInput1.setStyle(UserConfig.badStyle());
             }
             try {
                 int v = Integer.parseInt(vInput2.getText());
@@ -438,10 +438,10 @@ public class ColorController extends BaseController {
                     d2 = DoubleTools.scale(v / 255.0d, scale);
                     vInput2.setStyle(null);
                 } else {
-                    vInput2.setStyle(NodeStyleTools.badStyle);
+                    vInput2.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                vInput2.setStyle(NodeStyleTools.badStyle);
+                vInput2.setStyle(UserConfig.badStyle());
             }
             try {
                 int v = Integer.parseInt(vInput3.getText());
@@ -449,10 +449,10 @@ public class ColorController extends BaseController {
                     d3 = DoubleTools.scale(v / 255.0d, scale);
                     vInput3.setStyle(null);
                 } else {
-                    vInput3.setStyle(NodeStyleTools.badStyle);
+                    vInput3.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                vInput3.setStyle(NodeStyleTools.badStyle);
+                vInput3.setStyle(UserConfig.badStyle());
             }
         }
 

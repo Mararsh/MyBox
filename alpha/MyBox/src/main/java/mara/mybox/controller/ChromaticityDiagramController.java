@@ -347,7 +347,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
                         X = Double.parseDouble(newValue);
                         XInput.setStyle(null);
                     } catch (Exception e) {
-                        XInput.setStyle(NodeStyleTools.badStyle);
+                        XInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -357,12 +357,12 @@ public class ChromaticityDiagramController extends ImageViewerController {
                     try {
                         Y = Double.parseDouble(newValue);
                         if (Y == 0) {
-                            YInput.setStyle(NodeStyleTools.badStyle);
+                            YInput.setStyle(UserConfig.badStyle());
                         } else {
                             YInput.setStyle(null);
                         }
                     } catch (Exception e) {
-                        YInput.setStyle(NodeStyleTools.badStyle);
+                        YInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -373,7 +373,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
                         Z = Double.parseDouble(newValue);
                         ZInput.setStyle(null);
                     } catch (Exception e) {
-                        ZInput.setStyle(NodeStyleTools.badStyle);
+                        ZInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -386,12 +386,12 @@ public class ChromaticityDiagramController extends ImageViewerController {
                         x = Double.parseDouble(newValue);
                         double z = 1 - x - y;
                         if (x > 1 || x < 0 || z < 0 || z > 1) {
-                            xInput.setStyle(NodeStyleTools.badStyle);
+                            xInput.setStyle(UserConfig.badStyle());
                         } else {
                             xInput.setStyle(null);
                         }
                     } catch (Exception e) {
-                        xInput.setStyle(NodeStyleTools.badStyle);
+                        xInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -403,28 +403,28 @@ public class ChromaticityDiagramController extends ImageViewerController {
                         y = Double.parseDouble(newValue);
                         double z = 1 - x - y;
                         if (y > 1 || y <= 0 || z < 0 || z > 1) {
-                            yInput.setStyle(NodeStyleTools.badStyle);
+                            yInput.setStyle(UserConfig.badStyle());
                         } else {
                             yInput.setStyle(null);
                         }
                     } catch (Exception e) {
-                        yInput.setStyle(NodeStyleTools.badStyle);
+                        yInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
 
             calculateXYZButton.disableProperty().bind(Bindings.isEmpty(XInput.textProperty())
-                    .or(XInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(XInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(YInput.textProperty()))
-                    .or(YInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(YInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(ZInput.textProperty()))
-                    .or(ZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(ZInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
             calculateXYButton.disableProperty().bind(Bindings.isEmpty(xInput.textProperty())
-                    .or(xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(yInput.textProperty()))
-                    .or(yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(yInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
             displayDataButton.disableProperty().bind(Bindings.isEmpty(sourceDataArea.textProperty())
@@ -529,10 +529,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
                     displayChromaticityDiagram();
                 }
             } else {
-                fontSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                fontSelector.getEditor().setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            fontSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            fontSelector.getEditor().setStyle(UserConfig.badStyle());
         }
     }
 

@@ -53,6 +53,17 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
         }
     }
 
+    public void loadData(String[][] data, List<ColumnDefinition> dataColumns) {
+        try {
+            sourceFile = null;
+            initCurrentPage();
+            initFile();
+            makeSheet(data, dataColumns);;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public void copyCols(List<Integer> cols, boolean withNames, boolean toSystemClipboard) {
         if (cols == null || cols.isEmpty()) {

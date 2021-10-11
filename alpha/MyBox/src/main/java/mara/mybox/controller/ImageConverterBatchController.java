@@ -7,7 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.fxml.NodeStyleTools;
@@ -53,11 +53,11 @@ public class ImageConverterBatchController extends BaseBatchImageController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(formatController.profileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(formatController.thresholdInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(formatController.icoWidthSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(formatController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(formatController.icoWidthSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

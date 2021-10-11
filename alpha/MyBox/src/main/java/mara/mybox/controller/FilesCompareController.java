@@ -21,7 +21,7 @@ import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -76,12 +76,12 @@ public class FilesCompareController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     String v = file1Input.getText();
                     if (v == null || v.isEmpty()) {
-                        file1Input.setStyle(NodeStyleTools.badStyle);
+                        file1Input.setStyle(UserConfig.badStyle());
                         return;
                     }
                     final File file = new File(v);
                     if (!file.exists()) {
-                        file1Input.setStyle(NodeStyleTools.badStyle);
+                        file1Input.setStyle(UserConfig.badStyle());
                         return;
                     }
                     file1 = file;
@@ -95,12 +95,12 @@ public class FilesCompareController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     String v = file2Input.getText();
                     if (v == null || v.isEmpty()) {
-                        file2Input.setStyle(NodeStyleTools.badStyle);
+                        file2Input.setStyle(UserConfig.badStyle());
                         return;
                     }
                     final File file = new File(v);
                     if (!file.exists()) {
-                        file2Input.setStyle(NodeStyleTools.badStyle);
+                        file2Input.setStyle(UserConfig.badStyle());
                         return;
                     }
                     file2 = file;
@@ -119,9 +119,9 @@ public class FilesCompareController extends BaseController {
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(file1Input.textProperty())
-                            .or(file1Input.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(file1Input.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(file2Input.textProperty()))
-                            .or(file2Input.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(file2Input.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

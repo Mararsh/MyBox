@@ -63,14 +63,13 @@ public abstract class ControlSheetExcel_Operations extends ControlSheetExcel_Fil
                     while (iterator.hasNext() && (iterator.next() == null)) {
                     }
                 }
-                int sourceRowIndex = 0;
+                int sourceRowIndex = -1;
                 while (iterator.hasNext()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
                         continue;
                     }
-                    sourceRowIndex++;
-                    if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                    if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
                         List<String> values = new ArrayList<>();
                         for (int c : cols) {
                             int cellIndex = c + sourceRow.getFirstCellNum();
@@ -85,6 +84,9 @@ public abstract class ControlSheetExcel_Operations extends ControlSheetExcel_Fil
                     } else if (sourceRowIndex == currentPageStart) {
                         copyPageData(csvPrinter, cols);
                     }
+                }
+                if (sourceRowIndex < 0) {
+                    copyPageData(csvPrinter, cols);
                 }
             } else {
                 copyPageData(csvPrinter, cols);

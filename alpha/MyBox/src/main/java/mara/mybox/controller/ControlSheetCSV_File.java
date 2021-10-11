@@ -155,13 +155,13 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
 
     @Override
     protected String[][] readPageData() {
-        if (currentPageStart < 1) {
-            currentPageStart = 1;
+        if (currentPageStart < 0) {
+            currentPageStart = 0;
         }
         long end = currentPageStart + pageSize;
         String[][] data = null;
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            int rowIndex = 0, maxCol = 0;
+            int rowIndex = -1, maxCol = 0;
             List<List<String>> rows = new ArrayList<>();
             for (CSVRecord record : parser) {
                 if (++rowIndex < currentPageStart) {
@@ -198,7 +198,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
         if (data == null) {
             currentPageEnd = currentPageStart;
         } else {
-            currentPageEnd = currentPageStart + data.length;  // 1-based, excluded
+            currentPageEnd = currentPageStart + data.length;
         }
         return data;
     }
@@ -358,15 +358,15 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
                 if (withName) {
                     csvPrinter.printRecord(columnNames());
                 }
-                long index = 0;
+                long index = -1;
                 for (CSVRecord record : parser) {
-                    if (++index < currentPageStart || index >= currentPageEnd) {    // 1-based, excluded
+                    if (++index < currentPageStart || index >= currentPageEnd) {
                         csvPrinter.printRecord(record);
                     } else if (index == currentPageStart) {
                         writePageData(csvPrinter);
                     }
                 }
-                if (index == 0) {
+                if (index < 0) {
                     writePageData(csvPrinter);
                 }
             } catch (Exception e) {
@@ -425,7 +425,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
             rowText(s, -1, columnNames(), delimiter);
         }
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            int fileIndex = 0, dataIndex = 0;
+            int fileIndex = -1, dataIndex = 0;
             for (CSVRecord record : parser) {
                 if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
                     List<String> values = new ArrayList<>();
@@ -437,7 +437,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
                     dataIndex = pageText(s, dataIndex, delimiter);
                 }
             }
-            if (fileIndex == 0) {
+            if (fileIndex < 0) {
                 pageText(s, dataIndex, delimiter);
             }
         } catch (Exception e) {
@@ -467,7 +467,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
         }
         StringTable table = new StringTable(names, title);
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            int fileIndex = 0, dataIndex = 0;
+            int fileIndex = -1, dataIndex = 0;
             for (CSVRecord record : parser) {
                 if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
                     List<String> values = new ArrayList<>();
@@ -483,7 +483,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
                     dataIndex = pageHtml(table, dataIndex);
                 }
             }
-            if (fileIndex == 0) {
+            if (fileIndex < 0) {
                 pageHtml(table, dataIndex);
             }
         } catch (Exception e) {

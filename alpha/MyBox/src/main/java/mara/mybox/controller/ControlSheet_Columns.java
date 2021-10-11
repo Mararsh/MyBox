@@ -21,8 +21,8 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -102,7 +102,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
     }
 
     protected String rowName(int row) {
-        return message("Row") + (currentPageStart + row);
+        return message("Row") + (currentPageStart + row + 1);
     }
 
     protected String colName(int col) {
@@ -260,7 +260,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
 
             TextField nameInput = (TextField) (line.getChildren().get(1));
             if (nameInput.getText().isBlank()) {
-                nameInput.setStyle(NodeStyleTools.badStyle);
+                nameInput.setStyle(UserConfig.badStyle());
                 ok = false;
             } else {
                 column.setName(nameInput.getText().trim());
@@ -280,12 +280,12 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                         lenSelector.getEditor().setStyle(null);
                     } else {
                         ok = false;
-                        lenSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        lenSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             } catch (Exception e) {
                 ok = false;
-                lenSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                lenSelector.getEditor().setStyle(UserConfig.badStyle());
             }
 
             TextField widthInput = (TextField) (line.getChildren().get(5));
@@ -296,11 +296,11 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                     widthInput.setStyle(null);
                 } else {
                     ok = false;
-                    widthInput.setStyle(NodeStyleTools.badStyle);
+                    widthInput.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
                 ok = false;
-                widthInput.setStyle(NodeStyleTools.badStyle);
+                widthInput.setStyle(UserConfig.badStyle());
             }
 
             if (ok) {
@@ -381,6 +381,12 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
 
     @FXML
     public void validateData() {
+        if (validateChange()) {
+            popInformation(message("DataAreValid"));
+        }
+    }
+
+    public boolean validateChange() {
         try {
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Reason")));
@@ -390,9 +396,9 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                     for (int j = 0; j < sheetInputs[i].length; j++) {
                         String value = cellString(i, j);
                         if (!cellValid(j, value)) {
-                            sheetInputs[i][j].setStyle(NodeStyleTools.badStyle);
+                            sheetInputs[i][j].setStyle(UserConfig.badStyle());
                             List<String> row = new ArrayList<>();
-                            row.addAll(Arrays.asList((currentPageStart + i) + "", (j + 1) + "",
+                            row.addAll(Arrays.asList((currentPageStart + i + 1) + "", (j + 1) + "",
                                     (value == null || value.isBlank() ? message("Null") : message("InvalidValue"))));
                             table.add(row);
                         } else {
@@ -403,11 +409,12 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
             }
             if (!table.isEmpty()) {
                 table.htmlTable();
-            } else {
-                popInformation(message("DataAreValid"));
+                return false;
             }
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -429,34 +436,18 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         if (conn == null || dataName == null) {
             return false;
         }
-        try {
-            DataDefinition def = tableDataDefinition.read(conn, dataType, dataName);
-            if (def == null) {
-                def = DataDefinition.create()
-                        .setDataName(dataName).setDataType(dataType)
-                        .setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
-                tableDataDefinition.insertData(conn, def);
-            } else {
-                def.setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
-                tableDataDefinition.updateData(conn, def);
-                tableDataColumn.clear(conn, def.getDfid());
-            }
-            if (columns != null && !columns.isEmpty()) {
-                if (validateColumns(columns)) {
-                    tableDataColumn.save(conn, def.getDfid(), columns);
-                    conn.commit();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        StringTable validReport = DataDefinition.saveDefinition(tableDataDefinition, tableDataColumn, conn,
+                dataName, dataType, charset, delimiterName, withName, columns);
+        if (validReport != null && !validReport.isEmpty()) {
+            Platform.runLater(() -> {
+                validReport.htmlTable();
+            });
             if (task != null) {
-                task.setError(e.toString());
+                task.setError(message("InvalidColumns"));
             }
             return false;
+        } else {
+            return true;
         }
     }
 

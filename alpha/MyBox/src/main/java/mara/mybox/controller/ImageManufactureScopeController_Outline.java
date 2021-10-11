@@ -230,8 +230,6 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                         scope.setOutline(outline[1]);
                         scope.setRectangle(maskRectangleData.cloneValues());
                         displayOutline(outline[1]);
-
-                        popImage();
                     }
 
                 };

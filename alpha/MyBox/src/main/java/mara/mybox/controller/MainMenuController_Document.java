@@ -133,6 +133,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void htmlExtractTables(ActionEvent event) {
+        loadScene(Fxmls.HtmlExtractTablesFxml);
+    }
+
+    @FXML
     protected void openHtmlMergeAsHtml(ActionEvent event) {
         loadScene(Fxmls.HtmlMergeAsHtmlFxml);
     }

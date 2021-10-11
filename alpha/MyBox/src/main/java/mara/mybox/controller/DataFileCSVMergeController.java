@@ -13,10 +13,10 @@ import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -55,9 +55,9 @@ public class DataFileCSVMergeController extends FilesMergeController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
                     .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                    .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(csvSourceController.delimiterInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(csvTargetController.delimiterInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(csvSourceController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(csvTargetController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -80,7 +80,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
     @Override
     protected boolean openWriter() {
         try {
-            if (csvSourceController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)
+            if (csvSourceController.delimiterInput.getStyle().equals(UserConfig.badStyle())
                     || (!csvSourceController.autoDetermine && csvSourceController.charset == null)) {
                 return false;
             }

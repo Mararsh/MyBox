@@ -90,7 +90,7 @@ public class ControlCsvOptions extends BaseController {
                     if (delimiterInputRadio.isSelected()) {
                         String v = delimiterInput.getText();
                         if (v == null || v.isBlank()) {
-                            delimiterInput.setStyle(NodeStyleTools.badStyle);
+                            delimiterInput.setStyle(UserConfig.badStyle());
                             return;
                         }
                         delimiter = v.charAt(0);

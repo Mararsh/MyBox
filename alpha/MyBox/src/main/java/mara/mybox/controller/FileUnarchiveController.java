@@ -29,7 +29,7 @@ import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.cell.TreeTableEraCell;
 import mara.mybox.fxml.cell.TreeTableFileSizeCell;
 import mara.mybox.tools.CompressTools;
@@ -324,7 +324,7 @@ public class FileUnarchiveController extends FilesTreeController {
     @FXML
     @Override
     public void startAction() {
-        if (targetPath == null || NodeStyleTools.badStyle.equals(targetPathInput.getStyle())) {
+        if (targetPath == null || UserConfig.badStyle().equals(targetPathInput.getStyle())) {
             popError(Languages.message("InvalidTargetPath"));
             return;
         }

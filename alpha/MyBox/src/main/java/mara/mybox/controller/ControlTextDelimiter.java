@@ -47,7 +47,7 @@ public class ControlTextDelimiter extends BaseController {
                     if (stringRadio.isSelected()) {
                         String v = delimiterInput.getText();
                         if (v == null || v.isBlank()) {
-                            delimiterInput.setStyle(NodeStyleTools.badStyle);
+                            delimiterInput.setStyle(UserConfig.badStyle());
                             return;
                         }
                         delimiterName = v;
@@ -85,7 +85,7 @@ public class ControlTextDelimiter extends BaseController {
                         return;
                     }
                     if (newValue == null || newValue.isBlank()) {
-                        delimiterInput.setStyle(NodeStyleTools.badStyle);
+                        delimiterInput.setStyle(UserConfig.badStyle());
                         return;
                     }
                     delimiterName = newValue;

@@ -31,7 +31,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
         }
         List<List<String>> rows = new ArrayList<>();
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            int index = 0;
+            int index = -1;
             String d;
             for (CSVRecord record : parser) {
                 if (++index < currentPageStart || index >= currentPageEnd) {
@@ -49,7 +49,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                     copyPageData(rows, cols);
                 }
             }
-            if (index == 0) {
+            if (index < 0) {
                 copyPageData(rows, cols);
             }
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
             int disLen = disCols == null ? 0 : disCols.size();
             if (percentage || disLen > 0) {
                 try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-                    int fileRowIndex = 0, calLen = calCols.size(), dataIndex = 0;
+                    int fileRowIndex = -1, calLen = calCols.size(), dataIndex = 0;
                     for (CSVRecord record : parser) {
                         if (++fileRowIndex < currentPageStart || fileRowIndex >= currentPageEnd) {
                             dataIndex = fileRowIndex;
@@ -129,7 +129,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                         }
 
                     }
-                    if (fileRowIndex == 0) {
+                    if (fileRowIndex < 0) {
                         dataIndex = writePageStatistic(csvPrinter, sData, calCols, disCols, percentage, dataIndex);
                     }
                 } catch (Exception e) {
@@ -158,7 +158,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
             sData[c] = new DoubleStatistic();
         }
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            int index = 0;
+            int index = -1;
             for (CSVRecord record : parser) {
                 if (++index < currentPageStart || index >= currentPageEnd) {
                     for (int c = 0; c < calSize; c++) {
@@ -180,7 +180,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                     countPageData(sData, calCols);
                 }
             }
-            if (index == 0) {
+            if (index < 0) {
                 countPageData(sData, calCols);
             }
         } catch (Exception e) {
@@ -202,7 +202,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
             return sData;
         }
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            int index = 0;
+            int index = -1;
             for (CSVRecord record : parser) {
                 if (++index < currentPageStart || index >= currentPageEnd) {
                     for (int c = 0; c < calSize; c++) {
@@ -221,7 +221,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                     variancePageData(sData, calCols);
                 }
             }
-            if (index == 0) {
+            if (index < 0) {
                 variancePageData(sData, calCols);
             }
         } catch (Exception e) {

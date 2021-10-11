@@ -17,7 +17,7 @@ import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import thridparty.TableAutoCommitCell;
@@ -67,7 +67,7 @@ public class FFmpegImageFilesTableController extends FilesTableController {
         try {
             long v = Long.parseLong(durationInput.getText());
             if (v <= 0) {
-                durationInput.setStyle(NodeStyleTools.badStyle);
+                durationInput.setStyle(UserConfig.badStyle());
             } else {
                 durationInput.setStyle(null);
                 duration = v;

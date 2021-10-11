@@ -35,26 +35,22 @@ public abstract class ControlSheet_Base extends BaseController {
     protected ColumnDefinition.ColumnType defaultColumnType;
     protected String dataName, defaultColValue, colPrefix, inputStyle;
     protected boolean defaultColNotNull;
-    protected String[][] pageData;
-    protected int colsNumber, rowsNumber;
+
+    protected int totalSize, pagesNumber, pageSize, colsNumber, rowsNumber, widthChange;
+    protected long currentPageStart, currentPageEnd;   // 0-based, excluded end
+    protected int currentPage, currentRow, currentCol;  // 0-based
+    protected int maxRandom;
+    protected short scale;
+    protected boolean sourceWithNames, totalRead;
+    protected List<ColumnDefinition> savedColumns;
+    protected String sourceDelimiterName, editDelimiterName, displayDelimiterName;
+    protected SimpleBooleanProperty sheetChangedNotify, dataChangedNotify;
 
     protected TextField[][] sheetInputs;
     protected CheckBox[] colsCheck, rowsCheck;
-    protected SimpleBooleanProperty sheetChangedNotify, dataChangedNotify;
-    protected int currentRow, currentCol; // 0-based
-    protected boolean isMatrix2;
     protected Label noDataLabel;
-    protected String sourceDelimiterName, editDelimiterName, displayDelimiterName;
-
-    protected long totalSize, currentPageStart, currentPageEnd;   // // 1-based, excluded end
-    protected int pagesNumber, widthChange, currentPage, pageSize;// 1-based
-
+    protected String[][] pageData;
     protected ControlFileBackup backupController;
-    protected boolean sourceWithNames, totalRead;
-    protected List<ColumnDefinition> savedColumns;
-
-    protected int maxRandom;
-    protected short scale;
 
     @FXML
     protected TabPane tabPane;

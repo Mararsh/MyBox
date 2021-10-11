@@ -281,7 +281,7 @@ public class ControlOCROptions extends BaseController {
                 isSettingValues = false;
             } else {
                 currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-                currentOCRFilesLabel.setStyle(NodeStyleTools.badStyle);
+                currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
 
         } catch (Exception e) {
@@ -414,7 +414,7 @@ public class ControlOCROptions extends BaseController {
             } else {
                 UserConfig.setString("ImageOCRLanguages", null);
                 currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-                currentOCRFilesLabel.setStyle(NodeStyleTools.badStyle);
+                currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

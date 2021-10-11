@@ -22,7 +22,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -34,6 +33,7 @@ import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -66,7 +66,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
         File dataPath = ocrOptionsController.dataPathController.file;
         if (!dataPath.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.dataPathController.fileInput.setStyle(NodeStyleTools.badStyle);
+            ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
             return;
         }
         if (ocrOptionsController.embedRadio.isSelected()) {
@@ -83,7 +83,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
         File tesseract = ocrOptionsController.tesseractPathController.file;
         if (!tesseract.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.tesseractPathController.fileInput.setStyle(NodeStyleTools.badStyle);
+            ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
             return;
         }
         loading = handling();

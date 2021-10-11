@@ -83,10 +83,10 @@ public class PdfAttributesController extends BaseController {
                         versionInput.setStyle(null);
                         version = f;
                     } else {
-                        versionInput.setStyle(NodeStyleTools.badStyle);
+                        versionInput.setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    versionInput.setStyle(NodeStyleTools.badStyle);
+                    versionInput.setStyle(UserConfig.badStyle());
                 }
             }
         });
@@ -105,10 +105,10 @@ public class PdfAttributesController extends BaseController {
                         createTimeInput.setStyle(null);
                         createTime = d;
                     } else {
-                        createTimeInput.setStyle(NodeStyleTools.badStyle);
+                        createTimeInput.setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    createTimeInput.setStyle(NodeStyleTools.badStyle);
+                    createTimeInput.setStyle(UserConfig.badStyle());
                 }
             }
         });
@@ -127,10 +127,10 @@ public class PdfAttributesController extends BaseController {
                         modifyTimeInput.setStyle(null);
                         modifyTime = d;
                     } else {
-                        modifyTimeInput.setStyle(NodeStyleTools.badStyle);
+                        modifyTimeInput.setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    modifyTimeInput.setStyle(NodeStyleTools.badStyle);
+                    modifyTimeInput.setStyle(UserConfig.badStyle());
                 }
             }
         });
@@ -185,12 +185,12 @@ public class PdfAttributesController extends BaseController {
         authorInput.setText(UserConfig.getString("AuthorKey", System.getProperty("user.name")));
 
         saveButton.disableProperty().bind(
-                sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                        .or(versionInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                        .or(createTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                        .or(modifyTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                        .or(userPasswordInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                        .or(ownerPasswordInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                        .or(versionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                        .or(createTimeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                        .or(modifyTimeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                        .or(userPasswordInput2.styleProperty().isEqualTo(UserConfig.badStyle()))
+                        .or(ownerPasswordInput2.styleProperty().isEqualTo(UserConfig.badStyle()))
         );
 
     }
@@ -208,7 +208,7 @@ public class PdfAttributesController extends BaseController {
 
     @Override
     public void sourceFileChanged(final File file) {
-        sourceFileInput.setStyle(NodeStyleTools.badStyle);
+        sourceFileInput.setStyle(UserConfig.badStyle());
         if (!PdfTools.isPDF(file.getAbsolutePath())) {
             return;
         }
@@ -229,7 +229,7 @@ public class PdfAttributesController extends BaseController {
             userPasswordInput.setStyle(null);
             userPasswordInput2.setStyle(null);
         } else {
-            userPasswordInput2.setStyle(NodeStyleTools.badStyle);
+            userPasswordInput2.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -246,7 +246,7 @@ public class PdfAttributesController extends BaseController {
             ownerPasswordInput.setStyle(null);
             ownerPasswordInput2.setStyle(null);
         } else {
-            ownerPasswordInput2.setStyle(NodeStyleTools.badStyle);
+            ownerPasswordInput2.setStyle(UserConfig.badStyle());
         }
     }
 

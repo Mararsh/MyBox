@@ -132,8 +132,8 @@ public abstract class BaseDataOperationController extends BaseController {
                 rowAllRadio.setDisable(sheetController.pagesNumber <= 1 || sheetController.dataChangedNotify.get());
             }
             List<String> rows = new ArrayList<>();
-            for (long i = sheetController.pageStart(); i < sheetController.pageEnd(); i++) {
-                rows.add(i + "");
+            for (long i = sheetController.pageStart2(); i < sheetController.pageEnd2(); i++) {
+                rows.add((i + 1) + "");
             }
             if (rowSelector != null) {
                 String v = rowSelector.getValue();

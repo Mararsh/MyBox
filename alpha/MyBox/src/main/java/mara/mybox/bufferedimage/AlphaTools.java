@@ -52,7 +52,7 @@ public class AlphaTools {
         if (!hasAlpha(source)) {
             return source;
         }
-        return AlphaTools.removeAlpha(source, ColorConvertTools.getAlphaColor());
+        return AlphaTools.removeAlpha(source, ColorConvertTools.alphaColor());
     }
 
     public static BufferedImage removeAlpha(BufferedImage source, Color alphaColor) {
@@ -153,7 +153,7 @@ public class AlphaTools {
             BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, imageType);
             Color sourceColor;
             Color newColor;
-            Color bkColor = ColorConvertTools.getAlphaColor();
+            Color bkColor = ColorConvertTools.alphaColor();
             int bkPixel = bkColor.getRGB();
             for (int j = 0; j < sourceHeight; ++j) {
                 for (int i = 0; i < sourceWidth; ++i) {

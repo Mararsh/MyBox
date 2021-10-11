@@ -52,7 +52,7 @@ public class Link {
         if (pageName == null || pageName.isBlank()) {
             pageName = UrlTools.filePrefix(getUrl());
         }
-        return FileNameTools.filenameFilter(pageName);
+        return FileNameTools.filter(pageName);
     }
 
     public String filename(File path, FilenameType nameType) {

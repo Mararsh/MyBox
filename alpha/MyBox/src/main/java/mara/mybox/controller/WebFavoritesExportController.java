@@ -145,7 +145,7 @@ public class WebFavoritesExportController extends BaseTaskController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(treeView.getSelectionModel().selectedItemProperty().isNull())
             );
 
@@ -293,7 +293,7 @@ public class WebFavoritesExportController extends BaseTaskController {
                 if (framesetFile != null) {
                     updateLogs(Languages.message("Writing") + " " + framesetFile.getAbsolutePath());
                     StringBuilder s;
-                    String subPath = FileNameTools.filenameFilter(prefix) + "-frameset";
+                    String subPath = FileNameTools.filter(prefix) + "-frameset";
                     File path = new File(targetPath + File.separator + subPath + File.separator);
                     path.mkdirs();
                     framesetNavFile = new File(path.getAbsolutePath() + File.separator + "nav.html");
@@ -448,12 +448,12 @@ public class WebFavoritesExportController extends BaseTaskController {
             FileWriter bookWriter = null, bookNavWriter = null;
             File nodeFile = null;
             if (framesetNavWriter != null) {
-                File bookNavFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filenameFilter(title) + "_nav.html");
+                File bookNavFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(title) + "_nav.html");
                 bookNavWriter = new FileWriter(bookNavFile, charset);
                 writeHtmlHead(bookNavWriter, title);
                 bookNavWriter.write(indent + "<BODY>\n");
 
-                nodeFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filenameFilter(title) + ".html");
+                nodeFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(title) + ".html");
                 bookWriter = new FileWriter(nodeFile, charset);
                 writeHtmlHead(bookWriter, title);
                 bookWriter.write(indent + "<BODY>\n");

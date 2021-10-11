@@ -48,16 +48,16 @@ public class SheetColumnsAddController extends BaseDataOperationController {
                             numberInput.setStyle(null);
                             UserConfig.setInt(baseName + "Number", number);
                         } else {
-                            numberInput.setStyle(NodeStyleTools.badStyle);
+                            numberInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        numberInput.setStyle(NodeStyleTools.badStyle);
+                        numberInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
 
             okButton.disableProperty().bind(Bindings.isEmpty(numberInput.textProperty())
-                    .or(numberInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(numberInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

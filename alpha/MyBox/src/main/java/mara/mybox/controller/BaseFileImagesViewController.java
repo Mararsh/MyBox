@@ -221,11 +221,11 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 pageSelector.getEditor().setStyle(null);
                 return true;
             } else {
-                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                pageSelector.getEditor().setStyle(UserConfig.badStyle());
                 return false;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            pageSelector.getEditor().setStyle(UserConfig.badStyle());
             return false;
         }
     }

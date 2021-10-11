@@ -124,10 +124,10 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
                                 UserConfig.setInt(baseName + "MaxRandom", v);
                                 randomSelector.getEditor().setStyle(null);
                             } else {
-                                randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                                randomSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            randomSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
 
@@ -159,10 +159,10 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
                 UserConfig.setInt(baseName + "Scale", v);
                 scaleSelector.getEditor().setStyle(null);
             } else {
-                scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
         }
     }
 

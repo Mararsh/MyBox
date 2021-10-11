@@ -14,7 +14,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.fxml.NodeStyleTools;
@@ -62,10 +62,10 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(shearBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(angleBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(shearBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(angleBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

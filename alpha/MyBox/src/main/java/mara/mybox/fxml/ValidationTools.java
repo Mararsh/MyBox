@@ -29,11 +29,11 @@ public class ValidationTools {
     }
 
     public static void setEditorBadStyle(final ComboBox box) {
-        setEditorStyle(box, NodeStyleTools.badStyle);
+        setEditorStyle(box, UserConfig.badStyle());
     }
 
     public static void setEditorWarnStyle(final ComboBox box) {
-        setEditorStyle(box, NodeStyleTools.warnStyle);
+        setEditorStyle(box, UserConfig.warnStyle());
     }
 
     public static int positiveValue(final TextField input) {
@@ -47,11 +47,11 @@ public class ValidationTools {
                 input.setStyle(null);
                 return v;
             } else {
-                input.setStyle(NodeStyleTools.badStyle);
+                input.setStyle(UserConfig.badStyle());
                 return -1;
             }
         } catch (Exception e) {
-            input.setStyle(NodeStyleTools.badStyle);
+            input.setStyle(UserConfig.badStyle());
             return -1;
         }
     }
@@ -69,10 +69,10 @@ public class ValidationTools {
                     if (v >= 0 && v <= max) {
                         input.setStyle(null);
                     } else {
-                        input.setStyle(NodeStyleTools.badStyle);
+                        input.setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    input.setStyle(NodeStyleTools.badStyle);
+                    input.setStyle(UserConfig.badStyle());
                 }
             }
         });
@@ -84,7 +84,7 @@ public class ValidationTools {
                 float v = Float.valueOf(newValue);
                 input.setStyle(null);
             } catch (Exception e) {
-                input.setStyle(NodeStyleTools.badStyle);
+                input.setStyle(UserConfig.badStyle());
             }
         });
     }
@@ -102,10 +102,10 @@ public class ValidationTools {
                     if (v > 0 && v <= max) {
                         input.setStyle(null);
                     } else {
-                        input.setStyle(NodeStyleTools.badStyle);
+                        input.setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    input.setStyle(NodeStyleTools.badStyle);
+                    input.setStyle(UserConfig.badStyle());
                 }
             }
         });
@@ -115,16 +115,16 @@ public class ValidationTools {
         if (input == null) {
             return;
         }
-        input.setStyle(NodeStyleTools.badStyle);
+        input.setStyle(UserConfig.badStyle());
         input.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             String v = input.getText();
             if (v == null || v.isEmpty()) {
-                input.setStyle(NodeStyleTools.badStyle);
+                input.setStyle(UserConfig.badStyle());
                 return;
             }
             final File file = new File(newValue);
             if (!file.exists() || !file.isFile()) {
-                input.setStyle(NodeStyleTools.badStyle);
+                input.setStyle(UserConfig.badStyle());
                 return;
             }
             input.setStyle(null);
@@ -141,7 +141,7 @@ public class ValidationTools {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 final File file = new File(newValue);
                 if (!file.isDirectory()) {
-                    input.setStyle(NodeStyleTools.badStyle);
+                    input.setStyle(UserConfig.badStyle());
                     return;
                 }
                 input.setStyle(null);
@@ -158,7 +158,7 @@ public class ValidationTools {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 final File file = new File(newValue);
                 if (!file.exists() || !file.isDirectory()) {
-                    input.setStyle(NodeStyleTools.badStyle);
+                    input.setStyle(UserConfig.badStyle());
                     return;
                 }
                 input.setStyle(null);

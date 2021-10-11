@@ -48,7 +48,7 @@ public abstract class ControlSheetText_Operations extends ControlSheetText_File 
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
-                if (++rowIndex < currentPageStart || rowIndex >= currentPageEnd) {
+                if (rowIndex < currentPageStart || rowIndex >= currentPageEnd) {
                     List<String> values = new ArrayList<>();
                     for (int c : cols) {
                         if (c >= row.size()) {
@@ -62,6 +62,7 @@ public abstract class ControlSheetText_Operations extends ControlSheetText_File 
                 } else if (rowIndex == currentPageStart) {
                     copyPageData(csvPrinter, cols);
                 }
+                rowIndex++;
             }
             if (rowIndex == 0) {
                 copyPageData(csvPrinter, cols);

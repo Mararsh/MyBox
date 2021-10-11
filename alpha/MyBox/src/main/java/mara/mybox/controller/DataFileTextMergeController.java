@@ -16,13 +16,13 @@ import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -57,9 +57,9 @@ public class DataFileTextMergeController extends FilesMergeController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
                     .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                    .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(readOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(writeOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(readOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(writeOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

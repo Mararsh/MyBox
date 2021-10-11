@@ -47,7 +47,7 @@ public abstract class PixelsOperation {
     }
 
     public PixelsOperation() {
-        this.bkColor = ColorConvertTools.getAlphaColor();
+        this.bkColor = ColorConvertTools.alphaColor();
         excludeScope = false;
     }
 

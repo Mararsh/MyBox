@@ -171,12 +171,12 @@ public class ControlTextFilter extends BaseController {
         for (String s : strings) {
             String v = ByteTools.formatTextHex(s);
             if (v == null) {
-                filterInput.setStyle(NodeStyleTools.badStyle);
+                filterInput.setStyle(UserConfig.badStyle());
                 return;
             }
             if (v.length() >= maxLen * 3) {
                 popError(Languages.message("FindStringLimitation"));
-                filterInput.setStyle(NodeStyleTools.badStyle);
+                filterInput.setStyle(UserConfig.badStyle());
                 return;
             }
             vs.add(v);

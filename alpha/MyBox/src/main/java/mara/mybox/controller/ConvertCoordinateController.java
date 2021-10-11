@@ -24,7 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
@@ -102,10 +102,10 @@ public class ConvertCoordinateController extends BaseMapController {
                             decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                             isSettingValues = false;
                         } else {
-                            degreesInput.setStyle(NodeStyleTools.badStyle);
+                            degreesInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        degreesInput.setStyle(NodeStyleTools.badStyle);
+                        degreesInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -143,10 +143,10 @@ public class ConvertCoordinateController extends BaseMapController {
                             decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                             isSettingValues = false;
                         } else {
-                            minutesInput.setStyle(NodeStyleTools.badStyle);
+                            minutesInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        minutesInput.setStyle(NodeStyleTools.badStyle);
+                        minutesInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -184,10 +184,10 @@ public class ConvertCoordinateController extends BaseMapController {
                             decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                             isSettingValues = false;
                         } else {
-                            secondsInput.setStyle(NodeStyleTools.badStyle);
+                            secondsInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        secondsInput.setStyle(NodeStyleTools.badStyle);
+                        secondsInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -215,7 +215,7 @@ public class ConvertCoordinateController extends BaseMapController {
                     }
                     double[] v = LocationTools.parseDMS(newValue);
                     if (v[0] < -180) {
-                        dmsInput.setStyle(NodeStyleTools.badStyle);
+                        dmsInput.setStyle(UserConfig.badStyle());
                     } else {
                         dmsInput.setStyle(null);
                         coordinate = v[0];
@@ -272,11 +272,11 @@ public class ConvertCoordinateController extends BaseMapController {
                             secondsInput.setText(DoubleTools.scale(seconds, 4) + "");
                             isSettingValues = false;
                         } else {
-                            decimalInput.setStyle(NodeStyleTools.badStyle);
+                            decimalInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
 //                        MyBoxLog.debug(e.toString());
-                        decimalInput.setStyle(NodeStyleTools.badStyle);
+                        decimalInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -298,10 +298,10 @@ public class ConvertCoordinateController extends BaseMapController {
                                     longitude = v;
                                     longitudeInput.setStyle(null);
                                 } else {
-                                    longitudeInput.setStyle(NodeStyleTools.badStyle);
+                                    longitudeInput.setStyle(UserConfig.badStyle());
                                 }
                             } catch (Exception e) {
-                                longitudeInput.setStyle(NodeStyleTools.badStyle);
+                                longitudeInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
@@ -323,17 +323,17 @@ public class ConvertCoordinateController extends BaseMapController {
                                     latitude = v;
                                     latitudeInput.setStyle(null);
                                 } else {
-                                    latitudeInput.setStyle(NodeStyleTools.badStyle);
+                                    latitudeInput.setStyle(UserConfig.badStyle());
                                 }
                             } catch (Exception e) {
-                                latitudeInput.setStyle(NodeStyleTools.badStyle);
+                                latitudeInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
 
             equalCsButton.disableProperty().bind(
-                    longitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                            .or(latitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    longitudeInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(latitudeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

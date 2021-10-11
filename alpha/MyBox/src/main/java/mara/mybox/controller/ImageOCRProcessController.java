@@ -84,10 +84,10 @@ public class ImageOCRProcessController extends ImageViewerController {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
                         } else {
-                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        scaleSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -109,10 +109,10 @@ public class ImageOCRProcessController extends ImageViewerController {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
                         } else {
-                            binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            binarySelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        binarySelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });

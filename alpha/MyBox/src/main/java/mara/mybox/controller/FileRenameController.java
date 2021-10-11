@@ -66,7 +66,7 @@ public class FileRenameController extends BaseController {
                 closeStage();
                 return;
             }
-            File theFile = new File(pathLabel.getText() + FileNameTools.filenameFilter(nameInput.getText() + suffixLabel.getText()));
+            File theFile = new File(pathLabel.getText() + FileNameTools.filter(nameInput.getText() + suffixLabel.getText()));
             if (theFile.getAbsolutePath().equals(file.getAbsolutePath())) {
                 popError("Same");
                 return;

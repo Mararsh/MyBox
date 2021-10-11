@@ -10,7 +10,6 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
 import org.apache.poi.hslf.usermodel.HSLFShape;
@@ -20,6 +19,7 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -50,7 +50,7 @@ public class PptSplitController extends BaseBatchFileController {
                     Bindings.isEmpty(tableView.getItems())
                             .or(splitWayController.valid)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

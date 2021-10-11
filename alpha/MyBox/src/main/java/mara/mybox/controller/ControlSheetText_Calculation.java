@@ -35,7 +35,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                 readNames(reader);
             }
             String line;
-            int rowIndex = 0;
+            int rowIndex = -1;
             while ((line = reader.readLine()) != null) {
                 List<String> row = parseFileLine(line);
                 if (row == null || row.isEmpty()) {
@@ -56,7 +56,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                     copyPageData(rows, cols);
                 }
             }
-            if (rowIndex == 0) {
+            if (rowIndex < 0) {
                 copyPageData(rows, cols);
             }
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                         readNames(reader);
                     }
                     String line;
-                    int fileRowIndex = 0, calLen = calCols.size(), dataIndex = 0;
+                    int fileRowIndex = -1, calLen = calCols.size(), dataIndex = 0;
                     while ((line = reader.readLine()) != null) {
                         List<String> lineData = parseFileLine(line);
                         if (lineData == null || lineData.isEmpty()) {
@@ -146,7 +146,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                         }
 
                     }
-                    if (fileRowIndex == 0) {
+                    if (fileRowIndex < 0) {
                         dataIndex = writePageStatistic(csvPrinter, sData, calCols, disCols, percentage, dataIndex);
                     }
                 } catch (Exception e) {
@@ -179,7 +179,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                 readNames(reader);
             }
             String line;
-            int index = 0;
+            int index = -1;
             while ((line = reader.readLine()) != null) {
                 List<String> lineData = parseFileLine(line);
                 if (lineData == null || lineData.isEmpty()) {
@@ -205,7 +205,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                     countPageData(sData, calCols);
                 }
             }
-            if (index == 0) {
+            if (index < 0) {
                 countPageData(sData, calCols);
             }
         } catch (Exception e) {
@@ -231,7 +231,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                 readNames(reader);
             }
             String line;
-            int index = 0;
+            int index = -1;
             while ((line = reader.readLine()) != null) {
                 List<String> lineData = parseFileLine(line);
                 if (lineData == null || lineData.isEmpty()) {
@@ -254,7 +254,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                     variancePageData(sData, calCols);
                 }
             }
-            if (index == 0) {
+            if (index < 0) {
                 variancePageData(sData, calCols);
             }
         } catch (Exception e) {

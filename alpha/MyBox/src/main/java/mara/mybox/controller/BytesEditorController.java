@@ -140,7 +140,7 @@ public class BytesEditorController extends BaseFileEditorController {
             }
             final String v = ByteTools.formatTextHex(lbBytesInput.getText());
             if (v == null || v.isEmpty()) {
-                lbBytesInput.setStyle(NodeStyleTools.badStyle);
+                lbBytesInput.setStyle(UserConfig.badStyle());
             } else {
                 lineBreakValue = v;
                 lbBytesInput.setStyle(null);
@@ -157,7 +157,7 @@ public class BytesEditorController extends BaseFileEditorController {
             }
 
         } catch (Exception e) {
-            lbBytesInput.setStyle(NodeStyleTools.badStyle);
+            lbBytesInput.setStyle(UserConfig.badStyle());
         }
 
     }
@@ -174,11 +174,11 @@ public class BytesEditorController extends BaseFileEditorController {
                 lbWidthInput.setStyle(null);
                 UserConfig.setInt(baseName + "LineBreakWidth", v);
             } else {
-                lbWidthInput.setStyle(NodeStyleTools.badStyle);
+                lbWidthInput.setStyle(UserConfig.badStyle());
             }
 
         } catch (Exception e) {
-            lbWidthInput.setStyle(NodeStyleTools.badStyle);
+            lbWidthInput.setStyle(UserConfig.badStyle());
         }
     }
 

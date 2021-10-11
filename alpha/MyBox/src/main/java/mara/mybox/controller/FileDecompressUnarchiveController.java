@@ -11,7 +11,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -127,7 +127,7 @@ public class FileDecompressUnarchiveController extends BaseController {
     public void startAction() {
         compressor = null;
         archiver = null;
-        if (sourceFile == null || NodeStyleTools.badStyle.equals(sourceFileInput.getStyle())) {
+        if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
             popError(Languages.message("InvalidData"));
             return;
         }

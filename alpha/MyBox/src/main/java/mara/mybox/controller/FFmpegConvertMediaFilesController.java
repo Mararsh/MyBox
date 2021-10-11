@@ -15,7 +15,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -23,6 +22,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -43,9 +43,9 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(tableView.getItems()))
-                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

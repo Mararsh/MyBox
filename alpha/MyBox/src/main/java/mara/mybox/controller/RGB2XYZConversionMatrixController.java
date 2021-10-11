@@ -63,37 +63,37 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
         initOptions();
 
         calculateButton.disableProperty().bind(Bindings.isEmpty(scaleInput.textProperty())
-                .or(scaleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(scaleInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.redXInput.textProperty()))
-                .or(rgbController.redXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.redXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.redYInput.textProperty()))
-                .or(rgbController.redYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.redYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.redZInput.textProperty()))
-                .or(rgbController.redZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.redZInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.greenXInput.textProperty()))
-                .or(rgbController.greenXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.greenXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.greenYInput.textProperty()))
-                .or(rgbController.greenYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.greenYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.greenZInput.textProperty()))
-                .or(rgbController.greenZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.greenZInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.blueXInput.textProperty()))
-                .or(rgbController.blueXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.blueXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.blueYInput.textProperty()))
-                .or(rgbController.blueYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.blueYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.blueZInput.textProperty()))
-                .or(rgbController.blueZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.blueZInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.whiteXInput.textProperty()))
-                .or(rgbController.whiteXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.whiteXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.whiteYInput.textProperty()))
-                .or(rgbController.whiteYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.whiteYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(rgbController.whiteZInput.textProperty()))
-                .or(rgbController.whiteZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(rgbController.whiteZInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(xyzController.xInput.textProperty()))
-                .or(xyzController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(xyzController.xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(xyzController.yInput.textProperty()))
-                .or(xyzController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(xyzController.yInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(Bindings.isEmpty(xyzController.zInput.textProperty()))
-                .or(xyzController.zInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(xyzController.zInput.styleProperty().isEqualTo(UserConfig.badStyle()))
         );
 
     }
@@ -117,14 +117,14 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
                 try {
                     int p = Integer.parseInt(scaleMatricesInput.getText());
                     if (p <= 0) {
-                        scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
+                        scaleMatricesInput.setStyle(UserConfig.badStyle());
                     } else {
                         scale = p;
                         scaleMatricesInput.setStyle(null);
                         UserConfig.setInt("MatrixDecimalScale", scale);
                     }
                 } catch (Exception e) {
-                    scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
+                    scaleMatricesInput.setStyle(UserConfig.badStyle());
                 }
             }
         });
@@ -132,7 +132,7 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
         scaleMatricesInput.setText(p + "");
 
         calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()
-                .or(scaleMatricesInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(scaleMatricesInput.styleProperty().isEqualTo(UserConfig.badStyle()))
         );
 
         exportButton.disableProperty().bind(textsArea.textProperty().isEmpty()

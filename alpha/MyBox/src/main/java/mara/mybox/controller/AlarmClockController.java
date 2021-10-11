@@ -95,7 +95,7 @@ public class AlarmClockController extends BaseController {
                         String oldValue, String newValue) {
                     Date d = DateTools.stringToDatetime(startInput.getText());
                     if (d == null) {
-                        startInput.setStyle(NodeStyleTools.badStyle);
+                        startInput.setStyle(UserConfig.badStyle());
                         startTime = -1;
                     } else {
                         startInput.setStyle(null);
@@ -172,12 +172,12 @@ public class AlarmClockController extends BaseController {
             checkLoop();
 
             saveButton.disableProperty().bind(
-                    sysInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                            .or(localInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(everyInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(startInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(loopInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(urlInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    sysInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(localInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(everyInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(startInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(loopInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(urlInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
             volumeValue = 1.0f;
@@ -223,7 +223,7 @@ public class AlarmClockController extends BaseController {
         if (Languages.message("LocalMusic").equals(selected.getText())) {
             final File file = new File(localInput.getText());
             if (!file.exists() || !file.isFile()) {
-                localInput.setStyle(NodeStyleTools.badStyle);
+                localInput.setStyle(UserConfig.badStyle());
             } else {
                 currentSound = file.getAbsolutePath();
             }
@@ -232,13 +232,13 @@ public class AlarmClockController extends BaseController {
             try {
                 currentSound = urlInput.getText();
             } catch (Exception e) {
-                urlInput.setStyle(NodeStyleTools.badStyle);
+                urlInput.setStyle(UserConfig.badStyle());
             }
 
         } else if (Languages.message("SystemSounds").equals(selected.getText())) {
             final File file = new File(sysInput.getText());
             if (!file.exists() || !file.isFile()) {
-                sysInput.setStyle(NodeStyleTools.badStyle);
+                sysInput.setStyle(UserConfig.badStyle());
             } else {
                 currentSound = file.getAbsolutePath();
             }
@@ -276,10 +276,10 @@ public class AlarmClockController extends BaseController {
             try {
                 everyValue = Integer.valueOf(everyInput.getText());
                 if (everyValue <= 0) {
-                    everyInput.setStyle(NodeStyleTools.badStyle);
+                    everyInput.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                everyInput.setStyle(NodeStyleTools.badStyle);
+                everyInput.setStyle(UserConfig.badStyle());
             }
         }
     }
@@ -290,7 +290,7 @@ public class AlarmClockController extends BaseController {
             loopInput.setStyle(null);
         } catch (Exception e) {
             loopValue = 0;
-            loopInput.setStyle(NodeStyleTools.badStyle);
+            loopInput.setStyle(UserConfig.badStyle());
         }
     }
 

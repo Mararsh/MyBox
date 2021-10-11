@@ -14,7 +14,7 @@ import mara.mybox.value.AppValues;
  */
 public class FileNameTools {
 
-    public static String filenameFilter(String name) {
+    public static String filter(String name) {
         if (name == null || name.isBlank()) {
             return name;
         }

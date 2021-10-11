@@ -224,7 +224,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             if (editLabel != null) {
                 editLabel.setText(message("InvalidData"));
             }
-            mainArea.setStyle(NodeStyleTools.badStyle);
+            mainArea.setStyle(UserConfig.badStyle());
 //            popError(message("InvalidData"));
         } else if (editLabel != null) {
             editLabel.setText("");

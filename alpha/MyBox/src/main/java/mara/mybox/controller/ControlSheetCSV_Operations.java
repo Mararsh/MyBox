@@ -40,7 +40,7 @@ public abstract class ControlSheetCSV_Operations extends ControlSheetCSV_File {
                 }
                 csvPrinter.printRecord(names);
             }
-            int index = 0;
+            int index = -1;
             for (CSVRecord record : parser) {
                 if (++index < currentPageStart || index >= currentPageEnd) {
                     List<String> values = new ArrayList<>();
@@ -57,7 +57,7 @@ public abstract class ControlSheetCSV_Operations extends ControlSheetCSV_File {
                     copyPageData(csvPrinter, cols);
                 }
             }
-            if (index == 0) {
+            if (index < 0) {
                 copyPageData(csvPrinter, cols);
             }
         } catch (Exception e) {

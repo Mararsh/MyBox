@@ -608,7 +608,7 @@ public class HtmlReadTools {
         }
     }
 
-    public static List<StringTable> Tables(String html) {
+    public static List<StringTable> Tables(String html, String name) {
         try {
             if (html == null || html.isBlank()) {
                 return null;
@@ -616,9 +616,12 @@ public class HtmlReadTools {
             List<StringTable> tables = new ArrayList<>();
             org.jsoup.nodes.Document doc = Jsoup.parse(html);
             Elements tablesList = doc.getElementsByTag("table");
+            String titlePrefix = name != null ? name + "_t_" : "t_";
+            int count = 0;
             if (tablesList != null) {
                 for (org.jsoup.nodes.Element table : tablesList) {
                     StringTable stringTable = new StringTable();
+                    stringTable.setTitle(titlePrefix + (++count));
                     List<List<String>> data = new ArrayList<>();
                     List<String> names = null;
                     Elements trList = table.getElementsByTag("tr");

@@ -19,11 +19,10 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -123,7 +122,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     header.setAlignment(Pos.CENTER);
                     header.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     header.setSpacing(space);
-                    col0Label = new Label(Languages.message("Col") + "0");
+                    col0Label = new Label(message("Col") + "0");
                     col0Label.setPrefHeight(header.getHeight());
                     col0Label.setAlignment(Pos.CENTER);
                     col0Label.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
@@ -278,7 +277,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                                 v = v == null ? defaultColValue : v;
                                 isSettingValues = true;
                                 valueInput.setText(v);
-                                valueInput.setStyle(inputStyle + (cellValid(col, v) ? "" : NodeStyleTools.badStyle));
+                                valueInput.setStyle(inputStyle + (cellValid(col, v) ? "" : UserConfig.badStyle()));
                                 valueInput.setPrefWidth(columns.get(col).getWidth());
                                 isSettingValues = false;
                                 sheetInputs[row][col] = valueInput;
@@ -295,7 +294,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                 }
                 refreshStyle(sheetBox);
                 if (changed) {
-                    validateData();
+                    validateChange();
                 }
                 sheetChanged(changed);
             } catch (Exception e) {
@@ -329,9 +328,9 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
             if (cellValid(col, value)) {
                 input.setStyle(inputStyle);
             } else {
-                input.setStyle(inputStyle + NodeStyleTools.badStyle);
-                popError(Languages.message("Row") + " " + (row + 1) + " " + Languages.message("Column") + " " + (col + 1)
-                        + " " + (value == null || value.isBlank() ? Languages.message("Null") : Languages.message("InvalidValue")));
+                input.setStyle(inputStyle + UserConfig.badStyle());
+                popError(message("Row") + " " + (row + 1) + " " + message("Column") + " " + (col + 1)
+                        + " " + (value == null || value.isBlank() ? message("Null") : message("InvalidValue")));
             }
             sheetChanged();
         } catch (Exception e) {
@@ -390,12 +389,12 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
     }
 
-    protected long pageStart() {
+    protected long pageStart2() {
         return currentPageStart;
     }
 
-    protected long pageEnd() {
-        return pageStart() + (pageData == null ? 0 : pageData.length);
+    protected long pageEnd2() {
+        return pageStart2() + (pageData == null ? 0 : pageData.length);
     }
 
     protected List<String> row(int row) {

@@ -99,13 +99,13 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetFileInput.textProperty())
-                            .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(optionsController.executableInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(optionsController.titleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(optionsController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(optionsController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(optionsController.widthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(optionsController.heightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(optionsController.executableInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(optionsController.titleInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(optionsController.xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(optionsController.yInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(optionsController.widthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(optionsController.heightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(stopping)
             );
 
