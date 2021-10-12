@@ -245,10 +245,10 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
 
     @Override
     protected String[][] readPageData() {
-        if (currentPageStart < 0) {
-            currentPageStart = 0;
+        if (startRowOfCurrentPage < 0) {
+            startRowOfCurrentPage = 0;
         }
-        long end = currentPageStart + pageSize;
+        long end = startRowOfCurrentPage + pageSize;
         String[][] data = null;
         try ( Workbook wb = WorkbookFactory.create(sourceFile)) {
             Sheet sheet;
@@ -271,7 +271,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                     if (fileRow == null) {
                         continue;
                     }
-                    if (++rowIndex < currentPageStart) {
+                    if (++rowIndex < startRowOfCurrentPage) {
                         continue;
                     }
                     if (rowIndex >= end) {
@@ -305,9 +305,9 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
             MyBoxLog.console(e);
         }
         if (data == null) {
-            currentPageEnd = currentPageStart;
+            endRowOfCurrentPage = startRowOfCurrentPage;
         } else {
-            currentPageEnd = currentPageStart + data.length;
+            endRowOfCurrentPage = startRowOfCurrentPage + data.length;
         }
         return data;
     }
@@ -442,10 +442,10 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                         if (sourceRow == null) {
                             continue;
                         }
-                        if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                        if (++sourceRowIndex < startRowOfCurrentPage || sourceRowIndex >= endRowOfCurrentPage) {
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             MicrosoftDocumentTools.copyRow(sourceRow, targetRow);
-                        } else if (sourceRowIndex == currentPageStart) {
+                        } else if (sourceRowIndex == startRowOfCurrentPage) {
                             targetRowIndex = writePageData(targetSheet, targetRowIndex);
                         }
                     }
@@ -600,7 +600,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                     if (sourceRow == null) {
                         continue;
                     }
-                    if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    if (++fileIndex < startRowOfCurrentPage || fileIndex >= endRowOfCurrentPage) {
                         List<String> values = new ArrayList<>();
                         for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                             String d = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
@@ -608,7 +608,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                             values.add(d);
                         }
                         rowText(s, dataIndex++, values, delimiter);
-                    } else if (fileIndex == currentPageStart) {
+                    } else if (fileIndex == startRowOfCurrentPage) {
                         dataIndex = pageText(s, dataIndex, delimiter);
                     }
                 }
@@ -661,7 +661,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                     if (sourceRow == null) {
                         continue;
                     }
-                    if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    if (++fileIndex < startRowOfCurrentPage || fileIndex >= endRowOfCurrentPage) {
                         List<String> values = new ArrayList<>();
                         if (htmlRowCheck.isSelected()) {
                             values.add(message("Row") + (dataIndex + 1));
@@ -673,7 +673,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                         }
                         table.add(values);
                         dataIndex++;
-                    } else if (fileIndex == currentPageStart) {
+                    } else if (fileIndex == startRowOfCurrentPage) {
                         dataIndex = pageHtml(table, dataIndex);
                     }
                 }

@@ -534,8 +534,9 @@ public class StyleButton {
         if (id.startsWith("hex")) {
             return new StyleData(id, message("FormattedHexadecimal"), "", "iconHex.png");
         }
-        if (id.startsWith("locate")) {
-            return new StyleData(id, message("Locate"), "", "iconLocate.png");
+
+        if (id.startsWith("location")) {
+            return new StyleData(id, message("Location"), "", "iconLocation.png");
         }
         if (id.startsWith("imageSize")) {
             switch (id) {

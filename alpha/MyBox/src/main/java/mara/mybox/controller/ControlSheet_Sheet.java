@@ -2,11 +2,14 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -16,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
@@ -73,7 +77,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         makeSheet(data, true);
     }
 
-    public synchronized void makeSheet(String[][] data, boolean changed) {
+    public synchronized void makeSheet(String[][] inData, boolean changed) {
         if (isSettingValues) {
             return;
         }
@@ -85,6 +89,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
         Platform.runLater(() -> {
             try {
+                String[][] data = inData;
                 clearSheet();
                 int rowsSize = data == null ? 0 : data.length;
                 int colsSize = data == null || rowsSize == 0 ? 0 : data[0].length;
@@ -107,6 +112,40 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                 }
                 if (dataType == DataType.Matrix) {
                     makeColumns(colsSize);
+                }
+                if (rowsSize * colsSize > warnThreshold) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle(getMyStage().getTitle());
+                    alert.setHeaderText(getMyStage().getTitle());
+                    alert.setContentText(message("SheetSizeTooLarge"));
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    ButtonType buttonDisplay = new ButtonType(message("Display"));
+                    ButtonType buttonLess = new ButtonType(message("DisplayLessRows"));
+                    ButtonType buttonCancel = new ButtonType(message("Cancel"));
+                    alert.getButtonTypes().setAll(buttonLess, buttonDisplay, buttonCancel);
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == buttonLess) {
+                        int lessRowsSize = warnThreshold / colsSize;
+                        if (lessRowsSize < 1) {
+                            lessRowsSize = 1;
+                        }
+                        String[][] lessData = new String[lessRowsSize][colsSize];
+                        for (int i = 0; i < lessRowsSize; i++) {
+                            lessData[i] = data[i];
+                        }
+                        data = lessData;
+                        rowsSize = lessRowsSize;
+
+                    } else if (result.get() != buttonDisplay) {
+                        if (loading != null) {
+                            loading.closeStage();
+                        }
+                        return;
+                    }
                 }
                 double space = 0.0;
                 double rowCheckWidth = 80 + (rowsSize + "").length() * AppVariables.sceneFontSize;
@@ -390,7 +429,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     }
 
     protected long pageStart2() {
-        return currentPageStart;
+        return startRowOfCurrentPage;
     }
 
     protected long pageEnd2() {

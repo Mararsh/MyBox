@@ -8,7 +8,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
@@ -99,11 +98,11 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
     public double doubleValue(String v) {
         try {
             if (v == null || v.isBlank()) {
-                v = defaultColValue;
+                return 0;
             }
             return Double.valueOf(v.replaceAll(",", ""));
         } catch (Exception e) {
-            return AppValues.InvalidDouble;
+            return 0;
         }
     }
 
@@ -199,7 +198,8 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
 
     public void statistic(List<Integer> rows, List<Integer> calCols, List<Integer> disCols,
             boolean mode, boolean median, boolean percentage) {
-        if (rows == null || rows.isEmpty() || calCols == null || calCols.isEmpty() || sheetInputs == null || columns == null) {
+        if (rows == null || rows.isEmpty() || calCols == null || calCols.isEmpty()
+                || sheetInputs == null || columns == null) {
             popError(message("NoData"));
             return;
         }
@@ -263,7 +263,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
                     sData[c].count++;
                     int col = calCols.get(c);
                     if (col >= sheetInputs[r].length) {
-                        break;
+                        continue;
                     }
                     double v = doubleValue(cellString(r, col));
                     sData[c].sum += v;
@@ -289,7 +289,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
                 for (int c = 0; c < calCols.size(); c++) {
                     int col = calCols.get(c);
                     if (col >= sheetInputs[r].length) {
-                        break;
+                        continue;
                     }
                     double v = doubleValue(cellString(r, col));
                     sData[c].variance += Math.pow(v - sData[c].mean, 2);

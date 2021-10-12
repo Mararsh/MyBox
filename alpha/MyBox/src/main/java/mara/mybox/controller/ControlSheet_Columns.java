@@ -102,7 +102,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
     }
 
     protected String rowName(int row) {
-        return message("Row") + (currentPageStart + row + 1);
+        return message("Row") + (startRowOfCurrentPage + row + 1);
     }
 
     protected String colName(int col) {
@@ -398,7 +398,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                         if (!cellValid(j, value)) {
                             sheetInputs[i][j].setStyle(UserConfig.badStyle());
                             List<String> row = new ArrayList<>();
-                            row.addAll(Arrays.asList((currentPageStart + i + 1) + "", (j + 1) + "",
+                            row.addAll(Arrays.asList((startRowOfCurrentPage + i + 1) + "", (j + 1) + "",
                                     (value == null || value.isBlank() ? message("Null") : message("InvalidValue"))));
                             table.add(row);
                         } else {

@@ -9,7 +9,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.Link.FilenameType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -80,6 +79,9 @@ public class DownloadFirstLevelLinksSetController extends BaseController {
     @Override
     public void okAction() {
         if (parentController == null) {
+            return;
+        }
+        if (pathInput.getText() == null || pathInput.getText().isBlank()) {
             return;
         }
         DownloadFirstLevelLinksController controller = (DownloadFirstLevelLinksController) parentController;

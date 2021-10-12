@@ -170,10 +170,10 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
 
     @Override
     protected String[][] readPageData() {
-        if (currentPageStart < 0) {
-            currentPageStart = 0;
+        if (startRowOfCurrentPage < 0) {
+            startRowOfCurrentPage = 0;
         }
-        long end = currentPageStart + pageSize;
+        long end = startRowOfCurrentPage + pageSize;
         String[][] data = null;
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset))) {
             if (sourceWithNames) {
@@ -187,7 +187,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
-                if (++rowIndex < currentPageStart) {
+                if (++rowIndex < startRowOfCurrentPage) {
                     continue;
                 }
                 if (rowIndex >= end) {
@@ -215,9 +215,9 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
             MyBoxLog.console(e);
         }
         if (data == null) {
-            currentPageEnd = currentPageStart;
+            endRowOfCurrentPage = startRowOfCurrentPage;
         } else {
-            currentPageEnd = currentPageStart + data.length;
+            endRowOfCurrentPage = startRowOfCurrentPage + data.length;
         }
         return data;
 
@@ -320,9 +320,9 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                     if (row == null || row.isEmpty()) {
                         continue;
                     }
-                    if (++rowIndex < currentPageStart || rowIndex >= currentPageEnd) {
+                    if (++rowIndex < startRowOfCurrentPage || rowIndex >= endRowOfCurrentPage) {
                         TextFileTools.writeLine(writer, row, delimiter);
-                    } else if (rowIndex == currentPageStart) {
+                    } else if (rowIndex == startRowOfCurrentPage) {
                         writePageData(writer, delimiter);
                     }
                 }
@@ -408,9 +408,9 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
-                if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                if (++fileIndex < startRowOfCurrentPage || fileIndex >= endRowOfCurrentPage) {
                     rowText(s, dataIndex++, row, delimiter);
-                } else if (fileIndex == currentPageStart) {
+                } else if (fileIndex == startRowOfCurrentPage) {
                     dataIndex = pageText(s, dataIndex, delimiter);
                 }
             }
@@ -454,13 +454,13 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
-                if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                if (++fileIndex < startRowOfCurrentPage || fileIndex >= endRowOfCurrentPage) {
                     if (htmlRowCheck.isSelected()) {
                         row.add(0, message("Row") + (dataIndex + 1));
                     }
                     table.add(row);
                     dataIndex++;
-                } else if (fileIndex == currentPageStart) {
+                } else if (fileIndex == startRowOfCurrentPage) {
                     dataIndex = pageHtml(table, dataIndex);
                 }
             }

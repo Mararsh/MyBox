@@ -85,7 +85,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-11
  * @License Apache License Version 2.0
  */
-public class DownloadFirstLevelLinksController extends WebAddressController {
+public class DownloadFirstLevelLinksController extends BaseController {
 
     protected final ObservableList<Link> linksData, downloadingData, failedData;
     protected int maxThreadsNumber, maxLogs, maxRetries;
@@ -510,7 +510,7 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
             popError(Languages.message("InvalidParameters"));
             return;
         }
-        VisitHistoryTools.visitURI(address);
+        VisitHistoryTools.downloadURI(address);
         File downloadPath = targetPathController.file;
         if (downloadPath == null) {
             popError(Languages.message("InvalidParameters"));

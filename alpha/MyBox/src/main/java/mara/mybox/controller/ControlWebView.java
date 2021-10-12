@@ -40,7 +40,6 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import mara.mybox.data.BaseTask;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
@@ -52,7 +51,6 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -627,13 +625,25 @@ public class ControlWebView extends BaseController {
                 menu = new MenuItem(message("CopyImageToSystemClipboard"));
             }
             menu.setOnAction((ActionEvent event) -> {
-                copyImage(finalAddress, name, true);
+                handleImage(finalAddress, name, "toSystemClipboard");
             });
             items.add(menu);
 
             menu = new MenuItem(message("CopyImageToMyBoxClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                copyImage(finalAddress, name, false);
+                handleImage(finalAddress, name, "toMyBoxClipboard");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ViewImage"));
+            menu.setOnAction((ActionEvent event) -> {
+                handleImage(finalAddress, name, "view");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("EditImage"));
+            menu.setOnAction((ActionEvent event) -> {
+                handleImage(finalAddress, name, "edit");
             });
             items.add(menu);
         }
@@ -716,64 +726,51 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    public void copyImage(String address, String name, boolean toSystemClipboard) {
-        if (address == null) {
+    public void handleImage(String address, String name, String target) {
+        if (address == null || target == null) {
             return;
         }
         synchronized (this) {
-            BaseTask copyTask = new BaseTask<Void>() {
+            popInformation(message("Handling..."));
+            SingletonTask bgTask = new SingletonTask<Void>() {
+
+                private Image image = null;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        String suffix = null;
-                        if (name != null && !name.isBlank()) {
-                            suffix = FileNameTools.getFileSuffix(name);
-                        }
-                        String addrSuffix = FileNameTools.getFileSuffix(address);
-                        if (addrSuffix != null && !addrSuffix.isBlank()) {
-                            if (suffix == null || suffix.isBlank()
-                                    || !addrSuffix.equalsIgnoreCase(suffix)) {
-                                suffix = addrSuffix;
-                            }
-                        }
-                        if (suffix == null || (suffix.length() != 3
-                                && !"jpeg".equalsIgnoreCase(suffix) && !"tiff".equalsIgnoreCase(suffix))) {
-                            suffix = "jpg";
-                        }
-
-                        File tmpFile = HtmlReadTools.url2File(address);
-                        if (tmpFile == null) {
+                        File imageFile = HtmlReadTools.url2Image(address, name);
+                        BufferedImage bi = ImageFileReaders.readImage(imageFile);
+                        if (bi == null) {
                             return false;
                         }
-                        File imageFile = new File(tmpFile.getAbsoluteFile() + "." + suffix);
-                        if (FileTools.rename(tmpFile, imageFile)) {
-                            BufferedImage bi = ImageFileReaders.readImage(imageFile);
-                            if (bi == null) {
-                                return false;
-                            }
-                            Image image = SwingFXUtils.toFXImage(bi, null);
-                            if (image == null) {
-                                return false;
-                            }
-                            if (toSystemClipboard) {
-                                ImageClipboardTools.copyToSystemClipboard(myController, image);
-                                return true;
-                            } else {
-                                ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
-                                return true;
-                            }
-                        } else {
-                            return false;
-                        }
+                        image = SwingFXUtils.toFXImage(bi, null);
+                        return image != null;
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
                     }
                 }
 
+                @Override
+                protected void whenSucceeded() {
+                    switch (target) {
+                        case "toSystemClipboard":
+                            ImageClipboardTools.copyToSystemClipboard(myController, image);
+                            break;
+                        case "toMyBoxClipboard":
+                            ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
+                            break;
+                        case "edit":
+                            ImageManufactureController.load(image);
+                            break;
+                        default:
+                            ImageViewerController.load(image);
+                    }
+                }
+
             };
-            start(copyTask, false);
+            start(bgTask, false);
         }
     }
 
@@ -1096,51 +1093,70 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        try {
-            NodeList aList = doc.getElementsByTagName("a");
-            if (aList == null || aList.getLength() < 1) {
-                popError(message("NoData"));
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
-                    message("Address"), message("FullAddress")
-            ));
-            StringTable table = new StringTable(names);
-            int index = 1;
-            for (int i = 0; i < aList.getLength(); i++) {
-                org.w3c.dom.Node node = aList.item(i);
-                if (node == null) {
-                    continue;
+        synchronized (this) {
+            popInformation(message("Handling..."));
+            SingletonTask bgTask = new SingletonTask<Void>() {
+
+                private StringTable table;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        NodeList aList = doc.getElementsByTagName("a");
+                        if (aList == null || aList.getLength() < 1) {
+                            error = message("NoData");
+                            return false;
+                        }
+                        List<String> names = new ArrayList<>();
+                        names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
+                                message("Address"), message("FullAddress")
+                        ));
+                        table = new StringTable(names);
+                        int index = 1;
+                        for (int i = 0; i < aList.getLength(); i++) {
+                            org.w3c.dom.Node node = aList.item(i);
+                            if (node == null) {
+                                continue;
+                            }
+                            Element element = (Element) node;
+                            String href = element.getAttribute("href");
+                            if (href == null || href.isBlank()) {
+                                continue;
+                            }
+                            String linkAddress = href;
+                            try {
+                                URL url = new URL(new URL(element.getBaseURI()), href);
+                                linkAddress = url.toString();
+                            } catch (Exception e) {
+                            }
+                            String name = element.getTextContent();
+                            String title = element.getAttribute("title");
+                            List<String> row = new ArrayList<>();
+                            row.addAll(Arrays.asList(
+                                    index + "",
+                                    "<a href=\"" + linkAddress + "\">" + (name == null ? title : name) + "</a>",
+                                    name == null ? "" : name,
+                                    title == null ? "" : title,
+                                    URLDecoder.decode(href, charset),
+                                    URLDecoder.decode(linkAddress, charset)
+                            ));
+                            table.add(row);
+                            index++;
+                        }
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                 }
-                Element element = (Element) node;
-                String href = element.getAttribute("href");
-                if (href == null || href.isBlank()) {
-                    continue;
+
+                @Override
+                protected void whenSucceeded() {
+                    table.editHtml();
                 }
-                String linkAddress = href;
-                try {
-                    URL url = new URL(new URL(element.getBaseURI()), href);
-                    linkAddress = url.toString();
-                } catch (Exception e) {
-                }
-                String name = element.getTextContent();
-                String title = element.getAttribute("title");
-                List<String> row = new ArrayList<>();
-                row.addAll(Arrays.asList(
-                        index + "",
-                        "<a href=\"" + linkAddress + "\">" + (name == null ? title : name) + "</a>",
-                        name == null ? "" : name,
-                        title == null ? "" : title,
-                        URLDecoder.decode(href, charset),
-                        URLDecoder.decode(linkAddress, charset)
-                ));
-                table.add(row);
-                index++;
-            }
-            table.editHtml();
-        } catch (Exception e) {
-            popError(e.toString());
+
+            };
+            start(bgTask, false);
         }
     }
 
@@ -1150,50 +1166,69 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        try {
-            NodeList aList = doc.getElementsByTagName("img");
-            if (aList == null || aList.getLength() < 1) {
-                popError(message("NoData"));
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
-                    message("Address"), message("FullAddress")
-            ));
-            StringTable table = new StringTable(names);
-            int index = 1;
-            for (int i = 0; i < aList.getLength(); i++) {
-                org.w3c.dom.Node node = aList.item(i);
-                if (node == null) {
-                    continue;
+        synchronized (this) {
+            popInformation(message("Handling..."));
+            SingletonTask bgTask = new SingletonTask<Void>() {
+
+                private StringTable table;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        NodeList aList = doc.getElementsByTagName("img");
+                        if (aList == null || aList.getLength() < 1) {
+                            error = message("NoData");
+                            return false;
+                        }
+                        List<String> names = new ArrayList<>();
+                        names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
+                                message("Address"), message("FullAddress")
+                        ));
+                        table = new StringTable(names);
+                        int index = 1;
+                        for (int i = 0; i < aList.getLength(); i++) {
+                            org.w3c.dom.Node node = aList.item(i);
+                            if (node == null) {
+                                continue;
+                            }
+                            Element element = (Element) node;
+                            String href = element.getAttribute("src");
+                            if (href == null || href.isBlank()) {
+                                continue;
+                            }
+                            String linkAddress = href;
+                            try {
+                                URL url = new URL(new URL(element.getBaseURI()), href);
+                                linkAddress = url.toString();
+                            } catch (Exception e) {
+                            }
+                            String name = element.getAttribute("alt");
+                            List<String> row = new ArrayList<>();
+                            row.addAll(Arrays.asList(
+                                    index + "",
+                                    "<a href=\"" + linkAddress + "\">" + (name == null ? message("Link") : name) + "</a>",
+                                    "<img src=\"" + linkAddress + "\" " + (name == null ? "" : "alt=\"" + name + "\"") + " width=100/>",
+                                    name == null ? "" : name,
+                                    URLDecoder.decode(href, charset),
+                                    URLDecoder.decode(linkAddress, charset)
+                            ));
+                            table.add(row);
+                            index++;
+                        }
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                 }
-                Element element = (Element) node;
-                String href = element.getAttribute("src");
-                if (href == null || href.isBlank()) {
-                    continue;
+
+                @Override
+                protected void whenSucceeded() {
+                    table.editHtml();
                 }
-                String linkAddress = href;
-                try {
-                    URL url = new URL(new URL(element.getBaseURI()), href);
-                    linkAddress = url.toString();
-                } catch (Exception e) {
-                }
-                String name = element.getAttribute("alt");
-                List<String> row = new ArrayList<>();
-                row.addAll(Arrays.asList(
-                        index + "",
-                        "<a href=\"" + linkAddress + "\">" + (name == null ? message("Link") : name) + "</a>",
-                        "<img src=\"" + linkAddress + "\" " + (name == null ? "" : "alt=\"" + name + "\"") + " width=100/>",
-                        name == null ? "" : name,
-                        URLDecoder.decode(href, charset),
-                        URLDecoder.decode(linkAddress, charset)
-                ));
-                table.add(row);
-                index++;
-            }
-            table.editHtml();
-        } catch (Exception e) {
-            popError(e.toString());
+
+            };
+            start(bgTask, false);
         }
     }
 
@@ -1202,14 +1237,32 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        String toc = HtmlReadTools.toc(html, 8);
-        if (toc == null || toc.isBlank()) {
-            popError(message("NoData"));
-            return;
+        synchronized (this) {
+            popInformation(message("Handling..."));
+            SingletonTask bgTask = new SingletonTask<Void>() {
+
+                private String toc;
+
+                @Override
+                protected boolean handle() {
+                    toc = HtmlReadTools.toc(html, 8);
+                    if (toc == null || toc.isBlank()) {
+                        error = message("NoData");
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+                    c.loadContents(toc);
+                    c.toFront();
+                }
+
+            };
+            start(bgTask, false);
         }
-        TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        c.loadContents(toc);
-        c.toFront();
     }
 
     protected void texts(String html) {
@@ -1217,14 +1270,32 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        String texts = HtmlWriteTools.htmlToText(html);
-        if (texts == null || texts.isBlank()) {
-            popError(message("NoData"));
-            return;
+        synchronized (this) {
+            popInformation(message("Handling..."));
+            SingletonTask bgTask = new SingletonTask<Void>() {
+
+                private String texts;
+
+                @Override
+                protected boolean handle() {
+                    texts = HtmlWriteTools.htmlToText(html);
+                    if (texts == null || texts.isBlank()) {
+                        error = message("NoData");
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+                    c.loadContents(texts);
+                    c.toFront();
+                }
+
+            };
+            start(bgTask, false);
         }
-        TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        c.loadContents(texts);
-        c.toFront();
     }
 
     protected void tables(String html, String title) {
@@ -1232,15 +1303,32 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        popInformation(message("Handling..."));
-        List<StringTable> tables = HtmlReadTools.Tables(html, title);
-        if (tables == null || tables.isEmpty()) {
-            popError(message("NoData"));
-            return;
+        synchronized (this) {
+            popInformation(message("Handling..."));
+            SingletonTask bgTask = new SingletonTask<Void>() {
+
+                private List<StringTable> tables;
+
+                @Override
+                protected boolean handle() {
+                    tables = HtmlReadTools.Tables(html, title);
+                    if (tables == null || tables.isEmpty()) {
+                        error = message("NoData");
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+                    c.loadData(tables);
+                    c.toFront();
+                }
+
+            };
+            start(bgTask, false);
         }
-        DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        c.loadData(tables);
-        c.toFront();
     }
 
     @FXML

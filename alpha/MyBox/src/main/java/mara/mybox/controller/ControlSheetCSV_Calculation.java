@@ -9,6 +9,7 @@ import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -34,7 +35,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
             int index = -1;
             String d;
             for (CSVRecord record : parser) {
-                if (++index < currentPageStart || index >= currentPageEnd) {
+                if (++index < startRowOfCurrentPage || index >= endRowOfCurrentPage) {
                     List<String> row = new ArrayList<>();
                     for (int c : cols) {
                         if (c >= record.size()) {
@@ -45,7 +46,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                         }
                     }
                     rows.add(row);
-                } else if (index == currentPageStart) {
+                } else if (index == startRowOfCurrentPage) {
                     copyPageData(rows, cols);
                 }
             }
@@ -56,20 +57,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
             MyBoxLog.error(e);
             return null;
         }
-        if (rows.isEmpty()) {
-            return null;
-        }
-        String[][] data = new String[rows.size()][cols.size()];
-        for (int r = 0; r < rows.size(); ++r) {
-            List<String> row = rows.get(r);
-            for (int c = 0; c < cols.size(); ++c) {
-                int col = cols.get(c);
-                if (col < row.size()) {
-                    data[r][c] = row.get(col);
-                }
-            }
-        }
-        return data;
+        return TextTools.toArray(rows);
     }
 
     @Override
@@ -77,7 +65,6 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
         if (sourceFile == null || calCols == null || calCols.isEmpty()) {
             return null;
         }
-
         DoubleStatistic[] sData = countFileStatistic(calCols);
         if (sData == null) {
             return null;
@@ -93,7 +80,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                 try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
                     int fileRowIndex = -1, calLen = calCols.size(), dataIndex = 0;
                     for (CSVRecord record : parser) {
-                        if (++fileRowIndex < currentPageStart || fileRowIndex >= currentPageEnd) {
+                        if (++fileRowIndex < startRowOfCurrentPage || fileRowIndex >= endRowOfCurrentPage) {
                             dataIndex = fileRowIndex;
                             List<String> row = new ArrayList<>();
                             if (percentage) {
@@ -124,7 +111,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                             }
                             csvPrinter.printRecord(row);
                             row.clear();
-                        } else if (fileRowIndex == currentPageStart) {
+                        } else if (fileRowIndex == startRowOfCurrentPage) {
                             dataIndex = writePageStatistic(csvPrinter, sData, calCols, disCols, percentage, dataIndex);
                         }
 
@@ -160,7 +147,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
             int index = -1;
             for (CSVRecord record : parser) {
-                if (++index < currentPageStart || index >= currentPageEnd) {
+                if (++index < startRowOfCurrentPage || index >= endRowOfCurrentPage) {
                     for (int c = 0; c < calSize; c++) {
                         sData[c].count++;
                         int col = calCols.get(c);
@@ -176,7 +163,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                             sData[c].minimum = v;
                         }
                     }
-                } else if (index == currentPageStart) {
+                } else if (index == startRowOfCurrentPage) {
                     countPageData(sData, calCols);
                 }
             }
@@ -204,7 +191,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
             int index = -1;
             for (CSVRecord record : parser) {
-                if (++index < currentPageStart || index >= currentPageEnd) {
+                if (++index < startRowOfCurrentPage || index >= endRowOfCurrentPage) {
                     for (int c = 0; c < calSize; c++) {
                         if (sData[c].count == 0) {
                             continue;
@@ -217,7 +204,7 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                         sData[c].variance += Math.pow(v - sData[c].mean, 2);
                         sData[c].skewness += Math.pow(v - sData[c].mean, 3);
                     }
-                } else if (index == currentPageStart) {
+                } else if (index == startRowOfCurrentPage) {
                     variancePageData(sData, calCols);
                 }
             }

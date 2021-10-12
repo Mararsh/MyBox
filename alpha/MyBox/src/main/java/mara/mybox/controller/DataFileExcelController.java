@@ -146,8 +146,8 @@ public class DataFileExcelController extends BaseDataFileController {
                 + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
         if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
             info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(sheetController.currentPageStart + 1) + " - "
-                    + StringTools.format(sheetController.currentPageStart + sheetController.sheetInputs.length)
+                    + ": " + StringTools.format(sheetController.startRowOfCurrentPage + 1) + " - "
+                    + StringTools.format(sheetController.startRowOfCurrentPage + sheetController.sheetInputs.length)
                     + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
         }
         info += message("PageModifyTime") + ": " + DateTools.nowString();

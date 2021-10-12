@@ -131,6 +131,42 @@ public class HtmlReadTools {
         return TextFileTools.readTexts(tmpFile);
     }
 
+    public static File url2Image(String address, String name) {
+        try {
+            if (address == null) {
+                return null;
+            }
+            String suffix = null;
+            if (name != null && !name.isBlank()) {
+                suffix = FileNameTools.getFileSuffix(name);
+            }
+            String addrSuffix = FileNameTools.getFileSuffix(address);
+            if (addrSuffix != null && !addrSuffix.isBlank()) {
+                if (suffix == null || suffix.isBlank()
+                        || !addrSuffix.equalsIgnoreCase(suffix)) {
+                    suffix = addrSuffix;
+                }
+            }
+            if (suffix == null || (suffix.length() != 3
+                    && !"jpeg".equalsIgnoreCase(suffix) && !"tiff".equalsIgnoreCase(suffix))) {
+                suffix = "jpg";
+            }
+            File tmpFile = url2File(address);
+            if (tmpFile == null) {
+                return null;
+            }
+            File imageFile = new File(tmpFile.getAbsoluteFile() + "." + suffix);
+            if (FileTools.rename(tmpFile, imageFile)) {
+                return imageFile;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e, address);
+            return null;
+        }
+    }
+
     public static String readURL(String address) {
         try {
             if (address == null) {

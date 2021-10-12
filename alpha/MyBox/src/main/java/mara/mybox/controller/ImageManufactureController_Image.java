@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -55,6 +56,8 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     protected ImageManufactureScopesSavedController scopeSavedController;
     @FXML
     protected ColorSet colorSetController;
+    @FXML
+    protected Button viewImageButton;
 
     @Override
     public Image imageToSave() {

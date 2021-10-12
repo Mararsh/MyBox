@@ -42,9 +42,9 @@ License:    Apache License Version 2.0
                     </toggleGroup>
                 </RadioButton>
                 <RadioButton fx:id="statisticRadio" mnemonicParsing="false" text="%Statistic" toggleGroup="$calGroup" />
-                <RadioButton fx:id="formularRadio" mnemonicParsing="false" text="%Formula" toggleGroup="$calGroup" />
-                <RadioButton fx:id="sortRadio" mnemonicParsing="false" text="%Sort" toggleGroup="$calGroup" />
-                <RadioButton fx:id="concatRadio" mnemonicParsing="false" text="%Concat" toggleGroup="$calGroup" />
+                <RadioButton fx:id="formularRadio" mnemonicParsing="false" text="%Formula" toggleGroup="$calGroup" visible="false" />
+                <RadioButton fx:id="sortRadio" mnemonicParsing="false" text="%Sort" toggleGroup="$calGroup" visible="false" />
+                <RadioButton fx:id="concatRadio" mnemonicParsing="false" text="%Concat" toggleGroup="$calGroup" visible="false" />
             </children>
         </FlowPane>
       <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true">

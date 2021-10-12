@@ -11,6 +11,7 @@ import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -55,7 +56,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                     if (sourceRow == null) {
                         continue;
                     }
-                    if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                    if (++sourceRowIndex < startRowOfCurrentPage || sourceRowIndex >= endRowOfCurrentPage) {
                         List<String> row = new ArrayList<>();
                         for (int c : cols) {
                             int cellIndex = c + sourceRow.getFirstCellNum();
@@ -67,35 +68,18 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                             }
                         }
                         rows.add(row);
-                    } else if (sourceRowIndex == currentPageStart) {
+                    } else if (sourceRowIndex == startRowOfCurrentPage) {
                         copyPageData(rows, cols);
                     }
                 }
             } else {
                 copyPageData(rows, cols);
             }
-            if (rows.isEmpty()) {
-                return null;
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
-        if (rows.isEmpty()) {
-            return null;
-        }
-        String[][] data = new String[rows.size()][cols.size()];
-        for (int r = 0; r < rows.size(); ++r) {
-            List<String> row = rows.get(r);
-            for (int c = 0; c < cols.size(); ++c) {
-                int col = cols.get(c);
-                if (col < row.size()) {
-                    data[r][c] = row.get(col);
-                }
-            }
-        }
-        return data;
+        return TextTools.toArray(rows);
     }
 
     @Override
@@ -107,7 +91,6 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
         if (sData == null) {
             return null;
         }
-
         File tmpFile = TmpFileTools.getTempFile(".csv");
         CSVFormat csvFormat = CSVFormat.DEFAULT.withDelimiter(',')
                 .withIgnoreEmptyLines().withTrim().withNullString("").withFirstRecordAsHeader();
@@ -137,7 +120,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                             if (sourceRow == null) {
                                 continue;
                             }
-                            if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                            if (++sourceRowIndex < startRowOfCurrentPage || sourceRowIndex >= endRowOfCurrentPage) {
                                 dataIndex = sourceRowIndex;
                                 List<String> row = new ArrayList<>();
                                 if (percentage) {
@@ -171,7 +154,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                                 csvPrinter.printRecord(row);
                                 row.clear();
 
-                            } else if (sourceRowIndex == currentPageStart) {
+                            } else if (sourceRowIndex == startRowOfCurrentPage) {
                                 dataIndex = writePageStatistic(csvPrinter, sData, calCols, disCols, percentage, dataIndex);
                             }
                         }
@@ -225,7 +208,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                     if (sourceRow == null) {
                         continue;
                     }
-                    if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                    if (++sourceRowIndex < startRowOfCurrentPage || sourceRowIndex >= endRowOfCurrentPage) {
                         for (int c = 0; c < calSize; c++) {
                             sData[c].count++;
                             int cellIndex = calCols.get(c) + sourceRow.getFirstCellNum();
@@ -241,7 +224,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                                 sData[c].minimum = v;
                             }
                         }
-                    } else if (sourceRowIndex == currentPageStart) {
+                    } else if (sourceRowIndex == startRowOfCurrentPage) {
                         countPageData(sData, calCols);
                     }
                 }
@@ -291,7 +274,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                     if (sourceRow == null) {
                         continue;
                     }
-                    if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                    if (++sourceRowIndex < startRowOfCurrentPage || sourceRowIndex >= endRowOfCurrentPage) {
                         for (int c = 0; c < calSize; c++) {
                             if (sData[c].count == 0) {
                                 continue;
@@ -305,7 +288,7 @@ public abstract class ControlSheetExcel_Calculation extends ControlSheetExcel_Op
                             sData[c].skewness += Math.pow(v - sData[c].mean, 3);
 
                         }
-                    } else if (sourceRowIndex == currentPageStart) {
+                    } else if (sourceRowIndex == startRowOfCurrentPage) {
                         variancePageData(sData, calCols);
                     }
                 }

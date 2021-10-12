@@ -2,14 +2,22 @@ package mara.mybox.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.Languages;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
  * @CreateDate 2019-8-12
  * @License Apache License Version 2.0
+ *
+ * ImageManufactureController < ImageManufactureController_Actions <
+ * ImageManufactureController_Histories < ImageManufactureController_Image <
+ * ImageViewerController
  */
 public class ImageManufactureController extends ImageManufactureController_Actions {
 
@@ -51,6 +59,17 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         }
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(popButton, Languages.message("PopTabImage"));
+            NodeStyleTools.setTooltip(viewImageButton, Languages.message("PopManufacturedImage"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     protected void initBackupsTab() {
         try {
             backupController.setControls(this, baseName);
@@ -87,4 +106,12 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         }
     }
 
+    /*
+        static methods
+     */
+    public static ImageManufactureController load(Image image) {
+        ImageManufactureController controller = (ImageManufactureController) WindowTools.openStage(Fxmls.ImageManufactureFxml);
+        controller.loadImage(image);
+        return controller;
+    }
 }

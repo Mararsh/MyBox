@@ -113,6 +113,7 @@ public class WebAddressController extends BaseWebViewController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         webViewController.refreshAction();
     }

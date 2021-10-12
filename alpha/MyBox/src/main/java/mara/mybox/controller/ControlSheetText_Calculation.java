@@ -11,6 +11,7 @@ import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -41,7 +42,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
-                if (++rowIndex < currentPageStart || rowIndex >= currentPageEnd) {
+                if (++rowIndex < startRowOfCurrentPage || rowIndex >= endRowOfCurrentPage) {
                     List<String> values = new ArrayList<>();
                     for (int c : cols) {
                         if (c >= row.size()) {
@@ -52,7 +53,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                         values.add(d);
                     }
                     rows.add(values);
-                } else if (rowIndex == currentPageStart) {
+                } else if (rowIndex == startRowOfCurrentPage) {
                     copyPageData(rows, cols);
                 }
             }
@@ -60,25 +61,10 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                 copyPageData(rows, cols);
             }
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.console(e);
-        }
-        if (rows.isEmpty()) {
+            MyBoxLog.error(e);
             return null;
         }
-        String[][] data = new String[rows.size()][cols.size()];
-        for (int r = 0; r < rows.size(); ++r) {
-            List<String> row = rows.get(r);
-            for (int c = 0; c < cols.size(); ++c) {
-                int col = cols.get(c);
-                if (col < row.size()) {
-                    data[r][c] = row.get(col);
-                }
-            }
-        }
-        return data;
+        return TextTools.toArray(rows);
     }
 
     @Override
@@ -86,7 +72,6 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
         if (sourceFile == null || calCols == null || calCols.isEmpty()) {
             return null;
         }
-
         DoubleStatistic[] sData = countFileStatistic(calCols);
         if (sData == null) {
             return null;
@@ -110,7 +95,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                         if (lineData == null || lineData.isEmpty()) {
                             continue;
                         }
-                        if (++fileRowIndex < currentPageStart || fileRowIndex >= currentPageEnd) {
+                        if (++fileRowIndex < startRowOfCurrentPage || fileRowIndex >= endRowOfCurrentPage) {
                             dataIndex = fileRowIndex;
                             List<String> row = new ArrayList<>();
                             if (percentage) {
@@ -141,7 +126,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                             }
                             csvPrinter.printRecord(row);
                             row.clear();
-                        } else if (fileRowIndex == currentPageStart) {
+                        } else if (fileRowIndex == startRowOfCurrentPage) {
                             dataIndex = writePageStatistic(csvPrinter, sData, calCols, disCols, percentage, dataIndex);
                         }
 
@@ -185,7 +170,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                 if (lineData == null || lineData.isEmpty()) {
                     continue;
                 }
-                if (++index < currentPageStart || index >= currentPageEnd) {
+                if (++index < startRowOfCurrentPage || index >= endRowOfCurrentPage) {
                     for (int c = 0; c < calSize; c++) {
                         sData[c].count++;
                         int col = calCols.get(c);
@@ -201,7 +186,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                             sData[c].minimum = v;
                         }
                     }
-                } else if (index == currentPageStart) {
+                } else if (index == startRowOfCurrentPage) {
                     countPageData(sData, calCols);
                 }
             }
@@ -237,7 +222,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                 if (lineData == null || lineData.isEmpty()) {
                     continue;
                 }
-                if (++index < currentPageStart || index >= currentPageEnd) {
+                if (++index < startRowOfCurrentPage || index >= endRowOfCurrentPage) {
                     for (int c = 0; c < calSize; c++) {
                         if (sData[c].count == 0) {
                             continue;
@@ -250,7 +235,7 @@ public abstract class ControlSheetText_Calculation extends ControlSheetText_Oper
                         sData[c].variance += Math.pow(v - sData[c].mean, 2);
                         sData[c].skewness += Math.pow(v - sData[c].mean, 3);
                     }
-                } else if (index == currentPageStart) {
+                } else if (index == startRowOfCurrentPage) {
                     variancePageData(sData, calCols);
                 }
             }

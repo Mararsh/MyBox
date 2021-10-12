@@ -657,27 +657,27 @@ public class TextTools {
         }
     }
 
-    public static String[][] toArray(List<List<String>> data) {
+    public static String[][] toArray(List<List<String>> rows) {
         try {
-            if (data == null || data.isEmpty()) {
+            if (rows == null || rows.isEmpty()) {
                 return null;
             }
-            int rowSize = data.size();
+            int rowSize = rows.size();
             int colSize = -1;
-            for (List<String> row : data) {
+            for (List<String> row : rows) {
                 int len = row.size();
                 if (len > colSize) {
                     colSize = len;
                 }
             }
-            String[][] array = new String[rowSize][colSize];
-            for (int r = 0; r < data.size(); r++) {
-                List<String> row = data.get(r);
+            String[][] data = new String[rowSize][colSize];
+            for (int r = 0; r < rows.size(); r++) {
+                List<String> row = rows.get(r);
                 for (int c = 0; c < row.size(); c++) {
-                    array[r][c] = row.get(c);
+                    data[r][c] = row.get(c);
                 }
             }
-            return array;
+            return data;
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;

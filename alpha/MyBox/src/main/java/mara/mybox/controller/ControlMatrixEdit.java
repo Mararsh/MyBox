@@ -265,6 +265,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                             }
                             matrix.setId(id);
                         } else {
+                            matrix.setId(id);
                             if (tableMatrix.readData(conn, matrix) == null) {
                                 notExist = true;
                                 return true;

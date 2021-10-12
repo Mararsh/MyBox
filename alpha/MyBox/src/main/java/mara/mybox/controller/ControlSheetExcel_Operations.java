@@ -69,7 +69,7 @@ public abstract class ControlSheetExcel_Operations extends ControlSheetExcel_Fil
                     if (sourceRow == null) {
                         continue;
                     }
-                    if (++sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                    if (++sourceRowIndex < startRowOfCurrentPage || sourceRowIndex >= endRowOfCurrentPage) {
                         List<String> values = new ArrayList<>();
                         for (int c : cols) {
                             int cellIndex = c + sourceRow.getFirstCellNum();
@@ -81,7 +81,7 @@ public abstract class ControlSheetExcel_Operations extends ControlSheetExcel_Fil
                             values.add(d);
                         }
                         csvPrinter.printRecord(values);
-                    } else if (sourceRowIndex == currentPageStart) {
+                    } else if (sourceRowIndex == startRowOfCurrentPage) {
                         copyPageData(csvPrinter, cols);
                     }
                 }

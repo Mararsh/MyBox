@@ -167,6 +167,7 @@ public abstract class BaseDataFileController extends BaseController {
 
     public void loadData(String[][] data, List<ColumnDefinition> dataColumns) {
         pickOptions();
+        sourceFile = null;
         dataController.loadData(data, dataColumns);
     }
 

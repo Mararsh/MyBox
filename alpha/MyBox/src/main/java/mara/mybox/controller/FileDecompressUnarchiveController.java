@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -8,16 +7,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.tools.CompressTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
 
@@ -84,7 +78,6 @@ public class FileDecompressUnarchiveController extends BaseController {
         } else if (compressorChoice.equals(Languages.message("None"))) {
             compressorChoice = "none";
         }
-        startAction();
     }
 
     protected void checkArchiver() {
@@ -95,7 +88,6 @@ public class FileDecompressUnarchiveController extends BaseController {
         } else if (archiverChoice.equals(Languages.message("None"))) {
             archiverChoice = "none";
         }
-        startAction();
     }
 
     protected void checkSevenCompress() {
@@ -114,12 +106,6 @@ public class FileDecompressUnarchiveController extends BaseController {
                 sevenCompress = SevenZMethod.BZIP2;
                 break;
         }
-    }
-
-    @Override
-    public void sourceFileChanged(File file) {
-        sourceFile = file;
-        startAction();
     }
 
     @FXML

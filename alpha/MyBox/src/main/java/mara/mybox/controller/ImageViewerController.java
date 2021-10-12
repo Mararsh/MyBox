@@ -34,9 +34,9 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -877,6 +877,15 @@ public class ImageViewerController extends BaseImageController {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
         MenuImageViewController.open(this, localToScreen.getX(), localToScreen.getY());
         return true;
+    }
+
+    /*
+        static methods
+     */
+    public static ImageViewerController load(Image image) {
+        ImageViewerController controller = (ImageViewerController) WindowTools.openStage(Fxmls.ImageViewerFxml);
+        controller.loadImage(image);
+        return controller;
     }
 
 }

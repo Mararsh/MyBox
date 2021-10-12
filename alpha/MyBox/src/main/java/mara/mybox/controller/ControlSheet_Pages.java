@@ -61,8 +61,8 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
 
     public void initCurrentPage() {
         currentPage = 0;
-        currentPageStart = 0;
-        currentPageEnd = 0;
+        startRowOfCurrentPage = 0;
+        endRowOfCurrentPage = 0;
     }
 
     public void loadPage(int pageNumber) {
@@ -116,7 +116,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
         if (currentPage > pagesNumber - 1) {
             currentPage = pagesNumber - 1;
         }
-        currentPageStart = pageSize * currentPage;
+        startRowOfCurrentPage = pageSize * currentPage;
     }
 
     protected void setPagination() {

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -19,11 +20,14 @@ public class DoubleTools {
 
     public static String percentage(double data, double total) {
         try {
+            if (total == 0) {
+                return message("Invalid");
+            }
             String format = "#,###.##";
             DecimalFormat df = new DecimalFormat(format);
             return df.format(scale(data * 100 / total, 2));
         } catch (Exception e) {
-            return data + "";
+            return message("Invalid");
         }
     }
 
@@ -36,7 +40,7 @@ public class DoubleTools {
             DecimalFormat df = new DecimalFormat(format);
             return df.format(scale(data, scale));
         } catch (Exception e) {
-            return data + "";
+            return message("Invalid");
         }
     }
 

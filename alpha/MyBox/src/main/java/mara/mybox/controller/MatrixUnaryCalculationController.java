@@ -14,7 +14,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppValues;
@@ -349,10 +348,12 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         resultBox.getChildren().add(resultArea);
                         resultArea.setText(resultValue + "");
                     }
+                    refreshStyle(resultBox);
                 }
 
             };
             start(task);
         }
+
     }
 }

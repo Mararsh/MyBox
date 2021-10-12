@@ -37,9 +37,9 @@ public abstract class ControlSheet_Base extends BaseController {
     protected boolean defaultColNotNull;
 
     protected int totalSize, pagesNumber, pageSize, colsNumber, rowsNumber, widthChange;
-    protected long currentPageStart, currentPageEnd;   // 0-based, excluded end
+    protected long startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected int currentPage, currentRow, currentCol;  // 0-based
-    protected int maxRandom;
+    protected int maxRandom, warnThreshold;
     protected short scale;
     protected boolean sourceWithNames, totalRead;
     protected List<ColumnDefinition> savedColumns;
@@ -81,6 +81,8 @@ public abstract class ControlSheet_Base extends BaseController {
     protected HBox defBottunsBox, paginationBox;
     @FXML
     protected Label pageLabel, totalLabel;
+    @FXML
+    protected TextField warnThresholdInput;
 
     public ControlSheet_Base() {
         baseTitle = message("Data");

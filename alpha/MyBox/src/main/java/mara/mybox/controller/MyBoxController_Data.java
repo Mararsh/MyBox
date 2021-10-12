@@ -8,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -25,7 +24,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem EditExcel = new MenuItem(message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
-            DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+            DataFileExcelController controller = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
             controller.dataController.newSheet(3, 3);
         });
 
@@ -46,7 +45,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem EditCSV = new MenuItem(message("EditCSV"));
         EditCSV.setOnAction((ActionEvent event1) -> {
-            DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+            DataFileCSVController controller = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
             controller.dataController.newSheet(3, 3);
         });
 
@@ -62,7 +61,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem TextData = new MenuItem(message("EditTextDataFile"));
         TextData.setOnAction((ActionEvent event1) -> {
-            DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+            DataFileTextController controller = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
             controller.dataController.newSheet(3, 3);
         });
 

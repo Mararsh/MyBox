@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
@@ -247,13 +248,14 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         }
     }
 
-//    @Override
-//    public boolean keyEventsFilter(KeyEvent event) {
-//        if (currentController != null) {
-//            return currentController.keyEventsFilter(event);
-//        }
-//        return false;
-//    }
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (currentController != null) {
+            return currentController.keyEventsFilter(event);
+        }
+        return false;
+    }
+
     @Override
     public BaseImageController refreshInterfaceAndFile() {
         return null;  //Bypass since this is part of frame

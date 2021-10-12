@@ -510,17 +510,15 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             if (rows == null || sheetInputs == null || cols == null || cols.isEmpty()) {
                 return;
             }
-            String d;
             for (int r = 0; r < sheetInputs.length; r++) {
                 List<String> row = new ArrayList<>();
                 int colsSize = sheetInputs[r].length;
                 for (int c : cols) {
                     if (c > colsSize) {
-                        d = defaultColValue;
+                        row.add(defaultColValue);
                     } else {
-                        d = cellString(r, c);
+                        row.add(cellString(r, c));
                     }
-                    row.add(d);
                 }
                 rows.add(row);
             }

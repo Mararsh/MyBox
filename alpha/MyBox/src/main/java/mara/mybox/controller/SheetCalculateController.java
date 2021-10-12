@@ -21,6 +21,11 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.jexl3.JexlBuilder;
+import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.jexl3.JexlEngine;
+import org.apache.commons.jexl3.JexlExpression;
+import org.apache.commons.jexl3.MapContext;
 
 /**
  * @Author Mara
@@ -79,6 +84,8 @@ public class SheetCalculateController extends BaseDataOperationController {
     public void updateControls() {
         try {
             super.updateControls();
+
+            rowAllRadio.setDisable(sheetController.pagesNumber <= 1);
 
             List<String> cols = new ArrayList<>();
             if (sheetController.columns != null) {
@@ -170,6 +177,19 @@ public class SheetCalculateController extends BaseDataOperationController {
     @FXML
     public void popOperators(MouseEvent mouseEvent) {
         try {
+            JexlEngine jexl = new JexlBuilder().create();
+
+            String jexlExp = "(A +B) * 4 / C";
+            JexlExpression e = jexl.createExpression(jexlExp);
+
+            JexlContext jc = new MapContext();
+            jc.set("A", 5);
+            jc.set("B", 4);
+            jc.set("C", 6);
+
+            Object o = e.evaluate(jc);
+
+            MyBoxLog.console((int) o);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

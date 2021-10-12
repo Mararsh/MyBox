@@ -3,14 +3,12 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -117,8 +115,8 @@ public class DataFileCSVController extends BaseDataFileController {
                 + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
         if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
             info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(sheetController.currentPageStart + 1) + " - "
-                    + StringTools.format(sheetController.currentPageStart + sheetController.sheetInputs.length)
+                    + ": " + StringTools.format(sheetController.startRowOfCurrentPage + 1) + " - "
+                    + StringTools.format(sheetController.startRowOfCurrentPage + sheetController.sheetInputs.length)
                     + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
         }
         info += message("PageModifyTime") + ": " + DateTools.nowString();
@@ -140,23 +138,23 @@ public class DataFileCSVController extends BaseDataFileController {
         if (tables == null || tables.isEmpty()) {
             return;
         }
-        if (tables.size() == 1) {
-            StringTable table = tables.get(0);
-            String[][] data = TextTools.toArray(table.getData());
-            if (data == null || data.length == 0) {
-                return;
-            }
-            List<ColumnDefinition> dataColumns = null;
-            List<String> names = table.getNames();
-            if (names != null && !names.isEmpty()) {
-                dataColumns = new ArrayList<>();
-                for (String name : names) {
-                    dataColumns.add(new ColumnDefinition(name, ColumnDefinition.ColumnType.String));
-                }
-            }
-            loadData(data, dataColumns);
-            return;
-        }
+//        if (tables.size() == 1) {
+//            StringTable table = tables.get(0);
+//            String[][] data = TextTools.toArray(table.getData());
+//            if (data == null || data.length == 0) {
+//                return;
+//            }
+//            List<ColumnDefinition> dataColumns = null;
+//            List<String> names = table.getNames();
+//            if (names != null && !names.isEmpty()) {
+//                dataColumns = new ArrayList<>();
+//                for (String name : names) {
+//                    dataColumns.add(new ColumnDefinition(name, ColumnDefinition.ColumnType.String));
+//                }
+//            }
+//            loadData(data, dataColumns);
+//            return;
+//        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

@@ -21,7 +21,6 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -168,7 +167,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
     }
 
     @FXML
-    protected void popImage() {
+    public void popImage() {
         if (imagePopController != null && imagePopController.getMyWindow().isShowing()) {
             return;
         }
@@ -223,7 +222,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             if (selected == null) {
                 return;
             }
-            SingletonTask viewTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>() {
                 private Image hisImage;
 
                 @Override
@@ -238,7 +237,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 }
 
             };
-            start(viewTask);
+            start(bgTask, false);
         }
     }
 
@@ -248,7 +247,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                ImagePopController.openView(myController, imageView);
+                popImage();
                 return true;
 
             } else if (tab == scopeTab) {
@@ -280,7 +279,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             if (file == null) {
                 return;
             }
-            SingletonTask viewTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>() {
                 private Image backImage;
 
                 @Override
@@ -312,7 +311,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 }
 
             };
-            start(viewTask);
+            start(bgTask, false);
         }
     }
 

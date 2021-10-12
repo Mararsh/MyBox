@@ -42,13 +42,13 @@ public abstract class ControlSheetText_Operations extends ControlSheetText_File 
                 readNames(reader);
             }
             String line;
-            int rowIndex = 0;
+            int rowIndex = -1;
             while ((line = reader.readLine()) != null) {
                 List<String> row = parseFileLine(line);
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
-                if (rowIndex < currentPageStart || rowIndex >= currentPageEnd) {
+                if (++rowIndex < startRowOfCurrentPage || rowIndex >= endRowOfCurrentPage) {
                     List<String> values = new ArrayList<>();
                     for (int c : cols) {
                         if (c >= row.size()) {
@@ -59,12 +59,11 @@ public abstract class ControlSheetText_Operations extends ControlSheetText_File 
                         values.add(d);
                     }
                     csvPrinter.printRecord(values);
-                } else if (rowIndex == currentPageStart) {
+                } else if (rowIndex == startRowOfCurrentPage) {
                     copyPageData(csvPrinter, cols);
                 }
-                rowIndex++;
             }
-            if (rowIndex == 0) {
+            if (rowIndex < 0) {
                 copyPageData(csvPrinter, cols);
             }
         } catch (Exception e) {

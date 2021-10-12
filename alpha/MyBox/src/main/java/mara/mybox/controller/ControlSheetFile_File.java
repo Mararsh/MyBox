@@ -139,7 +139,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                     if (!readTotal() || isCancelled()) {
                         return false;
                     }
-                    countPagination((int) (currentPageStart / pageSize));
+                    countPagination((int) (startRowOfCurrentPage / pageSize));
                     return true;
                 }
 
