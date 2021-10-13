@@ -21,7 +21,6 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -59,10 +58,10 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                                 newWidth = v;
                                 newWidthInput.setStyle(null);
                             } else {
-                                newWidthInput.setStyle(NodeStyleTools.badStyle);
+                                newWidthInput.setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            newWidthInput.setStyle(NodeStyleTools.badStyle);
+                            newWidthInput.setStyle(UserConfig.badStyle());
                         }
                     });
             newHeightInput.textProperty().addListener(
@@ -73,10 +72,10 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                                 newHeight = v;
                                 newHeightInput.setStyle(null);
                             } else {
-                                newHeightInput.setStyle(NodeStyleTools.badStyle);
+                                newHeightInput.setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            newHeightInput.setStyle(NodeStyleTools.badStyle);
+                            newHeightInput.setStyle(UserConfig.badStyle());
                         }
                     });
             colorSetController.init(this, baseName + "NewBackgroundColor");
@@ -85,8 +84,8 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             newHeightInput.setText("500");
 
             createButton.disableProperty().bind(
-                    newWidthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                            .or(newHeightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    newWidthInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(newHeightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -167,6 +166,14 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         operationsController.clipboardController.pasteImageInSystemClipboard();
     }
 
+    @FXML
+    public void popImage() {
+        if (imagePopController != null && imagePopController.getMyWindow().isShowing()) {
+            return;
+        }
+        imagePopController = ImagePopController.openView(this, imageView);
+    }
+
     public void applyKernel(ConvolutionKernel kernel) {
         operationsController.enhancementPane.setExpanded(true);
         operationsController.enhancementController.optionsController.applyKernel(kernel);
@@ -215,7 +222,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             if (selected == null) {
                 return;
             }
-            SingletonTask viewTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>() {
                 private Image hisImage;
 
                 @Override
@@ -230,7 +237,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 }
 
             };
-            start(viewTask);
+            start(bgTask, false);
         }
     }
 
@@ -240,7 +247,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                ImagePopController.openView(myController, imageView);
+                popImage();
                 return true;
 
             } else if (tab == scopeTab) {
@@ -272,7 +279,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             if (file == null) {
                 return;
             }
-            SingletonTask viewTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>() {
                 private Image backImage;
 
                 @Override
@@ -304,7 +311,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 }
 
             };
-            start(viewTask);
+            start(bgTask, false);
         }
     }
 

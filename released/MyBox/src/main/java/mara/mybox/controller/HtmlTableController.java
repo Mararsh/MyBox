@@ -212,6 +212,12 @@ public class HtmlTableController extends BaseWebViewController {
         }
     }
 
+    @FXML
+    public void dataAction() {
+        webViewController.tables(html, title);
+    }
+
+
     /*
         get/set
      */

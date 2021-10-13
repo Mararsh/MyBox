@@ -26,7 +26,7 @@ import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.ListDatasetCell;
 import mara.mybox.tools.DateTools;
@@ -83,7 +83,7 @@ public class LocationDataEditController extends BaseController {
             startTime = endTime = AppValues.InvalidLong;
             longitude = latitude = -200;
             dataset = null;
-            datasetSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            datasetSelector.getEditor().setStyle(UserConfig.badStyle());
             direction = AppValues.InvalidShort;
             tableLocationData = new TableLocationData();
 
@@ -175,10 +175,10 @@ public class LocationDataEditController extends BaseController {
                                 direction = v;
                                 directionSelector.getEditor().setStyle(null);
                             } else {
-                                directionSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                                directionSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            directionSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            directionSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
 
@@ -193,17 +193,17 @@ public class LocationDataEditController extends BaseController {
                     });
 
             saveButton.disableProperty().bind(
-                    longitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                            .or(latitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(altitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(precisionInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(speedInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(valueInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(sizeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(directionSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(startTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(endTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    longitudeInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(latitudeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(altitudeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(precisionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(speedInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(valueInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(sizeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(directionSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(startTimeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(endTimeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
             datasetSelector.requestFocus();
@@ -232,10 +232,10 @@ public class LocationDataEditController extends BaseController {
                 longitude = v;
                 longitudeInput.setStyle(null);
             } else {
-                longitudeInput.setStyle(NodeStyleTools.badStyle);
+                longitudeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            longitudeInput.setStyle(NodeStyleTools.badStyle);
+            longitudeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -246,10 +246,10 @@ public class LocationDataEditController extends BaseController {
                 latitude = v;
                 latitudeInput.setStyle(null);
             } else {
-                latitudeInput.setStyle(NodeStyleTools.badStyle);
+                latitudeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            latitudeInput.setStyle(NodeStyleTools.badStyle);
+            latitudeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -291,7 +291,7 @@ public class LocationDataEditController extends BaseController {
             altitude = v;
             altitudeInput.setStyle(null);
         } catch (Exception e) {
-            altitudeInput.setStyle(NodeStyleTools.badStyle);
+            altitudeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -307,7 +307,7 @@ public class LocationDataEditController extends BaseController {
             precision = v;
             precisionInput.setStyle(null);
         } catch (Exception e) {
-            precisionInput.setStyle(NodeStyleTools.badStyle);
+            precisionInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -324,10 +324,10 @@ public class LocationDataEditController extends BaseController {
                 speed = v;
                 speedInput.setStyle(null);
             } else {
-                speedInput.setStyle(NodeStyleTools.badStyle);
+                speedInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            speedInput.setStyle(NodeStyleTools.badStyle);
+            speedInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -343,7 +343,7 @@ public class LocationDataEditController extends BaseController {
             dataValue = v;
             valueInput.setStyle(null);
         } catch (Exception e) {
-            valueInput.setStyle(NodeStyleTools.badStyle);
+            valueInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -359,7 +359,7 @@ public class LocationDataEditController extends BaseController {
             dataSize = v;
             sizeInput.setStyle(null);
         } catch (Exception e) {
-            sizeInput.setStyle(NodeStyleTools.badStyle);
+            sizeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -376,10 +376,10 @@ public class LocationDataEditController extends BaseController {
                 startTime = v.getTime();
                 startTimeInput.setStyle(null);
             } else {
-                startTimeInput.setStyle(NodeStyleTools.badStyle);
+                startTimeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            startTimeInput.setStyle(NodeStyleTools.badStyle);
+            startTimeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -396,10 +396,10 @@ public class LocationDataEditController extends BaseController {
                 endTime = v.getTime();
                 endTimeInput.setStyle(null);
             } else {
-                endTimeInput.setStyle(NodeStyleTools.badStyle);
+                endTimeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            endTimeInput.setStyle(NodeStyleTools.badStyle);
+            endTimeInput.setStyle(UserConfig.badStyle());
         }
     }
 

@@ -197,8 +197,8 @@ public class ColorConvertTools {
         return srgb;
     }
 
-    public static Color getAlphaColor() {
-        return converColor(UserConfig.getAlphaColor());
+    public static Color alphaColor() {
+        return converColor(UserConfig.alphaColor());
     }
 
     public static Color thresholdingColor(Color inColor, int threshold, int smallValue, int bigValue) {

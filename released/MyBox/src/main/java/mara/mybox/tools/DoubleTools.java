@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -17,16 +18,30 @@ import java.util.Random;
  */
 public class DoubleTools {
 
-    public static String format(double data, int scale) {
-        String format = "#,###";
-        if (scale > 0) {
-            format += ".";
-            for (int i = 0; i < scale; i++) {
-                format += "#";
+    public static String percentage(double data, double total) {
+        try {
+            if (total == 0) {
+                return message("Invalid");
             }
+            String format = "#,###.##";
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(scale(data * 100 / total, 2));
+        } catch (Exception e) {
+            return message("Invalid");
         }
-        DecimalFormat df = new DecimalFormat(format);
-        return df.format(scale(data, scale));
+    }
+
+    public static String format(double data, int scale) {
+        try {
+            String format = "#,###";
+            if (scale > 0) {
+                format += "." + "#".repeat(scale);
+            }
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(scale(data, scale));
+        } catch (Exception e) {
+            return message("Invalid");
+        }
     }
 
     /*
@@ -96,7 +111,13 @@ public class DoubleTools {
         Collections.sort(list, new Comparator<Double>() {
             @Override
             public int compare(Double p1, Double p2) {
-                return (int) (p1 - p2);
+                if (p1 > p2) {
+                    return 1;
+                } else if (p1 < p2) {
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
         double[] sorted = new double[numbers.length];

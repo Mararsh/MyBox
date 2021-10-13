@@ -15,7 +15,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 
@@ -66,13 +66,13 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(customWidthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(customHeightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(keepWidthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(keepHeightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(scaleBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)));
+                    .or(customWidthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(customHeightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(keepWidthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(keepHeightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(scaleBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -195,10 +195,10 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
             if (customWidth > 0) {
                 customWidthInput.setStyle(null);
             } else {
-                customWidthInput.setStyle(NodeStyleTools.badStyle);
+                customWidthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            customWidthInput.setStyle(NodeStyleTools.badStyle);
+            customWidthInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -208,10 +208,10 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
             if (customHeight > 0) {
                 customHeightInput.setStyle(null);
             } else {
-                customHeightInput.setStyle(NodeStyleTools.badStyle);
+                customHeightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            customHeightInput.setStyle(NodeStyleTools.badStyle);
+            customHeightInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -221,10 +221,10 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
             if (keepWidth > 0) {
                 keepWidthInput.setStyle(null);
             } else {
-                keepWidthInput.setStyle(NodeStyleTools.badStyle);
+                keepWidthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            keepWidthInput.setStyle(NodeStyleTools.badStyle);
+            keepWidthInput.setStyle(UserConfig.badStyle());
         }
 
     }
@@ -235,10 +235,10 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
             if (keepHeight > 0) {
                 keepHeightInput.setStyle(null);
             } else {
-                keepHeightInput.setStyle(NodeStyleTools.badStyle);
+                keepHeightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            keepHeightInput.setStyle(NodeStyleTools.badStyle);
+            keepHeightInput.setStyle(UserConfig.badStyle());
         }
     }
 

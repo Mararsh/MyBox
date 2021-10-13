@@ -159,7 +159,7 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Button fx:id="datesetButton" layoutX="1055.0" layoutY="10.0" mnemonicParsing="false" onAction="#datasetAction">
+                                        <Button fx:id="datasetButton" layoutX="1055.0" layoutY="10.0" mnemonicParsing="false" onAction="#datasetAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

@@ -37,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.MenuController;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -66,7 +67,8 @@ public class PopTools {
             // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
             try {
                 if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() > 0) {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
+                    Runtime.getRuntime().exec(new String[]{"xdg-open",
+                        uri.toString()});
                     return;
                 } else {
                 }
@@ -113,14 +115,14 @@ public class PopTools {
     public static Alert alert(BaseController controller, Alert.AlertType type, String information) {
         try {
             Alert alert = new Alert(type);
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             if (controller != null) {
                 alert.setTitle(controller.getTitle());
             }
             alert.setHeaderText(null);
             alert.setContentText(information);
-            //            alert.getDialogPane().applyCss();
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().applyCss();
             // https://stackoverflow.com/questions/38799220/javafx-how-to-bring-dialog-alert-to-the-front-of-the-screen?r=SearchResults
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
@@ -435,6 +437,60 @@ public class PopTools {
                 nodes.add(button);
             }
             controller.addFlowPane(nodes);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name) {
+        try {
+            int max = UserConfig.getInt(name + "MaxSaved", 20);
+
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            List<Node> setButtons = new ArrayList<>();
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                }
+            });
+            setButtons.add(clearButton);
+
+            Button maxButton = new Button(message("MaxSaved"));
+            maxButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    String value = PopTools.askValue(parent.getTitle(), null, message("MaxSaved"), max + "");
+                    if (value == null) {
+                        return;
+                    }
+                    try {
+                        int v = Integer.parseInt(value);
+                        UserConfig.setInt(name + "MaxSaved", v);
+                    } catch (Exception e) {
+                        MyBoxLog.error(e);
+                    }
+                }
+            });
+            setButtons.add(maxButton);
+            controller.addFlowPane(setButtons);
+
+            List<String> values = TableStringValues.max(name, max);
+            List<Node> valueButtons = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.setText(value);
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

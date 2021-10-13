@@ -42,7 +42,6 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     public void refreshAction() {
         try {
             if (!isSettingValues && sourceFile != null) {
-                recordCursor();
                 sourceInformation.setCharsetDetermined(true);
                 sourceInformation.setCharset(Charset.forName(charsetSelector.getSelectionModel().getSelectedItem()));
                 openFile(sourceFile);
@@ -55,7 +54,8 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     @FXML
     @Override
     public void saveAction() {
-        if (!formatMainArea()) {
+        if (!validateMainArea()) {
+            popError(message("InvalidData"));
             return;
         }
         if (sourceFile == null) {
@@ -89,6 +89,11 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     popSaved();
                     sourceFile = file;
                     sourceInformation.setTotalNumberRead(false);
+                    String pageText = mainArea.getText();
+                    sourceInformation.setCurrentPageLineStart(0);
+                    sourceInformation.setCurrentPageLineEnd(pageLinesNumber(pageText));
+                    sourceInformation.setCurrentPageObjectStart(0);
+                    sourceInformation.setCurrentPageObjectEnd(pageObjectsNumber(pageText));
                     updateInterface(false);
                     loadTotalNumbers();
                 }
@@ -141,6 +146,9 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                         popSaved();
                     }
                     sourceInformation.setTotalNumberRead(false);
+                    String pageText = mainArea.getText();
+                    sourceInformation.setCurrentPageLineEnd(sourceInformation.getCurrentPageLineStart() + pageLinesNumber(pageText));
+                    sourceInformation.setCurrentPageObjectEnd(sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber(pageText));
                     updateInterface(false);
                     loadTotalNumbers();
                 }
@@ -153,7 +161,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     @FXML
     @Override
     public void saveAsAction() {
-        if (!formatMainArea()) {
+        if (!validateMainArea()) {
             return;
         }
         final File file = chooseSaveFile();
@@ -225,62 +233,40 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
     @FXML
     protected void locateLine() {
-        sourceInformation.setCurrentLine(-1);
+        if (locateLine < 0 || locateLine >= sourceInformation.getLinesNumber()) {
+            popError(message("InvalidParameters"));
+            return;
+        }
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            String[] lines = mainArea.getText().split("\n");
-            if (lineLocation > lines.length) {
-                popError(message("NoData"));
-                return;
-            }
-            mainArea.requestFocus();
-            mainArea.deselect();
-            int index = 0;
-            for (int i = 0; i < lineLocation - 1; ++i) {
-                index += lines[i].length() + 1;
-            }
-            mainArea.selectRange(index, index);
-
+            selectLine(locateLine);
         } else {
-            if (lineLocation > sourceInformation.getLinesNumber()) {
-                popError(message("NoData"));
-                return;
-            }
-            if (sourceInformation.getCurrentPageLineStart() <= lineLocation
-                    && sourceInformation.getCurrentPageLineEnd() > lineLocation) {
-                String[] lines = mainArea.getText().split("\n");
-                mainArea.requestFocus();
-                mainArea.deselect();
-                int index = 0, end = (int) (lineLocation - sourceInformation.getCurrentPageLineStart());
-                for (int i = 0; i < end; ++i) {
-                    index += lines[i].length() + 1;
-                }
-                mainArea.selectRange(index, index);
-
+            if (locateLine >= sourceInformation.getCurrentPageLineStart()
+                    && locateLine < sourceInformation.getCurrentPageLineEnd()) {
+                selectLine(locateLine - sourceInformation.getCurrentPageLineStart());
             } else {
-                sourceInformation.setCurrentLine(lineLocation);
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
                 synchronized (this) {
                     if (task != null && !task.isQuit()) {
                         return;
                     }
                     task = new SingletonTask<Void>() {
 
-                        private String text;
+                        String text;
 
                         @Override
                         protected boolean handle() {
-                            text = sourceInformation.locateLine();
+                            text = sourceInformation.readLine(locateLine);
                             return text != null;
                         }
 
                         @Override
                         protected void whenSucceeded() {
-                            isSettingValues = true;
-                            mainArea.setText(text);
-                            isSettingValues = false;
-
-                            sourceInformation.setCurrentLine(lineLocation);
-                            updateInterface(false);
+                            loadText(text, false);
+                            selectLine(locateLine - sourceInformation.getCurrentPageLineStart());
                         }
+
                     };
                     start(task);
                 }
@@ -290,29 +276,159 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
     @FXML
     protected void locateObject() {
+        if (locateObject < 0 || locateObject >= sourceInformation.getObjectsNumber()) {
+            popError(message("InvalidParameters"));
+            return;
+        }
+        int unit = sourceInformation.getObjectUnit();
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
-            mainArea.requestFocus();
-            mainArea.deselect();
-            int start = (int) ((objectLocation - 1) * sourceInformation.getObjectUnit());
-            mainArea.selectRange(start, start);
-            lastCursor = start;
+            selectObjects(locateObject * unit, unit);
 
         } else {
-            long pageSize = sourceInformation.getPageSize();
-            if (sourceInformation.getCurrentPageObjectStart() <= objectLocation - 1
-                    && sourceInformation.getCurrentPageObjectEnd() > objectLocation) {
-                mainArea.requestFocus();
-                mainArea.deselect();
-                int pLocation = (int) ((objectLocation - 1 - sourceInformation.getCurrentPageObjectStart())
-                        * sourceInformation.getObjectUnit());
-                mainArea.selectRange(pLocation, pLocation);
+            if (locateObject >= sourceInformation.getCurrentPageObjectStart()
+                    && locateObject < sourceInformation.getCurrentPageObjectEnd()) {
+                selectObjects((locateObject - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
+                synchronized (this) {
+                    if (task != null && !task.isQuit()) {
+                        return;
+                    }
+                    task = new SingletonTask<Void>() {
+
+                        String text;
+
+                        @Override
+                        protected boolean handle() {
+                            text = sourceInformation.readObject(locateObject);
+                            return text != null;
+                        }
+
+                        @Override
+                        protected void whenSucceeded() {
+                            loadText(text, false);
+                            selectObjects((locateObject - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+                        }
+
+                    };
+                    start(task);
+                }
+
+            }
+        }
+    }
+
+    @FXML
+    protected void locateLinesRange() {
+        long from, to;  // 0-based, exlcuded end
+        try {
+            from = Long.valueOf(lineFromInput.getText()) - 1;
+            if (from < 0 || from >= sourceInformation.getLinesNumber()) {
+                popError(message("InvalidParameters") + ": " + message("From"));
+                return;
+            }
+            to = Long.valueOf(lineToInput.getText());
+            if (to < 0 || to > sourceInformation.getLinesNumber() || from > to) {
+                popError(message("InvalidParameters") + ": " + message("To"));
+                return;
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+            return;
+        }
+        int number = (int) (to - from);
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectLines(from, number);
+        } else {
+            if (from >= sourceInformation.getCurrentPageLineStart() && to <= sourceInformation.getCurrentPageLineEnd()) {
+                selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+            } else {
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
+                synchronized (this) {
+                    if (task != null && !task.isQuit()) {
+                        return;
+                    }
+                    task = new SingletonTask<Void>() {
+
+                        String text;
+
+                        @Override
+                        protected boolean handle() {
+                            text = sourceInformation.readLines(from, number);
+                            return text != null;
+                        }
+
+                        @Override
+                        protected void whenSucceeded() {
+                            loadText(text, false);
+                            selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+                        }
+
+                    };
+                    start(task);
+                }
+            }
+        }
+    }
+
+    @FXML
+    protected void locateObjectsRange() {
+        long from, to;  // 0-based, exlcuded end
+        try {
+            from = Long.valueOf(objectFromInput.getText()) - 1;
+            if (from < 0 || from >= sourceInformation.getObjectsNumber()) {
+                popError(message("InvalidParameters") + ": " + message("From"));
+                return;
+            }
+            to = Long.valueOf(objectToInput.getText());
+            if (to < 0 || to > sourceInformation.getObjectsNumber() || from > to) {
+                popError(message("InvalidParameters") + ": " + message("To"));
+                return;
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+            return;
+        }
+        int len = (int) (to - from), unit = sourceInformation.getObjectUnit();
+        if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
+            selectObjects(from * unit, len * unit);
+
+        } else {
+            if (from >= sourceInformation.getCurrentPageObjectStart() && to <= sourceInformation.getCurrentPageObjectEnd()) {
+                selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
 
             } else {
-                int page = (int) ((objectLocation - 1) / pageSize + 1);
-                int pLocation = (int) ((objectLocation - 1) % pageSize);
-                sourceInformation.setCurrentPage(page);
-                lastCursor = pLocation * sourceInformation.getObjectUnit();
-                loadPage();
+                if (!checkBeforeNextAction()) {
+                    return;
+                }
+                synchronized (this) {
+                    if (task != null && !task.isQuit()) {
+                        return;
+                    }
+                    task = new SingletonTask<Void>() {
+
+                        String text;
+
+                        @Override
+                        protected boolean handle() {
+                            text = sourceInformation.readObjects(from, len);
+                            return text != null;
+                        }
+
+                        @Override
+                        protected void whenSucceeded() {
+                            loadText(text, false);
+                            selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
+                        }
+
+                    };
+                    start(task);
+                }
+
             }
         }
     }

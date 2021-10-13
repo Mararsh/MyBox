@@ -25,16 +25,11 @@ import javafx.stage.Stage;
 import mara.mybox.MainApp;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -50,6 +45,7 @@ public class MyBoxSetupController implements Initializable {
     protected int newJVM;
     protected File configPath;
     protected long totalM;
+    protected final String badStyle = "-fx-text-box-border: blue;   -fx-text-fill:blue; ";
 
     @FXML
     protected Pane thisPane;
@@ -164,10 +160,10 @@ public class MyBoxSetupController implements Initializable {
                             jvmInput.setStyle(null);
                             newJVM = v;
                         } else {
-                            jvmInput.setStyle(NodeStyleTools.badStyle);
+                            jvmInput.setStyle(badStyle);
                         }
                     } catch (Exception e) {
-                        jvmInput.setStyle(NodeStyleTools.badStyle);
+                        jvmInput.setStyle(badStyle);
                     }
                 }
             });
@@ -175,7 +171,7 @@ public class MyBoxSetupController implements Initializable {
             okButton.disableProperty().bind(
                     dataDirInput.textProperty().isEmpty()
                             .or(jvmInput.textProperty().isEmpty())
-                            .or(jvmInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(jvmInput.styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {

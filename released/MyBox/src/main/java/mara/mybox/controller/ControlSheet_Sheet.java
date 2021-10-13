@@ -2,11 +2,14 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -14,15 +17,16 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -43,7 +47,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     }
 
     public void makeSheet(String[][] data) {
-        makeSheet(data, true);
+        makeSheet(data, true, true);
     }
 
     public void makeSheetWithName(String[][] data) {
@@ -67,13 +71,13 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
     }
 
-    @Override
     public void makeSheet(String[][] data, List<ColumnDefinition> columns) {
         this.columns = columns;
-        makeSheet(data, true);
+        makeSheet(data, true, true);
     }
 
-    public synchronized void makeSheet(String[][] data, boolean changed) {
+    @Override
+    public synchronized void makeSheet(String[][] inData, boolean dataChanged, boolean validate) {
         if (isSettingValues) {
             return;
         }
@@ -85,10 +89,12 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
         Platform.runLater(() -> {
             try {
+                String[][] data = inData;
                 clearSheet();
                 int rowsSize = data == null ? 0 : data.length;
                 int colsSize = data == null || rowsSize == 0 ? 0 : data[0].length;
                 if (colsSize > 0) {
+                    // Align columns as data
                     if (dataType != DataType.Matrix) {
                         if (columns == null) {
                             columns = new ArrayList<>();
@@ -96,7 +102,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                         if (columns.size() < colsSize) {
                             makeColumns(columns.size(), colsSize - columns.size());
                         } else if (columns.size() > colsSize) {
-                            for (int col = columns.size() - 1; col > colsSize; col--) {
+                            for (int col = columns.size() - 1; col >= colsSize; col--) {
                                 columns.remove(col);
                             }
                         }
@@ -106,6 +112,40 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                 }
                 if (dataType == DataType.Matrix) {
                     makeColumns(colsSize);
+                }
+                if (rowsSize * colsSize > warnThreshold) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle(getMyStage().getTitle());
+                    alert.setHeaderText(getMyStage().getTitle());
+                    alert.setContentText(message("SheetSizeTooLarge"));
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    ButtonType buttonDisplay = new ButtonType(message("Display"));
+                    ButtonType buttonLess = new ButtonType(message("DisplayLessRows"));
+                    ButtonType buttonCancel = new ButtonType(message("Cancel"));
+                    alert.getButtonTypes().setAll(buttonLess, buttonDisplay, buttonCancel);
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == buttonLess) {
+                        int lessRowsSize = warnThreshold / colsSize;
+                        if (lessRowsSize < 1) {
+                            lessRowsSize = 1;
+                        }
+                        String[][] lessData = new String[lessRowsSize][colsSize];
+                        for (int i = 0; i < lessRowsSize; i++) {
+                            lessData[i] = data[i];
+                        }
+                        data = lessData;
+                        rowsSize = lessRowsSize;
+
+                    } else if (result.get() != buttonDisplay) {
+                        if (loading != null) {
+                            loading.closeStage();
+                        }
+                        return;
+                    }
                 }
                 double space = 0.0;
                 double rowCheckWidth = 80 + (rowsSize + "").length() * AppVariables.sceneFontSize;
@@ -121,7 +161,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     header.setAlignment(Pos.CENTER);
                     header.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     header.setSpacing(space);
-                    col0Label = new Label(Languages.message("Col") + "0");
+                    col0Label = new Label(message("Col") + "0");
                     col0Label.setPrefHeight(header.getHeight());
                     col0Label.setAlignment(Pos.CENTER);
                     col0Label.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
@@ -146,6 +186,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     sheetBox.getChildren().add(header);
                 }
                 col0Label.setPrefWidth(rowCheckWidth);
+                col0Label.setWrapText(true);
+                col0Label.setMinHeight(Region.USE_PREF_SIZE);
                 int currentRowsSize = sheetBox.getChildren().size() - 1;
                 int currentColsSize = header.getChildren().size() - 1;
                 if (currentColsSize > colsSize) {
@@ -190,6 +232,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                             header.getChildren().add(colCheck);
                         }
                         colCheck.setPrefWidth(columns.get(col).getWidth());
+                        colCheck.setWrapText(true);
+                        colCheck.setMinHeight(Region.USE_PREF_SIZE);
                         colCheck.setText(colName(col));
                         colCheck.setSelected(false);
                         colsCheck[col] = colCheck;
@@ -243,6 +287,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                             }
                             rowCheck.setText(rowName(row));
                             rowCheck.setPrefWidth(rowCheckWidth);
+                            rowCheck.setWrapText(true);
+                            rowCheck.setMinHeight(Region.USE_PREF_SIZE);
                             rowCheck.setSelected(false);
                             rowsCheck[row] = rowCheck;
                             for (int col = 0; col < colsSize; ++col) {
@@ -270,7 +316,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                                 v = v == null ? defaultColValue : v;
                                 isSettingValues = true;
                                 valueInput.setText(v);
-                                valueInput.setStyle(inputStyle + (cellValid(col, v) ? "" : NodeStyleTools.badStyle));
+                                valueInput.setStyle(inputStyle + (cellValid(col, v) ? "" : UserConfig.badStyle()));
                                 valueInput.setPrefWidth(columns.get(col).getWidth());
                                 isSettingValues = false;
                                 sheetInputs[row][col] = valueInput;
@@ -286,7 +332,10 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     sheetBox.getChildren().add(noDataLabel);
                 }
                 refreshStyle(sheetBox);
-                sheetChanged(changed);
+                if (validate) {
+                    validateChange();
+                }
+                dataChanged(dataChanged);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
             }
@@ -302,7 +351,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
             sourceFile = null;
             columns = null;
             sheetBox.getChildren().clear();
-            makeSheet(new String[rows][cols], false);
+            makeSheet(new String[rows][cols], false, false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -318,9 +367,9 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
             if (cellValid(col, value)) {
                 input.setStyle(inputStyle);
             } else {
-                input.setStyle(inputStyle + NodeStyleTools.badStyle);
-                popError(Languages.message("Row") + " " + (row + 1) + " " + Languages.message("Column") + " " + (col + 1)
-                        + " " + (value == null || value.isBlank() ? Languages.message("Null") : Languages.message("InvalidValue")));
+                input.setStyle(inputStyle + UserConfig.badStyle());
+                popError(message("Row") + " " + (row + 1) + " " + message("Column") + " " + (col + 1)
+                        + " " + (value == null || value.isBlank() ? message("Null") : message("InvalidValue")));
             }
             sheetChanged();
         } catch (Exception e) {
@@ -340,23 +389,27 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
     }
 
-    public synchronized void sheetChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
+    public synchronized void dataChanged(boolean dataChanged) {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            pickData();
+            dataChangedNotify.set(dataChanged);
+            sheetChangedNotify.set(!sheetChangedNotify.get());
+            sheetTab.setText(message("Sheet") + (dataChanged ? " *" : ""));
+            afterDataChanged();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        pickData();
-        dataChangedNotify.set(changed);
-        sheetChangedNotify.set(!sheetChangedNotify.get());
-        sheetTab.setText(message("Sheet") + (changed ? " *" : ""));
-        afterDataChanged();
     }
 
     public void sheetChanged() {
-        sheetChanged(true);
+        dataChanged(true);
     }
 
     public void sheetSaved() {
-        sheetChanged(false);
+        dataChanged(false);
     }
 
     public String askValue(String header, String name, String initValue) {
@@ -375,12 +428,12 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
     }
 
-    protected long pageStart() {
-        return currentPageStart;
+    protected long pageStart2() {
+        return startRowOfCurrentPage;
     }
 
-    protected long pageEnd() {
-        return pageStart() + (pageData == null ? 0 : pageData.length);
+    protected long pageEnd2() {
+        return pageStart2() + (pageData == null ? 0 : pageData.length);
     }
 
     protected List<String> row(int row) {
@@ -406,25 +459,31 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         return values;
     }
 
+    @Override
     protected String[][] pickData() {
-        pageData = null;
-        rowsNumber = colsNumber = 0;
-        if (sheetInputs == null || sheetInputs.length == 0) {
-            return null;
-        }
-        rowsNumber = sheetInputs.length;
-        colsNumber = sheetInputs[0].length;
-        if (colsNumber == 0) {
-            return null;
-        }
-        String[][] data = new String[sheetInputs.length][sheetInputs[0].length];
-        for (int r = 0; r < rowsNumber; r++) {
-            for (int c = 0; c < colsNumber; c++) {
-                data[r][c] = cellString(r, c);
+        try {
+            pageData = null;
+            rowsNumber = colsNumber = 0;
+            if (sheetInputs == null || sheetInputs.length == 0) {
+                return null;
             }
+            rowsNumber = sheetInputs.length;
+            colsNumber = sheetInputs[0].length;
+            if (colsNumber == 0) {
+                return null;
+            }
+            String[][] data = new String[sheetInputs.length][sheetInputs[0].length];
+            for (int r = 0; r < rowsNumber; r++) {
+                for (int c = 0; c < colsNumber; c++) {
+                    data[r][c] = cellString(r, c);
+                }
+            }
+            pageData = data;
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        pageData = data;
-        return data;
     }
 
     @Override

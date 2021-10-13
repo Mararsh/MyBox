@@ -52,6 +52,8 @@ public abstract class ControlSheet_Base extends BaseController {
     protected String[][] pageData;
     protected ControlFileBackup backupController;
 
+    protected final int defaultWarnThreshold = 2000;
+
     @FXML
     protected TabPane tabPane;
     @FXML

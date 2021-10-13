@@ -5,11 +5,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -27,10 +23,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 thisPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                     keyEvent = event;
                     if (keyEventsFilter(event)) {
-//                        MyBoxLog.debug("consume:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode());
                         event.consume();
                     }
-                    keyEvent = null;
                 });
             }
         } catch (Exception e) {
@@ -41,7 +35,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     // return whether handled
     public boolean keyEventsFilter(KeyEvent event) {
 //        MyBoxLog.debug("filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
-//                + " source:" + event.getSource().getClass() + " target:" + event.getTarget().getClass());
+//                + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
+        keyEvent = event;
         if (event.isControlDown()) {
             return controlAltFilter(event);
 
@@ -55,7 +50,18 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return false;
     }
 
+    // Shortcuts like PageDown/PageUp/Home/End/Ctrl-c/v/x/z/y/a should work for text editing preferentially
+    public boolean targetIsTextInput() {
+        if (keyEvent == null || keyEvent.getTarget() == null) {
+            return false;
+        }
+        String t = keyEvent.getTarget().toString();
+        return t.contains("TextField") || t.contains("ComboBox")
+                || t.contains("TextArea") || t.contains("WebView");
+    }
+
     public boolean altFilter(KeyEvent event) {
+        keyEvent = event;
         if (!event.isAltDown() || event.getCode() == null) {
             return false;
         }
@@ -115,6 +121,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltFilter(KeyEvent event) {
+        keyEvent = event;
         if (event.getCode() == null) {
             return false;
         }
@@ -218,43 +225,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return false;
     }
 
-    // Shortcuts like PageDown/PageUp/Home/End/Ctrl-c/v/x/z/y/a should work for text editing preferentially
-    public boolean defaultHandled() {
-        if (keyEvent == null) {
-            return false;
-        }
-        return NodeTools.isTextInput(keyEvent.getTarget()) != null;
-    }
-
-    public boolean controlAltCTextInput() {
-        if (keyEvent == null) {
-            return false;
-        }
-        EventTarget target = keyEvent.getTarget();
-        if (target != null) {
-            if (target instanceof TextInputControl) {
-                TextClipboardTools.copyToSystemClipboard(myController, (TextInputControl) target);
-                return true;
-            }
-            if (target instanceof ComboBox) {
-                ComboBox cb = (ComboBox) target;
-                if (cb.isEditable()) {
-                    TextClipboardTools.copyToSystemClipboard(myController, cb.getEditor());
-                    return true;
-                }
-            }
-            if (target instanceof WebView) {
-                WebView webview = (WebView) target;
-                TextClipboardTools.copyToSystemClipboard(myController, WebViewTools.selectedText(webview.getEngine()));
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean controlAltC() {
-        if (controlAltCTextInput()) {
-            return true;
+        if (targetIsTextInput()) {
+            return false;
         }
         if (copyButton != null) {
             if (!copyButton.isDisabled() && copyButton.isVisible()) {
@@ -277,7 +250,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltV() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         if (pasteButton != null) {
@@ -300,7 +273,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltA() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         if (allButton != null) {
@@ -378,7 +351,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltD() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         if (deleteButton != null) {
@@ -401,7 +374,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltX() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         if (cropButton != null) {
@@ -434,7 +407,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltZ() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         if (undoButton != null) {
@@ -447,7 +420,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltY() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         if (redoButton != null) {
@@ -551,6 +524,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyFilter(KeyEvent event) {
+        keyEvent = event;
         KeyCode code = event.getCode();
         if (code == null) {
             return false;
@@ -614,7 +588,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (NodeTools.textInputFocus(getMyScene()) == null) {
+        if (!targetIsTextInput()) {
             return controlAltFilter(event);
         }
         return false;
@@ -625,28 +599,28 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyHome() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         return altHome();
     }
 
     public boolean keyEnd() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         return altEnd();
     }
 
     public boolean keyPageUp() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         return altPageUp();
     }
 
     public boolean keyPageDown() {
-        if (defaultHandled()) {
+        if (targetIsTextInput()) {
             return false;
         }
         return altPageDown();

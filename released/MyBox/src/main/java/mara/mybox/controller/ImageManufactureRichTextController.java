@@ -170,10 +170,10 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             angleBox.getSelectionModel().select(0);
 
             rotateLeftButton.disableProperty().bind(
-                    angleBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    angleBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
             );
             rotateLeftButton.disableProperty().bind(
-                    angleBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    angleBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
             );
 
             editAction(null);

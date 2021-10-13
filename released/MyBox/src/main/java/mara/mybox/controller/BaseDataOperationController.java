@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -36,6 +37,8 @@ public abstract class BaseDataOperationController extends BaseController {
     @FXML
     protected RadioButton rowCheckedRadio, rowCurrentPageRadio, rowAllRadio, rowSelectRadio,
             colCheckedRadio, colAllRadio, colSelectRadio;
+    @FXML
+    protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
 
     @Override
     public void setStageStatus() {
@@ -63,7 +66,7 @@ public abstract class BaseDataOperationController extends BaseController {
                     rowSelector.setValue(row + "");
                 }
                 if (rowsListController != null) {
-                    rowsListController.selectIndex(Arrays.asList(row));
+                    rowsListController.setCheckIndices(Arrays.asList(row));
                 }
             }
 
@@ -75,7 +78,7 @@ public abstract class BaseDataOperationController extends BaseController {
                     colSelector.setValue(sheetController.columns.get(col).getName());
                 }
                 if (colsListController != null) {
-                    colsListController.selectIndex(Arrays.asList(col));
+                    colsListController.setCheckIndices(Arrays.asList(col));
                 }
             }
 
@@ -84,9 +87,13 @@ public abstract class BaseDataOperationController extends BaseController {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                         rowsListController.listView.setDisable(!rowSelectRadio.isSelected());
+                        selectAllRowsButton.setDisable(!rowSelectRadio.isSelected());
+                        selectNoneRowsButton.setDisable(!rowSelectRadio.isSelected());
                     }
                 });
                 rowsListController.listView.setDisable(!rowSelectRadio.isSelected());
+                selectAllRowsButton.setDisable(!rowSelectRadio.isSelected());
+                selectNoneRowsButton.setDisable(!rowSelectRadio.isSelected());
             }
 
             if (colGroup != null && colsListController != null && colSelectRadio != null) {
@@ -94,9 +101,13 @@ public abstract class BaseDataOperationController extends BaseController {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                         colsListController.listView.setDisable(!colSelectRadio.isSelected());
+                        selectAllColsButton.setDisable(!colSelectRadio.isSelected());
+                        selectNoneColsButton.setDisable(!colSelectRadio.isSelected());
                     }
                 });
                 colsListController.listView.setDisable(!colSelectRadio.isSelected());
+                selectAllColsButton.setDisable(!colSelectRadio.isSelected());
+                selectNoneColsButton.setDisable(!colSelectRadio.isSelected());
             }
 
         } catch (Exception e) {
@@ -121,8 +132,8 @@ public abstract class BaseDataOperationController extends BaseController {
                 rowAllRadio.setDisable(sheetController.pagesNumber <= 1 || sheetController.dataChangedNotify.get());
             }
             List<String> rows = new ArrayList<>();
-            for (long i = sheetController.pageStart(); i < sheetController.pageEnd(); i++) {
-                rows.add(i + "");
+            for (long i = sheetController.pageStart2(); i < sheetController.pageEnd2(); i++) {
+                rows.add((i + 1) + "");
             }
             if (rowSelector != null) {
                 String v = rowSelector.getValue();
@@ -178,6 +189,26 @@ public abstract class BaseDataOperationController extends BaseController {
     }
 
     @FXML
+    public void selectAllRows() {
+        rowsListController.checkAll();
+    }
+
+    @FXML
+    public void selectNoneRows() {
+        rowsListController.checkNone();
+    }
+
+    @FXML
+    public void selectAllCols() {
+        colsListController.checkAll();
+    }
+
+    @FXML
+    public void selectNoneCols() {
+        colsListController.checkNone();
+    }
+
+    @FXML
     @Override
     public void cancelAction() {
         close();
@@ -188,8 +219,23 @@ public abstract class BaseDataOperationController extends BaseController {
         updateControls();
     }
 
+    public List<Integer> selectedCols(ControlListCheckBox listController) {
+        List<String> names = listController.checkedValues();
+        if (names == null) {
+            return null;
+        }
+        List<Integer> indices = new ArrayList<>();
+        for (String name : names) {
+            int index = sheetController.colIndex(name);
+            if (index >= 0) {
+                indices.add((Integer) index);
+            }
+        }
+        return indices;
+    }
+
     public List<Integer> selectedCols() {
-        return colsListController.getSelectedIndex();
+        return selectedCols(colsListController);
     }
 
     public List<Integer> cols() {
@@ -205,7 +251,7 @@ public abstract class BaseDataOperationController extends BaseController {
     }
 
     public List<Integer> selectedRows() {
-        return rowsListController.getSelectedIndex();
+        return rowsListController.checkedIndices();
     }
 
     public List<Integer> rows() {
@@ -237,14 +283,35 @@ public abstract class BaseDataOperationController extends BaseController {
     /*
         static
      */
-    public static void update() {
+    public static void update(ControlSheet sheetController) {
         try {
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
                 Object object = window.getUserData();
                 if (object != null && object instanceof BaseDataOperationController) {
-                    ((BaseDataOperationController) object).updateControls();
+                    BaseDataOperationController controller = (BaseDataOperationController) object;
+                    if (controller.sheetController == sheetController) {
+                        controller.updateControls();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void closeAll(ControlSheet sheetController) {
+        try {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof BaseDataOperationController) {
+                    BaseDataOperationController controller = (BaseDataOperationController) object;
+                    if (controller.sheetController == sheetController) {
+                        controller.close();
+                    }
                 }
             }
         } catch (Exception e) {

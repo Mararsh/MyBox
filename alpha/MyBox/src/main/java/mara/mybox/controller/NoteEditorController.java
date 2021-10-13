@@ -586,14 +586,14 @@ public class NoteEditorController extends HtmlEditorController {
                     UserConfig.setBoolean(baseName + "ShowTagsTab", tagsMenu.isSelected());
                     if (tagsMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(tagsTab)) {
-                            tabPane.getTabs().add(tagsTab);
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, tagsTab);
                         }
                     } else {
                         if (tabPane.getTabs().contains(tagsTab)) {
                             tabPane.getTabs().remove(tagsTab);
                         }
                     }
-                    NodeStyleTools.refreshStyle(thisPane);
+                    NodeStyleTools.refreshStyle(tabPane);
                 }
             });
             items.add(tagsMenu);
@@ -606,14 +606,14 @@ public class NoteEditorController extends HtmlEditorController {
                     UserConfig.setBoolean(baseName + "ShowStyleTab", styleMenu.isSelected());
                     if (styleMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(styleTab)) {
-                            tabPane.getTabs().add(styleTab);
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, styleTab);
                         }
                     } else {
                         if (tabPane.getTabs().contains(styleTab)) {
                             tabPane.getTabs().remove(styleTab);
                         }
                     }
-                    NodeStyleTools.refreshStyle(thisPane);
+                    NodeStyleTools.refreshStyle(tabPane);
                 }
             });
             items.add(styleMenu);

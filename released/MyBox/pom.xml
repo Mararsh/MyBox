@@ -4,14 +4,14 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.4.8</version>
+    <version>6.4.9</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <organization>
@@ -22,43 +22,43 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>16</version>
+            <version>17.0.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>16</version>
+            <version>17.0.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>16</version>
+            <version>17.0.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>16</version>
+            <version>17.0.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>16</version>
+            <version>17.0.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>16</version>
+            <version>17.0.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>16</version>
+            <version>17.0.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -227,6 +227,16 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.14.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
 

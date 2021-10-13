@@ -142,7 +142,7 @@ public class VisitHistoryTools {
     /*
         URI
      */
-    public static boolean visitURI(String address) {
+    public static boolean downloadURI(String address) {
         return TableVisitHistory.update(ResourceType.URI, FileType.General, OperationType.Download, address);
     }
 

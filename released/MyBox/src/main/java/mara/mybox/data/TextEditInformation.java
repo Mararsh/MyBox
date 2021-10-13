@@ -1,17 +1,17 @@
 package mara.mybox.data;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
-import static mara.mybox.tools.TextTools.bomSize;
 import mara.mybox.tools.TmpFileTools;
 
 /**
@@ -34,284 +34,126 @@ public class TextEditInformation extends FileEditInformation {
 
     @Override
     public boolean readTotalNumbers() {
-        try {
-            if (file == null || pageSize <= 0 || lineBreakValue == null) {
-                return false;
+        if (file == null || pageSize <= 0 || lineBreakValue == null) {
+            return false;
+        }
+        objectsNumber = 0;
+        linesNumber = 0;
+        pagesNumber = 1;
+        long lineIndex = 0, charIndex = 0;
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                charIndex += line.length();
+                lineIndex++;
             }
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
-                if (withBom) {
-                    inputStream.skip(bomSize(charset.name()));
-                }
-                int textSize = FileTools.bufSize(file, 16);
-                char[] textBuf = new char[textSize];
-                char[] charBuf = new char[1];
-                boolean crlf = lineBreak.equals(Line_Break.CRLF);
-                long charIndex = 0, lineIndex = 1, pageIndex = 0;
-                int textLen, readLen = textSize;
-                String text;
-                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
-                    charIndex += textLen;
-                    text = new String(textBuf, 0, textLen);
-                    if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
-                        text += new String(charBuf, 0, 1);
-                        charIndex++;
-                        readLen = textSize - 1;
-                    } else {
-                        readLen = textSize;
-                    }
-                    lineIndex += FindReplaceString.count(text, lineBreakValue);
-                    pageIndex++;
-                }
-                objectsNumber = charIndex;
-                linesNumber = lineIndex;
-                pagesNumber = objectsNumber / pageSize;
-                if (objectsNumber % pageSize > 0) {
-                    pagesNumber++;
-                }
-                totalNumberRead = true;
-            }
-            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
-    }
-
-    @Override
-    public String readPage() {
-        return readPage(currentPage);
+        linesNumber = lineIndex;
+        pagesNumber = linesNumber / pageSize;
+        if (linesNumber % pageSize > 0) {
+            pagesNumber++;
+        }
+        objectsNumber = charIndex + (linesNumber > 0 ? linesNumber - 1 : 0);
+        totalNumberRead = true;
+        return true;
     }
 
     @Override
     public String readPage(long pageNumber) {
-        try {
-            if (file == null || pageSize <= 0 || pageNumber < 1) {
-                return null;
-            }
-            long pageStart = 0, pageEnd = 0, lineEnd = 1, lineStart = 1, pageIndex = 1;
-            String pageText = null;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
-                if (withBom) {
-                    inputStream.skip(bomSize(charset.name()));
-                }
-                int bufSize = (int) Math.min(file.length(), pageSize);
-                char[] textBuf = new char[bufSize];
-                char[] charBuf = new char[1];
-                boolean crlf = lineBreak.equals(Line_Break.CRLF);
-                String text;
-                int textLen, readLen = bufSize;
-                long findStart = -1, findEnd = -1;
-                if (findReplace != null && findReplace.getFileRange() != null) {
-                    findStart = findReplace.getFileRange().getStart();
-                    findEnd = findReplace.getFileRange().getEnd();
-                }
-                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
-                    text = new String(textBuf, 0, textLen);
-                    if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
-                        text += new String(charBuf, 0, 1);
-                        textLen++;
-                        readLen = bufSize - 1;
-                    } else {
-                        readLen = bufSize;
-                    }
-                    pageStart = pageEnd;
-                    pageEnd += textLen;
-                    lineStart = lineEnd;
-                    if (pageIndex == pageNumber) {
-                        pageText = text;
-                        if (findStart >= pageStart && findStart < pageEnd && findEnd > pageEnd) {
-                            char[] findBuf = new char[(int) (findEnd - pageEnd)];
-                            int findLen;
-                            if ((findLen = reader.read(findBuf)) > 0) {
-                                String findText = new String(findBuf, 0, findLen);
-                                pageText += findText;
-                                pageEnd += findLen;
-                            }
-                        }
-                        lineEnd += FindReplaceString.count(pageText, lineBreakValue);
-                        break;
-                    } else {
-                        lineEnd += FindReplaceString.count(text, lineBreakValue);
-                    }
-                    pageIndex++;
-                }
-            }
-            if (pageText == null) {
-                return null;
-            }
-            currentPage = pageNumber;
-            currentPageObjectStart = pageStart;  // 0-based
-            currentPageObjectEnd = pageEnd;      // excluded
-            currentPageLineStart = lineStart;    // 1-based
-            currentPageLineEnd = lineEnd;        // included
-            if (!lineBreak.equals(Line_Break.LF)) {
-                pageText = pageText.replaceAll(lineBreakValue, "\n");  // length is less than actual size in file when line break is CRLF
-            }
-            if (findReplace != null && findReplace.getFileRange() != null) {
-                findReplace.setPageReloaded(true);
-                FindReplaceFile.stringRange(findReplace, pageText);
-            }
-            return pageText;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
+        return readLines(pageNumber * pageSize, pageSize);
     }
 
     @Override
-    public boolean writeObject(String text) {
-        try {
-            if (file == null || charset == null || text == null || text.isEmpty()) {
-                return false;
-            }
-            try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
-                if (withBom) {
-                    byte[] bytes = bomBytes(charset.name());
-                    outputStream.write(bytes);
-                }
-                if (lineBreak != Line_Break.LF) {
-                    writer.write(text.replaceAll("\n", lineBreakValue));
+    public String readLines(long from, long number) {
+        if (file == null || from < 0 || number <= 0 || (linesNumber > 0 && from >= linesNumber)) {
+            return null;
+        }
+        long lineIndex = 0, charIndex = 0, lineStart = 0;
+        StringBuilder pageText = new StringBuilder();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            lineStart = (from / pageSize) * pageSize;
+            long lineEnd = Math.max(from + number, lineStart + pageSize);
+            String line, fixedLine;
+            boolean moreLine = false;
+            while ((line = reader.readLine()) != null) {
+                if (lineIndex > 0) {
+                    fixedLine = "\n" + line;
                 } else {
-                    writer.write(text);
+                    fixedLine = line;
+                }
+                charIndex += fixedLine.length();
+                if (lineIndex++ < lineStart) {
+                    continue;
+                }
+                if (moreLine) {
+                    pageText.append(fixedLine);
+                } else {
+                    pageText.append(line);
+                    moreLine = true;
+                }
+                if (lineIndex >= lineEnd) {
+                    break;
                 }
             }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return false;
-        }
-    }
-
-    @Override
-    public boolean writePage(FileEditInformation sourceInfo, String text) {
-        return writePage(sourceInfo, sourceInfo.getCurrentPage(), text);
-    }
-
-    @Override
-    public boolean writePage(FileEditInformation sourceInfo, long pageNumber, String pageText) {
-        try {
-            if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
-                    || sourceInfo.getPageSize() <= 0 || pageNumber < 1
-                    || pageText == null || pageText.isEmpty()
-                    || file == null || charset == null || lineBreakValue == null) {
-                return false;
-            }
-            File targetFile = file;
-            if (sourceInfo.getFile().equals(file)) {
-                targetFile = TmpFileTools.getTempFile();
-            }
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
-                    InputStreamReader reader = new InputStreamReader(inputStream, sourceInfo.getCharset());
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
-                if (sourceInfo.isWithBom()) {
-                    inputStream.skip(bomSize(sourceInfo.getCharset().name()));
-                }
-                if (withBom) {
-                    byte[] bytes = bomBytes(charset.name());
-                    outputStream.write(bytes);
-                }
-                String sourceLineBreak = sourceInfo.getLineBreakValue();
-                boolean sameLineBreak = lineBreakValue.equals(sourceLineBreak);
-                boolean crlf = lineBreak.equals(Line_Break.CRLF);
-                int bufSize = (int) Math.min(sourceInfo.getFile().length(), sourceInfo.getPageSize());
-                int readLen = bufSize, textLen, pageIndex = 1;
-                char[] textBuf = new char[bufSize];
-                char[] charBuf = new char[1];
-                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
-                    if (pageIndex == pageNumber) {
-                        if (lineBreak != Line_Break.LF) {
-                            writer.write(pageText.replaceAll("\n", lineBreakValue));
-                        } else {
-                            writer.write(pageText);
-                        }
-                    } else {
-                        String text = new String(textBuf, 0, textLen);
-                        if (crlf && pageText.endsWith("\r") && reader.read(charBuf) == 1) {
-                            text += new String(charBuf, 0, 1);
-                            textLen++;
-                            readLen = bufSize - 1;
-                        } else {
-                            readLen = bufSize;
-                        }
-                        if (sameLineBreak) {
-                            writer.write(text);
-                        } else {
-                            writer.write(text.replaceAll(sourceLineBreak, lineBreakValue));
-                        }
-                    }
-                    pageIndex++;
-                }
-            }
-            if (sourceInfo.getFile().equals(file)) {
-                FileTools.rename(targetFile, file);
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return false;
-        }
-    }
-
-    @Override
-    public String locateLine() {
-        try {
-            if (file == null || currentLine <= 0) {
-                return null;
-            }
-            long pageStart = 0, pageEnd = 0, lineEnd = 1, lineStart = 1, pageIndex = 1;
-            String pageText = null;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
-                if (withBom) {
-                    inputStream.skip(bomSize(charset.name()));
-                }
-                int bufSize = (int) Math.min(file.length(), pageSize);
-                char[] textBuf = new char[bufSize];
-                char[] charBuf = new char[1];
-                boolean crlf = lineBreak.equals(Line_Break.CRLF);
-                int textLen, readLen = bufSize;
-                String text;
-                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
-                    text = new String(textBuf, 0, textLen);
-                    if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
-                        text += new String(charBuf, 0, 1);
-                        textLen++;
-                        readLen = bufSize - 1;
-                    } else {
-                        readLen = bufSize;
-                    }
-                    pageStart = pageEnd;
-                    pageEnd += textLen;
-                    lineStart = lineEnd;
-                    lineEnd += FindReplaceString.count(text, lineBreakValue);
-                    if (currentLine >= lineStart && currentLine <= lineEnd) {
-                        pageText = text;
-                        break;
-                    }
-                    pageIndex++;
-                }
-                if (pageText == null) {
-                    return null;
-                }
-            }
-            currentPage = pageIndex;
-            currentPageObjectStart = pageStart;
-            currentPageObjectEnd = pageEnd;
-            currentPageLineStart = lineStart;
-            currentPageLineEnd = lineEnd;
-            if (!lineBreak.equals(Line_Break.LF)) {
-                pageText = pageText.replaceAll(lineBreakValue, "\n");
-            }
-            return pageText;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
+        currentPage = lineStart / pageSize;
+        currentPageObjectStart = charIndex - pageText.length();
+        currentPageObjectEnd = charIndex;
+        currentPageLineStart = lineStart;
+        currentPageLineEnd = lineIndex;
+        return pageText.toString();
+    }
 
+    @Override
+    public String readObjects(long from, long number) {
+        if (file == null || from < 0 || number <= 0 || (objectsNumber > 0 && from >= objectsNumber)) {
+            return null;
+        }
+        long charIndex = 0, lineIndex = 0, lineStart = 0;
+        StringBuilder pageText = new StringBuilder();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            long to = from + number;
+            boolean moreLine = false;
+            String line, fixedLine;
+            while ((line = reader.readLine()) != null) {
+                if (lineIndex > 0) {
+                    fixedLine = "\n" + line;
+                } else {
+                    fixedLine = line;
+                }
+                if (moreLine) {
+                    pageText.append(fixedLine);
+                } else {
+                    pageText.append(line);
+                    moreLine = true;
+                }
+                charIndex += fixedLine.length();
+                if (++lineIndex == lineStart + pageSize && charIndex < from) {
+                    lineStart = lineIndex;
+                    pageText = new StringBuilder();
+                    moreLine = false;
+                }
+                if (charIndex >= to && lineIndex >= lineStart + pageSize) {
+                    break;
+                }
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+        currentPage = lineStart / pageSize;;
+        currentPageObjectStart = charIndex - pageText.length();
+        currentPageObjectEnd = charIndex;
+        currentPageLineStart = lineStart;
+        currentPageLineEnd = lineIndex;
+        return pageText.toString();
     }
 
     @Override
@@ -321,77 +163,107 @@ public class TextEditInformation extends FileEditInformation {
                 return file;
             }
             File targetFile = TmpFileTools.getTempFile();
-            long lineEnd = 1, lineStart = 1;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
-                if (withBom) {
-                    byte[] bytes = bomBytes(charset.name());
-                    inputStream.skip(bytes.length);
-                    outputStream.write(bytes);
-                }
-                int bufSize = (int) Math.min(file.length(), pageSize);
-                char[] textBuf = new char[bufSize];
-                char[] charBuf = new char[1];
-                boolean crlf = lineBreak.equals(Line_Break.CRLF);
-                int textLen, readLen = bufSize;
-                String text, crossString = "";
-                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
-                    text = new String(textBuf, 0, textLen);
-                    if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
-                        text += new String(charBuf, 0, 1);
-                        textLen++;
-                        readLen = bufSize - 1;
-                    } else {
-                        readLen = bufSize;
-                    }
-                    text = crossString + text;
-                    String[] lines = text.split(lineBreakValue);
-                    lineStart = lineEnd;
-                    lineEnd += lines.length - 1;
-                    for (int i = 0; i < lines.length - 1; ++i) {
-                        if (isMatchFilters(lines[i])) {
-                            if (recordLineNumbers) {
-                                String lineNumber = StringTools.fillRightBlank(lineStart + i, 15);
-                                writer.write(lineNumber + "    " + lines[i] + lineBreakValue);
-                            } else {
-                                writer.write(lines[i] + lineBreakValue);
-                            }
-                        }
-                    }
-                    if (text.endsWith(lineBreakValue)) {
-                        if (isMatchFilters(lines[lines.length - 1])) {
-                            if (recordLineNumbers) {
-                                String lineNumber = StringTools.fillRightBlank(lineStart + lines.length - 1, 15);
-                                writer.write(lineNumber + "    " + lines[lines.length - 1] + lineBreakValue);
-                            } else {
-                                writer.write(lines[lines.length - 1] + lineBreakValue);
-                            }
-                        }
-                        crossString = "";
-                    } else {
-                        crossString = lines[lines.length - 1];
-                    }
-                }
-                if (!crossString.isEmpty()) {
-                    if (isMatchFilters(crossString)) {
+            long lineIndex = 0;
+            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                     BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (isMatchFilters(line)) {
                         if (recordLineNumbers) {
-                            String lineNumber = StringTools.fillRightBlank(lineEnd, 15);
-                            writer.write(lineNumber + "    " + crossString);
-                        } else {
-                            writer.write(crossString);
+                            line = StringTools.fillRightBlank(lineIndex, 15) + line;
                         }
+                        writer.write(line + lineBreakValue);
                     }
+                    lineIndex++;
                 }
+                writer.flush();
             }
-
             return targetFile;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
 
+    }
+
+    @Override
+    public boolean writeObject(String text) {
+        if (file == null || charset == null || text == null || text.isEmpty()) {
+            return false;
+        }
+        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+            if (withBom) {
+                byte[] bytes = bomBytes(charset.name());
+                outputStream.write(bytes);
+            }
+            if (lineBreak != Line_Break.LF) {
+                writer.write(text.replaceAll("\n", lineBreakValue));
+            } else {
+                writer.write(text);
+            }
+            writer.flush();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean writePage(FileEditInformation sourceInfo, String pageText) {
+        try {
+            if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
+                    || sourceInfo.getPageSize() <= 0 || pageText == null
+                    || file == null || charset == null || lineBreakValue == null) {
+                return false;
+            }
+            File targetFile = file;
+            if (sourceInfo.getFile().equals(file)) {
+                targetFile = TmpFileTools.getTempFile();
+            }
+            try ( BufferedReader reader = new BufferedReader(new FileReader(sourceInfo.getFile(), sourceInfo.charset));
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+                if (withBom) {
+                    byte[] bytes = bomBytes(charset.name());
+                    outputStream.write(bytes);
+                }
+                String line, text = null;
+                long lineIndex = 0, pageLineStart = sourceInfo.getCurrentPageLineStart(),
+                        pageLineEnd = sourceInfo.getCurrentPageLineEnd();
+                while ((line = reader.readLine()) != null) {
+                    text = null;
+                    if (lineIndex < pageLineStart || lineIndex >= pageLineEnd) {
+                        text = line;
+                    } else if (lineIndex == pageLineStart) {
+                        if (lineBreak != Line_Break.LF) {
+                            text = pageText.replaceAll("\n", lineBreakValue);
+                        } else {
+                            text = pageText;
+                        }
+                    }
+                    if (text != null) {
+                        if (lineIndex > 0) {
+                            text = lineBreakValue + text;
+                        }
+                        writer.write(text);
+                    }
+                    lineIndex++;
+                }
+                writer.flush();
+            } catch (Exception e) {
+                MyBoxLog.debug(e.toString());
+                return false;
+            }
+            if (sourceInfo.getFile().equals(file)) {
+                FileTools.rename(targetFile, file);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return false;
+        }
     }
 
 }

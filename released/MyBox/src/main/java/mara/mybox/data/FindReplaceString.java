@@ -41,7 +41,6 @@ public class FindReplaceString {
 
     public boolean run() {
         reset();
-//        MyBoxLog.console(findString);
         if (operation == null
                 || inputString == null || inputString.isEmpty()
                 || findString == null || findString.isEmpty()) {
@@ -91,7 +90,7 @@ public class FindReplaceString {
                 }
                 return run(start, end);
             case FindPrevious:
-                if (end >= inputString.length()) {
+                if (end > inputString.length()) {
                     return true;
                 }
                 if (isRegex) {

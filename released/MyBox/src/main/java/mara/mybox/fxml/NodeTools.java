@@ -144,6 +144,7 @@ public class NodeTools {
         if (scene == null) {
             return null;
         }
+        MyBoxLog.console(scene.getFocusOwner() != null);
         return isTextInput(scene.getFocusOwner());
     }
 
@@ -151,6 +152,7 @@ public class NodeTools {
         if (node == null) {
             return null;
         }
+        MyBoxLog.console(node.getClass());
         if (node instanceof TextInputControl) {
             return node;
         }

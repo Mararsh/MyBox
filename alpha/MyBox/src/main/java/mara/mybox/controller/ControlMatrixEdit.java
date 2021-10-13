@@ -69,7 +69,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                     if (isSettingValues) {
                         return;
                     }
-                    sheetChanged(true);
+                    dataChanged(true);
                 }
             });
 
@@ -86,7 +86,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
             rowsNumber = 3;
             colsNumber = 3;
             nameInput.setText(rowsNumber + "x" + colsNumber);
-            makeSheet(new String[rowsNumber][colsNumber], false);
+            makeSheet(new String[rowsNumber][colsNumber], false, false);
 
             autoNameCheck.setSelected(UserConfig.getBoolean(baseName + "AutoName", true));
             autoNameCheck.selectedProperty().addListener(
@@ -177,7 +177,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
         } catch (Exception e) {
         }
         columns = null;
-        makeSheet(values, false);
+        makeSheet(values, false, false);
     }
 
     public void loadNull() {
@@ -208,7 +208,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
         } catch (Exception e) {
         }
         columns = null;
-        makeSheet(values, true);
+        makeSheet(values, true, false);
     }
 
     protected double[][] matrixDouble() {

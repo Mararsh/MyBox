@@ -16,6 +16,10 @@ import mara.mybox.value.UserConfig;
  * @Author Mara
  * @CreateDate 2018-6-28
  * @License Apache License Version 2.0
+ *
+ * ImagesBrowserController < ImagesBrowserController_Pane <
+ * ImagesBrowserController_Menu < ImagesBrowserController_Action <
+ * ImagesBrowserController_Load < ImageViewerController
  */
 public class ImagesBrowserController extends ImagesBrowserController_Pane {
 
@@ -32,7 +36,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             colsNum = -1;
             displayMode = DisplayMode.ImagesGrid;
             currentIndex = -1;
-            thumbWidth = UserConfig.getInt("ThumbnailWidth", 100);
+            thumbWidth = UserConfig.getInt(baseName + "ThumbnailWidth", 100);
             thumbWidth = thumbWidth > 0 ? thumbWidth : 100;
 
         } catch (Exception e) {
@@ -124,8 +128,8 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             ValidationTools.setEditorNormal(thumbWidthSelector);
+                            UserConfig.setInt(baseName + "ThumbnailWidth", v);
                             thumbWidth = v;
-                            UserConfig.setInt("ThumbnailWidth", thumbWidth);
                             loadImages();
                         } else {
                             ValidationTools.setEditorBadStyle(thumbWidthSelector);

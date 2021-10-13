@@ -350,8 +350,11 @@ public class TextTools {
                                 outputStream.write(bytes);
                             }
                             while ((line = bufferedReader.readLine()) != null) {
-                                writer.write(line + taregtLineBreak);
-                                linesNumber++;
+                                if (linesNumber++ > 0) {
+                                    writer.write(taregtLineBreak + line);
+                                } else {
+                                    writer.write(line);
+                                };
                                 if (linesNumber >= maxLines) {
                                     break;
                                 }
@@ -376,8 +379,11 @@ public class TextTools {
                             outputStream.write(bytes);
                         }
                         String line;
+                        if ((line = bufferedReader.readLine()) != null) {
+                            writer.write(line);
+                        }
                         while ((line = bufferedReader.readLine()) != null) {
-                            writer.write(line + taregtLineBreak);
+                            writer.write(taregtLineBreak + line);
                         }
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
@@ -398,8 +404,7 @@ public class TextTools {
         }
     }
 
-    public static IndexRange hexIndex(String text, Charset charset,
-            String lineBreakValue, IndexRange textRange) {
+    public static IndexRange hexIndex(String text, Charset charset, String lineBreakValue, IndexRange textRange) {
         int hIndex = 0;
         int hBegin = 0;
         int hEnd = 0;
@@ -609,31 +614,31 @@ public class TextTools {
             switch (delimiterName.toLowerCase()) {
                 case "tab":
                 case "\t":
-                    values = line.split("\t");
+                    values = line.split("\t", -1);
                     break;
                 case "blank":
                 case " ":
-                    values = line.split("\\s");
+                    values = line.split("\\s", -1);
                     break;
                 case "blank4":
                 case "    ":
-                    values = line.split("\\s{4}");
+                    values = line.split("\\s{4}", -1);
                     break;
                 case "blank8":
                 case "        ":
-                    values = line.split("\\s{8}");
+                    values = line.split("\\s{8}", -1);
                     break;
                 case "blanks":
-                    values = line.split("\\s+");
+                    values = line.split("\\s+", -1);
                     break;
                 case "|":
-                    values = line.split("\\|");
+                    values = line.split("\\|", -1);
                     break;
                 default:
                     if (delimiterName.isBlank()) {
-                        values = line.split("\\s+");
+                        values = line.split("\\s+", -1);
                     } else {
-                        values = line.split(delimiterName);
+                        values = line.split(delimiterName, -1);
                     }
                     break;
 
@@ -652,19 +657,27 @@ public class TextTools {
         }
     }
 
-    public static String[][] toArray(List<List<String>> data) {
+    public static String[][] toArray(List<List<String>> rows) {
         try {
-            if (data == null || data.isEmpty()) {
+            if (rows == null || rows.isEmpty()) {
                 return null;
             }
-            String[][] array = new String[data.size()][data.get(0).size()];
-            for (int r = 0; r < data.size(); r++) {
-                List<String> row = data.get(r);
-                for (int c = 0; c < row.size(); c++) {
-                    array[r][c] = row.get(c);
+            int rowSize = rows.size();
+            int colSize = -1;
+            for (List<String> row : rows) {
+                int len = row.size();
+                if (len > colSize) {
+                    colSize = len;
                 }
             }
-            return array;
+            String[][] data = new String[rowSize][colSize];
+            for (int r = 0; r < rows.size(); r++) {
+                List<String> row = rows.get(r);
+                for (int c = 0; c < row.size(); c++) {
+                    data[r][c] = row.get(c);
+                }
+            }
+            return data;
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;

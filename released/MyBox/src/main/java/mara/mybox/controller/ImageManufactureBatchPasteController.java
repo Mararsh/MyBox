@@ -22,7 +22,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Colors;
@@ -74,13 +74,13 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(Bindings.isEmpty(sourceFileInput.textProperty()))
-                    .or(sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(marginInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(yInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(marginInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -245,10 +245,10 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 UserConfig.setInt(baseName + "Margin", margin);
                 marginInput.setStyle(null);
             } else {
-                marginInput.setStyle(NodeStyleTools.badStyle);
+                marginInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            marginInput.setStyle(NodeStyleTools.badStyle);
+            marginInput.setStyle(UserConfig.badStyle());
         }
 
     }
@@ -260,10 +260,10 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 posX = v;
                 xInput.setStyle(null);
             } else {
-                xInput.setStyle(NodeStyleTools.badStyle);
+                xInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            xInput.setStyle(NodeStyleTools.badStyle);
+            xInput.setStyle(UserConfig.badStyle());
         }
 
         try {
@@ -272,10 +272,10 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 posY = v;
                 yInput.setStyle(null);
             } else {
-                yInput.setStyle(NodeStyleTools.badStyle);
+                yInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            yInput.setStyle(NodeStyleTools.badStyle);
+            yInput.setStyle(UserConfig.badStyle());
         }
 
     }

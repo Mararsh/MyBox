@@ -4,62 +4,60 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2021-9-21 版本6.4.8         
+2021-10-13 版本6.4.9         
 
-* 数据：完善表单操作；可编辑数据文本；支持文本数据文件；数据粘贴板可保存和管理。       
-* 改进：弹出的文本/图像/网页可与原内容同步；可查询颜色；图像列表支持PDF和PPT。          
-* 解决的主要问题：PDF的OCR无法刷新；矩阵右键菜单时会内存溢出；Linux上无法选择无后缀的文件。               
+* 改进：文本编辑器以行数分页、每个换行符算作一个字符；批处理的目标文件名均自动附加时标。       
+* 新增：从网页中提取表格数据；网页/笔记编辑器可以关闭页签；转换word/ppt/文本为PDF。          
+* 平台：升级到java17和javafx17；程序可以从非英文目录下启动了；Linux上可正常播放媒体了。          
+* 解决：文本/字节编辑器读写错误；图像的范围不显示且无法保存；输入文本时可能触发快捷键；多个功能失效。               
 
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)           
-
-中秋节快乐！       
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.9)           
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
 
 ### 源码
-[MyBox-6.4.8-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-src.zip)   39M（大约值）       
+[MyBox-6.4.9-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-src.zip)   39M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
 
 
 ### 自包含程序包
-自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）       
+自包含的程序包无需java环境、无需安装、解包可用。     
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.4.8-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-win10-x64.zip)  | 231MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.4.8-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac | [MyBox-6.4.8-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-mac.dmg)  | 245MB  |  MyBox-6.4.8.app   |
+| win10 x64 | [MyBox-6.4.9-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-win10-x64.zip)  | 231MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.4.9-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac x64| [MyBox-6.4.9-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-mac.dmg)  | 245MB  |  MyBox-6.4.9.app   |
 
-双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
-（目前无法双击打开路径包含汉字的文件）       
+双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
+  
 
 ### Jar包
-在已安装JRE或者JDK 16或更高版本（[Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html)或[open jdk](http://jdk.java.net/)均可）的环境下，可以下载jar包。       
+在已安装JRE或者JDK [Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html)或[open jdk](http://jdk.java.net/)均可）的环境下，可以下载jar包。       
+在我的Mac环境（OS X 10.11.6/Darwin 15.6.0）下,openJDK 17无法启动，所以MyBox的mac版本基于openJDK 16。
+
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.4.8-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-win-jar.zip)  | 168MB | Java 16或更高版本 |
-| linux | [MyBox-6.4.8-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-linux-jar.zip)  | 176MB  | Java 16或更高版本 |
-| mac | [MyBox-6.4.8-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-mac-jar.zip)  |  173MB  | Java 16或更高版本 |
+| win | [MyBox-6.4.9-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-win-jar.zip)  | 168MB | Java 17或更高版本 |
+| linux | [MyBox-6.4.9-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-linux-jar.zip)  | 176MB  | Java 17或更高版本 |
+| mac | [MyBox-6.4.9-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-mac-jar.zip)  |  173MB  | Java 16 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.4.8.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.4.9.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.4.8.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.4.9.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
 从sourceforge下载：[https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)      
 
 ### 限制
-
-* 自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
-[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)       
+  
 * 在某个输入法运行时，MyBox的窗口经常僵住。解决办法：禁用/卸载此输入法。       
-* 版本6.4.3以后在Linux上用MyBox播放媒体将导致MyBox崩溃。
 
 ## 版本迁移
 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
@@ -69,9 +67,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.4.8.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.4.8.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.4.8.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.4.9.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.4.9.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.4.9.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -90,7 +88,7 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.4.8 | 2021-9-20 | [html](#devLog) |
+| 开发日志 | 6.4.9 | 2021-10-13 | [html](#devLog) |
 | 快捷键 | 6.4.7 |  2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -161,7 +159,7 @@ MyBox基于以下开放资源：
 
 
 # 当前版本       
-当前是版本6.4.8，已实现的特点概述如下:      
+当前是版本6.4.9，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
@@ -196,6 +194,7 @@ MyBox基于以下开放资源：
     - [其它](#imageOthers)
     - [大图片的处理](#bigImage)
 * [数据工具](#dataTools)
+    - [通用的表单管理](#sheetDataBase)
     - [数据文件](#dataFiles)
     - [数据粘贴板](#dataClipboard)
     - [矩阵](#matrix)
@@ -218,7 +217,14 @@ MyBox基于以下开放资源：
     - [封装ffmpeg的功能](#ffmpeg)
     - [游戏-消消乐](#gameElimination)
     - [游戏-挖雷](#gameMine)
-编码URL](#encodeDecodeURL)
+    - [其它](#mediaOthers)
+* [网络工具](#netTools)
+    - [下载第一级链接](#downloadFirstLevelLinks)
+    - [微博截图工具](#weiboSnap)
+    - [网页浏览器](#webBrowser)
+    - [查询网址](#queryAddress)
+    - [批量查询DNS](#queryDNS)
+    - [解码/编码URL](#encodeDecodeURL)
     - [管理安全证书](#securityCerificates)
 * [开发工具](#devTools)
 * [设置](#settings)
@@ -226,7 +232,7 @@ MyBox基于以下开放资源：
 * [帮助](#helps)
 
 ## 跨平台<a id="cross-platform" />       
-MyBox用纯Java实现且只基于开放资源，MyBox可运行于所有支持Java 16的平台。       
+MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 17的平台。       
 MyBox v5.3以前的版本均基于Java 8。       
 
 ## 国际化<a id="international" />       
@@ -311,24 +317,29 @@ MyBox v5.3以前的版本均基于Java 8。
 
 ### 文本编辑的基础<a id="editTextBase" />
 1. 编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
-2. 查找与替换。
+2. 查找与替换：
 	-  选项：忽略大小写、回绕。
 	-  查找字串和替换字串都支持支持多行。其中的换行符按照当前文件换行符的定义来处理。
 	-  支持正则表达式，提供示例。
 	-  计数
 	-  由于算法的限制，对于多页文档查找规则表达式时，假设：匹配的字符串的最大长度小于当前JVM可用内存的1/16。
-3. 定位。跳转到指定的字符位置或行号。
+3. 定位：
+	-  选择指定行号的行。
+	-  选择指定位置的字符。
+	-  选择指定范围的行。
+	-  选择指定范围的字符。
 4. 行过滤：
 	-  条件：包含/不包含任一、包含/不含所有、包含/不包含规则表达式、匹配/不匹配规则表达式。
 	-  可累加过滤。
-  	-  可保存过滤结果。可选是否包含行号。
+  	-  可保存过滤结果。
+  	-  可选是否包含行号。
 5. 分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
 	-  设置页尺寸。
 	-  页面导航。
 	-  先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	-  对于跨页字符串，确保查找、替换、过滤的正确性。
-6. 定时自动保存。
-7. 保存时自动备份。       
+6. 定时自动保存。只在有修改时保存。
+7. 保存时自动备份。可恢复到备份。       
 
 
 ### Markdown工具<a id="markdownTools" />
@@ -350,7 +361,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  字符集对应的编码：字节的十六进制，同步显示、同步选择，可选同步滚动、同步更新。              
 2. 批量转换/分割文本文件。
 3. 合并文本文件。
-4. 批量转换文本文件为网页。
+4. 批量转换文本文件为网页/PDF。
 5. 批量替换文本文件中的字符串。
 
 ### 网页工具<a id="htmlTools" />       
@@ -368,25 +379,27 @@ MyBox v5.3以前的版本均基于Java 8。
 2. 查找网页中的字串。
 3. 查找网页中的元素。
 4. 网页截图：可设置dpi，看选保存为一张图还是多图保存在PDF中。
-5. 批量转换网页为Markdown/文本/PDF文件：
-6. 批量设置网页的编码/样式。
-7. 合并多个网页为一个网页/Markdown/文本/PDF文件。
-8. 对多个文件生成框架文件。   
+5. 批量提取网页中的表格数据：
+6. 批量转换网页为Markdown/文本/PDF文件：
+7. 批量设置网页的编码/样式。
+8. 合并多个网页为一个网页/Markdown/文本/PDF文件。
+9. 对多个文件生成框架文件。   
 
 ![截屏-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor.jpg)       
 
 ### 微软的文档格式<a id="msDocuments" />
 1. 处理Word文档
-	-  查看Word文件：            
+	-  格式：            
 		-  文件".doc"(Word 97，即OLE 2格式)被转换为html，保留大部分格式。
 		-  文件".docx"(Word 2007, 即OOXML格式)被转换为文本，格式丢失。
-	-  批量转换".doc"(Word 97，即OLE 2格式)文件为html。          
+	-  查看Word文件。            
+	-  批量转换Word文件为html/PDF。           
 2. 处理PPT文档：
 	-  不说明则同时支持".ppt"(PPT 97，即OLE 2格式)和".pptx"(PPT 2007, 即OOXML格式）： 
 	-  查看PPT文件-图像模式。逐页显示：
 		-  页面被转换为图片
 		-  幻灯片文本和备注文本
-	-  批量转换PPT文件为图片。
+	-  批量转换PPT文件为图片/PDF。
 	-  批量提取PPT文件中的对象：
 		-  可选择提取：幻灯片文本、备注文本、模板文本、注释文本、图片、声音、OLE(Word/Excel)
 		-  不支持从".pptx"中提取声音。
@@ -590,7 +603,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  多种图像算法
 	-  伸缩比例
 	-  黑白阈值
-	-  旋转角度。
+	-  旋转角度
 	-  是否自动矫正偏斜
 	-  是否反色
 2. 文字识别的选项：
@@ -653,10 +666,9 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  以下是可选数据域：name       
 8. 查询颜色。
 
-[常用网页颜色列表](http://mararsh.github.io/MyBox_data/colors/%E5%B8%B8%E7%94%A8%E7%BD%91%E9%A1%B5%E9%A2%9C%E8%89%B2.html)       
+[常用网页颜色列表](http://mararsh.github.io/MyBox_data/colors/%E5%B8%B8%E7%94%A8%E7%BD%91%E9%A1%B5%E9%A2%9C%E8%89%B2.html)         
 
-
-![截屏-colors](https://mararsh.github.io/MyBox/snap-colors.jpg)        
+![截屏-colors](https://mararsh.github.io/MyBox/snap-colors.jpg)          
 
 ### 色彩空间<a id="colorSpaces" />
 1. 绘制色度图
@@ -743,6 +755,44 @@ MyBox v5.3以前的版本均基于Java 8。
 
 ## 数据工具<a id="dataTools" />
 
+### 通用的表单管理<a id="sheetDataBase" />
+1. 以下对象是以表单数据来处理的：数据文件、数据粘贴板、矩阵。
+2. 表单数据应当是等宽的，即所有行的列数相同。   
+3. 编辑表单数据：
+	- 有两种编辑模式：表格模式、文本模式，可以分别修改数据。
+	- 当前页签下的模式称为“当前编辑模式”。
+	- 在表格模式下：
+ 		- 每个数据对应一个输入框
+ 		- 每次修改都将自动同步到其它面板。
+	- 在文本模式下：
+ 		- 所有数据都在一个文本区域内自由修改
+ 		- 点击按钮“同步”以把修改同步到其它面板。
+4. 操作表单：
+	- 操作类型：赋值、设置列宽、增/删行、增/删列、复制、粘贴、排序、导出
+	- 操作对象：选择的行/列、当前页的所有行、文件中所有行。
+5. 表单分页。当页数大于1、并且选择对文件中所有行操作时：
+	- 必须先保存当前页的修改。
+	- 操作是直接写文件，所以无法撤销。（如果备份了可以恢复）
+6. "数据定义"用以描述和约束数据：
+	- 列名不能为空也不能重复。
+	- "数据类型"、字串长度、和"是否为空"用来检验数据值的合法性。
+7. 同步显示数据的文本格式和网页格式。
+8. 计算数据：
+	- 计算类型：转置、统计
+	- 计算对象：选择的行/列、当前页的所有行、文件中所有行。
+	- 以下计算只能用于数值型的字段：
+ 		- 统计
+	- 以下计算需要读取所有选择的数据，应确保内存够用：
+ 		- 转置
+ 		- 统计“中位数”和“众数”
+	- 计算结果被显示在新的数据表单中。
+9. 选项：
+	- 数值的小数位数
+	- 随机数的最大值。
+	- 当鼠标移至或点击行/列的头部，是否弹出此行/列的功能菜单。
+	- 数据警告阈值。
+
+
 ### 数据文件<a id="dataFiles" />
 1. 编辑数据文件：
 	- 对于CSV文件和文本文件，选项包括：文件的字符集、是否以第一行作为字段的名字、字段的分隔符。
@@ -750,20 +800,6 @@ MyBox v5.3以前的版本均基于Java 8。
  		- 选项包括：工作表号、是否以第一行作为字段的名字。
  		- 添加/删除/重命名excel工作表。
  		- 工具只能处理Excel文件中的基本数据。如果文件包含格式、公式、风格、或图，建议把修改保存为新文件以免数据丢失。
-	- 文件中的数据应当是等宽的，即所有行的列数相同。        
-	- 编辑数据：
- 		- 在表单中修改单元值。功能包括：设置列宽、增/删行或列、赋值、复制、粘贴、排序、导出。
- 		- 以文本方式修改数据，分隔符可选。
-	- 数据分页。当页数大于1时：
- 		- 运行一些功能之前必须保存当前页的修改。
- 		- 修改是直接写文件，所以无法撤销。（如果备份了可以恢复）
-	- "数据定义"用以描述和约束数据：
- 		- 列名不能为空也不能重复。
- 		- "数据类型"、字串长度、和"是否为空"用来检验数据值的合法性。
-	- 同步显示数据的文本格式和网页格式：
-	- 选项：
- 		- 数值的精度、随机数的最大值。
- 		- 将鼠标移至或点击行/列的头部，以弹出此行/列的功能菜单。
 2. 批量转换/分割数据文件：
 	- 源文件格式：csv、excel、文本。可以设置源文件的选项。
 	- 目标文件格式：csv、文本、excel、xml、json、html、pdf。可以设置目标文件的选项。
@@ -779,7 +815,7 @@ MyBox v5.3以前的版本均基于Java 8。
 
 
 ### 矩阵<a id="matrix" />
-1. 编辑矩阵。功能同数据文件的编辑。
+1. 编辑矩阵。
 2. 矩阵可保存和取用。
 3. 矩阵的一元计算：转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解、逆矩阵-用消元法求解、逆矩阵-用伴随矩阵求解、矩阵的秩、
 伴随矩阵、余子式、归一化、乘以数值、除以数值、幂。        
@@ -903,7 +939,62 @@ MyBox v5.3以前的版本均基于Java 8。
  	-  可选：标签、坐标、地址。
  	-  对于位置数据，还可选：开始时间、结束时间、数据值等。
  	-  可多选。每个选择显示为一行。
- 	-  可设置标         adminName1 adminCode1 adminName2 adminCode2 adminName3 adminCode3        
+ 	-  可设置标记文字的尺寸。
+ 	-  可选是否粗体。
+ 	-  可设置标记文字的颜色。对于位置数据，还可选：数据颜色。
+8. 弹出信息：
+  	-  鼠标放在标注上则可弹出更多信息。
+  	-  可选是否弹出。
+9. 截图：
+  	-  可设置截图分辨率。
+  	-  把当前地图和图中数据截取为html
+10. 地图的数据密钥可以在“设置”里修改。 缺省的密钥是所有MyBox用户共享的免费密钥。
+
+
+### 地理编码<a id="geographyCode" />
+1. 数据定义：
+	-  基本属性：标识、级别、经度、纬度、中国名、英文名、5个代码、5个别名。
+	-  从属属性：属主、洲、国家、省、市、县、镇、村、建筑。（构成"祖先"）
+	-  辅助属性：高度、精度、坐标系统、面积（平方米）、人口、注释、是否预定义。
+2. 数据约束：
+ 	-  必须有值：标识、级别、中文名或英文名
+ 	-  "级别"的可取值：全球（只能是"地球"）、洲、国家、省（州）、市、县（区）、镇（乡）、村（居委会）、建筑、兴趣点。
+ 	- 数据不必逐级从属，即可以跨级定义，例如：一个村庄直接属于南极洲；又如：城市直接属于国家，而没有省/州一级。
+ 	- 匹配数据：
+ 	  	- 以下方式之一可以确定一个地址：
+ 	  	 	- 匹配数据标识（由MyBox自动赋值）。这是精确匹配。
+  	  	 	- 匹配"级别" + "祖先" + "中文名"或"英文名"或任一别名"。这是精确匹配。
+ 	  	 	- 匹配"级别" + "中文名"或"英文名"或任一"别名"。这是模糊匹配，可能有同级重名导致匹配错误的情况。
+ 	  	- 匹配名字或者别名时，不区分大小写。
+ 	  	- 有时候"代码"（code1/2/3/4/5）也可以辅助查找。
+3. 编辑数据：
+ 	-  数据的"从属关系"只能从位置树上选择。
+ 	-  数据的级别必须比祖先低。
+ 	-  数据必须有中文名或者英文名。
+ 	-  可在地图上选择/显示坐标。
+ 	-  对选择的数据项设置为："预定义的数据"、或"输入的数据"。
+4. 定义条件：
+  	- 地理代码按级别和从属关系形成一棵树，可多选
+5. 导入数据：
+ 	-  内置的预定义数据：洲、国家、中国的省/市/县。
+           国家的"面积"和"人口"有有效值。
+ 	-  CSV格式。
+ 	  	- 下载地址：        
+                         https://github.com/Mararsh/MyBox_data/tree/master/md/GeographyCode
+ 	  	-  以下为必要字段：        
+                         Level,Longitude,Latitude        
+                         以及"Chinese Name"或 "English Name"        
+ 	  	-  以下是可选字段：        
+                         Altitude,Precision,Coordinate System,Square Kilometers,Population,        
+                         Code 1,Code 2,Code 3,Code 4,Code 5,Alias 1,Alias 2,Alias 3,Alias 4,Alias 5,        
+                         Continent,Country,Province,City,County,Town,Village,Building,Comments        
+ 	-  来自geoname.org的位置数据。        
+ 	  	- 下载地址：        
+                         http://download.geonames.org/export/zip/        
+ 	  	-  以制表符分隔的文本，编码为UTF-8。        
+ 	  	-  字段：        
+                           countryCode postalCode placeName        
+                           adminName1 adminCode1 adminName2 adminCode2 adminName3 adminCode3        
                            latitude longitude accuracy        
  	  	-  坐标系统是WGS_84。
  	  	-  同一地址只写一次，即使它有多个邮编或者坐标。
@@ -1177,9 +1268,7 @@ MyBox v5.3以前的版本均基于Java 8。
 
 ## 媒体工具<a id="MediaTools" />
 
-### 播放视频/音频<a id="mediaPlayer" />              
-注意：版本6.4.3以后在Linux上用MyBox播放媒体将导致MyBox崩溃。            
-
+### 播放视频/音频<a id="mediaPlayer" />                
 1. 创建/加载播放列表
 2. 选项：自动播放、显示毫秒、循环次数、随机顺序
 3. 设置：音量、速度（0~8倍）
@@ -1190,15 +1279,14 @@ MyBox v5.3以前的版本均基于Java 8。
     已知问题：播放一些流媒体时MyBox可能崩溃退出。        
 7. 乖乖和笨笨的声音
 8. 此工具无需ffmpeg。但是在Linux上需要安装libavcodec和libavformat， 参见：        
-https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html        
+https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html  
 
 ### 管理播放列表<a id="mediaList" />
 1. 增删改播放列表
 2. 增删改播放列表的内容。
 3. 读取所支持媒体格式的信息：时长、音频编码、视频编码        
 
-![截屏-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer.jpg)        
-
+![截屏-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer.jpg)         
 
 ### 封装ffmpeg的功能<a id="ffmpeg" />        
 注：这一组功能依赖于ffmpeg，需要用户自己下载ffmpeg（建议使用静态版本）。        
@@ -1379,7 +1467,6 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 	-  不支持Alpha时要替换的颜色（建议为白色）
 	-  缩略图宽度
 	-  采样图像最大显示宽度
-	-  是否往系统粘贴板中复制图片
 6. 地图：
 	-  设置数据密钥
 7. 清除个人设置。
@@ -1402,6 +1489,15 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 
 # 开发日志<a id="devLog" />          
+2021-10-13 版本6.4.9         
+
+* 改进：文本编辑器以行数分页、每个换行符算作一个字符；批处理的目标文件名均自动附加时标。       
+* 新增：从网页中提取表格数据；网页/笔记编辑器可以关闭页签；转换word/ppt/文本为PDF。          
+* 平台：升级到java17和javafx17；程序可以从非英文目录下启动了；Linux上可正常播放媒体了。          
+* 解决：文本/字节编辑器读写错误；图像的范围不显示且无法保存；输入文本时可能触发快捷键；多个功能失效。               
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.9)           
+
 2021-9-21 版本6.4.8         
 
 * 数据：完善表单操作；可编辑数据文本；支持文本数据文件；数据粘贴板可保存和管理。       
@@ -1880,9 +1976,3 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。    
 
 [未定义版本的已关闭的需求/问题列表](https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone)    
-
-
-
-
-
-

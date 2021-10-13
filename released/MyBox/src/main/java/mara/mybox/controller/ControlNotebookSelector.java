@@ -1,26 +1,13 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.db.data.Notebook;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -44,9 +31,6 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
         this.tableNotebook = notesController.tableNotebook;
         this.tableNote = notesController.tableNote;
         super.setParent(notesController, true);
-        if (importButton != null) {
-            NodeStyleTools.removeTooltip(importButton);
-        }
     }
 
     public void setCaller(NotesController notesController) {
@@ -173,50 +157,15 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
     }
 
     @FXML
-    @Override
-    protected void popImportMenu(MouseEvent mouseEvent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu = new MenuItem(Languages.message("ImportNotesFiles"));
-            menu.setOnAction((ActionEvent event) -> {
-                NotesImportController c = (NotesImportController) WindowTools.openStage(Fxmls.NotesImportFxml);
-                c.notesController = notesController;
-            });
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("ImportExamples"));
-            menu.setOnAction((ActionEvent event) -> {
-                importExamples();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
-
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected void importExamples() {
         NotesImportController controller = (NotesImportController) WindowTools.openStage(Fxmls.NotesImportFxml);
         controller.importExamples(notesController);
+    }
+
+    @FXML
+    protected void importFiles() {
+        NotesImportController c = (NotesImportController) WindowTools.openStage(Fxmls.NotesImportFxml);
+        c.notesController = notesController;
     }
 
 }

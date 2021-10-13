@@ -364,13 +364,13 @@ public class FilesRenameController extends BaseBatchFileController {
             String newName;
             switch (renameType) {
                 case ReplaceSubString:
-                    newName = file.getName().replaceAll(oldStringInput.getText(), FileNameTools.filenameFilter(newStringInput.getText()));
+                    newName = file.getName().replaceAll(oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
                     break;
                 case AppendPrefix:
-                    newName = FileNameTools.filenameFilter(prefixInput.getText()) + file.getName();
+                    newName = FileNameTools.filter(prefixInput.getText()) + file.getName();
                     break;
                 case AppendSuffix:
-                    newName = FileNameTools.appendName(file.getName(), FileNameTools.filenameFilter(suffixInput.getText()));
+                    newName = FileNameTools.appendName(file.getName(), FileNameTools.filter(suffixInput.getText()));
                     break;
                 case AddSequenceNumber:
                     newName = "";
@@ -378,7 +378,7 @@ public class FilesRenameController extends BaseBatchFileController {
                         newName += FileNameTools.getFilePrefix(file.getName());
                     }
                     if (stringCheck.isSelected()) {
-                        newName += FileNameTools.filenameFilter(stringInput.getText());
+                        newName += FileNameTools.filter(stringInput.getText());
                     }
                     String pageNumber = currentAccum + "";
                     if (fillZeroCheck.isSelected()) {
@@ -389,7 +389,7 @@ public class FilesRenameController extends BaseBatchFileController {
                     newName += "." + FileNameTools.getFileSuffix(file.getName());
                     break;
                 case ChangeExtension:
-                    newName = FileNameTools.replaceFileSuffix(file.getName(), FileNameTools.filenameFilter(newExtInput.getText()));
+                    newName = FileNameTools.replaceFileSuffix(file.getName(), FileNameTools.filter(newExtInput.getText()));
                     break;
                 default:
                     return null;

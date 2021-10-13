@@ -140,7 +140,7 @@ public class Base64Controller extends BaseController {
                     popError(Languages.message("NoData"));
                     return;
                 }
-            } else if (sourceFile == null || NodeStyleTools.badStyle.equals(sourceFileInput.getStyle())) {
+            } else if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
                 popError(Languages.message("NoData"));
                 return;
             }
@@ -216,7 +216,7 @@ public class Base64Controller extends BaseController {
                     popError(Languages.message("NoData"));
                     return;
                 }
-            } else if (sourceFile == null || NodeStyleTools.badStyle.equals(sourceFileInput.getStyle())) {
+            } else if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
                 popError(Languages.message("NoData"));
                 return;
             }

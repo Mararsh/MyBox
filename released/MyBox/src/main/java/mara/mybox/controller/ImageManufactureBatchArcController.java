@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -54,10 +54,10 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(arcBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(perBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(arcBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(perBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

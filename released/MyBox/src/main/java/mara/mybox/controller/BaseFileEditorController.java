@@ -50,18 +50,21 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
 
     public final void setTextType() {
         editType = Edit_Type.Text;
+        defaultPageSize = 200;
 
         setFileType(VisitHistory.FileType.Text);
     }
 
     public final void setBytesType() {
         editType = Edit_Type.Bytes;
+        defaultPageSize = 50000;
 
         setFileType(VisitHistory.FileType.Bytes);
     }
 
     public final void setMarkdownType() {
         editType = Edit_Type.Markdown;
+        defaultPageSize = 200;
 
         setFileType(VisitHistory.FileType.Markdown);
     }
@@ -87,7 +90,6 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             initMainBox();
             initPairBox();
             initPageBar();
-            initToolBar();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -1,12 +1,14 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -161,6 +163,12 @@ public abstract class BaseDataFileController extends BaseController {
         pickOptions();
         dataController.sourceFile = sourceFile;
         dataController.loadFile();
+    }
+
+    public void loadData(String[][] data, List<ColumnDefinition> dataColumns) {
+        pickOptions();
+        sourceFile = null;
+        dataController.loadData(data, dataColumns);
     }
 
     @FXML

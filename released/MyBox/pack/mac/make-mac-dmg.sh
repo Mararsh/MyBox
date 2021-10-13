@@ -1,6 +1,6 @@
 # Unzip source package. Edit this script to change directories as your env.
 # In terminal window, enter path "MyBox/pack/mac", and run this script.
-version=6.4.8
+version=6.4.9
 jpackagePath=/Library/Java/JavaVirtualMachines/jdk-16.jdk/Contents/Home/bin
 jdkPath=/Library/Java/JavaVirtualMachines/jdk-16.jdk/Contents/Home
 

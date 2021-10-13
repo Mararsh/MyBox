@@ -39,7 +39,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             return;
         }
         initPage(file);
-
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -66,9 +65,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                     bottomLabel.setText("");
                     isSettingValues = true;
                     sourceInformation.setCharsetDetermined(true);
-                    if (currentLineBreak != null) {
-                        currentLineBreak.setText(sourceInformation.getLineBreak().toString());
-                    }
                     if (charsetSelector != null) {
                         charsetSelector.getSelectionModel().select(sourceInformation.getCharset().name());
                         if (sourceInformation.isWithBom()) {
@@ -107,35 +103,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         sourceInformation.setLineBreakValue(lineBreakValue);
         sourceInformation.setLineBreakWidth(lineBreakWidth);
         loadPage();
-
-    }
-
-    protected void loadTotalNumbers() {
-        if (sourceInformation == null || sourceFile == null
-                || sourceInformation.isTotalNumberRead()) {
-            return;
-        }
-        synchronized (this) {
-            if (backgroundTask != null) {
-                backgroundTask.cancel();
-                backgroundTask = null;
-            }
-            backgroundTask = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    ok = sourceInformation.readTotalNumbers();
-                    return ok;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    updateNumbers(false);
-                }
-
-            };
-            start(backgroundTask, false, null);
-        }
     }
 
     protected void initPage(File file) {
@@ -167,7 +134,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 sourceInformation.setCurrentPage(existedInfo.getCurrentPage());
                 sourceInformation.setCharsetDetermined(existedInfo.isCharsetDetermined());
             } else {
-                sourceInformation.setCurrentPage(1);
+                sourceInformation.setCurrentPage(0);
             }
             sourceInformation.setPageSize(UserConfig.getInt(baseName + "PageSize", defaultPageSize));
             sourceInformation.setFindReplace(null);
@@ -180,7 +147,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             fileLabel.setText("");
             selectionLabel.setText("");
             if (charsetSelector != null) {
-                charsetSelector.getSelectionModel().select(defaultCharset().name());
+                charsetSelector.getSelectionModel().select(UserConfig.getString(baseName + "SourceCharset", defaultCharset().name()));
             }
             if (bomLabel != null) {
                 bomLabel.setText("");
@@ -196,8 +163,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             mainArea.requestFocus();
 
             if (findReplaceController != null) {
-                findReplaceController.lastFileRange = null;
-                findReplaceController.lastStringRange = null;
                 findReplaceController.findReplace = null;
                 setControlsStyle();
             }
@@ -205,6 +170,33 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             isSettingValues = false;
+        }
+    }
+
+    protected void loadTotalNumbers() {
+        if (sourceInformation == null || sourceFile == null || sourceInformation.isTotalNumberRead()) {
+            return;
+        }
+        synchronized (this) {
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
+                backgroundTask = null;
+            }
+            backgroundTask = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    ok = sourceInformation.readTotalNumbers();
+                    return ok;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    updateNumbers(false);
+                }
+
+            };
+            start(backgroundTask, false, null);
         }
     }
 
@@ -231,16 +223,10 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 protected void whenSucceeded() {
                     bottomLabel.setText("");
                     if (text != null) {
-                        isSettingValues = true;
-                        mainArea.setText(text);
-                        isSettingValues = false;
-                        formatMainArea();
-                        updateInterface(false);
-                        updateCursor();
+                        loadText(text, false);
                         if (!sourceInformation.isTotalNumberRead()) {
                             loadTotalNumbers();
                         }
-
                     } else {
                         popFailed();
                     }
@@ -257,6 +243,14 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         }
     }
 
+    protected void loadText(String text, boolean changed) {
+        isSettingValues = true;
+        mainArea.setText(text);
+        isSettingValues = false;
+        formatMainArea();
+        updateInterface(changed);
+    }
+
     public void setPageSize() {
         try {
             if (isSettingValues || !checkBeforeNextAction()) {
@@ -268,14 +262,14 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 popError(message("MayOutOfMemory"));
                 v = available;
             } else if (v <= 0) {
-                pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                 popError(message("InvalidParameters"));
                 return;
             }
             pageSizeSelector.getEditor().setStyle(null);
             UserConfig.setInt(baseName + "PageSize", v);
             sourceInformation.setPageSize(v);
-            sourceInformation.setCurrentPage(1);
+            sourceInformation.setCurrentPage(0);
             if (sourceInformation.getLineBreak() == FileEditInformation.Line_Break.Width) {
                 sourceInformation.setTotalNumberRead(false);
                 openFile(sourceFile);
@@ -283,7 +277,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 loadPage();
             }
         } catch (Exception e) {
-            pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
             popError(message("InvalidParameters"));
         }
     }
@@ -296,19 +290,16 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         try {
             int v = Integer.valueOf(value);
             if (v > 0 && v <= sourceInformation.getPagesNumber()) {
-                sourceInformation.setCurrentPage(v);
-                if (findReplaceController != null) {
-                    findReplaceController.lastFileRange = null;
-                }
+                sourceInformation.setCurrentPage(v - 1);
                 pageSelector.getEditor().setStyle(null);
                 loadPage();
                 return true;
             } else {
-                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                pageSelector.getEditor().setStyle(UserConfig.badStyle());
                 return false;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            pageSelector.getEditor().setStyle(UserConfig.badStyle());
             return false;
         }
     }
@@ -324,13 +315,10 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (sourceInformation.getObjectsNumber() <= sourceInformation.getCurrentPageObjectEnd()) {
+        if (sourceInformation.getCurrentPage() >= sourceInformation.getPagesNumber() - 1) {
             pageNextButton.setDisable(true);
         } else {
             sourceInformation.setCurrentPage(sourceInformation.getCurrentPage() + 1);
-            if (findReplaceController != null) {
-                findReplaceController.lastFileRange = null;
-            }
             loadPage();
         }
     }
@@ -341,13 +329,10 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (sourceInformation.getCurrentPage() <= 1) {
+        if (sourceInformation.getCurrentPage() <= 0) {
             pagePreviousButton.setDisable(true);
         } else {
             sourceInformation.setCurrentPage(sourceInformation.getCurrentPage() - 1);
-            if (findReplaceController != null) {
-                findReplaceController.lastFileRange = null;
-            }
             loadPage();
         }
     }
@@ -358,10 +343,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         if (!checkBeforeNextAction()) {
             return;
         }
-        sourceInformation.setCurrentPage(1);
-        if (findReplaceController != null) {
-            findReplaceController.lastFileRange = null;
-        }
+        sourceInformation.setCurrentPage(0);
         loadPage();
     }
 
@@ -371,10 +353,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         if (!checkBeforeNextAction()) {
             return;
         }
-        sourceInformation.setCurrentPage(sourceInformation.getPagesNumber());
-        if (findReplaceController != null) {
-            findReplaceController.lastFileRange = null;
-        }
+        sourceInformation.setCurrentPage(sourceInformation.getPagesNumber() - 1);
         loadPage();
     }
 

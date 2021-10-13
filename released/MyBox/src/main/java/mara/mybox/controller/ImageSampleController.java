@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.fxml.NodeStyleTools;
@@ -115,18 +115,18 @@ public class ImageSampleController extends ImageViewerController {
             initMaskControls(false);
 
             okButton.disableProperty().bind(
-                    widthScaleSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                            .or(heightScaleSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    widthScaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(heightScaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(heightScaleSelector.getEditor().textProperty()))
                             .or(Bindings.isEmpty(widthScaleSelector.getEditor().textProperty()))
                             .or(Bindings.isEmpty(rectLeftTopXInput.textProperty()))
-                            .or(rectLeftTopXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(rectLeftTopXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(rectLeftTopYInput.textProperty()))
-                            .or(rectLeftTopYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(rectLeftTopYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(rightBottomXInput.textProperty()))
-                            .or(rightBottomXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(rightBottomXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(rightBottomYInput.textProperty()))
-                            .or(rightBottomYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(rightBottomYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
             saveButton.disableProperty().bind(okButton.disabledProperty());
 
@@ -174,28 +174,28 @@ public class ImageSampleController extends ImageViewerController {
                 x1 = Double.parseDouble(rectLeftTopXInput.getText());
                 rectLeftTopXInput.setStyle(null);
             } catch (Exception e) {
-                rectLeftTopXInput.setStyle(NodeStyleTools.badStyle);
+                rectLeftTopXInput.setStyle(UserConfig.badStyle());
                 return null;
             }
             try {
                 y1 = Double.parseDouble(rectLeftTopYInput.getText());
                 rectLeftTopYInput.setStyle(null);
             } catch (Exception e) {
-                rectLeftTopYInput.setStyle(NodeStyleTools.badStyle);
+                rectLeftTopYInput.setStyle(UserConfig.badStyle());
                 return null;
             }
             try {
                 x2 = Double.parseDouble(rightBottomXInput.getText());
                 rightBottomXInput.setStyle(null);
             } catch (Exception e) {
-                rightBottomXInput.setStyle(NodeStyleTools.badStyle);
+                rightBottomXInput.setStyle(UserConfig.badStyle());
                 return null;
             }
             try {
                 y2 = Double.parseDouble(rightBottomYInput.getText());
                 rightBottomYInput.setStyle(null);
             } catch (Exception e) {
-                rightBottomYInput.setStyle(NodeStyleTools.badStyle);
+                rightBottomYInput.setStyle(UserConfig.badStyle());
                 return null;
             }
             DoubleRectangle rect = new DoubleRectangle(

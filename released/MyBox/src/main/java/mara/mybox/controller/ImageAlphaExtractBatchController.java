@@ -5,7 +5,7 @@ import java.io.File;
 import javafx.beans.binding.Bindings;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.fxml.NodeStyleTools;
@@ -42,7 +42,7 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
             super.initControls();
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
 

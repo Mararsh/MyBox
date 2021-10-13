@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -11,7 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -22,24 +20,17 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-5-27
  * @License Apache License Version 2.0
  */
-public class ImagesEditorController extends BaseController {
+public class ImagesEditorController extends BaseImagesListController {
 
     protected ObservableList<ImageInformation> tableData;
     protected TableView<ImageInformation> tableView;
 
     @FXML
     protected ControlImagesTable tableController;
-    @FXML
-    protected ControlImagesSave saveController;
 
     public ImagesEditorController() {
         baseTitle = Languages.message("ImagesEditor");
         TipsLabelKey = "ImagesEditorTips";
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(FileType.Image);
     }
 
     @Override
@@ -66,9 +57,7 @@ public class ImagesEditorController extends BaseController {
                 }
             });
 
-            saveController.setParent(this);
-
-            playButton.disableProperty().bind(Bindings.isEmpty(tableData));
+            playButton.disableProperty().bind(Bindings.isEmpty(imageInfos));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -80,37 +69,26 @@ public class ImagesEditorController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             selected = tableData;
         }
-        saveController.setImages(selected);
+        imageInfos.setAll(selected);
     }
 
     public void open(File file) {
         tableController.addFile(sourceFile);
     }
 
+    public void loadImages(List<ImageInformation> infos) {
+        setImages(infos);
+        tableData.setAll(imageInfos);
+    }
+
     @FXML
     @Override
     public void playAction() {
         try {
-            List<ImageInformation> selected = tableView.getSelectionModel().getSelectedItems();
-            if (selected == null || selected.isEmpty()) {
-                selected = tableData;
-            }
-            List<ImageInformation> infos = new ArrayList<>();
-            if (selected != null) {
-                for (ImageInformation info : selected) {
-                    infos.add(info.cloneAttributes());
-                }
-            }
             ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
-            controller.loadImages(infos);
+            controller.loadImages(imageInfos);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void loadImages(List<ImageInformation> infos) {
-        if (infos != null && !infos.isEmpty()) {
-            tableData.addAll(infos);
         }
     }
 

@@ -24,15 +24,15 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class ImageManufactureScopesSavedController extends ImageViewerController {
-
+    
     protected ImageManufactureController imageController;
     protected ImageManufactureScopeController scopeController;
-
+    
     @FXML
     protected Button deleteScopesButton, useScopeButton;
     @FXML
     protected ListView<ImageScope> scopesList;
-
+    
     public void setParameters(ImageManufactureController parent) {
         this.parentController = parent;
         imageController = parent;
@@ -44,10 +44,10 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
         image = imageController.image;
         initScopesBox();
         refreshStyle();
-
+        
         loadScopes();
     }
-
+    
     public void initScopesBox() {
         try {
             scopesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -57,7 +57,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                     return new ImageScopeCell();
                 }
             });
-
+            
             scopesList.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -66,28 +66,28 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                     }
                 }
             });
-
+            
             deleteScopesButton.disableProperty().bind(
                     scopesList.getSelectionModel().selectedItemProperty().isNull()
             );
             useScopeButton.disableProperty().bind(deleteScopesButton.disableProperty());
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public class ImageScopeCell extends ListCell<ImageScope> {
-
+        
         private final ImageView view;
-
+        
         public ImageScopeCell() {
             setContentDisplay(ContentDisplay.LEFT);
             view = new ImageView();
             view.setPreserveRatio(true);
             view.setFitWidth(20);
         }
-
+        
         @Override
         protected void updateItem(ImageScope item, boolean empty) {
             super.updateItem(item, empty);
@@ -96,7 +96,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                 setGraphic(null);
                 return;
             }
-
+            
             Image icon;
             try {
                 switch (item.getScopeType()) {
@@ -151,28 +151,26 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                 setText(null);
                 setGraphic(null);
             }
-
+            
         }
     }
-
+    
     public void loadScopes() {
+        scopesList.getItems().clear();
         if (sourceFile == null) {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
             scopesList.getItems().clear();
-            task = new SingletonTask<Void>() {
+            SingletonTask scopesTask = new SingletonTask<Void>() {
                 List<ImageScope> list;
-
+                
                 @Override
                 protected boolean handle() {
                     list = TableImageScope.read(sourceFile.getAbsolutePath());
                     return true;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     if (list != null && !list.isEmpty()) {
@@ -181,10 +179,10 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                     }
                 }
             };
-            parentController.start(task);
+            start(scopesTask, false);
         }
     }
-
+    
     @FXML
     public void deleteScopes() {
         List<ImageScope> selected = scopesList.getSelectionModel().getSelectedItems();
@@ -196,12 +194,12 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                 return;
             }
             task = new SingletonTask<Void>() {
-
+                
                 @Override
                 protected boolean handle() {
                     return TableImageScope.delete(selected);
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     for (ImageScope scope : selected) {
@@ -214,7 +212,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
             parentController.start(task);
         }
     }
-
+    
     @FXML
     public void clearScopes() {
         if (sourceFile == null) {
@@ -230,7 +228,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                     TableImageScope.clearScopes(sourceFile.getAbsolutePath());
                     return true;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     scopesList.getItems().clear();
@@ -240,7 +238,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
             parentController.start(task);
         }
     }
-
+    
     @FXML
     public void useScope() {
         ImageScope selected = scopesList.getSelectionModel().getSelectedItem();
@@ -254,11 +252,12 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
             scopesList.getItems().set(i, scopesList.getItems().get(i));
         }
         scopeController.showScope(scope);
+        imageController.tabPane.getSelectionModel().select(imageController.scopeTab);
     }
-
+    
     @FXML
     public void refreshScopes() {
         loadScopes();
     }
-
+    
 }

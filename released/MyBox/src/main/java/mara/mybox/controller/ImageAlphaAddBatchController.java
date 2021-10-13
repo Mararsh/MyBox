@@ -13,7 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.BufferedImageTools;
@@ -65,9 +65,9 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
             super.initControls();
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(opacityBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(opacityBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
 

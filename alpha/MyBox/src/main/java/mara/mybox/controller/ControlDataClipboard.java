@@ -178,20 +178,6 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
     }
 
     @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-//            if (isMatrix) {
-//                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("MatrixInputComments")));
-//            } else {
-//                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("DataInputComments")));
-//            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    @Override
     public int readDataSize() {
         if (checkedInvalid) {
             return DataClipboard.size(tableDataDefinition);
@@ -223,7 +209,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
         refreshAction();
         if (sheetController.sourceFile != null && !sheetController.sourceFile.exists()) {
             loadNull();
-            sheetController.makeSheet(null, false);
+            sheetController.makeSheet(null, false, false);
         }
     }
 
@@ -232,7 +218,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
         FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
         refreshAction();
         loadNull();
-        sheetController.makeSheet(null, false);
+        sheetController.makeSheet(null, false, false);
     }
 
     @Override

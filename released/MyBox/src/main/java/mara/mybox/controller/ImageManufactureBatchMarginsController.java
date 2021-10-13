@@ -19,7 +19,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.MargionTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -70,10 +70,10 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(marginWidthBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(marginsTopCheck.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(marginWidthBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(marginsTopCheck.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -189,10 +189,10 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
                 UserConfig.setInt(baseName + "Distance", distance);
                 distanceInput.setStyle(null);
             } else {
-                distanceInput.setStyle(NodeStyleTools.badStyle);
+                distanceInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            distanceInput.setStyle(NodeStyleTools.badStyle);
+            distanceInput.setStyle(UserConfig.badStyle());
         }
     }
 

@@ -421,15 +421,19 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </FlowPane>
-                                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconOK.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                   <children>
+                                                                      <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                                                                          <graphic>
+                                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                  <image>
+                                                                                      <Image url="@../buttons/Red/iconOK.png" />
+                                                                                  </image>
+                                                                              </ImageView>
+                                                                          </graphic>
+                                                                      </Button>
+                                                   </children>
+                                                </HBox>
                                                             </children>
                                                         </VBox>
                                                         <Label fx:id="promptLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />

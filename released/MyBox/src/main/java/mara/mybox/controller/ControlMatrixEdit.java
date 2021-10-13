@@ -69,7 +69,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                     if (isSettingValues) {
                         return;
                     }
-                    sheetChanged(true);
+                    dataChanged(true);
                 }
             });
 
@@ -86,7 +86,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
             rowsNumber = 3;
             colsNumber = 3;
             nameInput.setText(rowsNumber + "x" + colsNumber);
-            makeSheet(new String[rowsNumber][colsNumber], false);
+            makeSheet(new String[rowsNumber][colsNumber], false, false);
 
             autoNameCheck.setSelected(UserConfig.getBoolean(baseName + "AutoName", true));
             autoNameCheck.selectedProperty().addListener(
@@ -177,7 +177,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
         } catch (Exception e) {
         }
         columns = null;
-        makeSheet(values, false);
+        makeSheet(values, false, false);
     }
 
     public void loadNull() {
@@ -208,7 +208,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
         } catch (Exception e) {
         }
         columns = null;
-        makeSheet(values, true);
+        makeSheet(values, true, false);
     }
 
     protected double[][] matrixDouble() {
@@ -238,6 +238,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
 
                 private Matrix matrix;
                 private long id = -1;
+                private boolean notExist = false;
 
                 @Override
                 protected boolean handle() {
@@ -264,6 +265,11 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                             }
                             matrix.setId(id);
                         } else {
+                            matrix.setId(id);
+                            if (tableMatrix.readData(conn, matrix) == null) {
+                                notExist = true;
+                                return true;
+                            }
                             matrix.setId(id);
                             if (tableMatrix.updateData(conn, matrix) == null) {
                                 return false;
@@ -297,10 +303,16 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
 
                 @Override
                 protected void whenSucceeded() {
-                    manager.loadTableData();
-                    idInput.setText(id + "");
-                    sheetSaved();
-                    popSuccessful();
+                    if (notExist) {
+                        dataChangedNotify.set(false);
+                        copyMatrixAction();
+                        popError(message("NotExist"));
+                    } else {
+                        manager.loadTableData();
+                        idInput.setText(id + "");
+                        sheetSaved();
+                        popSuccessful();
+                    }
                 }
             };
             start(task);

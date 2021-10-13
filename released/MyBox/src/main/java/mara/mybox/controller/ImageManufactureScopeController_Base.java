@@ -28,14 +28,13 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureScopeController_Base extends ImageViewerController {
+public abstract class ImageManufactureScopeController_Base extends ImageViewerController {
 
     protected TableColor tableColor;
     protected ImageManufactureController imageController;
     protected ImageManufactureScopesSavedController scopesSavedController;
     protected float opacity;
     protected BufferedImage outlineSource;
-    protected ImagePopController imagePopController;
 
     @FXML
     protected ImageView scopeView, scopeTipsView;
@@ -59,7 +58,7 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
     protected ListView<String> pointsList;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
-            ignoreTransparentCheck, squareRootCheck, popImageCheck;
+            ignoreTransparentCheck, squareRootCheck;
     @FXML
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
@@ -116,23 +115,11 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
                     scopeView.setFitHeight(imageView.getFitHeight());
                     scopeView.setLayoutX(imageView.getLayoutX());
                     scopeView.setLayoutY(imageView.getLayoutY());
-
-                    popImage();
                 }
 
             };
-//            parentController.start(task);
+            parentController.start(task);
         }
-    }
-
-    protected void popImage() {
-        if (scopeAllRadio.isSelected() || !popImageCheck.isSelected()) {
-            return;
-        }
-        if (imagePopController != null && imagePopController.getMyWindow().isShowing()) {
-            return;
-        }
-        imagePopController = ImagePopController.openView(imageController, imageController.imageView);
     }
 
     @Override

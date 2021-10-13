@@ -38,6 +38,8 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     protected char copyDelimiter = ',';
 
+    protected abstract String[][] allRows(List<Integer> cols);
+
     public abstract void copyCols(List<Integer> cols, boolean withNames, boolean toSystemClipboard);
 
     public abstract void setCols(List<Integer> cols, String value);
@@ -47,6 +49,27 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
     public abstract void pasteFile(ControlSheetCSV sourceController, int row, int col, boolean enlarge);
 
     public abstract boolean exportCols(SheetExportController exportController, List<Integer> cols);
+
+    public String[][] data(List<Integer> rows, List<Integer> cols) {
+        if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty() || sheetInputs == null || columns == null) {
+            popError(message("NoData"));
+            return null;
+        }
+        int rowSize = rows.size();
+        int colSize = cols.size();
+        String[][] data = new String[rowSize][colSize];
+        for (int r = 0; r < rows.size(); ++r) {
+            int row = rows.get(r);
+            for (int c = 0; c < cols.size(); ++c) {
+                data[r][c] = cellString(row, cols.get(c));
+            }
+        }
+        return data;
+    }
+
+    public String[][] data(List<Integer> cols) {
+        return data(rowsIndex(true), cols);
+    }
 
     @FXML
     @Override
@@ -340,45 +363,50 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
     }
 
     protected void addRows(int row, boolean above, int number) {
-        if (number < 1 || columns == null || columns.isEmpty()) {
-            return;
-        }
-        String[][] current = pickData();
-        String[][] values;
-        int cNumber = columns.size();
-        if (current == null) {
-            values = new String[number][cNumber];
-            for (int r = 0; r < number; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = defaultColValue;
-                }
+        try {
+            if (number < 1 || columns == null || columns.isEmpty()) {
+                return;
             }
-        } else {
-            int rNumber = current.length;
-            values = new String[rNumber + number][cNumber];
-            int base;
-            if (row < 0) {
-                base = 0;
+            String[][] current = pickData();
+            String[][] values;
+            int cNumber = columns.size();
+            if (current == null) {
+                values = new String[number][cNumber];
+                for (int r = 0; r < number; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = defaultColValue;
+                    }
+                }
             } else {
-                base = row + (above ? 0 : 1);
-            }
-            for (int r = 0; r < base; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = current[r][c];
+                int rNumber = current.length;
+                values = new String[rowsNumber + number][cNumber];
+                int base;
+                if (row < 0) {
+                    base = 0;
+                } else {
+                    base = row + (above ? 0 : 1);
+                }
+                for (int r = 0; r < base; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = current[r][c];
+                    }
+                }
+                for (int r = base; r < base + number; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = defaultColValue;
+                    }
+                }
+                for (int r = base + number; r < rNumber + number; ++r) {
+                    for (int c = 0; c < cNumber; ++c) {
+                        values[r][c] = current[r - number][c];
+                    }
                 }
             }
-            for (int r = base; r < base + number; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = defaultColValue;
-                }
-            }
-            for (int r = base + number; r < rNumber + number; ++r) {
-                for (int c = 0; c < cNumber; ++c) {
-                    values[r][c] = current[r - number][c];
-                }
-            }
+            makeSheet(values);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        makeSheet(values);
+
     }
 
     @FXML
@@ -389,7 +417,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     public void deleteRows(List<Integer> rows) {
         if (rows == null || rows.isEmpty()) {
-            popError(message("NoSelection"));
+            popError(message("SelectToHandle"));
             return;
         }
         if (rowsCheck == null || columns == null || columns.isEmpty()) {
@@ -471,7 +499,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     public void deleteCols(List<Integer> cols) {
         if (cols == null || cols.isEmpty() || columns == null || columns.isEmpty()) {
-            popError(message("NoSelection"));
+            popError(message("SelectToHandle"));
             return;
         }
         List<ColumnDefinition> leftColumns = new ArrayList<>();

@@ -24,7 +24,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -33,6 +32,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -109,8 +109,8 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(sourcePathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
             operationBarController.openTargetButton.disableProperty().bind(

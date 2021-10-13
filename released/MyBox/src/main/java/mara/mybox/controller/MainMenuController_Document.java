@@ -133,6 +133,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void htmlExtractTables(ActionEvent event) {
+        loadScene(Fxmls.HtmlExtractTablesFxml);
+    }
+
+    @FXML
     protected void openHtmlMergeAsHtml(ActionEvent event) {
         loadScene(Fxmls.HtmlMergeAsHtmlFxml);
     }
@@ -188,8 +193,13 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
-    protected void openTextToHtml(ActionEvent event) {
+    protected void textToHtml(ActionEvent event) {
         loadScene(Fxmls.TextToHtmlFxml);
+    }
+
+    @FXML
+    protected void textToPdf(ActionEvent event) {
+        loadScene(Fxmls.TextToPdfFxml);
     }
 
     @FXML
@@ -213,6 +223,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void WordToPdf(ActionEvent event) {
+        loadScene(Fxmls.WordToPdfFxml);
+    }
+
+    @FXML
     protected void PptView(ActionEvent event) {
         loadScene(Fxmls.PptViewFxml);
     }
@@ -220,6 +235,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void PptToImages(ActionEvent event) {
         loadScene(Fxmls.PptToImagesFxml);
+    }
+
+    @FXML
+    protected void PptToPdf(ActionEvent event) {
+        loadScene(Fxmls.PptToPdfFxml);
     }
 
     @FXML

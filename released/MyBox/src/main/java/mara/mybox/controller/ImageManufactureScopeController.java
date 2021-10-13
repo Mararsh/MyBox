@@ -22,6 +22,12 @@ import mara.mybox.value.UserConfig;
  * @Author Mara
  * @CreateDate 2020-9-15
  * @License Apache License Version 2.0
+ *
+ * ImageManufactureScopeController < ImageManufactureScopeController_Save <
+ * ImageManufactureScopeController_Set < ImageManufactureScopeController_Outline
+ * < ImageManufactureScopeController_Colors <
+ * ImageManufactureScopeController_Points < ImageManufactureScopeController_Area
+ * ImageManufactureScopeController_Base < ImageViewerController
  */
 public class ImageManufactureScopeController extends ImageManufactureScopeController_Save {
 

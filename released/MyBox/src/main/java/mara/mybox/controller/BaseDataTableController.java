@@ -338,7 +338,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 try {
                     int v = Integer.parseInt(newValue.trim());
                     if (v <= 0) {
-                        pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                     } else {
                         pageSize = v;
                         UserConfig.setInt(baseName + "PageSize", pageSize);
@@ -348,7 +348,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                         }
                     }
                 } catch (Exception e) {
-                    pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
 
@@ -365,7 +365,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
         try {
             int v = Integer.parseInt(value);
             if (v < 0) {
-                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                pageSelector.getEditor().setStyle(UserConfig.badStyle());
                 return false;
             } else {
                 currentPage = v;
@@ -374,7 +374,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 return true;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            pageSelector.getEditor().setStyle(UserConfig.badStyle());
             return false;
         }
     }

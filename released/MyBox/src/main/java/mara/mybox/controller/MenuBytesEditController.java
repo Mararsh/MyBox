@@ -13,6 +13,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
+import mara.mybox.data.FileEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
@@ -20,6 +21,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -153,6 +155,30 @@ public class MenuBytesEditController extends MenuTextEditController {
     public void editAction() {
         BytesEditorController controller = (BytesEditorController) openStage(Fxmls.BytesEditorFxml);
         controller.loadContents(textInput.getText());
+    }
+
+    @FXML
+    public void hexAction() {
+        String text = textInput.getText();
+        text = ByteTools.formatTextHex(text);
+        if (text != null) {
+            if (text.isEmpty()) {
+                return;
+            }
+            String hex;
+            if (parentController instanceof BytesEditorController) {
+                BytesEditorController c = (BytesEditorController) parentController;
+                FileEditInformation info = c.sourceInformation;
+                hex = ByteTools.formatHex(text, info.getLineBreak(), info.getLineBreakWidth(), info.getLineBreakValue());
+            } else {
+                hex = ByteTools.formatHex(text, FileEditInformation.Line_Break.Width, 30, "0A");
+            }
+            isSettingValues = true;
+            textInput.setText(hex);
+            isSettingValues = false;
+        } else {
+            popError(message("InvalidData"));
+        }
     }
 
     @FXML

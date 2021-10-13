@@ -38,10 +38,24 @@ public class DataClipboard extends DataDefinition {
         if (tableDataDefinition == null) {
             return -1;
         }
+        int count = 0;
+        try ( Connection conn = DerbyBase.getConnection()) {
+            count = checkValid(conn, tableDataDefinition);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return count;
+    }
+
+    public static int checkValid(Connection conn, TableDataDefinition tableDataDefinition) {
+        if (tableDataDefinition == null) {
+            return -1;
+        }
         String sql = "SELECT * FROM Data_Definition WHERE data_type="
                 + DataDefinition.dataType(DataDefinition.DataType.DataClipboard);
         int count = 0;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try {
+            conn.setAutoCommit(true);
             List<DataDefinition> invalid = new ArrayList<>();
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
@@ -60,7 +74,7 @@ public class DataClipboard extends DataDefinition {
                 }
             }
             tableDataDefinition.deleteData(conn, invalid);
-            conn.commit();
+            conn.setAutoCommit(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

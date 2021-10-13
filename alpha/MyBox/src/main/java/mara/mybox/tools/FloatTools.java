@@ -73,9 +73,19 @@ public class FloatTools {
         return d;
     }
 
-    public static float random(float max) {
-        Random r = new Random();
-        return r.nextFloat(max);
+    // works on java 17 while not work on java 16
+//    public static float random(float max) {
+//        Random r = new Random();
+//        return r.nextFloat(max);
+//    }
+    // works on java 16
+    public static float random(Random r, int max) {
+        if (r == null) {
+            r = new Random();
+        }
+        float f = r.nextFloat();
+        int i = max > 0 ? r.nextInt(max) : 0;
+        return i + f;
     }
 
     public static float[] sortArray(float[] numbers) {

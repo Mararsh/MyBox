@@ -501,7 +501,7 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
                             fileSelectorSize = v;
                             tableFiltersInput.setStyle(null);
                         } else {
-                            tableFiltersInput.setStyle(NodeStyleTools.badStyle);
+                            tableFiltersInput.setStyle(UserConfig.badStyle());
                             popError(Languages.message("FileSizeComments"));
                         }
 

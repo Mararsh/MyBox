@@ -18,7 +18,7 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -116,10 +116,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                         checkPopulation();
                     });
 
-            saveButton.disableProperty().bind(longitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                    .or(latitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(areaInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(populationInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+            saveButton.disableProperty().bind(longitudeInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(latitudeInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(areaInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(populationInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -163,10 +163,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 longitude = v;
                 longitudeInput.setStyle(null);
             } else {
-                longitudeInput.setStyle(NodeStyleTools.badStyle);
+                longitudeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            longitudeInput.setStyle(NodeStyleTools.badStyle);
+            longitudeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -183,10 +183,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 latitude = v;
                 latitudeInput.setStyle(null);
             } else {
-                latitudeInput.setStyle(NodeStyleTools.badStyle);
+                latitudeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            latitudeInput.setStyle(NodeStyleTools.badStyle);
+            latitudeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -201,7 +201,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             altitude = Double.valueOf(s);
             altitudeInput.setStyle(null);
         } catch (Exception e) {
-            altitudeInput.setStyle(NodeStyleTools.badStyle);
+            altitudeInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -216,7 +216,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             precision = Double.valueOf(s);
             precisionInput.setStyle(null);
         } catch (Exception e) {
-            precisionInput.setStyle(NodeStyleTools.badStyle);
+            precisionInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -227,10 +227,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 area = v;
                 areaInput.setStyle(null);
             } else {
-                areaInput.setStyle(NodeStyleTools.badStyle);
+                areaInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            areaInput.setStyle(NodeStyleTools.badStyle);
+            areaInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -241,10 +241,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 population = v;
                 populationInput.setStyle(null);
             } else {
-                populationInput.setStyle(NodeStyleTools.badStyle);
+                populationInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            populationInput.setStyle(NodeStyleTools.badStyle);
+            populationInput.setStyle(UserConfig.badStyle());
         }
     }
 

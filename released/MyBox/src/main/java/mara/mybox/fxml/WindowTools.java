@@ -2,6 +2,7 @@ package mara.mybox.fxml;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -23,8 +24,14 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableFileBackup;
+import mara.mybox.db.table.TableImageClipboard;
+import mara.mybox.db.table.TableImageEditHistory;
+import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -384,6 +391,8 @@ public class WindowTools {
             ImageClipboardTools.stopImageClipboardMonitor();
             TextClipboardTools.stopTextClipboardMonitor();
 
+            clearInvalidData();
+
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVariables.scheduledTasks.keySet()) {
@@ -417,6 +426,7 @@ public class WindowTools {
                     MyBoxLog.debug("Shut down Derby...");
                     DerbyBase.shutdownEmbeddedDerby();
                 }
+
                 Platform.setImplicitExit(true);
                 System.gc();
                 Platform.exit(); // Some thread may still be alive after this
@@ -425,9 +435,36 @@ public class WindowTools {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+
         }
 
+    }
+
+    public static void clearInvalidData() {
+        try {
+            MyBoxLog.info("clearing tmeporary data...");
+
+            FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
+
+            try ( Connection conn = DerbyBase.getConnection()) {
+
+                new TableImageClipboard().clearInvalid(conn);
+
+                new TableImageEditHistory().clearInvalid(conn);
+
+                new TableImageScope().clearInvalid(conn);
+
+                new TableFileBackup().clearInvalid(conn);
+
+                new TableDataDefinition().clearInvalid(conn);
+
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }

@@ -9,11 +9,13 @@ import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -36,6 +38,7 @@ import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.value.HtmlStyles;
@@ -86,16 +89,7 @@ public class NoteEditorController extends HtmlEditorController {
             saveButton = notesController.saveButton;
             currentNote = null;
 
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue ov, Tab oldTab, Tab newTab) {
-                    if (oldTab == styleTab) {
-                        webEngine.getLoadWorker().cancel();
-                        webEngine.loadContent(styleHtml(htmlInWebview()));
-                        htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
-                    }
-                }
-            });
+            initTabPane();
 
             titleInput.setText(message("Note"));
             styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle));
@@ -233,6 +227,7 @@ public class NoteEditorController extends HtmlEditorController {
             notesController.rightPane.setDisable(true);
             SingletonTask saveTask = new SingletonTask<Void>() {
                 private Note note;
+                private boolean notExist = false;
 
                 @Override
                 protected boolean handle() {
@@ -242,13 +237,22 @@ public class NoteEditorController extends HtmlEditorController {
                         note.setHtml(HtmlReadTools.body(html, false));
                         note.setUpdateTime(new Date());
                         if (currentNote != null) {
-                            note.setNtid(currentNote.getNtid());
-                            note.setNotebook(currentNote.getNotebookid());
-                            currentNote = tableNote.updateData(conn, note);
-                        } else {
+                            currentNote = tableNote.readData(conn, currentNote);
+                            bookOfCurrentNote = tableNotebook.readData(conn, bookOfCurrentNote);
+                            if (currentNote == null || bookOfCurrentNote == null) {
+                                notExist = true;
+                                currentNote = null;
+                                return true;
+                            } else {
+                                note.setNtid(currentNote.getNtid());
+                                note.setNotebook(currentNote.getNotebookid());
+                                currentNote = tableNote.updateData(conn, note);
+                            }
+                        } else if (currentNote == null) {
                             if (bookOfCurrentNote == null) {
                                 bookOfCurrentNote = notebooksController.root(conn);
                             }
+                            note.setNtid(-1);
                             note.setNotebook(bookOfCurrentNote.getNbid());
                             currentNote = tableNote.insertData(conn, note);
                         }
@@ -261,16 +265,22 @@ public class NoteEditorController extends HtmlEditorController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSaved();
-                    idInput.setText(currentNote.getNtid() + "");
-                    timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
-                    updateBookOfCurrentNote();
-                    if (notebooksController.selectedNode != null
-                            && notebooksController.selectedNode.getNbid() == currentNote.getNotebookid()) {
-                        notesController.refreshNotes();
+                    if (notExist) {
+                        fileChanged = false;
+                        copyNote();
+                        popError(message("NotExist"));
+                    } else {
+                        popSaved();
+                        idInput.setText(currentNote.getNtid() + "");
+                        timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
+                        updateBookOfCurrentNote();
+                        if (notebooksController.selectedNode != null
+                                && notebooksController.selectedNode.getNbid() == currentNote.getNotebookid()) {
+                            notesController.refreshNotes();
+                        }
+                        notesController.refreshTimes();
+                        updateFileStatus(false);
                     }
-                    notesController.refreshTimes();
-                    updateFileStatus(false);
                 }
 
                 @Override
@@ -291,7 +301,7 @@ public class NoteEditorController extends HtmlEditorController {
         try {
             tagsListController.setParent(notesController);
 
-            tagsListController.changedNotify.addListener(new ChangeListener<Boolean>() {
+            tagsListController.checkedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldV, Boolean newV) {
                     tagsTab.setText(message("Tags") + " *");
@@ -344,7 +354,7 @@ public class NoteEditorController extends HtmlEditorController {
                 @Override
                 protected void whenSucceeded() {
                     tagsListController.setValues(tagsString);
-                    tagsListController.selectIndex(selected);
+                    tagsListController.setCheckIndices(selected);
                     tagsChanged(false);
                 }
 
@@ -360,13 +370,13 @@ public class NoteEditorController extends HtmlEditorController {
 
     @FXML
     public void selectAllNoteTags() {
-        tagsListController.selectAll();
+        tagsListController.checkAll();
         tagsChanged(true);
     }
 
     @FXML
     public void selectNoneNoteTags() {
-        tagsListController.selectNone();
+        tagsListController.checkNone();
         tagsChanged(true);
     }
 
@@ -386,7 +396,7 @@ public class NoteEditorController extends HtmlEditorController {
 
                 @Override
                 protected boolean handle() {
-                    List<String> selected = tagsListController.getSelectedValues();
+                    List<String> selected = tagsListController.checkedValues();
                     long noteid = currentNote.getNtid();
                     try ( Connection conn = DerbyBase.getConnection();
                              PreparedStatement query = conn.prepareStatement(TableTag.QueryTag);
@@ -520,6 +530,98 @@ public class NoteEditorController extends HtmlEditorController {
                 return result.get() == buttonNotSave;
             }
         }
+    }
+
+    /*
+        panes
+     */
+    @Override
+    public void tabSelectionChanged(Tab oldTab) {
+        if (oldTab == styleTab) {
+            webEngine.getLoadWorker().cancel();
+            webEngine.loadContent(styleHtml(htmlInWebview()));
+            htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
+        }
+        super.tabSelectionChanged(oldTab);
+    }
+
+    @Override
+    public void showTabs() {
+        try {
+            super.showTabs();
+
+            if (!UserConfig.getBoolean(baseName + "ShowTagsTab", true)) {
+                tabPane.getTabs().remove(tagsTab);
+            }
+            tagsTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(baseName + "ShowTagsTab", false);
+                }
+            });
+
+            if (!UserConfig.getBoolean(baseName + "ShowStyleTab", true)) {
+                tabPane.getTabs().remove(styleTab);
+            }
+            styleTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(baseName + "ShowStyleTab", false);
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public List<MenuItem> makePanesMenu(MouseEvent mouseEvent) {
+        List<MenuItem> items = super.makePanesMenu(mouseEvent);
+        try {
+            CheckMenuItem tagsMenu = new CheckMenuItem(message("Tags"));
+            tagsMenu.setSelected(tabPane.getTabs().contains(tagsTab));
+            tagsMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowTagsTab", tagsMenu.isSelected());
+                    if (tagsMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(tagsTab)) {
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, tagsTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(tagsTab)) {
+                            tabPane.getTabs().remove(tagsTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(tabPane);
+                }
+            });
+            items.add(tagsMenu);
+
+            CheckMenuItem styleMenu = new CheckMenuItem(message("Style"));
+            styleMenu.setSelected(tabPane.getTabs().contains(styleTab));
+            styleMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowStyleTab", styleMenu.isSelected());
+                    if (styleMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(styleTab)) {
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, styleTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(styleTab)) {
+                            tabPane.getTabs().remove(styleTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(tabPane);
+                }
+            });
+            items.add(styleMenu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+        return items;
     }
 
 }

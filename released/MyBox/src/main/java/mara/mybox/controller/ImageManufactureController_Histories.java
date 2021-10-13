@@ -36,6 +36,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -88,11 +89,11 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                             maxHistoriesInput.setStyle(null);
                             okHistoriesSizeButton.setDisable(false);
                         } else {
-                            maxHistoriesInput.setStyle(NodeStyleTools.badStyle);
+                            maxHistoriesInput.setStyle(UserConfig.badStyle());
                             okHistoriesSizeButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        maxHistoriesInput.setStyle(NodeStyleTools.badStyle);
+                        maxHistoriesInput.setStyle(UserConfig.badStyle());
                         okHistoriesSizeButton.setDisable(true);
                     }
                 }
@@ -126,7 +127,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                             } else {
                                 setStyle("");
                             }
-                            view.setFitWidth(UserConfig.getInt("ThumbnailWidth", 100));
+                            view.setFitWidth(AppVariables.thumbnailWidth);
                             view.setImage(item.getThumbnail());
                             setGraphic(view);
                             setText(s);
@@ -276,8 +277,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                             filename = new File(filename).getAbsolutePath();
                             finalname = new File(filename + ".png").getAbsolutePath();
                             ImageFileWriters.writeImageFile(bufferedImage, "png", finalname);
-                            thumbnail = ScaleTools.scaleImageWidthKeep(bufferedImage,
-                                    UserConfig.getInt("ThumbnailWidth", 100));
+                            thumbnail = ScaleTools.scaleImageWidthKeep(bufferedImage, AppVariables.thumbnailWidth);
                             String thumbname = new File(filename + "_thumbnail.png").getAbsolutePath();
                             if (!ImageFileWriters.writeImageFile(thumbnail, "png", thumbname)) {
                                 return false;
@@ -349,7 +349,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                 return;
             }
             String fname = his.getHistoryLocation();
-            int width = UserConfig.getInt("ThumbnailWidth", 100);
+            int width = AppVariables.thumbnailWidth;
             String thumbname = FileNameTools.appendName(fname, "_thumbnail");
             File thumbfile = new File(thumbname);
             BufferedImage bufferedImage;

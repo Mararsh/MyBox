@@ -12,6 +12,10 @@ import mara.mybox.value.Languages;
  * @Author Mara
  * @CreateDate 2021-7-27
  * @License Apache License Version 2.0
+ *
+ * BaseController < BaseController_MouseEvents < BaseController_KeyEvents <
+ * BaseController_Actions < BaseController_Interface < BaseController_Files <
+ * BaseController_Attributes
  */
 public abstract class BaseController extends BaseController_MouseEvents implements Initializable {
 
@@ -22,8 +26,10 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            baseName = NodeTools.getFxmlName(url);
-            myFxml = "/fxml/" + baseName + ".fxml";
+            interfaceName = NodeTools.getFxmlName(url);
+            baseName = interfaceName;
+
+            myFxml = "/fxml/" + interfaceName + ".fxml";
 
             initValues();
             monitorKeyEvents();
@@ -54,10 +60,6 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void initControls() {
-
     }
 
 }

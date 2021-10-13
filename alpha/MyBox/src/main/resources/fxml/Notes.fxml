@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NotesController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NotesController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -170,7 +170,6 @@ License:    Apache License Version 2.0
                                                                                 <RadioButton fx:id="contentsRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Contents" toggleGroup="$searchGroup" />
                                                                             </children>
                                                                         </HBox>
-                                                                          <Label minHeight="-Infinity" text="%Include" wrapText="true" />
                                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <fx:include fx:id="search" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
@@ -185,10 +184,10 @@ License:    Apache License Version 2.0
                                                                                 </Button>
                                                                             </children>
                                                                         </HBox>
-                                                                        <Label minHeight="-Infinity" text="%SeparateBySpace" wrapText="true" />
+                                                                        <Label minHeight="-Infinity" text="%NotesSearchComments" wrapText="true" />
                                                                     </children>
                                                                     <padding>
-                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                        <Insets bottom="5.0" left="2.0" right="2.0" top="5.0" />
                                                                     </padding>
                                                                 </VBox>
                                                             </content>

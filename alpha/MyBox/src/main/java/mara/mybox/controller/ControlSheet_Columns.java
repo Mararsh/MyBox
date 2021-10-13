@@ -331,7 +331,8 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
         if (ok) {
             popSuccessful();
-            makeSheet(pickData(), newValues);
+            columns = newValues;
+            makeSheet(pickData(), dataChangedNotify.get(), true);
         } else {
             popError(message("InvalidData"));
         }
@@ -460,7 +461,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
 
     protected abstract String[][] pickData();
 
-    public abstract void makeSheet(String[][] data, List<ColumnDefinition> columns);
+    public abstract void makeSheet(String[][] data, boolean dataChanged, boolean validate);
 
     protected abstract String cellString(int row, int col);
 

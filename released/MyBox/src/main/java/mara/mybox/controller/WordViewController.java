@@ -1,8 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Languages;
 
@@ -23,6 +23,12 @@ public class WordViewController extends BaseWebViewController {
         setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
     }
 
+    @Override
+    public void sourceFileChanged(File file) {
+        loadFile(file);
+    }
+
+    @Override
     public boolean loadFile(File file) {
         if (file == null) {
             getMyStage().setTitle(getBaseTitle());
@@ -34,31 +40,19 @@ public class WordViewController extends BaseWebViewController {
             }
             task = new SingletonTask<Void>() {
 
-                private String html;
+                private File htmlFile;
 
                 @Override
                 protected boolean handle() {
-                    String suffix = FileNameTools.getFileSuffix(file);
-                    if ("doc".equalsIgnoreCase(suffix)) {
-                        html = MicrosoftDocumentTools.word2html(file, getCharset());
-                    } else if ("docx".equalsIgnoreCase(suffix)) {
-                        String text = MicrosoftDocumentTools.extractText(file);
-                        if (text == null) {
-                            return false;
-                        }
-                        html = text.replaceAll("\n", "<BR>\n");
-                    } else {
-                        error = Languages.message("NotSupport");
-                        return false;
-                    }
-                    return html != null;
+                    htmlFile = MicrosoftDocumentTools.word2HtmlFile(file, getCharset());
+                    return htmlFile != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    setSourceFile(file);
+                    sourceFile = file;
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
-                    loadContents(html);
+                    webViewController.loadFile(htmlFile);
                 }
 
             };
@@ -67,4 +61,14 @@ public class WordViewController extends BaseWebViewController {
         }
     }
 
+    @Override
+    protected void afterPageLoaded() {
+
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        loadFile(sourceFile);
+    }
 }

@@ -23,18 +23,17 @@ import thridparty.EncodingDetect;
  * @CreateDate 2018-12-10 13:06:33
  * @License Apache License Version 2.0
  */
-public abstract class FileEditInformation extends FileInformation {
+public abstract class FileEditInformation extends FileInformation implements Cloneable {
 
     protected Edit_Type editType;
     protected boolean withBom, totalNumberRead, charsetDetermined;
     protected Charset charset;
     protected Line_Break lineBreak;
     protected String lineBreakValue;
-    protected int objectUnit, pageSize, lineBreakWidth;
-    protected long objectsNumber,
-            currentPageLineStart, currentPageLineEnd, // 1-based, include end
-            linesNumber, pagesNumber, currentPage, currentLine,
-            currentPageObjectStart, currentPageObjectEnd; // 0-based, exclude end
+    protected int objectUnit, pageSize, lineBreakWidth;// 1-based
+    protected long objectsNumber, linesNumber, pagesNumber;// 1-based
+    protected long currentPage, currentPageLineStart, currentPageLineEnd,
+            currentPageObjectStart, currentPageObjectEnd; // 0-based, excluded end
     protected String[] filterStrings;
     protected FindReplaceFile findReplace;
     protected StringFilterType filterType;
@@ -68,15 +67,31 @@ public abstract class FileEditInformation extends FileInformation {
         initValues();
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        try {
+            FileEditInformation newInfo = (FileEditInformation) super.clone();
+            newInfo.setEditType(editType);
+            newInfo.setCharset(charset);
+            newInfo.setLineBreak(lineBreak);
+            newInfo.setFindReplace(findReplace);
+            newInfo.setFilterType(filterType);
+            return newInfo;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
     protected final void initValues() {
         filterType = StringFilterType.IncludeOne;
         withBom = totalNumberRead = charsetDetermined = false;
         charset = defaultCharset();
-        objectsNumber = linesNumber = 0;
-        currentPage = pagesNumber = 1;  // 1-based
+        pagesNumber = 1;
         pageSize = 100000;
-        currentPageObjectStart = currentPageObjectEnd = 0;
-        currentLine = 0;
+        objectsNumber = linesNumber = 0;
+        currentPage = 0;
+        currentPageLineStart = currentPageLineEnd = currentPageObjectStart = currentPageObjectEnd = 0;
         findReplace = null;
         switch (System.lineSeparator()) {
             case "\r\n":
@@ -101,17 +116,6 @@ public abstract class FileEditInformation extends FileInformation {
         return Charset.forName("UTF-8");
     }
 
-    public static FileEditInformation newEditInformation(Edit_Type type) {
-        switch (type) {
-            case Text:
-                return new TextEditInformation();
-            case Bytes:
-                return new BytesEditInformation();
-            default:
-                return new TextEditInformation();
-        }
-    }
-
     public static FileEditInformation newEditInformation(Edit_Type type, File file) {
         switch (type) {
             case Text:
@@ -120,52 +124,6 @@ public abstract class FileEditInformation extends FileInformation {
                 return new BytesEditInformation(file);
             default:
                 return new TextEditInformation(file);
-        }
-    }
-
-    public static FileEditInformation newEditInformationFull(
-            FileEditInformation sourceInfo) {
-        FileEditInformation newInformation
-                = FileEditInformation.newEditInformation(sourceInfo.getEditType(), sourceInfo.getFile());
-        newInformation.setCharset(sourceInfo.getCharset());
-        newInformation.setWithBom(sourceInfo.isWithBom());
-        newInformation.setObjectsNumber(sourceInfo.getObjectsNumber());
-        newInformation.setLinesNumber(sourceInfo.getLinesNumber());
-        newInformation.setLineBreak(sourceInfo.getLineBreak());
-        newInformation.setLineBreakValue(sourceInfo.getLineBreakValue());
-        newInformation.setLineBreakWidth(sourceInfo.getLineBreakWidth());
-        newInformation.setFilterStrings(sourceInfo.getFilterStrings());
-        newInformation.setFilterType(sourceInfo.getFilterType());
-        newInformation.setFindReplace(sourceInfo.getFindReplace());
-        newInformation.setPageSize(sourceInfo.getPageSize());
-        newInformation.setCurrentPage(sourceInfo.getCurrentPage());
-        newInformation.setCurrentPageObjectStart(sourceInfo.getCurrentPageObjectStart());
-        newInformation.setCurrentPageObjectEnd(sourceInfo.getCurrentPageObjectEnd());
-        newInformation.setCurrentPageLineStart(sourceInfo.getCurrentPageLineEnd());
-        return newInformation;
-    }
-
-    public static FileEditInformation newEditInformationMajor(
-            FileEditInformation sourceInfo) {
-        FileEditInformation newInformation
-                = FileEditInformation.newEditInformation(sourceInfo.getEditType(), sourceInfo.getFile());
-        newInformation.setCharset(sourceInfo.getCharset());
-        newInformation.setWithBom(sourceInfo.isWithBom());
-        newInformation.setLineBreak(sourceInfo.getLineBreak());
-        newInformation.setLineBreakValue(sourceInfo.getLineBreakValue());
-        newInformation.setLineBreakWidth(sourceInfo.getLineBreakWidth());
-        newInformation.setFilterStrings(sourceInfo.getFilterStrings());
-        newInformation.setFilterType(sourceInfo.getFilterType());
-        newInformation.setPageSize(sourceInfo.getPageSize());
-        return newInformation;
-    }
-
-    public static FileEditInformation newEditInformation(
-            FileEditInformation sourceInfo, boolean full) {
-        if (full) {
-            return newEditInformationFull(sourceInfo);
-        } else {
-            return newEditInformationMajor(sourceInfo);
         }
     }
 
@@ -230,19 +188,29 @@ public abstract class FileEditInformation extends FileInformation {
 
     public abstract boolean readTotalNumbers();
 
-    public abstract String readPage();
-
     public abstract String readPage(long pageNumber);
 
     public abstract boolean writeObject(String text);
 
     public abstract boolean writePage(FileEditInformation sourceInfo, String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo, long pageNumber, String text);
+    public abstract String readLines(long from, long number);
 
-    public abstract String locateLine();
+    public abstract String readObjects(long from, long number);
 
     public abstract File filter(boolean recordLineNumbers);
+
+    public String readPage() {
+        return readPage(currentPage);
+    }
+
+    public String readLine(long line) {
+        return readLines(line, 1);
+    }
+
+    public String readObject(long index) {
+        return readObjects(index, 1);
+    }
 
     public boolean isMatchFilters(String string) {
         if (string == null || string.isEmpty()) {
@@ -467,14 +435,6 @@ public abstract class FileEditInformation extends FileInformation {
 
     public void setTotalNumberRead(boolean totalNumberRead) {
         this.totalNumberRead = totalNumberRead;
-    }
-
-    public long getCurrentLine() {
-        return currentLine;
-    }
-
-    public void setCurrentLine(long currentLine) {
-        this.currentLine = currentLine;
     }
 
     public long getLinesNumber() {

@@ -47,7 +47,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     }
 
     public void makeSheet(String[][] data) {
-        makeSheet(data, true);
+        makeSheet(data, true, true);
     }
 
     public void makeSheetWithName(String[][] data) {
@@ -71,13 +71,13 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
     }
 
-    @Override
     public void makeSheet(String[][] data, List<ColumnDefinition> columns) {
         this.columns = columns;
-        makeSheet(data, true);
+        makeSheet(data, true, true);
     }
 
-    public synchronized void makeSheet(String[][] inData, boolean changed) {
+    @Override
+    public synchronized void makeSheet(String[][] inData, boolean dataChanged, boolean validate) {
         if (isSettingValues) {
             return;
         }
@@ -332,10 +332,10 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     sheetBox.getChildren().add(noDataLabel);
                 }
                 refreshStyle(sheetBox);
-                if (changed) {
+                if (validate) {
                     validateChange();
                 }
-                sheetChanged(changed);
+                dataChanged(dataChanged);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
             }
@@ -351,7 +351,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
             sourceFile = null;
             columns = null;
             sheetBox.getChildren().clear();
-            makeSheet(new String[rows][cols], false);
+            makeSheet(new String[rows][cols], false, false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -389,15 +389,15 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
     }
 
-    public synchronized void sheetChanged(boolean changed) {
+    public synchronized void dataChanged(boolean dataChanged) {
         try {
             if (isSettingValues) {
                 return;
             }
             pickData();
-            dataChangedNotify.set(changed);
+            dataChangedNotify.set(dataChanged);
             sheetChangedNotify.set(!sheetChangedNotify.get());
-            sheetTab.setText(message("Sheet") + (changed ? " *" : ""));
+            sheetTab.setText(message("Sheet") + (dataChanged ? " *" : ""));
             afterDataChanged();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -405,11 +405,11 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     }
 
     public void sheetChanged() {
-        sheetChanged(true);
+        dataChanged(true);
     }
 
     public void sheetSaved() {
-        sheetChanged(false);
+        dataChanged(false);
     }
 
     public String askValue(String header, String name, String initValue) {

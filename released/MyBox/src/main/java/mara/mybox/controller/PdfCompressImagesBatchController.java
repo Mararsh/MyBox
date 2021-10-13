@@ -13,7 +13,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
@@ -62,9 +62,9 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(jpegBox.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                            .or(thresholdInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(jpegBox.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
@@ -138,10 +138,10 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             if (jpegQuality >= 0 && jpegQuality <= 100) {
                 jpegBox.setStyle(null);
             } else {
-                jpegBox.setStyle(NodeStyleTools.badStyle);
+                jpegBox.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            jpegBox.setStyle(NodeStyleTools.badStyle);
+            jpegBox.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -157,11 +157,11 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
                 thresholdInput.setStyle(null);
             } else {
                 threshold = -1;
-                thresholdInput.setStyle(NodeStyleTools.badStyle);
+                thresholdInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
             threshold = -1;
-            thresholdInput.setStyle(NodeStyleTools.badStyle);
+            thresholdInput.setStyle(UserConfig.badStyle());
         }
     }
 

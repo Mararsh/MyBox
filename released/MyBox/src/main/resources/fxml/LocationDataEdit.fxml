@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                                         <TextField fx:id="dataidInput" disable="true" prefWidth="240.0" HBox.hgrow="NEVER" />
                                         <Label minWidth="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DataSet" HBox.hgrow="NEVER" />
                                         <ComboBox fx:id="datasetSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="datesetButton" mnemonicParsing="false" onAction="#datasetAction">
+                                        <Button fx:id="datasetButton" mnemonicParsing="false" onAction="#datasetAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

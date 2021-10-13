@@ -27,7 +27,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -40,6 +39,7 @@ import net.sourceforge.tess4j.ITessAPI;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.Word;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -206,7 +206,7 @@ public class ImageOCRController extends ImageViewerController {
         File dataPath = ocrOptionsController.dataPathController.file;
         if (!dataPath.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.dataPathController.fileInput.setStyle(NodeStyleTools.badStyle);
+            ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
             return;
         }
         if (ocrOptionsController.embedRadio.isSelected()) {
@@ -224,7 +224,7 @@ public class ImageOCRController extends ImageViewerController {
         File tesseract = ocrOptionsController.tesseractPathController.file;
         if (!tesseract.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.tesseractPathController.fileInput.setStyle(NodeStyleTools.badStyle);
+            ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
             return;
         }
         loading = handling();

@@ -2,24 +2,15 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -28,330 +19,427 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay {
 
-    protected List<ColumnDefinition> numberColumns;
+    public abstract void statistic(List<Integer> calCols, List<Integer> disCols, boolean mode, boolean median, boolean percentage);
 
-    @FXML
-    protected ToggleGroup calGroup;
-    @FXML
-    protected Label calColumnsLabel;
-    @FXML
-    protected ComboBox<String> rowFromSelector, rowToSelector;
-    @FXML
-    protected TextArea calculationColumnsArea, displayColumnsArea;
-    @FXML
-    protected Button exampleCalculationColumnsButton, exampleDisplayColumnsButton, calculatorButton;
-    @FXML
-    protected VBox calColumnsBox;
+    public void transpose(List<Integer> rows, List<Integer> cols) {
+        transpose(data(rows, cols));
+    }
 
-    public void initCalculationControls() {
-        try {
-            calGroup.selectedToggleProperty().addListener((ChangeListener<Toggle>) (observable, ov, nv) -> {
-                checkCalculation();
-            });
-
-            calculatorButton.disableProperty().bind(calculationColumnsArea.textProperty().isEmpty());
-
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+    public void transpose(List<Integer> cols) {
+        if (cols == null || cols.isEmpty()) {
+            popError(message("NoData"));
+            return;
         }
-    }
-
-    protected void checkCalculation() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            calculationColumnsArea.clear();
-            displayColumnsArea.clear();
-
-            if (ascendingRadio.isSelected() || descendingRadio.isSelected()) {
-                calColumnsLabel.setText(message("OrderColumn"));
-            } else {
-                calColumnsLabel.setText(message("ColumnsCalculationSeparateByComma"));
-            }
-
-            calColumnsBox.setDisable(copyRadio.isSelected());
-
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+        if (sourceFile == null || pagesNumber <= 1) {
+            transpose(data(cols));
+            return;
         }
-    }
+        synchronized (this) {
+            SingletonTask calTask = new SingletonTask<Void>() {
 
-    protected void updateCalculation() {
-        try {
-            if (rowFromSelector == null) {
-                return;
-            }
-            rowFromSelector.getItems().clear();
-            rowToSelector.getItems().clear();
-            long total = rowsTotal();
-            List<String> indices = new ArrayList<>();
-            long step = total > 1000 ? total / 1000 : 1;
-            for (long i = 1; i <= total; i += step) {
-                indices.add(i + "");
-            }
-            rowFromSelector.getItems().addAll(indices);
-            rowToSelector.getItems().addAll(indices);
-            selectAllRows();
+                private String[][] data;
 
-            numberColumns = new ArrayList<>();
-            if (columns != null) {
-                for (ColumnDefinition column : columns) {
-                    if (column.isNumberType()) {
-                        numberColumns.add(column);
-                    }
-                }
-            }
-            isSettingValues = true;
-            if (numberColumns.isEmpty()) {
-                sumRadio.setDisable(true);
-                addRadio.setDisable(true);
-                subRadio.setDisable(true);
-                multiplyRadio.setDisable(true);
-                ascendingRadio.fire();
-            } else {
-                sumRadio.setDisable(false);
-                addRadio.setDisable(false);
-                subRadio.setDisable(false);
-                multiplyRadio.setDisable(false);
-                sumRadio.fire();
-            }
-            isSettingValues = false;
-            checkCalculation();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void calculationAction() {
-        try {
-            int from = Integer.valueOf(rowFromSelector.getValue());
-            int to = Integer.valueOf(rowToSelector.getValue());
-            if (from > to) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-
-            String[] calCols = calculationColumnsArea.getText().split(",");
-            List<Integer> calculationColumns = new ArrayList<>();
-            for (String v : calCols) {
-                for (int c = 0; c < columns.size(); c++) {
-                    ColumnDefinition col = columns.get(c);
-                    if (col.getName().equals(v.trim())) {
-                        calculationColumns.add(c);
-                    }
-                }
-            }
-            if (calculationColumns.isEmpty()) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-
-            String[] disCols = displayColumnsArea.getText().split(",");
-            List<Integer> displayColumns = new ArrayList<>();
-            for (String v : disCols) {
-                for (int c = 0; c < columns.size(); c++) {
-                    ColumnDefinition col = columns.get(c);
-                    if (col.getName().equals(v.trim())) {
-                        displayColumns.add(c);
-                    }
-                }
-            }
-
-            if (sumRadio.isSelected()) {
-                sum(calculationColumns, displayColumns, from, to);
-            } else if (addRadio.isSelected()) {
-
-            }
-
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void selectAllRows() {
-        rowFromSelector.getSelectionModel().select("1");
-        rowToSelector.getSelectionModel().select(rowsTotal() + "");
-    }
-
-    @FXML
-    public void popCalculationColumn(MouseEvent mouseEvent) {
-        try {
-            List<Node> columButtons = new ArrayList<>();
-            List<ColumnDefinition> popColumns = columns;
-            if (sumRadio.isSelected() || addRadio.isSelected() || subRadio.isSelected() || multiplyRadio.isSelected()) {
-                popColumns = numberColumns;
-            }
-            if (popColumns == null || popColumns.isEmpty()) {
-                return;
-            }
-            for (ColumnDefinition column : popColumns) {
-                String name = column.getName();
-                Button button = new Button(name);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        if (ascendingRadio.isSelected() || descendingRadio.isSelected()) {
-                            calculationColumnsArea.setText(name);
-                        } else {
-                            calculationColumnsArea.insertText(calculationColumnsArea.getAnchor(), name);
-                        }
-                    }
-                });
-                columButtons.add(button);
-            }
-
-            List<Node> otherButtons = new ArrayList<>();
-            if (!ascendingRadio.isSelected() && !descendingRadio.isSelected()) {
-                Button commaButton = new Button(message("Comma"));
-                commaButton.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        calculationColumnsArea.insertText(calculationColumnsArea.getAnchor(), ",");
-                    }
-                });
-                otherButtons.add(commaButton);
-            }
-
-            Button clearTButton = new Button(message("Clear"));
-            clearTButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
-                public void handle(ActionEvent event) {
-                    calculationColumnsArea.clear();
+                protected boolean handle() {
+                    // transpose involves all data and can not handle row by row
+                    data = allRows(cols);
+                    return data != null;
                 }
-            });
-            otherButtons.add(clearTButton);
 
-            MenuController controller = MenuController.open(this, calculationColumnsArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            controller.addFlowPane(columButtons);
-            controller.addFlowPane(otherButtons);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+                @Override
+                protected void whenSucceeded() {
+                    transpose(data);
+                }
+
+            };
+            start(calTask, false);
         }
     }
 
-    @FXML
-    public void popDisplayColumn(MouseEvent mouseEvent) {
-        try {
-            List<Node> columButtons = new ArrayList<>();
-            for (ColumnDefinition column : columns) {
-                String name = column.getName();
-                Button button = new Button(name);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        displayColumnsArea.insertText(displayColumnsArea.getAnchor(), name);
-                    }
-                });
-                columButtons.add(button);
-            }
-
-            List<Node> otherButtons = new ArrayList<>();
-            Button commaButton = new Button(message("Comma"));
-            commaButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    displayColumnsArea.insertText(displayColumnsArea.getAnchor(), ",");
-                }
-            });
-            otherButtons.add(commaButton);
-
-            Button clearTButton = new Button(message("Clear"));
-            clearTButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    displayColumnsArea.clear();
-                }
-            });
-            otherButtons.add(clearTButton);
-
-            MenuController controller = MenuController.open(this, displayColumnsArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            controller.addFlowPane(columButtons);
-            controller.addFlowPane(otherButtons);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void transpose(String[][] data) {
+        if (data == null) {
+            popError(message("NoData"));
+            return;
         }
-    }
+        synchronized (this) {
+            SingletonTask calTask = new SingletonTask<Void>() {
+                private String[][] transposed;
 
-    @FXML
-    public void copyCalculationResults() {
-
-    }
-
-    @FXML
-    public void editCalulationResults() {
-
-    }
-
-    // 1-based, include
-    public void sum(List<Integer> calculationColumns, List<Integer> displayColumns, int intFrom, int inTo) {
-        try {
-            if (calculationColumns == null || calculationColumns.isEmpty()
-                    || pageData == null || intFrom > inTo) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-            int from = Math.min(pageData.length, Math.max(1, intFrom));
-            int to = Math.min(pageData.length, Math.max(1, inTo));
-            if (from > to) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-            MyBoxLog.console(from + " " + to);
-            int calSize = calculationColumns.size();
-            int displaySize = displayColumns.size();
-            List<ColumnDefinition> dataColumns = new ArrayList<>();
-            dataColumns.add(new ColumnDefinition(message("Calculation"), ColumnType.String));
-            for (int c : calculationColumns) {
-                ColumnDefinition def = columns.get(c);
-                if (!def.isNumberType()) {
-                    popError(message("InvalidParameters"));
-                    return;
-                }
-                dataColumns.add(new ColumnDefinition(def.getName(), ColumnType.Double));
-            }
-            for (int c : displayColumns) {
-                dataColumns.add(columns.get(c));
-            }
-
-            String[][] data = new String[to - from + 2][calSize + displaySize + 1];
-            data[0][0] = message("Total");
-            for (int c = 0; c < calSize; ++c) {
-                double sum = 0;
-                int colIndex = calculationColumns.get(c);
-                for (int r = from - 1; r <= to - 1; ++r) {
+                @Override
+                protected boolean handle() {
                     try {
-                        sum += Double.valueOf(pageData[r][colIndex]);
+                        int rowSize = data.length;
+                        int colSize = data[0].length;
+                        transposed = new String[colSize][rowSize];
+                        for (int r = 0; r < rowSize; ++r) {
+                            for (int c = 0; c < colSize; ++c) {
+                                transposed[c][r] = data[r][c];
+                            }
+                        }
+                        return transposed != null;
                     } catch (Exception e) {
+                        error = e.toString();
+                        MyBoxLog.error(e.toString());
+                        return false;
                     }
                 }
-                data[0][c + 1] = DoubleTools.format(sum, 2);
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+                    controller.loadData(transposed, null);
+                }
+
+            };
+            start(calTask, false);
+        }
+    }
+
+    public double doubleValue(String v) {
+        try {
+            if (v == null || v.isBlank()) {
+                return 0;
             }
-            for (int c = 0; c < displaySize; ++c) {
-                data[0][c + calSize + 1] = "";
+            return Double.valueOf(v.replaceAll(",", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    // All as double to make things simple. 
+    // To improve performance, this should be counting according to columns' types.
+    public String[][] statistic(String[][] sourceData) {
+        if (sourceData == null) {
+            popError(message("NoData"));
+            return null;
+        }
+        try {
+            int rowSize = sourceData.length;
+            int colSize = sourceData[0].length;
+            String[][] sData = new String[9][colSize + 1];
+            sData[0][0] = message("Count");
+            sData[1][0] = message("Summation");
+            sData[2][0] = message("Mean");
+            sData[3][0] = message("Variance");
+            sData[4][0] = message("Skewness");
+            sData[5][0] = message("Maximum");
+            sData[6][0] = message("Minimum");
+            sData[7][0] = message("Mode");
+            sData[8][0] = message("Median");
+            for (int c = 0; c < colSize; c++) {
+                int col = c + 1;
+                double[] colData = new double[rowSize];
+                for (int r = 0; r < rowSize; r++) {
+                    colData[r] = doubleValue(sourceData[r][c]);
+                }
+                DoubleStatistic statistic = new DoubleStatistic(colData);
+                sData[0][col] = StringTools.format(statistic.getCount());
+                sData[1][col] = DoubleTools.format(statistic.getSum(), scale);
+                sData[2][col] = DoubleTools.format(statistic.getMean(), scale);
+                sData[3][col] = DoubleTools.format(statistic.getVariance(), scale);
+                sData[4][col] = DoubleTools.format(statistic.getSkewness(), scale);
+                sData[5][col] = DoubleTools.format(statistic.getMaximum(), scale);
+                sData[6][col] = DoubleTools.format(statistic.getMinimum(), scale);
+                sData[7][col] = DoubleTools.format(statistic.getMode(), scale);
+                sData[8][col] = DoubleTools.format(statistic.getMedian(), scale);
             }
-            for (int r = 1; r <= to - from + 1; ++r) {
-                data[r][0] = null;
+            return sData;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    protected String[][] statistic(String[][] sourceData, String[][] disData,
+            boolean mode, boolean median, boolean percentage) {
+        try {
+            String[][] statisticData = statistic(sourceData);
+            if (statisticData == null) {
+                return null;
             }
-            for (int c = 0; c < calSize; ++c) {
-                int colIndex = calculationColumns.get(c);
-                for (int r = 1; r <= to - from + 1; ++r) {
-                    data[r][c + 1] = pageData[r + from - 2][colIndex];
+            int rowSize = sourceData.length;
+            int colSize = sourceData[0].length;
+            int disSize = disData == null ? 0 : disData[0].length;
+            int totalRowSize = statisticData.length;
+            if (percentage || disSize > 0) {
+                totalRowSize += rowSize;
+            }
+            String[][] resultData = new String[totalRowSize][colSize + disSize + 1];
+            for (int r = 0; r < statisticData.length; r++) {
+                for (int c = 0; c < statisticData[r].length; c++) {
+                    resultData[r][c] = statisticData[r][c];
                 }
             }
-            for (int c = 0; c < displaySize; ++c) {
-                int colIndex = displayColumns.get(c);
-                for (int r = 1; r <= to - from + 1; ++r) {
-                    data[r][c + calSize + 1] = pageData[r + from - 2][colIndex];
+            if (percentage) {
+                for (int r = 0; r < rowSize; r++) {
+                    resultData[r + 9][0] = message("Percentage") + "_" + message("DataRow") + (r + 1) + "_%";
+                    for (int c = 1; c <= colSize; c++) {
+                        resultData[r + 9][c] = DoubleTools.percentage(doubleValue(sourceData[r][c - 1]), doubleValue(statisticData[1][c]));
+                    }
+                }
+            } else if (disSize > 0) {
+                for (int r = 0; r < rowSize; r++) {
+                    resultData[r + 9][0] = message("DataRow") + (r + 1);
                 }
             }
-//            DataClipboardController.open(data, dataColumns);
+            if (disSize > 0) {
+                for (int r = 0; r < rowSize; r++) {
+                    for (int c = 0; c < disSize; c++) {
+                        resultData[r + 9][c + colSize + 1] = disData[r][c];
+                    }
+                }
+            }
+            return resultData;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public void statistic(List<Integer> rows, List<Integer> calCols, List<Integer> disCols,
+            boolean mode, boolean median, boolean percentage) {
+        if (rows == null || rows.isEmpty() || calCols == null || calCols.isEmpty()
+                || sheetInputs == null || columns == null) {
+            popError(message("NoData"));
+            return;
+        }
+        synchronized (this) {
+            SingletonTask calTask = new SingletonTask<Void>() {
+                private String[][] resultData;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        resultData = statistic(data(rows, calCols), data(rows, disCols), mode, median, percentage);
+                        return resultData != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        MyBoxLog.error(e.toString());
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+                    controller.loadData(resultData, statisticColumns(calCols, disCols));
+                }
+
+            };
+            start(calTask, false);
+        }
+    }
+
+    protected List<ColumnDefinition> statisticColumns(List<Integer> calCols, List<Integer> disCols) {
+        if (calCols == null || calCols.isEmpty() || columns == null) {
+            popError(message("NoData"));
+            return null;
+        }
+        // The column name can not start with "m_", or else errors popped by javafx class "CheckBoxSkin". I guess this is a bug of Javafx.
+        // https://github.com/Mararsh/MyBox/issues/1222
+        List<ColumnDefinition> dataColumns = new ArrayList<>();
+        dataColumns.add(new ColumnDefinition("__" + message("CalculationName") + "__", ColumnDefinition.ColumnType.String).setWidth(200));
+
+        for (Integer i : calCols) {
+            dataColumns.add(new ColumnDefinition("__" + message("Calculation") + "__" + columns.get(i).getName() + "__",
+                    ColumnDefinition.ColumnType.Double).setWidth(200));
+        }
+        if (disCols != null) {
+            for (Integer i : disCols) {
+                dataColumns.add(columns.get(i).cloneBase());
+            }
+        }
+        return dataColumns;
+    }
+
+    protected void countPageData(DoubleStatistic[] sData, List<Integer> calCols) {
+        try {
+            if (sheetInputs == null || calCols == null || calCols.isEmpty()
+                    || sData == null || sData.length < calCols.size()) {
+                return;
+            }
+            for (int r = 0; r < sheetInputs.length; r++) {
+                for (int c = 0; c < calCols.size(); c++) {
+                    sData[c].count++;
+                    int col = calCols.get(c);
+                    if (col >= sheetInputs[r].length) {
+                        continue;
+                    }
+                    double v = doubleValue(cellString(r, col));
+                    sData[c].sum += v;
+                    if (v > sData[c].maximum) {
+                        sData[c].maximum = v;
+                    }
+                    if (v < sData[c].minimum) {
+                        sData[c].minimum = v;
+                    }
+                }
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    protected void variancePageData(DoubleStatistic[] sData, List<Integer> calCols) {
+        try {
+            if (sData == null || sheetInputs == null || calCols == null || calCols.isEmpty()) {
+                return;
+            }
+            for (int r = 0; r < sheetInputs.length; r++) {
+                for (int c = 0; c < calCols.size(); c++) {
+                    int col = calCols.get(c);
+                    if (col >= sheetInputs[r].length) {
+                        continue;
+                    }
+                    double v = doubleValue(cellString(r, col));
+                    sData[c].variance += Math.pow(v - sData[c].mean, 2);
+                    sData[c].skewness += Math.pow(v - sData[c].mean, 3);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected boolean writeStatisticData(CSVPrinter csvPrinter, DoubleStatistic[] sData,
+            List<Integer> calCols, List<Integer> disCols, boolean percentage) {
+        if (csvPrinter == null || sData == null || calCols == null || calCols.isEmpty()) {
+            return false;
+        }
+        try {
+            List<ColumnDefinition> sColumns = statisticColumns(calCols, disCols);
+            List<String> names = new ArrayList<>();
+            for (ColumnDefinition c : sColumns) {
+                names.add(c.getName());
+            }
+            csvPrinter.printRecord(names);
+
+            List<String> values = new ArrayList<>();
+            int calLen = sData.length, disLen = disCols == null ? 0 : disCols.size();
+
+            values.add(message("Count"));
+            for (int c = 0; c < calLen; c++) {
+                values.add(StringTools.format(sData[c].count));
+            }
+            for (int c = 0; c < disLen; c++) {
+                values.add("");
+            }
+            csvPrinter.printRecord(values);
+            values.clear();
+
+            values.add(message("Summation"));
+            for (int c = 0; c < calLen; c++) {
+                values.add(StringTools.format(sData[c].sum));
+            }
+            for (int c = 0; c < disLen; c++) {
+                values.add("");
+            }
+            csvPrinter.printRecord(values);
+            values.clear();
+
+            values.add(message("Mean"));
+            for (int c = 0; c < calLen; c++) {
+                values.add(StringTools.format(sData[c].mean));
+            }
+            for (int c = 0; c < disLen; c++) {
+                values.add("");
+            }
+            csvPrinter.printRecord(values);
+            values.clear();
+
+            values.add(message("Variance"));
+            for (int c = 0; c < calLen; c++) {
+                values.add(StringTools.format(sData[c].variance));
+            }
+            for (int c = 0; c < disLen; c++) {
+                values.add("");
+            }
+            csvPrinter.printRecord(values);
+            values.clear();
+
+            values.add(message("Skewness"));
+            for (int c = 0; c < calLen; c++) {
+                values.add(StringTools.format(sData[c].skewness));
+            }
+            for (int c = 0; c < disLen; c++) {
+                values.add("");
+            }
+            csvPrinter.printRecord(values);
+            values.clear();
+
+            values.add(message("Maximum"));
+            for (int c = 0; c < calLen; c++) {
+                values.add(StringTools.format(sData[c].maximum));
+            }
+            for (int c = 0; c < disLen; c++) {
+                values.add("");
+            }
+            csvPrinter.printRecord(values);
+            values.clear();
+
+            values.add(message("Minimum"));
+            for (int c = 0; c < calLen; c++) {
+                values.add(StringTools.format(sData[c].minimum));
+            }
+            for (int c = 0; c < disLen; c++) {
+                values.add("");
+            }
+            csvPrinter.printRecord(values);
+            values.clear();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
+    }
+
+    protected int writePageStatistic(CSVPrinter csvPrinter, DoubleStatistic[] sData,
+            List<Integer> calCols, List<Integer> disCols, boolean percentage, int startIndex) {
+        int dataIndex = startIndex;
+        try {
+            if (sheetInputs == null || calCols == null || calCols.isEmpty()
+                    || csvPrinter == null || sData == null) {
+                return startIndex;
+            }
+            int calLen = calCols.size(), disLen = disCols == null ? 0 : disCols.size();
+            for (int r = 0; r < sheetInputs.length; r++) {
+                dataIndex++;
+                List<String> row = new ArrayList<>();
+                if (percentage) {
+                    row.add(message("Percentage") + "_" + message("DataRow") + dataIndex + "_%");
+                } else {
+                    row.add(message("DataRow") + dataIndex);
+                }
+                int rLen = sheetInputs[r].length;
+                for (int c = 0; c < calLen; c++) {
+                    if (percentage) {
+                        int col = calCols.get(c);
+                        if (col >= rLen) {
+                            row.add("");
+                        } else {
+                            row.add(DoubleTools.percentage(doubleValue(cellString(r, col)), sData[c].sum));
+                        }
+                    } else {
+                        row.add("");
+                    }
+                }
+                for (int c = 0; c < disLen; c++) {
+                    int col = disCols.get(c);
+                    if (col >= rLen) {
+                        row.add("");
+                    } else {
+                        String v = cellString(r, col);
+                        row.add(v == null ? defaultColValue : v);
+                    }
+                }
+                csvPrinter.printRecord(row);
+                row.clear();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return dataIndex;
     }
 
 }

@@ -35,13 +35,13 @@ import mara.mybox.value.UserConfig;
  *
  */
 public abstract class ControlSheet extends ControlSheet_Calculation {
-    
+
     @Override
     public void initValues() {
         try {
             super.initValues();
             widthChange = 10;
-            
+
             columns = new ArrayList<>();
             tableDataDefinition = new TableDataDefinition();
             tableDataColumn = new TableDataColumn();
@@ -53,18 +53,18 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             pagesNumber = 1;
             pageSize = 50;
             currentRow = currentCol = 0;
-            
+
             parentController = this;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            
+
             NodeStyleTools.setTooltip(trimColumnsButton, message("RenameAllColumns"));
             NodeStyleTools.setTooltip(equalSheetButton, message("SetValues"));
             NodeStyleTools.setTooltip(synchronizeEditButton, message("SynchronizeChangesToOtherPanes"));
@@ -93,12 +93,12 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void initOptions() {
         try {
             scale = (short) UserConfig.getInt(baseName + "Scale", 2);
             maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
-            
+
             scaleSelector.getItems().addAll(
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
             );
@@ -107,7 +107,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         checkScale();
                     });
-            
+
             randomSelector.getItems().addAll(
                     Arrays.asList("1", "100", "10", "1000", "10000", "1000000", "10000000")
             );
@@ -130,22 +130,22 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
                             randomSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
-            
+
             overPopMenuCheck.setSelected(UserConfig.getBoolean(baseName + "OverPop", false));
             overPopMenuCheck.selectedProperty().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         UserConfig.setBoolean(baseName + "OverPop", newValue);
                     });
-            
+
             rightClickPopMenuCheck.setSelected(UserConfig.getBoolean(baseName + "RightClickPop", true));
             rightClickPopMenuCheck.selectedProperty().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         UserConfig.setBoolean(baseName + "RightClickPop", newValue);
                     });
-            
-            warnThreshold = UserConfig.getInt(baseName + "WarnThreshold", 5000);
+
+            warnThreshold = UserConfig.getInt(baseName + "WarnThreshold", defaultWarnThreshold);
             if (warnThreshold < 1) {
-                warnThreshold = 5000;
+                warnThreshold = defaultWarnThreshold;
             }
             if (warnThresholdInput != null) {
                 warnThresholdInput.setText(warnThreshold + "");
@@ -165,12 +165,12 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
                             }
                         });
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void checkScale() {
         if (isSettingValues) {
             return;
@@ -188,7 +188,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             scaleSelector.getEditor().setStyle(UserConfig.badStyle());
         }
     }
-    
+
     @FXML
     @Override
     public void createAction() {
@@ -205,12 +205,12 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
                     controller.closeStage();
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     protected void afterDataChanged() {
         try {
@@ -218,7 +218,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             makeDefintionPane();
             updateHtml();
             updateText();
-            
+
             boolean noRows = sheetInputs == null || sheetInputs.length == 0;
             boolean noCols = columns == null || columns.isEmpty();
             rowsAddButton.setDisable(noCols);
@@ -230,19 +230,19 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             equalSheetButton.setDisable(noRows);
             sortSheetButton.setDisable(noRows);
             calculateSheetButton.setDisable(noRows);
-            
+
             BaseDataOperationController.update(this);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
-    
+
     @FXML
     @Override
     public void saveAction() {
         parentController.saveAction();
     }
-    
+
     @FXML
     @Override
     public boolean popAction() {
@@ -251,57 +251,57 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             if (tab == htmlTab) {
                 HtmlPopController.openWebView(this, htmlViewController.webView);
                 return true;
-                
+
             } else if (tab == textsDisplayTab) {
                 TextPopController.openInput(this, textsDisplayArea);
                 return true;
-                
+
             } else if (tab == editTab) {
                 TextPopController.openInput(this, textsEditArea);
                 return true;
-                
+
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
         return true;
     }
-    
+
     @FXML
     @Override
     public boolean menuAction() {
         try {
             closePopup();
-            
+
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
                 Point2D localToScreen = htmlViewController.webView.localToScreen(htmlViewController.webView.getWidth() - 80, 80);
                 MenuWebviewController.pop(htmlViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
-                
+
             } else if (tab == textsDisplayTab) {
                 Point2D localToScreen = textsDisplayArea.localToScreen(textsDisplayArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textsDisplayArea, localToScreen.getX(), localToScreen.getY());
                 return true;
-                
+
             } else if (tab == editTab) {
                 Point2D localToScreen = textsEditArea.localToScreen(textsEditArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textsEditArea, localToScreen.getX(), localToScreen.getY());
                 return true;
-                
+
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
         return false;
     }
-    
+
     @Override
     public boolean controlAltM() {
         myBoxClipBoard();
         return true;
     }
-    
+
     @Override
     public boolean checkBeforeNextAction() {
         boolean goOn;
@@ -320,7 +320,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
-            
+
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonSave) {
                 saveAction();
@@ -340,7 +340,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
         }
         return goOn;
     }
-    
+
     @Override
     public void cleanPane() {
         try {
@@ -356,5 +356,5 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
         }
         super.cleanPane();
     }
-    
+
 }

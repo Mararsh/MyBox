@@ -41,7 +41,7 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
@@ -412,7 +412,7 @@ public class ConvolutionKernelManagerController extends BaseController {
                     valueInput.setStyle(null);
                 } catch (Exception e) {
                     matrixValid = false;
-                    valueInput.setStyle(NodeStyleTools.badStyle);
+                    valueInput.setStyle(UserConfig.badStyle());
                 }
             }
         }

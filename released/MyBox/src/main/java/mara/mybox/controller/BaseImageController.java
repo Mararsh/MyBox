@@ -7,6 +7,10 @@ import mara.mybox.value.UserConfig;
  * @Author Mara
  * @CreateDate 2018-6-24
  * @License Apache License Version 2.0
+ *
+ * BaseImageController < BaseImageController_Actions < BaseImageController_Image
+ * < BaseImageController_MouseEvents < BaseImageController_Shapes <
+ * BaseImageController_Mask < BaseImageController_ImageView
  */
 public abstract class BaseImageController extends BaseImageController_Actions {
 

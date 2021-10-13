@@ -25,6 +25,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -46,6 +47,7 @@ import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -86,10 +88,22 @@ public class HtmlEditorController extends WebAddressController {
     protected ControlFileBackup backupController;
     @FXML
     protected CheckBox wrapCodesCheck, wrapMarkdownCheck, wrapTextsCheck;
+    @FXML
+    protected Button panesMenuButton;
 
     public HtmlEditorController() {
         baseTitle = message("HtmlEditor");
         TipsLabelKey = "HtmlEditorTips";
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            StyleTools.setIconTooltips(panesMenuButton, "iconPanes.png", message("Panes"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     @Override
@@ -989,6 +1003,8 @@ public class HtmlEditorController extends WebAddressController {
                 });
             }
 
+            NodeStyleTools.refreshStyle(tabPane);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1034,14 +1050,14 @@ public class HtmlEditorController extends WebAddressController {
                     UserConfig.setBoolean(baseName + "ShowViewTab", viewMenu.isSelected());
                     if (viewMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(viewTab)) {
-                            tabPane.getTabs().add(viewTab);
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, viewTab);
                         }
                     } else {
                         if (tabPane.getTabs().contains(viewTab)) {
                             tabPane.getTabs().remove(viewTab);
                         }
                     }
-                    NodeStyleTools.refreshStyle(thisPane);
+                    NodeStyleTools.refreshStyle(tabPane);
                 }
             });
             items.add(viewMenu);
@@ -1054,14 +1070,14 @@ public class HtmlEditorController extends WebAddressController {
                     UserConfig.setBoolean(baseName + "ShowCodesTab", codesMenu.isSelected());
                     if (codesMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(codesTab)) {
-                            tabPane.getTabs().add(codesTab);
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, codesTab);
                         }
                     } else {
                         if (tabPane.getTabs().contains(codesTab)) {
                             tabPane.getTabs().remove(codesTab);
                         }
                     }
-                    NodeStyleTools.refreshStyle(thisPane);
+                    NodeStyleTools.refreshStyle(tabPane);
                 }
             });
             items.add(codesMenu);
@@ -1074,14 +1090,14 @@ public class HtmlEditorController extends WebAddressController {
                     UserConfig.setBoolean(baseName + "ShowEditorTab", editorMenu.isSelected());
                     if (editorMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(editorTab)) {
-                            tabPane.getTabs().add(editorTab);
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, editorTab);
                         }
                     } else {
                         if (tabPane.getTabs().contains(editorTab)) {
                             tabPane.getTabs().remove(editorTab);
                         }
                     }
-                    NodeStyleTools.refreshStyle(thisPane);
+                    NodeStyleTools.refreshStyle(tabPane);
                 }
             });
             items.add(editorMenu);
@@ -1094,14 +1110,14 @@ public class HtmlEditorController extends WebAddressController {
                     UserConfig.setBoolean(baseName + "ShowMarkdownTab", mdMenu.isSelected());
                     if (mdMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(markdownTab)) {
-                            tabPane.getTabs().add(markdownTab);
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, markdownTab);
                         }
                     } else {
                         if (tabPane.getTabs().contains(markdownTab)) {
                             tabPane.getTabs().remove(markdownTab);
                         }
                     }
-                    NodeStyleTools.refreshStyle(thisPane);
+                    NodeStyleTools.refreshStyle(tabPane);
                 }
             });
             items.add(mdMenu);
@@ -1114,7 +1130,7 @@ public class HtmlEditorController extends WebAddressController {
                     UserConfig.setBoolean(baseName + "ShowTextsTab", textsMenu.isSelected());
                     if (textsMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(textsTab)) {
-                            tabPane.getTabs().add(textsTab);
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, textsTab);
                         }
                     } else {
                         if (tabPane.getTabs().contains(textsTab)) {
@@ -1135,14 +1151,14 @@ public class HtmlEditorController extends WebAddressController {
                         UserConfig.setBoolean(baseName + "ShowBackupTab", backupMenu.isSelected());
                         if (backupMenu.isSelected()) {
                             if (!tabPane.getTabs().contains(backupTab)) {
-                                tabPane.getTabs().add(backupTab);
+                                tabPane.getTabs().add(tabPane.getTabs().size() - 1, backupTab);
                             }
                         } else {
                             if (tabPane.getTabs().contains(backupTab)) {
                                 tabPane.getTabs().remove(backupTab);
                             }
                         }
-                        NodeStyleTools.refreshStyle(thisPane);
+                        NodeStyleTools.refreshStyle(tabPane);
                     }
                 });
                 items.add(backupMenu);

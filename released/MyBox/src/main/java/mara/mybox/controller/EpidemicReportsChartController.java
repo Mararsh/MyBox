@@ -218,10 +218,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                             drawChart();
                         }
                     } else {
-                        labelSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        labelSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    labelSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    labelSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
 

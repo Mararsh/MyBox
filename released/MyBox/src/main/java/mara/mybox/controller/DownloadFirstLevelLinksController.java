@@ -85,7 +85,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-11
  * @License Apache License Version 2.0
  */
-public class DownloadFirstLevelLinksController extends WebAddressController {
+public class DownloadFirstLevelLinksController extends BaseController {
 
     protected final ObservableList<Link> linksData, downloadingData, failedData;
     protected int maxThreadsNumber, maxLogs, maxRetries;
@@ -242,11 +242,11 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
             });
 
             goButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                             .or(urlSelector.getSelectionModel().selectedItemProperty().isNull())
             );
             downloadButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                             .or(linksTableView.getSelectionModel().selectedItemProperty().isNull())
             );
             copyButton.disableProperty().bind(linksTableView.getSelectionModel().selectedItemProperty().isNull());
@@ -382,10 +382,10 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
                         threadsSelector.getEditor().setStyle(null);
                         checkThreads();
                     } else {
-                        threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        threadsSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    threadsSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
             threadsSelector.getSelectionModel().select(maxThreadsNumber + "");
@@ -403,10 +403,10 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
                         UserConfig.setInt(baseName + "MaxRetries", v);
                         retriesSelector.getEditor().setStyle(null);
                     } else {
-                        retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        retriesSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    retriesSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
             retriesSelector.getSelectionModel().select(maxRetries + "");
@@ -510,7 +510,7 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
             popError(Languages.message("InvalidParameters"));
             return;
         }
-        VisitHistoryTools.visitURI(address);
+        VisitHistoryTools.downloadURI(address);
         File downloadPath = targetPathController.file;
         if (downloadPath == null) {
             popError(Languages.message("InvalidParameters"));
@@ -1180,11 +1180,11 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
                 connValue = v;
                 webConnectTimeoutInput.setStyle(null);
             } else {
-                webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
+                webConnectTimeoutInput.setStyle(UserConfig.badStyle());
                 return;
             }
         } catch (Exception e) {
-            webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
+            webConnectTimeoutInput.setStyle(UserConfig.badStyle());
             return;
         }
         try {
@@ -1193,11 +1193,11 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
                 readValue = v;
                 webReadTimeoutInput.setStyle(null);
             } else {
-                webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
+                webReadTimeoutInput.setStyle(UserConfig.badStyle());
                 return;
             }
         } catch (Exception e) {
-            webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
+            webReadTimeoutInput.setStyle(UserConfig.badStyle());
             return;
         }
         UserConfig.setInt("WebConnectTimeout", connValue);
@@ -1636,10 +1636,10 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
                 maxLogsinput.setStyle(null);
                 UserConfig.setInt(baseName + "MaxLogs", maxLogs);
             } else {
-                maxLogsinput.setStyle(NodeStyleTools.badStyle);
+                maxLogsinput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            maxLogsinput.setStyle(NodeStyleTools.badStyle);
+            maxLogsinput.setStyle(UserConfig.badStyle());
         }
     }
 

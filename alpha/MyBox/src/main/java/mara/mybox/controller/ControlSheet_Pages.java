@@ -89,7 +89,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
 
                 @Override
                 protected void whenSucceeded() {
-                    makeSheet(data, false);
+                    makeSheet(data, false, true);
                     setPagination();
                 }
 

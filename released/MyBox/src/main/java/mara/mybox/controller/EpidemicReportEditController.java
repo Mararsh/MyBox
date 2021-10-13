@@ -15,7 +15,7 @@ import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -80,10 +80,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                     });
             timeInput.setText(DateTools.nowString());
 
-            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                    .or(confirmedInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(healedInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(deadInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(confirmedInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(healedInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(deadInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -164,10 +164,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 confirmed = v;
                 confirmedInput.setStyle(null);
             } else {
-                confirmedInput.setStyle(NodeStyleTools.badStyle);
+                confirmedInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            confirmedInput.setStyle(NodeStyleTools.badStyle);
+            confirmedInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -184,10 +184,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 healed = v;
                 healedInput.setStyle(null);
             } else {
-                healedInput.setStyle(NodeStyleTools.badStyle);
+                healedInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            healedInput.setStyle(NodeStyleTools.badStyle);
+            healedInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -204,10 +204,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 dead = v;
                 deadInput.setStyle(null);
             } else {
-                deadInput.setStyle(NodeStyleTools.badStyle);
+                deadInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            deadInput.setStyle(NodeStyleTools.badStyle);
+            deadInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -224,10 +224,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 time = v.getTime();
                 timeInput.setStyle(null);
             } else {
-                timeInput.setStyle(NodeStyleTools.badStyle);
+                timeInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            timeInput.setStyle(NodeStyleTools.badStyle);
+            timeInput.setStyle(UserConfig.badStyle());
         }
     }
 

@@ -72,4 +72,11 @@ public class JsonTools {
         }
     }
 
+    public static String replaceSpecialChars(String value) {
+        if (value == null || value.isBlank() || !value.contains("\"")) {
+            return value;
+        }
+        return value.replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
+    }
+
 }

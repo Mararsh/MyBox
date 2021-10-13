@@ -97,7 +97,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
             idInput.clear();
             nameInput.setText(nameInput.getText() + "_" + message("Copy"));
             manager.tableView.getSelectionModel().clearSelection();
-            sheetChanged(true);
+            dataChanged(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

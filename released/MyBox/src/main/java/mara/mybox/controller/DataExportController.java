@@ -117,7 +117,7 @@ public class DataExportController extends BaseTaskController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

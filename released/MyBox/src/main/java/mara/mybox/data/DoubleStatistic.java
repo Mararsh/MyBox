@@ -1,42 +1,68 @@
 package mara.mybox.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
- * @CreateDate 2019-2-11 12:53:19
- * @Version 1.0
- * @Description
+ * @CreateDate 2021-10-4
  * @License Apache License Version 2.0
  */
 public class DoubleStatistic {
 
-    private String name;
-    private double sum;
-    private double mean, variance, skewness, minimum, maximum, mode, median;
+    public String name;
+    public int count;
+    public double sum;
+    public double mean, variance, skewness, minimum, maximum, mode, median;
 
     public DoubleStatistic() {
+        sum = count = 0;
+        minimum = Double.MAX_VALUE;
+        maximum = -Double.MAX_VALUE;
     }
 
-    public DoubleStatistic(String name, double sum, double mean,
-            double variance, double skewness, double minimum, double maximum,
-            double mode, double median) {
-        this.name = name;
-        this.sum = sum;
-        this.mean = mean;
-        this.variance = variance;
-        this.skewness = skewness;
-        this.minimum = minimum;
-        this.maximum = maximum;
-        this.mode = mode;
-        this.median = median;
+    public DoubleStatistic(double[] values) {
+        if (values == null || values.length == 0) {
+            return;
+        }
+        count = values.length;
+        sum = 0;
+        minimum = Double.MAX_VALUE;
+        maximum = -Double.MAX_VALUE;
+        for (int i = 0; i < count; ++i) {
+            double v = values[i];
+            sum += v;
+            if (v > maximum) {
+                maximum = v;
+            }
+            if (v < minimum) {
+                minimum = v;
+            }
+        }
+        mean = sum / count;
+        variance = 0;
+        skewness = 0;
+        mode = mode(values);
+        median = median(values);
+        for (int i = 0; i < values.length; ++i) {
+            double v = values[i];
+            variance += Math.pow(v - mean, 2);
+            skewness += Math.pow(v - mean, 3);
+        }
+        variance = Math.sqrt(variance / count);
+        skewness = Math.cbrt(skewness / count);
     }
 
+
+    /*
+        static methods
+     */
     public static double sum(double[] values) {
+        if (values == null || values.length == 0) {
+            return AppValues.InvalidLong;
+        }
         double sum = 0;
         for (int i = 0; i < values.length; ++i) {
             sum += values[i];
@@ -46,9 +72,9 @@ public class DoubleStatistic {
 
     public static double maximum(double[] values) {
         if (values == null || values.length == 0) {
-            return Integer.MIN_VALUE;
+            return AppValues.InvalidDouble;
         }
-        double max = Integer.MIN_VALUE;
+        double max = -Double.MAX_VALUE;
         for (int i = 0; i < values.length; ++i) {
             if (values[i] > max) {
                 max = values[i];
@@ -57,25 +83,11 @@ public class DoubleStatistic {
         return max;
     }
 
-    public static double maximumIndex(double[] values) {
-        if (values == null || values.length == 0) {
-            return -1;
-        }
-        double max = Integer.MIN_VALUE, maxIndex = -1;
-        for (int i = 0; i < values.length; ++i) {
-            if (values[i] > max) {
-                max = values[i];
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
-    }
-
     public static double minimum(double[] values) {
         if (values == null || values.length == 0) {
-            return Integer.MAX_VALUE;
+            return AppValues.InvalidDouble;
         }
-        double min = Integer.MAX_VALUE;
+        double min = Double.MAX_VALUE;
         for (int i = 0; i < values.length; ++i) {
             if (values[i] < min) {
                 min = values[i];
@@ -84,109 +96,83 @@ public class DoubleStatistic {
         return min;
     }
 
-    public static double[] sumMaxMin(double[] values) {
-        double[] s = new double[3];
-        if (values == null || values.length == 0) {
-            return s;
-        }
-        double sum = 0, min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-        for (int i = 0; i < values.length; ++i) {
-            sum += values[i];
-            if (values[i] > max) {
-                max = values[i];
-            }
-            if (values[i] < min) {
-                min = values[i];
-            }
-        }
-        s[0] = sum;
-        s[1] = min;
-        s[2] = max;
-        return s;
-    }
-
     public static double mean(double[] values) {
         if (values == null || values.length == 0) {
-            return 0;
+            return AppValues.InvalidDouble;
         }
-        return (double) (sum(values) / values.length);
+        return sum(values) / values.length;
+    }
+
+    public static double mode(double[] values) {
+        if (values == null || values.length == 0) {
+            return AppValues.InvalidDouble;
+        }
+        double mode = 0;
+        Map<Double, Integer> number = new HashMap<>();
+        for (double value : values) {
+            if (number.containsKey(value)) {
+                number.put(value, number.get(value) + 1);
+            } else {
+                number.put(value, 1);
+            }
+        }
+        double num = 0;
+        for (double value : number.keySet()) {
+            if (num < number.get(value)) {
+                mode = value;
+            }
+        }
+        return mode;
     }
 
     public static double median(double[] values) {
-        double mid = 0;
         if (values == null || values.length == 0) {
-            return mid;
+            return AppValues.InvalidDouble;
         }
         double[] sorted = DoubleTools.sortArray(values);
-        if (sorted.length % 2 == 0) {
-            mid = (sorted[sorted.length / 2] + sorted[sorted.length / 2 - 1]) / 2;
+        int len = sorted.length;
+        if (len % 2 == 0) {
+            return (sorted[len / 2] + sorted[len / 2 + 1]) / 2;
         } else {
-            mid = sorted[sorted.length / 2];
+            return sorted[len / 2];
         }
-        return mid;
-    }
-
-    public static double medianIndex(double[] values) {
-        if (values == null || values.length == 0) {
-            return -1;
-        }
-        double[] sorted = DoubleTools.sortArray(values);
-        double mid = sorted[sorted.length / 2];
-        for (int i = 0; i < values.length; ++i) {
-            if (values[i] == mid) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     public static double variance(double[] values) {
+        if (values == null || values.length == 0) {
+            return AppValues.InvalidDouble;
+        }
         double mean = mean(values);
         return variance(values, mean);
     }
 
     public static double variance(double[] values, double mean) {
+        if (values == null || values.length == 0) {
+            return AppValues.InvalidDouble;
+        }
         double variance = 0;
         for (int i = 0; i < values.length; ++i) {
             variance += Math.pow(values[i] - mean, 2);
         }
-        variance = (double) Math.sqrt(variance / values.length);
+        variance = Math.sqrt(variance / values.length);
         return variance;
     }
 
     public static double skewness(double[] values, double mean) {
+        if (values == null || values.length == 0) {
+            return AppValues.InvalidDouble;
+        }
         double skewness = 0;
         for (int i = 0; i < values.length; ++i) {
             skewness += Math.pow(values[i] - mean, 3);
         }
-        skewness = Math.pow(skewness / values.length, 1.0 / 3);
+        skewness = Math.cbrt(skewness / values.length);
         return skewness;
     }
 
-    public static DoubleValue median(List<DoubleValue> values) {
-        if (values == null) {
-            return null;
-        }
-        List<DoubleValue> sorted = new ArrayList<>();
-        sorted.addAll(values);
-        Collections.sort(sorted, new Comparator<DoubleValue>() {
-            @Override
-            public int compare(DoubleValue p1, DoubleValue p2) {
-                return (int) (p1.getValue() - p2.getValue());
-            }
-        });
-        DoubleValue mid = new DoubleValue();
-
-        if (sorted.size() % 2 == 0) {
-            mid.setName(sorted.get(sorted.size() / 2).getName() + " - " + sorted.get(sorted.size() / 2 + 1).getName());
-            mid.setValue((sorted.get(sorted.size() / 2).getValue() + sorted.get(sorted.size() / 2 + 1).getValue()) / 2);
-        } else {
-            mid.setName(sorted.get(sorted.size() / 2).getName());
-            mid.setValue(sorted.get(sorted.size() / 2).getValue());
-        }
-        return mid;
-    }
-
+    /*
+        get/set
+     */
     public String getName() {
         return name;
     }
@@ -257,6 +243,14 @@ public class DoubleStatistic {
 
     public void setMedian(double median) {
         this.median = median;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
 }

@@ -188,10 +188,10 @@ public class MenuImageBaseController extends MenuController {
                                 imageController.zoomStepChanged();
                             }
                         } else {
-                            zoomStepSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        zoomStepSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        zoomStepSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });

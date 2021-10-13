@@ -44,6 +44,7 @@ public class Fxmls {
     public static final String HtmlSetCharsetFxml = "/fxml/HtmlSetCharset.fxml";
     public static final String HtmlSetStyleFxml = "/fxml/HtmlSetStyle.fxml";
     public static final String HtmlSnapFxml = "/fxml/HtmlSnap.fxml";
+    public static final String HtmlExtractTablesFxml = "/fxml/HtmlExtractTables.fxml";
     public static final String HtmlMergeAsHtmlFxml = "/fxml/HtmlMergeAsHtml.fxml";
     public static final String HtmlMergeAsMarkdownFxml = "/fxml/HtmlMergeAsMarkdown.fxml";
     public static final String HtmlMergeAsPDFFxml = "/fxml/HtmlMergeAsPDF.fxml";
@@ -68,6 +69,7 @@ public class Fxmls {
     public static final String TextReplaceBatchFxml = "/fxml/TextReplaceBatch.fxml";
     public static final String TextFilterBatchFxml = "/fxml/TextFilterBatch.fxml";
     public static final String TextToHtmlFxml = "/fxml/TextToHtml.fxml";
+    public static final String TextToPdfFxml = "/fxml/TextToPdf.fxml";
     public static final String TextInSystemClipboardFxml = "/fxml/TextInSystemClipboard.fxml";
     public static final String TextInMyBoxClipboardFxml = "/fxml/TextInMyBoxClipboard.fxml";
     public static final String TextPopFxml = "/fxml/TextPop.fxml";
@@ -77,8 +79,10 @@ public class Fxmls {
 
     public static final String WordViewFxml = "/fxml/WordView.fxml";
     public static final String WordToHtmlFxml = "/fxml/WordToHtml.fxml";
+    public static final String WordToPdfFxml = "/fxml/WordToPdf.fxml";
     public static final String PptViewFxml = "/fxml/PptView.fxml";
     public static final String PptToImagesFxml = "/fxml/PptToImages.fxml";
+    public static final String PptToPdfFxml = "/fxml/PptToPdf.fxml";
     public static final String PptExtractFxml = "/fxml/PptExtract.fxml";
     public static final String PptxMergeFxml = "/fxml/PptxMerge.fxml";
     public static final String PptSplitFxml = "/fxml/PptSplit.fxml";

@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureScopeController_Set extends ImageManufactureScopeController_Outline {
+public abstract class ImageManufactureScopeController_Set extends ImageManufactureScopeController_Outline {
 
     protected void setScopeName() {
         if (scope == null) {

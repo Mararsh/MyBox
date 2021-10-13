@@ -32,6 +32,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -93,11 +94,11 @@ public class ControlFileBackup extends BaseController {
                             maxBackupsInput.setStyle(null);
                             okMaxButton.setDisable(false);
                         } else {
-                            maxBackupsInput.setStyle(NodeStyleTools.badStyle);
+                            maxBackupsInput.setStyle(UserConfig.badStyle());
                             okMaxButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        maxBackupsInput.setStyle(NodeStyleTools.badStyle);
+                        maxBackupsInput.setStyle(UserConfig.badStyle());
                         okMaxButton.setDisable(true);
                     }
                 }
@@ -127,7 +128,7 @@ public class ControlFileBackup extends BaseController {
                             setText(DateTools.datetimeToString(item.getRecordTime()) + "  "
                                     + FileTools.showFileSize(item.getBackup().length()));
                             if (parentController instanceof ImageManufactureController) {
-                                int width = UserConfig.getInt("ThumbnailWidth", 100);
+                                int width = AppVariables.thumbnailWidth;
                                 BufferedImage bufferedImage = ImageFileReaders.readImageByWidth(item.getBackup().getAbsolutePath(), width);
                                 if (bufferedImage != null) {
                                     view.setFitWidth(width);

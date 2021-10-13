@@ -44,7 +44,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
@@ -286,7 +285,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (IccTagType.dateTimeBytes(newValue) != null) {
                         createTimeInput.setStyle(null);
                     } else {
-                        createTimeInput.setStyle(NodeStyleTools.badStyle);
+                        createTimeInput.setStyle(UserConfig.badStyle());
                     }
                     if (isSettingValues) {
                         return;
@@ -495,7 +494,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         double v = Double.parseDouble(newValue);
                         xInput.setStyle(null);
                     } catch (Exception e) {
-                        xInput.setStyle(NodeStyleTools.badStyle);
+                        xInput.setStyle(UserConfig.badStyle());
                     }
                     if (isSettingValues) {
                         return;
@@ -512,7 +511,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         double v = Double.parseDouble(newValue);
                         yInput.setStyle(null);
                     } catch (Exception e) {
-                        yInput.setStyle(NodeStyleTools.badStyle);
+                        yInput.setStyle(UserConfig.badStyle());
                     }
                     if (isSettingValues) {
                         return;
@@ -529,7 +528,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         double v = Double.parseDouble(newValue);
                         zInput.setStyle(null);
                     } catch (Exception e) {
-                        zInput.setStyle(NodeStyleTools.badStyle);
+                        zInput.setStyle(UserConfig.badStyle());
                     }
                     if (isSettingValues) {
                         return;
@@ -609,10 +608,10 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 UserConfig.setInt("ICCMaxDecodeNumber", v);
                 xInput.setStyle(null);
             } else {
-                xInput.setStyle(NodeStyleTools.badStyle);
+                xInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            xInput.setStyle(NodeStyleTools.badStyle);
+            xInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -1097,7 +1096,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                                 }
                                 NodeStyleTools.setStyle(thisPane, name + "Input", null);
                             } else {
-                                NodeStyleTools.setStyle(thisPane, name + "Input", badStyle);
+                                NodeStyleTools.setStyle(thisPane, name + "Input", UserConfig.badStyle());
                             }
                         }
                     });
@@ -1128,7 +1127,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         if (tagValueChanged(tag, newValue)) {
                             valuesListbox.getEditor().setStyle(null);
                         } else {
-                            valuesListbox.getEditor().setStyle(NodeStyleTools.badStyle);
+                            valuesListbox.getEditor().setStyle(UserConfig.badStyle());
                         }
                     }
                 });
@@ -1148,7 +1147,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         if (tagValueChanged(tag, newValue)) {
                             valueInput.setStyle(null);
                         } else {
-                            valueInput.setStyle(NodeStyleTools.badStyle);
+                            valueInput.setStyle(UserConfig.badStyle());
                         }
                     }
                 });
@@ -1175,7 +1174,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         if (tagValueChanged(tag, newValue)) {
                             valueInput.setStyle(null);
                         } else {
-                            valueInput.setStyle(NodeStyleTools.badStyle);
+                            valueInput.setStyle(UserConfig.badStyle());
                         }
                     }
                 });
@@ -1193,7 +1192,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                             if (tagValueChanged(tag, newValue)) {
                                 valueInput.setStyle(null);
                             } else {
-                                valueInput.setStyle(NodeStyleTools.badStyle);
+                                valueInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
@@ -1212,7 +1211,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                             if (tagValueChanged(tag, newValue)) {
                                 valueInput.setStyle(null);
                             } else {
-                                valueInput.setStyle(NodeStyleTools.badStyle);
+                                valueInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
@@ -1243,7 +1242,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         if (tagValueChanged(tag, newValue)) {
                             valueInput.setStyle(null);
                         } else {
-                            valueInput.setStyle(NodeStyleTools.badStyle);
+                            valueInput.setStyle(UserConfig.badStyle());
                         }
                     }
                 });
@@ -1263,7 +1262,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                             if (tagValueChanged(tag, newValue)) {
                                 valueInput.setStyle(null);
                             } else {
-                                valueInput.setStyle(NodeStyleTools.badStyle);
+                                valueInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
@@ -1279,7 +1278,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                             if (tagValueChanged(tag, newValue)) {
                                 valueInput.setStyle(null);
                             } else {
-                                valueInput.setStyle(NodeStyleTools.badStyle);
+                                valueInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
@@ -1322,7 +1321,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "Illuminant", newValue)) {
                         illuminantInput.setStyle(null);
                     } else {
-                        illuminantInput.setStyle(NodeStyleTools.badStyle);
+                        illuminantInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1353,7 +1352,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "Surround", newValue)) {
                         surroundInput.setStyle(null);
                     } else {
-                        surroundInput.setStyle(NodeStyleTools.badStyle);
+                        surroundInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1384,7 +1383,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "IlluminantType", newValue)) {
                         typeListbox.getEditor().setStyle(null);
                     } else {
-                        typeListbox.getEditor().setStyle(NodeStyleTools.badStyle);
+                        typeListbox.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1433,7 +1432,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "Observer", newValue)) {
                         observerListbox.getEditor().setStyle(null);
                     } else {
-                        observerListbox.getEditor().setStyle(NodeStyleTools.badStyle);
+                        observerListbox.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1463,7 +1462,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "Tristimulus", newValue)) {
                         tristimulusInput.setStyle(null);
                     } else {
-                        tristimulusInput.setStyle(NodeStyleTools.badStyle);
+                        tristimulusInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1494,7 +1493,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "Geometry", newValue)) {
                         geometryListbox.getEditor().setStyle(null);
                     } else {
-                        geometryListbox.getEditor().setStyle(NodeStyleTools.badStyle);
+                        geometryListbox.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1524,7 +1523,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "Flare", newValue)) {
                         flareInput.setStyle(null);
                     } else {
-                        flareInput.setStyle(NodeStyleTools.badStyle);
+                        flareInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1554,7 +1553,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (tagValueChanged(tag, "IlluminantType", newValue)) {
                         typeListbox.getEditor().setStyle(null);
                     } else {
-                        typeListbox.getEditor().setStyle(NodeStyleTools.badStyle);
+                        typeListbox.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1586,7 +1585,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         if (tagValueChanged(tag, newValue)) {
                             valueInput.setStyle(null);
                         } else {
-                            valueInput.setStyle(NodeStyleTools.badStyle);
+                            valueInput.setStyle(UserConfig.badStyle());
                         }
                     }
                 });
@@ -1604,7 +1603,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                             if (tagValueChanged(tag, newValue)) {
                                 valueInput.setStyle(null);
                             } else {
-                                valueInput.setStyle(NodeStyleTools.badStyle);
+                                valueInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
@@ -1622,7 +1621,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                             if (tagValueChanged(tag, newValue)) {
                                 valueInput.setStyle(null);
                             } else {
-                                valueInput.setStyle(NodeStyleTools.badStyle);
+                                valueInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     });
@@ -1760,7 +1759,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (node == null || !inputsValid) {
             return;
         }
-        if (NodeStyleTools.badStyle.equals(node.getStyle())) {
+        if (UserConfig.badStyle().equals(node.getStyle())) {
             inputsValid = false;
             return;
         }
@@ -1885,11 +1884,11 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     private byte[] encodeHeaderUpdate() {
-        if (profileVersionInput.getStyle().equals(NodeStyleTools.badStyle)
-                || createTimeInput.getStyle().equals(NodeStyleTools.badStyle)
-                || xInput.getStyle().equals(NodeStyleTools.badStyle)
-                || yInput.getStyle().equals(NodeStyleTools.badStyle)
-                || zInput.getStyle().equals(NodeStyleTools.badStyle)) {
+        if (profileVersionInput.getStyle().equals(UserConfig.badStyle())
+                || createTimeInput.getStyle().equals(UserConfig.badStyle())
+                || xInput.getStyle().equals(UserConfig.badStyle())
+                || yInput.getStyle().equals(UserConfig.badStyle())
+                || zInput.getStyle().equals(UserConfig.badStyle())) {
             popError(Languages.message("InvalidData"));
             return null;
         }

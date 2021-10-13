@@ -118,7 +118,7 @@ Examples > Articles/Data > Chinese
 中国气象数据网
 http://data.cma.cn
 
-示例 > 论文和数据 > 中文
+Examples > Articles/Data > Chinese
 中国探月工程数据发布与信息服务系统
 https://moon.bao.ac.cn
 

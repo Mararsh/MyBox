@@ -117,7 +117,7 @@ public class ControlFFmpegOptions extends BaseController {
             executableInput.setText(UserConfig.getString(executableName, executableDefault));
 
             if (functionBox != null) {
-                functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(NodeStyleTools.badStyle));
+                functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(UserConfig.badStyle()));
             }
 
         } catch (Exception e) {
@@ -167,12 +167,12 @@ public class ControlFFmpegOptions extends BaseController {
         }
         String v = executableInput.getText();
         if (v == null || v.isEmpty()) {
-            executableInput.setStyle(NodeStyleTools.badStyle);
+            executableInput.setStyle(UserConfig.badStyle());
             return;
         }
         final File file = new File(v);
         if (!file.exists()) {
-            executableInput.setStyle(NodeStyleTools.badStyle);
+            executableInput.setStyle(UserConfig.badStyle());
             return;
         }
         executable = file;
@@ -472,10 +472,10 @@ public class ControlFFmpegOptions extends BaseController {
                             audioBitrate = v;
                             audioBitrateSelector.getEditor().setStyle(null);
                         } else {
-                            audioBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            audioBitrateSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        audioBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        audioBitrateSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 });
                 audioBitrateSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultAudioBitrate", "192kbps"));
@@ -509,10 +509,10 @@ public class ControlFFmpegOptions extends BaseController {
                             audioSampleRate = v;
                             audioSampleRateSelector.getEditor().setStyle(null);
                         } else {
-                            audioSampleRateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            audioSampleRateSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        audioSampleRateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        audioSampleRateSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 });
                 audioSampleRateSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultAudioSampleRate", Languages.message("44100Hz")));
@@ -661,14 +661,14 @@ public class ControlFFmpegOptions extends BaseController {
                         if (pos < 0) {
                             pos = newValue.indexOf("mbps");
                             if (pos < 0) {
-                                videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                                videoBitrateSelector.getEditor().setStyle(UserConfig.badStyle());
                             } else {
                                 float f = Float.parseFloat(newValue.substring(0, pos).trim());
                                 if (f > 0) {
                                     videoBitrate = f * 1000;
                                     videoBitrateSelector.getEditor().setStyle(null);
                                 } else {
-                                    videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                                    videoBitrateSelector.getEditor().setStyle(UserConfig.badStyle());
                                 }
                             }
                         } else {
@@ -677,11 +677,11 @@ public class ControlFFmpegOptions extends BaseController {
                                 videoBitrate = f;
                                 videoBitrateSelector.getEditor().setStyle(null);
                             } else {
-                                videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                                videoBitrateSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
                         }
                     } catch (Exception e) {
-                        videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        videoBitrateSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 });
                 videoBitrateSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultVideoBitrate", "1800kbps"));

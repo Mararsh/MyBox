@@ -27,7 +27,6 @@ import javax.imageio.stream.ImageInputStream;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.data.BaseTask;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
@@ -50,12 +49,10 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  * @CreateDate 2021-5-29
  * @License Apache License Version 2.0
  */
-public class ImagesPlayController extends ImageViewerController {
+public class ImagesPlayController extends BaseImagesListController {
 
-    protected final List<ImageInformation> imageInfos;
     protected int queueSize, fromFrame, toFrame;
     protected String fileFormat;
-    protected boolean isTransparent;
     protected LoadingController loading;
     protected long memoryThreadhold;
     protected Thread loadThread;
@@ -80,13 +77,6 @@ public class ImagesPlayController extends ImageViewerController {
     public ImagesPlayController() {
         baseTitle = Languages.message("ImagesPlay");
         TipsLabelKey = "ImagesPlayTips";
-
-        imageInfos = new ArrayList<>();
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Image);
     }
 
     @Override
@@ -103,6 +93,7 @@ public class ImagesPlayController extends ImageViewerController {
                         setFileType(VisitHistory.FileType.PDF);
                         if (!fileVBox.getChildren().contains(pdfBox)) {
                             fileVBox.getChildren().add(3, pdfBox);
+                            NodeStyleTools.refreshStyle(pdfBox);
                         }
                     } else if (pptRadio.isSelected()) {
                         setFileType(VisitHistory.FileType.PPTS);
@@ -124,12 +115,10 @@ public class ImagesPlayController extends ImageViewerController {
             fromInput.setText("1");
             toInput.setText("-1");
 
-            isTransparent = UserConfig.getBoolean(baseName + "Transparent", false);
-            transparentBackgroundCheck.setSelected(isTransparent);
+            transparentBackgroundCheck.setSelected(UserConfig.getBoolean(baseName + "Transparent", false));
             transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    isTransparent = transparentBackgroundCheck.isSelected();
                     UserConfig.setBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
                     if (fileFormat != null && fileFormat.equalsIgnoreCase("pdf")) {
                         reloadImages();
@@ -140,29 +129,12 @@ public class ImagesPlayController extends ImageViewerController {
             imageBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
-            playController.setParameters(this);
+            fileVBox.getChildren().remove(pdfBox);
 
-            updateStatus();
+            playController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void updateStatus() {
-        viewButton.setDisable(sourceFile == null);
-        framesPane.setDisable(sourceFile == null);
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            fileVBox.getChildren().remove(pdfBox);
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -212,11 +184,8 @@ public class ImagesPlayController extends ImageViewerController {
         fileFormat = null;
         image = null;
         imageInformation = null;
-        if (imageInfos != null) {
-            imageInfos.clear();
-        }
+        imageInfos.clear();
         playController.clear();
-        updateStatus();
     }
 
     @Override
@@ -251,13 +220,11 @@ public class ImagesPlayController extends ImageViewerController {
                     if (error != null && !error.isBlank()) {
                         alertError(error);
                     }
-                    updateStatus();
                     playImages();
                 }
             };
             loading = start(task);
         }
-
     }
 
     // Read images as more as possible
@@ -265,7 +232,6 @@ public class ImagesPlayController extends ImageViewerController {
         imageInfos.clear();
         Platform.runLater(() -> {
             imagesRadio.fire();
-            updateStatus();
         });
         if (sourceFile == null) {
             return false;
@@ -368,7 +334,6 @@ public class ImagesPlayController extends ImageViewerController {
         imageInfos.clear();
         Platform.runLater(() -> {
             pptRadio.fire();
-            updateStatus();
         });
         if (sourceFile == null) {
             return false;
@@ -440,7 +405,6 @@ public class ImagesPlayController extends ImageViewerController {
         imageInfos.clear();
         Platform.runLater(() -> {
             pdfRadio.fire();
-            updateStatus();
         });
         if (sourceFile == null) {
             return false;
@@ -456,7 +420,7 @@ public class ImagesPlayController extends ImageViewerController {
             }
             PDFRenderer renderer = new PDFRenderer(doc);
             ImageType type = ImageType.RGB;
-            if (isTransparent) {
+            if (transparentBackgroundCheck.isSelected()) {
                 type = ImageType.ARGB;
             }
             int start = fromFrame;
@@ -582,7 +546,29 @@ public class ImagesPlayController extends ImageViewerController {
             };
             start(task);
         }
+    }
 
+    public synchronized boolean playImages() {
+        try {
+            if (imageInfos == null || framesNumber < 1) {
+                return false;
+            }
+            int start = fromFrame, end = toFrame;
+            if (start < 0 || start >= framesNumber) {
+                start = 0;
+            }
+            if (end < 0 || end >= framesNumber) {
+                end = framesNumber - 1;
+            }
+            if (start > end) {
+                return false;
+            }
+            playController.play(framesNumber, start, end);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
     }
 
     @FXML
@@ -599,13 +585,13 @@ public class ImagesPlayController extends ImageViewerController {
             try {
                 int v = Integer.valueOf(value);
                 if (v < 0) {
-                    fromInput.setStyle(NodeStyleTools.badStyle);
+                    fromInput.setStyle(UserConfig.badStyle());
                 } else {
                     f = v - 1;
                     fromInput.setStyle(null);
                 }
             } catch (Exception e) {
-                fromInput.setStyle(NodeStyleTools.badStyle);
+                fromInput.setStyle(UserConfig.badStyle());
             }
         }
         int t = AppValues.InvalidInteger;
@@ -624,7 +610,7 @@ public class ImagesPlayController extends ImageViewerController {
                     toInput.setStyle(null);
                 }
             } catch (Exception e) {
-                toInput.setStyle(NodeStyleTools.badStyle);
+                toInput.setStyle(UserConfig.badStyle());
             }
         }
         if (f == AppValues.InvalidInteger || t == AppValues.InvalidInteger
@@ -644,30 +630,6 @@ public class ImagesPlayController extends ImageViewerController {
             List<ImageInformation> infos = new ArrayList<>();
             infos.addAll(imageInfos);
             loadImages(infos);
-        }
-    }
-
-    public synchronized boolean playImages() {
-        try {
-            updateStatus();
-            if (imageInfos == null || framesNumber < 1) {
-                return false;
-            }
-            int start = fromFrame, end = toFrame;
-            if (start < 0 || start >= framesNumber) {
-                start = 0;
-            }
-            if (end < 0 || end >= framesNumber) {
-                end = framesNumber - 1;
-            }
-            if (start > end) {
-                return false;
-            }
-            playController.play(framesNumber, start, end);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
         }
     }
 
@@ -702,22 +664,20 @@ public class ImagesPlayController extends ImageViewerController {
     @FXML
     public void viewFile() {
         try {
-            updateStatus();
             if (fileFormat == null) {
-                return;
-            }
-            if (fileFormat.equalsIgnoreCase("pdf")) {
-                PdfViewController controller
-                        = (PdfViewController) openStage(Fxmls.PdfViewFxml);
+                viewAction();
+
+            } else if (fileFormat.equalsIgnoreCase("pdf")) {
+                PdfViewController controller = (PdfViewController) openStage(Fxmls.PdfViewFxml);
                 controller.loadFile(sourceFile, null, frameIndex);
+
             } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
-                PptViewController controller
-                        = (PptViewController) openStage(Fxmls.PptViewFxml);
+                PptViewController controller = (PptViewController) openStage(Fxmls.PptViewFxml);
                 controller.loadFile(sourceFile, frameIndex);
+
             } else {
                 viewAction();
             }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -725,39 +685,8 @@ public class ImagesPlayController extends ImageViewerController {
 
     @FXML
     public void editFrames() {
-        BaseTask editTask = new SingletonTask<Void>() {
-
-            private List<ImageInformation> infos;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    infos = new ArrayList<>();
-                    if (imageInfos == null) {
-                        return true;
-                    }
-                    for (ImageInformation info : imageInfos) {
-                        Image thumb = info.getThumbnail();
-                        if (thumb == null) {
-                            continue;
-                        }
-                        ImageInformation newInfo = info.cloneAttributes();
-                        newInfo.setThumbnail(mara.mybox.fximage.ScaleTools.scaleImage(thumb, AppVariables.thumbnailWidth));
-                        infos.add(newInfo);
-                    }
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
-                controller.loadImages(infos);
-            }
-        };
-        start(editTask, false);
+        ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
+        controller.loadImages(imageInfos);
     }
 
     /*

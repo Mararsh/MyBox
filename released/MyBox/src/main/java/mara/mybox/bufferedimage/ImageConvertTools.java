@@ -31,7 +31,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.FileExtensions;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOEncoder;
 
@@ -145,11 +145,13 @@ public class ImageConvertTools {
                 if (csName == null) {
                     return tmpImage;
                 }
-                if ("BlackOrWhite".equals(csName) || Languages.message("BlackOrWhite").equals(csName)) {
+                if ("BlackOrWhite".equals(csName) || message("BlackOrWhite").equals(csName)) {
+                    tmpImage = AlphaTools.removeAlpha(srcImage);
                     return convertBinary(tmpImage, attributes);
                 } else {
-                    if (Languages.message("Gray").equals(csName)) {
+                    if (message("Gray").equals(csName)) {
                         csName = "Gray";
+                        tmpImage = AlphaTools.removeAlpha(srcImage);
                     }
                     targetProfile = ImageColorSpace.internalProfileByName(csName);
                     attributes.setProfile(targetProfile);
@@ -443,7 +445,8 @@ public class ImageConvertTools {
         }
     }
 
-    public static Raster ycck2cmyk(final byte[] buffer, final int w, final int h) throws IOException {
+    public static Raster ycck2cmyk(final byte[] buffer, final int w, final int h)
+            throws IOException {
         final int pixelCount = w * h * 4;
         for (int i = 0; i < pixelCount; i = i + 4) {
             int y = (buffer[i] & 255);
@@ -460,7 +463,8 @@ public class ImageConvertTools {
             buffer[i + 2] = (byte) (255 - b);
         }
 
-        return Raster.createInterleavedRaster(new DataBufferByte(buffer, pixelCount), w, h, w * 4, 4, new int[]{0, 1, 2, 3}, null);
+        return Raster.createInterleavedRaster(new DataBufferByte(buffer, pixelCount), w, h, w * 4, 4, new int[]{
+            0, 1, 2, 3}, null);
     }
 
     public static BufferedImage rgb2cmyk(ICC_Profile cmykProfile,
@@ -511,7 +515,8 @@ public class ImageConvertTools {
                 //no change so use last value
             } else { //new value
 
-                RGB = CMYK.toRGB(new float[]{C / 255f, M / 255f, Y / 255f, K / 255f});
+                RGB = CMYK.toRGB(new float[]{C / 255f, M / 255f, Y / 255f,
+                    K / 255f});
 
                 //flag so we can just reuse if next value the same
                 lastC = C;
@@ -532,7 +537,8 @@ public class ImageConvertTools {
         /**
          * create CMYK raster from buffer
          */
-        final Raster raster = Raster.createInterleavedRaster(new DataBufferByte(buffer, j), w, h, w * 3, 3, new int[]{0, 1, 2}, null);
+        final Raster raster = Raster.createInterleavedRaster(new DataBufferByte(buffer, j), w, h, w * 3, 3, new int[]{
+            0, 1, 2}, null);
 
         //data now sRGB so create image
         final BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);

@@ -8,15 +8,13 @@ import javafx.fxml.FXML;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -31,7 +29,7 @@ public class TextReplaceBatchController extends BaseBatchFileController {
     protected TextReplaceBatchOptions optionsController;
 
     public TextReplaceBatchController() {
-        baseTitle = Languages.message("TextReplaceBatch");
+        baseTitle = message("TextReplaceBatch");
     }
 
     @Override
@@ -39,9 +37,11 @@ public class TextReplaceBatchController extends BaseBatchFileController {
         try {
             super.initControls();
 
+            optionsController.setParent(this);
+
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(optionsController.findArea.textProperty().isEmpty())
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
@@ -55,15 +55,18 @@ public class TextReplaceBatchController extends BaseBatchFileController {
     public boolean makeMoreParameters() {
         try {
             String findString = optionsController.findArea.getText();
-            if (findString.isEmpty()) {
-                popError(Languages.message("EmptyValue"));
+            if (findString == null || findString.isEmpty()) {
+                popError(message("EmptyValue"));
                 return false;
             }
-            String replaceString = optionsController.replaceArea.getText();
+            TableStringValues.add(baseName + "FindString", findString);
 
-            replace = new FindReplaceFile()
-                    .setMultiplePages(true)
-                    .setPosition(0);
+            String replaceString = optionsController.replaceArea.getText();
+            if (replaceString != null && !replaceString.isEmpty()) {
+                TableStringValues.add(baseName + "ReplaceString", replaceString);
+            }
+
+            replace = new FindReplaceFile().setPosition(0);
             replace.setOperation(FindReplaceString.Operation.ReplaceAll)
                     .setFindString(findString)
                     .setAnchor(0)
@@ -94,32 +97,32 @@ public class TextReplaceBatchController extends BaseBatchFileController {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
             File tmpFile = TmpFileTools.getTempFile();
             Files.copy(srcFile, tmpFile);
             TextEditInformation fileInfo = new TextEditInformation(tmpFile);
             if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
             fileInfo.setLineBreak(TextTools.checkLineBreak(srcFile));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
+            fileInfo.setPagesNumber(2);
             fileInfo.setFindReplace(replace);
             replace.setFileInfo(fileInfo);
 
             if (!replace.file() || !tmpFile.exists()) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
             if (FileTools.rename(tmpFile, target)) {
                 targetFileGenerated(target);
-                return MessageFormat.format(Languages.message("ReplaceAllOk"), replace.getCount());
+                return MessageFormat.format(message("ReplaceAllOk"), replace.getCount());
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

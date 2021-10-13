@@ -24,6 +24,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+
 <VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMatrixEdit">
     <children>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -77,7 +78,7 @@ License:    Apache License Version 2.0
                                 <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                     <children>
                                         <Label fx:id="sheetLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
-                                        <!--                                        <Button fx:id="calculateSheetButton" mnemonicParsing="false" onAction="#calculateDataAction">
+                                        <Button fx:id="calculateSheetButton" mnemonicParsing="false" onAction="#calculateDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -85,7 +86,7 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                             </graphic>
-                                        </Button>-->
+                                        </Button>
                                         <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportSheetAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -406,6 +407,12 @@ License:    Apache License Version 2.0
                                                 <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
                                             </children>
                                         </HBox>
+                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="2.0">
+                                            <children>
+                                                <Label minWidth="-Infinity" text="%SheetWarnThreshold" />
+                                                <TextField fx:id="warnThresholdInput" prefWidth="120.0" />
+                                            </children>
+                                        </HBox>                                        
                                         <Label text="%Description" />
                                         <TextArea fx:id="commentsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     </children>

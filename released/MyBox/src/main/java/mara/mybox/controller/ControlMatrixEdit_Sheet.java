@@ -20,10 +20,10 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -97,7 +97,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
             idInput.clear();
             nameInput.setText(nameInput.getText() + "_" + message("Copy"));
             manager.tableView.getSelectionModel().clearSelection();
-            sheetChanged(true);
+            dataChanged(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -198,7 +198,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
             for (int i = 0; i < colsNumber; ++i) {
                 double d = cellDouble(j, i);
                 if (d == AppValues.InvalidDouble) {
-                    sheetInputs[j][i].setStyle(NodeStyleTools.badStyle);
+                    sheetInputs[j][i].setStyle(UserConfig.badStyle());
                     popError(message("InvalidData"));
                     return;
                 }
@@ -348,7 +348,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
     @Override
     public void deleteRows(List<Integer> rows) {
         if (rows == null || rows.isEmpty()) {
-            popError(message("NoSelection"));
+            popError(message("SelectToHandle"));
             return;
         }
         if (rowsCheck == null || columns == null || columns.isEmpty()) {
@@ -395,7 +395,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
     @Override
     public void deleteCols(List<Integer> cols) {
         if (cols == null || cols.isEmpty() || columns == null || columns.isEmpty()) {
-            popError(message("NoSelection"));
+            popError(message("SelectToHandle"));
             return;
         }
         if (autoNameCheck.isSelected()) {
@@ -435,6 +435,16 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
     @Override
     public boolean exportCols(SheetExportController exportController, List<Integer> cols) {
         return exportRowsCols(exportController, rowsIndex(true), cols);
+    }
+
+    @Override
+    protected String[][] allRows(List<Integer> cols) {
+        return data(rowsIndex(true), cols);
+    }
+
+    @Override
+    public void statistic(List<Integer> calCols, List<Integer> disCols, boolean mode, boolean median, boolean percentage) {
+        statistic(rowsIndex(true), calCols, disCols, mode, median, percentage);
     }
 
 }

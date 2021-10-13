@@ -13,7 +13,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -46,25 +45,34 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setTitle(getMyStage().getTitle());
                         alert.setHeaderText(getMyStage().getTitle());
-                        alert.setContentText(Languages.message("SheetEditSureChangeDelimiter"));
+                        alert.setContentText(message("SheetEditSureChangeDelimiter"));
                         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                        ButtonType buttonChange = new ButtonType(Languages.message("Change"));
-                        ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
-                        alert.getButtonTypes().setAll(buttonChange, buttonCancel);
+                        ButtonType buttonChange = new ButtonType(message("Change"));
+                        ButtonType buttonCancel = new ButtonType(message("Cancel"));
+                        ButtonType buttonSynchronize = new ButtonType(message("Synchronize"));
+                        alert.getButtonTypes().setAll(buttonSynchronize, buttonChange, buttonCancel);
                         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                         stage.setAlwaysOnTop(true);
                         stage.toFront();
 
                         Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() != buttonChange) {
+                        if (result.get() == buttonSynchronize) {
+                            String cname = editDelimiterName;
+                            editDelimiterName = editDelimiterController.delimiterName;
+                            synchronizeEdit(cname);
+                        } else if (result.get() == buttonChange) {
+                            editDelimiterName = editDelimiterController.delimiterName;
+                            updateEdit();
+                        } else {
                             isAsking = true;
                             editDelimiterController.setDelimiter(editDelimiterName);
                             isAsking = false;
-                            return;
                         }
+                    } else {
+                        editDelimiterName = editDelimiterController.delimiterName;
+                        updateEdit();
                     }
-                    editDelimiterName = editDelimiterController.delimiterName;
-                    updateEdit();
+
                 }
             });
 
@@ -106,6 +114,10 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
 
     @FXML
     public void synchronizeEdit() {
+        synchronizeEdit(editDelimiterName);
+    }
+
+    public void synchronizeEdit(String delimiterName) {
         try {
             if (isSettingValues) {
                 return;
@@ -113,13 +125,13 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
             String s = textsEditArea.getText();
             String[] lines = s.split("\n");
             int colsSize = 0;
-            List<List<String>> data = new ArrayList<>();
+            List<List<String>> rows = new ArrayList<>();
             for (String line : lines) {
                 line = line.trim();
                 if (line.isEmpty()) {
                     continue;
                 }
-                List<String> row = TextTools.parseLine(line, editDelimiterName);
+                List<String> row = TextTools.parseLine(line, delimiterName);
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
@@ -127,9 +139,9 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
                 if (size > colsSize) {
                     colsSize = size;
                 }
-                data.add(row);
+                rows.add(row);
             }
-            int rowsSize = data.size();
+            int rowsSize = rows.size();
             if (pagesNumber > 1) {
                 colsSize = columns == null ? 0 : columns.size();
             }
@@ -137,14 +149,14 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
                 makeSheet(null);
                 return;
             }
-            pageData = new String[rowsSize][colsSize];
+            String[][] data = new String[rowsSize][colsSize];
             for (int r = 0; r < rowsSize; r++) {
-                List<String> row = data.get(r);
+                List<String> row = rows.get(r);
                 for (int c = 0; c < Math.min(colsSize, row.size()); c++) {
-                    pageData[r][c] = row.get(c);
+                    data[r][c] = row.get(c);
                 }
             }
-            makeSheet(pageData, true);
+            makeSheet(data, true, true);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }

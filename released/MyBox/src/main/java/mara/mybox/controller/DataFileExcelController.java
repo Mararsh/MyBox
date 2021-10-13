@@ -142,12 +142,12 @@ public class DataFileExcelController extends BaseDataFileController {
             info += message("LinesNumberInFile") + ":" + sheetController.totalSize + "\n";
         }
         info += message("ColumnsNumber") + ": " + (sheetController.columns == null ? "0" : sheetController.columns.size()) + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage)
+                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage + 1)
                 + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
         if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
             info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(sheetController.currentPageStart) + " - "
-                    + StringTools.format(sheetController.currentPageStart + sheetController.sheetInputs.length - 1)
+                    + ": " + StringTools.format(sheetController.startRowOfCurrentPage + 1) + " - "
+                    + StringTools.format(sheetController.startRowOfCurrentPage + sheetController.sheetInputs.length)
                     + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
         }
         info += message("PageModifyTime") + ": " + DateTools.nowString();

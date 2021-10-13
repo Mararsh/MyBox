@@ -10,7 +10,7 @@ import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -56,7 +56,7 @@ public class FileTTC2TTFController extends HtmlTableController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(ttcController.fileInput.textProperty())
-                            .or(ttcController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(ttcController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

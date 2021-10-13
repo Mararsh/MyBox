@@ -214,7 +214,7 @@ public class TextEditInformation extends FileEditInformation {
     public boolean writePage(FileEditInformation sourceInfo, String pageText) {
         try {
             if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
-                    || sourceInfo.getPageSize() <= 0 || pageText == null || pageText.isEmpty()
+                    || sourceInfo.getPageSize() <= 0 || pageText == null
                     || file == null || charset == null || lineBreakValue == null) {
                 return false;
             }
@@ -229,8 +229,9 @@ public class TextEditInformation extends FileEditInformation {
                     byte[] bytes = bomBytes(charset.name());
                     outputStream.write(bytes);
                 }
-                String line, text;
-                long lineIndex = 0, pageLineStart = sourceInfo.getCurrentPageLineStart(), pageLineEnd = sourceInfo.getCurrentPageLineEnd();
+                String line, text = null;
+                long lineIndex = 0, pageLineStart = sourceInfo.getCurrentPageLineStart(),
+                        pageLineEnd = sourceInfo.getCurrentPageLineEnd();
                 while ((line = reader.readLine()) != null) {
                     text = null;
                     if (lineIndex < pageLineStart || lineIndex >= pageLineEnd) {

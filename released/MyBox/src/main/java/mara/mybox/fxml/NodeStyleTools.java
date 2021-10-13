@@ -25,8 +25,6 @@ import mara.mybox.value.AppVariables;
  */
 public class NodeStyleTools {
 
-    public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
-    public static String badStyle = "-fx-text-box-border: blue;   -fx-text-fill: blue;";
     public static String errorData = "-fx-background-color: #e5fbe5;";
     public static String blueText = "-fx-text-fill: #2e598a;";
     public static String redText = "-fx-text-fill: #961c1c;";
@@ -70,9 +68,13 @@ public class NodeStyleTools {
     }
 
     public static void refreshStyle(Parent node) {
-        applyStyle(node);
-        node.applyCss();
-        node.layout();
+        try {
+            applyStyle(node);
+            node.applyCss();
+            node.layout();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public static boolean setStyle(Pane pane, String nodeId, String style) {

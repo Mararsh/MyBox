@@ -120,8 +120,8 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             });
 
             okButton.disableProperty().bind(
-                    marginWidthBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                            .or(distanceInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    marginWidthBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(distanceInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -216,10 +216,10 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
                 distanceInput.setStyle(null);
                 UserConfig.setInt("ImageMarginsColorDistance", v);
             } else {
-                distanceInput.setStyle(NodeStyleTools.badStyle);
+                distanceInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            distanceInput.setStyle(NodeStyleTools.badStyle);
+            distanceInput.setStyle(UserConfig.badStyle());
         }
     }
 

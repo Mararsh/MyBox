@@ -203,7 +203,7 @@ public class MargionTools {
             float iOpocity;
             float jOpacity;
             float opocity;
-            Color alphaColor = ColorConvertTools.getAlphaColor();
+            Color alphaColor = ColorConvertTools.alphaColor();
             for (int j = 0; j < height; ++j) {
                 for (int i = 0; i < width; ++i) {
                     int pixel = source.getRGB(i, j);

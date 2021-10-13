@@ -11,19 +11,20 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureScopeController_Save extends ImageManufactureScopeController_Set {
+public abstract class ImageManufactureScopeController_Save extends ImageManufactureScopeController_Set {
 
     public void initSaveTab() {
         try {
             saveScopeButton.disableProperty().bind(scopeNameInput.textProperty().isEmpty()
                     .or(scopeDistanceSelector.visibleProperty()
-                            .and(scopeDistanceSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)))
+                            .and(scopeDistanceSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())))
             );
 
         } catch (Exception e) {
@@ -38,15 +39,12 @@ public class ImageManufactureScopeController_Save extends ImageManufactureScopeC
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
             String name = scopeNameInput.getText().trim();
             if (name.isEmpty()) {
                 return;
             }
             scope.setName(name);
-            task = new SingletonTask<Void>() {
+            SingletonTask saveTask = new SingletonTask<Void>() {
 
                 @Override
                 protected boolean handle() {
@@ -57,9 +55,10 @@ public class ImageManufactureScopeController_Save extends ImageManufactureScopeC
                 @Override
                 protected void whenSucceeded() {
                     scopesSavedController.loadScopes();
+                    popSaved();
                 }
             };
-            parentController.start(task);
+            start(saveTask, false);
 
         }
     }

@@ -21,7 +21,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
@@ -81,12 +81,12 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(Bindings.isEmpty(waterInput.textProperty()))
-                    .or(waterXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(waterYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(marginInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(waterXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(waterYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(marginInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -323,10 +323,10 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 UserConfig.setInt(baseName + "Margin", margin);
                 marginInput.setStyle(null);
             } else {
-                marginInput.setStyle(NodeStyleTools.badStyle);
+                marginInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            marginInput.setStyle(NodeStyleTools.badStyle);
+            marginInput.setStyle(UserConfig.badStyle());
         }
 
     }
@@ -338,10 +338,10 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 waterX = v;
                 waterXInput.setStyle(null);
             } else {
-                waterXInput.setStyle(NodeStyleTools.badStyle);
+                waterXInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            waterXInput.setStyle(NodeStyleTools.badStyle);
+            waterXInput.setStyle(UserConfig.badStyle());
         }
 
         try {
@@ -350,10 +350,10 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 waterY = v;
                 waterYInput.setStyle(null);
             } else {
-                waterYInput.setStyle(NodeStyleTools.badStyle);
+                waterYInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            waterYInput.setStyle(NodeStyleTools.badStyle);
+            waterYInput.setStyle(UserConfig.badStyle());
         }
 
     }

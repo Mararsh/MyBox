@@ -268,6 +268,25 @@ public class StringTools {
         }
     }
 
+    public static boolean match(String string, String find, boolean isRegex,
+            boolean dotAll, boolean multiline, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (dotAll ? Pattern.DOTALL : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.matches();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return false;
+        }
+    }
+
     public static boolean include(String string, String find, boolean caseInsensitive) {
         if (string == null || find == null || find.isEmpty()) {
             return false;

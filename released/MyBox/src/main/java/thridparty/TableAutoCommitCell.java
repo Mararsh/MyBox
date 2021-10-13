@@ -16,7 +16,7 @@ import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Ogmios
@@ -97,7 +97,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
                 txtFldRef.setStyle(null);
             }
         } catch (Exception e) {
-            txtFldRef.setStyle(NodeStyleTools.badStyle);
+            txtFldRef.setStyle(UserConfig.badStyle());
         }
     }
 

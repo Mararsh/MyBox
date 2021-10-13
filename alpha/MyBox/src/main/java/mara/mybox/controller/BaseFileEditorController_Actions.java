@@ -89,6 +89,11 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     popSaved();
                     sourceFile = file;
                     sourceInformation.setTotalNumberRead(false);
+                    String pageText = mainArea.getText();
+                    sourceInformation.setCurrentPageLineStart(0);
+                    sourceInformation.setCurrentPageLineEnd(pageLinesNumber(pageText));
+                    sourceInformation.setCurrentPageObjectStart(0);
+                    sourceInformation.setCurrentPageObjectEnd(pageObjectsNumber(pageText));
                     updateInterface(false);
                     loadTotalNumbers();
                 }
@@ -141,6 +146,9 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                         popSaved();
                     }
                     sourceInformation.setTotalNumberRead(false);
+                    String pageText = mainArea.getText();
+                    sourceInformation.setCurrentPageLineEnd(sourceInformation.getCurrentPageLineStart() + pageLinesNumber(pageText));
+                    sourceInformation.setCurrentPageObjectEnd(sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber(pageText));
                     updateInterface(false);
                     loadTotalNumbers();
                 }

@@ -10,7 +10,7 @@ import javafx.scene.control.ComboBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -33,7 +33,7 @@ public class ControlStringSelector extends BaseController {
         this.defaultMax = defaultMax > 0 ? defaultMax : 20;
 
         parentController = parent;
-        setting = "... " + Languages.message("MaxSaved");
+        setting = "... " + message("MaxSaved");
         baseName = parent.baseName;
         baseTitle = parent.baseTitle;
 
@@ -48,7 +48,7 @@ public class ControlStringSelector extends BaseController {
                     @Override
                     public void run() {
                         if (setting.equals(newValue)) {
-                            String value = PopTools.askValue(baseTitle, baseTitle, Languages.message("MaxSaved"), max + "");
+                            String value = PopTools.askValue(baseTitle, baseTitle, message("MaxSaved"), max + "");
                             if (value == null) {
                                 return;
                             }
@@ -57,7 +57,7 @@ public class ControlStringSelector extends BaseController {
                                 UserConfig.setInt(getName() + "MaxSaved", max);
                                 refreshList();
                             } catch (Exception e) {
-                                popError(Languages.message("InvalidData"));
+                                popError(message("InvalidData"));
                             }
                         }
                     }

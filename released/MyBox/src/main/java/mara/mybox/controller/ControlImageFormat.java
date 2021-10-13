@@ -23,7 +23,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageColorSpace;
@@ -349,7 +349,7 @@ public class ControlImageFormat extends BaseController {
             File file = new File(profileInput.getText());
             ICC_Profile profile = ImageColorSpace.iccProfile(file.getAbsolutePath());
             if (profile == null) {
-                profileInput.setStyle(NodeStyleTools.badStyle);
+                profileInput.setStyle(UserConfig.badStyle());
             } else {
                 profileInput.setStyle(null);
                 attributes.setProfile(profile);
@@ -513,10 +513,10 @@ public class ControlImageFormat extends BaseController {
                 thresholdInput.setStyle(null);
                 UserConfig.setString(baseName + "Threashold", inputValue + "");
             } else {
-                thresholdInput.setStyle(NodeStyleTools.badStyle);
+                thresholdInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            thresholdInput.setStyle(NodeStyleTools.badStyle);
+            thresholdInput.setStyle(UserConfig.badStyle());
         }
     }
 

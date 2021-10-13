@@ -3,13 +3,9 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -21,36 +17,29 @@ public class WordToHtmlController extends BaseBatchFileController {
     protected Charset charset;
 
     public WordToHtmlController() {
-        baseTitle = Languages.message("WordToHtml");
+        baseTitle = message("WordToHtml");
     }
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Word, VisitHistory.FileType.Html);
+        setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
         targetFileSuffix = "htm";
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            charset = Charset.defaultCharset();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        charset = Charset.defaultCharset();
     }
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        File target = makeTargetFile(srcFile, targetPath);
-        if (target == null) {
-            return Languages.message("Skip");
-        }
         try {
-            String html = MicrosoftDocumentTools.word2html(srcFile, charset);
-            TextFileTools.writeFile(target, html, charset);
+            File target = makeTargetFile(srcFile, targetPath);
+            if (target == null) {
+                return message("Skip");
+            }
+            File tmpFile = MicrosoftDocumentTools.word2HtmlFile(srcFile, charset);
+            if (!FileTools.rename(tmpFile, target)) {
+                return message("Failed");
+            }
             targetFileGenerated(target);
-            return Languages.message("Successful");
+            return message("Successful");
         } catch (Exception e) {
             updateLogs(e.toString());
             return e.toString();

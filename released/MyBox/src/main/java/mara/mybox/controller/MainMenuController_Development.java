@@ -15,8 +15,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -76,7 +74,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
                             String sysInfo = System.getProperty("os.name")
                                     + " " + Languages.message("PhysicalMemory") + ":" + physicalTotal + "MB"
                                     + " " + Languages.message("Used") + ":"
-                                    + physicalUse + "MB (" + FloatTools.roundFloat2(physicalUse * 100.0f / physicalTotal) + "%)";
+                                    + physicalUse + "MB (" + FloatTools.percentage(physicalUse, physicalTotal) + "%)";
                             sysMemLabel.setText(sysInfo);
                             sysMemBar.setProgress(physicalUse * 1.0f / physicalTotal);
 
@@ -88,9 +86,9 @@ public abstract class MainMenuController_Development extends MainMenuController_
                                     //                    + "  " + AppVariables.getMessage("AvailableProcessors") + ":" + availableProcessors
                                     + " " + Languages.message("AvaliableMemory") + ":" + maxMemory + "MB"
                                     + " " + Languages.message("Required") + ":"
-                                    + totalMemory + "MB(" + FloatTools.roundFloat2(totalMemory * 100.0f / maxMemory) + "%)"
+                                    + totalMemory + "MB(" + FloatTools.percentage(totalMemory, maxMemory) + "%)"
                                     + " " + Languages.message("Used") + ":"
-                                    + usedMemory + "MB(" + FloatTools.roundFloat2(usedMemory * 100.0f / maxMemory) + "%)";
+                                    + usedMemory + "MB(" + FloatTools.percentage(usedMemory, maxMemory) + "%)";
                             myboxMemLabel.setText(myboxInfo);
                             myboxMemBar.setProgress(usedMemory * 1.0f / maxMemory);
                         }

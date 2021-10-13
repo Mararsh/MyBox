@@ -136,7 +136,7 @@ public class MediaPlayerController extends BaseController {
                         }
                         repeatSelector.getEditor().setStyle(null);
                     } catch (Exception e) {
-                        repeatSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        repeatSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -152,7 +152,7 @@ public class MediaPlayerController extends BaseController {
                     try {
                         double v = Double.valueOf(newValue);
                         if (v <= 0 || v > 8) {
-                            speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            speedSelector.getEditor().setStyle(UserConfig.badStyle());
                         } else {
                             speed = v;
                             speedSelector.getEditor().setStyle(null);
@@ -163,7 +163,7 @@ public class MediaPlayerController extends BaseController {
                             }
                         }
                     } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        speedSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });

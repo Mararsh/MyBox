@@ -120,7 +120,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
             s = textArea.getText();
         }
         if (s == null || s.isEmpty()) {
-            popError(Languages.message("CopyNone"));
+            popError(Languages.message("SelectToHandle"));
             return;
         }
         textInput.insertText(textInput.getAnchor(), s);

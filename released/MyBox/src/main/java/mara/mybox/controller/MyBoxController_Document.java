@@ -140,8 +140,13 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.TextToHtmlFxml);
         });
 
+        MenuItem TextToPdf = new MenuItem(Languages.message("TextToPdf"));
+        TextToPdf.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.TextToPdfFxml);
+        });
+
         textsMenu.getItems().addAll(
-                textEditer, TextConvert, TextMerge, TextReplaceBatch, TextFilterBatch, TextToHtml
+                textEditer, TextConvert, TextMerge, TextReplaceBatch, TextFilterBatch, TextToHtml, TextToPdf
         );
 
         MenuItem bytesEditer = new MenuItem(Languages.message("BytesEditer"));
@@ -191,6 +196,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.HtmlFindFxml);
         });
 
+        MenuItem HtmlExtractTables = new MenuItem(Languages.message("HtmlExtractTables"));
+        HtmlExtractTables.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.HtmlExtractTablesFxml);
+        });
+
         MenuItem WebElements = new MenuItem(Languages.message("WebElements"));
         WebElements.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.HtmlElementsFxml);
@@ -222,7 +232,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         htmlMenu.getItems().addAll(
-                htmlEditor, WebFind, WebElements, HtmlSnap, new SeparatorMenuItem(),
+                htmlEditor, WebFind, WebElements, HtmlSnap, HtmlExtractTables, new SeparatorMenuItem(),
                 htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );
@@ -271,6 +281,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.WordToHtmlFxml);
         });
 
+        MenuItem WordToPdf = new MenuItem(Languages.message("WordToPdf"));
+        WordToPdf.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.WordToPdfFxml);
+        });
+
         MenuItem PptView = new MenuItem(Languages.message("PptView"));
         PptView.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.PptViewFxml);
@@ -279,6 +294,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         MenuItem PptToImages = new MenuItem(Languages.message("PptToImages"));
         PptToImages.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.PptToImagesFxml);
+        });
+
+        MenuItem PptToPdf = new MenuItem(Languages.message("PptToPdf"));
+        PptToPdf.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.PptToPdfFxml);
         });
 
         MenuItem PptExtract = new MenuItem(Languages.message("PptExtract"));
@@ -318,8 +338,8 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         msMenu.getItems().addAll(
-                WordView, WordToHtml, new SeparatorMenuItem(),
-                PptView, PptToImages, PptExtract, PptSplit, PptxMerge, imagesCombinePPT, PptPlay, new SeparatorMenuItem(),
+                WordView, WordToHtml, WordToPdf, new SeparatorMenuItem(),
+                PptView, PptToImages, PptToPdf, PptExtract, PptSplit, PptxMerge, imagesCombinePPT, PptPlay, new SeparatorMenuItem(),
                 ExtractTextsFromMS
         );
 

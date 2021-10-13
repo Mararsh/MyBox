@@ -50,12 +50,9 @@ import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 import org.apache.derby.drda.NetworkServerControl;
 
@@ -481,7 +478,7 @@ public class DerbyBase {
                 new TableStringValues().init(conn);
             }
             if (!tables.contains("image_scope".toUpperCase())) {
-                new TableImageScope().init(conn);
+                new TableImageScope().createTable(conn);
             }
             if (!tables.contains("System_Conf".toUpperCase())) {
                 new TableSystemConf().init(conn);

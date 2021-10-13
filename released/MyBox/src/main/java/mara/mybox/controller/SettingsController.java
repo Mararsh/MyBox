@@ -34,8 +34,6 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -45,12 +43,10 @@ import static mara.mybox.fxml.WindowTools.styleAll;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -103,7 +99,7 @@ public class SettingsController extends BaseController {
             derbyStatus;
 
     public SettingsController() {
-        baseTitle = Languages.message("Settings");
+        baseTitle = message("Settings");
 
     }
 
@@ -131,14 +127,14 @@ public class SettingsController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(hidpiIconsCheck, new Tooltip(Languages.message("HidpiIconsComments")));
-            NodeStyleTools.setTooltip(redRadio, new Tooltip(Languages.message("MyBoxDarkRed")));
-            NodeStyleTools.setTooltip(pinkRadio, new Tooltip(Languages.message("MyBoxDarkPink")));
-            NodeStyleTools.setTooltip(orangeRadio, new Tooltip(Languages.message("MyBoxOrange")));
-            NodeStyleTools.setTooltip(lightBlueRadio, new Tooltip(Languages.message("MyBoxDarkGreyBlue")));
-            NodeStyleTools.setTooltip(blueRadio, new Tooltip(Languages.message("MyBoxDarkBlue")));
-            NodeStyleTools.setTooltip(darkGreenRadio, new Tooltip(Languages.message("MyBoxDarkGreen")));
-            NodeStyleTools.setTooltip(imageHisBox, new Tooltip(Languages.message("ImageHisComments")));
+            NodeStyleTools.setTooltip(hidpiIconsCheck, new Tooltip(message("HidpiIconsComments")));
+            NodeStyleTools.setTooltip(redRadio, new Tooltip(message("MyBoxDarkRed")));
+            NodeStyleTools.setTooltip(pinkRadio, new Tooltip(message("MyBoxDarkPink")));
+            NodeStyleTools.setTooltip(orangeRadio, new Tooltip(message("MyBoxOrange")));
+            NodeStyleTools.setTooltip(lightBlueRadio, new Tooltip(message("MyBoxDarkGreyBlue")));
+            NodeStyleTools.setTooltip(blueRadio, new Tooltip(message("MyBoxDarkBlue")));
+            NodeStyleTools.setTooltip(darkGreenRadio, new Tooltip(message("MyBoxDarkGreen")));
+            NodeStyleTools.setTooltip(imageHisBox, new Tooltip(message("ImageHisComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -149,7 +145,7 @@ public class SettingsController extends BaseController {
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
 
-            thumbnailWidthInput.setText(UserConfig.getInt("ThumbnailWidth", 100) + "");
+            thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
 
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
@@ -157,31 +153,31 @@ public class SettingsController extends BaseController {
             String style = UserConfig.getString("InterfaceStyle", AppValues.DefaultStyle);
             switch (style) {
                 case AppValues.DefaultStyle:
-                    styleBox.getSelectionModel().select(Languages.message("DefaultStyle"));
+                    styleBox.getSelectionModel().select(message("DefaultStyle"));
                     break;
                 case AppValues.caspianStyle:
-                    styleBox.getSelectionModel().select(Languages.message("caspianStyle"));
+                    styleBox.getSelectionModel().select(message("caspianStyle"));
                     break;
                 case AppValues.WhiteOnBlackStyle:
-                    styleBox.getSelectionModel().select(Languages.message("WhiteOnBlackStyle"));
+                    styleBox.getSelectionModel().select(message("WhiteOnBlackStyle"));
                     break;
                 case AppValues.PinkOnBlackStyle:
-                    styleBox.getSelectionModel().select(Languages.message("PinkOnBlackStyle"));
+                    styleBox.getSelectionModel().select(message("PinkOnBlackStyle"));
                     break;
                 case AppValues.YellowOnBlackStyle:
-                    styleBox.getSelectionModel().select(Languages.message("YellowOnBlackStyle"));
+                    styleBox.getSelectionModel().select(message("YellowOnBlackStyle"));
                     break;
                 case AppValues.GreenOnBlackStyle:
-                    styleBox.getSelectionModel().select(Languages.message("GreenOnBlackStyle"));
+                    styleBox.getSelectionModel().select(message("GreenOnBlackStyle"));
                     break;
                 case AppValues.WhiteOnBlueStyle:
-                    styleBox.getSelectionModel().select(Languages.message("WhiteOnBlueStyle"));
+                    styleBox.getSelectionModel().select(message("WhiteOnBlueStyle"));
                     break;
                 case AppValues.WhiteOnGreenStyle:
-                    styleBox.getSelectionModel().select(Languages.message("WhiteOnGreenStyle"));
+                    styleBox.getSelectionModel().select(message("WhiteOnGreenStyle"));
                     break;
                 case AppValues.WhiteOnPurpleStyle:
-                    styleBox.getSelectionModel().select(Languages.message("WhiteOnVioletredStyle"));
+                    styleBox.getSelectionModel().select(message("WhiteOnVioletredStyle"));
                     break;
                 default:
                     break;
@@ -301,11 +297,11 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            styleBox.getItems().addAll(Arrays.asList(Languages.message("DefaultStyle"), Languages.message("caspianStyle"),
-                    Languages.message("WhiteOnBlackStyle"), Languages.message("PinkOnBlackStyle"),
-                    Languages.message("YellowOnBlackStyle"), Languages.message("GreenOnBlackStyle"),
-                    Languages.message("WhiteOnBlueStyle"), Languages.message("WhiteOnGreenStyle"),
-                    Languages.message("WhiteOnVioletredStyle")));
+            styleBox.getItems().addAll(Arrays.asList(message("DefaultStyle"), message("caspianStyle"),
+                    message("WhiteOnBlackStyle"), message("PinkOnBlackStyle"),
+                    message("YellowOnBlackStyle"), message("GreenOnBlackStyle"),
+                    message("WhiteOnBlueStyle"), message("WhiteOnGreenStyle"),
+                    message("WhiteOnVioletredStyle")));
             styleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -445,23 +441,23 @@ public class SettingsController extends BaseController {
 
     protected void checkStyle(String s) {
         try {
-            if (Languages.message("DefaultStyle").equals(s)) {
+            if (message("DefaultStyle").equals(s)) {
                 setStyle(AppValues.MyBoxStyle);
-            } else if (Languages.message("caspianStyle").equals(s)) {
+            } else if (message("caspianStyle").equals(s)) {
                 setStyle(AppValues.caspianStyle);
-            } else if (Languages.message("WhiteOnBlackStyle").equals(s)) {
+            } else if (message("WhiteOnBlackStyle").equals(s)) {
                 setStyle(AppValues.WhiteOnBlackStyle);
-            } else if (Languages.message("PinkOnBlackStyle").equals(s)) {
+            } else if (message("PinkOnBlackStyle").equals(s)) {
                 setStyle(AppValues.PinkOnBlackStyle);
-            } else if (Languages.message("YellowOnBlackStyle").equals(s)) {
+            } else if (message("YellowOnBlackStyle").equals(s)) {
                 setStyle(AppValues.YellowOnBlackStyle);
-            } else if (Languages.message("GreenOnBlackStyle").equals(s)) {
+            } else if (message("GreenOnBlackStyle").equals(s)) {
                 setStyle(AppValues.GreenOnBlackStyle);
-            } else if (Languages.message("WhiteOnBlueStyle").equals(s)) {
+            } else if (message("WhiteOnBlueStyle").equals(s)) {
                 setStyle(AppValues.WhiteOnBlueStyle);
-            } else if (Languages.message("WhiteOnGreenStyle").equals(s)) {
+            } else if (message("WhiteOnGreenStyle").equals(s)) {
                 setStyle(AppValues.WhiteOnGreenStyle);
-            } else if (Languages.message("WhiteOnVioletredStyle").equals(s)) {
+            } else if (message("WhiteOnVioletredStyle").equals(s)) {
                 setStyle(AppValues.WhiteOnPurpleStyle);
             }
         } catch (Exception e) {
@@ -539,10 +535,10 @@ public class SettingsController extends BaseController {
             int mb = 1024 * 1024;
             OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
             final long totalM = osmxb.getTotalPhysicalMemorySize() / mb;
-            String m = Languages.message("PhysicalMemory") + ": " + totalM + "MB";
+            String m = message("PhysicalMemory") + ": " + totalM + "MB";
             Runtime r = Runtime.getRuntime();
             final long jvmM = r.maxMemory() / mb;
-            m += "    " + Languages.message("JvmXmx") + ": " + jvmM + "MB";
+            m += "    " + message("JvmXmx") + ": " + jvmM + "MB";
             currentJvmLabel.setText(m);
             jvmInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -562,11 +558,11 @@ public class SettingsController extends BaseController {
                             newJVM = v;
                             settingsJVMButton.setDisable(false);
                         } else {
-                            jvmInput.setStyle(NodeStyleTools.badStyle);
+                            jvmInput.setStyle(UserConfig.badStyle());
                             settingsJVMButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        jvmInput.setStyle(NodeStyleTools.badStyle);
+                        jvmInput.setStyle(UserConfig.badStyle());
                         settingsJVMButton.setDisable(true);
                     }
                 }
@@ -634,10 +630,10 @@ public class SettingsController extends BaseController {
                     || newPath.trim().equals(AppVariables.MyboxDataPath)) {
                 return;
             }
-            if (!PopTools.askSure(getBaseTitle(), Languages.message("ChangeDataPathConfirm"))) {
+            if (!PopTools.askSure(getBaseTitle(), message("ChangeDataPathConfirm"))) {
                 return;
             }
-            popInformation(Languages.message("CopyingFilesFromTo"));
+            popInformation(message("CopyingFilesFromTo"));
             String oldPath = AppVariables.MyboxDataPath;
             if (FileCopyTools.copyWholeDirectory(new File(oldPath), new File(newPath), null, false)) {
                 File lckFile = new File(newPath + File.separator
@@ -658,12 +654,12 @@ public class SettingsController extends BaseController {
                 MyBox.restart();
             } else {
                 popFailed();
-                dataDirInput.setStyle(NodeStyleTools.badStyle);
+                dataDirInput.setStyle(UserConfig.badStyle());
             }
 
         } catch (Exception e) {
             popFailed();
-            dataDirInput.setStyle(NodeStyleTools.badStyle);
+            dataDirInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -676,10 +672,10 @@ public class SettingsController extends BaseController {
                 webConnectTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
-                webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
+                webConnectTimeoutInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
+            webConnectTimeoutInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -692,10 +688,10 @@ public class SettingsController extends BaseController {
                 webReadTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
-                webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
+                webReadTimeoutInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
+            webReadTimeoutInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -726,8 +722,8 @@ public class SettingsController extends BaseController {
                 }
             });
             dataDirInput.setText(AppVariables.MyboxDataPath);
-            currentDataPathLabel.setText(MessageFormat.format(Languages.message("CurrentValue"), AppVariables.MyboxDataPath));
-            clearCurrentRootCheck.setText(MessageFormat.format(Languages.message("ClearPathWhenChange"), AppVariables.MyboxDataPath));
+            currentDataPathLabel.setText(MessageFormat.format(message("CurrentValue"), AppVariables.MyboxDataPath));
+            clearCurrentRootCheck.setText(MessageFormat.format(message("ClearPathWhenChange"), AppVariables.MyboxDataPath));
 
             setDerbyMode();
             derbyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -758,7 +754,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearFileHistories(ActionEvent event) {
-        if (!PopTools.askSure(getBaseTitle(), Languages.message("SureClear"))) {
+        if (!PopTools.askSure(getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableVisitHistory().clear();
@@ -777,14 +773,14 @@ public class SettingsController extends BaseController {
         isSettingValues = true;
         if (DerbyStatus.Nerwork == DerbyBase.status) {
             networkRadio.setSelected(true);
-            derbyStatus.setText(MessageFormat.format(Languages.message("DerbyServerListening"), DerbyBase.port + ""));
+            derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
         } else if (DerbyStatus.Embedded == DerbyBase.status) {
             embeddedRadio.setSelected(true);
-            derbyStatus.setText(Languages.message("DerbyEmbeddedMode"));
+            derbyStatus.setText(message("DerbyEmbeddedMode"));
         } else {
             networkRadio.setSelected(false);
             embeddedRadio.setSelected(false);
-            derbyStatus.setText(MessageFormat.format(Languages.message("DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
+            derbyStatus.setText(MessageFormat.format(message("DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
         }
         isSettingValues = false;
     }
@@ -983,7 +979,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
                     if (!Color.WHITE.equals((Color) newValue)) {
-                        alphaLabel.setText(Languages.message("AlphaReplaceComments"));
+                        alphaLabel.setText(message("AlphaReplaceComments"));
                         alphaLabel.setStyle(NodeStyleTools.darkRedText);
                     } else {
                         alphaLabel.setText("");
@@ -999,13 +995,14 @@ public class SettingsController extends BaseController {
                         int v = Integer.valueOf(thumbnailWidthInput.getText());
                         if (v > 0) {
                             UserConfig.setInt("ThumbnailWidth", v);
+                            AppVariables.thumbnailWidth = v;
                             thumbnailWidthInput.setStyle(null);
                             popSuccessful();
                         } else {
-                            thumbnailWidthInput.setStyle(NodeStyleTools.badStyle);
+                            thumbnailWidthInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        thumbnailWidthInput.setStyle(NodeStyleTools.badStyle);
+                        thumbnailWidthInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -1045,18 +1042,18 @@ public class SettingsController extends BaseController {
                 fileRecentInput.setStyle(null);
                 settingsRecentOKButton.setDisable(false);
             } else {
-                fileRecentInput.setStyle(NodeStyleTools.badStyle);
+                fileRecentInput.setStyle(UserConfig.badStyle());
                 settingsRecentOKButton.setDisable(true);
             }
         } catch (Exception e) {
-            fileRecentInput.setStyle(NodeStyleTools.badStyle);
+            fileRecentInput.setStyle(UserConfig.badStyle());
             settingsRecentOKButton.setDisable(true);
         }
     }
 
     @FXML
     protected void clearImageHistories(ActionEvent event) {
-        if (!PopTools.askSure(getBaseTitle(), Languages.message("SureClear"))) {
+        if (!PopTools.askSure(getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableImageEditHistory().clear();
@@ -1084,7 +1081,7 @@ public class SettingsController extends BaseController {
         if (tiandituKey == null || tiandituKey.trim().isBlank()
                 || daodeWeb == null || daodeWeb.trim().isBlank()
                 || gaoServiceKey == null || gaoServiceKey.trim().isBlank()) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
             return;
         }
         UserConfig.setString("TianDiTuWebKey", tiandituKey);

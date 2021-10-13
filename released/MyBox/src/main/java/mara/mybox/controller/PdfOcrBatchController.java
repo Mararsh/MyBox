@@ -28,7 +28,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageBinary;
@@ -155,10 +155,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
                         } else {
-                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        scaleSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -181,10 +181,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
                         } else {
-                            binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            binarySelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        binarySelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -301,13 +301,13 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 File tesseract = ocrOptionsController.tesseractPathController.file;
                 if (!tesseract.exists()) {
                     popError(Languages.message("InvalidParameters"));
-                    ocrOptionsController.tesseractPathController.fileInput.setStyle(NodeStyleTools.badStyle);
+                    ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
                     return false;
                 }
                 File dataPath = ocrOptionsController.dataPathController.file;
                 if (!dataPath.exists()) {
                     popError(Languages.message("InvalidParameters"));
-                    ocrOptionsController.dataPathController.fileInput.setStyle(NodeStyleTools.badStyle);
+                    ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
                     return false;
                 }
                 configFile = TmpFileTools.getTempFile();

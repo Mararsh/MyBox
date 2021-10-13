@@ -17,7 +17,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
@@ -363,10 +363,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 pageWidth = v;
                 customWidthInput.setStyle(null);
             } else {
-                customWidthInput.setStyle(NodeStyleTools.badStyle);
+                customWidthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            customWidthInput.setStyle(NodeStyleTools.badStyle);
+            customWidthInput.setStyle(UserConfig.badStyle());
         }
         try {
             int v = Integer.valueOf(customHeightInput.getText());
@@ -374,10 +374,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 pageHeight = v;
                 customHeightInput.setStyle(null);
             } else {
-                customHeightInput.setStyle(NodeStyleTools.badStyle);
+                customHeightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            customHeightInput.setStyle(NodeStyleTools.badStyle);
+            customHeightInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -443,10 +443,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 jpegQualitySelector.setStyle(null);
                 UserConfig.setInt(baseName + "PdfJpegQuality", jpegQuality);
             } else {
-                jpegQualitySelector.setStyle(NodeStyleTools.badStyle);
+                jpegQualitySelector.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            jpegQualitySelector.setStyle(NodeStyleTools.badStyle);
+            jpegQualitySelector.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -482,10 +482,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 threshold = v;
                 thresholdInput.setStyle(null);
             } else {
-                thresholdInput.setStyle(NodeStyleTools.badStyle);
+                thresholdInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            thresholdInput.setStyle(NodeStyleTools.badStyle);
+            thresholdInput.setStyle(UserConfig.badStyle());
         }
     }
 

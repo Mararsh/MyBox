@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansRegionQuantization;
 import mara.mybox.data.ListKMeans;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansRegionQuantization;
 
 /**
  * @Author Mara
@@ -123,25 +123,30 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     }
 
     public Color map(Color color) {
-        if (color.getRGB() == 0 || dataMap == null) {
-            return color;
-        }
-        Color regionColor = regionQuantization.map(new Color(color.getRGB(), false));
-        Color mappedColor = dataMap.get(regionColor);
-        // Some new colors maybe generated outside regions due to dithering again
-        if (mappedColor == null) {
-            mappedColor = regionColor;
-            int minDistance = Integer.MAX_VALUE;
-            for (int i = 0; i < centers.size(); ++i) {
-                Color centerColor = centers.get(i);
-                int distance = ColorMatchTools.calculateColorDistanceSquare(regionColor, centerColor);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    mappedColor = centerColor;
+        try {
+            if (color.getRGB() == 0 || dataMap == null) {
+                return color;
+            }
+            Color regionColor = regionQuantization.map(new Color(color.getRGB(), false));
+            Color mappedColor = dataMap.get(regionColor);
+            // Some new colors maybe generated outside regions due to dithering again
+            if (mappedColor == null) {
+                mappedColor = regionColor;
+                int minDistance = Integer.MAX_VALUE;
+                for (int i = 0; i < centers.size(); ++i) {
+                    Color centerColor = centers.get(i);
+                    int distance = ColorMatchTools.calculateColorDistanceSquare(regionColor, centerColor);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        mappedColor = centerColor;
+                    }
                 }
             }
+            return mappedColor;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return color;
         }
-        return mappedColor;
     }
 
     /*

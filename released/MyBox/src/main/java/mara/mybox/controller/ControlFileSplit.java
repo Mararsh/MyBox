@@ -14,7 +14,7 @@ import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -50,9 +50,9 @@ public class ControlFileSplit extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            valid.bind(pagesNumberInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                    .or(filesNumberInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(listInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)));
+            valid.bind(pagesNumberInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(filesNumberInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(listInput.styleProperty().isEqualTo(UserConfig.badStyle())));
 
             splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -137,10 +137,10 @@ public class ControlFileSplit extends BaseController {
                 pagesNumber = v;
                 UserConfig.setString(baseName + "PagesNumber", pagesNumber + "");
             } else {
-                pagesNumberInput.setStyle(NodeStyleTools.badStyle);
+                pagesNumberInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            pagesNumberInput.setStyle(NodeStyleTools.badStyle);
+            pagesNumberInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -152,10 +152,10 @@ public class ControlFileSplit extends BaseController {
                 filesNumber = v;
                 UserConfig.setString(baseName + "FilesNumber", filesNumber + "");
             } else {
-                filesNumberInput.setStyle(NodeStyleTools.badStyle);
+                filesNumberInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            filesNumberInput.setStyle(NodeStyleTools.badStyle);
+            filesNumberInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -179,13 +179,13 @@ public class ControlFileSplit extends BaseController {
                 }
             }
             if (startEndList.isEmpty()) {
-                listInput.setStyle(NodeStyleTools.badStyle);
+                listInput.setStyle(UserConfig.badStyle());
             } else {
                 listInput.setStyle(null);
                 UserConfig.setString(baseName + "List", listInput.getText());
             }
         } catch (Exception e) {
-            listInput.setStyle(NodeStyleTools.badStyle);
+            listInput.setStyle(UserConfig.badStyle());
         }
     }
 

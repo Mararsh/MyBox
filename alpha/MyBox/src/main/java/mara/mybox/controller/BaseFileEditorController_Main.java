@@ -16,7 +16,6 @@ import javafx.scene.layout.AnchorPane;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
@@ -239,6 +238,24 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         }
     }
 
+    protected int pageLinesNumber(String pageText) {
+        if (pageText == null) {
+            return 0;
+        }
+        return FindReplaceString.count(pageText, "\n") + 1;
+    }
+
+    protected int pageObjectsNumber(String pageText) {
+        if (pageText == null) {
+            return 0;
+        }
+        if (editType == Edit_Type.Bytes) {
+            return pageText.replaceAll("\\s+|\n", "").length() / 2;
+        } else {
+            return pageText.length();
+        }
+    }
+
     protected void updateNumbers(boolean changed) {
         saveButton.setDisable(false);
         if (saveAsButton != null) {
@@ -251,13 +268,8 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         if (pageText == null) {
             pageText = "";
         }
-        int pageLinesNumber = FindReplaceString.count(pageText, "\n") + 1;
-        int pageObjectsNumber;
-        if (editType == Edit_Type.Bytes) {
-            pageObjectsNumber = pageText.replaceAll("\\s+|\n", "").length() / 2;
-        } else {
-            pageObjectsNumber = pageText.length();
-        }
+        int pageLinesNumber = pageLinesNumber(pageText);
+        int pageObjectsNumber = pageObjectsNumber(pageText);
         long pageObjectStart = 0, pageObjectEnd = pageObjectsNumber;
         long pageLineStart = 0, pageLineEnd = pageLinesNumber, pagesNumber = 1;
         long fileObjectNumber = pageObjectsNumber;

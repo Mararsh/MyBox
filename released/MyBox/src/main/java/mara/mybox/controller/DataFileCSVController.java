@@ -2,15 +2,22 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
@@ -104,12 +111,12 @@ public class DataFileCSVController extends BaseDataFileController {
             info += message("LinesNumberInFile") + ":" + sheetController.totalSize + "\n";
         }
         info += message("ColumnsNumber") + ": " + (sheetController.columns == null ? "0" : sheetController.columns.size()) + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage)
+                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage + 1)
                 + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
         if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
             info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(sheetController.currentPageStart) + " - "
-                    + StringTools.format(sheetController.currentPageStart + sheetController.sheetInputs.length - 1)
+                    + ": " + StringTools.format(sheetController.startRowOfCurrentPage + 1) + " - "
+                    + StringTools.format(sheetController.startRowOfCurrentPage + sheetController.sheetInputs.length)
                     + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
         }
         info += message("PageModifyTime") + ": " + DateTools.nowString();
@@ -127,6 +134,72 @@ public class DataFileCSVController extends BaseDataFileController {
         sheetController.saveAs();
     }
 
+    public void loadData(List<StringTable> tables) {
+        if (tables == null || tables.isEmpty()) {
+            return;
+        }
+//        if (tables.size() == 1) {
+//            StringTable table = tables.get(0);
+//            String[][] data = TextTools.toArray(table.getData());
+//            if (data == null || data.length == 0) {
+//                return;
+//            }
+//            List<ColumnDefinition> dataColumns = null;
+//            List<String> names = table.getNames();
+//            if (names != null && !names.isEmpty()) {
+//                dataColumns = new ArrayList<>();
+//                for (String name : names) {
+//                    dataColumns.add(new ColumnDefinition(name, ColumnDefinition.ColumnType.String));
+//                }
+//            }
+//            loadData(data, dataColumns);
+//            return;
+//        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private File tmpPath;
+                private LinkedHashMap<File, Boolean> files;
+                private int count;
+
+                @Override
+                protected boolean handle() {
+                    tmpPath = TmpFileTools.getTempDirectory();
+                    files = CsvTools.save(tmpPath, "tmp", tables);
+                    count = files != null ? files.size() : 0;
+                    return count > 0;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    Iterator<File> iterator = files.keySet().iterator();
+                    File csvFile = iterator.next();
+                    setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ',');
+                    if (count > 1) {
+                        browseURI(tmpPath.toURI());
+                        String info = MessageFormat.format(message("GeneratedFilesResult"),
+                                count, "\"" + tmpPath + "\"");
+                        int num = 1;
+                        info += "\n    " + csvFile.getName();
+                        while (iterator.hasNext()) {
+                            info += "\n    " + iterator.next().getName();
+                            if (++num > 10) {
+                                info += "\n    ......";
+                                break;
+                            }
+                        }
+                        info += "\n\n" + message("NoticeTmpFiles");
+                        alertInformation(info);
+                    }
+                }
+
+            };
+            start(task);
+        }
+    }
 
     /*
         static

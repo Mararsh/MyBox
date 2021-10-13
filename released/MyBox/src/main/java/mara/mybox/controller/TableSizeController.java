@@ -51,14 +51,14 @@ public class TableSizeController extends BaseController {
                 try {
                     int v = Integer.parseInt(newValue.trim());
                     if (v <= 0) {
-                        colsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        colsSelector.getEditor().setStyle(UserConfig.badStyle());
                     } else {
                         colsNumber = v;
                         UserConfig.setInt(baseName + "ColsNumber", colsNumber);
                         colsSelector.getEditor().setStyle(null);
                     }
                 } catch (Exception e) {
-                    colsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    colsSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
 
@@ -72,14 +72,14 @@ public class TableSizeController extends BaseController {
                 try {
                     int v = Integer.parseInt(newValue.trim());
                     if (v <= 0) {
-                        rowsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        rowsSelector.getEditor().setStyle(UserConfig.badStyle());
                     } else {
                         rowsNumber = v;
                         UserConfig.setInt(baseName + "RowsNumber", rowsNumber);
                         rowsSelector.getEditor().setStyle(null);
                     }
                 } catch (Exception e) {
-                    rowsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    rowsSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
 

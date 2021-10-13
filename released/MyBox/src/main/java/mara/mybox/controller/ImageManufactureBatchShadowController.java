@@ -15,7 +15,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ShadowTools;
 import mara.mybox.fximage.FxColorTools;
@@ -58,10 +58,10 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(shadowBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
-                    .or(perBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(shadowBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(perBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

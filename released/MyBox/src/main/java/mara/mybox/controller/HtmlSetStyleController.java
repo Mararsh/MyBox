@@ -10,13 +10,9 @@ import javafx.scene.control.TextArea;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
-
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.HtmlStyles;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -27,7 +23,6 @@ import mara.mybox.value.UserConfig;
  */
 public class HtmlSetStyleController extends BaseBatchFileController {
 
-    protected Charset charset;
     protected String css;
 
     @FXML
@@ -84,7 +79,8 @@ public class HtmlSetStyleController extends BaseBatchFileController {
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String changed = HtmlWriteTools.setStyle(srcFile, css, ignoreCheck.isSelected());
+            Charset charset = TextFileTools.charset(srcFile);
+            String changed = HtmlWriteTools.setStyle(srcFile, charset, css, ignoreCheck.isSelected());
             if (changed == null) {
                 return Languages.message("Failed");
             }

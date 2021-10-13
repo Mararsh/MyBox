@@ -121,7 +121,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         }
                     }
                 });
-                targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
+                targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", "mm"));
             }
 
             if (targetPathInput != null) {
@@ -139,11 +139,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 if (operationBarController.openTargetButton != null) {
                     if (targetFileInput != null) {
                         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                         );
                     } else if (targetPathInput != null) {
                         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                                .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                         );
                     }
                 }
@@ -368,11 +368,15 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 UserConfig.setInt(baseName + "DPI", dpi);
                 dpiSelector.getEditor().setStyle(null);
             } else {
-                dpiSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                dpiSelector.getEditor().setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            dpiSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            dpiSelector.getEditor().setStyle(UserConfig.badStyle());
         }
+    }
+
+    public void initControls() {
+
     }
 
     /*
@@ -413,7 +417,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public String interfaceKeysPrefix() {
-        return "Interface_" + baseName + (isPop ? "_Pop" : "");
+        return "Interface_" + interfaceName + (isPop ? "_Pop" : "");
     }
 
     public void setStageStatus() {
@@ -467,7 +471,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setAsPopup(String baseName) {
         try {
             isPop = true;
-            this.baseName = baseName;
+            this.interfaceName = baseName;
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
             int mh = UserConfig.getInt(prefix + "StageHeight", Math.min(500, (int) myStage.getHeight()));
@@ -526,8 +530,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public void refreshStyle(Parent node) {
-        NodeStyleTools.refreshStyle(node);
-        setControlsStyle();
+        try {
+            NodeStyleTools.refreshStyle(node);
+            setControlsStyle();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void toFront() {

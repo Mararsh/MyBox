@@ -99,7 +99,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 }
             });
 
-            setButton.disableProperty().bind(valueSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
+            setButton.disableProperty().bind(valueSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()));
             colorIncreaseButton.disableProperty().bind(setButton.disableProperty());
             colorDecreaseButton.disableProperty().bind(setButton.disableProperty());
             colorInvertButton.disableProperty().bind(setButton.disableProperty());
@@ -190,10 +190,10 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         UserConfig.setInt(baseName + "ColorDistance", colorDistance);
                         distanceSelector.getEditor().setStyle(null);
                     } else {
-                        distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        distanceSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 } catch (Exception e) {
-                    distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    distanceSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             }
         });
@@ -222,7 +222,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             }
             if (colorReplaceRadio.isSelected()) {
                 imageController.imageTab();
-                okButton.disableProperty().bind(distanceSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
+                okButton.disableProperty().bind(distanceSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()));
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(replaceBox);
                 commentsLabel.setText(Languages.message("ManufactureWholeImage"));

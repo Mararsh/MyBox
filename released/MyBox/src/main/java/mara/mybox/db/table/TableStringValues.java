@@ -159,8 +159,11 @@ public class TableStringValues extends DerbyBase {
                     if (++count > max) {
                         break;
                     }
-                    records.add(results.getString("string_value"));
-                    times.add(results.getTimestamp("create_time"));
+                    String value = results.getString("string_value");
+                    if (!records.contains(value)) {
+                        records.add(value);
+                        times.add(results.getTimestamp("create_time"));
+                    }
                 }
             }
             if (count > max) {

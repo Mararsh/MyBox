@@ -21,14 +21,15 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.QueryCondition.DataOperation;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -87,7 +88,7 @@ public class ControlDataQuery extends BaseController {
                 titleInput.textProperty().addListener(
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             if (newValue == null || newValue.isBlank()) {
-                                titleInput.setStyle(NodeStyleTools.badStyle);
+                                titleInput.setStyle(UserConfig.badStyle());
                             } else {
                                 titleInput.setStyle(null);
                             }
@@ -98,7 +99,7 @@ public class ControlDataQuery extends BaseController {
                 prefixInput.textProperty().addListener(
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             if (newValue == null || newValue.isBlank()) {
-                                prefixInput.setStyle(NodeStyleTools.badStyle);
+                                prefixInput.setStyle(UserConfig.badStyle());
                             } else {
                                 prefixInput.setStyle(null);
                             }
@@ -197,14 +198,14 @@ public class ControlDataQuery extends BaseController {
         }
         String title = titleInput.getText() == null ? null : titleInput.getText().trim();
         if (title == null || title.isEmpty()) {
-            titleInput.setStyle(NodeStyleTools.badStyle);
+            titleInput.setStyle(UserConfig.badStyle());
             return null;
         }
         titleInput.setStyle(null);
 
         String prefix = prefixInput.getText() == null ? null : prefixInput.getText().trim();
         if (prefix == null || prefix.isEmpty()) {
-            prefixInput.setStyle(NodeStyleTools.badStyle);
+            prefixInput.setStyle(UserConfig.badStyle());
             return null;
         }
         prefixInput.setStyle(null);
@@ -214,7 +215,7 @@ public class ControlDataQuery extends BaseController {
             try {
                 top = Integer.parseInt(topInput.getText().trim());
             } catch (Exception e) {
-                topInput.setStyle(NodeStyleTools.badStyle);
+                topInput.setStyle(UserConfig.badStyle());
                 return null;
             }
         }

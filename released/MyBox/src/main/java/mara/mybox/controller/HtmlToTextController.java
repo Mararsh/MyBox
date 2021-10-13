@@ -18,6 +18,7 @@ public class HtmlToTextController extends BaseBatchFileController {
 
     public HtmlToTextController() {
         baseTitle = Languages.message("HtmlToText");
+        targetFileSuffix = "txt";
     }
 
     @Override
@@ -50,20 +51,6 @@ public class HtmlToTextController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return Languages.message("Failed");
-        }
-    }
-
-    @Override
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        try {
-            String namePrefix = FileNameTools.getFilePrefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                nameSuffix = ".txt";
-            }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
-        } catch (Exception e) {
-            return null;
         }
     }
 

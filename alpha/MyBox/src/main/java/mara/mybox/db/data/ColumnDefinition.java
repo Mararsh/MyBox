@@ -57,7 +57,7 @@ public class ColumnDefinition extends BaseData implements Cloneable {
         index = -1;
         isPrimaryKey = notNull = isID = false;
         editable = true;
-        length = 128;
+        length = 4096;
         width = 100; // px
         onDelete = OnDelete.Restrict;
         onUpdate = OnUpdate.Restrict;
@@ -256,6 +256,27 @@ public class ColumnDefinition extends BaseData implements Cloneable {
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
     }
 
+    // works on java 17 while not work on java 16
+//    public String random(Random random, int maxRandom, short scale) {
+//        if (random == null) {
+//            random = new Random();
+//        }
+//        switch (type) {
+//            case Double:
+//                return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+//            case Float:
+//                return FloatTools.format(random.nextFloat(maxRandom), scale);
+//            case Integer:
+//                return StringTools.format(random.nextInt(maxRandom));
+//            case Long:
+//                return StringTools.format(random.nextLong(maxRandom));
+//            case Short:
+//                return StringTools.format((short) random.nextInt(maxRandom));
+//            default:
+//                return (char) ('a' + random.nextInt(25)) + "";
+//        }
+//    }
+    // works on java 16
     public String random(Random random, int maxRandom, short scale) {
         if (random == null) {
             random = new Random();
@@ -264,11 +285,11 @@ public class ColumnDefinition extends BaseData implements Cloneable {
             case Double:
                 return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
             case Float:
-                return FloatTools.format(random.nextFloat(maxRandom), scale);
+                return FloatTools.format(FloatTools.random(random, maxRandom), scale);
             case Integer:
                 return StringTools.format(random.nextInt(maxRandom));
             case Long:
-                return StringTools.format(random.nextLong(maxRandom));
+                return StringTools.format(FloatTools.random(random, maxRandom));
             case Short:
                 return StringTools.format((short) random.nextInt(maxRandom));
             default:

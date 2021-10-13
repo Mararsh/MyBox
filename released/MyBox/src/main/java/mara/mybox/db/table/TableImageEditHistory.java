@@ -1,23 +1,22 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ImageEditHistory;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ImageEditHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
@@ -265,6 +264,32 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             MyBoxLog.error(e);
             return -1;
         }
+    }
+
+    public int clearInvalid(Connection conn) {
+        int count = 0;
+        try {
+            conn.setAutoCommit(true);
+            List<ImageEditHistory> invalid = new ArrayList<>();
+            try ( PreparedStatement query = conn.prepareStatement(queryAllStatement());
+                     ResultSet results = query.executeQuery()) {
+                while (results.next()) {
+                    ImageEditHistory data = readData(results);
+                    if (data.getHistoryLocation() == null || !new File(data.getHistoryLocation()).exists()) {
+                        invalid.add(data);
+                    }
+                }
+
+            } catch (Exception e) {
+                MyBoxLog.debug(e, tableName);
+            }
+            count = invalid.size();
+            deleteData(conn, invalid);
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+        }
+        return count;
     }
 
 }

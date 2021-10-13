@@ -126,7 +126,7 @@ public class TextClipboardTools {
             @Override
             public void run() {
                 if (text == null || text.isEmpty()) {
-                    controller.popError(message("CopyNone"));
+                    controller.popError(message("SelectToHandle"));
                     return;
                 }
                 if (stringToSystemClipboard(text)) {
@@ -150,7 +150,7 @@ public class TextClipboardTools {
             @Override
             public void run() {
                 if (file == null || !file.exists()) {
-                    controller.popError(message("CopyNone"));
+                    controller.popError(message("SelectToHandle"));
                     return;
                 }
                 copyToSystemClipboard(controller, TextFileTools.readTexts(file));
@@ -176,7 +176,7 @@ public class TextClipboardTools {
             @Override
             public void run() {
                 if (text == null || text.isEmpty()) {
-                    controller.popError(message("CopyNone"));
+                    controller.popError(message("SelectToHandle"));
                     return;
                 }
                 if (stringToMyBoxClipboard(text)) {

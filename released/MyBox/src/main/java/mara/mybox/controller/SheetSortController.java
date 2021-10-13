@@ -21,7 +21,7 @@ public class SheetSortController extends BaseDataOperationController {
         try {
             int col = colSelector.getSelectionModel().getSelectedIndex();
             if (col < 0) {
-                popError(message("NoSelection"));
+                popError(message("SelectToHandle"));
                 return;
             }
             boolean asc = ascRadio.isSelected();

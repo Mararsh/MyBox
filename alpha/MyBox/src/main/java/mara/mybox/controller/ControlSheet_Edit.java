@@ -156,7 +156,7 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
                     data[r][c] = row.get(c);
                 }
             }
-            makeSheet(data, true);
+            makeSheet(data, true, true);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }

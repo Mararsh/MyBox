@@ -172,7 +172,7 @@ public class MicrosoftDocumentTools {
             for (int i = 0; i < columns.size(); i++) {
                 sheet.autoSizeColumn(i);
             }
-            try (OutputStream fileOut = new FileOutputStream(file)) {
+            try ( OutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
             }
             return true;
@@ -208,7 +208,7 @@ public class MicrosoftDocumentTools {
                     cell.setCellValue(values.get(j));
                 }
             }
-            try (OutputStream fileOut = new FileOutputStream(file)) {
+            try ( OutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
             }
             return true;
@@ -219,9 +219,9 @@ public class MicrosoftDocumentTools {
 
     }
 
-    public static Document word2Doc(File srcFile) {
+    public static Document word97ToDoc(File srcFile) {
         Document doc = null;
-        try (HWPFDocument wordDocument = new HWPFDocument(new FileInputStream(srcFile))) {
+        try ( HWPFDocument wordDocument = new HWPFDocument(new FileInputStream(srcFile))) {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             WordToHtmlConverter converter = new WordToHtmlConverter(doc);
             converter.processDocument(wordDocument);
@@ -232,9 +232,9 @@ public class MicrosoftDocumentTools {
         return doc;
     }
 
-    public static String word2html(File srcFile, Charset charset) {
+    public static String word97Tohtml(File srcFile, Charset charset) {
         try {
-            Document doc = word2Doc(srcFile);
+            Document doc = word97ToDoc(srcFile);
             if (doc == null) {
                 return null;
             }
@@ -247,6 +247,38 @@ public class MicrosoftDocumentTools {
             baos.flush();
             baos.close();
             return baos.toString(charset);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static File word2HtmlFile(File srcFile, Charset charset) {
+        try {
+            String suffix = FileNameTools.getFileSuffix(srcFile.getName());
+            String html;
+            if ("doc".equalsIgnoreCase(suffix)) {
+                html = word97Tohtml(srcFile, charset);
+            } else if ("docx".equalsIgnoreCase(suffix)) {
+                String text = extractText(srcFile);
+                if (text == null) {
+                    return null;
+                }
+                html = HtmlWriteTools.textToHtml(text);
+            } else {
+                return null;
+            }
+            return HtmlWriteTools.writeHtml(html);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static String word2Html(File srcFile, Charset charset) {
+        try {
+            File htmlFile = word2HtmlFile(srcFile, charset);
+            return TextFileTools.readTexts(htmlFile, charset);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -281,7 +313,7 @@ public class MicrosoftDocumentTools {
 
     public static String extractText(File srcFile) {
         String text = null;
-        try (POITextExtractor extractor = ExtractorFactory.createExtractor(srcFile)) {
+        try ( POITextExtractor extractor = ExtractorFactory.createExtractor(srcFile)) {
             text = extractor.getText();
         } catch (Exception e) {
             MyBoxLog.error(e);

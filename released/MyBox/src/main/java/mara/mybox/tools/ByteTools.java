@@ -252,7 +252,25 @@ public class ByteTools {
         }
     }
 
-    public static String validateTextHex(String text) {
+    public static boolean validateTextHex(String text) {
+        try {
+            String inHex = text.replaceAll("\\s+|\n", "").toUpperCase();
+            int hexlen = inHex.length();
+            if (hexlen % 2 == 1) {
+                return false;
+            }
+            String b;
+            for (int i = 0; i < hexlen; i += 2) {
+                b = inHex.substring(i, i + 2);
+                Integer.parseInt(b, 16);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String formatTextHex(String text) {
         try {
             String inHex = text.replaceAll("\\s+|\n", "").toUpperCase();
             int hexlen = inHex.length();

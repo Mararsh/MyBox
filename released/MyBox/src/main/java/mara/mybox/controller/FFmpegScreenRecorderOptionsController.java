@@ -309,11 +309,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             UserConfig.setString("FFmpegScreenRecorderAudio", newValue);
 
                         } else {
-                            audioThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
+                            audioThreadQueueSizeInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                        audioThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
+                        audioThreadQueueSizeInput.setStyle(UserConfig.badStyle());
                     }
 
                 }
@@ -332,11 +331,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             UserConfig.setString("FFmpegScreenRecorderAudio", newValue);
 
                         } else {
-                            videoThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
+                            videoThreadQueueSizeInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                        videoThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
+                        videoThreadQueueSizeInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -374,10 +372,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 xInput.setStyle(null);
                 UserConfig.setString("FFmpegScreenRecorderX", v + "");
             } else {
-                xInput.setStyle(NodeStyleTools.badStyle);
+                xInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            xInput.setStyle(NodeStyleTools.badStyle);
+            xInput.setStyle(UserConfig.badStyle());
         }
         try {
             int v = Integer.parseInt(yInput.getText().trim());
@@ -386,10 +384,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 yInput.setStyle(null);
                 UserConfig.setString("FFmpegScreenRecorderY", v + "");
             } else {
-                yInput.setStyle(NodeStyleTools.badStyle);
+                yInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            yInput.setStyle(NodeStyleTools.badStyle);
+            yInput.setStyle(UserConfig.badStyle());
         }
 
         try {
@@ -399,10 +397,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 widthInput.setStyle(null);
                 UserConfig.setString("FFmpegScreenRecorderWidth", v + "");
             } else {
-                widthInput.setStyle(NodeStyleTools.badStyle);
+                widthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            widthInput.setStyle(NodeStyleTools.badStyle);
+            widthInput.setStyle(UserConfig.badStyle());
         }
         try {
             int v = Integer.parseInt(heightInput.getText().trim());
@@ -411,17 +409,17 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 heightInput.setStyle(null);
                 UserConfig.setString("FFmpegScreenRecorderHeight", v + "");
             } else {
-                heightInput.setStyle(NodeStyleTools.badStyle);
+                heightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            heightInput.setStyle(NodeStyleTools.badStyle);
+            heightInput.setStyle(UserConfig.badStyle());
         }
 
     }
 
     protected void checkWindow() {
         if (titleInput.getText().trim().isBlank()) {
-            titleInput.setStyle(NodeStyleTools.badStyle);
+            titleInput.setStyle(UserConfig.badStyle());
         } else {
             titleInput.setStyle(null);
         }

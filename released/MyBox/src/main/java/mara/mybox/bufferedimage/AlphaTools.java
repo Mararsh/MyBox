@@ -5,9 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.FileFilters;
-
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 import mara.mybox.value.FileExtensions;
 
@@ -55,21 +52,21 @@ public class AlphaTools {
         if (!hasAlpha(source)) {
             return source;
         }
-        return AlphaTools.removeAlpha(source, ColorConvertTools.getAlphaColor());
+        return AlphaTools.removeAlpha(source, ColorConvertTools.alphaColor());
     }
 
-    public static BufferedImage removeAlpha(BufferedImage source, Color color) {
+    public static BufferedImage removeAlpha(BufferedImage source, Color alphaColor) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
             int imageType = BufferedImage.TYPE_INT_RGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
-            int colorPixel = color.getRGB();
+            int alphaPixel = alphaColor.getRGB();
             for (int j = 0; j < height; ++j) {
                 for (int i = 0; i < width; ++i) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
-                        target.setRGB(i, j, colorPixel);
+                        target.setRGB(i, j, alphaPixel);
                     } else {
                         target.setRGB(i, j, new Color(pixel, false).getRGB());
                     }
@@ -156,7 +153,7 @@ public class AlphaTools {
             BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, imageType);
             Color sourceColor;
             Color newColor;
-            Color bkColor = ColorConvertTools.getAlphaColor();
+            Color bkColor = ColorConvertTools.alphaColor();
             int bkPixel = bkColor.getRGB();
             for (int j = 0; j < sourceHeight; ++j) {
                 for (int i = 0; i < sourceWidth; ++i) {

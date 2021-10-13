@@ -71,13 +71,13 @@ public class ControlPlay extends BaseController {
                     try {
                         double v = Double.valueOf(newValue);
                         if (v <= 0) {
-                            speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            speedSelector.getEditor().setStyle(UserConfig.badStyle());
                         } else {
                             speed = v;
                             speedSelector.getEditor().setStyle(null);
                         }
                     } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        speedSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -96,7 +96,7 @@ public class ControlPlay extends BaseController {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v <= 0) {
-                            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            intervalSelector.getEditor().setStyle(UserConfig.badStyle());
                         } else {
                             interval = v;
                             intervalSelector.getEditor().setStyle(null);
@@ -112,7 +112,7 @@ public class ControlPlay extends BaseController {
 
                         }
                     } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        speedSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });

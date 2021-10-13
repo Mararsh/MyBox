@@ -38,6 +38,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }
+        BaseDataOperationController.closeAll(this);
     }
 
     public void loadFile() {
@@ -92,7 +93,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
 
                 @Override
                 protected void whenSucceeded() {
-                    makeSheet(data, false);
+                    makeSheet(data, false, true);
                     loadTotal();
                 }
 
@@ -138,7 +139,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                     if (!readTotal() || isCancelled()) {
                         return false;
                     }
-                    countPagination((int) ((currentPageStart - 1) / pageSize) + 1);
+                    countPagination((int) (startRowOfCurrentPage / pageSize));
                     return true;
                 }
 

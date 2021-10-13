@@ -35,7 +35,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-8-8
  * @License Apache License Version 2.0
  */
-public class ImageSplitController extends ImageViewerController {
+public class ImageSplitController extends BaseImagesListController {
 
     protected List<Integer> rows, cols;
     protected int rowsNumber, colsNumber, width, height;
@@ -60,8 +60,6 @@ public class ImageSplitController extends ImageViewerController {
     protected VBox splitOptionsBox;
     @FXML
     protected Label promptLabel, sizeLabel;
-    @FXML
-    protected ControlImagesSave saveController;
 
     public ImageSplitController() {
         baseTitle = Languages.message("ImageSplit");
@@ -89,9 +87,6 @@ public class ImageSplitController extends ImageViewerController {
             rightPane.disableProperty().bind(imageView.imageProperty().isNull());
 
             initSplitPane();
-
-            saveController.setParent(this);
-            this.saveButton = saveController.saveButton;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -148,8 +143,8 @@ public class ImageSplitController extends ImageViewerController {
                 }
             });
 
-            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
-                    .or(colsInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(colsInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -192,7 +187,7 @@ public class ImageSplitController extends ImageViewerController {
             }
         }
         sizeLabel.setText("");
-        saveController.setImages(null);
+        imageInfos.clear();
 
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
         if (Languages.message("Predefined").equals(selected.getText())) {
@@ -242,10 +237,10 @@ public class ImageSplitController extends ImageViewerController {
                 if (rowsNumber > 0) {
                     rowsInput.setStyle(null);
                 } else {
-                    rowsInput.setStyle(NodeStyleTools.badStyle);
+                    rowsInput.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                rowsInput.setStyle(NodeStyleTools.badStyle);
+                rowsInput.setStyle(UserConfig.badStyle());
             }
         }
 
@@ -259,10 +254,10 @@ public class ImageSplitController extends ImageViewerController {
                 if (colsNumber > 0) {
                     colsInput.setStyle(null);
                 } else {
-                    colsInput.setStyle(NodeStyleTools.badStyle);
+                    colsInput.setStyle(UserConfig.badStyle());
                 }
             } catch (Exception e) {
-                colsInput.setStyle(NodeStyleTools.badStyle);
+                colsInput.setStyle(UserConfig.badStyle());
             }
         }
     }
@@ -277,10 +272,10 @@ public class ImageSplitController extends ImageViewerController {
                 widthInput.setStyle(null);
                 width = v;
             } else {
-                widthInput.setStyle(NodeStyleTools.badStyle);
+                widthInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            widthInput.setStyle(NodeStyleTools.badStyle);
+            widthInput.setStyle(UserConfig.badStyle());
         }
         try {
             int v = Integer.valueOf(heightInput.getText());
@@ -288,10 +283,10 @@ public class ImageSplitController extends ImageViewerController {
                 heightInput.setStyle(null);
                 height = v;
             } else {
-                heightInput.setStyle(NodeStyleTools.badStyle);
+                heightInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            heightInput.setStyle(NodeStyleTools.badStyle);
+            heightInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -315,7 +310,7 @@ public class ImageSplitController extends ImageViewerController {
                 try {
                     int value = Integer.valueOf(row.trim());
                     if (value < 0 || value > getOperationHeight() - 1) {
-                        customizedRowsInput.setStyle(NodeStyleTools.badStyle);
+                        customizedRowsInput.setStyle(UserConfig.badStyle());
                         isValidRows = false;
                         break;
                     }
@@ -323,7 +318,7 @@ public class ImageSplitController extends ImageViewerController {
                         rows.add(value);
                     }
                 } catch (Exception e) {
-                    customizedRowsInput.setStyle(NodeStyleTools.badStyle);
+                    customizedRowsInput.setStyle(UserConfig.badStyle());
                     isValidRows = false;
                     break;
                 }
@@ -336,7 +331,7 @@ public class ImageSplitController extends ImageViewerController {
                 try {
                     int value = Integer.valueOf(col.trim());
                     if (value <= 0 || value >= getOperationWidth() - 1) {
-                        customizedColsInput.setStyle(NodeStyleTools.badStyle);
+                        customizedColsInput.setStyle(UserConfig.badStyle());
                         isValidcols = false;
                         break;
                     }
@@ -344,7 +339,7 @@ public class ImageSplitController extends ImageViewerController {
                         cols.add(value);
                     }
                 } catch (Exception e) {
-                    customizedColsInput.setStyle(NodeStyleTools.badStyle);
+                    customizedColsInput.setStyle(UserConfig.badStyle());
                     isValidcols = false;
                     break;
                 }
@@ -361,7 +356,7 @@ public class ImageSplitController extends ImageViewerController {
     @Override
     public boolean afterImageLoaded() {
         try {
-            saveController.setImages(null);
+            imageInfos.clear();
             if (!super.afterImageLoaded()) {
                 return false;
             }
@@ -523,36 +518,6 @@ public class ImageSplitController extends ImageViewerController {
         customizedColsInput.setText("");
     }
 
-    @Override
-    public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        super.imageSingleClicked(event, p);
-        if (image == null || splitMethod != SplitMethod.Customize) {
-            return;
-        }
-//        imageView.setCursor(Cursor.OPEN_HAND);
-        promptLabel.setText(Languages.message("SplitCustomComments"));
-
-        if (event.getButton() == MouseButton.PRIMARY) {
-
-            int y = (int) Math.round(p.getY() / heightRatio());
-            String str = customizedRowsInput.getText().trim();
-            if (str.isEmpty()) {
-                customizedRowsInput.setText(y + "");
-            } else {
-                customizedRowsInput.setText(str + "," + y);
-            }
-
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-            int x = (int) Math.round(p.getX() / widthRatio());
-            String str = customizedColsInput.getText().trim();
-            if (str.isEmpty()) {
-                customizedColsInput.setText(x + "");
-            } else {
-                customizedColsInput.setText(str + "," + x);
-            }
-        }
-    }
-
     protected void indicateSplit() {
         try {
             List<Node> nodes = new ArrayList<>();
@@ -563,7 +528,7 @@ public class ImageSplitController extends ImageViewerController {
                     node = null;
                 }
             }
-            saveController.setImages(null);
+            imageInfos.clear();
             if (rows == null || cols == null
                     || rows.size() < 2 || cols.size() < 2
                     || (rows.size() == 2 && cols.size() == 2)) {
@@ -646,7 +611,67 @@ public class ImageSplitController extends ImageViewerController {
             MyBoxLog.error(e.toString());
             splitValid.set(false);
         }
-        checkImages();
+        makeList();
+    }
+
+    public synchronized void makeList() {
+        imageInfos.clear();
+        if (!splitValid.get()) {
+            return;
+        }
+        List<ImageInformation> infos = new ArrayList<>();
+        try {
+            int x1, y1, x2, y2;
+            for (int i = 0; i < rows.size() - 1; ++i) {
+                y1 = rows.get(i);
+                y2 = rows.get(i + 1);
+                for (int j = 0; j < cols.size() - 1; ++j) {
+                    x1 = cols.get(j);
+                    x2 = cols.get(j + 1);
+                    ImageInformation info;
+                    if (imageInformation != null) {
+                        info = imageInformation.cloneAttributes();
+                    } else {
+                        info = new ImageInformation(image);
+                    }
+                    info.setRegion(new Rectangle(x1, y1, Math.abs(x2 - x1 + 1), Math.abs(y2 - y1 + 1)));
+                    infos.add(info);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        imageInfos.setAll(infos);
+    }
+
+    @Override
+    public void imageSingleClicked(MouseEvent event, DoublePoint p) {
+        super.imageSingleClicked(event, p);
+        if (image == null || splitMethod != SplitMethod.Customize) {
+            return;
+        }
+//        imageView.setCursor(Cursor.OPEN_HAND);
+        promptLabel.setText(Languages.message("SplitCustomComments"));
+
+        if (event.getButton() == MouseButton.PRIMARY) {
+
+            int y = (int) Math.round(p.getY() / heightRatio());
+            String str = customizedRowsInput.getText().trim();
+            if (str.isEmpty()) {
+                customizedRowsInput.setText(y + "");
+            } else {
+                customizedRowsInput.setText(str + "," + y);
+            }
+
+        } else if (event.getButton() == MouseButton.SECONDARY) {
+            int x = (int) Math.round(p.getX() / widthRatio());
+            String str = customizedColsInput.getText().trim();
+            if (str.isEmpty()) {
+                customizedColsInput.setText(x + "");
+            } else {
+                customizedColsInput.setText(str + "," + x);
+            }
+        }
     }
 
     @Override
@@ -665,43 +690,10 @@ public class ImageSplitController extends ImageViewerController {
         }
     }
 
-    public synchronized void checkImages() {
-        if (!splitValid.get()) {
-            saveController.setImages(null);
-            return;
-        }
-        List<ImageInformation> infos = new ArrayList<>();
-        try {
-            int x1, y1, x2, y2;
-            for (int i = 0; i < rows.size() - 1; ++i) {
-                y1 = rows.get(i);
-                y2 = rows.get(i + 1);
-                for (int j = 0; j < cols.size() - 1; ++j) {
-                    x1 = cols.get(j);
-                    x2 = cols.get(j + 1);
-                    ImageInformation info;
-                    if (imageInformation != null) {
-                        info = (ImageInformation) (imageInformation.clone());
-                        if (info.isIsSampled() || info.isIsScaled()) {
-                            info.setImage(null);
-                        }
-                    } else {
-                        info = new ImageInformation(image);
-                    }
-                    info.setRegion(new Rectangle(x1, y1, Math.abs(x2 - x1 + 1), Math.abs(y2 - y1 + 1)));
-                    infos.add(info);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        saveController.setImages(infos);
-    }
-
-    @FXML
     @Override
-    public void saveAction() {
+    public boolean controlAltS() {
         saveController.saveAsAction();
+        return false;
     }
 
 }

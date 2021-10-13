@@ -4,7 +4,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.ContextMenuEvent;
-import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
@@ -33,9 +32,9 @@ public class TextEditorController extends BaseFileEditorController {
     protected void initLineBreakGroup() {
         try {
             String savedLB = UserConfig.getString(baseName + "LineBreak", Line_Break.LF.toString());
-            if (savedLB.equals(FileEditInformation.Line_Break.CR.toString())) {
+            if (savedLB.equals(Line_Break.CR.toString())) {
                 crRadio.fire();
-            } else if (savedLB.equals(FileEditInformation.Line_Break.CRLF.toString())) {
+            } else if (savedLB.equals(Line_Break.CRLF.toString())) {
                 crlfRadio.fire();
             } else {
                 lfRadio.fire();

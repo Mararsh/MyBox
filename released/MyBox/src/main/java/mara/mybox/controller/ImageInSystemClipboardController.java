@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,7 @@ import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -45,7 +47,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     @FXML
     protected CheckBox saveCheck, copyCheck;
     @FXML
-    protected Label recordLabel;
+    protected Label recordLabel, numberLabel;
     @FXML
     protected ComboBox<String> intervalSelector, widthSelector;
 
@@ -118,16 +120,16 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                             ImageClipboardTools.setMonitorInterval(v);
                             startMonitor();
                         } else {
-                            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            intervalSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        intervalSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
 
             openPathButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -166,7 +168,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
     public void startMonitor() {
         try {
-            if (targetPath != null) {
+            targetPath = new File(targetPathInput.getText());
+            if (targetPath != null && targetPath.exists()) {
                 if (targetPrefixInput.getText().trim().isEmpty()) {
                     filePrefix = targetPath.getAbsolutePath() + File.separator;
                 } else {
@@ -181,7 +184,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 imageClipboardMonitor = null;
             }
             imageClipboardMonitor = new ImageClipboardMonitor()
-                    .start(ImageClipboardTools.getMonitorInterval(), attributes, filePrefix);
+                    .start(ImageClipboardTools.getMonitorInterval(), formatController.getAttributes(), filePrefix);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -232,10 +235,15 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             popError(message("NoImageInClipboard"));
             return;
         }
-        loadClip(clipboard.getImage());
+        loadClip(clipboard.getImage(), -1);
     }
 
-    public synchronized void loadClip(Image clip) {
+    public synchronized void loadClip(Image clip, int number) {
+        if (number > 0) {
+            numberLabel.setText(MessageFormat.format(message("RecordingImages"), number));
+        } else {
+            numberLabel.setText("");
+        }
         if (clip == null) {
             return;
         }

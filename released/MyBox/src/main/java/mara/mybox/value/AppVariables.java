@@ -72,11 +72,19 @@ public class AppVariables {
 
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {
+
+                private boolean handling = false;
+
                 @Override
                 public void run() {
+                    if (handling) {
+                        return;
+                    }
+                    handling = true;
                     WindowTools.checkExit();
+                    handling = false;
                 }
-            }, 500);
+            }, 3000);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

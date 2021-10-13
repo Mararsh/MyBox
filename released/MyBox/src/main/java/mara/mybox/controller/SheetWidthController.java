@@ -46,16 +46,16 @@ public class SheetWidthController extends BaseDataOperationController {
                             widthInput.setStyle(null);
                             UserConfig.setInt(baseName + "Width", width);
                         } else {
-                            widthInput.setStyle(NodeStyleTools.badStyle);
+                            widthInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-                        widthInput.setStyle(NodeStyleTools.badStyle);
+                        widthInput.setStyle(UserConfig.badStyle());
                     }
                 }
             });
 
             okButton.disableProperty().bind(Bindings.isEmpty(widthInput.textProperty())
-                    .or(widthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(widthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

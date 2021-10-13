@@ -11,7 +11,7 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -131,15 +131,15 @@ public class XYZController extends BaseController {
         try {
             double v = Double.parseDouble(xInput.getText());
             if (v < 0) {
-                xInput.setStyle(NodeStyleTools.badStyle);
+                xInput.setStyle(UserConfig.badStyle());
                 return;
             } else {
                 if (valueType == ValueType.Normalized) {
                     if (v > 1.0) {
-                        xInput.setStyle(NodeStyleTools.badStyle);
+                        xInput.setStyle(UserConfig.badStyle());
                         if (commentsLabel != null) {
                             commentsLabel.setText(Languages.message("NormalizeError"));
-                            commentsLabel.setStyle(NodeStyleTools.badStyle);
+                            commentsLabel.setStyle(UserConfig.badStyle());
                         }
                         return;
                     }
@@ -148,22 +148,22 @@ public class XYZController extends BaseController {
                 xInput.setStyle(null);
             }
         } catch (Exception e) {
-            xInput.setStyle(NodeStyleTools.badStyle);
+            xInput.setStyle(UserConfig.badStyle());
             return;
         }
 
         try {
             double v = Double.parseDouble(yInput.getText());
             if (v < 0) {
-                yInput.setStyle(NodeStyleTools.badStyle);
+                yInput.setStyle(UserConfig.badStyle());
                 return;
             } else {
                 if (valueType == ValueType.Normalized) {
                     if (v > 1.0) {
-                        yInput.setStyle(NodeStyleTools.badStyle);
+                        yInput.setStyle(UserConfig.badStyle());
                         if (commentsLabel != null) {
                             commentsLabel.setText(Languages.message("NormalizeError"));
-                            commentsLabel.setStyle(NodeStyleTools.badStyle);
+                            commentsLabel.setStyle(UserConfig.badStyle());
                         }
                         return;
                     }
@@ -172,7 +172,7 @@ public class XYZController extends BaseController {
                 yInput.setStyle(null);
             }
         } catch (Exception e) {
-            yInput.setStyle(NodeStyleTools.badStyle);
+            yInput.setStyle(UserConfig.badStyle());
             return;
         }
 
@@ -187,7 +187,7 @@ public class XYZController extends BaseController {
                 z = v;
                 zInput.setStyle(null);
             } catch (Exception e) {
-                zInput.setStyle(NodeStyleTools.badStyle);
+                zInput.setStyle(UserConfig.badStyle());
                 return;
             }
         }

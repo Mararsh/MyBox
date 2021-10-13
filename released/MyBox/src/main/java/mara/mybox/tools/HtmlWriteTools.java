@@ -13,6 +13,8 @@ import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import static mara.mybox.tools.HtmlReadTools.charsetInHead;
+import static mara.mybox.tools.HtmlReadTools.tag;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
@@ -34,7 +36,11 @@ public class HtmlWriteTools {
     public static File writeHtml(String html) {
         try {
             File htmFile = TmpFileTools.getTempFile(".htm");
-            Charset charset = HtmlReadTools.htmlCharset(html);
+            Charset charset = charsetInHead(tag(html, "head", true));
+            if (charset == null) {
+                charset = Charset.forName("UTF-8");
+                html = setCharset(html, charset);
+            }
             TextFileTools.writeFile(htmFile, html, charset);
             return htmFile;
         } catch (Exception e) {
@@ -160,28 +166,71 @@ public class HtmlWriteTools {
             Charset fileCharset = TextFileTools.charset(htmlFile);
             String html = TextFileTools.readTexts(htmlFile, fileCharset);
             String head = HtmlReadTools.tag(html, "head", false);
-            String preHtml = HtmlReadTools.preHtml(html);
             if (head == null) {
                 if (!must && fileCharset.equals(charset)) {
                     return "NeedNot";
                 }
-                html = preHtml + "<html>\n" + "    <head>\n" + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n" + "    </head>\n" + html + "\n" + "</html>";
             } else {
-                String newHead;
                 Charset headCharset = HtmlReadTools.charsetInHead(head);
                 if (!must && fileCharset.equals(charset) && (headCharset == null || charset.equals(headCharset))) {
                     return "NeedNot";
                 }
+            }
+            return setCharset(html, charset);
+        } catch (Exception e) {
+            MyBoxLog.error(e, charset.displayName());
+            return null;
+        }
+    }
+
+    public static String setCharset(String html, Charset charset) {
+        try {
+            if (html == null || charset == null) {
+                return "InvalidData";
+            }
+            String head = HtmlReadTools.tag(html, "head", false);
+            String preHtml = HtmlReadTools.preHtml(html);
+            String name = charset.name().toLowerCase();
+            if (head == null) {
+                html = preHtml + "<html>\n" + "    <head>\n" + "        <meta http-equiv=\"Content-Type\" content=\"text/html;charset="
+                        + name + "\" />\n" + "    </head>\n" + html + "\n" + "</html>";
+            } else {
+                String newHead;
+                Charset headCharset = HtmlReadTools.charsetInHead(head);
                 if (headCharset != null) {
-                    newHead = FindReplaceString.replace(head, headCharset.name(), charset.name(), 0, false, true, false);
+                    newHead = FindReplaceString.replace(head, headCharset.name(), name, 0, false, true, false);
                 } else {
-                    newHead = head + "\n<meta charset=\"text/html; charset=" + charset.name() + "\"/>";
+                    newHead = head + "\n<meta http-equiv=\"Content-Type\" content=\"text/html;charset=" + name + "\"/>";
                 }
-                html = preHtml + "<html>\n" + "    <head>\n" + newHead + "\n" + "    </head>\n" + HtmlReadTools.body(html, true) + "\n" + "</html>";
+                html = preHtml + "<html>\n" + "    <head>\n" + newHead + "\n"
+                        + "    </head>\n" + HtmlReadTools.body(html, true) + "\n" + "</html>";
             }
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e, charset.displayName());
+            return null;
+        }
+    }
+
+    public static String ignoreHead(String html) {
+        try {
+            if (html == null) {
+                return "InvalidData";
+            }
+            String head = HtmlReadTools.tag(html, "head", false);
+            String preHtml = HtmlReadTools.preHtml(html);
+            String charset = "utf-8";
+            if (head != null) {
+                Charset headCharset = HtmlReadTools.charsetInHead(head);
+                if (headCharset != null) {
+                    charset = headCharset.name();
+                }
+            }
+            html = preHtml + "<html>\n" + "    <head>\n" + "        <meta http-equiv=\"Content-Type\" content=\"text/html;charset="
+                    + charset + "\" />\n" + "    </head>\n" + HtmlReadTools.body(html, true) + "\n" + "</html>";
+            return html;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -194,27 +243,30 @@ public class HtmlWriteTools {
         return setCharset(htmlFile, Charset.forName("utf-8"), must);
     }
 
-    public static String setStyle(File htmlFile, String css, boolean ignoreOriginal) {
+    public static String setStyle(File htmlFile, Charset charset, String css, boolean ignoreOriginal) {
         try {
             if (htmlFile == null || css == null) {
                 return "InvalidData";
             }
-            Charset fileCharset = TextFileTools.charset(htmlFile);
-            String html = TextFileTools.readTexts(htmlFile, fileCharset);
+            if (charset == null) {
+                charset = TextFileTools.charset(htmlFile);
+            }
+            String html = TextFileTools.readTexts(htmlFile, charset);
             String preHtml = HtmlReadTools.preHtml(html);
             String head;
             if (ignoreOriginal) {
-                head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
+                head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n";
             } else {
                 head = HtmlReadTools.tag(html, "head", false);
                 if (head == null) {
-                    head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
+                    head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n";
                 }
             }
-            html = preHtml + "<html>\n" + "    <head>\n"
-                    + head + "\n" + "        <style type=\"text/css\">/>\n"
-                    + css + "        </style>/>\n" + "    </head>\n"
-                    + HtmlReadTools.body(html, true) + "\n" + "</html>";
+            String body = HtmlReadTools.body(html, true);
+            html = preHtml + "<html>\n    <head>\n"
+                    + head + "\n        <style type=\"text/css\">\n"
+                    + css + "        </style>\n    </head>\n"
+                    + body + "\n</html>";
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e);

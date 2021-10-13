@@ -93,7 +93,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
 
                 @Override
                 protected void whenSucceeded() {
-                    makeSheet(data, false);
+                    makeSheet(data, false, true);
                     loadTotal();
                 }
 

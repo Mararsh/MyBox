@@ -93,7 +93,7 @@ public class ImageClipboardMonitor extends Timer {
                         lastImage = clip;
                         number++;
                         if (controller != null) {
-                            controller.loadClip(clip);
+                            controller.loadClip(clip, number);
                         }
                         if (ImageClipboardTools.isCopy()) {
                             copyToMyBoxClipboard(clip);
@@ -122,10 +122,10 @@ public class ImageClipboardMonitor extends Timer {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
                 }
                 File file = new File(filePrefix + DateTools.nowString3() + "-"
-                        + IntTools.getRandomInt(1000) + "." + attributes.getImageFormat());
+                        + IntTools.random(1000) + "." + attributes.getImageFormat());
                 while (file.exists()) {
                     file = new File(filePrefix + DateTools.nowString3() + "-"
-                            + IntTools.getRandomInt(1000) + "." + attributes.getImageFormat());
+                            + IntTools.random(1000) + "." + attributes.getImageFormat());
                 }
                 BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, attributes);
                 ImageFileWriters.writeImageFile(converted, attributes, file.getAbsolutePath());

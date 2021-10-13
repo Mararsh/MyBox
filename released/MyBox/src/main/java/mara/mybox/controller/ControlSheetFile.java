@@ -8,10 +8,10 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  *
- * ControlSheetFile < ControlSheetFile_Sheet < ControlSheetFile_File <
- * ControlSheet
+ * ControlSheetFile < ControlSheetFile_Calculation < ControlSheetFile_Operations
+ * < ControlSheetFile_File < ControlSheet
  */
-public abstract class ControlSheetFile extends ControlSheetFile_Sheet {
+public abstract class ControlSheetFile extends ControlSheetFile_Calculation {
 
     @Override
     public void initValues() {

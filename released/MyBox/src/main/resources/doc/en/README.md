@@ -5,15 +5,15 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 
 ## What's New            
-2021-9-21 v6.4.8         
+2021-10-13 v6.4.9         
 
-* Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
-* Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix.            
-       
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
-
-Happy Moon Festival!                
+* Improve. Text editor implements pagination as lines number and counts each line break as one character. 
+Timestamp is appended in target filename for batch operations.        
+* Add. Extract table data from html. Tabs can be closed in html/notes editor. Convert word/ppt/text as PDF.                
+* Platform. Upgrade to java17 and javafx17. MyBox can start from path with non-ascii name. Media can be played normally on Linux.          
+* Solved. Text/Bytes Editors read/write wrongly. Image scope is not displayed and fail to save. Inputting text may trigger shortcuts. Many functions fail to work.                           
+      
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.9)            
    
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -21,51 +21,47 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.4.8-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-src.zip)   39M(approximation)        
+[MyBox-6.4.9-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-src.zip)   39M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
 
 
 ### Self-contain packages
-Self-contain packages include all files and need not java env nor installation.   (Please unpack it under path in pure-English name.)        
+Self-contain packages include all files and need not java env nor installation.      
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.4.8-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-win10-x64.zip)  | 231MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.4.8-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac | [MyBox-6.4.8-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-mac.dmg)  | 245MB  |  MyBox-6.4.8.app   |        
+| win10 x64 | [MyBox-6.4.9-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-win10-x64.zip)  | 231MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.4.9-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.4.9-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-mac.dmg)  | 245MB  |  MyBox-6.4.9.app   |        
 
-User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
-(File with name including non-ascii can not be opened by double clicking currently)        
+User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
 ### Jar
-When JRE or JDK 16 or higher([Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html) or [open jdk](http://jdk.java.net/)) is installed, jar can run:        
+When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html) or [open jdk](http://jdk.java.net/)) is installed, jar can run:        
+In my Mac env(OS X 10.11.6/Darwin 15.6.0), openJDK 17 fails to start, so MyBox on mac is based on openJDK 16.         
+
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.4.8-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-win-jar.zip)  | 168MB | Java 16 or higher |
-| linux | [MyBox-6.4.8-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-linux-jar.zip)  | 176MB  | Java 16 or higher |
-| mac | [MyBox-6.4.8-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.8/MyBox-6.4.8-mac-jar.zip)  |  173MB  | Java 16 or higher |        
+| win | [MyBox-6.4.9-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-win-jar.zip)  | 168MB | Java 17 or higher |
+| linux | [MyBox-6.4.9-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-linux-jar.zip)  | 176MB  | Java 17 or higher |
+| mac | [MyBox-6.4.9-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-mac-jar.zip)  |  173MB  | Java 16 |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.4.8.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.9.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.4.8.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.9.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
 Download from sourceforge: [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)             
 
 ## Limitation        
-
-* Self-contain packages can not be lanuched under path including non-English characters.  And file with name including non-ascii can not be opened by double clicking.
-A bug has been reported to jpackage dev team:
-[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)        
 * MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
-* Since v6.4.3, Mybox will crash when play media on Linux.           
 
 ## Migration
 Each version has itself's configuration file. New version can copy parameters from existed versions.        
@@ -75,9 +71,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.4.8.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.4.8.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.4.8.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.4.9.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.4.9.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.4.9.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -97,7 +93,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.4.8 | 2021-9-20 | [html](#devLog) |
+| Development Logs | 6.4.9 | 2021-10-13 | [html](#devLog) |
 | Shortcuts | 6.4.7 | 2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -153,9 +149,6 @@ MyBox is based on following open sources:
 | JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |
 | Website | Color data | https://tool.lanrentuku.com/color/china.html |
 | Book | Materials | https://book.douban.com/subject/3894923/ |
-| National Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.tional Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.://github.com/CSSEGISandData/COVID-19 |
-| Website | Color data | https://tool.lanrentuku.com/color/china.html |
-| Book | Materials | https://book.douban.com/subject/3894923/ |
 | National Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |
 | movebank | Location data | https://www.datarepository.movebank.org |
 | CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |
@@ -170,7 +163,7 @@ MyBox is based on following open sources:
 | jsoup | DOM | https://jsoup.org/ |        
 
 # Current Version        
-Current version is 6.4.8. Its features are mentioned below in summary:          
+Current version is 6.4.9. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
@@ -205,6 +198,7 @@ Current version is 6.4.8. Its features are mentioned below in summary:
     -  [Others](#imageOthers)         
     -  [Big Image](#bigImage)         
 *  [Data Tools](#dataTools)         
+    -  [Common sheet management](#sheetDataBase)         
     -  [Data File](#dataFiles)         
     -  [Data Clipboard](#dataClipboard)         
     -  [Matrix](#matrix)         
@@ -244,7 +238,7 @@ Current version is 6.4.8. Its features are mentioned below in summary:
 
 ## Cross Platforms <a id="Cross-platform"></a>        
 
-MyBox is implemented in pure Java and only based on open sources, and it can run any platform which supports Java 16.        
+MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 17.        
 Versions before v5.3 are based on Java 8.        
 
 ## Internationalized <a id="Internationalized"></a>        
@@ -338,7 +332,11 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 	-  Support regular expression. Provide examples.
 	-  Counting.
 	-  Due to limitation of algorithm, to find regular expression in pages，assume maximum length of matched string is less than 1/16 of current JVM available memory.
-3. Locate. Go to position of specified character or specified line.
+3. Locate：
+	-  Select character at specified position.
+	-  Select line at specified position.
+	-  Select lines of specified range.
+	-  Select characters of specified range.
 4. Filter lines:
 	-  Conditions: Include/Not include One, Include/Not Include All, Include/Not Include Regular Expression, Match/Not Match Regular Expression.
 	-  Cumulative filter.
@@ -373,7 +371,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 	-  Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.              
 2. Convert/Split text files in batch.
 3. Merge text files.
-4. Convert text as htmls in batch.
+4. Convert text as htmls/PDF in batch.
 5. Replace strings in text files in batch.      
 
 ### Html Tools<a id="htmlTools" />       
@@ -391,25 +389,27 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 2. Find strings in html.
 3. Find elements in html.
 4. Snap html page. Dpi can be set. Save as one image or images in PDF.
-5. Convert html as Markdown/text/PDF in batch.
-6. Convert charset/style in html files in batch.
-7. Merge multiple pages as one html/Markdown/texts/PDF.
-8. Generate frameset file for multiple files. 
+5. Extract table data in html in batch.
+6. Convert html as Markdown/text/PDF in batch.
+7. Convert charset/style in html files in batch.
+8. Merge multiple pages as one html/Markdown/texts/PDF.
+9. Generate frameset file for multiple files. 
 
 ![Snap-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor-en.jpg)        
 
 ### Microsoft Documents <a id="msDocuments"></a>
 1. Handle Word file
-	-  View Word file:            
+	-  Formats:            
 		-  File ".doc"(Word 97， OLE 2) is converted as html. Most of formats kept.
 		-  File ".docx"(Word 2007, OOXML) is converted as text. Formats lost.
-	-  Convert ".doc"(Word 97) files as html in batch.          
+	-  View Word file.            
+	-  Convert Word  files as html/PDF in batch.          
 2. Handle PPT file:
 	-  If no comment, both ".ppt"(PPT 97, OLE 2) and ".pptx"(PPT 2007, OOXML) are suportted. 
 	-  View PPT file. Shown page by page:
 		-  Page is converted as an image
 		-  Slide text and Note text are displayed
-	-  Convert PPT files as images in batch
+	-  Convert PPT files as images/PDF in batch
 	-  Extract objects in PPT file in batch:
 		-  Selections: Slide text, Note text, Master text, Comments text,  image, sound,  OLE(Word/Excel)
 		-  Not support to extract sounds in ".pptx".
@@ -476,7 +476,8 @@ Load/Refresh/Delete text in System Clipboard:
 
 
 ### Analyse Image <a id="analyseImage"></a>
-1. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
+1. Statistic and visualization of image data, including average, variance, skewness, median, mode, 
+minimum, maximum of occurance of each color channel, and their histograms.
 2. Channels of histograms can be selected.
 3. Statistic against selected area.
 4. Count dominant colors:
@@ -770,6 +771,44 @@ Load/Refresh/Delete image in System Clipboard:
 
 ## Data Tools <a id="dataTools"></a>
 
+
+### Common sheet management<a id="sheetDataBase" />
+1. Following objects are handled by sheet data: Data File, Data Clipboard, Matrix.
+2. Data should be in same width. That is all rows have equal number of columns.   
+3. Edit sheet data:
+	- Two edit modes: Sheet Mode, and Text Mode. Each can modify data separately.      
+	- Mode in current tab is called "Current edit mode".
+	- In Sheet Mode:
+ 		- Each data is in a input field.
+ 		- Each modification is synchronized automatically to other panes.
+	- In Text Mode:
+ 		- All data are changed in one text area.
+ 		- Click button "Synchronize" to apply changes to other panes.
+4. Operation sheet:
+	- Operation types: Assign values, set column width, add/delete rows, add/delete columns,  copy, paste, sort, export.
+	- Operation objects: Selected rows/columns, all rows in current page, or all rows in file.
+5. Pagination. When pages number is larger than 1 and select all rows in file as operation object: 
+	- Changes of current page should be saved at first.
+	- Changes are written in file directly and can not be undone. (Can recover if backup)
+6. Data Definition is to describe and constrain data:
+	- Column name should not be null nor duplicate.
+	- Data type and "Not Null" are to validate data value.
+7. Text format and html are displayed synchronously:
+8. Calculate data:
+	- Calculation types: Transpose, Statistic.
+	- Calculation objects: Selected rows/columns, all rows in current page, or all rows in file.
+	- Following calculations can only work for columns of number types:
+ 		- Statistic
+	- Following calculations read all selected rows and need make sure there is enough memory:
+ 		- Transpose
+ 		- Statistic of "Mode" or "Median"
+	- Calculation result is displayed in new data sheet.
+9. Options:
+	- Decimal scale
+	- Maximum value of random.
+	- Whether pop functions menu of column/row when click or move mouse upon column/row header.
+	- Data warning threshold       
+
 ### Data File<a id="dataFiles" />
 1. Edit data file:
 	- Options of CSV file and text data file include charset, whether has first line as field names, and delimiter of data.
@@ -777,20 +816,6 @@ Load/Refresh/Delete image in System Clipboard:
  		- Options include sheet number and whether has first line as field names.
 		- Add/Delete/Rename sheets.
  		- Tool can only handle base data in Excel file. If file includes format, style, formula, or chart, suggest to save changes as new file to avoid data loss.
-	- Data in file should be in same width. That is all rows have equal number of columns.
-	- Edit data:
- 		- Change values in sheet cells. Functions include: set column width, set/copy/paste/insert/delete/sort/export columns and rows.
- 		- Values can be modified in text format with delimiter selections.
-	- Data are paginated. When pages number is larger than 1:
- 		- Changes of current page should be saved before run some functions.
- 		- Changes are written in file directly and can not be undone. (Can recover if backup)
-	- Data Definition is to describe and constrain data:
- 		- Column name should not be null nor duplicate.
- 		- Data type and "Not Null" are to validate data value.
-	- Text format and html are displayed synchronously:
-	- Options:
- 		- Decimal scale and maximum value of random.
- 		- Click or move mouse upon column/row header to pop functions menu of this column/row.
 2. Convert/Split data files in batch:
 	- Source files' formats can be csv, excel, and text. Options of source files can be set.
 	- Target files' formats include csv, text, excel, xml, json, html, pdf. Options of target files can be set.
@@ -806,8 +831,8 @@ Load/Refresh/Delete image in System Clipboard:
 
 
 ### Matrix<a id="matrix"></a>
-1. Edit matrix.  Same as editing of data file.      
-2. Matix can be saved and reused.
+1. Edit matrix. 
+2. matrix can be saved and reused.
 3. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Multiply Number, Divide By Number, Power.
 4. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
 
@@ -1248,8 +1273,6 @@ Load/Refresh/Delete image in System Clipboard:
 ## Media Tools <a id="MediaTools"></a>
 
 ### Play Videos/Audios<a id="mediaPlayer" />                   
-Notice: Since v6.4.3, Mybox will crash when play media on Linux.           
-
 1. Create/load playlist
 2. Options:  auto-play,  display milliseconds, loop number, random order
 3. Set: volumn, speed(0~8 times)
@@ -1448,7 +1471,6 @@ Decoding does reverse conversion.
 	- Color to replace Alpha when Alpha is not supported. (Suggest as White)
 	- Wdith of thumbnail
 	- Maximum width to display sampled images
-	- Whether copy image in system clipboard
 6. Map:
 	-  Data keys of map
 7. Clear personal settings.
@@ -1470,11 +1492,21 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
+2021-10-13 v6.4.9         
+
+* Improve. Text editor implements pagination as lines number and counts each line break as one character. 
+Timestamp is appended in target filename for batch operations.        
+* Add. Extract table data from html. Tabs can be closed in html/notes editor. Convert word/ppt/text as PDF.                
+* Platform. Upgrade to java17 and javafx17. MyBox can start from path with non-ascii name. Media can be played normally on Linux.          
+* Solved. Text/Bytes Editors read/write wrongly. Image scope is not displayed and fail to save. Inputting text may trigger shortcuts. Many functions fail to work.                           
+      
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.9)            
+   
 2021-9-21 v6.4.8         
 
-* Data file: Optimize operations of sheet. Data text can be editable. Support text data file.              
+* Data file: Optimize operations of sheet. Data text can be edited. Support text data file.  Data clipboard can be saved and managed.                     
 * Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.        
-* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matix.  Fail to open file without suffix.                     
+* Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matrix.  Fail to open file without suffix on Linux.                     
        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8)         
 
@@ -1941,5 +1973,3 @@ This tool might fail to work when weibo would change the accessing channel of pa
     
 
 [Closed requirements/bugs not in any version](https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone)    
-
-

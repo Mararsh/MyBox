@@ -1,7 +1,11 @@
 package mara.mybox.db.table;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -121,6 +125,37 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
             ret = false;
         }
         return ret;
+    }
+
+    public int clearInvalid(Connection conn) {
+        int count = 0;
+        try {
+            conn.setAutoCommit(true);
+            String sql = "SELECT * FROM Data_Definition WHERE data_type="
+                    + DataDefinition.dataType(DataType.DataClipboard)
+                    + " OR data_type=" + DataDefinition.dataType(DataType.DataFile);
+            List<DataDefinition> invalid = new ArrayList<>();
+            try ( PreparedStatement statement = conn.prepareStatement(sql);
+                     ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    DataDefinition data = readData(results);
+                    try {
+                        File file = new File(data.getDataName());
+                        if (!file.exists()) {
+                            invalid.add(data);
+                        }
+                    } catch (Exception e) {
+                        invalid.add(data);
+                    }
+                }
+            }
+            count = invalid.size();
+            deleteData(conn, invalid);
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return count;
     }
 
 }

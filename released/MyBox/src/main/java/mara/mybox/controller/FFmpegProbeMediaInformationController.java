@@ -36,7 +36,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -91,7 +91,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
 
             tabPane.getTabs().clear();
 
-            functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(NodeStyleTools.badStyle));
+            functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(UserConfig.badStyle()));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -115,7 +115,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
     public void checkSourceFileInput() {
         String v = sourceFileInput.getText();
         if (v == null || v.isEmpty()) {
-            sourceFileInput.setStyle(NodeStyleTools.badStyle);
+            sourceFileInput.setStyle(UserConfig.badStyle());
             return;
         }
         sourceFileInput.setStyle(null);
@@ -281,7 +281,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             }
             final String address = sourceFileInput.getText();
             if (address == null || address.isEmpty()) {
-                sourceFileInput.setStyle(NodeStyleTools.badStyle);
+                sourceFileInput.setStyle(UserConfig.badStyle());
                 return;
             }
             formatView.getEngine().loadContent​("");

@@ -25,7 +25,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SettingsController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SettingsController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -142,7 +142,7 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <VBox minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                     <children>
-                                                        <Label text="%PoppedMessage" />
+                                                        <Label text="%Message" />
                                                         <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="55.0" spacing="10.0">
                                                             <children>
                                                                 <Label text="%FontSizeTimes" />

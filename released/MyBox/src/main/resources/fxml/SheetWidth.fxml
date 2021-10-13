@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SheetWidthController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SheetWidthController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -36,6 +36,28 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="colAllRadio" mnemonicParsing="false" text="%All" toggleGroup="$colGroup" />
                 <RadioButton fx:id="colSelectRadio" layoutX="77.0" layoutY="14.0" mnemonicParsing="false" text="%Select" toggleGroup="$colGroup" />
                 <fx:include fx:id="colsList" prefHeight="150.0" prefWidth="200.0" source="ControlListCheckBox.fxml" />
+            <VBox spacing="2.0">
+               <children>
+                  <Button fx:id="selectAllColsButton" mnemonicParsing="false" onAction="#selectAllCols">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectAll.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="selectNoneColsButton" mnemonicParsing="false" onAction="#selectNoneCols">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectNone.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
             </children>
         </HBox>
         <HBox fx:id="codeBox1" alignment="CENTER_LEFT" layoutX="30.0" layoutY="55.0" spacing="5.0">

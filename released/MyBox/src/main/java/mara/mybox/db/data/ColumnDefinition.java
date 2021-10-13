@@ -10,6 +10,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -19,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-7-12
  * @License Apache License Version 2.0
  */
-public class ColumnDefinition extends BaseData {
+public class ColumnDefinition extends BaseData implements Cloneable {
 
     protected DataDefinition dataDefinition;
     protected long dcid, dataid;
@@ -56,7 +57,7 @@ public class ColumnDefinition extends BaseData {
         index = -1;
         isPrimaryKey = notNull = isID = false;
         editable = true;
-        length = 128;
+        length = 4096;
         width = 100; // px
         onDelete = OnDelete.Restrict;
         onUpdate = OnUpdate.Restrict;
@@ -143,17 +144,17 @@ public class ColumnDefinition extends BaseData {
                 case Image:
                     return length <= 0 || value.length() <= length;
                 case Double:
-                    Double.parseDouble(value);
+                    Double.parseDouble(value.replaceAll(",", ""));
                     return true;
                 case Float:
-                    Float.parseFloat(value);
+                    Float.parseFloat(value.replaceAll(",", ""));
                     return true;
                 case Long:
                 case Era:
                     Long.parseLong(value);
                     return true;
                 case Integer:
-                    Integer.parseInt(value);
+                    Integer.parseInt(value.replaceAll(",", ""));
                     return true;
                 case Boolean:
                     String v = value.toLowerCase();
@@ -255,20 +256,63 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
     }
 
+    // works on java 17 while not work on java 16
+//    public String random(Random random, int maxRandom, short scale) {
+//        if (random == null) {
+//            random = new Random();
+//        }
+//        switch (type) {
+//            case Double:
+//                return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+//            case Float:
+//                return FloatTools.format(random.nextFloat(maxRandom), scale);
+//            case Integer:
+//                return StringTools.format(random.nextInt(maxRandom));
+//            case Long:
+//                return StringTools.format(random.nextLong(maxRandom));
+//            case Short:
+//                return StringTools.format((short) random.nextInt(maxRandom));
+//            default:
+//                return (char) ('a' + random.nextInt(25)) + "";
+//        }
+//    }
+    // works on java 16
     public String random(Random random, int maxRandom, short scale) {
         if (random == null) {
             random = new Random();
         }
         switch (type) {
             case Double:
-            case Float:
                 return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+            case Float:
+                return FloatTools.format(FloatTools.random(random, maxRandom), scale);
             case Integer:
-            case Long:
-            case Short:
                 return StringTools.format(random.nextInt(maxRandom));
+            case Long:
+                return StringTools.format(FloatTools.random(random, maxRandom));
+            case Short:
+                return StringTools.format((short) random.nextInt(maxRandom));
             default:
                 return (char) ('a' + random.nextInt(25)) + "";
+        }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        try {
+            ColumnDefinition newInfo = (ColumnDefinition) super.clone();
+            return newInfo;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public ColumnDefinition cloneBase() {
+        try {
+            return (ColumnDefinition) clone();
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -698,8 +742,9 @@ public class ColumnDefinition extends BaseData {
         return width;
     }
 
-    public void setWidth(int width) {
+    public ColumnDefinition setWidth(int width) {
         this.width = width;
+        return this;
     }
 
 }
