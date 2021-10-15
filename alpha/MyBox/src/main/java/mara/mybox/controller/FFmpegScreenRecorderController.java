@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,7 +22,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
@@ -98,8 +96,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetFileInput.textProperty())
-                            .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    targetFileController.valid.not()
                             .or(optionsController.executableInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(optionsController.titleInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(optionsController.xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
@@ -119,11 +116,11 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         if (ext == null || ext.isBlank() || Languages.message("OriginalFormat").equals(ext)) {
             return;
         }
-        String v = targetFileInput.getText();
+        String v = targetFileController.text();
         if (v == null || v.isBlank()) {
-            targetFileInput.setText(AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString() + "." + ext);
+            targetFileController.input(AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
-            targetFileInput.setText(FileNameTools.getFilePrefix(v) + "." + ext);
+            targetFileController.input(FileNameTools.getFilePrefix(v) + "." + ext);
         }
     }
 

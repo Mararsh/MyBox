@@ -48,7 +48,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     public abstract void pasteFile(ControlSheetCSV sourceController, int row, int col, boolean enlarge);
 
-    public abstract boolean exportCols(SheetExportController exportController, List<Integer> cols);
+    public abstract boolean exportCols(SheetExportController exportController, List<Integer> cols, boolean skip);
 
     public String[][] data(List<Integer> rows, List<Integer> cols) {
         if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty() || sheetInputs == null || columns == null) {
@@ -543,7 +543,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
         controller.dataController.setParameters((ControlSheet) this, -1, -1);
     }
 
-    public boolean exportRowsCols(SheetExportController exportController, List<Integer> rows, List<Integer> cols) {
+    public boolean exportRowsCols(SheetExportController exportController, List<Integer> rows, List<Integer> cols, boolean skip) {
         try {
             if (exportController == null) {
                 return false;
@@ -559,7 +559,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                 names.add(columns.get(c).getName());
             }
             exportController.convertController.names = names;
-            exportController.convertController.openWriters(exportController.filePrefix);
+            exportController.convertController.openWriters(exportController.filePrefix, skip);
             for (int r = 0; r < rows.size(); ++r) {
                 if (exportController.task == null || exportController.task.isCancelled()) {
                     return false;

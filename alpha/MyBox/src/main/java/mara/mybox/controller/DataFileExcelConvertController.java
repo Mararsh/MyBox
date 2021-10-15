@@ -23,6 +23,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 public class DataFileExcelConvertController extends BaseDataConvertController {
 
+    protected boolean skip;
+
     @FXML
     protected CheckBox withNamesCheck;
 
@@ -43,6 +45,12 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public boolean makeMoreParameters() {
+        skip = targetPathController.isSkip();
+        return super.makeMoreParameters();
     }
 
     @Override
@@ -78,13 +86,13 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                     if (convertController.names.isEmpty()) {
                         if (withNamesCheck.isSelected()) {
                             convertController.names.addAll(rowData);
-                            convertController.openWriters(filePrefix);
+                            convertController.openWriters(filePrefix, skip);
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {
                                 convertController.names.add(Languages.message("Field") + c);
                             }
-                            convertController.openWriters(filePrefix + "_" + sheet.getSheetName());
+                            convertController.openWriters(filePrefix + "_" + sheet.getSheetName(), skip);
                         }
                     }
                     convertController.writeRow(rowData);

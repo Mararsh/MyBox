@@ -55,8 +55,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
         try {
             super.initControls();
 
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {

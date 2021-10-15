@@ -11,7 +11,6 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
@@ -64,8 +63,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
 
                 startButton.disableProperty().unbind();
                 startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                        .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                        .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                        .or(targetPathController.valid.not())
                         .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                         .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                         .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))

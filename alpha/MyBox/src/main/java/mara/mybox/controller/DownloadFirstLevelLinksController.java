@@ -126,7 +126,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     protected TableColumn<Link, Integer> indexColumn;
     @FXML
-    protected ControlFileSelecter targetPathController;
+    protected ControlFileSelecter targetPathInputController;
     @FXML
     protected Button downloadButton, equalButton, linkButton, htmlButton,
             clearDownloadingButton, deleteDownloadingButton, copyDownloadingButton,
@@ -190,9 +190,9 @@ public class DownloadFirstLevelLinksController extends BaseController {
             textParser = Parser.builder(textOptions).build();
             textCollectingVisitor = new TextCollectingVisitor();
 
-            targetPathController.label(Languages.message("TargetPath"))
-                    .name(baseName + "TargatPath", true)
-                    .isSource(false).isDirectory(true).mustExist(false);
+            targetPathInputController.label(Languages.message("TargetPath"))
+                    .baseName(baseName).savedName(baseName + "TargatPath")
+                    .isSource(false).isDirectory(true).mustExist(false).init();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -242,11 +242,11 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
             goButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    targetPathInputController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                             .or(urlSelector.getSelectionModel().selectedItemProperty().isNull())
             );
             downloadButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    targetPathInputController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                             .or(linksTableView.getSelectionModel().selectedItemProperty().isNull())
             );
             copyButton.disableProperty().bind(linksTableView.getSelectionModel().selectedItemProperty().isNull());
@@ -472,7 +472,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            if (targetPathController.file == null) {
+            if (targetPathInputController.file == null) {
                 tabPane.getSelectionModel().select(optionsTab);
             }
 
@@ -511,7 +511,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             return;
         }
         VisitHistoryTools.downloadURI(address);
-        File downloadPath = targetPathController.file;
+        File downloadPath = targetPathInputController.file;
         if (downloadPath == null) {
             popError(Languages.message("InvalidParameters"));
             tabPane.getSelectionModel().select(optionsTab);
@@ -572,7 +572,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         this.subPath = subPath;
         filenameType = nameType;
         linksData.clear();
-        File downloadPath = targetPathController.file;
+        File downloadPath = targetPathInputController.file;
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -759,7 +759,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         }
         String path = result.get().trim();
         for (Link link : selected) {
-            File fullpath = new File(targetPathController.file.getAbsolutePath() + File.separator + path);
+            File fullpath = new File(targetPathInputController.file.getAbsolutePath() + File.separator + path);
             String filename = link.filename(fullpath, filenameType);
             link.setFile(filename);
         }
@@ -775,7 +775,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             Link link = selected.get(i);
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -793,7 +793,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         for (Link link : selected) {
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -980,7 +980,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
     @FXML
     public void view(Link link) {
-        if (link == null || targetPathController.file == null) {
+        if (link == null || targetPathInputController.file == null) {
             return;
         }
         String s = Languages.message("Address") + ": " + link.getAddress() + "<br>"
@@ -1667,7 +1667,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     protected void openFolder() {
         try {
-            browseURI(targetPathController.file.toURI());
+            browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {
         }
     }

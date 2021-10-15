@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Languages;
@@ -45,6 +47,21 @@ public class DataFileExcelMergeController extends FilesMergeController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Excel);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(tableData)
+                    .or(targetFileController.valid.not())
+            );
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override

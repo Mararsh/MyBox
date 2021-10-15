@@ -95,17 +95,17 @@ public class SheetExportController extends BaseTaskController {
     @Override
     protected boolean doTask() {
         try {
+            boolean skip = targetPathController.isSkip();
             List<Integer> cols = dataController.cols();
-
             List<String> names = new ArrayList<>();
             for (int c : cols) {
                 names.add(dataController.sheetController.columns.get(c).getName());
             }
             convertController.names = names;
             if (dataController.rowAllRadio.isSelected()) {
-                return dataController.sheetController.exportCols(this, cols);
+                return dataController.sheetController.exportCols(this, cols, skip);
             } else {
-                return dataController.sheetController.exportRowsCols(this, dataController.rows(), cols);
+                return dataController.sheetController.exportRowsCols(this, dataController.rows(), cols, skip);
             }
         } catch (Exception e) {
             if (task != null) {

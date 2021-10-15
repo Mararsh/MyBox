@@ -19,7 +19,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextFileTools;
@@ -47,7 +46,7 @@ public class ControlDataConvert extends BaseController {
 
     protected BaseTaskController parent;
     protected List<String> names;
-    protected boolean firstRow, toCsv, toText, toHtml, toXml, toJson, toXlsx, toPdf;
+    protected boolean firstRow, toCsv, toText, toHtml, toXml, toJson, toXlsx, toPdf, skip;
     protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile;
     protected CSVPrinter csvPrinter;
     protected BufferedWriter textWriter, htmlWriter, xmlWriter, jsonWriter;
@@ -83,19 +82,18 @@ public class ControlDataConvert extends BaseController {
     }
 
     public void setControls(BaseTaskController parent, ControlPdfWriteOptions pdfOptionsController) {
-        setControls(parent, pdfOptionsController, true, true, true, true, true, true, true);
+        this.parent = parent;
+        baseName = parent.baseName;
+
+        this.pdfOptionsController = pdfOptionsController;
+        if (pdfOptionsController != null) {
+            pdfOptionsController.set(baseName, false);
+        }
+        setControls(true, true, true, true, true, true, true);
     }
 
-    public void setControls(BaseTaskController parent, ControlPdfWriteOptions pdfOptionsController,
-            boolean toCsv, boolean toText, boolean toJson, boolean toXml, boolean toXlsx, boolean toHtml, boolean toPdf) {
+    private void setControls(boolean toCsv, boolean toText, boolean toJson, boolean toXml, boolean toXlsx, boolean toHtml, boolean toPdf) {
         try {
-            this.parent = parent;
-            baseName = parent.baseName;
-
-            this.pdfOptionsController = pdfOptionsController;
-            if (pdfOptionsController != null) {
-                pdfOptionsController.set(baseName, false);
-            }
             this.toCsv = toCsv;
             this.toText = toText;
             this.toJson = toJson;
@@ -233,7 +231,6 @@ public class ControlDataConvert extends BaseController {
             fileIndex = 1;
             rowsIndex = 0;
             targetPath = parent.targetPath;
-            targetExistType = parent.targetExistType;
 
             if (pdfOptionsController != null && toPdf && pdfCheck.isSelected()) {
                 columnWidths = new ArrayList<>();
@@ -274,7 +271,7 @@ public class ControlDataConvert extends BaseController {
         }
     }
 
-    protected void initWriters() {
+    private void initWriters() {
         csvPrinter = null;
         textWriter = null;
         htmlWriter = null;
@@ -293,14 +290,15 @@ public class ControlDataConvert extends BaseController {
         firstRow = true;
     }
 
-    protected boolean openWriters(String prefix) {
+    public boolean openWriters(String prefix, boolean skip) {
         filePrefix = prefix;
         fileIndex = 1;
         rowsIndex = 0;
+        this.skip = skip;
         return openWriters();
     }
 
-    protected boolean openWriters() {
+    private boolean openWriters() {
         initWriters();
         if (csvWriteController.charset == null) {
             csvWriteController.charset = Charset.forName("utf-8");
@@ -324,7 +322,7 @@ public class ControlDataConvert extends BaseController {
                     if (csvWriteController.withNamesCheck.isSelected()) {
                         csvPrinter.printRecord(names);
                     }
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (skip) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -337,7 +335,7 @@ public class ControlDataConvert extends BaseController {
                     if (textWriteOptionsController.withNamesCheck.isSelected()) {
                         TextFileTools.writeLine(textWriter, names, textDelimiter);
                     }
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (skip) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -358,7 +356,7 @@ public class ControlDataConvert extends BaseController {
                     s.append(indent).append("</HEAD>\n").append(indent).append("<BODY>\n");
                     s.append(StringTable.tablePrefix(new StringTable(names)));
                     htmlWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (skip) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -372,7 +370,7 @@ public class ControlDataConvert extends BaseController {
                             .append(csvWriteController.charset.name()).append("\"?>\n")
                             .append("<Data>\n");
                     xmlWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (skip) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -384,7 +382,7 @@ public class ControlDataConvert extends BaseController {
                     StringBuilder s = new StringBuilder();
                     s.append("{\"Data\": [\n");
                     jsonWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (skip) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -393,7 +391,7 @@ public class ControlDataConvert extends BaseController {
                 if (pdfFile != null) {
                     updateLogs(Languages.message("Writing") + " " + pdfFile.getAbsolutePath());
                     pdfTable.setColumns(names).createDoc(pdfFile);
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (skip) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -412,7 +410,7 @@ public class ControlDataConvert extends BaseController {
                         cell.setCellValue(names.get(i));
                         cell.setCellStyle(horizontalCenter);
                     }
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (skip) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -423,7 +421,7 @@ public class ControlDataConvert extends BaseController {
         }
     }
 
-    protected void writeRow(List<String> row) {
+    public void writeRow(List<String> row) {
         try {
             if (row == null) {
                 return;
@@ -514,7 +512,7 @@ public class ControlDataConvert extends BaseController {
         }
     }
 
-    protected void closeWriters() {
+    public void closeWriters() {
         try {
             if (csvPrinter != null && csvFile != null) {
                 csvPrinter.flush();
@@ -583,11 +581,11 @@ public class ControlDataConvert extends BaseController {
         }
     }
 
-    protected void updateLogs(String logs) {
+    public void updateLogs(String logs) {
         parent.updateLogs(logs);
     }
 
-    protected void targetFileGenerated(File file) {
+    public void targetFileGenerated(File file) {
         parent.targetFileGenerated(file);
     }
 

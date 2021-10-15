@@ -12,10 +12,10 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -45,8 +45,7 @@ public class PptToImagesController extends BaseBatchFileController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(targetPathController.valid.not())
                     .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))

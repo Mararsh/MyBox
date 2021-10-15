@@ -121,10 +121,10 @@ public class ImageClipboardMonitor extends Timer {
                 if (width > 0) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
                 }
-                File file = new File(filePrefix + DateTools.nowString3() + "-"
+                File file = new File(filePrefix + "-" + DateTools.nowFileString() + "-"
                         + IntTools.random(1000) + "." + attributes.getImageFormat());
                 while (file.exists()) {
-                    file = new File(filePrefix + DateTools.nowString3() + "-"
+                    file = new File(filePrefix + "-" + DateTools.nowFileString() + "-"
                             + IntTools.random(1000) + "." + attributes.getImageFormat());
                 }
                 BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, attributes);

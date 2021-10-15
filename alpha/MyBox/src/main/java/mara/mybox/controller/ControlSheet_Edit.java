@@ -59,7 +59,7 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
                         if (result.get() == buttonSynchronize) {
                             String cname = editDelimiterName;
                             editDelimiterName = editDelimiterController.delimiterName;
-                            synchronizeEdit(cname);
+                            synchronizeTextsEdit(cname);
                         } else if (result.get() == buttonChange) {
                             editDelimiterName = editDelimiterController.delimiterName;
                             updateEdit();
@@ -106,18 +106,18 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
     public void textChanged(boolean changed) {
         try {
             textChanged = changed;
-            editTab.setText(message("EditText") + (changed ? " *" : ""));
+            textsEditTab.setText(message("EditText") + (changed ? " *" : ""));
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
 
     @FXML
-    public void synchronizeEdit() {
-        synchronizeEdit(editDelimiterName);
+    public void synchronizeTextsEdit() {
+        synchronizeTextsEdit(editDelimiterName);
     }
 
-    public void synchronizeEdit(String delimiterName) {
+    public void synchronizeTextsEdit(String delimiterName) {
         try {
             if (isSettingValues) {
                 return;
@@ -167,11 +167,11 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            tabPane.getSelectionModel().select(editTab);
+            tabPane.getSelectionModel().select(textsEditTab);
             isSettingValues = true;
             textsEditArea.setText(text);
             isSettingValues = false;
-            synchronizeEdit();
+            synchronizeTextsEdit();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

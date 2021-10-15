@@ -5,18 +5,14 @@ import java.io.File;
 import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -40,8 +36,8 @@ public class MyBoxIconsController extends BaseTaskController {
             super.initControls();
             sourceCodesPathController.label(Languages.message("sourceCodesPath"))
                     .isDirectory(true).isSource(false).mustExist(true).permitNull(true)
-                    .defaultValue("win".equals(SystemTools.os()) ? "D:\\MyBox" : "/home/mara/mybox")
-                    .name("SourceCodesPath", true);
+                    .defaultFile("win".equals(SystemTools.os()) ? new File("D:\\MyBox") : new File("/home/mara/mybox"))
+                    .baseName(baseName).savedName(baseName + "SourceCodesPath").init();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

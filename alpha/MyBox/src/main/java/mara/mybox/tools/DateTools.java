@@ -15,7 +15,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 import mara.mybox.data.Era;
 import mara.mybox.value.AppValues;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.TimeFormats;
 
@@ -31,32 +30,14 @@ public class DateTools {
     }
 
     public static String nowFileString() {
-        return datetimeToString(new Date()).replaceAll(":", "-").replaceAll("\\s+", "_");
+        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.DatetimeFormat2);
+        formatter.setTimeZone(getTimeZone());
+        String dateString = formatter.format(new Date());
+        return dateString;
     }
 
     public static String nowString() {
         return datetimeToString(new Date());
-    }
-
-    public static String nowString3() {
-        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.DatetimeFormat3);
-        formatter.setTimeZone(getTimeZone());
-        String dateString = formatter.format(new Date());
-        return dateString;
-    }
-
-    public static String nowString4() {
-        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.DatetimeFormat4);
-        formatter.setTimeZone(getTimeZone());
-        String dateString = formatter.format(new Date());
-        return dateString;
-    }
-
-    public static String nowString5() {
-        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.EraDatetimeZh, Languages.LocaleEn);
-        formatter.setTimeZone(getTimeZone());
-        String dateString = formatter.format(new Date());
-        return dateString;
     }
 
     public static boolean isBC(long value) {

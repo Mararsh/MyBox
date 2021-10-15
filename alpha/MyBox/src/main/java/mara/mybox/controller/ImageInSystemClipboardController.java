@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -42,6 +41,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     private String filePrefix;
     private Clipboard clipboard;
 
+    @FXML
+    protected ControlFileSelecter targetPathInputController;
     @FXML
     protected Button openPathButton, clearBoardButton;
     @FXML
@@ -128,9 +129,11 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 }
             });
 
-            openPathButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
+            targetPathInputController.label(message("TargetPath"))
+                    .baseName(baseName).savedName(baseName + "TargatPath")
+                    .isSource(false).isDirectory(true).mustExist(false).init();
+
+            openPathButton.disableProperty().bind(targetPathInputController.valid.not());
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -158,7 +161,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
     @FXML
     protected void openTargetPath(ActionEvent event) {
-        view(new File(targetPathInput.getText()));
+        view(targetPathInputController.file);
     }
 
     @FXML
@@ -168,7 +171,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
     public void startMonitor() {
         try {
-            targetPath = new File(targetPathInput.getText());
+            targetPath = targetPathInputController.file;
             if (targetPath != null && targetPath.exists()) {
                 if (targetPrefixInput.getText().trim().isEmpty()) {
                     filePrefix = targetPath.getAbsolutePath() + File.separator;

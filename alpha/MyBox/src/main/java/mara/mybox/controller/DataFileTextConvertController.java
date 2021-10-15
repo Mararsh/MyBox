@@ -25,6 +25,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
     protected String sourceDelimiterName;
     protected Charset sourceCharset;
     protected boolean sourceWithName;
+    protected boolean skip;
 
     @FXML
     protected ControlTextOptions readOptionsController;
@@ -59,6 +60,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
         sourceCharset = readOptionsController.charset;
         sourceDelimiterName = readOptionsController.delimiterName;
         sourceWithName = readOptionsController.withNamesCheck.isSelected();
+        skip = targetPathController.isSkip();
         return super.makeMoreParameters();
     }
 
@@ -89,7 +91,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
                         }
                     }
                     convertController.names = names;
-                    convertController.openWriters(filePrefix(srcFile));
+                    convertController.openWriters(filePrefix(srcFile), skip);
                     if (sourceWithName) {
                         continue;
                     }

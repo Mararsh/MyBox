@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.4.9</version>
+    <version>6.5.1</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>

@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                             </content>
                                         </ScrollPane>
                                         <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction"
-                                                  styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                                styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -68,38 +68,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="targetVBox" spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label text="%FilesPath" HBox.hgrow="NEVER">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" HBox.hgrow="NEVER">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label text="%ExistedFiles" />
-                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="targetExistGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
-                                                <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
-                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                                            </children>
-                                        </HBox>
+                                        <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

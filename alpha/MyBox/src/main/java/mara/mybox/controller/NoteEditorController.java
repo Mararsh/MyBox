@@ -540,7 +540,9 @@ public class NoteEditorController extends HtmlEditorController {
         if (oldTab == styleTab) {
             webEngine.getLoadWorker().cancel();
             webEngine.loadContent(styleHtml(htmlInWebview()));
-            htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
+            if (tabPane.getTabs().contains(editorTab)) {
+                htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
+            }
         }
         super.tabSelectionChanged(oldTab);
     }
@@ -553,7 +555,7 @@ public class NoteEditorController extends HtmlEditorController {
             if (!UserConfig.getBoolean(baseName + "ShowTagsTab", true)) {
                 tabPane.getTabs().remove(tagsTab);
             }
-            tagsTab.setOnClosed(new EventHandler<Event>() {
+            tagsTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
                     UserConfig.setBoolean(baseName + "ShowTagsTab", false);
@@ -563,7 +565,7 @@ public class NoteEditorController extends HtmlEditorController {
             if (!UserConfig.getBoolean(baseName + "ShowStyleTab", true)) {
                 tabPane.getTabs().remove(styleTab);
             }
-            styleTab.setOnClosed(new EventHandler<Event>() {
+            styleTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
                     UserConfig.setBoolean(baseName + "ShowStyleTab", false);

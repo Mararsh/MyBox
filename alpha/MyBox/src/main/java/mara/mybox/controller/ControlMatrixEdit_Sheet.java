@@ -433,8 +433,8 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
     }
 
     @Override
-    public boolean exportCols(SheetExportController exportController, List<Integer> cols) {
-        return exportRowsCols(exportController, rowsIndex(true), cols);
+    public boolean exportCols(SheetExportController exportController, List<Integer> cols, boolean skip) {
+        return exportRowsCols(exportController, rowsIndex(true), cols, skip);
     }
 
     @Override

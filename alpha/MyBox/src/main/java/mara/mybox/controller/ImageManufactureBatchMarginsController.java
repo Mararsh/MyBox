@@ -18,13 +18,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.MargionTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -69,8 +64,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(marginWidthBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(marginsTopCheck.styleProperty().isEqualTo(UserConfig.badStyle()))

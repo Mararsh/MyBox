@@ -109,17 +109,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                                                                     <children>
-                                                                        <Label text="%TargetPath" />
-                                                                        <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconFolderImage.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
+                                                                        <fx:include fx:id="targetPathInput" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS"  maxWidth="1.7976931348623157E308" />
                                                                         <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openTargetPath">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

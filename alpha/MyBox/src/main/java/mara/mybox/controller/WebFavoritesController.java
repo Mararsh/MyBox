@@ -139,7 +139,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             });
 
             iconController.isDirectory(false).isSource(true).mustExist(true).permitNull(true)
-                    .name(baseName + "Icon", false).type(VisitHistory.FileType.Image);
+                    .baseName(baseName).savedName(baseName + "Icon").type(VisitHistory.FileType.Image);
             iconController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {

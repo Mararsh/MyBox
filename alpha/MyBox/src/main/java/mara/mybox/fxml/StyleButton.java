@@ -366,7 +366,15 @@ public class StyleButton {
         if (id.startsWith("style")) {
             return new StyleData(id, message("Style"), "", "iconStyle.png");
         }
-        if (id.startsWith("panesMenu")) {
+        if (id.startsWith("paneSize")) {
+            switch (id) {
+                case "paneSizeButton":
+                    return new StyleData(id, message("PaneSize"), "CTRL+2", "iconPaneSize.png");
+                default:
+                    return new StyleData(id, message("PaneSize"), "", "iconPaneSize.png");
+            }
+        }
+        if (id.startsWith("panes")) {
             return new StyleData(id, message("Panes"), "", "iconPanes.png");
         }
         if (id.startsWith("extract")) {
@@ -546,14 +554,7 @@ public class StyleButton {
                     return new StyleData(id, message("LoadedSize"), "", "iconLoadSize.png");
             }
         }
-        if (id.startsWith("paneSize")) {
-            switch (id) {
-                case "paneSizeButton":
-                    return new StyleData(id, message("PaneSize"), "CTRL+2", "iconPaneSize.png");
-                default:
-                    return new StyleData(id, message("PaneSize"), "", "iconPaneSize.png");
-            }
-        }
+
         return null;
     }
 

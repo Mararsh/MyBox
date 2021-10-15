@@ -18,9 +18,10 @@ public class TimeFormats {
     public static final String TimeFormat = "HH:mm:ss";
     public static final String TimeMs = "HH:mm:ss.SSS";
     public static final String DatetimeMs = "yyyy-MM-dd HH:mm:ss.SSS";
-    public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
-    public static final String DatetimeFormat4 = "yyyyMMddHHmmssSSS";
-    public static final String DatetimeFormat6 = "yyyy.MM.dd HH:mm:ss";
+    public static final String DatetimeFormat2 = "yyyy-MM-dd_HH-mm-ss-SSS";
+    public static final String DatetimeFormat3 = "yyyyMMddHHmmssSSS";
+    public static final String DatetimeFormat4 = "yyyy-MM-dd_HH-mm-ss";
+    public static final String DatetimeFormat5 = "yyyy.MM.dd HH:mm:ss";
     public static final String EraDatetimeEn = "y-M-d H:m:s G";
     public static final String EraDatetimeMsEn = "y-M-d H:m:s.S G";
     public static final String EraDateEn = "y-M-d G";

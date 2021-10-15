@@ -55,18 +55,13 @@ public abstract class BaseController_Attributes {
     protected Timer popupTimer, timer;
     protected Popup popup;
     protected ContextMenu popMenu;
-    protected String targetFileSuffix, targetNameAppend;
+    protected String targetFileSuffix;
     protected boolean isSettingValues, isPop;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected SaveAsType saveAsType;
-    protected TargetExistType targetExistType;
 
     protected enum SaveAsType {
         Load, Open, None
-    }
-
-    public static enum TargetExistType {
-        Rename, Replace, Skip
     }
 
     @FXML
@@ -74,10 +69,13 @@ public abstract class BaseController_Attributes {
     @FXML
     protected MainMenuController mainMenuController;
     @FXML
-    protected TextField sourceFileInput, sourcePathInput, targetAppendInput,
-            targetPathInput, targetPrefixInput, targetFileInput, statusLabel;
+    protected TextField sourceFileInput, sourcePathInput, targetPrefixInput, statusLabel;
     @FXML
     protected OperationController operationBarController;
+    @FXML
+    protected ControlTargetPath targetPathController;
+    @FXML
+    protected ControlTargetFile targetFileController;
     @FXML
     protected Button selectFileButton, okButton, startButton, goButton, previewButton, playButton, stopButton,
             editButton, deleteButton, saveButton, cropButton, saveAsButton, undoButton, redoButton,
@@ -85,7 +83,7 @@ public abstract class BaseController_Attributes {
             copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
             myBoxClipboardButton, systemClipboardButton, selectButton, selectAllButton, selectNoneButton,
-            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
+            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton, panesMenuButton,
             firstButton, lastButton, previousButton, nextButton, pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
             infoButton, metaButton, transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
@@ -97,10 +95,9 @@ public abstract class BaseController_Attributes {
     @FXML
     protected CheckBox topCheck, saveCloseCheck, closeRightPaneCheck;
     @FXML
-    protected ToggleGroup saveAsGroup, targetExistGroup, fileTypeGroup;
+    protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML
-    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio,
-            targetReplaceRadio, targetRenameRadio, targetSkipRadio;
+    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
     @FXML
     protected SplitPane splitPane;
     @FXML

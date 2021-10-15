@@ -23,7 +23,6 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -54,8 +53,7 @@ public class PptToPdfController extends BaseBatchFileController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(targetPathController.valid.not())
             );
 
         } catch (Exception e) {

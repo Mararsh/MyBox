@@ -50,34 +50,7 @@ License:    Apache License Version 2.0
                         <TreeTableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
                     </columns>
                 </TreeTableView>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
-                    <children>
-                        <Label text="%FilesPath" />
-                        <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconFolder.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER_LEFT">
-                    <children>
-                        <Label text="%ExistedFiles" />
-                        <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="targetExistGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                        <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
-                        <TextField fx:id="targetAppendInput" prefWidth="120.0" text="-m" />
-                    </children>
-                </HBox>
+                <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="575.0">
                     <children>
                         <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />

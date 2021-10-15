@@ -4,6 +4,7 @@ import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -54,14 +55,18 @@ public abstract class ControlSheet_Base extends BaseController {
 
     protected final int defaultWarnThreshold = 2000;
 
+    protected final ButtonType buttonClose = new ButtonType(message("Close"));
+    protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
+    protected final ButtonType buttonCancel = new ButtonType(message("Cancel"));
+
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab sheetTab, editTab, htmlTab, textsDisplayTab, optionsTab, defTab;
+    protected Tab sheetTab, textsEditTab, htmlTab, textsDisplayTab, optionsTab, defTab;
     @FXML
     protected VBox sheetBox, defBox;
     @FXML
-    protected Button analyseSheetButton, synchronizeEditButton,
+    protected Button analyseSheetButton, synchronizeTextsEditButton,
             rowsAddButton, rowsDeleteButton, columnsAddButton, columnsDeleteButton, widthSheetButton,
             calculateSheetButton, sortSheetButton, deleteSheetButton, equalSheetButton;
     @FXML

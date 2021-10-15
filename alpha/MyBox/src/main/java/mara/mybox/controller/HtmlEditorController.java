@@ -25,7 +25,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -47,7 +46,6 @@ import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -72,6 +70,10 @@ public class HtmlEditorController extends WebAddressController {
     protected HtmlRenderer htmlRender;
     protected String title;
 
+    protected final ButtonType buttonClose = new ButtonType(message("Close"));
+    protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
+    protected final ButtonType buttonCancel = new ButtonType(message("Cancel"));
+
     @FXML
     protected HBox addressBox;
     @FXML
@@ -88,22 +90,10 @@ public class HtmlEditorController extends WebAddressController {
     protected ControlFileBackup backupController;
     @FXML
     protected CheckBox wrapCodesCheck, wrapMarkdownCheck, wrapTextsCheck;
-    @FXML
-    protected Button panesMenuButton;
 
     public HtmlEditorController() {
         baseTitle = message("HtmlEditor");
         TipsLabelKey = "HtmlEditorTips";
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            StyleTools.setIconTooltips(panesMenuButton, "iconPanes.png", message("Panes"));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     @Override
@@ -585,6 +575,9 @@ public class HtmlEditorController extends WebAddressController {
         codes
      */
     public void loadHtmlCodes(String html, boolean updated) {
+        if (!tabPane.getTabs().contains(codesTab)) {
+            return;
+        }
         Platform.runLater(() -> {
             try {
                 codesArea.setEditable(false);
@@ -633,6 +626,9 @@ public class HtmlEditorController extends WebAddressController {
         richText
      */
     public void loadRichEditor(String html, boolean updated) {
+        if (!tabPane.getTabs().contains(editorTab)) {
+            return;
+        }
         Platform.runLater(() -> {
             try {
                 htmlEditor.setDisable(true);
@@ -678,6 +674,9 @@ public class HtmlEditorController extends WebAddressController {
         Markdown
      */
     public void loadMarkdown(String html, boolean changed) {
+        if (!tabPane.getTabs().contains(markdownTab)) {
+            return;
+        }
         Platform.runLater(() -> {
             try {
                 if (html == null || html.isEmpty()) {
@@ -740,6 +739,9 @@ public class HtmlEditorController extends WebAddressController {
         texts
      */
     public void loadText(String html, boolean updated) {
+        if (!tabPane.getTabs().contains(textsTab)) {
+            return;
+        }
         Platform.runLater(() -> {
             try {
                 textsArea.setEditable(false);
@@ -822,53 +824,23 @@ public class HtmlEditorController extends WebAddressController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == viewTab) {
-                Platform.runLater(() -> {
-                    String html = htmlInWebview();
-                    loadHtmlCodes(html, true);
-                    loadRichEditor(html, true);
-                    loadMarkdown(html, true);
-                    loadText(html, true);
-                });
+                synchronizeWebview();
                 return true;
 
             } else if (tab == codesTab) {
-                Platform.runLater(() -> {
-                    String html = htmlByCodes();
-                    loadRichEditor(html, true);
-                    loadMarkdown(html, true);
-                    loadText(html, true);
-                    loadView(html, true);
-                });
+                synchronizeCodes();
                 return true;
 
             } else if (tab == editorTab) {
-                Platform.runLater(() -> {
-                    String html = htmlByEditor();
-                    loadHtmlCodes(html, true);
-                    loadMarkdown(html, true);
-                    loadText(html, true);
-                    loadView(html, true);
-                });
+                synchronizeEditor();
                 return true;
 
             } else if (tab == markdownTab) {
-                Platform.runLater(() -> {
-                    String html = htmlByMarkdown();
-                    loadRichEditor(html, true);
-                    loadHtmlCodes(html, true);
-                    loadText(html, true);
-                    loadView(html, true);
-                });
+                synchronizeMarkdown();
                 return true;
 
             } else if (tab == textsTab) {
-                Platform.runLater(() -> {
-                    String html = htmlByText();
-                    loadRichEditor(html, true);
-                    loadHtmlCodes(html, true);
-                    loadMarkdown(html, true);
-                    loadView(html, true);
-                });
+                synchronizeTexts();
                 return true;
 
             }
@@ -876,6 +848,56 @@ public class HtmlEditorController extends WebAddressController {
             MyBoxLog.debug(e.toString());
         }
         return false;
+    }
+
+    public void synchronizeWebview() {
+        Platform.runLater(() -> {
+            String html = htmlInWebview();
+            loadHtmlCodes(html, true);
+            loadRichEditor(html, true);
+            loadMarkdown(html, true);
+            loadText(html, true);
+        });
+    }
+
+    public void synchronizeCodes() {
+        Platform.runLater(() -> {
+            String html = htmlByCodes();
+            loadRichEditor(html, true);
+            loadMarkdown(html, true);
+            loadText(html, true);
+            loadView(html, true);
+        });
+    }
+
+    public void synchronizeEditor() {
+        Platform.runLater(() -> {
+            String html = htmlByEditor();
+            loadHtmlCodes(html, true);
+            loadMarkdown(html, true);
+            loadText(html, true);
+            loadView(html, true);
+        });
+    }
+
+    public void synchronizeMarkdown() {
+        Platform.runLater(() -> {
+            String html = htmlByMarkdown();
+            loadRichEditor(html, true);
+            loadHtmlCodes(html, true);
+            loadText(html, true);
+            loadView(html, true);
+        });
+    }
+
+    public void synchronizeTexts() {
+        Platform.runLater(() -> {
+            String html = htmlByText();
+            loadRichEditor(html, true);
+            loadHtmlCodes(html, true);
+            loadMarkdown(html, true);
+            loadView(html, true);
+        });
     }
 
     @FXML
@@ -944,7 +966,7 @@ public class HtmlEditorController extends WebAddressController {
             if (!UserConfig.getBoolean(baseName + "ShowViewTab", true)) {
                 tabPane.getTabs().remove(viewTab);
             }
-            viewTab.setOnClosed(new EventHandler<Event>() {
+            viewTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
                     UserConfig.setBoolean(baseName + "ShowViewTab", false);
@@ -954,9 +976,18 @@ public class HtmlEditorController extends WebAddressController {
             if (!UserConfig.getBoolean(baseName + "ShowCodesTab", true)) {
                 tabPane.getTabs().remove(codesTab);
             }
-            codesTab.setOnClosed(new EventHandler<Event>() {
+            codesTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
+                    if (codesChanged) {
+                        Optional<ButtonType> result = alertClosingTab();
+                        if (result.get() == buttonSynchronize) {
+                            synchronizeCodes();
+                        } else if (result.get() != buttonClose) {
+                            event.consume();
+                            return;
+                        }
+                    }
                     UserConfig.setBoolean(baseName + "ShowCodesTab", false);
                 }
             });
@@ -964,9 +995,18 @@ public class HtmlEditorController extends WebAddressController {
             if (!UserConfig.getBoolean(baseName + "ShowEditorTab", true)) {
                 tabPane.getTabs().remove(editorTab);
             }
-            editorTab.setOnClosed(new EventHandler<Event>() {
+            editorTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
+                    if (heChanged) {
+                        Optional<ButtonType> result = alertClosingTab();
+                        if (result.get() == buttonSynchronize) {
+                            synchronizeEditor();
+                        } else if (result.get() != buttonClose) {
+                            event.consume();
+                            return;
+                        }
+                    }
                     UserConfig.setBoolean(baseName + "ShowEditorTab", false);
                 }
             });
@@ -974,9 +1014,19 @@ public class HtmlEditorController extends WebAddressController {
             if (!UserConfig.getBoolean(baseName + "ShowMarkdownTab", true)) {
                 tabPane.getTabs().remove(markdownTab);
             }
-            markdownTab.setOnClosed(new EventHandler<Event>() {
+            markdownTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
+                    if (mdChanged) {
+                        Optional<ButtonType> result = alertClosingTab();
+
+                        if (result.get() == buttonSynchronize) {
+                            synchronizeMarkdown();
+                        } else if (result.get() != buttonClose) {
+                            event.consume();
+                            return;
+                        }
+                    }
                     UserConfig.setBoolean(baseName + "ShowMarkdownTab", false);
                 }
             });
@@ -984,9 +1034,19 @@ public class HtmlEditorController extends WebAddressController {
             if (!UserConfig.getBoolean(baseName + "ShowTextsTab", true)) {
                 tabPane.getTabs().remove(textsTab);
             }
-            textsTab.setOnClosed(new EventHandler<Event>() {
+            textsTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
+                    if (textsChanged) {
+                        Optional<ButtonType> result = alertClosingTab();
+
+                        if (result.get() == buttonSynchronize) {
+                            synchronizeTexts();
+                        } else if (result.get() != buttonClose) {
+                            event.consume();
+                            return;
+                        }
+                    }
                     UserConfig.setBoolean(baseName + "ShowTextsTab", false);
                 }
             });
@@ -995,7 +1055,7 @@ public class HtmlEditorController extends WebAddressController {
                 if (!UserConfig.getBoolean(baseName + "ShowBackupTab", true)) {
                     tabPane.getTabs().remove(backupTab);
                 }
-                backupTab.setOnClosed(new EventHandler<Event>() {
+                backupTab.setOnCloseRequest(new EventHandler<Event>() {
                     @Override
                     public void handle(Event event) {
                         UserConfig.setBoolean(baseName + "ShowBackupTab", false);
@@ -1008,6 +1068,20 @@ public class HtmlEditorController extends WebAddressController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public Optional<ButtonType> alertClosingTab() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getMyStage().getTitle());
+        alert.setHeaderText(getMyStage().getTitle());
+        alert.setContentText(message("ClosingEditorTabConfirm"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.getButtonTypes().setAll(buttonSynchronize, buttonClose, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        return alert.showAndWait();
     }
 
     @FXML
@@ -1071,6 +1145,7 @@ public class HtmlEditorController extends WebAddressController {
                     if (codesMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(codesTab)) {
                             tabPane.getTabs().add(tabPane.getTabs().size() - 1, codesTab);
+                            loadHtmlCodes(htmlInWebview(), false);
                         }
                     } else {
                         if (tabPane.getTabs().contains(codesTab)) {
@@ -1091,6 +1166,7 @@ public class HtmlEditorController extends WebAddressController {
                     if (editorMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(editorTab)) {
                             tabPane.getTabs().add(tabPane.getTabs().size() - 1, editorTab);
+                            loadRichEditor(htmlInWebview(), false);
                         }
                     } else {
                         if (tabPane.getTabs().contains(editorTab)) {
@@ -1111,6 +1187,7 @@ public class HtmlEditorController extends WebAddressController {
                     if (mdMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(markdownTab)) {
                             tabPane.getTabs().add(tabPane.getTabs().size() - 1, markdownTab);
+                            loadMarkdown(htmlInWebview(), false);
                         }
                     } else {
                         if (tabPane.getTabs().contains(markdownTab)) {
@@ -1131,6 +1208,7 @@ public class HtmlEditorController extends WebAddressController {
                     if (textsMenu.isSelected()) {
                         if (!tabPane.getTabs().contains(textsTab)) {
                             tabPane.getTabs().add(tabPane.getTabs().size() - 1, textsTab);
+                            loadText(htmlInWebview(), false);
                         }
                     } else {
                         if (tabPane.getTabs().contains(textsTab)) {

@@ -24,6 +24,8 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class DataFileCSVConvertController extends BaseDataConvertController {
 
+    protected boolean skip;
+
     @FXML
     protected ControlCsvOptions csvReadController;
 
@@ -55,6 +57,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                 || (!csvReadController.autoDetermine && csvReadController.charset == null)) {
             return false;
         }
+        skip = targetPathController.isSkip();
         return super.makeMoreParameters();
     }
 
@@ -82,7 +85,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             List<String> names = parser.getHeaderNames();
             convertController.names = names;
             String filePrefix = FileNameTools.getFilePrefix(srcFile.getName()) + "_" + new Date().getTime();
-            convertController.openWriters(filePrefix);
+            convertController.openWriters(filePrefix, skip);
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {
                     return message("Cancelled");
@@ -124,7 +127,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                         names.add(message("col") + i);
                     }
                     convertController.names = names;
-                    convertController.openWriters(filePrefix(srcFile));
+                    convertController.openWriters(filePrefix(srcFile), skip);
                 }
                 List<String> rowData = new ArrayList<>();
                 for (int i = 0; i < record.size(); i++) {

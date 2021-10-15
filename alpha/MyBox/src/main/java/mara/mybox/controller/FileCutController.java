@@ -15,14 +15,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileSplitTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -184,8 +180,7 @@ public class FileCutController extends BaseBatchFileController {
     @Override
     public void initTargetSection() {
 
-        startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+        startButton.disableProperty().bind(targetPathController.valid.not()
                 .or(Bindings.isEmpty(tableData))
                 .or(filesNumberInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(bytesNumberInput.styleProperty().isEqualTo(UserConfig.badStyle()))

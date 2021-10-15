@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -58,6 +57,8 @@ public class WeiboSnapController extends BaseController {
     private PdfImageFormat format;
     private List<String> addressList;
 
+    @FXML
+    protected ControlFileSelecter targetPathInputController;
     @FXML
     protected ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
     @FXML
@@ -864,8 +865,15 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
 
-        startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+        targetPathInputController.notify.addListener(
+                (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                    targetPath = targetPathInputController.file;
+                });
+        targetPathInputController.label(Languages.message("TargetPath"))
+                .baseName(baseName).savedName(baseName + "TargatPath")
+                .isSource(false).isDirectory(true).mustExist(false).init();
+
+        startButton.disableProperty().bind(targetPathInputController.valid.not()
                 .or(startMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(endMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(zoomBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))

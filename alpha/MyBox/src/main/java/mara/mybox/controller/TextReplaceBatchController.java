@@ -14,7 +14,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -40,8 +39,7 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             optionsController.setParent(this);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(optionsController.findArea.textProperty().isEmpty())
                     .or(Bindings.isEmpty(tableView.getItems()))
             );

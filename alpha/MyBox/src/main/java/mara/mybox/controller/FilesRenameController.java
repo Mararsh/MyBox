@@ -60,6 +60,8 @@ public class FilesRenameController extends BaseBatchFileController {
             prefixInput, suffixInput, stringInput;
     @FXML
     protected ToggleGroup sortGroup, renameGroup;
+    @FXML
+    protected RadioButton targetReplaceRadio, targetSkipRadio;
 
     public static enum RenameType {
         ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber,
@@ -266,7 +268,7 @@ public class FilesRenameController extends BaseBatchFileController {
             if (newName != null) {
                 File newFile = new File(newName);
                 if (newFile.exists()) {
-                    if (targetExistType != TargetExistType.Replace) {
+                    if (targetSkipRadio.isSelected()) {
                         return null;
                     }
                     FileDeleteTools.delete(newFile);
@@ -418,7 +420,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 if (newFile.exists()) {
                     File oldFile = new File(originalName);
                     if (oldFile.exists()) {
-                        if (targetExistType != TargetExistType.Replace) {
+                        if (targetSkipRadio.isSelected()) {
                             f.setHandled(Languages.message("FailRecovered"));
                             continue;
                         } else {
@@ -474,7 +476,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 if (newFile.exists()) {
                     File oldFile = new File(originalName);
                     if (oldFile.exists()) {
-                        if (targetExistType != TargetExistType.Replace) {
+                        if (targetSkipRadio.isSelected()) {
                             f.setHandled(Languages.message("FailRecovered"));
                             continue;
                         } else {
@@ -503,7 +505,7 @@ public class FilesRenameController extends BaseBatchFileController {
                     }
                     File oldFile = new File(originalFileName);
                     if (oldFile.exists()) {
-                        if (targetExistType != TargetExistType.Replace) {
+                        if (targetSkipRadio.isSelected()) {
                             f.setHandled(Languages.message("FailRecovered"));
                             continue;
                         } else {

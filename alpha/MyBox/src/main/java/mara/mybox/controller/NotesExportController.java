@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -29,7 +28,6 @@ import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
@@ -138,8 +136,7 @@ public class NotesExportController extends BaseTaskController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    targetPathController.valid.not()
                             .or(treeView.getSelectionModel().selectedItemProperty().isNull())
             );
 
@@ -267,7 +264,7 @@ public class NotesExportController extends BaseTaskController {
                 if (textsFile != null) {
                     updateLogs(Languages.message("Writing") + " " + textsFile.getAbsolutePath());
                     textsWriter = new FileWriter(textsFile, charset);
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -278,7 +275,7 @@ public class NotesExportController extends BaseTaskController {
                     htmlWriter = new FileWriter(htmlFile, charset);
                     writeHtmlHead(htmlWriter, nodeName);
                     htmlWriter.write(indent + "<BODY>\n" + indent + indent + "<H2>" + nodeName + "</H2>\n");
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -313,7 +310,7 @@ public class NotesExportController extends BaseTaskController {
                     s.append(indent).append("<BODY>\n");
                     s.append(indent).append(indent).append("<H2>").append(nodeName).append("</H2>\n");
                     framesetNavWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -326,7 +323,7 @@ public class NotesExportController extends BaseTaskController {
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n").append("<notes>\n");
                     xmlWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }

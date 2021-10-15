@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -28,7 +27,6 @@ import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -115,10 +113,7 @@ public class DataExportController extends BaseTaskController {
             startButton.applyCss();
             startButton.setUserData(null);
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
+            startButton.disableProperty().bind(targetPathController.valid.not());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -182,6 +177,8 @@ public class DataExportController extends BaseTaskController {
             initLogs();
             task = new SingletonTask<Void>() {
 
+                private final boolean skip = targetPathController.isSkip();
+
                 @Override
                 protected boolean handle() {
                     if (epidemicReportTop) {
@@ -194,6 +191,7 @@ public class DataExportController extends BaseTaskController {
                 private boolean commonHandle() {
                     try {
                         String filePrefix = targetNameInput.getText().trim();
+
                         if (currentPage) {
                             currentSQL = dataController.pageQuerySQL;
                             dataSize = dataController.tableData.size();
@@ -250,7 +248,7 @@ public class DataExportController extends BaseTaskController {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setReadOnly(true);
                         int count = 0;
-                        if (!convertController.openWriters(filePrefix)) {
+                        if (!convertController.openWriters(filePrefix, skip)) {
                             return false;
                         }
                         try ( ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
@@ -378,7 +376,7 @@ public class DataExportController extends BaseTaskController {
                     try {
                         String filePrefix = targetNameInput.getText().trim();
                         int count = 0;
-                        if (!convertController.openWriters(filePrefix)) {
+                        if (!convertController.openWriters(filePrefix, skip)) {
                             return false;
                         }
                         for (EpidemicReport report : reports) {

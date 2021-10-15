@@ -13,12 +13,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.ImageBinary;
-import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -61,8 +58,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(targetPathController.valid.not())
                             .or(jpegBox.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(tableView.getItems()))

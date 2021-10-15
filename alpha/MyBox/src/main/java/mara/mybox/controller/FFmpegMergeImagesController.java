@@ -77,8 +77,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetFileInput.textProperty())
-                            .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    targetFileController.valid.not()
                             .or(Bindings.isEmpty(tableView.getItems()))
                             .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
@@ -93,11 +92,11 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         if (ext == null || ext.isBlank() || Languages.message("OriginalFormat").equals(ext)) {
             return;
         }
-        String v = targetFileInput.getText();
+        String v = targetFileController.text();
         if (v == null || v.isBlank()) {
-            targetFileInput.setText(AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString() + "." + ext);
+            targetFileController.input(AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
-            targetFileInput.setText(FileNameTools.getFilePrefix(v) + "." + ext);
+            targetFileController.input(FileNameTools.getFilePrefix(v) + "." + ext);
         }
     }
 

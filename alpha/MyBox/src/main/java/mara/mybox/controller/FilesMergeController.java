@@ -25,19 +25,6 @@ public class FilesMergeController extends BaseBatchFileController {
     }
 
     @Override
-    public void selectTargetFileFromPath(File path) {
-        try {
-            final File file = chooseSaveFile(path, null, targetExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            selectTargetFile(file);
-        } catch (Exception e) {
-            updateLogs(e.toString(), true, true);
-        }
-    }
-
-    @Override
     public boolean makeMoreParameters() {
         try {
             if (targetFileController != null) {
@@ -46,7 +33,7 @@ public class FilesMergeController extends BaseBatchFileController {
             if (targetFile == null) {
                 return false;
             }
-            targetFile = makeTargetFile(targetFile.getName(), targetFile.getParentFile(), false);
+            targetFile = makeTargetFile(targetFile.getName(), targetFile.getParentFile());
             if (targetFile == null) {
                 return false;
             }

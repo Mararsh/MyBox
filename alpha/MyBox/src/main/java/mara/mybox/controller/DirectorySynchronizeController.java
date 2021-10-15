@@ -49,6 +49,8 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     protected String strDeleteSuccessfully, strFileDeleteSuccessfully, strDirectoryDeleteSuccessfully;
 
     @FXML
+    protected ControlFileSelecter targetPathInputController;
+    @FXML
     protected VBox dirsBox, conditionsBox, condBox, logsBox;
     @FXML
     protected TextField notCopyInput;
@@ -106,11 +108,14 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 }
             });
 
+            targetPathInputController.label(Languages.message("TargetPath"))
+                    .baseName(baseName).savedName(baseName + "TargatPath")
+                    .isSource(false).isDirectory(true).mustExist(false).init();
+
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(targetPathInputController.valid.not())
             );
 
             operationBarController.openTargetButton.disableProperty().bind(
@@ -166,9 +171,18 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                         }
                     }
                 }
+
+                targetPath = targetPathInputController.file;
+                if (!targetPath.exists()) {
+                    targetPath.mkdirs();
+                    updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
+                }
+                targetPath.setWritable(true);
+                targetPath.setExecutable(true);
+
                 initLogs();
                 logsTextArea.setText(Languages.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
-                logsTextArea.appendText(Languages.message("TargetPath") + ": " + targetPathInput.getText() + "\n");
+                logsTextArea.appendText(Languages.message("TargetPath") + ": " + targetPath.getAbsolutePath() + "\n");
 
                 strFailedCopy = Languages.message("FailedCopy") + ": ";
                 strCreatedSuccessfully = Languages.message("CreatedSuccessfully") + ": ";
@@ -178,13 +192,6 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 strFileDeleteSuccessfully = Languages.message("FileDeletedSuccessfully") + ": ";
                 strDirectoryDeleteSuccessfully = Languages.message("DirectoryDeletedSuccessfully") + ": ";
 
-                targetPath = new File(targetPathInput.getText());
-                if (!targetPath.exists()) {
-                    targetPath.mkdirs();
-                    updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
-                }
-                targetPath.setWritable(true);
-                targetPath.setExecutable(true);
                 startHandle = true;
                 lastFileName = null;
 
@@ -415,7 +422,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     @Override
     public void openTarget(ActionEvent event) {
         try {
-            browseURI(new File(targetPathInput.getText()).toURI());
+            browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -392,7 +392,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
     }
 
     @Override
-    public boolean exportCols(SheetExportController exportController, List<Integer> cols) {
+    public boolean exportCols(SheetExportController exportController, List<Integer> cols, boolean skip) {
         if (exportController == null) {
             return false;
         }
@@ -407,7 +407,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
                 .withIgnoreEmptyLines().withTrim().withNullString("");
         try ( CSVParser parser = CSVParser.parse(file, Charset.forName("UTF-8"), csvFormat)) {
             List<String> names = parser.getHeaderNames();
-            exportController.convertController.openWriters(exportController.filePrefix);
+            exportController.convertController.openWriters(exportController.filePrefix, skip);
             for (CSVRecord record : parser) {
                 if (exportController.task == null || exportController.task.isCancelled()) {
                     return false;
