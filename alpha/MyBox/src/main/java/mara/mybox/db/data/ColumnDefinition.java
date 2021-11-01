@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-7-12
  * @License Apache License Version 2.0
  */
-public class ColumnDefinition extends BaseData implements Cloneable {
+public class ColumnDefinition extends BaseData {
 
     protected DataDefinition dataDefinition;
     protected long dcid, dataid;
@@ -53,6 +53,8 @@ public class ColumnDefinition extends BaseData implements Cloneable {
     }
 
     private void init() {
+        dcid = -1;
+        dataid = -1;
         type = ColumnType.String;
         index = -1;
         isPrimaryKey = notNull = isID = false;
@@ -300,8 +302,9 @@ public class ColumnDefinition extends BaseData implements Cloneable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
-            ColumnDefinition newInfo = (ColumnDefinition) super.clone();
-            return newInfo;
+            ColumnDefinition newColumn = (ColumnDefinition) super.clone();
+            newColumn.setDcid(-1);
+            return newColumn;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
@@ -745,6 +748,10 @@ public class ColumnDefinition extends BaseData implements Cloneable {
     public ColumnDefinition setWidth(int width) {
         this.width = width;
         return this;
+    }
+
+    public String getTypeString() {
+        return message(type.name());
     }
 
 }

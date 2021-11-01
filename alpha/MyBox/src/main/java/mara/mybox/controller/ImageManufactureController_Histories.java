@@ -29,8 +29,8 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -195,7 +195,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
             if (loadTask != null && !loadTask.isQuit()) {
                 loadTask.cancel();
             }
-            loadTask = new SingletonTask<Void>() {
+            loadTask = new SingletonTask<Void>(this) {
                 private List<ImageEditHistory> list;
                 private File currentFile;
 
@@ -256,7 +256,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
                     private File currentFile;
                     private String finalname;
                     private BufferedImage thumbnail;
@@ -375,7 +375,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
-            loadTask = new SingletonTask<Void>() {
+            loadTask = new SingletonTask<Void>(this) {
                 private Image hisImage;
                 private String hisDesc;
                 private ImageEditHistory newHis;
@@ -495,7 +495,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
             if (selected == null) {
                 return;
             }
-            SingletonTask viewTask = new SingletonTask<Void>() {
+            SingletonTask viewTask = new SingletonTask<Void>(this) {
                 private Image hisImage;
 
                 @Override

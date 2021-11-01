@@ -15,8 +15,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
@@ -208,7 +208,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

@@ -154,7 +154,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
             targetBook.close();
             try ( Connection conn = DerbyBase.getConnection()) {
                 TableDataDefinition tableDataDefinition = new TableDataDefinition();
-                tableDataDefinition.clear(conn, DataDefinition.DataType.DataFile, targetFile.getAbsolutePath());
+                tableDataDefinition.deleteFile(conn, targetFile);
                 conn.commit();
                 DataDefinition dataDefinition = DataDefinition.create()
                         .setDataName(targetFile.getAbsolutePath())

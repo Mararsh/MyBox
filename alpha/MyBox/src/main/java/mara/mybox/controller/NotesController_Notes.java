@@ -20,6 +20,7 @@ import mara.mybox.db.data.Notebook;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -53,6 +54,7 @@ public abstract class NotesController_Notes extends NotesController_Tags {
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             ntidColumn.setCellValueFactory(new PropertyValueFactory<>("ntid"));
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
@@ -95,7 +97,7 @@ public abstract class NotesController_Notes extends NotesController_Tags {
             return;
         }
         synchronized (this) {
-            SingletonTask bookTask = new SingletonTask<Void>() {
+            SingletonTask bookTask = new SingletonTask<Void>(this) {
                 private List<Notebook> ancestor;
 
                 @Override
@@ -152,10 +154,10 @@ public abstract class NotesController_Notes extends NotesController_Tags {
     @Override
     public List<Note> readPageData() {
         if (notebooksController.selectedNode != null && subCheck.isSelected()) {
-            return tableNote.withSub(tableNotebook, notebooksController.selectedNode.getNbid(), currentPageStart - 1, currentPageSize);
+            return tableNote.withSub(tableNotebook, notebooksController.selectedNode.getNbid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
-            return tableNote.queryConditions(queryConditions, currentPageStart - 1, currentPageSize);
+            return tableNote.queryConditions(queryConditions, startRowOfCurrentPage, pageSize);
 
         } else {
             return null;
@@ -247,20 +249,21 @@ public abstract class NotesController_Notes extends NotesController_Tags {
 
     @Override
     public void itemClicked() {
-        editAction(null);
+        editAction();
     }
 
     @Override
-    protected int checkSelected() {
+    protected void checkButtons() {
         if (isSettingValues) {
-            return -1;
+            return;
         }
-        int selection = super.checkSelected();
-        deleteNotesButton.setDisable(selection == 0);
-        copyNotesButton.setDisable(selection == 0);
-        moveDataNotesButton.setDisable(selection == 0);
-        selectedLabel.setText(Languages.message("Selected") + ": " + selection);
-        return selection;
+        super.checkButtons();
+
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        deleteNotesButton.setDisable(none);
+        copyNotesButton.setDisable(none);
+        moveDataNotesButton.setDisable(none);
     }
 
     @FXML
@@ -299,7 +302,7 @@ public abstract class NotesController_Notes extends NotesController_Tags {
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         Note note = tableView.getSelectionModel().getSelectedItem();
         if (note != null) {
             noteEditorController.editNote(note);

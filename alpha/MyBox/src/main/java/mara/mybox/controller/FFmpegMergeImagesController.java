@@ -21,6 +21,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -130,7 +131,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 processStartTime = new Date();
                 totalFilesHandled = 0;
                 updateInterface("Started");
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     public Void call() {

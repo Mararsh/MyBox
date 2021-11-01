@@ -110,7 +110,7 @@ public class FilesRenameController extends BaseBatchFileController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableData)
-                            .or(tableController.getAddFilesButton().disableProperty())
+                            .or(tableController.addFilesButton.disableProperty())
             );
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -171,10 +171,10 @@ public class FilesRenameController extends BaseBatchFileController {
                     try {
                         digit = Integer.valueOf(digitInput.getText());
                     } catch (Exception e) {
-                        if (tableController.getTotalFilesNumber() <= 0) {
+                        if (tableController.totalFilesNumber <= 0) {
                             tableController.countSize();
                         }
-                        digit = (tableController.getTotalFilesNumber() + "").length();
+                        digit = (tableController.totalFilesNumber + "").length();
                     }
                 }
                 try {
@@ -248,7 +248,7 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        FileInformation d = tableController.data(currentParameters.currentIndex);
+        FileInformation d = tableController.row(currentParameters.currentIndex);
         String newName = renameFile(srcFile);
         if (newName != null) {
             d.setData(new File(newName).getAbsolutePath());

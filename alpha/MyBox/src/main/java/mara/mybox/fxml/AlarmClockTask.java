@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.fxml;
 
 import java.util.Date;
 import java.util.TimerTask;

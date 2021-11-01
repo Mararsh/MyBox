@@ -49,6 +49,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }
         UserConfig.setString(baseName + "SourceFile", file.getAbsolutePath());
         sourceFileInput.setStyle(null);
+        recordFileOpened(file);
         sourceFileChanged(file);
         if (parentController != null && parentController != this) {
             parentController.sourceFileChanged(file);

@@ -209,6 +209,11 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                     <columns>
+                                                        <TableColumn fx:id="rowsSelectionColumn"  minWidth="60.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                                            <graphic>
+                                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
+                                                            </graphic>
+                                                        </TableColumn>
                                                         <TableColumn fx:id="colorColumn" text="%Color" />
                                                         <TableColumn fx:id="orderColumn" prefWidth="100.0" text="%OrderFloat" />
                                                         <TableColumn fx:id="colorNameColumn" prefWidth="150.0" text="%Name" />

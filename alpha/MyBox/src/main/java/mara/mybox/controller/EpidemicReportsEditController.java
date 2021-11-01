@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Modality;
 import javafx.util.converter.LongStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.EpidemicReport;
@@ -22,12 +21,10 @@ import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 import thridparty.TableAutoCommitCell;
 
 /**
@@ -92,6 +89,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             locationColumn.setCellValueFactory(new PropertyValueFactory<>("locationFullName"));
             confirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
             confirmedColumn.setCellFactory((TableColumn<EpidemicReport, Long> param) -> {
@@ -112,10 +110,12 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                 if (t == null) {
                     return;
                 }
-                if (t.getNewValue() >= 0) {
-                    EpidemicReport row = t.getRowValue();
-                    row.setConfirmed(t.getNewValue());
+                EpidemicReport row = t.getRowValue();
+                Long v = t.getNewValue();
+                if (row == null || v == null || v < 0) {
+                    return;
                 }
+                row.setConfirmed(v);
             });
             confirmedColumn.getStyleClass().add("editable-column");
 
@@ -138,10 +138,12 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                 if (t == null) {
                     return;
                 }
-                if (t.getNewValue() >= 0) {
-                    EpidemicReport row = t.getRowValue();
-                    row.setHealed(t.getNewValue());
+                EpidemicReport row = t.getRowValue();
+                Long v = t.getNewValue();
+                if (row == null || v == null || v < 0) {
+                    return;
                 }
+                row.setHealed(v);
             });
             headledColumn.getStyleClass().add("editable-column");
 
@@ -164,10 +166,12 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                 if (t == null) {
                     return;
                 }
-                if (t.getNewValue() >= 0) {
-                    EpidemicReport row = t.getRowValue();
-                    row.setDead(t.getNewValue());
+                EpidemicReport row = t.getRowValue();
+                Long v = t.getNewValue();
+                if (row == null || v == null || v < 0) {
+                    return;
                 }
+                row.setDead(v);
             });
             deadColumn.getStyleClass().add("editable-column");
 
@@ -190,7 +194,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private List<String> datasets;
                 private List<EpidemicReport> data;
 
@@ -324,7 +328,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private long count = 0;
 
                 @Override

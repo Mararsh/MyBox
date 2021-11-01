@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,12 +11,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.DataCell;
+import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
-import mara.mybox.db.data.Matrix;
-import mara.mybox.db.data.MatrixCell;
-import mara.mybox.db.table.TableMatrixCell;
+import mara.mybox.db.table.TableDataCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -53,7 +56,6 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
         this.parentController = manager;
         baseTitle = manager.baseTitle;
         baseName = manager.baseName;
-        tableMatrix = manager.tableDefinition;
         setControls();
         newSheet(3, 3);
     }
@@ -99,7 +101,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
         }
     }
 
-    protected void loadMatrix(Matrix matrix) {
+    protected void loadMatrix(DataDefinition matrix) {
         if (!checkBeforeNextAction()) {
             return;
         }
@@ -109,36 +111,38 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
             }
             columns = null;
             sheetInputs = null;
-            colsNumber = matrix.getColsNumber();
-            rowsNumber = matrix.getRowsNumber();
+            colsNumber = (int) matrix.getColsNumber();
+            rowsNumber = (int) matrix.getRowsNumber();
             scale = matrix.getScale();
             isSettingValues = true;
-            nameInput.setText(matrix.getName());
+            nameInput.setText(matrix.getDataName());
             commentsArea.setText(matrix.getComments());
             scaleSelector.setValue(matrix.getScale() + "");
             isSettingValues = false;
             if (matrix.getId() >= 0) {
-                idInput.setText(matrix.getId() + "");
+                idInput.setText(matrix.getDfid() + "");
             } else {
                 idInput.clear();
                 loadMatrix(new double[rowsNumber][colsNumber]);
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private double[][] values;
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try ( Connection conn = DerbyBase.getConnection();
+                             PreparedStatement query = conn.prepareStatement(TableDataCell.QeuryData)) {
                         values = new double[rowsNumber][colsNumber];
-                        if (tableMatrixCell == null) {
-                            tableMatrixCell = new TableMatrixCell();
+                        if (tableDataCell == null) {
+                            tableDataCell = new TableDataCell();
                         }
-                        List<MatrixCell> data = tableMatrixCell.query(conn,
-                                "SELECT * FROM " + tableMatrixCell.getTableName() + " WHERE mcxid=" + matrix.getId());
-                        for (MatrixCell cell : data) {
+                        query.setLong(1, matrix.getDfid());
+                        ResultSet results = query.executeQuery();
+                        while (results.next()) {
+                            DataCell cell = tableDataCell.readData(results);
                             if (cell.getCol() < colsNumber && cell.getRow() < rowsNumber) {
-                                values[cell.getRow()][cell.getCol()] = cell.getValue();
+                                values[(int) cell.getRow()][(int) cell.getCol()] = Double.valueOf(cell.getValue());
                             }
                         }
                     } catch (Exception e) {
@@ -234,20 +238,20 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
-                private Matrix matrix;
+                private DataDefinition matrix;
                 private long id = -1;
                 private boolean notExist = false;
 
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
-                        matrix = new Matrix();
+                        matrix = new DataDefinition();
                         matrix.setColsNumber(colsNumber);
                         matrix.setRowsNumber(rowsNumber);
                         matrix.setScale(scale);
-                        matrix.setName(nameInput.getText().trim());
+                        matrix.setDataName(nameInput.getText().trim());
                         String comments = commentsArea.getText();
                         matrix.setComments(comments == null || comments.isBlank() ? null : comments.trim());
                         matrix.setModifyTime(new Date());
@@ -256,30 +260,30 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                         } catch (Exception e) {
                         }
                         if (id < 0) {
-                            if (tableMatrix.insertData(conn, matrix) == null) {
+                            if (tableDataDefinition.insertData(conn, matrix) == null) {
                                 return false;
                             }
-                            id = tableMatrix.getNewID();
+                            id = tableDataDefinition.getNewID();
                             if (id < 0) {
                                 return false;
                             }
                             matrix.setId(id);
                         } else {
                             matrix.setId(id);
-                            if (tableMatrix.readData(conn, matrix) == null) {
+                            if (tableDataDefinition.readData(conn, matrix) == null) {
                                 notExist = true;
                                 return true;
                             }
                             matrix.setId(id);
-                            if (tableMatrix.updateData(conn, matrix) == null) {
+                            if (tableDataDefinition.updateData(conn, matrix) == null) {
                                 return false;
                             }
                         }
-                        if (tableMatrixCell == null) {
-                            tableMatrixCell = new TableMatrixCell();
+                        if (tableDataCell == null) {
+                            tableDataCell = new TableDataCell();
                         }
-                        tableMatrixCell.update(conn, "DELETE FROM " + tableMatrixCell.getTableName() + " WHERE mcxid=" + id);
-                        List<MatrixCell> data = new ArrayList<>();
+                        tableDataCell.update(conn, "DELETE FROM Data_Cell WHERE dcdid=" + id);
+                        List<DataCell> data = new ArrayList<>();
                         for (int j = 0; j < rowsNumber; ++j) {
                             for (int i = 0; i < colsNumber; ++i) {
                                 double d = 0d;
@@ -288,12 +292,12 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                                     d = DoubleTools.scale(d, scale);
                                 } catch (Exception e) {
                                 }
-                                MatrixCell cell = MatrixCell.create()
-                                        .setMcxid(id).setCol(i).setRow(j).setValue(d);
+                                DataCell cell = DataCell.create()
+                                        .setDfid(id).setCol(i).setRow(j).setValue(d + "");
                                 data.add(cell);
                             }
                         }
-                        tableMatrixCell.insertList(conn, data);
+                        tableDataCell.insertList(conn, data);
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
@@ -323,8 +327,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
     public void cleanPane() {
         try {
             manager = null;
-            tableMatrixCell = null;
-            tableMatrix = null;
+            tableDataCell = null;
         } catch (Exception e) {
         }
         super.cleanPane();

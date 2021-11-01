@@ -16,6 +16,8 @@ public abstract class BaseData implements Cloneable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
+            BaseData newData = (BaseData) super.clone();
+            newData.setId(-1);
             return super.clone();
         } catch (Exception e) {
             return null;

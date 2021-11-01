@@ -12,6 +12,7 @@ import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -97,7 +98,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private StringTable table;
 

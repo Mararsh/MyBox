@@ -23,7 +23,7 @@ public class ImagePopController extends BaseImageController {
     protected ChangeListener listener;
 
     @FXML
-    protected CheckBox sychronizedCheck;
+    protected CheckBox refreshChangeCheck;
     @FXML
     protected Button refreshButton;
 
@@ -38,15 +38,15 @@ public class ImagePopController extends BaseImageController {
             listener = new ChangeListener<Image>() {
                 @Override
                 public void changed(ObservableValue ov, Image oldv, Image newv) {
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                    if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
                         refreshAction();
                     }
                 }
             };
 
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
             checkSychronize();
-            sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshChangeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
                     checkSychronize();
@@ -63,11 +63,11 @@ public class ImagePopController extends BaseImageController {
 
     public void checkSychronize() {
         if (sourceImageView == null) {
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
             return;
         }
-        if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+        if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
             sourceImageView.imageProperty().addListener(listener);
         } else {
             sourceImageView.imageProperty().removeListener(listener);
@@ -92,7 +92,7 @@ public class ImagePopController extends BaseImageController {
         try {
             this.baseName = baseName;
 
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
 
             loadImage(image);
@@ -109,7 +109,7 @@ public class ImagePopController extends BaseImageController {
             loadImage(sourceImageView.getImage());
 
         } else {
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
 
         }

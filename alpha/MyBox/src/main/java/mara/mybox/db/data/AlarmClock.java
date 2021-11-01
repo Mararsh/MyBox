@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import mara.mybox.data.AlarmClockTask;
+import mara.mybox.fxml.AlarmClockTask;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;

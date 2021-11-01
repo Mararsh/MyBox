@@ -131,7 +131,7 @@ public class TextClipboardTools {
                 }
                 if (stringToSystemClipboard(text)) {
                     int len = text.length();
-                    String info = message("Length") + ":" + len + "\n"
+                    String info = message("Count") + ":" + len + "\n"
                             + (len > 100 ? text.substring(0, 100) + "\n......" : text);
                     if (TextClipboardTools.isMonitoringCopy()) {
                         controller.popInformation(message("CopiedInClipBoards") + "\n----------------------\n" + info);

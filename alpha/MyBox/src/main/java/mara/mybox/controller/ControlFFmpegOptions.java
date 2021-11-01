@@ -23,6 +23,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.Fxmls;
@@ -208,7 +209,7 @@ public class ControlFFmpegOptions extends BaseController {
                 pb.redirectErrorStream(true);
                 final Process process = pb.start();
 
-                muxerTask = new SingletonTask<Void>() {
+                muxerTask = new SingletonTask<Void>(this) {
                     private List<String> muxers, commons;
 
                     @Override
@@ -323,7 +324,7 @@ public class ControlFFmpegOptions extends BaseController {
                 pb.redirectErrorStream(true);
                 final Process process = pb.start();
 
-                encoderTask = new SingletonTask<Void>() {
+                encoderTask = new SingletonTask<Void>(this) {
                     private List<String> aEncoders, vEncoders, sEncoders, videoCommons;
 
                     @Override

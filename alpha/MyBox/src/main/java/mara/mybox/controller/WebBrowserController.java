@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
@@ -174,7 +175,7 @@ public class WebBrowserController extends BaseController {
             if (dnFile == null) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

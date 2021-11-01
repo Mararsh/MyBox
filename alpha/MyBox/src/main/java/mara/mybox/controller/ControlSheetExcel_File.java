@@ -14,6 +14,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -83,8 +84,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
             }
             dataName = sourceFile.getAbsolutePath() + "-" + currentSheetName;
 
-            dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
-
+//            dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
             if (userSavedDataDefinition && dataDefinition != null) {
                 sourceWithNames = dataDefinition.isHasHeader();
             }
@@ -322,7 +322,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override
@@ -355,7 +355,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override
@@ -534,32 +534,32 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
             if (otherSheetNames != null) {
                 for (String name : otherSheetNames) {
                     String sourceDataName = sourceFile.getAbsolutePath() + "-" + name;
-                    DataDefinition sourceDef = tableDataDefinition.read(conn, dataType, sourceDataName);
-                    if (sourceDef == null) {
-                        continue;
-                    }
-                    String targetDataName = file.getAbsolutePath() + "-" + name;
-                    DataDefinition targetDef = tableDataDefinition.read(conn, dataType, targetDataName);
-                    if (targetDef == null) {
-                        targetDef = DataDefinition.create()
-                                .setDataName(targetDataName).setDataType(dataType)
-                                .setHasHeader(sourceDef.isHasHeader());
-                        tableDataDefinition.insertData(conn, targetDef);
-                    } else {
-                        targetDef.setHasHeader(sourceDef.isHasHeader());
-                        tableDataDefinition.updateData(conn, targetDef);
-                        tableDataColumn.clear(conn, targetDef.getDfid());
-                    }
-                    conn.commit();
-                    List<ColumnDefinition> sourceColumns = tableDataColumn.read(conn, sourceDef.getDfid());
-                    if (sourceColumns == null || sourceColumns.isEmpty()) {
-                        continue;
-                    }
-                    for (ColumnDefinition column : sourceColumns) {
-                        column.setDataid(targetDef.getDfid());
-                    }
-                    tableDataColumn.save(conn, targetDef.getDfid(), sourceColumns);
-                    conn.commit();
+//                    DataDefinition sourceDef = tableDataDefinition.read(conn, dataType, sourceDataName);
+//                    if (sourceDef == null) {
+//                        continue;
+//                    }
+//                    String targetDataName = file.getAbsolutePath() + "-" + name;
+//                    DataDefinition targetDef = tableDataDefinition.read(conn, dataType, targetDataName);
+//                    if (targetDef == null) {
+//                        targetDef = DataDefinition.create()
+//                                .setDataName(targetDataName).setDataType(dataType)
+//                                .setHasHeader(sourceDef.isHasHeader());
+//                        tableDataDefinition.insertData(conn, targetDef);
+//                    } else {
+//                        targetDef.setHasHeader(sourceDef.isHasHeader());
+//                        tableDataDefinition.updateData(conn, targetDef);
+//                        tableDataColumn.clear(conn, targetDef.getDfid());
+//                    }
+//                    conn.commit();
+//                    List<ColumnDefinition> sourceColumns = tableDataColumn.read(conn, sourceDef.getDfid());
+//                    if (sourceColumns == null || sourceColumns.isEmpty()) {
+//                        continue;
+//                    }
+//                    for (ColumnDefinition column : sourceColumns) {
+//                        column.setDataid(targetDef.getDfid());
+//                    }
+//                    tableDataColumn.save(conn, targetDef.getDfid(), sourceColumns);
+//                    conn.commit();
                 }
             }
         } catch (Exception e) {

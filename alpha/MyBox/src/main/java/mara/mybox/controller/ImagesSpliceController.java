@@ -28,7 +28,7 @@ import mara.mybox.bufferedimage.ImageCombine.CombineSizeType;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -440,7 +440,7 @@ public class ImagesSpliceController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     if (imageCombine.getArrayType() == ArrayType.SingleColumn) {

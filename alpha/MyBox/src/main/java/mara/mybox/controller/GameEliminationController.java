@@ -72,6 +72,7 @@ import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageCheckBoxCell;
 import mara.mybox.tools.DateTools;
@@ -229,7 +230,7 @@ public class GameEliminationController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<ImageItem> items;
                 private String defaultSelected;
@@ -371,11 +372,11 @@ public class GameEliminationController extends BaseController {
             rulersTable.setItems(scoreRulersData);
 
             numberColumn.setCellValueFactory(new PropertyValueFactory<>("adjacentNumber"));
+
             scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
             scoreColumn.setCellFactory(new Callback<TableColumn<ScoreRuler, Integer>, TableCell<ScoreRuler, Integer>>() {
                 @Override
-                public TableCell<ScoreRuler, Integer> call(
-                        TableColumn<ScoreRuler, Integer> param) {
+                public TableCell<ScoreRuler, Integer> call(TableColumn<ScoreRuler, Integer> param) {
                     TableAutoCommitCell<ScoreRuler, Integer> cell
                             = new TableAutoCommitCell<ScoreRuler, Integer>(new IntegerStringConverter()) {
                         @Override
@@ -392,15 +393,16 @@ public class GameEliminationController extends BaseController {
             });
             scoreColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<ScoreRuler, Integer>>() {
                 @Override
-                public void handle(
-                        TableColumn.CellEditEvent<ScoreRuler, Integer> t) {
+                public void handle(TableColumn.CellEditEvent<ScoreRuler, Integer> t) {
                     if (t == null) {
                         return;
                     }
-                    if (t.getNewValue() >= 0) {
-                        ScoreRuler row = t.getRowValue();
-                        row.score = t.getNewValue();
+                    ScoreRuler row = t.getRowValue();
+                    Integer v = t.getNewValue();
+                    if (row == null || v == null || v < 0) {
+                        return;
                     }
+                    row.score = v;
                 }
             });
             scoreColumn.getStyleClass().add("editable-column");

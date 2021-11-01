@@ -62,13 +62,13 @@ public class MyBoxIconsController extends BaseTaskController {
         try {
             String saved = UserConfig.getString("SourceCodesPath", null);
             if (saved == null) {
-                parentController.popError(Languages.message("MissSourceCodesPath"));
+                popError(Languages.message("MissSourceCodesPath"));
                 return false;
             }
             String srcPath = saved + "/src/main/resources/";
             String lightBluePath = srcPath + StyleTools.ButtonsPath + "LightBlue/";
             if (!new File(lightBluePath).exists()) {
-                parentController.popError(Languages.message("WrongSourceCodesPath"));
+                popError(Languages.message("WrongSourceCodesPath"));
                 return false;
             }
             updateLogs(srcPath + StyleTools.ButtonsPath);
@@ -135,11 +135,7 @@ public class MyBoxIconsController extends BaseTaskController {
 
     @Override
     protected void afterSuccess() {
-        if (parentController != null) {
-            parentController.popInformation(Languages.message("TakeEffectWhenReboot"));
-        } else {
-            popInformation(Languages.message("TakeEffectWhenReboot"));
-        }
+        popInformation(Languages.message("TakeEffectWhenReboot"));
         startButton.setDisable(false);
     }
 

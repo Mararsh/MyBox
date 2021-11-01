@@ -34,8 +34,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
@@ -177,7 +177,7 @@ public class ImageOCRProcessController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image changedImage;
 
                 @Override
@@ -212,7 +212,7 @@ public class ImageOCRProcessController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image ocrImage;
 
                 @Override
@@ -294,7 +294,7 @@ public class ImageOCRProcessController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image ocrImage;
 
                 @Override
@@ -577,7 +577,7 @@ public class ImageOCRProcessController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image ocrImage;
 
                 @Override
@@ -662,7 +662,7 @@ public class ImageOCRProcessController extends ImageViewerController {
             }
             recordFileWritten(file, VisitHistory.FileType.Image);
 
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

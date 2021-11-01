@@ -9,15 +9,15 @@ import java.util.Date;
 import java.util.Random;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.controller.ControlImagesClipboard;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.AppPaths;
 
 /**
  * @Author Mara
@@ -40,6 +40,7 @@ public class ImageClipboard extends BaseData {
     }
 
     private void init() {
+        icid = -1;
         source = ImageSource.Unknown;
         createTime = new Date();
         self = this;

@@ -28,25 +28,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
-
 import mara.mybox.tools.FFmpegTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -298,7 +295,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -677,7 +674,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -827,7 +824,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {

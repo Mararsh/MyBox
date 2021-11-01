@@ -23,6 +23,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.TextFileTools;
@@ -119,7 +120,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
             host = null;
             chain = null;
             addressController.refreshList();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String certString;
 
@@ -210,7 +211,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

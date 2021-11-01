@@ -18,6 +18,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
@@ -262,7 +263,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private int handled = 0;
                 private boolean hasMultipleFrames = false;

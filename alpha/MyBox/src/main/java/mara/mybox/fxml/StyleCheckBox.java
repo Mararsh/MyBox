@@ -16,6 +16,15 @@ public class StyleCheckBox {
         if (id.startsWith("coordinate")) {
             return new StyleData(id, "", message("Coordinate"), "", "iconLocation.png");
         }
+        if (id.startsWith("refreshSwitch")) {
+            return new StyleData(id, "", message("RefreshWhenSwitch"), "", "iconRefreshSwitch.png");
+        }
+        if (id.startsWith("refreshChange")) {
+            return new StyleData(id, "", message("RefreshWhenChange"), "", "iconRefresh.png");
+        }
+        if (id.startsWith("wrap")) {
+            return new StyleData(id, "", message("Wrap"), "", "iconWrap.png");
+        }
         switch (id) {
             case "tableSubdirCheck":
                 return new StyleData("tableSubdirCheck", "", message("HandleSubDirectories"), "", "iconFolder.png");

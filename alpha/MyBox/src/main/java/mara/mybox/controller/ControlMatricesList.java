@@ -3,14 +3,13 @@ package mara.mybox.controller;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
-import mara.mybox.db.data.Matrix;
-import mara.mybox.db.table.TableMatrix;
+import mara.mybox.db.data.DataDefinition;
+import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.Languages;
@@ -20,20 +19,20 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-12-15
  * @License Apache License Version 2.0
  */
-public class ControlMatricesList extends BaseDataTableController<Matrix> {
+public class ControlMatricesList extends BaseDataTableController<DataDefinition> {
 
     @FXML
     protected ControlMatrixEdit editController;
     @FXML
-    protected TableColumn<Matrix, Long> mxidColumn;
+    protected TableColumn<DataDefinition, Long> mxidColumn;
     @FXML
-    protected TableColumn<Matrix, Integer> widthColumn, heightColumn;
+    protected TableColumn<DataDefinition, Integer> widthColumn, heightColumn;
     @FXML
-    protected TableColumn<Matrix, String> nameColumn, commentsColumn;
+    protected TableColumn<DataDefinition, String> nameColumn, commentsColumn;
     @FXML
-    protected TableColumn<Matrix, Short> scaleColumn;
+    protected TableColumn<DataDefinition, Short> scaleColumn;
     @FXML
-    protected TableColumn<Matrix, Date> modifyColumn;
+    protected TableColumn<DataDefinition, Date> modifyColumn;
     @FXML
     protected Label matrixLabel;
 
@@ -43,12 +42,14 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
 
     @Override
     public void setTableDefinition() {
-        tableDefinition = new TableMatrix();
+        tableDefinition = new TableDataDefinition();
+        queryConditions = "data_type=" + DataDefinition.dataType(DataDefinition.DataType.Matrix);
     }
 
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             mxidColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             widthColumn.setCellValueFactory(new PropertyValueFactory<>("colsNumber"));
@@ -65,14 +66,14 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
 
     @Override
     public void itemClicked() {
-        editAction(null);
+        editAction();
     }
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         try {
-            Matrix selected = tableView.getSelectionModel().getSelectedItem();
+            DataDefinition selected = tableView.getSelectionModel().getSelectedItem();
             if (selected == null) {
                 return;
             }
@@ -83,7 +84,7 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
     }
 
     @Override
-    protected int deleteData(List<Matrix> data) {
+    protected int deleteData(List<DataDefinition> data) {
         int ret = super.deleteData(data);
         if (ret <= 0) {
             return ret;
@@ -96,8 +97,8 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
         if (currentid < 0) {
             return ret;
         }
-        for (Matrix m : data) {
-            if (m.getId() == currentid) {
+        for (DataDefinition m : data) {
+            if (m.getDfid() == currentid) {
                 Platform.runLater(() -> {
                     editController.loadNull();
                 });

@@ -11,6 +11,7 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.DataCell;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
@@ -19,8 +20,6 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
-import mara.mybox.db.data.Matrix;
-import mara.mybox.db.data.MatrixCell;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.NoteTag;
 import mara.mybox.db.data.Notebook;
@@ -56,12 +55,6 @@ public class DataFactory {
 
         } else if (data instanceof Location) {
             return new TableLocationData();
-
-        } else if (data instanceof Matrix) {
-            return new TableMatrix();
-
-        } else if (data instanceof MatrixCell) {
-            return new TableMatrixCell();
 
         } else if (data instanceof MyBoxLog) {
             return new TableMyBoxLog();
@@ -117,6 +110,9 @@ public class DataFactory {
         } else if (data instanceof ImageScope) {
             return new TableImageScope();
 
+        } else if (data instanceof DataCell) {
+            return new TableDataCell();
+
         }
         return null;
     }
@@ -136,12 +132,6 @@ public class DataFactory {
 
         } else if (data instanceof Location) {
             return Location.valid((Location) data);
-
-        } else if (data instanceof Matrix) {
-            return Matrix.valid((Matrix) data);
-
-        } else if (data instanceof MatrixCell) {
-            return MatrixCell.valid((MatrixCell) data);
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.valid((MyBoxLog) data);
@@ -197,6 +187,9 @@ public class DataFactory {
         } else if (data instanceof ImageScope) {
             return ImageScope.valid((ImageScope) data);
 
+        } else if (data instanceof DataCell) {
+            return DataCell.valid((DataCell) data);
+
         }
 
         return false;
@@ -217,12 +210,6 @@ public class DataFactory {
 
         } else if (data instanceof Location) {
             return Location.getValue((Location) data, name);
-
-        } else if (data instanceof Matrix) {
-            return Matrix.getValue((Matrix) data, name);
-
-        } else if (data instanceof MatrixCell) {
-            return MatrixCell.getValue((MatrixCell) data, name);
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.getValue((MyBoxLog) data, name);
@@ -278,6 +265,9 @@ public class DataFactory {
         } else if (data instanceof ImageScope) {
             return ImageScope.getValue((ImageScope) data, name);
 
+        } else if (data instanceof DataCell) {
+            return DataCell.getValue((DataCell) data, name);
+
         }
 
         return null;
@@ -298,12 +288,6 @@ public class DataFactory {
 
         } else if (data instanceof Location) {
             return Location.setValue((Location) data, name, value);
-
-        } else if (data instanceof Matrix) {
-            return Matrix.setValue((Matrix) data, name, value);
-
-        } else if (data instanceof MatrixCell) {
-            return MatrixCell.setValue((MatrixCell) data, name, value);
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.setValue((MyBoxLog) data, name, value);
@@ -358,6 +342,9 @@ public class DataFactory {
 
         } else if (data instanceof ImageScope) {
             return ImageScope.setValue((ImageScope) data, name, value);
+
+        } else if (data instanceof DataCell) {
+            return DataCell.setValue((DataCell) data, name, value);
 
         }
         return false;

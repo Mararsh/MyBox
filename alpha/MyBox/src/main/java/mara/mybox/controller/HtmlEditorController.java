@@ -46,6 +46,7 @@ import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -319,7 +320,7 @@ public class HtmlEditorController extends WebAddressController {
                 popError(message("NoData"));
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     try {
@@ -599,7 +600,7 @@ public class HtmlEditorController extends WebAddressController {
     protected void codesChanged(boolean changed) {
         codesChanged = changed;
         codesTab.setText(message("HtmlCodes") + (changed ? " *" : ""));
-        codesLabel.setText(message("Total") + ": " + StringTools.format(codesArea.getLength()));
+        codesLabel.setText(message("Count") + ": " + StringTools.format(codesArea.getLength()));
         if (changed) {
             updateFileStatus(true);
         }
@@ -659,7 +660,7 @@ public class HtmlEditorController extends WebAddressController {
         if (c != null && !c.isEmpty()) {
             len = c.length();
         }
-        editorController.setWebViewLabel(message("Total") + ": " + StringTools.format(len));
+        editorController.setWebViewLabel(message("Count") + ": " + StringTools.format(len));
         if (changed) {
             updateFileStatus(true);
         }
@@ -718,7 +719,7 @@ public class HtmlEditorController extends WebAddressController {
     protected void markdownChanged(boolean changed) {
         mdChanged = changed;
         markdownTab.setText("Markdown" + (changed ? " *" : ""));
-        markdownLabel.setText(message("Total") + ": " + StringTools.format(markdownArea.getLength()));
+        markdownLabel.setText(message("Count") + ": " + StringTools.format(markdownArea.getLength()));
         if (changed) {
             updateFileStatus(true);
         }
@@ -764,7 +765,7 @@ public class HtmlEditorController extends WebAddressController {
     protected void textsChanged(boolean changed) {
         textsChanged = changed;
         textsTab.setText(message("Texts") + (changed ? " *" : ""));
-        textsLabel.setText(message("Total") + ": " + StringTools.format(textsArea.getLength()));
+        textsLabel.setText(message("Count") + ": " + StringTools.format(textsArea.getLength()));
         if (changed) {
             updateFileStatus(true);
         }

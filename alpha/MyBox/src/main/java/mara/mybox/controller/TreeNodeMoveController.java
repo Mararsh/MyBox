@@ -3,9 +3,8 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
-import javafx.stage.Modality;
 import mara.mybox.db.data.TreeNode;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -55,7 +54,7 @@ public class TreeNodeMoveController extends BaseTreeNodeSelector {
             if (targetNode == null) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

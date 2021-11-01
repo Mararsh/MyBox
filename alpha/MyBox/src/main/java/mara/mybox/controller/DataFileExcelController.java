@@ -15,6 +15,7 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
@@ -172,7 +173,7 @@ public class DataFileExcelController extends BaseDataFileController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -237,7 +238,7 @@ public class DataFileExcelController extends BaseDataFileController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private int index;
 
                 @Override

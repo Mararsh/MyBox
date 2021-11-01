@@ -10,6 +10,7 @@ import java.util.List;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.FileFilters;
@@ -57,7 +58,7 @@ public class FFmpegMediasTableController extends ControlMediaTable {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {

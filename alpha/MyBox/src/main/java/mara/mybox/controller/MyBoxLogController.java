@@ -16,11 +16,9 @@ import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -59,6 +57,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             mblidColumn.setCellValueFactory(new PropertyValueFactory<>("mblid"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
             timeColumn.setCellFactory(new TableDateCell());

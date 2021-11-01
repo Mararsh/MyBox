@@ -11,6 +11,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Notebook;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 
@@ -52,7 +53,7 @@ public abstract class NotesController_Notebooks extends NotesController_Base {
         tableData.clear();
         notesConditionBox.getChildren().clear();
         namesPane.getChildren().clear();
-        currentPageStart = 1;
+        startRowOfCurrentPage = 0;
     }
 
     protected abstract void loadBook(Notebook book);
@@ -87,7 +88,7 @@ public abstract class NotesController_Notebooks extends NotesController_Base {
         synchronized (this) {
             timeController.clearTree();
             timesBox.setDisable(true);
-            SingletonTask timesTask = new SingletonTask<Void>() {
+            SingletonTask timesTask = new SingletonTask<Void>(this) {
                 private List<Date> times;
 
                 @Override

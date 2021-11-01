@@ -125,8 +125,13 @@ License:    Apache License Version 2.0
                                                                 <CheckBox fx:id="subCheck" mnemonicParsing="false" text="%IncludeSubNodes" />
                                                             </children>
                                                         </VBox>
-                                                        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                        <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                             <columns>
+                                                                <TableColumn fx:id="rowsSelectionColumn"  minWidth="60.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                                                    <graphic>
+                                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
+                                                                    </graphic>
+                                                                </TableColumn>
                                                                 <TableColumn fx:id="faidColumn" text="%ID" visible="false" />
                                                                 <TableColumn fx:id="iconColumn" prefWidth="100.0" text="%Icon" />
                                                                 <TableColumn fx:id="titleColumn" prefWidth="240.0" text="%Title" />

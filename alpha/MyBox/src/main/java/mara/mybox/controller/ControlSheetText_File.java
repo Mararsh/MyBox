@@ -14,6 +14,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -38,7 +39,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
     protected boolean readDataDefinition() {
         try ( Connection conn = DerbyBase.getConnection()) {
             dataName = sourceFile.getAbsolutePath();
-            dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
+//            dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
             if (userSavedDataDefinition && dataDefinition != null) {
                 sourceWithNames = dataDefinition.isHasHeader();
                 sourceCharset = Charset.forName(dataDefinition.getCharset());
@@ -237,7 +238,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override
@@ -269,7 +270,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override

@@ -174,7 +174,7 @@ public class WebAddressController extends BaseWebViewController {
 
     @Override
     public boolean keyEnter() {
-        if (urlSelector.isFocused()) {
+        if (urlSelector != null && urlSelector.isFocused()) {
             goAction();
             return true;
         }

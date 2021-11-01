@@ -22,7 +22,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -369,7 +369,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             if (task != null && !task.isQuit()) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image image;
 
@@ -420,7 +420,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 return;
             }
             int end = Math.min(pos + 20, framesNumber);
-            thumbTask = new SingletonTask<Void>() {
+            thumbTask = new SingletonTask<Void>(this) {
 
                 protected Map<Integer, Image> images;
 

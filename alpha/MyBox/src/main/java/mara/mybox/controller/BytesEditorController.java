@@ -15,7 +15,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.ByteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -237,7 +237,7 @@ public class BytesEditorController extends BaseFileEditorController {
         }
         sourceInformation.setCharset(Charset.forName(c));
         pairArea.setDisable(true);
-        SingletonTask pairTask = new SingletonTask<Void>() {
+        SingletonTask pairTask = new SingletonTask<Void>(this) {
 
             private String pairText;
 

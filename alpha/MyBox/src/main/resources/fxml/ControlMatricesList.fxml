@@ -19,6 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.CheckBox?>
 
 <VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMatricesList">
     <children>
@@ -65,8 +66,13 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </children>
                                 </HBox>
-                                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                     <columns>
+                                        <TableColumn fx:id="rowsSelectionColumn"  minWidth="60.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                            <graphic>
+                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
+                                            </graphic>
+                                        </TableColumn>
                                         <TableColumn fx:id="mxidColumn" text="%ID" />
                                         <TableColumn fx:id="nameColumn" prefWidth="120.0" text="%Name" />
                                         <TableColumn fx:id="widthColumn" prefWidth="60.0" text="%Width" />
@@ -78,12 +84,12 @@ License:    Apache License Version 2.0
                                 </TableView>
                                 <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                     <children>
-                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
-                                          <children>
-                                              <Label fx:id="dataSizeLabel" />
-                                              <Label fx:id="selectedLabel" />
-                                          </children>
-                                      </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label fx:id="dataSizeLabel" />
+                                                <Label fx:id="selectedLabel" />
+                                            </children>
+                                        </HBox>
                                         <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -129,15 +135,15 @@ License:    Apache License Version 2.0
                                         <Label text="%Page" />
                                         <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
                                         <Label fx:id="pageLabel" />
-                              <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconGo.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconGo.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </children>
                                 </HBox>
                             </children>
@@ -158,7 +164,7 @@ License:    Apache License Version 2.0
                                         <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
-                                  <fx:include fx:id="edit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMatrixEdit.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="edit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMatrixEdit.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

@@ -26,7 +26,7 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -308,7 +308,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 

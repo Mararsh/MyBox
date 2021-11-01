@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -42,7 +43,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
             if (textsTask != null) {
                 textsTask.cancel();
             }
-            textsTask = new SingletonTask<Void>() {
+            textsTask = new SingletonTask<Void>(this) {
 
                 protected String texts;
 
@@ -66,7 +67,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
                 @Override
                 protected void whenSucceeded() {
                     textsArea.setText(texts);
-                    textsLabel.setText(message("Length") + ": " + textsArea.getLength());
+                    textsLabel.setText(message("Count") + ": " + textsArea.getLength());
                     textsPage = frameIndex;
                 }
             };

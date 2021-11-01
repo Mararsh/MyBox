@@ -28,6 +28,7 @@ import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -580,7 +581,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 processStartTime = new Date();
                 totalFilesHandled = totalItemsHandled = 0;
                 updateInterface("Started");
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {

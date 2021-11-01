@@ -313,7 +313,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return true;
         } else if (addButton != null) {
             if (!addButton.isDisabled() && addButton.isVisible()) {
-                addAction(null);
+                addAction();
             }
             return true;
         }

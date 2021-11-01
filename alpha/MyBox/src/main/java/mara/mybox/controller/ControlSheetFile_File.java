@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -50,7 +51,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                 task.cancel();
             }
             initFile();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String[][] data;
 
@@ -132,7 +133,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
             totalSize = 0;
             totalRead = false;
             paginationBox.setVisible(false);
-            backgroundTask = new SingletonTask<Void>() {
+            backgroundTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

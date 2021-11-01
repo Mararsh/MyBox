@@ -29,7 +29,7 @@ public class HtmlPopController extends BaseWebViewController {
     protected ChangeListener listener;
 
     @FXML
-    protected CheckBox sychronizedCheck;
+    protected CheckBox refreshChangeCheck;
     @FXML
     protected Button refreshButton;
 
@@ -46,7 +46,7 @@ public class HtmlPopController extends BaseWebViewController {
             listener = new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                    if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
                         if (newState == Worker.State.SUCCEEDED) {
                             refreshAction();
                         }
@@ -54,22 +54,22 @@ public class HtmlPopController extends BaseWebViewController {
                 }
             };
 
-            sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshChangeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
                     if (sourceWebView == null) {
-                        sychronizedCheck.setVisible(false);
+                        refreshChangeCheck.setVisible(false);
                         refreshButton.setVisible(false);
                         return;
                     }
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                    if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
                         sourceWebView.getEngine().getLoadWorker().stateProperty().addListener(listener);
                     } else {
                         sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
                     }
                 }
             });
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
 
             setAsPopup(baseName);
 
@@ -96,7 +96,7 @@ public class HtmlPopController extends BaseWebViewController {
         try {
             this.baseName = baseName;
 
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
 
             loadContents(address, html);
@@ -112,7 +112,7 @@ public class HtmlPopController extends BaseWebViewController {
         try {
             this.baseName = baseName;
 
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
 
             loadAddress(address);
@@ -127,7 +127,7 @@ public class HtmlPopController extends BaseWebViewController {
     @FXML
     public void refreshAction() {
         if (sourceWebView == null) {
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
             return;
         }

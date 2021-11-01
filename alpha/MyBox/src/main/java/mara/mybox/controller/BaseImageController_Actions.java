@@ -25,6 +25,7 @@ import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -220,7 +221,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image areaImage;
 
@@ -249,7 +250,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image areaImage;
 
@@ -322,7 +323,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image areaImage;
 
@@ -501,7 +502,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 
@@ -556,7 +557,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

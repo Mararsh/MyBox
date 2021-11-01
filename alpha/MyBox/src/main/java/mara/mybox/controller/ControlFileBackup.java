@@ -24,8 +24,8 @@ import mara.mybox.db.table.TableFileBackup;
 import static mara.mybox.db.table.TableFileBackup.Default_Max_Backups;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
@@ -187,7 +187,7 @@ public class ControlFileBackup extends BaseController {
             if (task != null && !task.isQuit()) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private List<FileBackup> list;
                 private File currentFile;
 

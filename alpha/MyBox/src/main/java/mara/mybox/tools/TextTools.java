@@ -572,37 +572,52 @@ public class TextTools {
             String delimiter = delimiterValue(delimiterName);
             int rowsNumber = data.length;
             int colsNumber = data[0].length;
+            int colEnd;
             if (colsNames != null && colsNames.size() >= colsNumber) {
                 if (rowsNames != null) {
                     s.append(delimiter);
                 }
-                int end = colsNumber - 1;
-                for (int c = 0; c <= end; c++) {
+                colEnd = colsNumber - 1;
+                for (int c = 0; c <= colEnd; c++) {
                     s.append(colsNames.get(c));
-                    if (c < end) {
+                    if (c < colEnd) {
                         s.append(delimiter);
                     }
                 }
                 s.append("\n");
             }
-            for (int i = 0; i < rowsNumber; i++) {
+            Object v;
+            int rowEnd = rowsNumber - 1;
+            for (int i = 0; i <= rowEnd; i++) {
                 if (rowsNames != null) {
                     s.append(rowsNames.get(i)).append(delimiter);
                 }
-                int end = colsNumber - 1;
-                for (int c = 0; c <= end; c++) {
-                    s.append(data[i][c]);
-                    if (c < end) {
+                colEnd = colsNumber - 1;
+                for (int c = 0; c <= colEnd; c++) {
+                    v = data[i][c];
+                    s.append(v == null ? "" : v);
+                    if (c < colEnd) {
                         s.append(delimiter);
                     }
                 }
-                s.append("\n");
+                if (i < rowEnd) {
+                    s.append("\n");
+                }
             }
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.console(e);
             return "";
         }
+    }
+
+    public static String dataText(List<List<String>> rows, String delimiterName) {
+        return dataText(toArray(rows), delimiterName, null, null);
+    }
+
+    public static String dataText(List<List<String>> rows, String delimiterName,
+            List<String> colsNames, List<String> rowsNames) {
+        return dataText(toArray(rows), delimiterName, colsNames, rowsNames);
     }
 
     public static List<String> parseLine(String line, String delimiterName) {

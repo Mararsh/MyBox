@@ -35,6 +35,7 @@ import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableImageFileCell;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -97,6 +98,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             faidColumn.setCellValueFactory(new PropertyValueFactory<>("faid"));
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             iconColumn.setCellValueFactory(new PropertyValueFactory<>("icon"));
@@ -185,7 +187,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
         tableData.clear();
         conditionBox.getChildren().clear();
         namesPane.getChildren().clear();
-        currentPageStart = 1;
+        startRowOfCurrentPage = 0;
     }
 
     protected void loadAddress(TreeNode node) {
@@ -229,7 +231,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             return;
         }
         synchronized (this) {
-            SingletonTask bookTask = new SingletonTask<Void>() {
+            SingletonTask bookTask = new SingletonTask<Void>(this) {
                 private List<TreeNode> ancestor;
 
                 @Override
@@ -287,10 +289,10 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
     @Override
     public List<WebFavorite> readPageData() {
         if (treeController.selectedNode != null && subCheck.isSelected()) {
-            return tableWebFavorite.withSub(tableTree, treeController.selectedNode.getNodeid(), currentPageStart - 1, currentPageSize);
+            return tableWebFavorite.withSub(tableTree, treeController.selectedNode.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
-            return tableWebFavorite.queryConditions(queryConditions, currentPageStart - 1, currentPageSize);
+            return tableWebFavorite.queryConditions(queryConditions, startRowOfCurrentPage, pageSize);
 
         } else {
             return null;
@@ -336,7 +338,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
 
             menu = new MenuItem(message("Add"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                addAction(null);
+                addAction();
             });
             items.add(menu);
 
@@ -382,7 +384,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
 
     @Override
     public void itemClicked() {
-        editAction(null);
+        editAction();
     }
 
     @Override
@@ -400,28 +402,29 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
     }
 
     @Override
-    protected int checkSelected() {
+    protected void checkButtons() {
         if (isSettingValues) {
-            return -1;
+            return;
         }
-        int selection = super.checkSelected();
-        deleteButton.setDisable(selection == 0);
-        copyButton.setDisable(selection == 0);
-        moveDataButton.setDisable(selection == 0);
-        selectedLabel.setText(message("Selected") + ": " + selection);
-        return selection;
+        super.checkButtons();
+
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        deleteButton.setDisable(none);
+        copyButton.setDisable(none);
+        moveDataButton.setDisable(none);
     }
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         nodeOfCurrentAddress = treeController.selectedNode;
         editAddress(null);
     }
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         editAddress(tableView.getSelectionModel().getSelectedItem());
     }
 
@@ -482,7 +485,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
 
     protected void updateNodeOfCurrentAddress() {
         synchronized (this) {
-            SingletonTask updateTask = new SingletonTask<Void>() {
+            SingletonTask updateTask = new SingletonTask<Void>(this) {
                 private String chainName;
 
                 @Override
@@ -539,7 +542,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                 popError(message("InvalidData"));
                 return;
             }
-            SingletonTask updateTask = new SingletonTask<Void>() {
+            SingletonTask updateTask = new SingletonTask<Void>(this) {
                 private File iconFile;
 
                 @Override
@@ -576,7 +579,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                 popError(message("InvalidData") + ": " + message("Address"));
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private WebFavorite data;
 
                 @Override

@@ -11,6 +11,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Languages;
@@ -83,7 +84,7 @@ public class BaseTaskController extends BaseController {
     }
 
     public void startTask() {
-        task = new SingletonTask<Void>() {
+        task = new SingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -103,6 +104,7 @@ public class BaseTaskController extends BaseController {
 
             @Override
             protected void finalAction() {
+                task = null;
                 StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
                 startButton.applyCss();
                 startButton.setUserData(null);
@@ -130,6 +132,7 @@ public class BaseTaskController extends BaseController {
     }
 
     protected void afterTask() {
+
     }
 
     @FXML

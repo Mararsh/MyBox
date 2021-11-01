@@ -45,6 +45,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
@@ -597,7 +598,7 @@ public class MediaPlayerController extends BaseController {
                 if (task != null && !task.isQuit()) {
                     task.cancel();
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     private int index;
                     private MediaInformation info;
@@ -706,7 +707,7 @@ public class MediaPlayerController extends BaseController {
                 } else {
                     popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {

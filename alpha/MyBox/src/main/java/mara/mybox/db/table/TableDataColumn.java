@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -130,12 +131,12 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
         }
     }
 
-    public List<ColumnDefinition> read(Connection conn, DataType dataType, String dataName) {
-        if (dataType == null || dataName == null) {
+    public List<ColumnDefinition> queryFile(Connection conn, File file) {
+        if (file == null) {
             return null;
         }
         try {
-            DataDefinition dataDefinition = getTableDataDefinition().read(conn, dataType, dataName);
+            DataDefinition dataDefinition = getTableDataDefinition().queryFile(conn, file);
             if (dataDefinition == null) {
                 return null;
             }
@@ -146,23 +147,23 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
         }
     }
 
-    public boolean clear(DataType type, String dataName) {
-        if (type == null || dataName == null) {
+    public boolean clearFile(File file) {
+        if (file == null) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection();) {
-            return clear(conn, type, dataName);
+            return clearFile(conn, file);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    public boolean clear(Connection conn, DataType type, String dataName) {
-        if (conn == null || type == null || dataName == null) {
+    public boolean clearFile(Connection conn, File file) {
+        if (conn == null || file == null) {
             return false;
         }
-        DataDefinition dataDefinition = getTableDataDefinition().read(type, dataName);
+        DataDefinition dataDefinition = getTableDataDefinition().queryFile(conn, file);
         if (dataDefinition == null) {
             return false;
         }
@@ -219,26 +220,27 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
         }
     }
 
-    public boolean save(DataType type, String dataName, List<ColumnDefinition> columns) {
-        if (type == null || dataName == null || columns == null || columns.isEmpty()) {
+    public boolean save(File file, String dataName, List<ColumnDefinition> columns) {
+        if (file == null || dataName == null || columns == null || columns.isEmpty()) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection();) {
-            return save(conn, type, dataName, columns);
+            return save(conn, file, dataName, columns);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    public boolean save(Connection conn, DataType type, String dataName, List<ColumnDefinition> columns) {
-        if (type == null || dataName == null || columns == null || columns.isEmpty()) {
+    public boolean save(Connection conn, File file, String dataName, List<ColumnDefinition> columns) {
+        if (file == null || dataName == null || columns == null || columns.isEmpty()) {
             return false;
         }
         try {
-            DataDefinition dataDefinition = getTableDataDefinition().read(type, dataName);
+            DataDefinition dataDefinition = getTableDataDefinition().queryFileName(conn, file, dataName);
             if (dataDefinition == null) {
-                dataDefinition = DataDefinition.create().setDataType(type).setDataName(dataName);
+                dataDefinition = DataDefinition.create().setDataType(DataType.DataFile)
+                        .setFile(file).setDataName(dataName);
                 tableDataDefinition.insertData(conn, dataDefinition);
             }
             long dataid = dataDefinition.getDfid();

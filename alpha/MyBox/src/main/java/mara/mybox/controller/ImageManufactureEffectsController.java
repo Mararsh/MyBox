@@ -33,6 +33,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
@@ -100,7 +101,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
                 private String value = null;

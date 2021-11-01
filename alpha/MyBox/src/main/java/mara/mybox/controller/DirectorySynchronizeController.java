@@ -24,6 +24,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -222,7 +223,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {

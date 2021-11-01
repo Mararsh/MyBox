@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.fxml;
 
 import java.util.Date;
 import javafx.application.Platform;
@@ -80,10 +80,6 @@ public class BaseTask<P> extends Task<P> {
 
     }
 
-    protected void finalAction() {
-
-    }
-
     @Override
     protected void failed() {
         super.failed();
@@ -104,6 +100,10 @@ public class BaseTask<P> extends Task<P> {
         endTime = new Date();
         self = null;
         quit = true;
+    }
+
+    protected void finalAction() {
+
     }
 
     /*

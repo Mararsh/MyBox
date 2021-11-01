@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import thridparty.TTC;
@@ -73,7 +74,7 @@ public class FileTTC2TTFController extends HtmlTableController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -108,7 +109,7 @@ public class FileTTC2TTFController extends HtmlTableController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<File> files;
 

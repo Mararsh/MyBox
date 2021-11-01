@@ -14,6 +14,7 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
@@ -156,7 +157,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
             if (htmlTask != null) {
                 htmlTask.cancel();
             }
-            htmlTask = new SingletonTask<Void>() {
+            htmlTask = new SingletonTask<Void>(this) {
 
                 protected String title;
 

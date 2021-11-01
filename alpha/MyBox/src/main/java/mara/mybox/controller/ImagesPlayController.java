@@ -30,6 +30,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
@@ -202,7 +203,7 @@ public class ImagesPlayController extends BaseImagesListController {
             }
             sourceFile = file;
             fileFormat = format;
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -481,7 +482,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (infos == null || infos.isEmpty()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

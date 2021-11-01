@@ -8,9 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.Data2D;
+import mara.mybox.data.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
@@ -27,8 +30,9 @@ import org.apache.commons.csv.CSVFormat;
  * @CreateDate 2020-12-24
  * @License Apache License Version 2.0
  */
-public class DataFileCSVController extends BaseDataFileController {
+public class DataFileCSVController extends BaseData2DFileController {
 
+    protected DataFileCSV dataFileCSV;
     protected Charset sourceCharset;
     protected CSVFormat sourceCsvFormat;
 
@@ -36,16 +40,9 @@ public class DataFileCSVController extends BaseDataFileController {
     protected ControlCsvOptions csvReadController, csvWriteController;
     @FXML
     protected VBox mainBox;
-    @FXML
-    protected ControlSheetCSV sheetController;
 
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.CSV);
     }
 
     @Override
@@ -53,11 +50,18 @@ public class DataFileCSVController extends BaseDataFileController {
         try {
             super.initValues();
 
-            dataController = sheetController;
-            dataController.setParent(this);
+            setDataType(Data2D.Type.DataFileCSV);
+            dataFileCSV = (DataFileCSV) dataController.data2D;
+
+            MyBoxLog.console(dataFileCSV.getPageData() != null);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.CSV);
     }
 
     @Override
@@ -75,14 +79,10 @@ public class DataFileCSVController extends BaseDataFileController {
 
     @Override
     public void pickOptions() {
-        try {
-            sheetController.sourceCharset = csvReadController.charset;
-            sheetController.sourceCsvDelimiter = csvReadController.delimiter;
-            sheetController.autoDetermineSourceCharset = csvReadController.autoDetermine;
-            sheetController.sourceWithNames = csvReadController.withNamesCheck.isSelected();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        dataFileCSV.setSourceCharset(csvReadController.charset);
+        dataFileCSV.setSourceCsvDelimiter(csvReadController.delimiter);
+        dataFileCSV.setAutoDetermineSourceCharset(csvReadController.autoDetermine);
+        dataFileCSV.setSourceWithNames(csvReadController.withNamesCheck.isSelected());
     }
 
     public void setFile(File file, Charset charset, boolean withName, char delimiter) {
@@ -90,8 +90,11 @@ public class DataFileCSVController extends BaseDataFileController {
         csvReadController.withNamesCheck.setSelected(withName);
         csvReadController.setDelimiter(delimiter);
         csvReadController.setCharset(charset);
-        sheetController.initCurrentPage();
-        sheetController.userSavedDataDefinition = false;
+        dataFileCSV.setUserSavedDataDefinition(false);
+        dataFileCSV.setSourceCharset(charset);
+        dataFileCSV.setSourceCsvDelimiter(delimiter);
+        dataFileCSV.setAutoDetermineSourceCharset(false);
+        dataFileCSV.setSourceWithNames(withName);
         loadFile();
     }
 
@@ -101,23 +104,23 @@ public class DataFileCSVController extends BaseDataFileController {
         if (sourceFile != null) {
             info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + message("Charset") + ": " + sheetController.sourceCharset + "\n"
-                    + message("Delimiter") + ": " + TextTools.delimiterMessage(sheetController.sourceDelimiterName) + "\n"
-                    + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n";
+                    + message("Charset") + ": " + dataFileCSV.getSourceCharset() + "\n"
+                    + message("Delimiter") + ": " + TextTools.delimiterMessage(dataFileCSV.getSourceCsvDelimiter() + "") + "\n"
+                    + message("FirstLineAsNames") + ": " + (dataFileCSV.isSourceWithNames() ? message("Yes") : message("No")) + "\n";
         }
-        if (sheetController.pagesNumber <= 1) {
-            info += message("RowsNumber") + ":" + (sheetController.sheetInputs == null ? 0 : sheetController.sheetInputs.length) + "\n";
+        if (!dataFileCSV.isMutiplePages()) {
+            info += message("RowsNumber") + ":" + dataFileCSV.pageRowsNumber() + "\n";
         } else {
-            info += message("LinesNumberInFile") + ":" + sheetController.totalSize + "\n";
+            info += message("LinesNumberInFile") + ":" + dataFileCSV.getDataNumber() + "\n";
         }
-        info += message("ColumnsNumber") + ": " + (sheetController.columns == null ? "0" : sheetController.columns.size()) + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage + 1)
-                + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
-        if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
+        info += message("ColumnsNumber") + ": " + dataFileCSV.columnsNumber() + "\n"
+                + message("CurrentPage") + ": " + StringTools.format(dataFileCSV.getCurrentPage() + 1)
+                + " / " + StringTools.format(dataFileCSV.getPagesNumber()) + "\n";
+        if (dataFileCSV.isMutiplePages() && dataFileCSV.hasData()) {
             info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(sheetController.startRowOfCurrentPage + 1) + " - "
-                    + StringTools.format(sheetController.startRowOfCurrentPage + sheetController.sheetInputs.length)
-                    + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
+                    + ": " + StringTools.format(dataFileCSV.getStartRowOfCurrentPage() + 1) + " - "
+                    + StringTools.format(dataFileCSV.getStartRowOfCurrentPage() + dataFileCSV.pageRowsNumber())
+                    + " ( " + StringTools.format(dataFileCSV.pageRowsNumber()) + " )\n";
         }
         info += message("PageModifyTime") + ": " + DateTools.nowString();
         fileInfoLabel.setText(info);
@@ -126,12 +129,12 @@ public class DataFileCSVController extends BaseDataFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        sheetController.sourceFile = sourceFile;
-        sheetController.targetCharset = csvWriteController.charset;
-        sheetController.targetCsvDelimiter = csvWriteController.delimiter;
-        sheetController.targetWithNames = csvWriteController.withNamesCheck.isSelected();
-        sheetController.saveAsType = saveAsType;
-        sheetController.saveAs();
+//        sheetController.sourceFile = sourceFile;
+//        sheetController.targetCharset = csvWriteController.charset;
+//        sheetController.targetCsvDelimiter = csvWriteController.delimiter;
+//        sheetController.targetWithNames = csvWriteController.withNamesCheck.isSelected();
+//        sheetController.saveAsType = saveAsType;
+//        sheetController.saveAs();
     }
 
     public void loadData(List<StringTable> tables) {
@@ -159,7 +162,7 @@ public class DataFileCSVController extends BaseDataFileController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private File tmpPath;
                 private LinkedHashMap<File, Boolean> files;

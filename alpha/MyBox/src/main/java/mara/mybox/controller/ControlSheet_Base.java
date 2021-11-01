@@ -64,7 +64,7 @@ public abstract class ControlSheet_Base extends BaseController {
     @FXML
     protected Tab sheetTab, textsEditTab, htmlTab, textsDisplayTab, optionsTab, defTab;
     @FXML
-    protected VBox sheetBox, defBox;
+    protected VBox sheetBox;
     @FXML
     protected Button analyseSheetButton, synchronizeTextsEditButton,
             rowsAddButton, rowsDeleteButton, columnsAddButton, columnsDeleteButton, widthSheetButton,
@@ -83,13 +83,13 @@ public abstract class ControlSheet_Base extends BaseController {
     @FXML
     protected RadioButton sumRadio, addRadio, subRadio, multiplyRadio, mergeRadio, ascendingRadio, descendingRadio, copyRadio;
     @FXML
-    protected Button trimColumnsButton;
-    @FXML
-    protected HBox defBottunsBox, paginationBox;
+    protected HBox paginationBox;
     @FXML
     protected Label pageLabel, totalLabel;
     @FXML
     protected TextField warnThresholdInput;
+    @FXML
+    protected ControlData2DDefine columnsController;
 
     public ControlSheet_Base() {
         baseTitle = message("Data");

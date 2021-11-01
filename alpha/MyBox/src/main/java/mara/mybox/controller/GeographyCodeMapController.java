@@ -13,6 +13,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 
@@ -80,7 +81,7 @@ public class GeographyCodeMapController extends BaseMapController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     private List<GeographyCode> points;
 

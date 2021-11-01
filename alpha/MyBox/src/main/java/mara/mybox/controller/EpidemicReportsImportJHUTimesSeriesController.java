@@ -16,9 +16,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -31,7 +29,7 @@ import org.apache.commons.csv.CSVRecord;
 public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicReportsImportController {
 
     public EpidemicReportsImportJHUTimesSeriesController() {
-        baseTitle = Languages.message("ImportEpidemicReportJHUTimes");
+        baseTitle = message("ImportEpidemicReportJHUTimes");
     }
 
     @Override
@@ -54,7 +52,7 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
             conn.setAutoCommit(false);
             equalQuery.setMaxRows(1);
             if (TableGeographyCode.China(conn) == null) {
-                updateLogs(Languages.message("LoadingPredefinedGeographyCodes"), true);
+                updateLogs(message("LoadingPredefinedGeographyCodes"), true);
                 GeographyCodeTools.importPredefined(conn);
             }
             String filename = file.getAbsolutePath();
@@ -69,7 +67,7 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
             }
             List<String> names = parser.getHeaderNames();
             if (!names.contains("Province/State") || !names.contains("1/22/20")) {
-                updateLogs(Languages.message("InvalidFormat"), true);
+                updateLogs(message("InvalidFormat"), true);
                 return -1;
             }
             for (CSVRecord record : parser) {
@@ -103,9 +101,9 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                     }
                     String levelValue;
                     if (province != null && !province.isBlank()) {
-                        levelValue = Languages.message("Province");
+                        levelValue = message("Province");
                     } else {
-                        levelValue = Languages.message("Country");
+                        levelValue = message("Country");
                     }
                     double longitude = Double.valueOf(record.get("Long"));
                     double latitude = Double.valueOf(record.get("Lat"));
@@ -142,20 +140,20 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                         String d = names.get(i);
                         Date date = DateTools.stringToDatetime(d + EpidemicReport.COVID19TIME, "MM/dd/yy hh:mm:ss");
                         if (verboseCheck.isSelected() || (importCount % 100 == 0)) {
-                            updateLogs(Languages.message("Insert") + " " + insertCount + " "
-                                    + Languages.message("Update") + " " + updateCount + " "
-                                    + Languages.message("Skipped") + ":" + skipCount + " "
+                            updateLogs(message("Insert") + " " + insertCount + " "
+                                    + message("Update") + " " + updateCount + " "
+                                    + message("Skipped") + ":" + skipCount + " "
                                     + EpidemicReport.COVID19JHU + ": " + date + " "
                                     + country + " " + (province != null ? province : "") + " "
-                                    + Languages.message(valueName.name()), true);
+                                    + message(valueName.name()), true);
                         }
                         int value = Integer.valueOf(record.get(d));
                         if (value <= 0) {
                             skipCount++;
                             if (verboseCheck.isSelected() || (skipCount % 100 == 0)) {
-                                updateLogs(Languages.message("Skip") + ": " + date + " "
+                                updateLogs(message("Skip") + ": " + date + " "
                                         + country + " " + (province != null ? province : "") + " "
-                                        + Languages.message(valueName.name()), true);
+                                        + message(valueName.name()), true);
                             }
                             continue;
                         }
@@ -192,12 +190,12 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                                 continue;
                         }
                         report.setSource((short) 2);
-                        String info = Languages.message("Line") + " " + lineCount + " "
-                                + Languages.message("Data") + " " + dataCount + " "
-                                + Languages.message("Line") + " " + lineCount + " "
-                                + Languages.message("Data") + " " + dataCount + " "
+                        String info = message("Line") + " " + lineCount + " "
+                                + message("Data") + " " + dataCount + " "
+                                + message("Line") + " " + lineCount + " "
+                                + message("Data") + " " + dataCount + " "
                                 + country + " " + (province != null ? province : "") + " " + locationid + " " + locationCode.getName() + " "
-                                + date + " " + Languages.message(valueName.name()) + ": " + value;
+                                + date + " " + message(valueName.name()) + ": " + value;
                         if (existed) {
                             if (update == null) {
                                 skipCount++;
@@ -207,10 +205,10 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                                 updateCount++;
                                 importCount++;
                                 if (verboseCheck.isSelected() || (importCount % 100 == 0)) {
-                                    updateLogs(Languages.message("Update") + ": " + info, true);
+                                    updateLogs(message("Update") + ": " + info, true);
                                 }
                             } else {
-                                updateLogs(Languages.message("Update") + ": " + Languages.message("Failed") + "  " + info, true);
+                                updateLogs(message("Update") + ": " + message("Failed") + "  " + info, true);
                                 failedCount++;
                             }
                         } else {
@@ -218,10 +216,10 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                                 insertCount++;
                                 importCount++;
                                 if (verboseCheck.isSelected() || (importCount % 100 == 0)) {
-                                    updateLogs(Languages.message("Insert") + ": " + info, true);
+                                    updateLogs(message("Insert") + ": " + info, true);
                                 }
                             } else {
-                                updateLogs(Languages.message("Insert") + ": " + Languages.message("Failed") + "  " + info, true);
+                                updateLogs(message("Insert") + ": " + message("Failed") + "  " + info, true);
                                 failedCount++;
                             }
                         }
@@ -237,12 +235,12 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
         } catch (Exception e) {
             updateLogs(e.toString(), true);
         }
-        updateLogs(Languages.message("Imported") + ":" + importCount + "  " + file + "\n"
-                + Languages.message("Total") + ":" + dataCount + " "
-                + Languages.message("Insert") + ":" + insertCount + " "
-                + Languages.message("Update") + ":" + updateCount + " "
-                + Languages.message("FailedCount") + ":" + failedCount + " "
-                + Languages.message("Skipped") + ":" + skipCount, true);
+        updateLogs(message("Imported") + ":" + importCount + "  " + file + "\n"
+                + message("Total") + ":" + dataCount + " "
+                + message("Insert") + ":" + insertCount + " "
+                + message("Update") + ":" + updateCount + " "
+                + message("FailedCount") + ":" + failedCount + " "
+                + message("Skipped") + ":" + skipCount, true);
         return dataCount;
     }
 

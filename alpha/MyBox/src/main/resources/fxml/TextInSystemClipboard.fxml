@@ -35,34 +35,34 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                              <children>
-                                                  <Label text="%MonitorInterval" wrapText="true">
-                                                      <padding>
-                                                          <Insets right="10.0" />
-                                                      </padding>
-                                                  </Label>
-                                                  <ComboBox fx:id="intervalSelector" editable="true" prefWidth="100.0" />
-                                              </children>
-                                          </HBox>
-                                            <Label maxWidth="1.7976931348623157E308" text="%WhenNewTextInSystemBoard" />
-                              <CheckBox fx:id="copyCheck" mnemonicParsing="false" text="%CopyToMyBoxClipboard" />
-                              <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconStart.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button> 
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Label text="%MonitorInterval" wrapText="true">
+                                                    <padding>
+                                                        <Insets right="10.0" />
+                                                    </padding>
+                                                </Label>
+                                                <ComboBox fx:id="intervalSelector" editable="true" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                        <Label maxWidth="1.7976931348623157E308" text="%WhenNewTextInSystemBoard" />
+                                        <CheckBox fx:id="copyCheck" mnemonicParsing="false" text="%CopyToMyBoxClipboard" />
+                                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconStart.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button> 
                                         <Separator prefWidth="200.0" />
                                         <Label fx:id="recordLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                              <CheckBox fx:id="startCheck" layoutX="10.0" layoutY="99.0" mnemonicParsing="false" text="%StartMonitorWhenMyBoxBoot" wrapText="true" />
+                                        <CheckBox fx:id="startCheck" layoutX="10.0" layoutY="99.0" mnemonicParsing="false" text="%StartMonitorWhenMyBoxBoot" wrapText="true" />
                                     </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -75,68 +75,76 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SeparateLine" wrapText="true" />
-                                    <ComboBox fx:id="separateSelector" prefWidth="180.0" />
-                                    <CheckBox fx:id="wrapCheck" mnemonicParsing="false" selected="true" text="%Wrap" />
-                                                  <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
-                                                      <graphic>
-                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/Red/iconClipboard.png" />
-                                                              </image>
-                                                          </ImageView>
-                                                      </graphic>
-                                                  </Button>
-                                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconRefresh.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconClear.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconEdit.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button fx:id="copyToSystemClipboardButton" mnemonicParsing="false" onAction="#copyToSystemClipboard">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/iconCopySystem.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button fx:id="copyToMyBoxClipboardButton" mnemonicParsing="false" onAction="#copyToMyBoxClipboard">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconCopy.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                 </children>
-                              </FlowPane>
+                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SeparateLine" wrapText="true" />
+                                                <ComboBox fx:id="separateSelector" prefWidth="180.0" />
+                                                <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/red/iconWrap.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClipboard.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconRefresh.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconEdit.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="copyToSystemClipboardButton" mnemonicParsing="false" onAction="#copyToSystemClipboard">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconCopySystem.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="copyToMyBoxClipboardButton" mnemonicParsing="false" onAction="#copyToMyBoxClipboard">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconCopy.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </FlowPane>
                                     </children>
                                 </HBox>
                                 <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />

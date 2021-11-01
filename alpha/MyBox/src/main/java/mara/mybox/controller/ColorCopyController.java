@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
@@ -12,8 +11,7 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -92,7 +90,7 @@ public class ColorCopyController extends ControlColorPaletteSelector {
                 task.cancel();
                 task = null;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private int count;
 
                 @Override
@@ -121,7 +119,7 @@ public class ColorCopyController extends ControlColorPaletteSelector {
                 task.cancel();
                 task = null;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private int count;
 

@@ -25,7 +25,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem EditExcel = new MenuItem(message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
             DataFileExcelController controller = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-            controller.dataController.newSheet(3, 3);
+//            controller.dataController.newSheet(3, 3);
         });
 
         MenuItem ExcelConvert = new MenuItem(message("ExcelConvert"));
@@ -46,7 +46,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem EditCSV = new MenuItem(message("EditCSV"));
         EditCSV.setOnAction((ActionEvent event1) -> {
             DataFileCSVController controller = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-            controller.dataController.newSheet(3, 3);
+//            controller.dataController.newSheet(3, 3);
         });
 
         MenuItem CsvConvert = new MenuItem(message("CsvConvert"));
@@ -62,7 +62,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem TextData = new MenuItem(message("EditTextDataFile"));
         TextData.setOnAction((ActionEvent event1) -> {
             DataFileTextController controller = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-            controller.dataController.newSheet(3, 3);
+//            controller.dataController.newSheet(3, 3);
         });
 
         MenuItem TextDataConvert = new MenuItem(message("TextDataConvert"));

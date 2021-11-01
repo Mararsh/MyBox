@@ -37,6 +37,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DateTools;
@@ -197,7 +198,7 @@ public class LocationDataMapController extends BaseMapController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -444,7 +445,7 @@ public class LocationDataMapController extends BaseMapController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     List<String> startTimes;
 

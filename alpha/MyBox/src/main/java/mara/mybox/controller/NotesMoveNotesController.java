@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Notebook;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -53,7 +54,7 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
                 return;
             }
             long bookid = targetBook.getNbid();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private int count;
                 private boolean updateNote = false;

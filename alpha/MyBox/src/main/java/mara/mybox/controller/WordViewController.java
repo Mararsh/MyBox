@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Languages;
 
@@ -38,7 +39,7 @@ public class WordViewController extends BaseWebViewController {
             if (task != null && !task.isQuit()) {
                 return false;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private File htmlFile;
 

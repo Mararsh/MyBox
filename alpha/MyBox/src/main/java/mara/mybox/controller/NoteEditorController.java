@@ -39,6 +39,7 @@ import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.value.HtmlStyles;
@@ -139,7 +140,7 @@ public class NoteEditorController extends HtmlEditorController {
 
     protected void updateBookOfCurrentNote() {
         synchronized (this) {
-            SingletonTask noteTask = new SingletonTask<Void>() {
+            SingletonTask noteTask = new SingletonTask<Void>(this) {
                 private String chainName;
 
                 @Override
@@ -225,7 +226,7 @@ public class NoteEditorController extends HtmlEditorController {
             }
             String html = currentHtml(true);
             notesController.rightPane.setDisable(true);
-            SingletonTask saveTask = new SingletonTask<Void>() {
+            SingletonTask saveTask = new SingletonTask<Void>(this) {
                 private Note note;
                 private boolean notExist = false;
 
@@ -318,7 +319,7 @@ public class NoteEditorController extends HtmlEditorController {
         synchronized (this) {
             tagsListController.clear();
             noteTagsPane.setDisable(true);
-            SingletonTask noteTagsTask = new SingletonTask<Void>() {
+            SingletonTask noteTagsTask = new SingletonTask<Void>(this) {
                 private List<String> tagsString;
                 private List<Integer> selected;
 
@@ -392,7 +393,7 @@ public class NoteEditorController extends HtmlEditorController {
         }
         synchronized (this) {
             notesController.rightPane.setDisable(true);
-            SingletonTask noteTagsTask = new SingletonTask<Void>() {
+            SingletonTask noteTagsTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

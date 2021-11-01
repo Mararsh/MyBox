@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Fxmls;
@@ -56,7 +57,7 @@ public class FileDecompressController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 File decompressedFile;
                 String archiver;
 

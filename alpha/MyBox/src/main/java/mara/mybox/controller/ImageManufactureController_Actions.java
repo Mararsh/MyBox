@@ -21,6 +21,7 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -222,7 +223,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             if (selected == null) {
                 return;
             }
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
                 private Image hisImage;
 
                 @Override
@@ -279,7 +280,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             if (file == null) {
                 return;
             }
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
                 private Image backImage;
 
                 @Override

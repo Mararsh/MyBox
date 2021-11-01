@@ -20,6 +20,7 @@ import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -101,7 +102,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public void addAction(ActionEvent event) {
+    public void addAction() {
 
     }
 
@@ -315,7 +316,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(myController) {
 
                 @Override
                 protected boolean handle() {
@@ -424,6 +425,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         }
         if (task instanceof SingletonTask) {
             SingletonTask sTask = (SingletonTask) task;
+            sTask.setController(myController);
             sTask.setSelf(sTask);
         }
         Thread thread = new Thread(task);

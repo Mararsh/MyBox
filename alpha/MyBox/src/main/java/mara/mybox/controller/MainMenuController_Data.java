@@ -69,13 +69,13 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     @FXML
     protected void openDataCsv(ActionEvent event) {
         DataFileCSVController controller = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-        controller.dataController.newSheet(3, 3);
+//        controller.dataController.newSheet(3, 3);
     }
 
     @FXML
     protected void openDataExcel(ActionEvent event) {
         DataFileExcelController controller = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-        controller.dataController.newSheet(3, 3);
+//        controller.dataController.newSheet(3, 3);
     }
 
     @FXML
@@ -101,7 +101,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     @FXML
     protected void openDataText(ActionEvent event) {
         DataFileTextController controller = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-        controller.dataController.newSheet(3, 3);
+//        controller.dataController.newSheet(3, 3);
     }
 
     @FXML

@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 
 /**
@@ -100,7 +101,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 
@@ -131,7 +132,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 
@@ -162,7 +163,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 
@@ -192,7 +193,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 
@@ -222,7 +223,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 
@@ -257,7 +258,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private int angle;
                 private Image newImage;

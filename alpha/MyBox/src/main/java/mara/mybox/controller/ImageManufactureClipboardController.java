@@ -30,6 +30,7 @@ import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -256,7 +257,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image clipImage;
 
@@ -309,7 +310,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private boolean enlarged;
 

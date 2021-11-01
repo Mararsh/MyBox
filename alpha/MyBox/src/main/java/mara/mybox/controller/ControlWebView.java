@@ -47,6 +47,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
@@ -732,7 +733,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private Image image = null;
 
@@ -1095,7 +1096,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private StringTable table;
 
@@ -1168,7 +1169,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private StringTable table;
 
@@ -1239,7 +1240,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private String toc;
 
@@ -1272,7 +1273,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private String texts;
 
@@ -1305,7 +1306,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private List<StringTable> tables;
 
@@ -1364,7 +1365,7 @@ public class ControlWebView extends BaseController {
                 popError(message("NoData"));
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     File tmpFile = HtmlWriteTools.writeHtml(html);

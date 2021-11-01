@@ -18,7 +18,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -30,7 +29,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -57,8 +56,10 @@ public class PdfViewController extends PdfViewController_Html {
     protected Task outlineTask;
 
     @FXML
-    protected CheckBox transparentBackgroundCheck, bookmarksCheck, wrapTextsCheck, wrapOCRCheck,
-            ocrSynCheck, htmlSynCheck, textSynCheck;
+    protected CheckBox transparentBackgroundCheck, bookmarksCheck,
+            wrapTextsCheck, refreshSwitchTextsCheck, refreshChangeTextsCheck,
+            wrapOCRCheck, refreshChangeOCRCheck, refreshSwitchOCRCheck,
+            refreshChangeHtmlCheck, refreshSwitchHtmlCheck;
     @FXML
     protected ScrollPane outlineScrollPane;
     @FXML
@@ -82,19 +83,6 @@ public class PdfViewController extends PdfViewController_Html {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.setTooltip(ocrSynCheck, new Tooltip(message("AlwaysSynchronize")));
-            NodeStyleTools.setTooltip(htmlSynCheck, new Tooltip(message("AlwaysSynchronize")));
-            NodeStyleTools.setTooltip(textSynCheck, new Tooltip(message("AlwaysSynchronize")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     @Override
@@ -143,15 +131,15 @@ public class PdfViewController extends PdfViewController_Html {
                         return;
                     }
                     if (newValue == ocrTab) {
-                        if (orcPage != frameIndex) {
+                        if (orcPage != frameIndex && refreshSwitchOCRCheck.isSelected()) {
                             startOCR();
                         }
                     } else if (newValue == textsTab) {
-                        if (textsPage != frameIndex) {
+                        if (textsPage != frameIndex && refreshSwitchTextsCheck.isSelected()) {
                             extractTexts();
                         }
                     } else if (newValue == htmlTab) {
-                        if (htmlPage != frameIndex) {
+                        if (htmlPage != frameIndex && refreshSwitchHtmlCheck.isSelected()) {
                             convertHtml();
                         }
                     }
@@ -168,6 +156,22 @@ public class PdfViewController extends PdfViewController_Html {
             });
             textsArea.setWrapText(wrapTextsCheck.isSelected());
 
+            refreshSwitchTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchTexts", true));
+            refreshSwitchTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "RefreshSwitchTexts", newValue);
+                }
+            });
+
+            refreshChangeTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeTexts", false));
+            refreshChangeTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "RefreshChangeTexts", newValue);
+                }
+            });
+
             wrapOCRCheck.setSelected(UserConfig.getBoolean(baseName + "WrapOCR", true));
             wrapOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -178,27 +182,35 @@ public class PdfViewController extends PdfViewController_Html {
             });
             ocrArea.setWrapText(wrapTextsCheck.isSelected());
 
-            ocrSynCheck.setSelected(UserConfig.getBoolean(baseName + "OcrSyn", false));
-            ocrSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshSwitchOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchOCR", true));
+            refreshSwitchOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "OcrSyn", newValue);
+                    UserConfig.setBoolean(baseName + "RefreshSwitchOCR", newValue);
                 }
             });
 
-            htmlSynCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlSyn", false));
-            htmlSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshChangeOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeOCR", false));
+            refreshChangeOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "HtmlSyn", newValue);
+                    UserConfig.setBoolean(baseName + "RefreshChangeOCR", newValue);
                 }
             });
 
-            textSynCheck.setSelected(UserConfig.getBoolean(baseName + "TextSyn", false));
-            textSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshSwitchHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchHtml", true));
+            refreshSwitchHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "TextSyn", newValue);
+                    UserConfig.setBoolean(baseName + "RefreshSwitchHtml", newValue);
+                }
+            });
+
+            refreshChangeHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeHtml", false));
+            refreshChangeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "RefreshChangeHtml", newValue);
                 }
             });
 
@@ -284,7 +296,7 @@ public class PdfViewController extends PdfViewController_Html {
             pageSelector.getItems().clear();
             isSettingValues = false;
             pageLabel.setText("");
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 protected boolean pop;
 
                 @Override
@@ -370,11 +382,11 @@ public class PdfViewController extends PdfViewController_Html {
         }
         super.setImage(image, percent);
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (ocrSynCheck.isSelected() || tab == ocrTab) {
+        if (refreshChangeOCRCheck.isSelected() || tab == ocrTab) {
             startOCR();
-        } else if (textSynCheck.isSelected() || tab == textsTab) {
+        } else if (refreshChangeTextsCheck.isSelected() || tab == textsTab) {
             extractTexts();
-        } else if (htmlSynCheck.isSelected() || tab == htmlTab) {
+        } else if (refreshChangeHtmlCheck.isSelected() || tab == htmlTab) {
             convertHtml();
         }
     }
@@ -387,7 +399,7 @@ public class PdfViewController extends PdfViewController_Html {
             if (outlineTask != null) {
                 outlineTask.cancel();
             }
-            outlineTask = new SingletonTask<Void>() {
+            outlineTask = new SingletonTask<Void>(this) {
                 protected PDDocument doc;
 
                 @Override

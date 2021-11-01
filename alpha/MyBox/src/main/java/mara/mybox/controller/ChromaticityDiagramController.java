@@ -46,6 +46,7 @@ import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileNameTools;
@@ -541,7 +542,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private StringTable degree2nm1Table, degree10nm1Table, degree2nm5Table, degree10nm5Table;
 
                 @Override
@@ -596,7 +597,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String texts;
 
                 @Override
@@ -851,7 +852,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image image;
 
                 @Override
@@ -927,7 +928,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

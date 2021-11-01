@@ -7,16 +7,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
@@ -33,6 +40,12 @@ public class PptViewController extends BaseFileImagesViewController {
     protected TextArea notesArea, slideArea;
     @FXML
     protected Label notesLabel, slideLabel;
+    @FXML
+    protected CheckBox notesCheck;
+    @FXML
+    protected VBox textsBox;
+    @FXML
+    protected TitledPane notesPane;
 
     public PptViewController() {
         baseTitle = message("PptView");
@@ -41,6 +54,33 @@ public class PptViewController extends BaseFileImagesViewController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PPTS, VisitHistory.FileType.Image);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            notesCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayNotes", true));
+            notesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (notesCheck.isSelected()) {
+                        if (!textsBox.getChildren().contains(notesPane)) {
+                            textsBox.getChildren().add(notesPane);
+                        }
+                    } else {
+                        if (textsBox.getChildren().contains(notesPane)) {
+                            textsBox.getChildren().remove(notesPane);
+                        }
+                    }
+                    UserConfig.setBoolean(baseName + "DisplayNotes", notesCheck.isSelected());
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -71,7 +111,7 @@ public class PptViewController extends BaseFileImagesViewController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     setTotalPages(0);
@@ -120,7 +160,7 @@ public class PptViewController extends BaseFileImagesViewController {
             if (task != null && !task.isQuit()) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String slideTexts, notes;
 
                 @Override

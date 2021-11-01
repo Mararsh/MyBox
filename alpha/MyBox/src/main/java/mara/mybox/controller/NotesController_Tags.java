@@ -19,6 +19,7 @@ import mara.mybox.db.table.TableNote;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -66,7 +67,7 @@ public abstract class NotesController_Tags extends NotesController_Notebooks {
         synchronized (this) {
             tagsListController.clear();
             tagsPane.setDisable(true);
-            SingletonTask tagsTask = new SingletonTask<Void>() {
+            SingletonTask tagsTask = new SingletonTask<Void>(this) {
                 private List<String> tagsString;
 
                 @Override
@@ -113,7 +114,7 @@ public abstract class NotesController_Tags extends NotesController_Notebooks {
                 return;
             }
             rightPane.setDisable(true);
-            SingletonTask tagTask = new SingletonTask<Void>() {
+            SingletonTask tagTask = new SingletonTask<Void>(this) {
                 private Tag tag = null;
                 private boolean updateCurrent;
 
@@ -181,7 +182,7 @@ public abstract class NotesController_Tags extends NotesController_Notebooks {
             if (name == null || name.isBlank()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Tag updated;
 
                 @Override
@@ -244,7 +245,7 @@ public abstract class NotesController_Tags extends NotesController_Notebooks {
             if (!PopTools.askSure(getBaseTitle(), message("Tags"), message("SureDeleteAll"))) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -277,7 +278,7 @@ public abstract class NotesController_Tags extends NotesController_Notebooks {
             if (!PopTools.askSure(getBaseTitle(), message("Tags"), message("SureDelete"))) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

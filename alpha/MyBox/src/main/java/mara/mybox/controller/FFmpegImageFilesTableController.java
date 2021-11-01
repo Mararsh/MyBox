@@ -6,20 +6,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.UserConfig;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 import thridparty.TableAutoCommitCell;
 
 /**
@@ -40,8 +35,6 @@ public class FFmpegImageFilesTableController extends FilesTableController {
     protected TableColumn<FileInformation, Long> durationColumn;
     @FXML
     protected TextField durationInput;
-    @FXML
-    protected Button exampleRegexButton;
 
     public FFmpegImageFilesTableController() {
     }
@@ -84,29 +77,37 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             super.initColumns();
 
             durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
-            durationColumn.setCellFactory(new Callback<TableColumn<FileInformation, Long>, TableCell<FileInformation, Long>>() {
-                @Override
-                public TableCell<FileInformation, Long> call(TableColumn<FileInformation, Long> param) {
-                    TableAutoCommitCell<FileInformation, Long> cell = new TableAutoCommitCell();
-                    cell.setConverter(new LongStringConverter());
-                    return cell;
-                }
+            durationColumn.setCellFactory((TableColumn<FileInformation, Long> param) -> {
+                TableAutoCommitCell<FileInformation, Long> cell
+                        = new TableAutoCommitCell<FileInformation, Long>(new LongStringConverter()) {
+                    @Override
+                    public void commitEdit(Long val) {
+                        if (val <= 0) {
+                            cancelEdit();
+                        } else {
+                            super.commitEdit(val);
+                        }
+                    }
+                };
+                return cell;
             });
             durationColumn.setOnEditCommit(new EventHandler<CellEditEvent<FileInformation, Long>>() {
                 @Override
                 public void handle(CellEditEvent<FileInformation, Long> t) {
                     try {
-                        long v = (long) (t.getNewValue());
-                        if (v > 0) {
-                            t.getTableView().getItems().get(t.getTablePosition().getRow()).setDuration(v);
-                            if (!isSettingValues) {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateLabel();
-                                    }
-                                });
-                            }
+                        FileInformation row = t.getRowValue();
+                        Long v = t.getNewValue();
+                        if (row == null || v == null || v <= 0) {
+                            return;
+                        }
+                        row.setDuration(v);
+                        if (!isSettingValues) {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateLabel();
+                                }
+                            });
                         }
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());

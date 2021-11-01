@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TreeTableEraCell;
 import mara.mybox.fxml.cell.TreeTableFileSizeCell;
 import mara.mybox.value.Languages;
@@ -145,7 +146,7 @@ public class FilesTreeController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

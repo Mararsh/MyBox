@@ -3,13 +3,13 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
@@ -177,7 +177,7 @@ public class HtmlTableController extends BaseWebViewController {
     }
 
     @FXML
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         File file = TmpFileTools.getTempFile(".html");
         save(file, html, true);
     }
@@ -190,7 +190,7 @@ public class HtmlTableController extends BaseWebViewController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

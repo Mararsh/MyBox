@@ -14,6 +14,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableImageFileCell;
@@ -54,6 +55,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             iconColumn.setCellValueFactory(new PropertyValueFactory<>("icon"));
             iconColumn.setCellFactory(new TableImageFileCell(20));
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -92,13 +94,15 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
     }
 
     @Override
-    protected int checkSelected() {
+    protected void checkButtons() {
         if (isSettingValues) {
-            return -1;
+            return;
         }
-        int selection = super.checkSelected();
-        goButton.setDisable(selection == 0);
-        return selection;
+        super.checkButtons();
+
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        goButton.setDisable(none);
     }
 
     @Override
@@ -116,7 +120,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
         queryConditions = null;
         queryConditionsString = null;
         tableData.clear();
-        currentPageStart = 1;
+        startRowOfCurrentPage = 0;
     }
 
     /*
@@ -126,7 +130,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
     protected void refreshTimes() {
         synchronized (this) {
             timeController.clearTree();
-            SingletonTask timesTask = new SingletonTask<Void>() {
+            SingletonTask timesTask = new SingletonTask<Void>(this) {
                 private List<Date> times;
 
                 @Override

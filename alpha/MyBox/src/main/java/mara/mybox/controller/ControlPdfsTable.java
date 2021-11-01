@@ -15,16 +15,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.util.converter.IntegerStringConverter;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import thridparty.TableAutoCommitCell;
@@ -72,9 +67,66 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
     }
 
     @Override
-    public void initTable() {
+    public void initColumns() {
         try {
-            super.initTable();
+            super.initColumns();
+
+            userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("userPassword"));
+            userPasswordColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
+            userPasswordColumn.setOnEditCommit((TableColumn.CellEditEvent<PdfInformation, String> t) -> {
+                if (t == null) {
+                    return;
+                }
+                PdfInformation row = t.getRowValue();
+                if (row == null) {
+                    return;
+                }
+                row.setUserPassword(t.getNewValue());
+            });
+            userPasswordColumn.getStyleClass().add("editable-column");
+
+            fromColumn.setCellValueFactory(new PropertyValueFactory<>("fromPage"));
+            fromColumn.setCellFactory(TableAutoCommitCell.forIntegerColumn());
+            fromColumn.setOnEditCommit((TableColumn.CellEditEvent<PdfInformation, Integer> t) -> {
+                if (t == null) {
+                    return;
+                }
+                PdfInformation row = t.getRowValue();
+                Integer v = t.getNewValue();
+                if (row == null || v == null || v <= 0) {
+                    return;
+                }
+                row.setFromPage(v);
+            });
+            fromColumn.getStyleClass().add("editable-column");
+
+            toColumn.setCellValueFactory(new PropertyValueFactory<>("toPage"));
+            toColumn.setCellFactory(TableAutoCommitCell.forIntegerColumn());
+            toColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, Integer>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<PdfInformation, Integer> t) {
+                    if (t == null) {
+                        return;
+                    }
+                    PdfInformation row = t.getRowValue();
+                    Integer v = t.getNewValue();
+                    if (row == null || v == null) {
+                        return;
+                    }
+                    row.setToPage(v);
+                }
+            });
+            toColumn.getStyleClass().add("editable-column");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initMore() {
+        try {
+            super.initMore();
 
             fromInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -117,70 +169,6 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                     UserConfig.setBoolean("PDFTableSubDir", tableSubdirCheck.isSelected());
                 }
             });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initColumns() {
-        try {
-            super.initColumns();
-
-            userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("userPassword"));
-            userPasswordColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
-            userPasswordColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<PdfInformation, String> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    PdfInformation row = t.getRowValue();
-                    row.setUserPassword(t.getNewValue());
-                }
-            });
-            userPasswordColumn.getStyleClass().add("editable-column");
-
-            fromColumn.setCellValueFactory(new PropertyValueFactory<>("fromPage"));
-            fromColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
-                TableAutoCommitCell<PdfInformation, Integer> cell
-                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
-                    @Override
-                    public void commitEdit(Integer val) {
-                        if (val <= 0) {
-                            cancelEdit();
-                        } else {
-                            super.commitEdit(val);
-                        }
-                    }
-                };
-                return cell;
-            });
-            fromColumn.setOnEditCommit((TableColumn.CellEditEvent<PdfInformation, Integer> t) -> {
-                if (t == null) {
-                    return;
-                }
-                if (t.getNewValue() > 0) {
-                    PdfInformation row = t.getRowValue();
-                    row.setFromPage(t.getNewValue());
-                }
-            });
-            fromColumn.getStyleClass().add("editable-column");
-
-            toColumn.setCellValueFactory(new PropertyValueFactory<>("toPage"));
-            toColumn.setCellFactory(TableAutoCommitCell.forTableColumn(new IntegerStringConverter()));
-            toColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, Integer>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<PdfInformation, Integer> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    PdfInformation row = t.getRowValue();
-                    row.setToPage(t.getNewValue());
-                }
-            });
-            toColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -257,89 +245,6 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
     @Override
     protected boolean isValidFile(File file) {
         return PdfTools.isPDF(file);
-    }
-
-    /*
-        get/set
-     */
-    public TableColumn<PdfInformation, String> getUserPasswordColumn() {
-        return userPasswordColumn;
-    }
-
-    public void setUserPasswordColumn(TableColumn<PdfInformation, String> userPasswordColumn) {
-        this.userPasswordColumn = userPasswordColumn;
-    }
-
-    public Button getSetAllButton() {
-        return setAllOrSelectedButton;
-    }
-
-    public void setSetAllButton(Button setAllOrSelectedButton) {
-        this.setAllOrSelectedButton = setAllOrSelectedButton;
-    }
-
-    public FlowPane getSetPDFPane() {
-        return setPDFPane;
-    }
-
-    public void setSetPDFPane(FlowPane setPDFPane) {
-        this.setPDFPane = setPDFPane;
-    }
-
-    public HBox getFromToBox() {
-        return fromToBox;
-    }
-
-    public void setFromToBox(HBox fromToBox) {
-        this.fromToBox = fromToBox;
-    }
-
-    public Label getTableCommentsLabel() {
-        return tableCommentsLabel;
-    }
-
-    public void setTableCommentsLabel(Label tableCommentsLabel) {
-        this.tableCommentsLabel = tableCommentsLabel;
-    }
-
-    public TableColumn<PdfInformation, Integer> getFromColumn() {
-        return fromColumn;
-    }
-
-    public void setFromColumn(TableColumn<PdfInformation, Integer> fromColumn) {
-        this.fromColumn = fromColumn;
-    }
-
-    public TableColumn<PdfInformation, Integer> getToColumn() {
-        return toColumn;
-    }
-
-    public void setToColumn(TableColumn<PdfInformation, Integer> toColumn) {
-        this.toColumn = toColumn;
-    }
-
-    public TextField getPasswordInput() {
-        return passwordInput;
-    }
-
-    public void setPasswordInput(TextField passwordInput) {
-        this.passwordInput = passwordInput;
-    }
-
-    public TextField getFromInput() {
-        return fromInput;
-    }
-
-    public void setFromInput(TextField fromInput) {
-        this.fromInput = fromInput;
-    }
-
-    public TextField getToInput() {
-        return toInput;
-    }
-
-    public void setToInput(TextField toInput) {
-        this.toInput = toInput;
     }
 
 }

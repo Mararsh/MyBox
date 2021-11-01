@@ -43,7 +43,7 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import mara.mybox.data.BaseTask;
+import mara.mybox.fxml.BaseTask;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;

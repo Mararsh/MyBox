@@ -16,14 +16,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
+import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataClipboard;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -116,6 +117,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             dfidColumn.setCellValueFactory(new PropertyValueFactory<>("dfid"));
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("dataName"));
             nameColumn.setCellFactory(new Callback<TableColumn<DataDefinition, String>, TableCell<DataDefinition, String>>() {
@@ -190,7 +192,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
 
     @Override
     public List<DataDefinition> readPageData() {
-        return DataClipboard.queryPage(tableDataDefinition, currentPageStart - 1, currentPageSize);
+        return DataClipboard.queryPage(tableDataDefinition, startRowOfCurrentPage, pageSize);
     }
 
     @Override
@@ -227,10 +229,12 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
     }
 
     @Override
-    protected int checkSelected() {
-        int selection = super.checkSelected();
-        renameButton.setDisable(selection == 0);
-        return selection;
+    protected void checkButtons() {
+        if (isSettingValues) {
+            return;
+        }
+        super.checkButtons();
+        renameButton.setDisable(tableView.getSelectionModel().getSelectedIndex() < 0);
     }
 
     public void loadData(DataDefinition data) {
@@ -337,7 +341,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -368,7 +372,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private DataDefinition def;
 
                 @Override
@@ -442,7 +446,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private DataDefinition df;
 
                 @Override

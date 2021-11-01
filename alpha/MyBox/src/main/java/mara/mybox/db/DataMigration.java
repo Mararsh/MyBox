@@ -17,6 +17,8 @@ import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.DataCell;
+import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
@@ -30,6 +32,8 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableDataCell;
+import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
@@ -41,6 +45,7 @@ import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -109,6 +114,9 @@ public class DataMigration {
                 if (lastVersion < 6004008) {
                     updateIn648(conn);
                 }
+                if (lastVersion < 6005001) {
+                    updateIn651(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -117,6 +125,80 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn651(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.5.1...");
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE Data_Definition  ADD COLUMN  file VARCHAR(32672)");
+                statement.executeUpdate("ALTER TABLE Data_Definition  ADD COLUMN  columns_number BIGINT");
+                statement.executeUpdate("ALTER TABLE Data_Definition  ADD COLUMN  rows_number BIGINT");
+                statement.executeUpdate("ALTER TABLE Data_Definition  ADD COLUMN  scale SMALLINT");
+                statement.executeUpdate("ALTER TABLE Data_Definition  ADD COLUMN  max_random INTEGER");
+                statement.executeUpdate("ALTER TABLE Data_Definition  ADD COLUMN  modify_time  TIMESTAMP");
+                statement.executeUpdate("ALTER TABLE Data_Definition  ADD COLUMN  comments VARCHAR(32672)");
+                statement.executeUpdate("DROP  INDEX Data_Definition_unique_index");
+                statement.executeUpdate("UPDATE Data_Definition SET  file=data_name");
+                conn.commit();
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.setAutoCommit(false);
+            TableDataDefinition tableDataDefinition = new TableDataDefinition();
+            try ( ResultSet query = conn.createStatement().executeQuery("SELECT * FROM Data_Definition")) {
+                while (query.next()) {
+                    DataDefinition def = tableDataDefinition.readData(query);
+                    def.setDataName(FileNameTools.getFilePrefix(new File(def.getDataName())));
+                    tableDataDefinition.updateData(conn, def);
+                }
+                conn.commit();
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            try ( ResultSet mquery = conn.createStatement().executeQuery("SELECT * FROM Matrix")) {
+                conn.setAutoCommit(false);
+                TableDataCell tableDataCell = new TableDataCell();
+                while (mquery.next()) {
+                    long mxid = mquery.getLong("mxid");
+                    DataDefinition def = DataDefinition.create().setDataType(DataDefinition.DataType.Matrix)
+                            .setDataName(mquery.getString("name"))
+                            .setScale(mquery.getShort("scale"))
+                            .setColsNumber(mquery.getInt("columns_number"))
+                            .setRowsNumber(mquery.getInt("rows_number"))
+                            .setModifyTime(mquery.getTimestamp("modify_time"))
+                            .setComments(mquery.getString("comments"));
+                    def = tableDataDefinition.insertData(conn, def);
+                    conn.commit();
+                    long dfif = def.getDfid();
+                    try ( ResultSet cquery = conn.createStatement()
+                            .executeQuery("SELECT * FROM Matrix_Cell WHERE mcxid=" + mxid)) {
+                        while (cquery.next()) {
+                            DataCell cell = DataCell.create().setDfid(dfif)
+                                    .setCol(cquery.getInt("col"))
+                                    .setRow(cquery.getInt("row"))
+                                    .setValue(cquery.getDouble("value") + "");
+                            tableDataCell.insertData(conn, cell);
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e);
+                    }
+                    conn.commit();
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.commit();
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("DROP TABLE Matrix_Cell");
+                statement.executeUpdate("DROP TABLE Matrix");
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn648(Connection conn) {

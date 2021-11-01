@@ -111,7 +111,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <FlowPane alignment="TOP_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <CheckBox fx:id="wrapCodesCheck" mnemonicParsing="false" text="%Wrap" />
+                                                <CheckBox fx:id="wrapCodesCheck" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/red/iconWrap.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>                                                        
                                                 <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTextFile">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -217,7 +225,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <CheckBox fx:id="wrapMarkdownCheck" mnemonicParsing="false" text="%Wrap" />
+                                                <CheckBox fx:id="wrapMarkdownCheck" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/red/iconWrap.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>                                                        
                                                 <Button fx:id="clearMarkdownButton" mnemonicParsing="false" onAction="#clearMarkdown">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -280,7 +296,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" text="%Wrap" />
+                                                <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/red/iconWrap.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>                                                        
                                                 <HBox fx:id="htmlBox1" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                                                     <children>
                                                         <Button fx:id="clearTextsButton" mnemonicParsing="false" onAction="#clearTexts">

@@ -17,6 +17,7 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableDataCell;
 import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
@@ -28,8 +29,6 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableLocationData;
-import mara.mybox.db.table.TableMatrix;
-import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -528,12 +527,6 @@ public class DerbyBase {
             if (!tables.contains("MyBox_Log".toUpperCase())) {
                 new TableMyBoxLog().createTable(conn);
             }
-            if (!tables.contains("Matrix".toUpperCase())) {
-                new TableMatrix().createTable(conn);
-            }
-            if (!tables.contains("Matrix_Cell".toUpperCase())) {
-                new TableMatrixCell().createTable(conn);
-            }
             if (!tables.contains("Data_Definition".toUpperCase())) {
                 new TableDataDefinition().createTable(conn);
             }
@@ -578,6 +571,9 @@ public class DerbyBase {
             }
             if (!tables.contains("Text_Clipboard".toUpperCase())) {
                 new TableTextClipboard().createTable(conn);
+            }
+            if (!tables.contains("Data_Cell".toUpperCase())) {
+                new TableDataCell().createTable(conn);
             }
             return true;
         } catch (Exception e) {
@@ -644,13 +640,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Data_Definition_unique_index".toUpperCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableDataDefinition.Create_Index_unique);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Data_Column_unique_index".toUpperCase())) {

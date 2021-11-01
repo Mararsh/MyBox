@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -77,7 +78,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
             if (task != null) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override

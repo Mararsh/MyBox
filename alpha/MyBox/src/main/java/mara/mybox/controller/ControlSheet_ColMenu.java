@@ -123,7 +123,6 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
                     }
                     colsCheck[col].setText(value);
                     columns.get(col).setName(value);
-                    makeDefintionPane();
                     dataChanged(true);
                 });
                 items.add(menu);

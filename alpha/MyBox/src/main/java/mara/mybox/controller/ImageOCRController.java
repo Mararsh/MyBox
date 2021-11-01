@@ -27,6 +27,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -35,11 +36,11 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITessAPI;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.Word;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -350,7 +351,7 @@ public class ImageOCRController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String texts, html;
                 private List<Rectangle> rectangles;

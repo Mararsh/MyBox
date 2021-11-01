@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -27,7 +28,7 @@ public abstract class ControlSheetFile_Calculation extends ControlSheetFile_Oper
             return;
         }
         synchronized (this) {
-            SingletonTask calTask = new SingletonTask<Void>() {
+            SingletonTask calTask = new SingletonTask<Void>(this) {
                 private String[][] resultData = null;
                 private File file;
 
@@ -48,7 +49,7 @@ public abstract class ControlSheetFile_Calculation extends ControlSheetFile_Oper
                 protected void whenSucceeded() {
                     if (resultData != null) {
                         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                        controller.loadData(resultData, statisticColumns(calCols, disCols));
+//                        controller.loadData(resultData, statisticColumns(calCols, disCols));
                         controller.toFront();
                     } else if (file != null) {
                         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);

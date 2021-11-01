@@ -116,7 +116,7 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         return Charset.forName("UTF-8");
     }
 
-    public static FileEditInformation newEditInformation(Edit_Type type, File file) {
+    public static FileEditInformation create(Edit_Type type, File file) {
         switch (type) {
             case Text:
                 return new TextEditInformation(file);

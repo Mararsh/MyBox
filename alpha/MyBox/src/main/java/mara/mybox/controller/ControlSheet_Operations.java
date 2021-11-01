@@ -10,10 +10,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
+import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataClipboard;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
@@ -94,7 +95,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String[][] data;
 
@@ -270,7 +271,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String[][] sortedData;
 
@@ -352,7 +353,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                 }
             }
         }
-        makeDefintionPane();
+        columnsController.loadTableData();
         popSuccessful();
     }
 
@@ -589,7 +590,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
             return;
         }
         synchronized (this) {
-            SingletonTask csvTask = new SingletonTask<Void>() {
+            SingletonTask csvTask = new SingletonTask<Void>(this) {
                 File tmpFile;
 
                 @Override
@@ -627,7 +628,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
             return;
         }
         synchronized (this) {
-            SingletonTask excelTask = new SingletonTask<Void>() {
+            SingletonTask excelTask = new SingletonTask<Void>(this) {
                 File tmpFile;
 
                 @Override

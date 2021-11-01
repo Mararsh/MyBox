@@ -6,6 +6,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -57,7 +58,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
-            loadTask = new SingletonTask<Void>() {
+            loadTask = new SingletonTask<Void>(this) {
                 private ImageInformation targetInfo;
 
                 @Override
@@ -113,7 +114,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
-            loadTask = new SingletonTask<Void>() {
+            loadTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -157,7 +158,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
-            loadTask = new SingletonTask<Void>() {
+            loadTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

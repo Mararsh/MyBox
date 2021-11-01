@@ -1,4 +1,4 @@
-package mara.mybox.db.data;
+package mara.mybox.data;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -11,11 +11,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.TableDataColumn;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
@@ -165,10 +167,10 @@ public class DataClipboard extends DataDefinition {
         }
         DataDefinition def = null;
         try ( Connection conn = DerbyBase.getConnection()) {
-            String dname = dpFile.getAbsolutePath();
-            tableDataDefinition.clear(conn, DataType.DataClipboard, dname);
+            tableDataDefinition.deleteClipboard(conn, csvFile);
             def = DataDefinition.create()
-                    .setDataType(DataType.DataClipboard).setDataName(dname)
+                    .setDataType(DataType.DataClipboard)
+                    .setFile(csvFile).setDataName(FileNameTools.getFilePrefix(csvFile.getName()))
                     .setHasHeader(false).setCharset("UTF-8").setDelimiter(",");
             tableDataDefinition.insertData(conn, def);
             if (columns != null && !columns.isEmpty()) {

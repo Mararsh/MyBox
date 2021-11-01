@@ -12,6 +12,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.TextTools.delimiterValue;
@@ -39,7 +40,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
     protected boolean readDataDefinition() {
         try ( Connection conn = DerbyBase.getConnection()) {
             dataName = sourceFile.getAbsolutePath();
-            dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
+//            dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
             if (userSavedDataDefinition && dataDefinition != null) {
                 sourceDelimiterName = dataDefinition.getDelimiter();
                 sourceCsvDelimiter = sourceDelimiterName.charAt(0);
@@ -276,7 +277,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override
@@ -309,7 +310,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override

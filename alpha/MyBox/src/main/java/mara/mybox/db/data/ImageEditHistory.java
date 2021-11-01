@@ -18,6 +18,14 @@ public class ImageEditHistory extends BaseData {
     protected Date operationTime;
     protected Image thumbnail;
 
+    private void init() {
+        iehid = -1;
+    }
+
+    public ImageEditHistory() {
+        init();
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {

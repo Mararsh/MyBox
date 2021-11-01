@@ -28,7 +28,9 @@ import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableImageInfoCell;
+import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileTools;
@@ -209,7 +211,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -360,7 +362,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -526,6 +528,11 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                     return cell;
                 }
             });
+
+            TableColumn selectColumn = new TableColumn<List<String>, Boolean>();
+            selectColumn.setCellFactory(TableRowSelectionCell.create(tableView));
+            selectColumn.setPrefWidth(60);
+            tableView.getColumns().add(selectColumn);
 
             if (displayMode == ImagesBrowserController_Load.DisplayMode.ThumbnailsList) {
                 imageColumn = new TableColumn<>(Languages.message("Image"));

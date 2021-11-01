@@ -29,6 +29,7 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Fxmls;
@@ -309,7 +310,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     if (kernels == null) {

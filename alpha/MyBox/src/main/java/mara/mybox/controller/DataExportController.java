@@ -27,6 +27,7 @@ import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -175,7 +176,7 @@ public class DataExportController extends BaseTaskController {
             tabPane.getSelectionModel().select(logsTab);
             startTime = new Date().getTime();
             initLogs();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private final boolean skip = targetPathController.isSkip();
 

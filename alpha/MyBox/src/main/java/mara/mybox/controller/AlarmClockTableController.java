@@ -148,7 +148,7 @@ public class AlarmClockTableController extends BaseController {
     }
 
     @FXML
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         ObservableList<AlarmClock> selected = alarmClocksView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;

@@ -30,18 +30,15 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import thridparty.TableAutoCommitCell;
 
 /**
@@ -71,7 +68,8 @@ public class MyBoxLanguagesController extends BaseController {
     protected Button useButton, copyEnglishButton;
 
     public MyBoxLanguagesController() {
-        baseTitle = Languages.message("ManageLanguages");
+        baseTitle = message("ManageLanguages");
+        TipsLabelKey = "MyBoxLanguagesTips";
     }
 
     @Override
@@ -126,7 +124,7 @@ public class MyBoxLanguagesController extends BaseController {
             keyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
             englishColumn.setCellValueFactory(new PropertyValueFactory<>("english"));
             valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-            valueColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
+            valueColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
             valueColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<LanguageItem, String>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<LanguageItem, String> t) {
@@ -134,7 +132,11 @@ public class MyBoxLanguagesController extends BaseController {
                         return;
                     }
                     LanguageItem row = t.getRowValue();
+                    if (row == null) {
+                        return;
+                    }
                     row.setValue(t.getNewValue());
+                    interfaceChanged(true);
                 }
             });
             valueColumn.getStyleClass().add("editable-column");
@@ -170,7 +172,7 @@ public class MyBoxLanguagesController extends BaseController {
             tableKeyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
             tableEnglishColumn.setCellValueFactory(new PropertyValueFactory<>("english"));
             tableValueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-            tableValueColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
+            tableValueColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
             tableValueColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<LanguageItem, String>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<LanguageItem, String> t) {
@@ -178,7 +180,11 @@ public class MyBoxLanguagesController extends BaseController {
                         return;
                     }
                     LanguageItem row = t.getRowValue();
+                    if (row == null) {
+                        return;
+                    }
                     row.setValue(t.getNewValue());
+                    tableChanged(true);
                 }
             });
             tableValueColumn.getStyleClass().add("editable-column");
@@ -205,6 +211,14 @@ public class MyBoxLanguagesController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    protected void interfaceChanged(boolean changed) {
+        interfaceTab.setText(message("Interface") + (changed ? "*" : ""));
+    }
+
+    protected void tableChanged(boolean changed) {
+        tableTab.setText(message("Table") + (changed ? "*" : ""));
     }
 
     @Override
@@ -253,14 +267,16 @@ public class MyBoxLanguagesController extends BaseController {
     }
 
     public void loadLanguage(String name) {
-        interfaceData.clear();
-        tableData.clear();
-        copyEnglishButton.setDisable(true);
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            interfaceData.clear();
+            tableData.clear();
+            copyEnglishButton.setDisable(true);
+            interfaceChanged(false);
+            tableChanged(false);
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -304,6 +320,7 @@ public class MyBoxLanguagesController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
+                    setTitle(baseTitle + " - " + langName);
                     if (error == null) {
                         interfaceView.refresh();
                         tableView.refresh();
@@ -349,7 +366,7 @@ public class MyBoxLanguagesController extends BaseController {
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle(Languages.message("ManageLanguages"));
         dialog.setHeaderText(Languages.message("InputLangaugeName"));
@@ -430,7 +447,7 @@ public class MyBoxLanguagesController extends BaseController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -462,6 +479,8 @@ public class MyBoxLanguagesController extends BaseController {
 
                     @Override
                     protected void whenSucceeded() {
+                        interfaceChanged(false);
+                        tableChanged(false);
                         if (error == null) {
                             if (!listView.getItems().contains(langName)) {
                                 listView.getItems().add(0, langName);

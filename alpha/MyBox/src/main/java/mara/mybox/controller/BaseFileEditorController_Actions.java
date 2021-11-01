@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
@@ -75,7 +76,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -129,7 +130,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -172,7 +173,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            FileEditInformation targetInformation = FileEditInformation.newEditInformation(editType, file);
+            FileEditInformation targetInformation = FileEditInformation.create(editType, file);
             targetInformation.setFile(file);
             targetInformation.setCharset(Charset.forName(targetCharsetSelector.getSelectionModel().getSelectedItem()));
             targetInformation.setPageSize(sourceInformation.getPageSize());
@@ -184,7 +185,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             }
             targetInformation.setLineBreak(lineBreak);
             targetInformation.setLineBreakValue(TextTools.lineBreakValue(lineBreak));
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -251,7 +252,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -296,7 +297,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -352,7 +353,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -409,7 +410,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -448,7 +449,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             return;
         }
         synchronized (this) {
-            SingletonTask filterTask = new SingletonTask<Void>() {
+            SingletonTask filterTask = new SingletonTask<Void>(this) {
 
                 private File filteredFile;
                 private String finalCondition;
@@ -460,7 +461,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                         filterInfo = sourceInformation;
                     } else {
                         File tmpfile = TextFileTools.writeFile(TmpFileTools.getTempFile(".txt"), mainArea.getText(), Charset.forName("utf-8"));
-                        filterInfo = FileEditInformation.newEditInformation(editType, tmpfile);
+                        filterInfo = FileEditInformation.create(editType, tmpfile);
                         filterConditionsString = "";
                         if (editType != Edit_Type.Bytes) {
                             filterInfo.setLineBreak(TextTools.checkLineBreak(tmpfile));

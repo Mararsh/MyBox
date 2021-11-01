@@ -22,6 +22,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.tools.DateTools;
@@ -111,7 +112,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void checkThumb() {
         if (tableThumbCheck.isSelected()) {
             if (!tableView.getColumns().contains(imageColumn)) {
-                tableView.getColumns().add(0, imageColumn);
+                tableView.getColumns().add(1, imageColumn);
             }
         } else {
             if (tableView.getColumns().contains(imageColumn)) {
@@ -162,14 +163,16 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                     if (t == null) {
                         return;
                     }
-                    if (t.getNewValue() > 0) {
-                        ImageInformation row = t.getRowValue();
-                        row.setDuration(t.getNewValue());
-                        if (!isSettingValues) {
-                            Platform.runLater(() -> {
-                                updateLabel();
-                            });
-                        }
+                    ImageInformation row = t.getRowValue();
+                    Long v = t.getNewValue();
+                    if (row == null || v == null || v <= 0) {
+                        return;
+                    }
+                    row.setDuration(v);
+                    if (!isSettingValues) {
+                        Platform.runLater(() -> {
+                            updateLabel();
+                        });
                     }
                 });
                 durationColumn.getStyleClass().add("editable-column");
@@ -258,7 +261,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<ImageInformation> infos;
 

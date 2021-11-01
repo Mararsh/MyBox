@@ -19,9 +19,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.Matrix;
+import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
@@ -141,16 +142,17 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     }
 
     @Override
-    protected int checkSelected() {
+    protected void checkButtons() {
         if (isSettingValues) {
-            return -1;
+            return;
         }
-        int selection = super.checkSelected();
-        deleteButton.setDisable(selection == 0);
-        matrixAButton.setDisable(selection == 0);
-        matrixBButton.setDisable(selection == 0);
-        selectedLabel.setText(message("Selected") + ": " + selection);
-        return selection;
+        super.checkButtons();
+
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        deleteButton.setDisable(none);
+        matrixAButton.setDisable(none);
+        matrixBButton.setDisable(none);
     }
 
     @Override
@@ -197,7 +199,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     @FXML
     public void matrixAAction() {
         try {
-            Matrix selected = tableView.getSelectionModel().getSelectedItem();
+            DataDefinition selected = tableView.getSelectionModel().getSelectedItem();
             if (selected == null) {
                 return;
             }
@@ -210,7 +212,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     @FXML
     public void matrixBAction() {
         try {
-            Matrix selected = tableView.getSelectionModel().getSelectedItem();
+            DataDefinition selected = tableView.getSelectionModel().getSelectedItem();
             if (selected == null) {
                 return;
             }
@@ -266,7 +268,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                 return;
             }
             resultLabel.setText("");
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

@@ -39,6 +39,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -596,7 +597,7 @@ public abstract class BaseMapController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -650,7 +651,7 @@ public abstract class BaseMapController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

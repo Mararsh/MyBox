@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -66,7 +67,7 @@ public class RunSystemCommandController extends HtmlTableController {
             StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData("started");
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String lastText, htmlStyle;
 

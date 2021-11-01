@@ -8,20 +8,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -123,7 +119,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<String> datasets;
 
@@ -354,7 +350,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>() {
+        task = new SingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

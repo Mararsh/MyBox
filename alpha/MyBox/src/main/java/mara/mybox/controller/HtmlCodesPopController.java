@@ -12,6 +12,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -76,13 +77,13 @@ public class HtmlCodesPopController extends TextPopController {
                 listener = new ChangeListener<State>() {
                     @Override
                     public void changed(ObservableValue ov, State oldv, State newv) {
-                        if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                        if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
                             refreshAction();
                         }
                     }
                 };
             }
-            if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+            if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
                 sourceWebView.getEngine().getLoadWorker().stateProperty().addListener(listener);
             } else {
                 sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
@@ -102,7 +103,7 @@ public class HtmlCodesPopController extends TextPopController {
             textArea.setText(WebViewTools.getHtml(sourceWebView));
 
         } else {
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
         }
     }
@@ -126,7 +127,7 @@ public class HtmlCodesPopController extends TextPopController {
             if (file == null) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     try {

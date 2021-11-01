@@ -109,7 +109,7 @@ public class MenuWebviewController extends MenuController {
                 selectButton.setDisable(element == null);
 
                 String html = WebViewTools.getHtml(webView);
-                bottomLabel.setText(message("Length") + ": " + (html == null ? "0" : StringTools.format(html.length())));
+                bottomLabel.setText(message("Count") + ": " + (html == null ? "0" : StringTools.format(html.length())));
 
                 String htmlSelection = WebViewTools.selectedHtml(webView.getEngine());
                 htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : StringTools.format(htmlSelection.length())));

@@ -27,6 +27,7 @@ import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.sceneFontSize;

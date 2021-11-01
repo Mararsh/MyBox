@@ -32,6 +32,7 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -113,7 +114,7 @@ public class ColorPalettePopupController extends BaseController {
                 return;
             }
             thisPane.setDisable(true);
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 protected List<ColorData> colors;
 
@@ -165,6 +166,7 @@ public class ColorPalettePopupController extends BaseController {
 
                 @Override
                 protected void finalAction() {
+                    task = null;
                     thisPane.setDisable(false);
                 }
 

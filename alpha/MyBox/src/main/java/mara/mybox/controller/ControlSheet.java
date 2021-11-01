@@ -65,6 +65,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             currentRow = currentCol = 0;
 
             parentController = this;
+//            columnsController.setParameters(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -75,7 +76,6 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
         try {
             super.setControlsStyle();
 
-            NodeStyleTools.setTooltip(trimColumnsButton, message("RenameAllColumns"));
             NodeStyleTools.setTooltip(equalSheetButton, message("SetValues"));
             NodeStyleTools.setTooltip(synchronizeTextsEditButton, message("SynchronizeChangesToOtherPanes"));
             NodeStyleTools.setTooltip(analyseSheetButton, message("Validate"));
@@ -225,7 +225,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
     protected void afterDataChanged() {
         try {
             updateEdit();
-            makeDefintionPane();
+            columnsController.loadTableData();
             updateHtml();
             updateText();
 

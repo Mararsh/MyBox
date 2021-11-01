@@ -67,6 +67,7 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.DateTools;
@@ -523,7 +524,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String title;
 
                 @Override
@@ -577,7 +578,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<Link> links;
 
@@ -664,7 +665,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
 //                    tableDownloadHistory.deleteAddressHistory(address);

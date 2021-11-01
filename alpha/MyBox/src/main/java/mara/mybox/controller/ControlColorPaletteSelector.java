@@ -14,6 +14,7 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPaletteName;
 import static mara.mybox.db.table.TableColorPaletteName.DefaultPalette;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -87,7 +88,7 @@ public class ControlColorPaletteSelector extends BaseController {
             } else {
                 palettesList.getItems().clear();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private List<ColorPaletteName> palettes;
 
                 @Override
@@ -136,7 +137,7 @@ public class ControlColorPaletteSelector extends BaseController {
             if (name == null || name.isBlank()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private ColorPaletteName newPalatte;
 
                 @Override

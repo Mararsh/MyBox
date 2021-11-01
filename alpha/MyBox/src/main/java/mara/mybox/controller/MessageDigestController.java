@@ -16,7 +16,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
@@ -207,7 +207,7 @@ public class MessageDigestController extends BaseController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     private long datalen;
 

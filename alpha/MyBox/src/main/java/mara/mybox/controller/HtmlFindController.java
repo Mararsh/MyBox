@@ -18,6 +18,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
@@ -182,7 +183,7 @@ public class HtmlFindController extends WebAddressController {
             previousButton.setDisable(true);
             nextButton.setDisable(true);
             lastButton.setDisable(true);
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private StringBuilder results;
 
@@ -296,6 +297,7 @@ public class HtmlFindController extends WebAddressController {
                 @Override
                 protected void finalAction() {
                     loading = null;
+                    task = null;
                 }
 
             };

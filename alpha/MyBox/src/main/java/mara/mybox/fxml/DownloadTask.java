@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import mara.mybox.fxml.BaseTask;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.RandomAccessFile;

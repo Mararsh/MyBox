@@ -4,10 +4,11 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
@@ -75,7 +76,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             return;
         }
         synchronized (this) {
-            SingletonTask copyTask = new SingletonTask<Void>() {
+            SingletonTask copyTask = new SingletonTask<Void>(this) {
 
                 private File file;
 
@@ -129,7 +130,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private File file;
 
@@ -173,7 +174,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private File file;
 
@@ -212,7 +213,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private File file;
 
@@ -253,7 +254,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 String[][] data;
 
                 @Override
@@ -311,7 +312,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -360,7 +361,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -436,7 +437,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             return;
         }
         synchronized (this) {
-            SingletonTask textTask = new SingletonTask<Void>() {
+            SingletonTask textTask = new SingletonTask<Void>(this) {
                 String text;
 
                 @Override
@@ -462,7 +463,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
             return;
         }
         synchronized (this) {
-            SingletonTask textTask = new SingletonTask<Void>() {
+            SingletonTask textTask = new SingletonTask<Void>(this) {
                 String html;
 
                 @Override

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
@@ -26,6 +25,7 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
@@ -72,6 +72,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             thumbColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
             thumbColumn.setCellFactory(new Callback<TableColumn<ImageClipboard, ImageClipboard>, TableCell<ImageClipboard, ImageClipboard>>() {
 
@@ -142,7 +143,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                 return;
             }
             lastSystemClip = clip;
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private ImageClipboard clipData;
 
@@ -183,7 +184,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     private ImageClipboard clip;
 
@@ -206,7 +207,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     public List<ImageClipboard> readPageData() {
         try ( Connection conn = DerbyBase.getConnection()) {
             ((TableImageClipboard) tableDefinition).clearInvalid(conn);
-            return tableDefinition.queryConditions(conn, queryConditions, currentPageStart - 1, currentPageSize);
+            return tableDefinition.queryConditions(conn, queryConditions, startRowOfCurrentPage, pageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return new ArrayList<>();
@@ -248,7 +249,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         ImageClipboard clip = tableView.getSelectionModel().getSelectedItem();
         if (clip == null) {
             return;
@@ -257,7 +258,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image selectedImage;
 
@@ -289,7 +290,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image selectedImage;
 
@@ -320,7 +321,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<ImageClipboard> clips;
 

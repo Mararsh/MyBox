@@ -80,7 +80,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             checkSourceFileInput();
                         });
-                sourceFileInput.setText(UserConfig.getString(baseName + "SourceFile", null));
+//                sourceFileInput.setText(UserConfig.getString(baseName + "SourceFile", null));
             }
 
             if (sourcePathInput != null) {

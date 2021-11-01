@@ -42,6 +42,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.fxml.cell.TableMessageCell;
@@ -155,6 +156,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             datasetColumn.setCellValueFactory(new PropertyValueFactory<>("dataSet"));
             locationColumn.setCellValueFactory(new PropertyValueFactory<>("locationFullName"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
@@ -317,7 +319,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<String> datasets;
                 private List<Date> times;
@@ -644,8 +646,8 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         pageQueryString = pageQueryString + "</br>" + Languages.message("NumberTopDataDaily") + ": " + topNumber;
         List<EpidemicReport> data = new ArrayList();
         int start = 0;
-        int targetStart = currentPageStart - 1;
-        int targetEnd = currentPageStart + currentPageSize;
+        int targetStart = startRowOfCurrentPage;
+        int targetEnd = startRowOfCurrentPage + pageSize;
         for (String date : dataTimes) {
             List<EpidemicReport> reports = timesReports.get(date);
             int end = start + reports.size();
@@ -690,10 +692,10 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         EpidemicReport selected = (EpidemicReport) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            addAction(event);
+            addAction();
             return;
         }
         try {
@@ -746,7 +748,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -844,7 +846,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         try {
             EpidemicReportEditController controller
                     = (EpidemicReportEditController) openScene(null, Fxmls.EpidemicReportEditFxml);

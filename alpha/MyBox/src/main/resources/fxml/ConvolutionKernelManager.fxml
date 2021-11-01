@@ -89,8 +89,13 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </items>
                                 </ToolBar>
-                                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                     <columns>
+                                        <TableColumn fx:id="rowsSelectionColumn"  minWidth="60.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                            <graphic>
+                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
+                                            </graphic>
+                                        </TableColumn>
                                         <TableColumn fx:id="nameColumn" prefWidth="170.0" text="%Name" />
                                         <TableColumn fx:id="widthColumn" prefWidth="60.0" text="%Width" />
                                         <TableColumn fx:id="heightColumn" prefWidth="60.0" text="%Height" />

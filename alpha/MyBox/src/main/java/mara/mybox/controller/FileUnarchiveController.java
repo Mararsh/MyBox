@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TreeTableEraCell;
 import mara.mybox.fxml.cell.TreeTableFileSizeCell;
 import mara.mybox.tools.CompressTools;
@@ -171,7 +172,7 @@ public class FileUnarchiveController extends FilesTreeController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private TreeItem<FileInformation> root;
 
@@ -337,7 +338,7 @@ public class FileUnarchiveController extends FilesTreeController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

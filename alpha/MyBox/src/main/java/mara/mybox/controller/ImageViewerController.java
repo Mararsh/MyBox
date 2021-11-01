@@ -35,6 +35,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -530,7 +531,7 @@ public class ImageViewerController extends BaseImageController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     private Image areaImage;
 
@@ -617,7 +618,7 @@ public class ImageViewerController extends BaseImageController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     private Image targetImage;
 
@@ -713,7 +714,7 @@ public class ImageViewerController extends BaseImageController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

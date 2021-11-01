@@ -46,17 +46,13 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.StyleData;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
-
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -450,7 +446,7 @@ public class GameMineController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String html;
 
@@ -500,7 +496,7 @@ public class GameMineController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     TableStringValues.clear("GameMineHistory");
@@ -797,7 +793,7 @@ public class GameMineController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     TableStringValues.max("GameMineHistory", historiesNumber);

@@ -5,6 +5,7 @@ import java.util.List;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
@@ -35,7 +36,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
             return;
         }
         synchronized (this) {
-            SingletonTask calTask = new SingletonTask<Void>() {
+            SingletonTask calTask = new SingletonTask<Void>(this) {
 
                 private String[][] data;
 
@@ -62,7 +63,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
             return;
         }
         synchronized (this) {
-            SingletonTask calTask = new SingletonTask<Void>() {
+            SingletonTask calTask = new SingletonTask<Void>(this) {
                 private String[][] transposed;
 
                 @Override
@@ -87,7 +88,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
                 @Override
                 protected void whenSucceeded() {
                     DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                    controller.loadData(transposed, null);
+//                    controller.loadData(transposed, null);
                 }
 
             };
@@ -204,7 +205,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
             return;
         }
         synchronized (this) {
-            SingletonTask calTask = new SingletonTask<Void>() {
+            SingletonTask calTask = new SingletonTask<Void>(this) {
                 private String[][] resultData;
 
                 @Override
@@ -222,7 +223,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
                 @Override
                 protected void whenSucceeded() {
                     DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                    controller.loadData(resultData, statisticColumns(calCols, disCols));
+//                    controller.loadData(resultData, statisticColumns(calCols, disCols));
                 }
 
             };

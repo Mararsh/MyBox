@@ -14,6 +14,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppValues;
@@ -274,7 +275,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             }
             resultLabel.setText("");
             resultBox.getChildren().clear();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String op;
 
                 @Override

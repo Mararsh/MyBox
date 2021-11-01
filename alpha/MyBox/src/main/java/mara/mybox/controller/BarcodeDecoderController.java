@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.BarcodeTools.BarcodeType;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.Languages;
@@ -56,7 +57,7 @@ public class BarcodeDecoderController extends ImageViewerController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
                     private Result result;
 
                     @Override

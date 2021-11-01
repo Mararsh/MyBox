@@ -1,7 +1,9 @@
 package mara.mybox.db.data;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
@@ -18,29 +20,41 @@ public class DataDefinition extends BaseData {
 
     protected long dfid;
     protected DataType dataType;
-    protected String dataName, charset, delimiter;
+    protected String dataName, charset, delimiter, comments;
+    protected File file;
     protected boolean hasHeader;
+    protected long colsNumber, rowsNumber;
+    protected short scale;
+    protected int maxRandom;
+    protected Date modifyTime;
 
     public static enum DataType {
-        InternalTable, DataFile, Matrix, UserTable, DataClipboard
-    }
-
-    private void init() {
-        dfid = -1;
-        dataType = DataType.DataFile;
-        hasHeader = false;
-        charset = Charset.defaultCharset().name();
-        delimiter = ",";
+        InternalTable, DataFile, Matrix, UserTable, DataClipboard, Unknown
     }
 
     public DataDefinition() {
-        init();
+        initDefinition();
+        dataType = DataType.DataFile;
     }
 
     public DataDefinition(DataType dataType, String dataName) {
-        init();
+        initDefinition();
         this.dataType = dataType;
         this.dataName = dataName;
+    }
+
+    private void initDefinition() {
+        dfid = -1;
+        file = null;
+        dataName = null;
+        hasHeader = false;
+        charset = Charset.defaultCharset().name();
+        delimiter = ",";
+        colsNumber = rowsNumber = 0;
+        scale = 2;
+        maxRandom = 1000;
+        modifyTime = new Date();
+        comments = null;
     }
 
     /*
@@ -66,12 +80,26 @@ public class DataDefinition extends BaseData {
                 return dataType(data.getDataType());
             case "data_name":
                 return data.getDataName();
+            case "file":
+                return data.getFile() == null ? null : data.getFile().getAbsolutePath();
             case "charset":
                 return data.getCharset();
             case "delimiter":
                 return data.getDelimiter();
             case "has_header":
                 return data.isHasHeader();
+            case "columns_number":
+                return data.getColsNumber();
+            case "rows_number":
+                return data.getRowsNumber();
+            case "scale":
+                return data.getScale();
+            case "max_random":
+                return data.getMaxRandom();
+            case "modify_time":
+                return data.getModifyTime();
+            case "comments":
+                return data.getComments();
         }
         return null;
     }
@@ -91,6 +119,9 @@ public class DataDefinition extends BaseData {
                 case "data_name":
                     data.setDataName(value == null ? null : (String) value);
                     return true;
+                case "file":
+                    data.setFile(value == null ? null : new File((String) value));
+                    return true;
                 case "charset":
                     data.setCharset(value == null ? null : (String) value);
                     return true;
@@ -99,6 +130,24 @@ public class DataDefinition extends BaseData {
                     return true;
                 case "has_header":
                     data.setHasHeader((boolean) value);
+                    return true;
+                case "columns_number":
+                    data.setColsNumber(value == null ? 3 : (long) value);
+                    return true;
+                case "rows_number":
+                    data.setRowsNumber(value == null ? 3 : (long) value);
+                    return true;
+                case "scale":
+                    data.setScale(value == null ? 2 : (short) value);
+                    return true;
+                case "max_random":
+                    data.setMaxRandom(value == null ? 100 : (int) value);
+                    return true;
+                case "modify_time":
+                    data.setModifyTime(value == null ? null : (Date) value);
+                    return true;
+                case "comments":
+                    data.setComments(value == null ? null : (String) value);
                     return true;
             }
         } catch (Exception e) {
@@ -144,7 +193,7 @@ public class DataDefinition extends BaseData {
             return null;
         }
         try {
-            DataDefinition def = tableDataDefinition.read(conn, dataType, dataName);
+            DataDefinition def = tableDataDefinition.queryName(conn, dataType, dataName);
             if (def == null) {
                 def = DataDefinition.create()
                         .setDataName(dataName).setDataType(dataType)
@@ -223,6 +272,69 @@ public class DataDefinition extends BaseData {
 
     public DataDefinition setHasHeader(boolean hasHeader) {
         this.hasHeader = hasHeader;
+        return this;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public DataDefinition setComments(String comments) {
+        this.comments = comments;
+        return this;
+    }
+
+    public long getColsNumber() {
+        return colsNumber;
+    }
+
+    public DataDefinition setColsNumber(long colsNumber) {
+        this.colsNumber = colsNumber;
+        return this;
+    }
+
+    public long getRowsNumber() {
+        return rowsNumber;
+    }
+
+    public DataDefinition setRowsNumber(long rowsNumber) {
+        this.rowsNumber = rowsNumber;
+        return this;
+    }
+
+    public short getScale() {
+        return scale;
+    }
+
+    public DataDefinition setScale(short scale) {
+        this.scale = scale;
+        return this;
+    }
+
+    public int getMaxRandom() {
+        return maxRandom;
+    }
+
+    public DataDefinition setMaxRandom(int maxRandom) {
+        this.maxRandom = maxRandom;
+        return this;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public DataDefinition setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+        return this;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public DataDefinition setFile(File file) {
+        this.file = file;
         return this;
     }
 
