@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.table.TableDataColumn;
+import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import static mara.mybox.value.Languages.message;
 
@@ -29,7 +29,7 @@ import static mara.mybox.value.Languages.message;
 public abstract class ControlSheet_Base extends BaseController {
 
     protected TableDataDefinition tableDataDefinition;
-    protected TableDataColumn tableDataColumn;
+    protected TableData2DColumn tableDataColumn;
     protected DataDefinition dataDefinition;
     protected DataDefinition.DataType dataType;
     protected List<ColumnDefinition> columns;

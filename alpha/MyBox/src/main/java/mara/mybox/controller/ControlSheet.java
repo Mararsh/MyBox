@@ -23,7 +23,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -54,7 +53,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
 
             columns = new ArrayList<>();
             tableDataDefinition = new TableDataDefinition();
-            tableDataColumn = new TableDataColumn();
+//            tableDataColumn = new TableDataColumn();
             sheetChangedNotify = new SimpleBooleanProperty(false);
             dataChangedNotify = new SimpleBooleanProperty(false);
             noDataLabel = new Label(Languages.message("NoData"));

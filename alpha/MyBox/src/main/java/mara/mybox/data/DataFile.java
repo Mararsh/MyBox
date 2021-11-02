@@ -5,8 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.Charset;
 import java.util.List;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.db.data.Data2Column;
 
 /**
  * @Author Mara
@@ -15,11 +14,9 @@ import mara.mybox.dev.MyBoxLog;
  */
 public abstract class DataFile extends Data2D {
 
-    protected File file;
-    protected Charset sourceCharset, targetCharset;
-    protected boolean userSavedDataDefinition,
-            sourceWithNames, autoDetermineSourceCharset, targetWithNames;
-    protected List<ColumnDefinition> savedColumns;
+    protected Charset targetCharset;
+    protected boolean userSavedDataDefinition, autoDetermineSourceCharset, targetWithNames;
+    protected List<Data2Column> savedColumns;
 
     @Override
     public String titleName() {
@@ -36,52 +33,55 @@ public abstract class DataFile extends Data2D {
     }
 
     public String guessDelimiter() {
-        if (file == null || sourceCharset == null) {
+        hasHeader = false;
+        if (file == null || charset == null) {
             return null;
         }
-        try (
-                 BufferedReader reader = new BufferedReader(new FileReader(file, sourceCharset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line1 = reader.readLine();
             if (line1 == null) {
                 return null;
             }
-            String[] delimiter = {",", " ", "    ", "        ", "\t", "|", "@",
+            String[] values = {",", " ", "    ", "        ", "\t", "|", "@",
                 "#", ";", ":", "*", ".", "%", "$", "_", "&"};
-            int[] count1 = new int[delimiter.length];
+            int[] count1 = new int[values.length];
             int maxCount1 = 0, maxCountIndex1 = -1;
-            for (int i = 0; i < delimiter.length; i++) {
-                count1[i] = FindReplaceString.count(line1, delimiter[i]);
-                MyBoxLog.console(">>" + delimiter[i] + "<<<   " + count1[i]);
+            for (int i = 0; i < values.length; i++) {
+                count1[i] = FindReplaceString.count(line1, values[i]);
+//                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] > maxCount1) {
                     maxCount1 = count1[i];
                     maxCountIndex1 = i;
                 }
             }
-            MyBoxLog.console(maxCount1);
+//            MyBoxLog.console(maxCount1);
             String line2 = reader.readLine();
             if (line2 == null) {
                 if (maxCountIndex1 >= 0) {
-                    return delimiter[maxCountIndex1];
+                    hasHeader = true;
+                    return values[maxCountIndex1];
                 } else {
                     return null;
                 }
             }
-            int[] count2 = new int[delimiter.length];
+            int[] count2 = new int[values.length];
             int maxCount2 = 0, maxCountIndex2 = -1;
-            for (int i = 0; i < delimiter.length; i++) {
-                count2[i] = FindReplaceString.count(line2, delimiter[i]);
-                MyBoxLog.console(">>" + delimiter[i] + "<<<   " + count1[i]);
+            for (int i = 0; i < values.length; i++) {
+                count2[i] = FindReplaceString.count(line2, values[i]);
+//                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] == count2[i] && count2[i] > maxCount2) {
                     maxCount2 = count2[i];
                     maxCountIndex2 = i;
                 }
             }
-            MyBoxLog.console(maxCount2);
+//            MyBoxLog.console(maxCount2);
             if (maxCountIndex2 >= 0) {
-                return delimiter[maxCountIndex2];
+                hasHeader = true;
+                return values[maxCountIndex2];
             } else {
                 if (maxCountIndex1 >= 0) {
-                    return delimiter[maxCountIndex1];
+                    hasHeader = true;
+                    return values[maxCountIndex1];
                 } else {
                     return null;
                 }
@@ -92,37 +92,20 @@ public abstract class DataFile extends Data2D {
     }
 
     @Override
-    public void loadPageData(List<List<String>> data, List<ColumnDefinition> dataColumns) {
+    public void loadPageData(List<List<String>> data, List<Data2Column> dataColumns) {
         file = null;
         super.loadPageData(data, dataColumns);
     }
 
-    public void initFile() {
-        totalRead = false;
+    public void initFile(File file) {
+        resetData();
+        this.file = file;
         savedColumns = null;
-        initData();
     }
 
     /*
         get/set
      */
-    @Override
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public Charset getSourceCharset() {
-        return sourceCharset;
-    }
-
-    public void setSourceCharset(Charset sourceCharset) {
-        this.sourceCharset = sourceCharset;
-    }
-
     public Charset getTargetCharset() {
         return targetCharset;
     }
@@ -137,14 +120,6 @@ public abstract class DataFile extends Data2D {
 
     public void setUserSavedDataDefinition(boolean userSavedDataDefinition) {
         this.userSavedDataDefinition = userSavedDataDefinition;
-    }
-
-    public boolean isSourceWithNames() {
-        return sourceWithNames;
-    }
-
-    public void setSourceWithNames(boolean sourceWithNames) {
-        this.sourceWithNames = sourceWithNames;
     }
 
     public boolean isAutoDetermineSourceCharset() {
@@ -163,11 +138,11 @@ public abstract class DataFile extends Data2D {
         this.targetWithNames = targetWithNames;
     }
 
-    public List<ColumnDefinition> getSavedColumns() {
+    public List<Data2Column> getSavedColumns() {
         return savedColumns;
     }
 
-    public void setSavedColumns(List<ColumnDefinition> savedColumns) {
+    public void setSavedColumns(List<Data2Column> savedColumns) {
         this.savedColumns = savedColumns;
     }
 

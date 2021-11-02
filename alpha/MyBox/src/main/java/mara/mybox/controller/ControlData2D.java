@@ -16,13 +16,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.table.TableDataColumn;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -34,8 +33,8 @@ import mara.mybox.value.UserConfig;
 public class ControlData2D extends BaseController {
 
     protected Data2D data2D;
-    protected TableDataDefinition tableDataDefinition;
-    protected TableDataColumn tableDataColumn;
+    protected TableData2DDefinition tableData2DDefinition;
+    protected TableData2DColumn tableData2DColumn;
 
     @FXML
     protected TabPane tabPane;
@@ -58,11 +57,11 @@ public class ControlData2D extends BaseController {
         try {
             data2D = Data2D.create(type);
 
-            tableDataDefinition = new TableDataDefinition();
-            tableDataColumn = new TableDataColumn();
+            tableData2DDefinition = new TableData2DDefinition();
+            tableData2DColumn = new TableData2DColumn();
 
-            data2D.setTableDataDefinition(tableDataDefinition);
-            data2D.setTableDataColumn(tableDataColumn);
+            data2D.setTableData2DDefinition(tableData2DDefinition);
+            data2D.setTableData2DColumn(tableData2DColumn);
 
             editController.setParameters(this);
             viewController.setParameters(this);
@@ -91,7 +90,7 @@ public class ControlData2D extends BaseController {
         defineController.loadTableData();
     }
 
-    public void loadData(List<List<String>> data, List<ColumnDefinition> dataColumns) {
+    public void loadData(List<List<String>> data, List<Data2Column> dataColumns) {
         data2D.loadPageData(data, dataColumns);
         updateInterface();
     }
@@ -103,7 +102,7 @@ public class ControlData2D extends BaseController {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            data2D.initData();
+            data2D.resetData();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -266,8 +265,7 @@ public class ControlData2D extends BaseController {
     }
 
     protected void updateLabel() {
-        totalLabel.setText((data2D.getPagesNumber() <= 1 ? message("RowsNumber") : message("LinesNumberInFile"))
-                + ":" + data2D.getDataNumber());
+        totalLabel.setText(data2D.pageRowsNumber() + "/" + data2D.getDataNumber());
     }
 
     protected boolean checkCurrentPage() {
@@ -429,8 +427,8 @@ public class ControlData2D extends BaseController {
     @Override
     public void cleanPane() {
         try {
-            tableDataDefinition = null;
-            tableDataColumn = null;
+            tableData2DDefinition = null;
+            tableData2DColumn = null;
         } catch (Exception e) {
         }
         super.cleanPane();

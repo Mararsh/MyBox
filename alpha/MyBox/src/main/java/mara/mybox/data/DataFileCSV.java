@@ -5,10 +5,10 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javafx.collections.FXCollections;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.data.DataDefinition.DataType;
+import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
@@ -27,53 +27,53 @@ public class DataFileCSV extends DataFile {
     protected char sourceCsvDelimiter = ',', targetCsvDelimiter = ',';
 
     public DataFileCSV() {
-        type = Type.DataFileCSV;;
+        type = Type.DataFileCSV;
     }
 
     @Override
     public boolean readDataDefinition(SingletonTask<Void> task) {
+        d2did = -1;
         if (file == null) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            definition = tableDataDefinition.queryFile(conn, file);
+            Data2DDefinition definition = tableData2DDefinition.queryFile(conn, type, file);
             if (userSavedDataDefinition) {
                 if (definition != null) {
-                    sourceCsvDelimiter = definition.getDelimiter().charAt(0);
-                    sourceWithNames = definition.isHasHeader();
-                    sourceCharset = Charset.forName(definition.getCharset());
+                    load(definition);
                 } else {
-                    sourceWithNames = true;
-                    sourceCharset = TextFileTools.charset(file);
-                    String d = guessDelimiter();
-                    if (d != null) {
-                        sourceCsvDelimiter = d.charAt(0);
-                    }
+                    charset = TextFileTools.charset(file);
+                    delimiter = guessDelimiter();
                 }
             }
-            if (sourceCharset == null) {
-                sourceCharset = Charset.defaultCharset();
+            if (charset == null) {
+                charset = Charset.defaultCharset();
             }
+            if (delimiter == null) {
+                delimiter = ",";
+            }
+            sourceCsvDelimiter = delimiter.charAt(0);
             if (definition == null) {
-                definition = DataDefinition.create()
-                        .setDataType(DataType.DataFile).setFile(file)
+                definition = Data2DDefinition.create()
+                        .setType(type).setFile(file)
                         .setDataName(file.getName())
-                        .setCharset(sourceCharset.name()).setHasHeader(sourceWithNames)
+                        .setCharset(charset).setHasHeader(hasHeader)
                         .setDelimiter(sourceCsvDelimiter + "");
-                definition = tableDataDefinition.insertData(conn, definition);
+                definition = tableData2DDefinition.insertData(conn, definition);
                 conn.commit();
             } else {
                 if (!userSavedDataDefinition) {
-                    definition.setDataType(DataType.DataFile).setFile(file)
+                    definition.setType(type).setFile(file)
                             .setDataName(file.getName())
-                            .setCharset(sourceCharset.name())
-                            .setDelimiter(sourceCsvDelimiter + "")
-                            .setHasHeader(sourceWithNames);
-                    definition = tableDataDefinition.updateData(conn, definition);
+                            .setCharset(charset)
+                            .setDelimiter(delimiter)
+                            .setHasHeader(hasHeader);
+                    definition = tableData2DDefinition.updateData(conn, definition);
                     conn.commit();
                 }
-                savedColumns = tableDataColumn.read(conn, definition.getDfid());
+                savedColumns = tableData2DColumn.read(conn, definition.getD2did());
             }
+            d2did = definition.getD2did();
             userSavedDataDefinition = true;
         } catch (Exception e) {
             if (task != null) {
@@ -82,7 +82,7 @@ public class DataFileCSV extends DataFile {
             MyBoxLog.debug(e);
             return false;
         }
-        return definition != null && definition.getDfid() >= 0;
+        return d2did >= 0;
     }
 
     @Override
@@ -90,20 +90,23 @@ public class DataFileCSV extends DataFile {
         columns = new ArrayList<>();
         sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(sourceCsvDelimiter);
-        if (!sourceWithNames) {
+        if (d2did < 0) {
+            return false;
+        }
+        if (!hasHeader) {
             return true;
         }
         sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
-        try ( CSVParser parser = CSVParser.parse(file, sourceCharset, sourceCsvFormat)) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
             List<String> names = parser.getHeaderNames();
             if (names == null) {
-                sourceWithNames = false;
+                hasHeader = false;
                 return true;
             }
             for (String name : names) {
                 boolean found = false;
                 if (savedColumns != null) {
-                    for (ColumnDefinition def : savedColumns) {
+                    for (Data2Column def : savedColumns) {
                         if (def.getName().equals(name)) {
                             columns.add(def);
                             found = true;
@@ -112,14 +115,14 @@ public class DataFileCSV extends DataFile {
                     }
                 }
                 if (!found) {
-                    ColumnDefinition column = new ColumnDefinition(name, ColumnDefinition.ColumnType.String);
+                    Data2Column column = new Data2Column(name, Data2Column.ColumnType.String);
                     columns.add(column);
                 }
             }
             if (columns != null && !columns.isEmpty()) {
-                StringTable validateTable = ColumnDefinition.validate(columns);
+                StringTable validateTable = Data2Column.validate(columns);
                 if (validateTable == null || validateTable.isEmpty()) {
-                    tableDataColumn.save(definition.getDfid(), columns);
+                    tableData2DColumn.save(d2did, columns);
                     return true;
                 } else {
                     return false;
@@ -139,11 +142,11 @@ public class DataFileCSV extends DataFile {
     public boolean readTotal(SingletonTask<Void> task) {
         sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(sourceCsvDelimiter);
-        if (sourceWithNames) {
+        if (hasHeader) {
             sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
         }
         dataNumber = 0;
-        try ( CSVParser parser = CSVParser.parse(file, sourceCharset, sourceCsvFormat)) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (task != null && !task.isCancelled() && iterator.hasNext()) {
@@ -170,8 +173,8 @@ public class DataFileCSV extends DataFile {
             startRowOfCurrentPage = 0;
         }
         long end = startRowOfCurrentPage + pageSize;
-        pageData = null;
-        try ( CSVParser parser = CSVParser.parse(file, sourceCharset, sourceCsvFormat)) {
+        pageData = FXCollections.observableArrayList();
+        try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
             int rowIndex = -1, maxCol = 0;
             List<List<String>> fileRows = new ArrayList<>();
             for (CSVRecord record : parser) {
@@ -193,7 +196,7 @@ public class DataFileCSV extends DataFile {
                     maxCol = row.size();
                 }
             }
-            loadPageData(fileRows, sourceWithNames ? columns.size() : maxCol);
+            loadPageData(fileRows, hasHeader ? columns.size() : maxCol);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

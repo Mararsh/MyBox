@@ -18,7 +18,7 @@ public abstract class BaseData implements Cloneable {
         try {
             BaseData newData = (BaseData) super.clone();
             newData.setId(-1);
-            return super.clone();
+            return newData;
         } catch (Exception e) {
             return null;
         }

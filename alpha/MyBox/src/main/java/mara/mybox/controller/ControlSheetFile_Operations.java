@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -93,7 +92,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
                         for (int c : cols) {
                             dColumns.add(columns.get(c));
                         }
-                        DataClipboard.create(tableDataDefinition, tableDataColumn, file, dColumns);
+//                        DataClipboard.create(tableDataDefinition, tableDataColumn, file, dColumns);
                     }
                     return true;
                 }

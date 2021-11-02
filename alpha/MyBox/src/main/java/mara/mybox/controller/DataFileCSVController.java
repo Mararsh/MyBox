@@ -52,8 +52,6 @@ public class DataFileCSVController extends BaseData2DFileController {
 
             setDataType(Data2D.Type.DataFileCSV);
             dataFileCSV = (DataFileCSV) dataController.data2D;
-
-            MyBoxLog.console(dataFileCSV.getPageData() != null);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -79,10 +77,10 @@ public class DataFileCSVController extends BaseData2DFileController {
 
     @Override
     public void pickOptions() {
-        dataFileCSV.setSourceCharset(csvReadController.charset);
+        dataFileCSV.setCharset(csvReadController.charset);
         dataFileCSV.setSourceCsvDelimiter(csvReadController.delimiter);
         dataFileCSV.setAutoDetermineSourceCharset(csvReadController.autoDetermine);
-        dataFileCSV.setSourceWithNames(csvReadController.withNamesCheck.isSelected());
+        dataFileCSV.setHasHeader(csvReadController.withNamesCheck.isSelected());
     }
 
     public void setFile(File file, Charset charset, boolean withName, char delimiter) {
@@ -91,10 +89,10 @@ public class DataFileCSVController extends BaseData2DFileController {
         csvReadController.setDelimiter(delimiter);
         csvReadController.setCharset(charset);
         dataFileCSV.setUserSavedDataDefinition(false);
-        dataFileCSV.setSourceCharset(charset);
+        dataFileCSV.setCharset(charset);
         dataFileCSV.setSourceCsvDelimiter(delimiter);
         dataFileCSV.setAutoDetermineSourceCharset(false);
-        dataFileCSV.setSourceWithNames(withName);
+        dataFileCSV.setHasHeader(withName);
         loadFile();
     }
 
@@ -104,9 +102,9 @@ public class DataFileCSVController extends BaseData2DFileController {
         if (sourceFile != null) {
             info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + message("Charset") + ": " + dataFileCSV.getSourceCharset() + "\n"
+                    + message("Charset") + ": " + dataFileCSV.getCharset() + "\n"
                     + message("Delimiter") + ": " + TextTools.delimiterMessage(dataFileCSV.getSourceCsvDelimiter() + "") + "\n"
-                    + message("FirstLineAsNames") + ": " + (dataFileCSV.isSourceWithNames() ? message("Yes") : message("No")) + "\n";
+                    + message("FirstLineAsNames") + ": " + (dataFileCSV.isHasHeader() ? message("Yes") : message("No")) + "\n";
         }
         if (!dataFileCSV.isMutiplePages()) {
             info += message("RowsNumber") + ":" + dataFileCSV.pageRowsNumber() + "\n";

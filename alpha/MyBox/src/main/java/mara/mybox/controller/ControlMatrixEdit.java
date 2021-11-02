@@ -11,10 +11,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.DataCell;
+import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
-import mara.mybox.db.table.TableDataCell;
+import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
@@ -132,15 +132,15 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection();
-                             PreparedStatement query = conn.prepareStatement(TableDataCell.QeuryData)) {
+                             PreparedStatement query = conn.prepareStatement(TableData2DCell.QeuryData)) {
                         values = new double[rowsNumber][colsNumber];
                         if (tableDataCell == null) {
-                            tableDataCell = new TableDataCell();
+                            tableDataCell = new TableData2DCell();
                         }
                         query.setLong(1, matrix.getDfid());
                         ResultSet results = query.executeQuery();
                         while (results.next()) {
-                            DataCell cell = tableDataCell.readData(results);
+                            Data2DCell cell = tableDataCell.readData(results);
                             if (cell.getCol() < colsNumber && cell.getRow() < rowsNumber) {
                                 values[(int) cell.getRow()][(int) cell.getCol()] = Double.valueOf(cell.getValue());
                             }
@@ -280,10 +280,10 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                             }
                         }
                         if (tableDataCell == null) {
-                            tableDataCell = new TableDataCell();
+                            tableDataCell = new TableData2DCell();
                         }
-                        tableDataCell.update(conn, "DELETE FROM Data_Cell WHERE dcdid=" + id);
-                        List<DataCell> data = new ArrayList<>();
+                        tableDataCell.update(conn, "DELETE FROM Data2D_Cell WHERE dcdid=" + id);
+                        List<Data2DCell> data = new ArrayList<>();
                         for (int j = 0; j < rowsNumber; ++j) {
                             for (int i = 0; i < colsNumber; ++i) {
                                 double d = 0d;
@@ -292,8 +292,8 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                                     d = DoubleTools.scale(d, scale);
                                 } catch (Exception e) {
                                 }
-                                DataCell cell = DataCell.create()
-                                        .setDfid(id).setCol(i).setRow(j).setValue(d + "");
+                                Data2DCell cell = Data2DCell.create()
+                                        .setD2did(id).setCol(i).setRow(j).setValue(d + "");
                                 data.add(cell);
                             }
                         }

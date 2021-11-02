@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.data.DataDefinition.DataType;
+import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.MicrosoftDocumentTools;
@@ -30,8 +29,16 @@ public class DataFileExcel extends DataFile {
     protected List<String> sheetNames;
     protected boolean currentSheetOnly;
 
+    public DataFileExcel() {
+        type = Type.DataFileExcel;
+    }
+
     @Override
     public boolean readDataDefinition(SingletonTask<Void> task) {
+        d2did = -1;
+        if (file == null) {
+            return false;
+        }
         try ( Connection conn = DerbyBase.getConnection();
                  Workbook wb = WorkbookFactory.create(file)) {
             int sheetsNumber = wb.getNumberOfSheets();
@@ -47,13 +54,13 @@ public class DataFileExcel extends DataFile {
                 currentSheetName = sheet.getSheetName();
             }
 
-            definition = tableDataDefinition.queryFileName(conn, file, currentSheetName);
+            Data2DDefinition definition = tableData2DDefinition.queryFileName(conn, type, file, currentSheetName);
 
             if (userSavedDataDefinition && definition != null) {
-                sourceWithNames = definition.isHasHeader();
+                hasHeader = definition.isHasHeader();
             }
             boolean changed = !userSavedDataDefinition;
-            if (sourceWithNames) {
+            if (hasHeader) {
                 Iterator<Row> iterator = sheet.iterator();
                 Row firstRow = null;
                 if (iterator != null) {
@@ -65,26 +72,27 @@ public class DataFileExcel extends DataFile {
                     }
                 }
                 if (firstRow == null) {
-                    sourceWithNames = false;
+                    hasHeader = false;
                     changed = true;
                 }
             }
             if (definition == null) {
-                definition = DataDefinition.create().setDataType(DataType.DataFile)
+                definition = Data2DDefinition.create().setType(type)
                         .setFile(file).setDataName(currentSheetName)
-                        .setHasHeader(sourceWithNames);
-                tableDataDefinition.insertData(conn, definition);
+                        .setHasHeader(hasHeader);
+                tableData2DDefinition.insertData(conn, definition);
                 conn.commit();
             } else {
                 if (changed) {
-                    definition.setDataType(DataType.DataFile)
+                    definition.setType(type)
                             .setFile(file).setDataName(currentSheetName)
-                            .setHasHeader(sourceWithNames);
-                    tableDataDefinition.updateData(conn, definition);
+                            .setHasHeader(hasHeader);
+                    definition = tableData2DDefinition.updateData(conn, definition);
                     conn.commit();
                 }
-                savedColumns = tableDataColumn.read(conn, definition.getDfid());
+                savedColumns = tableData2DColumn.read(conn, definition.getD2did());
             }
+            d2did = definition.getD2did();
             userSavedDataDefinition = true;
         } catch (Exception e) {
             if (task != null) {
@@ -93,16 +101,16 @@ public class DataFileExcel extends DataFile {
             MyBoxLog.console(e);
             return false;
         }
-        return definition != null && definition.getDfid() >= 0;
+        return d2did >= 0;
     }
 
     @Override
     public boolean readColumns(SingletonTask<Void> task) {
         columns = new ArrayList<>();
-        if (definition == null) {
+        if (d2did < 0) {
             return false;
         }
-        if (!sourceWithNames) {
+        if (!hasHeader) {
             return true;
         }
         try ( Workbook wb = WorkbookFactory.create(file)) {
@@ -115,7 +123,7 @@ public class DataFileExcel extends DataFile {
             }
             Iterator<Row> iterator = sheet.iterator();
             if (iterator == null) {
-                sourceWithNames = false;
+                hasHeader = false;
                 return true;
             }
             Row firstRow = null;
@@ -126,20 +134,20 @@ public class DataFileExcel extends DataFile {
                 }
             }
             if (firstRow == null) {
-                sourceWithNames = false;
+                hasHeader = false;
                 return true;
             }
             for (int col = firstRow.getFirstCellNum(); col < firstRow.getLastCellNum(); col++) {
                 String name = (message(colPrefix()) + (col + 1));
-                ColumnType type = ColumnType.String;
+                ColumnType ctype = ColumnType.String;
                 Cell cell = firstRow.getCell(col);
                 if (cell != null) {
                     switch (cell.getCellType()) {
                         case NUMERIC:
-                            type = ColumnType.Double;
+                            ctype = ColumnType.Double;
                             break;
                         case BOOLEAN:
-                            type = ColumnType.Boolean;
+                            ctype = ColumnType.Boolean;
                             break;
                     }
                     String v = MicrosoftDocumentTools.cellString(cell);
@@ -149,7 +157,7 @@ public class DataFileExcel extends DataFile {
                 }
                 boolean found = false;
                 if (savedColumns != null) {
-                    for (ColumnDefinition def : savedColumns) {
+                    for (Data2Column def : savedColumns) {
                         if (def.getName().equals(name)) {
                             columns.add(def);
                             found = true;
@@ -158,14 +166,14 @@ public class DataFileExcel extends DataFile {
                     }
                 }
                 if (!found) {
-                    ColumnDefinition column = new ColumnDefinition(name, type);
+                    Data2Column column = new Data2Column(name, ctype);
                     columns.add(column);
                 }
             }
             if (columns != null && !columns.isEmpty()) {
-                StringTable validateTable = ColumnDefinition.validate(columns);
+                StringTable validateTable = Data2Column.validate(columns);
                 if (validateTable == null || validateTable.isEmpty()) {
-                    tableDataColumn.save(definition.getDfid(), columns);
+                    tableData2DColumn.save(d2did, columns);
                     return true;
                 } else {
                     return false;
@@ -200,7 +208,7 @@ public class DataFileExcel extends DataFile {
                 }
                 if (task == null || task.isCancelled()) {
                     dataNumber = 0;
-                } else if (sourceWithNames && dataNumber > 0) {
+                } else if (hasHeader && dataNumber > 0) {
                     dataNumber--;
                 }
             }
@@ -231,7 +239,7 @@ public class DataFileExcel extends DataFile {
             List<List<String>> fileRows = new ArrayList<>();
             Iterator<Row> iterator = sheet.iterator();
             if (iterator != null && iterator.hasNext()) {
-                if (sourceWithNames) {
+                if (hasHeader) {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
@@ -258,7 +266,7 @@ public class DataFileExcel extends DataFile {
                         maxCol = row.size();
                     }
                 }
-                loadPageData(fileRows, sourceWithNames ? columns.size() : maxCol);
+                loadPageData(fileRows, hasHeader ? columns.size() : maxCol);
             }
         } catch (Exception e) {
             if (task != null) {

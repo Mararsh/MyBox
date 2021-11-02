@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -116,7 +115,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
                     tableDataDefinition.updateData(conn, dataDefinition);
                     conn.commit();
                 }
-                savedColumns = tableDataColumn.read(conn, dataDefinition.getDfid());
+//                savedColumns = tableDataColumn.read(conn, dataDefinition.getDfid());
             }
             userSavedDataDefinition = true;
         } catch (Exception e) {
@@ -194,7 +193,7 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
             }
             if (columns != null && !columns.isEmpty()) {
                 if (validateColumns(columns)) {
-                    tableDataColumn.save(dataDefinition.getDfid(), columns);
+//                    tableDataColumn.save(dataDefinition.getDfid(), columns);
                     return true;
                 } else {
                     return false;
@@ -519,17 +518,16 @@ public abstract class ControlSheetExcel_File extends ControlSheetFile {
         return index;
     }
 
-    @Override
-    protected boolean saveDefinition() {
-        return saveDefinition(sourceFile.getAbsolutePath() + "-" + currentSheetName, dataType,
-                Charset.defaultCharset(), ",", sourceWithNames, columns);
-    }
-
+//    @Override
+//    protected boolean saveDefinition() {
+////        return saveDefinition(sourceFile.getAbsolutePath() + "-" + currentSheetName, dataType,
+////                Charset.defaultCharset(), ",", sourceWithNames, columns);
+//    }
     protected void saveDefinition(File file, String currentSheetName, List<String> otherSheetNames, boolean withName) {
         try ( Connection conn = DerbyBase.getConnection()) {
             if (currentSheetName != null) {
-                saveDefinition(conn, file.getAbsolutePath() + "-" + currentSheetName,
-                        dataType, Charset.defaultCharset(), ",", withName, columns);
+//                saveDefinition(conn, file.getAbsolutePath() + "-" + currentSheetName,
+//                        dataType, Charset.defaultCharset(), ",", withName, columns);
             }
             if (otherSheetNames != null) {
                 for (String name : otherSheetNames) {

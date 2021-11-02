@@ -63,7 +63,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
                     tableDataDefinition.updateData(conn, dataDefinition);
                     conn.commit();
                 }
-                savedColumns = tableDataColumn.read(conn, dataDefinition.getDfid());
+//                savedColumns = tableDataColumn.read(conn, dataDefinition.getDfid());
             }
             userSavedDataDefinition = true;
         } catch (Exception e) {
@@ -109,7 +109,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
             }
             if (columns != null && !columns.isEmpty()) {
                 if (validateColumns(columns)) {
-                    tableDataColumn.save(dataDefinition.getDfid(), columns);
+//                    tableDataColumn.save(dataDefinition.getDfid(), columns);
                     return true;
                 } else {
                     return false;
@@ -386,7 +386,7 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
             }
         }
         if (FileTools.rename(tmpFile, tfile, false)) {
-            saveDefinition(tfile.getAbsolutePath(), dataType, charset, csvFormat.getDelimiter() + "", withName, columns);
+//            saveDefinition(tfile.getAbsolutePath(), dataType, charset, csvFormat.getDelimiter() + "", withName, columns);
             return null;
         } else {
             return "Failed";
@@ -406,12 +406,11 @@ public abstract class ControlSheetCSV_File extends ControlSheetFile {
         }
     }
 
-    @Override
-    protected boolean saveDefinition() {
-        return saveDefinition(sourceFile.getAbsolutePath(), dataType,
-                sourceCharset, sourceDelimiterName, sourceWithNames, columns);
-    }
-
+//    @Override
+//    protected boolean saveDefinition() {
+//        return saveDefinition(sourceFile.getAbsolutePath(), dataType,
+//                sourceCharset, sourceDelimiterName, sourceWithNames, columns);
+//    }
     @Override
     protected String fileText() {
         if (sourceFile == null) {

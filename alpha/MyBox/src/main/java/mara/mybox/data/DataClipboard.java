@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javafx.application.Platform;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
+import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableDataDefinition;
-import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -156,9 +155,9 @@ public class DataClipboard extends DataDefinition {
         return tmpFile;
     }
 
-    public static DataDefinition create(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
+    public static DataDefinition create(TableDataDefinition tableDataDefinition, TableData2DColumn tableData2DColumn,
             File csvFile, List<ColumnDefinition> columns) {
-        if (tableDataDefinition == null || tableDataColumn == null || csvFile == null || !csvFile.exists()) {
+        if (tableDataDefinition == null || tableData2DColumn == null || csvFile == null || !csvFile.exists()) {
             return null;
         }
         File dpFile = new File(AppPaths.getDataClipboardPath() + File.separator + (new Date()).getTime() + ".csv");
@@ -167,25 +166,25 @@ public class DataClipboard extends DataDefinition {
         }
         DataDefinition def = null;
         try ( Connection conn = DerbyBase.getConnection()) {
-            tableDataDefinition.deleteClipboard(conn, csvFile);
+//            tableDataDefinition.deleteClipboard(conn, csvFile);
             def = DataDefinition.create()
                     .setDataType(DataType.DataClipboard)
                     .setFile(csvFile).setDataName(FileNameTools.getFilePrefix(csvFile.getName()))
                     .setHasHeader(false).setCharset("UTF-8").setDelimiter(",");
             tableDataDefinition.insertData(conn, def);
-            if (columns != null && !columns.isEmpty()) {
-                StringTable validateTable = ColumnDefinition.validate(columns);
-                if (validateTable != null) {
-                    if (validateTable.isEmpty()) {
-                        tableDataColumn.save(conn, def.getDfid(), columns);
-                        conn.commit();
-                    } else {
-                        Platform.runLater(() -> {
-                            validateTable.htmlTable();
-                        });
-                    }
-                }
-            }
+//            if (columns != null && !columns.isEmpty()) {
+//                StringTable validateTable = ColumnDefinition.validate(columns);
+//                if (validateTable != null) {
+//                    if (validateTable.isEmpty()) {
+////                        tableDataColumn.save(conn, def.getDfid(), columns);
+//                        conn.commit();
+//                    } else {
+//                        Platform.runLater(() -> {
+//                            validateTable.htmlTable();
+//                        });
+//                    }
+//                }
+//            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

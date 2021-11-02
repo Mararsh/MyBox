@@ -9,8 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.table.TableDataColumn;
+import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import org.apache.commons.csv.CSVFormat;
@@ -23,7 +22,7 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class CsvTools {
 
-    public static boolean save(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
+    public static boolean save(TableDataDefinition tableDataDefinition, TableData2DColumn tableDataColumn,
             File file, String[][] data, List<ColumnDefinition> dataColumns) {
         if (file == null || data == null) {
             return false;
@@ -52,9 +51,9 @@ public class CsvTools {
             return false;
         }
         if (names != null) {
-            DataDefinition.saveDefinition(tableDataDefinition, tableDataColumn,
-                    file.getAbsolutePath(), DataDefinition.DataType.DataFile,
-                    Charset.forName("UTF-8"), ",", true, dataColumns);
+//            DataDefinition.saveDefinition(tableDataDefinition, tableDataColumn,
+//                    file.getAbsolutePath(), DataDefinition.DataType.DataFile,
+//                    Charset.forName("UTF-8"), ",", true, dataColumns);
         }
         return true;
     }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import mara.mybox.data.Era;
-import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -22,8 +21,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class ColumnDefinition extends BaseData {
 
-    protected DataDefinition dataDefinition;
-    protected long dcid, dataid;
     protected String name, label, foreignName, foreignTable, foreignColumn;
     protected ColumnType type;
     protected int index, length, width;
@@ -52,9 +49,7 @@ public class ColumnDefinition extends BaseData {
         NoAction, Restrict
     }
 
-    private void init() {
-        dcid = -1;
-        dataid = -1;
+    public final void initColumnDefinition() {
         type = ColumnType.String;
         index = -1;
         isPrimaryKey = notNull = isID = false;
@@ -69,24 +64,24 @@ public class ColumnDefinition extends BaseData {
     }
 
     public ColumnDefinition() {
-        init();
+        initColumnDefinition();
     }
 
     public ColumnDefinition(String name, ColumnType type) {
-        init();
+        initColumnDefinition();
         this.name = name;
         this.type = type;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull) {
-        init();
+        initColumnDefinition();
         this.name = name;
         this.type = type;
         this.notNull = notNull;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
-        init();
+        initColumnDefinition();
         this.name = name;
         this.type = type;
         this.notNull = notNull;
@@ -303,7 +298,6 @@ public class ColumnDefinition extends BaseData {
     public Object clone() throws CloneNotSupportedException {
         try {
             ColumnDefinition newColumn = (ColumnDefinition) super.clone();
-            newColumn.setDcid(-1);
             return newColumn;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -330,122 +324,6 @@ public class ColumnDefinition extends BaseData {
         return data != null
                 && data.getType() != null
                 && data.getName() != null && !data.getName().isBlank();
-    }
-
-    public static Object getValue(ColumnDefinition data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        switch (column) {
-            case "dcid":
-                return data.getDcid();
-            case "dataid":
-                return data.getDataid();
-            case "column_type":
-                return columnType(data.getType());
-            case "column_name":
-                return data.getName();
-            case "index":
-                return data.getIndex();
-            case "length":
-                return data.getLength();
-            case "width":
-                return data.getWidth();
-            case "is_primary":
-                return data.isIsPrimaryKey();
-            case "not_null":
-                return data.isNotNull();
-            case "is_id":
-                return data.isIsID();
-            case "editable":
-                return data.isEditable();
-            case "max_value":
-                return number2String(data.getMaxValue());
-            case "min_value":
-                return number2String(data.getMinValue());
-            case "time_format":
-                return Era.format(data.getTimeFormat());
-            case "label":
-                return data.getLabel();
-            case "foreign_name":
-                return data.getForeignName();
-            case "foreign_table":
-                return data.getForeignTable();
-            case "foreign_column":
-                return data.getForeignColumn();
-            case "values_list":
-                return null;
-        }
-        return null;
-    }
-
-    public static boolean setValue(ColumnDefinition data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        try {
-            switch (column) {
-                case "dcid":
-                    data.setDcid(value == null ? -1 : (long) value);
-                    return true;
-                case "dataid":
-                    data.setDataid(value == null ? -1 : (long) value);
-                    return true;
-                case "column_type":
-                    data.setType(columnType((short) value));
-                    return true;
-                case "column_name":
-                    data.setName(value == null ? null : (String) value);
-                    return true;
-                case "index":
-                    data.setIndex(value == null ? null : (int) value);
-                    return true;
-                case "length":
-                    data.setLength(value == null ? null : (int) value);
-                    return true;
-                case "width":
-                    data.setWidth(value == null ? null : (int) value);
-                    return true;
-                case "is_primary":
-                    data.setIsPrimaryKey(value == null ? false : (boolean) value);
-                    return true;
-                case "not_null":
-                    data.setNotNull(value == null ? false : (boolean) value);
-                    return true;
-                case "is_id":
-                    data.setIsID(value == null ? false : (boolean) value);
-                    return true;
-                case "editable":
-                    data.setEditable(value == null ? false : (boolean) value);
-                    return true;
-                case "max_value":
-                    data.setMaxValue(string2Number(data.getType(), (String) value));
-                    return true;
-                case "min_value":
-                    data.setMinValue(string2Number(data.getType(), (String) value));
-                    return true;
-                case "time_format":
-                    data.setTimeFormat(Era.format((short) value));
-                    return true;
-                case "label":
-                    data.setLabel(value == null ? null : (String) value);
-                    return true;
-                case "foreign_name":
-                    data.setForeignName(value == null ? null : (String) value);
-                    return true;
-                case "foreign_table":
-                    data.setForeignTable(value == null ? null : (String) value);
-                    return true;
-                case "foreign_column":
-                    data.setForeignColumn(value == null ? null : (String) value);
-                    return true;
-                case "values_list":
-                    return true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        return false;
     }
 
     public static short columnType(ColumnType type) {
@@ -497,37 +375,6 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
-    public static StringTable validate(List<ColumnDefinition> columns) {
-        try {
-            if (columns == null || columns.isEmpty()) {
-                return null;
-            }
-            List<String> colsNames = new ArrayList<>();
-            List<String> tNames = new ArrayList<>();
-            tNames.addAll(Arrays.asList(message("ID"), message("Name"), message("Reason")));
-            StringTable colsTable = new StringTable(tNames, message("InvalidColumns"));
-            for (int c = 0; c < columns.size(); c++) {
-                ColumnDefinition column = columns.get(c);
-                if (!column.valid()) {
-                    List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Invalid")));
-                    colsTable.add(row);
-                }
-                if (colsNames.contains(column.getName())) {
-                    List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Duplicated")));
-                    colsTable.add(row);
-                }
-                colsNames.add(column.getName());
-            }
-            return colsTable;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-
     /*
         customized get/set
      */
@@ -541,30 +388,6 @@ public class ColumnDefinition extends BaseData {
     /*
         get/set
      */
-    public DataDefinition getDataDefinition() {
-        return dataDefinition;
-    }
-
-    public void setDataDefinition(DataDefinition dataDefinition) {
-        this.dataDefinition = dataDefinition;
-    }
-
-    public long getDataid() {
-        return dataid;
-    }
-
-    public void setDataid(long dataid) {
-        this.dataid = dataid;
-    }
-
-    public long getDcid() {
-        return dcid;
-    }
-
-    public void setDcid(long dcid) {
-        this.dcid = dcid;
-    }
-
     public String getName() {
         return name;
     }

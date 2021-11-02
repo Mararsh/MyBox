@@ -7,9 +7,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.data.DataDefinition.DataType;
+import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
@@ -22,47 +21,54 @@ import mara.mybox.tools.TextTools;
  */
 public class DataFileText extends DataFile {
 
-    protected String textDelimiterName;
+    public DataFileText() {
+        type = Type.DataFileText;
+    }
 
     @Override
     public boolean readDataDefinition(SingletonTask<Void> task) {
+        d2did = -1;
+        if (file == null) {
+            return false;
+        }
         try ( Connection conn = DerbyBase.getConnection()) {
-            definition = tableDataDefinition.queryFile(conn, file);
+            Data2DDefinition definition = tableData2DDefinition.queryFile(conn, type, file);
             if (userSavedDataDefinition) {
                 if (definition != null) {
-                    sourceWithNames = definition.isHasHeader();
-                    sourceCharset = Charset.forName(definition.getCharset());
-                    textDelimiterName = definition.getDelimiter();
+                    hasHeader = definition.isHasHeader();
+                    charset = definition.getCharset();
+                    delimiter = definition.getDelimiter();
                 } else {
-                    sourceWithNames = true;
-                    sourceCharset = TextFileTools.charset(file);
-                    textDelimiterName = guessDelimiter();
+                    hasHeader = true;
+                    charset = TextFileTools.charset(file);
+                    delimiter = guessDelimiter();
                 }
             }
-            if (sourceCharset == null) {
-                sourceCharset = Charset.defaultCharset();
+            if (charset == null) {
+                charset = Charset.defaultCharset();
             }
-            if (textDelimiterName == null) {
-                textDelimiterName = ",";
+            if (delimiter == null) {
+                delimiter = ",";
             }
             if (definition == null) {
-                definition = DataDefinition.create()
-                        .setDataType(DataType.DataFile).setFile(file)
-                        .setCharset(sourceCharset.name())
-                        .setHasHeader(sourceWithNames)
-                        .setDelimiter(textDelimiterName);
-                tableDataDefinition.insertData(conn, definition);
+                definition = Data2DDefinition.create()
+                        .setType(type).setFile(file)
+                        .setCharset(charset)
+                        .setHasHeader(hasHeader)
+                        .setDelimiter(delimiter);
+                definition = tableData2DDefinition.insertData(conn, definition);
                 conn.commit();
             } else {
                 if (!userSavedDataDefinition) {
-                    definition.setCharset(sourceCharset.name())
-                            .setHasHeader(sourceWithNames)
-                            .setDelimiter(textDelimiterName);
-                    tableDataDefinition.updateData(conn, definition);
+                    definition.setCharset(charset)
+                            .setHasHeader(hasHeader)
+                            .setDelimiter(delimiter);
+                    definition = tableData2DDefinition.updateData(conn, definition);
                     conn.commit();
                 }
-                savedColumns = tableDataColumn.read(conn, definition.getDfid());
+                savedColumns = tableData2DColumn.read(conn, definition.getD2did());
             }
+            d2did = definition.getD2did();
             userSavedDataDefinition = true;
         } catch (Exception e) {
             if (task != null) {
@@ -71,28 +77,28 @@ public class DataFileText extends DataFile {
             MyBoxLog.console(e);
             return false;
         }
-        return definition != null && definition.getDfid() >= 0;
+        return d2did >= 0;
     }
 
     @Override
     public boolean readColumns(SingletonTask<Void> task) {
         columns = new ArrayList<>();
-        if (!sourceWithNames) {
-            return true;
-        }
-        if (definition == null) {
+        if (d2did < 0) {
             return false;
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, sourceCharset))) {
+        if (!hasHeader) {
+            return true;
+        }
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             List<String> names = readNames(task, reader);
             if (names == null || names.isEmpty()) {
-                sourceWithNames = false;
+                hasHeader = false;
                 return true;
             }
             for (String name : names) {
                 boolean found = false;
                 if (savedColumns != null) {
-                    for (ColumnDefinition def : savedColumns) {
+                    for (Data2Column def : savedColumns) {
                         if (def.getName().equals(name)) {
                             columns.add(def);
                             found = true;
@@ -101,14 +107,14 @@ public class DataFileText extends DataFile {
                     }
                 }
                 if (!found) {
-                    ColumnDefinition column = new ColumnDefinition(name, ColumnDefinition.ColumnType.String);
+                    Data2Column column = new Data2Column(name, Data2Column.ColumnType.String);
                     columns.add(column);
                 }
             }
             if (columns != null && !columns.isEmpty()) {
-                StringTable validateTable = ColumnDefinition.validate(columns);
+                StringTable validateTable = Data2Column.validate(columns);
                 if (validateTable == null || validateTable.isEmpty()) {
-                    tableDataColumn.save(definition.getDfid(), columns);
+                    tableData2DColumn.save(d2did, columns);
                     return true;
                 } else {
                     return false;
@@ -127,7 +133,7 @@ public class DataFileText extends DataFile {
     @Override
     public boolean readTotal(SingletonTask<Void> task) {
         dataNumber = 0;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, sourceCharset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (task == null || task.isCancelled()) {
@@ -146,7 +152,7 @@ public class DataFileText extends DataFile {
             MyBoxLog.console(e);
             return false;
         }
-        if (sourceWithNames && dataNumber > 0) {
+        if (hasHeader && dataNumber > 0) {
             dataNumber--;
         }
         return true;
@@ -158,8 +164,8 @@ public class DataFileText extends DataFile {
             startRowOfCurrentPage = 0;
         }
         pageData = null;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, sourceCharset))) {
-            if (sourceWithNames) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            if (hasHeader) {
                 readNames(task, reader);
             }
             String line;
@@ -182,7 +188,7 @@ public class DataFileText extends DataFile {
                     maxCol = row.size();
                 }
             }
-            loadPageData(fileRows, sourceWithNames ? columns.size() : maxCol);
+            loadPageData(fileRows, hasHeader ? columns.size() : maxCol);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -194,7 +200,7 @@ public class DataFileText extends DataFile {
     }
 
     protected List<String> parseFileLine(String line) {
-        return TextTools.parseLine(line, definition.getDelimiter());
+        return TextTools.parseLine(line, delimiter);
     }
 
     protected List<String> readNames(SingletonTask<Void> task, BufferedReader reader) {

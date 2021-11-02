@@ -83,7 +83,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                                 ColumnDefinition column = new ColumnDefinition(message(colPrefix) + col, ColumnDefinition.ColumnType.String);
                                 columns.add(column);
                             }
-                            tableDataColumn.save(dataDefinition.getDfid(), columns);
+//                            tableDataColumn.save(dataDefinition.getDfid(), columns);
                         }
                     }
                     if (isCancelled()) {

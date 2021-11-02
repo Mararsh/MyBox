@@ -7,21 +7,21 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-10-17
  * @License Apache License Version 2.0
  */
-public class DataCell extends BaseData {
+public class Data2DCell extends BaseData {
 
-    protected long dceid, dfid;
+    protected long dceid, d2did;
     protected long col, row;
     protected String value;
 
     private void init() {
         dceid = -1;
-        dfid = -1;
+        d2did = -1;
         col = -1;
         row = -1;
         value = null;
     }
 
-    public DataCell() {
+    public Data2DCell() {
         init();
     }
 
@@ -29,15 +29,15 @@ public class DataCell extends BaseData {
     /*
         static methods
      */
-    public static DataCell create() {
-        return new DataCell();
+    public static Data2DCell create() {
+        return new Data2DCell();
     }
 
-    public static boolean valid(DataCell data) {
+    public static boolean valid(Data2DCell data) {
         return data != null && data.getCol() >= 0 && data.getRow() >= 0;
     }
 
-    public static boolean setValue(DataCell data, String column, Object value) {
+    public static boolean setValue(Data2DCell data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -47,7 +47,7 @@ public class DataCell extends BaseData {
                     data.setDceid(value == null ? -1 : (long) value);
                     return true;
                 case "dcdid":
-                    data.setDfid(value == null ? -1 : (long) value);
+                    data.setD2did(value == null ? -1 : (long) value);
                     return true;
                 case "col":
                     data.setCol(value == null ? 3 : (long) value);
@@ -66,7 +66,7 @@ public class DataCell extends BaseData {
         return false;
     }
 
-    public static Object getValue(DataCell data, String column) {
+    public static Object getValue(Data2DCell data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -75,7 +75,7 @@ public class DataCell extends BaseData {
                 case "dceid":
                     return data.getDceid();
                 case "dcdid":
-                    return data.getDfid();
+                    return data.getD2did();
                 case "row":
                     return data.getRow();
                 case "col":
@@ -96,17 +96,17 @@ public class DataCell extends BaseData {
         return dceid;
     }
 
-    public DataCell setDceid(long dceid) {
+    public Data2DCell setDceid(long dceid) {
         this.dceid = dceid;
         return this;
     }
 
-    public long getDfid() {
-        return dfid;
+    public long getD2did() {
+        return d2did;
     }
 
-    public DataCell setDfid(long dfid) {
-        this.dfid = dfid;
+    public Data2DCell setD2did(long d2did) {
+        this.d2did = d2did;
         return this;
     }
 
@@ -114,7 +114,7 @@ public class DataCell extends BaseData {
         return value;
     }
 
-    public DataCell setValue(String value) {
+    public Data2DCell setValue(String value) {
         this.value = value;
         return this;
     }
@@ -123,7 +123,7 @@ public class DataCell extends BaseData {
         return col;
     }
 
-    public DataCell setCol(long col) {
+    public Data2DCell setCol(long col) {
         this.col = col;
         return this;
     }
@@ -132,7 +132,7 @@ public class DataCell extends BaseData {
         return row;
     }
 
-    public DataCell setRow(long row) {
+    public Data2DCell setRow(long row) {
         this.row = row;
         return this;
     }

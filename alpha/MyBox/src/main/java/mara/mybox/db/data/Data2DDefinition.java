@@ -7,42 +7,42 @@ import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
- * @CreateDate 2020-7-13
+ * @CreateDate 2021-11-2
  * @License Apache License Version 2.0
  */
-public class DataDefinition extends BaseData {
+public class Data2DDefinition extends BaseData {
 
-    protected long dfid;
-    protected DataType dataType;
-    protected String dataName, charset, delimiter, comments;
+    protected long d2did;
+    protected Type type;
+    protected String dataName, delimiter, comments;
     protected File file;
+    protected Charset charset;
     protected boolean hasHeader;
     protected long colsNumber, rowsNumber;
     protected short scale;
     protected int maxRandom;
     protected Date modifyTime;
 
-    public static enum DataType {
-        InternalTable, DataFile, Matrix, UserTable, DataClipboard, Unknown
+    public static enum Type {
+        Unknown, DataFileCSV, DataFileExcel, DataFileText, Matrix, DataClipboard, DataTable
     }
 
-    public DataDefinition() {
-        initDefinition();
-        dataType = DataType.DataFile;
+    public Data2DDefinition() {
+        resetDefinition();
     }
 
-    public DataDefinition(DataType dataType, String dataName) {
-        initDefinition();
-        this.dataType = dataType;
+    public Data2DDefinition(Type type, String dataName) {
+        resetDefinition();
+        this.type = type;
         this.dataName = dataName;
     }
 
-    private void initDefinition() {
-        dfid = -1;
+    public final void resetDefinition() {
+        d2did = -1;
         file = null;
         dataName = null;
         hasHeader = false;
-        charset = Charset.defaultCharset().name();
+        charset = Charset.defaultCharset();
         delimiter = ",";
         colsNumber = rowsNumber = 0;
         scale = 2;
@@ -51,33 +51,67 @@ public class DataDefinition extends BaseData {
         comments = null;
     }
 
+    public boolean isValid() {
+        return valid(this);
+    }
+
+    public Data2DDefinition setCharsetName(String charsetName) {
+        try {
+            charset = Charset.forName(charsetName);
+        } catch (Exception e) {
+        }
+        return this;
+    }
+
+    public void load(Data2DDefinition def) {
+        try {
+            if (def == null) {
+                return;
+            }
+            d2did = def.getD2did();
+            type = def.getType();
+            dataName = def.getDataName();
+            delimiter = def.getDelimiter();
+            file = def.getFile();
+            charset = def.getCharset();
+            hasHeader = def.isHasHeader();
+            colsNumber = def.getColsNumber();
+            rowsNumber = def.getRowsNumber();
+            scale = def.getScale();
+            maxRandom = def.getMaxRandom();
+            modifyTime = def.getModifyTime();
+            comments = def.getComments();
+        } catch (Exception e) {
+        }
+    }
+
     /*
         static methods
      */
-    public static DataDefinition create() {
-        return new DataDefinition();
+    public static Data2DDefinition create() {
+        return new Data2DDefinition();
     }
 
-    public static boolean valid(DataDefinition data) {
-        return data != null
-                && data.getDataName() != null && data.getDataType() != null;
+    public static boolean valid(Data2DDefinition data) {
+        return data != null && data.getDataName() != null && data.getType() != null;
     }
 
-    public static Object getValue(DataDefinition data, String column) {
+    public static Object getValue(Data2DDefinition data, String column) {
         if (data == null || column == null) {
             return null;
         }
+
         switch (column) {
-            case "dfid":
-                return data.getDfid();
+            case "d2did":
+                return data.getD2did();
             case "data_type":
-                return dataType(data.getDataType());
+                return type(data.getType());
             case "data_name":
                 return data.getDataName();
             case "file":
                 return data.getFile() == null ? null : data.getFile().getAbsolutePath();
             case "charset":
-                return data.getCharset();
+                return data.getCharset() == null ? Charset.defaultCharset() : data.getCharset().name();
             case "delimiter":
                 return data.getDelimiter();
             case "has_header":
@@ -98,17 +132,17 @@ public class DataDefinition extends BaseData {
         return null;
     }
 
-    public static boolean setValue(DataDefinition data, String column, Object value) {
+    public static boolean setValue(Data2DDefinition data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
         try {
             switch (column) {
-                case "dfid":
-                    data.setDfid(value == null ? -1 : (long) value);
+                case "d2did":
+                    data.setD2did(value == null ? -1 : (long) value);
                     return true;
                 case "data_type":
-                    data.setDataType(dataType((short) value));
+                    data.setType(type((short) value));
                     return true;
                 case "data_name":
                     data.setDataName(value == null ? null : (String) value);
@@ -117,7 +151,7 @@ public class DataDefinition extends BaseData {
                     data.setFile(value == null ? null : new File((String) value));
                     return true;
                 case "charset":
-                    data.setCharset(value == null ? null : (String) value);
+                    data.setCharset(value == null ? null : Charset.forName((String) value));
                     return true;
                 case "delimiter":
                     data.setDelimiter(value == null ? null : (String) value);
@@ -150,51 +184,51 @@ public class DataDefinition extends BaseData {
         return false;
     }
 
-    public static short dataType(DataType type) {
+    public static short type(Type type) {
         if (type == null) {
             return 0;
         }
         return (short) (type.ordinal());
     }
 
-    public static DataType dataType(short type) {
-        DataType[] types = DataType.values();
+    public static Type type(short type) {
+        Type[] types = Type.values();
         if (type < 0 || type > types.length) {
-            return DataType.DataFile;
+            return Type.Unknown;
         }
         return types[type];
     }
 
 //    public static StringTable saveDefinition(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
-//            String dataName, DataDefinition.DataType dataType,
+//            String dataName, Data2DDefinition.Type type,
 //            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
 //        if (dataName == null) {
 //            return null;
 //        }
 //        try ( Connection conn = DerbyBase.getConnection()) {
 //            return saveDefinition(tableDataDefinition, tableDataColumn,
-//                    conn, dataName, dataType, charset, delimiterName, withName, columns);
+//                    conn, dataName, type, charset, delimiterName, withName, columns);
 //        } catch (Exception e) {
 //            MyBoxLog.error(e);
 //            return null;
 //        }
 //    }
 //    public static StringTable saveDefinition(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
-//            Connection conn, String dataName, DataDefinition.DataType dataType,
+//            Connection conn, String dataName, Type type,
 //            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
 //        if (conn == null || dataName == null) {
 //            return null;
 //        }
 //        try {
-//            DataDefinition def = tableDataDefinition.queryName(conn, dataType, dataName);
+////            Data2DDefinition def = tableDataDefinition.queryName(conn, type, dataName);
 //            if (def == null) {
-//                def = DataDefinition.create()
-//                        .setDataName(dataName).setDataType(dataType)
+//                def = Data2DDefinition.create()
+//                        .setDataName(dataName).setType(type)
 //                        .setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
-//                tableDataDefinition.insertData(conn, def);
+////                tableDataDefinition.insertData(conn, def);
 //            } else {
 //                def.setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
-//                tableDataDefinition.updateData(conn, def);
+////                tableDataDefinition.updateData(conn, def);
 //                tableDataColumn.clear(conn, def.getDfid());
 //            }
 //            StringTable validateTable = null;
@@ -215,20 +249,20 @@ public class DataDefinition extends BaseData {
     /*
         get/set
      */
-    public long getDfid() {
-        return dfid;
+    public long getD2did() {
+        return d2did;
     }
 
-    public void setDfid(long dfid) {
-        this.dfid = dfid;
+    public void setD2did(long d2did) {
+        this.d2did = d2did;
     }
 
-    public DataType getDataType() {
-        return dataType;
+    public Type getType() {
+        return type;
     }
 
-    public DataDefinition setDataType(DataType dataType) {
-        this.dataType = dataType;
+    public Data2DDefinition setType(Type type) {
+        this.type = type;
         return this;
     }
 
@@ -236,16 +270,16 @@ public class DataDefinition extends BaseData {
         return dataName;
     }
 
-    public DataDefinition setDataName(String dataName) {
+    public Data2DDefinition setDataName(String dataName) {
         this.dataName = dataName;
         return this;
     }
 
-    public String getCharset() {
+    public Charset getCharset() {
         return charset;
     }
 
-    public DataDefinition setCharset(String charset) {
+    public Data2DDefinition setCharset(Charset charset) {
         this.charset = charset;
         return this;
     }
@@ -254,7 +288,7 @@ public class DataDefinition extends BaseData {
         return delimiter;
     }
 
-    public DataDefinition setDelimiter(String delimiter) {
+    public Data2DDefinition setDelimiter(String delimiter) {
         this.delimiter = delimiter;
         return this;
     }
@@ -263,7 +297,7 @@ public class DataDefinition extends BaseData {
         return hasHeader;
     }
 
-    public DataDefinition setHasHeader(boolean hasHeader) {
+    public Data2DDefinition setHasHeader(boolean hasHeader) {
         this.hasHeader = hasHeader;
         return this;
     }
@@ -272,7 +306,7 @@ public class DataDefinition extends BaseData {
         return comments;
     }
 
-    public DataDefinition setComments(String comments) {
+    public Data2DDefinition setComments(String comments) {
         this.comments = comments;
         return this;
     }
@@ -281,7 +315,7 @@ public class DataDefinition extends BaseData {
         return colsNumber;
     }
 
-    public DataDefinition setColsNumber(long colsNumber) {
+    public Data2DDefinition setColsNumber(long colsNumber) {
         this.colsNumber = colsNumber;
         return this;
     }
@@ -290,7 +324,7 @@ public class DataDefinition extends BaseData {
         return rowsNumber;
     }
 
-    public DataDefinition setRowsNumber(long rowsNumber) {
+    public Data2DDefinition setRowsNumber(long rowsNumber) {
         this.rowsNumber = rowsNumber;
         return this;
     }
@@ -299,7 +333,7 @@ public class DataDefinition extends BaseData {
         return scale;
     }
 
-    public DataDefinition setScale(short scale) {
+    public Data2DDefinition setScale(short scale) {
         this.scale = scale;
         return this;
     }
@@ -308,7 +342,7 @@ public class DataDefinition extends BaseData {
         return maxRandom;
     }
 
-    public DataDefinition setMaxRandom(int maxRandom) {
+    public Data2DDefinition setMaxRandom(int maxRandom) {
         this.maxRandom = maxRandom;
         return this;
     }
@@ -317,7 +351,7 @@ public class DataDefinition extends BaseData {
         return modifyTime;
     }
 
-    public DataDefinition setModifyTime(Date modifyTime) {
+    public Data2DDefinition setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
         return this;
     }
@@ -326,7 +360,7 @@ public class DataDefinition extends BaseData {
         return file;
     }
 
-    public DataDefinition setFile(File file) {
+    public Data2DDefinition setFile(File file) {
         this.file = file;
         return this;
     }

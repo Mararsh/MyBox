@@ -64,7 +64,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
                     tableDataDefinition.updateData(conn, dataDefinition);
                     conn.commit();
                 }
-                savedColumns = tableDataColumn.read(conn, dataDefinition.getDfid());
+//                savedColumns = tableDataColumn.read(conn, dataDefinition.getDfid());
             }
             userSavedDataDefinition = true;
         } catch (Exception e) {
@@ -126,7 +126,7 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
             }
             if (columns != null && !columns.isEmpty()) {
                 if (validateColumns(columns)) {
-                    tableDataColumn.save(dataDefinition.getDfid(), columns);
+//                    tableDataColumn.save(dataDefinition.getDfid(), columns);
                     return true;
                 } else {
                     return false;
@@ -354,7 +354,8 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
             }
         }
         if (FileTools.rename(tmpFile, tfile, false)) {
-            return saveDefinition(tfile.getAbsolutePath(), dataType, charset, delimiterName, withNames, columns);
+            return false;
+//            return saveDefinition(tfile.getAbsolutePath(), dataType, charset, delimiterName, withNames, columns);
         } else {
             if (task != null) {
                 task.setError(message("Failed"));
@@ -380,11 +381,10 @@ public abstract class ControlSheetText_File extends ControlSheetFile {
         }
     }
 
-    @Override
-    protected boolean saveDefinition() {
-        return saveDefinition(sourceFile.getAbsolutePath(), dataType, sourceCharset, sourceDelimiterName, sourceWithNames, columns);
-    }
-
+//    @Override
+//    protected boolean saveDefinition() {
+//        return saveDefinition(sourceFile.getAbsolutePath(), dataType, sourceCharset, sourceDelimiterName, sourceWithNames, columns);
+//    }
     @Override
     protected String fileText() {
         if (sourceFile == null) {

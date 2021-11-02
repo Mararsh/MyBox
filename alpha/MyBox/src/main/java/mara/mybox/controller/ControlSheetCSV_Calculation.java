@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.DoubleStatistic;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.TextTools;
@@ -125,9 +124,8 @@ public abstract class ControlSheetCSV_Calculation extends ControlSheetCSV_Operat
                 }
             }
 
-            saveDefinition(tmpFile.getAbsolutePath(),
-                    DataDefinition.DataType.DataFile, Charset.forName("UTF-8"), ",", true, statisticColumns(calCols, disCols));
-
+//            saveDefinition(tmpFile.getAbsolutePath(),
+//                    DataDefinition.DataType.DataFile, Charset.forName("UTF-8"), ",", true, statisticColumns(calCols, disCols));
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

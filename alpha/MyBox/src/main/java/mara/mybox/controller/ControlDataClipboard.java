@@ -21,7 +21,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableDataColumn;
+import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -44,7 +44,7 @@ import org.apache.commons.csv.CSVFormat;
 public class ControlDataClipboard extends BaseDataTableController<DataDefinition> {
 
     protected TableDataDefinition tableDataDefinition;
-    protected TableDataColumn tableDataColumn;
+    protected TableData2DColumn tableData2DColumn;
     protected boolean checkedInvalid;
     protected DataDefinition currentData;
 
@@ -85,7 +85,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
     @Override
     public void setTableDefinition() {
         tableDataDefinition = sheetController.tableDataDefinition;
-        tableDataColumn = sheetController.tableDataColumn;
+//        tableData2DColumn = sheetController.tableData2DColumn;
         tableDefinition = tableDataDefinition;
 
         tableDataDefinition.setOrderColumns("dfid DESC");
@@ -385,7 +385,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
                     if (error != null) {
                         return false;
                     }
-                    def = DataClipboard.create(tableDataDefinition, tableDataColumn, file, sheetController.columns);
+                    def = DataClipboard.create(tableDataDefinition, tableData2DColumn, file, sheetController.columns);
                     return def != null;
                 }
 

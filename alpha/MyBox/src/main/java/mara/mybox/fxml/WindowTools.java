@@ -24,7 +24,7 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
@@ -456,7 +456,7 @@ public class WindowTools {
 
                 new TableFileBackup().clearInvalid(conn);
 
-                new TableDataDefinition().clearInvalid(conn);
+                new TableData2DDefinition().clearInvalid(conn);
 
             } catch (Exception e) {
                 MyBoxLog.error(e);

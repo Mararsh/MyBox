@@ -15,7 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
-import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2Column;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
@@ -38,7 +38,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             dataController = editController.dataController;
             this.data2D = dataController.data2D;
             this.baseName = dataController.baseName;
-            this.tableDefinition = dataController.tableDataColumn;
+            this.tableDefinition = dataController.tableData2DColumn;
 
             deleteButton = editController.deleteRowsButton;
 
@@ -54,14 +54,8 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             if (data2D == null || !data2D.hasData()) {
                 return;
             }
-            int rowsNumber = data2D.pageRowsNumber();
-            if (rowsNumber <= 0) {
-                tableData.clear();
-            } else {
-                tableData.addAll(data2D.getPageData());
-            }
+            tableData.addAll(data2D.getPageData());
             data2D.setPageData(tableData);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -77,9 +71,9 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             tableView.setEditable(true);
             rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView, data2D.getStartRowOfCurrentPage()));
 
-            List<ColumnDefinition> columns = data2D.getColumns();
+            List<Data2Column> columns = data2D.getColumns();
             for (int i = 0; i < columns.size(); i++) {
-                ColumnDefinition column = columns.get(i);
+                Data2Column column = columns.get(i);
                 String name = column.getName();
                 TableColumn tableColumn = new TableColumn<List<String>, String>(name);
                 tableColumn.setPrefWidth(column.getWidth());

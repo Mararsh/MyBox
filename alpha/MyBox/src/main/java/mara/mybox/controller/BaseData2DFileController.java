@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,9 +12,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFile;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.table.TableDataColumn;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -29,8 +30,8 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseData2DFileController extends BaseController {
 
     protected DataFile dataFile;
-    protected TableDataDefinition tableDataDefinition;
-    protected TableDataColumn tableDataColumn;
+    protected TableData2DDefinition tableData2DDefinition;
+    protected TableData2DColumn tableData2DColumn;
 
     @FXML
     protected TitledPane filePane, saveAsPane, backupPane, formatPane;
@@ -65,8 +66,8 @@ public abstract class BaseData2DFileController extends BaseController {
         try {
             dataController.setDataType(type);
             dataFile = (DataFile) dataController.data2D;
-            tableDataDefinition = dataController.tableDataDefinition;
-            tableDataColumn = dataController.tableDataColumn;
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -151,7 +152,7 @@ public abstract class BaseData2DFileController extends BaseController {
                 return;
             }
             sourceFile = null;
-            dataFile.initData();
+            dataFile.resetData();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -174,7 +175,7 @@ public abstract class BaseData2DFileController extends BaseController {
     }
 
     public void initFile() {
-        dataFile.initFile();
+        dataFile.initFile(sourceFile);
         dataController.paginationBox.setVisible(false);
 //        dataController.clearSheet();
         dataController.updateLabel();
@@ -203,8 +204,8 @@ public abstract class BaseData2DFileController extends BaseController {
                     if (!dataFile.readColumns(task) || isCancelled()) {
                         return false;
                     }
-                    List<ColumnDefinition> columns = dataFile.getColumns();
-                    List<ColumnDefinition> savedColumns = dataFile.getSavedColumns();
+                    List<Data2Column> columns = dataFile.getColumns();
+                    List<Data2Column> savedColumns = dataFile.getSavedColumns();
                     if (columns == null || columns.isEmpty()) {
                         if (savedColumns != null) {
                             columns = savedColumns;
@@ -220,10 +221,10 @@ public abstract class BaseData2DFileController extends BaseController {
                         int colsNumber = dataFile.pageColsNumber();
                         if (columns.size() < colsNumber) {
                             for (int col = columns.size() + 1; col <= colsNumber; col++) {
-                                ColumnDefinition column = new ColumnDefinition(message(dataFile.colPrefix()) + col, ColumnDefinition.ColumnType.String);
+                                Data2Column column = new Data2Column(message(dataFile.colPrefix()) + col, Data2Column.ColumnType.String);
                                 columns.add(column);
                             }
-                            tableDataColumn.save(dataFile.getDefinition().getDfid(), columns);
+                            tableData2DColumn.save(dataFile.getD2did(), columns);
                         }
                     }
                     if (isCancelled()) {
@@ -253,6 +254,7 @@ public abstract class BaseData2DFileController extends BaseController {
                 @Override
                 protected void finalAction() {
                     task = null;
+                    dataFile.setPageDataChanged(false);
                     dataController.updateInterface();
                     updateStatus();
                 }
@@ -337,7 +339,7 @@ public abstract class BaseData2DFileController extends BaseController {
         loadFile();
     }
 
-    public void loadData(List<List<String>> data, List<ColumnDefinition> dataColumns) {
+    public void loadData(List<List<String>> data, List<Data2Column> dataColumns) {
         sourceFile = null;
         dataController.loadData(data, dataColumns);
     }
@@ -349,15 +351,21 @@ public abstract class BaseData2DFileController extends BaseController {
     }
 
     protected void updateStatus() {
-        String title = baseTitle;
-        if (sourceFile != null) {
-            title += " " + sourceFile.getAbsolutePath();
-        }
-        if (dataFile.isPageDataChanged()) {
-            title += " *";
-        }
-        getMyStage().setTitle(title);
-        updateInfoLabel();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                String title = baseTitle;
+                if (sourceFile != null) {
+                    title += " " + sourceFile.getAbsolutePath();
+                }
+                if (dataFile.isPageDataChanged()) {
+                    title += " *";
+                }
+                getMyStage().setTitle(title);
+                updateInfoLabel();
+            }
+        });
+
     }
 
     protected void updateInfoLabel() {

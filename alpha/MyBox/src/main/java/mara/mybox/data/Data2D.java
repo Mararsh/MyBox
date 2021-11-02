@@ -1,17 +1,16 @@
 package mara.mybox.data;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.table.TableDataColumn;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
@@ -20,30 +19,22 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public abstract class Data2D {
+public abstract class Data2D extends Data2DDefinition {
 
-    protected Type type;
-    protected TableDataDefinition tableDataDefinition;
-    protected TableDataColumn tableDataColumn;
-    protected DataDefinition definition;
-    protected List<ColumnDefinition> columns;
+    protected TableData2DDefinition tableData2DDefinition;
+    protected TableData2DColumn tableData2DColumn;
+    protected List<Data2Column> columns;
     protected long dataNumber, pagesNumber, pageSize;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected ObservableList<List<String>> pageData;
     protected SimpleBooleanProperty pageDataLoadedNotify, pageDataChangedNotify;
     protected boolean totalRead, pageDataChanged;
 
-    public static enum Type {
-        InternalTable, DataFileCSV, DataFileExcel, DataFileText, Matrix, UserTable, DataClipboard, Unknown
-    }
-
     public Data2D() {
-        initData();
-        type = Type.DataFileCSV;
-        definition = null;
         pageSize = 50;
         pageDataLoadedNotify = new SimpleBooleanProperty(false);
         pageDataChangedNotify = new SimpleBooleanProperty(false);
+        resetData();
     }
 
     /*
@@ -60,7 +51,8 @@ public abstract class Data2D {
     /*
         page data
      */
-    public final void initData() {
+    public final void resetData() {
+        resetDefinition();
         columns = null;
         dataNumber = 0;
         pagesNumber = 1;
@@ -71,7 +63,7 @@ public abstract class Data2D {
     }
 
     public void newData() {
-        initData();
+        resetData();
         for (int r = 0; r < 3; r++) {
             List<String> row = new ArrayList<>();
             for (int col = 0; col < 3; col++) {
@@ -109,11 +101,9 @@ public abstract class Data2D {
         setPageDataChanged(true);
     }
 
-    public void loadPageData(List<List<String>> data, List<ColumnDefinition> dataColumns) {
-        definition = new DataDefinition();
+    public void loadPageData(List<List<String>> data, List<Data2Column> dataColumns) {
+        resetData();
         columns = dataColumns;
-        currentPage = startRowOfCurrentPage = endRowOfCurrentPage = 0;
-        pageData = FXCollections.observableArrayList();
         if (data != null) {
             pageData.addAll(data);
             endRowOfCurrentPage = data.size();
@@ -133,7 +123,7 @@ public abstract class Data2D {
         String value = null;
         try {
             value = pageData.get(row).get(col);
-            ColumnDefinition column = column(col);
+            Data2Column column = column(col);
             if (value != null && column.isNumberType()) {
                 value = value.replaceAll(",", "");
             }
@@ -217,7 +207,7 @@ public abstract class Data2D {
         return isMatrix();
     }
 
-    public ColumnDefinition column(int col) {
+    public Data2Column column(int col) {
         try {
             return columns.get(col);
         } catch (Exception e) {
@@ -228,7 +218,7 @@ public abstract class Data2D {
     public List<String> columnNames() {
         try {
             List<String> names = new ArrayList<>();
-            for (ColumnDefinition column : columns) {
+            for (Data2Column column : columns) {
                 names.add(column.getName());
             }
             return names;
@@ -286,11 +276,10 @@ public abstract class Data2D {
     }
 
     public String titleName() {
-        File file = getFile();
         if (file != null) {
             return file.getAbsolutePath();
-        } else if (definition != null) {
-            return definition.getDataName();
+        } else if (dataName != null) {
+            return dataName;
         } else {
             return "";
         }
@@ -298,30 +287,21 @@ public abstract class Data2D {
 
     public String random(Random random, int col) {
         try {
-            if (definition != null) {
-                return column(col).random(random, definition.getMaxRandom(), definition.getScale());
-            } else {
-                return column(col).random(random, 10000, (short) 2);
-            }
+            return column(col).random(random, maxRandom, scale);
         } catch (Exception e) {
             return null;
         }
     }
 
+    @Override
     public boolean isValid() {
-        return definition != null && columns != null && !columns.isEmpty();
+        return super.isValid() && columns != null && !columns.isEmpty();
     }
 
     public boolean hasData() {
         return isValid() && (pageRowsNumber() > 0 || dataNumber > 0);
     }
 
-    public File getFile() {
-        if (definition == null) {
-            return null;
-        }
-        return definition.getFile();
-    }
 
     /*
         static
@@ -354,39 +334,30 @@ public abstract class Data2D {
         return data;
     }
 
-
     /*
         get/set
      */
-    public TableDataDefinition getTableDataDefinition() {
-        return tableDataDefinition;
+    public TableData2DDefinition getTableData2DDefinition() {
+        return tableData2DDefinition;
     }
 
-    public void setTableDataDefinition(TableDataDefinition tableDataDefinition) {
-        this.tableDataDefinition = tableDataDefinition;
+    public void setTableData2DDefinition(TableData2DDefinition tableData2DDefinition) {
+        this.tableData2DDefinition = tableData2DDefinition;
     }
 
-    public DataDefinition getDefinition() {
-        return definition;
+    public TableData2DColumn getTableData2DColumn() {
+        return tableData2DColumn;
     }
 
-    public void setDefinition(DataDefinition definition) {
-        this.definition = definition;
+    public void setTableData2DColumn(TableData2DColumn tableData2DColumn) {
+        this.tableData2DColumn = tableData2DColumn;
     }
 
-    public TableDataColumn getTableDataColumn() {
-        return tableDataColumn;
-    }
-
-    public void setTableDataColumn(TableDataColumn tableDataColumn) {
-        this.tableDataColumn = tableDataColumn;
-    }
-
-    public List<ColumnDefinition> getColumns() {
+    public List<Data2Column> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<ColumnDefinition> columns) {
+    public void setColumns(List<Data2Column> columns) {
         this.columns = columns;
     }
 
@@ -444,14 +415,6 @@ public abstract class Data2D {
 
     public void setPageData(ObservableList<List<String>> pageData) {
         this.pageData = pageData;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
 
     public SimpleBooleanProperty getPageDataLoadedNotify() {

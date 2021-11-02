@@ -16,7 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.table.TableDataCell;
+import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.tools.DoubleTools;
@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
 public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
 
     protected ControlMatricesList manager;
-    protected TableDataCell tableDataCell;
+    protected TableData2DCell tableDataCell;
 
     @FXML
     protected TextField nameInput, idInput;

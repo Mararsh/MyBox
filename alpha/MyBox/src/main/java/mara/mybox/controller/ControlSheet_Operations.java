@@ -12,7 +12,6 @@ import java.util.Random;
 import javafx.fxml.FXML;
 import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -116,8 +115,9 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                         for (int c : cols) {
                             dColumns.add(columns.get(c));
                         }
-                        DataDefinition def = DataClipboard.create(tableDataDefinition, tableDataColumn, dFile, dColumns);
-                        return def != null;
+//                        DataDefinition def = DataClipboard.create(tableDataDefinition, tableDataColumn, dFile, dColumns);
+//                        return def != null;
+                        return false;
                     }
                 }
 

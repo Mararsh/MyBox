@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -132,14 +130,15 @@ public abstract class ControlData2DEditTable_Operations extends BaseDataTableCon
                     if (toSystemClipboard) {
                         return data != null;
                     } else {
-                        File dFile = DataClipboard.writeFile(data);
-                        List<ColumnDefinition> dColumns = new ArrayList<>();
-                        for (int c : cols) {
-                            dColumns.add(data2D.column(c));
-                        }
-                        DataDefinition def
-                                = DataClipboard.create(data2D.getTableDataDefinition(), data2D.getTableDataColumn(), dFile, dColumns);
-                        return def != null;
+//                        File dFile = DataClipboard.writeFile(data);
+//                        List<ColumnDefinition> dColumns = new ArrayList<>();
+//                        for (int c : cols) {
+//                            dColumns.add(data2D.column(c));
+//                        }
+//                        DataDefinition def
+//                                = DataClipboard.create(data2D.getTableData2DDefinition(), data2D.getTableDataColumn(), dFile, dColumns);
+//                        return def != null;
+                        return true;
                     }
                 }
 

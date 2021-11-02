@@ -1,16 +1,11 @@
 package mara.mybox.controller;
 
-import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -182,16 +177,16 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
             return false;
         }
         try {
-            StringTable validateTable = ColumnDefinition.validate(columns);
-            if (validateTable != null) {
-                if (validateTable.isEmpty()) {
-                    return true;
-                } else {
-                    Platform.runLater(() -> {
-                        validateTable.htmlTable();
-                    });
-                }
-            }
+//            StringTable validateTable = ColumnDefinition.validate(columns);
+//            if (validateTable != null) {
+//                if (validateTable.isEmpty()) {
+//                    return true;
+//                } else {
+//                    Platform.runLater(() -> {
+//                        validateTable.htmlTable();
+//                    });
+//                }
+//            }
             if (task != null) {
                 task.setError(message("InvalidColumns"));
             }
@@ -240,38 +235,37 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
     }
 
-    protected boolean saveDefinition(String dataName, DataDefinition.DataType dataType,
-            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
-        if (dataName == null) {
-            return false;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            return saveDefinition(conn, dataName, dataType, charset, delimiterName, withName, columns);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    protected boolean saveDefinition(Connection conn, String dataName, DataDefinition.DataType dataType,
-            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
-        if (conn == null || dataName == null) {
-            return false;
-        }
-        StringTable validReport = DataDefinition.saveDefinition(tableDataDefinition, tableDataColumn, conn,
-                dataName, dataType, charset, delimiterName, withName, columns);
-        if (validReport != null && !validReport.isEmpty()) {
-            Platform.runLater(() -> {
-                validReport.htmlTable();
-            });
-            if (task != null) {
-                task.setError(message("InvalidColumns"));
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
+//    protected boolean saveDefinition(String dataName, DataDefinition.DataType dataType,
+//            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
+//        if (dataName == null) {
+//            return false;
+//        }
+//        try ( Connection conn = DerbyBase.getConnection()) {
+//            return saveDefinition(conn, dataName, dataType, charset, delimiterName, withName, columns);
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//            return false;
+//        }
+//    }
+//    protected boolean saveDefinition(Connection conn, String dataName, DataDefinition.DataType dataType,
+//            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
+//        if (conn == null || dataName == null) {
+//            return false;
+//        }
+//        StringTable validReport = DataDefinition.saveDefinition(tableDataDefinition, tableDataColumn, conn,
+//                dataName, dataType, charset, delimiterName, withName, columns);
+//        if (validReport != null && !validReport.isEmpty()) {
+//            Platform.runLater(() -> {
+//                validReport.htmlTable();
+//            });
+//            if (task != null) {
+//                task.setError(message("InvalidColumns"));
+//            }
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
 
     /*
         abstract

@@ -12,8 +12,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.data.Data2D;
-import mara.mybox.db.table.TableDataColumn;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import static mara.mybox.value.Languages.message;
@@ -28,8 +28,8 @@ public class ControlData2DEdit extends BaseController {
 
     protected ControlData2D dataController;
     protected Data2D data2D;
-    protected TableDataDefinition tableDataDefinition;
-    protected TableDataColumn tableDataColumn;
+    protected TableData2DDefinition tableData2DDefinition;
+    protected TableData2DColumn tableData2DColumn;
 
     @FXML
     protected TabPane tabPane;
@@ -45,8 +45,8 @@ public class ControlData2DEdit extends BaseController {
     protected void setParameters(ControlData2D dataController) {
         try {
             this.dataController = dataController;
-            tableDataDefinition = dataController.tableDataDefinition;
-            tableDataColumn = dataController.tableDataColumn;
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
             data2D = dataController.data2D;
             baseName = dataController.baseName;
 
