@@ -104,7 +104,7 @@ public class WindowTools {
             stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ob, Boolean ov, Boolean nv) {
-                    if (!nv) {
+                    if (!nv && controller != null) {
                         controller.closePopup();
                     }
                 }

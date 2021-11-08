@@ -87,7 +87,8 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     protected QueryCondition queryCondition;
     protected String chartQuerySQL, chartName;
     protected List<String> orderNames, valuesNames;
-    protected int topNumber, snapWidth, mapLoadTime, totalSize;
+    protected int topNumber, snapWidth, mapLoadTime;
+    protected long totalSize;
     protected List<String> datasets, chartTimes;
     protected Map<String, List<EpidemicReport>> timesReports, locationsReports;
     protected List<GeographyCode> chartLocations;
@@ -355,7 +356,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         chartLocations = reportsController.dataLocations;
         multipleDatasets = reportsController.datasets.size() > 1;
         maxValue = reportsController.maxValue;
-        totalSize = reportsController.totalSize;
+        totalSize = reportsController.dataSize;
         chartTimes = new ArrayList<>();
         chartTimes.addAll(reportsController.dataTimes);
         Collections.reverse(chartTimes);

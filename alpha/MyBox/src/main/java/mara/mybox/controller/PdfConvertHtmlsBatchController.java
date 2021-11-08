@@ -47,9 +47,11 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
 
     public PdfConvertHtmlsBatchController() {
         baseTitle = Languages.message("PdfConvertHtmlsBatch");
+    }
 
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Html);
     }
 
     @Override

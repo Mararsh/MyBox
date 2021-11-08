@@ -34,18 +34,22 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     // return whether handled
     public boolean keyEventsFilter(KeyEvent event) {
+        try {
 //        MyBoxLog.debug("filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
 //                + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
-        keyEvent = event;
-        if (event.isControlDown()) {
-            return controlAltFilter(event);
+            keyEvent = event;
+            if (event.isControlDown()) {
+                return controlAltFilter(event);
 
-        } else if (event.isAltDown()) {
-            return altFilter(event);
+            } else if (event.isAltDown()) {
+                return altFilter(event);
 
-        } else if (event.getCode() != null) {
-            return keyFilter(event);
+            } else if (event.getCode() != null) {
+                return keyFilter(event);
 
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
         return false;
     }

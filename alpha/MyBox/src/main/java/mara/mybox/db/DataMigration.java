@@ -18,7 +18,7 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Dataset;
@@ -178,7 +178,7 @@ public class DataMigration {
                     long d2did = def.getD2did();
                     ResultSet cquery = conn.createStatement().executeQuery("SELECT * FROM Data_Column WHERE dataid=" + dfid);
                     while (cquery.next()) {
-                        Data2Column column = Data2Column.create().setD2id(d2did);
+                        Data2DColumn column = Data2DColumn.create().setD2id(d2did);
                         column.setType(ColumnDefinition.columnType(cquery.getShort("column_type")));
                         column.setName(cquery.getString("column_name"));
                         column.setIndex(cquery.getInt("index"));

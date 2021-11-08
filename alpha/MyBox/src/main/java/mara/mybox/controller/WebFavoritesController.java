@@ -49,7 +49,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-29
  * @License Apache License Version 2.0
  */
-public class WebFavoritesController extends BaseDataTableController<WebFavorite> {
+public class WebFavoritesController extends BaseSysTableController<WebFavorite> {
 
     protected TableTree tableTree;
     protected TableWebFavorite tableWebFavorite;
@@ -273,7 +273,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
     }
 
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         if (treeController.selectedNode != null && subCheck.isSelected()) {
             return TableWebFavorite.withSubSize(tableTree, treeController.selectedNode.getNodeid());
 

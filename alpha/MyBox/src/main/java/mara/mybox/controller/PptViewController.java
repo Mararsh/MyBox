@@ -4,9 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -65,21 +63,26 @@ public class PptViewController extends BaseFileImagesViewController {
             notesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (notesCheck.isSelected()) {
-                        if (!textsBox.getChildren().contains(notesPane)) {
-                            textsBox.getChildren().add(notesPane);
-                        }
-                    } else {
-                        if (textsBox.getChildren().contains(notesPane)) {
-                            textsBox.getChildren().remove(notesPane);
-                        }
-                    }
+                    checkNotes();
                     UserConfig.setBoolean(baseName + "DisplayNotes", notesCheck.isSelected());
                 }
             });
+            checkNotes();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkNotes() {
+        if (notesCheck.isSelected()) {
+            if (!textsBox.getChildren().contains(notesPane)) {
+                textsBox.getChildren().add(notesPane);
+            }
+        } else {
+            if (textsBox.getChildren().contains(notesPane)) {
+                textsBox.getChildren().remove(notesPane);
+            }
         }
     }
 
@@ -209,35 +212,36 @@ public class PptViewController extends BaseFileImagesViewController {
     }
 
     @Override
-    protected Map<Integer, Image> readThumbs(int pos, int end) {
-        Map<Integer, Image> images = null;
+    protected boolean loadThumbs(List<Integer> missed) {
         try ( SlideShow ppt = SlideShowFactory.create(sourceFile)) {
-            images = new HashMap<>();
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;
-            for (int i = pos; i < end; ++i) {
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+            for (Integer index : missed) {
+                if (thumbTask == null || thumbTask.isCancelled()) {
+                    break;
+                }
+                ImageView view = (ImageView) thumbBox.getChildren().get(2 * index);
                 if (view.getImage() != null) {
                     continue;
                 }
-                try {
-                    Slide slide = slides.get(i);
-                    BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                    slide.draw(slideImage.createGraphics());
-                    if (slideImage.getWidth() > ThumbWidth) {
-                        slideImage = ScaleTools.scaleImageWidthKeep(slideImage, ThumbWidth);
-                    }
-                    Image thumb = SwingFXUtils.toFXImage(slideImage, null);
-                    images.put(i, thumb);
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                Slide slide = slides.get(index);
+                BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                slide.draw(slideImage.createGraphics());
+                if (slideImage.getWidth() > ThumbWidth) {
+                    slideImage = ScaleTools.scaleImageWidthKeep(slideImage, ThumbWidth);
                 }
+                Image thumb = SwingFXUtils.toFXImage(slideImage, null);
+                view.setImage(thumb);
+                view.setFitHeight(view.getImage().getHeight());
             }
+            ppt.close();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            thumbTask.setError(e.toString());
+            MyBoxLog.debug(e);
+            return false;
         }
-        return images;
+        return true;
     }
 
 }

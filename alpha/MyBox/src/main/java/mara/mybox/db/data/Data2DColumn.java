@@ -15,36 +15,36 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-7-12
  * @License Apache License Version 2.0
  */
-public class Data2Column extends ColumnDefinition {
+public class Data2DColumn extends ColumnDefinition {
 
     protected Data2DDefinition data2DDefinition;
     protected long d2cid, d2id;
 
-    public final void initData2Column() {
+    public final void initData2DColumn() {
         initColumnDefinition();
         d2cid = -1;
         d2id = -1;
     }
 
-    public Data2Column() {
-        initData2Column();
+    public Data2DColumn() {
+        initData2DColumn();
     }
 
-    public Data2Column(String name, ColumnType type) {
-        initData2Column();
+    public Data2DColumn(String name, ColumnType type) {
+        initData2DColumn();
         this.name = name;
         this.type = type;
     }
 
-    public Data2Column(String name, ColumnType type, boolean notNull) {
-        initData2Column();
+    public Data2DColumn(String name, ColumnType type, boolean notNull) {
+        initData2DColumn();
         this.name = name;
         this.type = type;
         this.notNull = notNull;
     }
 
-    public Data2Column(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
-        initData2Column();
+    public Data2DColumn(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
+        initData2DColumn();
         this.name = name;
         this.type = type;
         this.notNull = notNull;
@@ -54,7 +54,7 @@ public class Data2Column extends ColumnDefinition {
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
-            Data2Column newColumn = (Data2Column) super.clone();
+            Data2DColumn newColumn = (Data2DColumn) super.clone();
             newColumn.setD2cid(-1);
             return newColumn;
         } catch (Exception e) {
@@ -64,9 +64,9 @@ public class Data2Column extends ColumnDefinition {
     }
 
     @Override
-    public Data2Column cloneBase() {
+    public Data2DColumn cloneBase() {
         try {
-            return (Data2Column) clone();
+            return (Data2DColumn) clone();
         } catch (Exception e) {
             return null;
         }
@@ -75,11 +75,11 @@ public class Data2Column extends ColumnDefinition {
     /*
         static methods
      */
-    public static Data2Column create() {
-        return new Data2Column();
+    public static Data2DColumn create() {
+        return new Data2DColumn();
     }
 
-    public static Object getValue(Data2Column data, String column) {
+    public static Object getValue(Data2DColumn data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -126,7 +126,7 @@ public class Data2Column extends ColumnDefinition {
         return null;
     }
 
-    public static boolean setValue(Data2Column data, String column, Object value) {
+    public static boolean setValue(Data2DColumn data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -195,7 +195,7 @@ public class Data2Column extends ColumnDefinition {
         return false;
     }
 
-    public static StringTable validate(List<Data2Column> columns) {
+    public static StringTable validate(List<Data2DColumn> columns) {
         try {
             if (columns == null || columns.isEmpty()) {
                 return null;
@@ -205,7 +205,7 @@ public class Data2Column extends ColumnDefinition {
             tNames.addAll(Arrays.asList(message("ID"), message("Name"), message("Reason")));
             StringTable colsTable = new StringTable(tNames, message("InvalidColumns"));
             for (int c = 0; c < columns.size(); c++) {
-                Data2Column column = columns.get(c);
+                Data2DColumn column = columns.get(c);
                 if (!column.valid()) {
                     List<String> row = new ArrayList<>();
                     row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Invalid")));
@@ -232,7 +232,7 @@ public class Data2Column extends ColumnDefinition {
         return data2DDefinition;
     }
 
-    public Data2Column setData2DDefinition(Data2DDefinition data2DDefinition) {
+    public Data2DColumn setData2DDefinition(Data2DDefinition data2DDefinition) {
         this.data2DDefinition = data2DDefinition;
         return this;
     }
@@ -241,7 +241,7 @@ public class Data2Column extends ColumnDefinition {
         return d2cid;
     }
 
-    public Data2Column setD2cid(long d2cid) {
+    public Data2DColumn setD2cid(long d2cid) {
         this.d2cid = d2cid;
         return this;
     }
@@ -250,7 +250,7 @@ public class Data2Column extends ColumnDefinition {
         return d2id;
     }
 
-    public Data2Column setD2id(long d2id) {
+    public Data2DColumn setD2id(long d2id) {
         this.d2id = d2id;
         return this;
     }

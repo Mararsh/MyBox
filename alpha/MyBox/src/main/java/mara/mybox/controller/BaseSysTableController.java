@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-12-18
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataTableController<P> extends BaseTableViewController<P> {
+public abstract class BaseSysTableController<P> extends BaseTableViewController<P> {
 
     protected BaseTable tableDefinition;
 
@@ -31,7 +31,7 @@ public abstract class BaseDataTableController<P> extends BaseTableViewController
     @FXML
     protected Label queryConditionsLabel;
 
-    public BaseDataTableController() {
+    public BaseSysTableController() {
         tableName = "";
         TipsLabelKey = "TableTips";
     }
@@ -57,7 +57,6 @@ public abstract class BaseDataTableController<P> extends BaseTableViewController
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
-        setPagination();
         if (queryConditionsLabel != null) {
             queryConditionsLabel.setText(queryConditionsString);
         }
@@ -73,7 +72,7 @@ public abstract class BaseDataTableController<P> extends BaseTableViewController
     }
 
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         if (tableDefinition != null) {
             if (queryConditions != null) {
                 return tableDefinition.conditionSize(queryConditions);
@@ -82,19 +81,6 @@ public abstract class BaseDataTableController<P> extends BaseTableViewController
             }
         } else {
             return 0;
-        }
-    }
-
-    @Override
-    public List<P> readData() {
-        if (tableDefinition != null) {
-            if (queryConditions != null) {
-                return tableDefinition.query(queryConditions);
-            } else {
-                return tableDefinition.readAll();
-            }
-        } else {
-            return null;
         }
     }
 

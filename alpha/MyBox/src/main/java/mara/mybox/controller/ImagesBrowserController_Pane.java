@@ -170,6 +170,10 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
 
     protected void makeImagesPane() {
         try {
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
+                backgroundTask = null;
+            }
             imagesPane.getChildren().clear();
             imageBoxList = new ArrayList<>();
             imageViewList = new ArrayList<>();
@@ -178,8 +182,8 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             selectedIndexes = new ArrayList<>();
             rowsNum = 0;
 
-            if (displayMode == ImagesBrowserController_Load.DisplayMode.ThumbnailsList
-                    || displayMode == ImagesBrowserController_Load.DisplayMode.FilesList) {
+            if (displayMode == DisplayMode.ThumbnailsList
+                    || displayMode == DisplayMode.FilesList) {
                 if (viewBox.getChildren().contains(gridOptionsBox)) {
                     viewBox.getChildren().remove(gridOptionsBox);
                 }
@@ -200,39 +204,68 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
     }
 
     protected void makeImagesGrid() {
-        if (colsNum <= 0 || displayMode != ImagesBrowserController_Load.DisplayMode.ImagesGrid) {
-            return;
-        }
-
-        if (imageFileList == null || imageFileList.isEmpty()) {
+        if (colsNum <= 0 || displayMode != DisplayMode.ImagesGrid
+                || imageFileList == null || imageFileList.isEmpty()) {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
             }
-            task = new SingletonTask<Void>(this) {
+            makeGridBox();
+            tableData.clear();
+            backgroundTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
-                    loadImageInfos();
-                    return true;
+                    try {
+                        for (int i = 0; i < imageFileList.size(); ++i) {
+                            if (backgroundTask == null || backgroundTask.isCancelled()) {
+                                break;
+                            }
+                            ImageView iView = imageViewList.get(i);
+                            File file = imageFileList.get(i);
+                            ImageInformation imageInfo = loadInfo(file);
+                            if (imageInfo == null) {
+                                continue;
+                            }
+                            iView.setImage(imageInfo.getThumbnail());
+                            if (imageInfo.isIsMultipleFrames()) {
+                                Label titleLabel = imageTitleList.get(i);
+                                String title = file.getName() + " " + Languages.message("MultipleFrames");
+                                titleLabel.setText(title);
+                                titleLabel.setStyle("-fx-text-box-border: purple;   -fx-text-fill: purple;");
+                            }
+                            tableData.add(imageInfo);
+                        }
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    makeGridBox();
+                }
+
+                @Override
+                protected void finalAction() {
+                    paneSizeAll();
+                    imagesPane.applyCss();
+                    imagesPane.layout();
                 }
 
             };
-            start(task);
+            start(backgroundTask, false);
         }
     }
 
     protected void makeGridBox() {
-        int num = tableData.size();
+        int num = imageFileList.size();
         HBox line = new HBox();
         for (int i = 0; i < num; ++i) {
+            File file = imageFileList.get(i);
             if (i % colsNum == 0) {
                 line = new HBox();
                 line.setAlignment(Pos.TOP_CENTER);
@@ -275,23 +308,14 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             titleLabel.setWrapText(true);
             VBox.setVgrow(titleLabel, Priority.NEVER);
             HBox.setHgrow(titleLabel, Priority.ALWAYS);
+            titleLabel.setText(file.getName());
+
             vbox.getChildren().addAll(titleLabel, sPane);
             vbox.setPickOnBounds(false);
 
-            ImageInformation imageInfo = tableData.get(i);
-            File file = imageInfo.getImageFileInformation().getFile();
-            iView.setImage(imageInfo.loadThumbnail(thumbWidth));
-
-            String title = file.getName();
-            if (imageInfo.isIsMultipleFrames()) {
-                title += " " + Languages.message("MultipleFrames");
-                titleLabel.setStyle("-fx-text-box-border: purple;   -fx-text-fill: purple;");
-            }
-            titleLabel.setText(title);
-
             final int index = i;
             vbox.setOnMouseClicked((MouseEvent event) -> {
-                File clickedFile = tableData.get(index).getFile();
+                File clickedFile = imageFileList.get(index);
                 if (event.getButton() == MouseButton.SECONDARY) {
                     if (contextMenuCheck.isSelected()) {
                         popImageMenu(index, iView, event);
@@ -337,62 +361,57 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             vbox.setPrefWidth(w);
             vbox.setPrefHeight(h);
         }
-
         // https://stackoverflow.com/questions/26152642/get-the-height-of-a-node-in-javafx-generate-a-layout-pass
         imagesPane.applyCss();
         imagesPane.layout();
-
-        paneSizeAll();
     }
 
     protected void makeListBox() {
         try {
-            if (displayMode != ImagesBrowserController_Load.DisplayMode.ThumbnailsList && displayMode != ImagesBrowserController_Load.DisplayMode.FilesList) {
+            if (displayMode != DisplayMode.ThumbnailsList
+                    && displayMode != DisplayMode.FilesList) {
                 return;
             }
             makeSourceTable();
             imagesPane.getChildren().add(tableView);
-            tableView.setItems(null);
+            tableData.clear();
+            tableView.setItems(tableData);
             tableView.refresh();
             if (imageFileList == null || imageFileList.isEmpty()) {
                 return;
             }
-
             synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+                if (backgroundTask != null) {
+                    backgroundTask.cancel();
                 }
-                task = new SingletonTask<Void>(this) {
+                backgroundTask = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
-                        loadImageInfos();
-                        return true;
+                        try {
+                            for (int i = 0; i < imageFileList.size(); ++i) {
+                                if (backgroundTask == null || backgroundTask.isCancelled()) {
+                                    break;
+                                }
+                                File file = imageFileList.get(i);
+                                ImageInformation imageInfo = loadInfo(file);
+                                if (imageInfo != null) {
+                                    tableData.add(imageInfo);
+                                }
+                            }
+                            return true;
+                        } catch (Exception e) {
+                            error = e.toString();
+                            return false;
+                        }
                     }
 
                     @Override
                     protected void whenSucceeded() {
-                        tableView.setItems(tableData);
-                        tableView.refresh();
                     }
 
                 };
-                start(task);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    protected void loadImageInfos() {
-        try {
-            tableData.clear();
-            for (int i = 0; i < imageFileList.size(); ++i) {
-                File file = imageFileList.get(i);
-                ImageInformation imageInfo = loadImageInfo(file);
-                if (imageInfo != null) {
-                    tableData.add(imageInfo);
-                }
+                start(backgroundTask, false);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -534,7 +553,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             selectColumn.setPrefWidth(60);
             tableView.getColumns().add(selectColumn);
 
-            if (displayMode == ImagesBrowserController_Load.DisplayMode.ThumbnailsList) {
+            if (displayMode == DisplayMode.ThumbnailsList) {
                 imageColumn = new TableColumn<>(Languages.message("Image"));
                 imageColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
                 imageColumn.setCellFactory(new TableImageInfoCell());

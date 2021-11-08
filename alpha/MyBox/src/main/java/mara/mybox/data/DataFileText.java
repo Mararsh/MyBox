@@ -7,10 +7,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 
@@ -26,10 +25,10 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean readDataDefinition(SingletonTask<Void> task) {
+    public long readDataDefinition() {
         d2did = -1;
         if (file == null) {
-            return false;
+            return -1;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             Data2DDefinition definition = tableData2DDefinition.queryFile(conn, type, file);
@@ -75,103 +74,77 @@ public class DataFileText extends DataFile {
                 task.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return false;
+            return -1;
         }
-        return d2did >= 0;
+        return d2did;
     }
 
     @Override
-    public boolean readColumns(SingletonTask<Void> task) {
-        columns = new ArrayList<>();
-        if (d2did < 0) {
-            return false;
-        }
-        if (!hasHeader) {
-            return true;
-        }
+    public List<Data2DColumn> readColumns() {
+        List<String> names = null;
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
-            List<String> names = readNames(task, reader);
-            if (names == null || names.isEmpty()) {
-                hasHeader = false;
-                return true;
-            }
-            for (String name : names) {
-                boolean found = false;
-                if (savedColumns != null) {
-                    for (Data2Column def : savedColumns) {
-                        if (def.getName().equals(name)) {
-                            columns.add(def);
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (!found) {
-                    Data2Column column = new Data2Column(name, Data2Column.ColumnType.String);
-                    columns.add(column);
-                }
-            }
-            if (columns != null && !columns.isEmpty()) {
-                StringTable validateTable = Data2Column.validate(columns);
-                if (validateTable == null || validateTable.isEmpty()) {
-                    tableData2DColumn.save(d2did, columns);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+            names = readNames(reader);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return false;
         }
-        return true;
+        if (names != null) {
+            List<Data2DColumn> fileColumns = new ArrayList<>();
+            for (String name : names) {
+                Data2DColumn column = new Data2DColumn(name, Data2DColumn.ColumnType.String);
+                fileColumns.add(column);
+            }
+            return fileColumns;
+        } else {
+            hasHeader = false;
+            return null;
+        }
     }
 
     @Override
-    public boolean readTotal(SingletonTask<Void> task) {
-        dataNumber = 0;
+    public long readTotal() {
+        dataSize = 0;
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (task == null || task.isCancelled()) {
-                    dataNumber = 0;
+                if (backgroundTask == null || backgroundTask.isCancelled()) {
+                    dataSize = 0;
                     break;
                 }
                 List<String> row = parseFileLine(line);
                 if (row != null && !row.isEmpty()) {
-                    dataNumber++;
+                    dataSize++;
                 }
             }
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            if (backgroundTask != null) {
+                backgroundTask.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return false;
+            return -1;
         }
-        if (hasHeader && dataNumber > 0) {
-            dataNumber--;
+        if (hasHeader && dataSize > 0) {
+            dataSize--;
         }
-        return true;
+        return dataSize;
     }
 
     @Override
-    public boolean readPageData(SingletonTask<Void> task) {
+    public List<List<String>> readPageData() {
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
         }
-        pageData = null;
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
-                readNames(task, reader);
+                readNames(reader);
             }
             String line;
-            int rowIndex = -1, maxCol = 0;
+            long rowIndex = -1;
             long end = startRowOfCurrentPage + pageSize;
-            List<List<String>> fileRows = new ArrayList<>();
+            List<List<String>> rows = new ArrayList<>();
+            int columnsNumber = columnsNumber();
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> row = parseFileLine(line);
                 if (row == null || row.isEmpty()) {
@@ -183,27 +156,26 @@ public class DataFileText extends DataFile {
                 if (rowIndex >= end) {
                     break;
                 }
-                fileRows.add(row);
-                if (maxCol < row.size()) {
-                    maxCol = row.size();
+                for (int col = row.size(); col < columnsNumber; col++) {
+                    row.add(defaultColValue());
                 }
+                rows.add(row);
             }
-            loadPageData(fileRows, hasHeader ? columns.size() : maxCol);
+            return rows;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return false;
+            return null;
         }
-        return true;
     }
 
     protected List<String> parseFileLine(String line) {
         return TextTools.parseLine(line, delimiter);
     }
 
-    protected List<String> readNames(SingletonTask<Void> task, BufferedReader reader) {
+    protected List<String> readNames(BufferedReader reader) {
         List<String> names = null;
         try {
             String line;

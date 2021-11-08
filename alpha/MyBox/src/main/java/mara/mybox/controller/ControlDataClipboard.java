@@ -41,7 +41,7 @@ import org.apache.commons.csv.CSVFormat;
  * @CreateDate 2021-3-11
  * @License Apache License Version 2.0
  */
-public class ControlDataClipboard extends BaseDataTableController<DataDefinition> {
+public class ControlDataClipboard extends BaseSysTableController<DataDefinition> {
 
     protected TableDataDefinition tableDataDefinition;
     protected TableData2DColumn tableData2DColumn;
@@ -180,7 +180,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
     }
 
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         if (checkedInvalid) {
             return DataClipboard.size(tableDataDefinition);
         } else {

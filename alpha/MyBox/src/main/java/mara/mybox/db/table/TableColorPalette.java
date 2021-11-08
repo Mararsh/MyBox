@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +9,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
@@ -188,7 +188,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         }
     }
 
-    public List<ColorData> colors(long paletteid, int start, int size) {
+    public List<ColorData> colors(long paletteid, long start, long size) {
         if (start < 0 || size <= 0) {
             return new ArrayList<>();
         }

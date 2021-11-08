@@ -5,9 +5,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import mara.mybox.data.Data2D;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 
@@ -16,7 +17,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-1-23
  * @License Apache License Version 2.0
  */
-public class TableData2DColumn extends BaseTable<Data2Column> {
+public class TableData2DColumn extends BaseTable<Data2DColumn> {
 
     protected TableData2DDefinition tableData2DDefinition;
 
@@ -33,30 +34,30 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
     }
 
     public final TableData2DColumn defineColumns() {
-        addColumn(new Data2Column("d2cid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new Data2Column("d2id", ColumnType.Long, true)
+        addColumn(new Data2DColumn("d2cid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new Data2DColumn("d2id", ColumnType.Long, true)
                 .setForeignName("Data2D_Column_d2id_fk").setForeignTable("Data2D_Definition").setForeignColumn("d2did")
-                .setOnDelete(Data2Column.OnDelete.Cascade));
-        addColumn(new Data2Column("column_type", ColumnType.Short, true));
-        addColumn(new Data2Column("column_name", ColumnType.String, true).setLength(1024));
-        addColumn(new Data2Column("index", ColumnType.Integer));
-        addColumn(new Data2Column("length", ColumnType.Integer));
-        addColumn(new Data2Column("width", ColumnType.Integer));
-        addColumn(new Data2Column("is_primary", ColumnType.Boolean));
-        addColumn(new Data2Column("not_null", ColumnType.Boolean));
-        addColumn(new Data2Column("is_id", ColumnType.Boolean));
-        addColumn(new Data2Column("editable", ColumnType.Boolean));
-        addColumn(new Data2Column("on_delete", ColumnType.Short));
-        addColumn(new Data2Column("on_update", ColumnType.Short));
-        addColumn(new Data2Column("default_value", ColumnType.String).setLength(4096));
-        addColumn(new Data2Column("max_value", ColumnType.String).setLength(128));
-        addColumn(new Data2Column("min_value", ColumnType.String).setLength(128));
-        addColumn(new Data2Column("time_format", ColumnType.Short));
-        addColumn(new Data2Column("label", ColumnType.String).setLength(1024));
-        addColumn(new Data2Column("foreign_name", ColumnType.String).setLength(1024));
-        addColumn(new Data2Column("foreign_table", ColumnType.String).setLength(1024));
-        addColumn(new Data2Column("foreign_column", ColumnType.String).setLength(1024));
-        addColumn(new Data2Column("values_list", ColumnType.Text).setLength(32672));
+                .setOnDelete(Data2DColumn.OnDelete.Cascade));
+        addColumn(new Data2DColumn("column_type", ColumnType.Short, true));
+        addColumn(new Data2DColumn("column_name", ColumnType.String, true).setLength(1024));
+        addColumn(new Data2DColumn("index", ColumnType.Integer));
+        addColumn(new Data2DColumn("length", ColumnType.Integer));
+        addColumn(new Data2DColumn("width", ColumnType.Integer));
+        addColumn(new Data2DColumn("is_primary", ColumnType.Boolean));
+        addColumn(new Data2DColumn("not_null", ColumnType.Boolean));
+        addColumn(new Data2DColumn("is_id", ColumnType.Boolean));
+        addColumn(new Data2DColumn("editable", ColumnType.Boolean));
+        addColumn(new Data2DColumn("on_delete", ColumnType.Short));
+        addColumn(new Data2DColumn("on_update", ColumnType.Short));
+        addColumn(new Data2DColumn("default_value", ColumnType.String).setLength(4096));
+        addColumn(new Data2DColumn("max_value", ColumnType.String).setLength(128));
+        addColumn(new Data2DColumn("min_value", ColumnType.String).setLength(128));
+        addColumn(new Data2DColumn("time_format", ColumnType.Short));
+        addColumn(new Data2DColumn("label", ColumnType.String).setLength(1024));
+        addColumn(new Data2DColumn("foreign_name", ColumnType.String).setLength(1024));
+        addColumn(new Data2DColumn("foreign_table", ColumnType.String).setLength(1024));
+        addColumn(new Data2DColumn("foreign_column", ColumnType.String).setLength(1024));
+        addColumn(new Data2DColumn("values_list", ColumnType.Text).setLength(32672));
         return this;
     }
 
@@ -95,7 +96,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
     }
 
     @Override
-    public boolean setForeignValue(Data2Column data, String column, Object value) {
+    public boolean setForeignValue(Data2DColumn data, String column, Object value) {
         if (data == null || column == null || value == null) {
             return true;
         }
@@ -105,7 +106,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         return true;
     }
 
-    public List<Data2Column> read(long d2id) {
+    public List<Data2DColumn> read(long d2id) {
         if (d2id < 0) {
             return null;
         }
@@ -117,7 +118,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         }
     }
 
-    public List<Data2Column> read(Connection conn, long d2id) {
+    public List<Data2DColumn> read(Connection conn, long d2id) {
         if (conn == null || d2id < 0) {
             return null;
         }
@@ -130,7 +131,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         }
     }
 
-    public List<Data2Column> queryFile(Connection conn, Data2DDefinition.Type type, File file) {
+    public List<Data2DColumn> queryFile(Connection conn, Data2DDefinition.Type type, File file) {
         if (file == null) {
             return null;
         }
@@ -143,6 +144,18 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    public boolean clearFile(Data2D data) {
+        if (data == null) {
+            return false;
+        }
+        try ( Connection conn = DerbyBase.getConnection();) {
+            return clearFile(conn, data.getType(), data.getFile());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -183,7 +196,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         }
     }
 
-    public boolean save(long d2id, List<Data2Column> columns) {
+    public boolean save(long d2id, List<Data2DColumn> columns) {
         if (d2id < 0 || columns.isEmpty()) {
             return false;
         }
@@ -196,7 +209,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         return true;
     }
 
-    public boolean save(Connection conn, long d2id, List<Data2Column> columns) {
+    public boolean save(Connection conn, long d2id, List<Data2DColumn> columns) {
         if (d2id < 0 || columns == null || columns.isEmpty()) {
             return false;
         }
@@ -204,7 +217,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
             clear(conn, d2id);
             conn.commit();
             int index = 0;
-            for (Data2Column column : columns) {
+            for (Data2DColumn column : columns) {
                 column.setD2id(d2id);
                 column.setIndex(index++);
             }
@@ -219,7 +232,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         }
     }
 
-    public boolean save(Data2DDefinition.Type type, File file, String dataName, List<Data2Column> columns) {
+    public boolean save(Data2DDefinition.Type type, File file, String dataName, List<Data2DColumn> columns) {
         if (file == null || dataName == null || columns == null || columns.isEmpty()) {
             return false;
         }
@@ -231,7 +244,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
         }
     }
 
-    public boolean save(Connection conn, Data2DDefinition.Type type, File file, String dataName, List<Data2Column> columns) {
+    public boolean save(Connection conn, Data2DDefinition.Type type, File file, String dataName, List<Data2DColumn> columns) {
         if (file == null || dataName == null || columns == null || columns.isEmpty()) {
             return false;
         }
@@ -246,7 +259,7 @@ public class TableData2DColumn extends BaseTable<Data2Column> {
             clear(conn, d2id);
             conn.commit();
             int index = 0;
-            for (Data2Column column : columns) {
+            for (Data2DColumn column : columns) {
                 column.setD2id(d2id);
                 column.setIndex(index++);
             }

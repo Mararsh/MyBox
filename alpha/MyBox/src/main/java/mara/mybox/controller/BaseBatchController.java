@@ -580,6 +580,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 }
                 processStartTime = new Date();
                 totalFilesHandled = totalItemsHandled = 0;
+                tableController.markFileHandling(-1);
                 updateInterface("Started");
                 task = new SingletonTask<Void>(this) {
 
@@ -627,6 +628,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         super.taskQuit();
                         quitProcess();
                         task = null;
+                        tableController.markFileHandling(-1);
                     }
 
                 };

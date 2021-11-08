@@ -943,7 +943,7 @@ public abstract class BaseTable<D> {
                 + (orderColumns != null ? " ORDER BY " + orderColumns : "");
     }
 
-    public List<D> query(int start, int size) {
+    public List<D> query(long start, long size) {
         if (start < 0 || size <= 0) {
             return new ArrayList<>();
         }
@@ -952,7 +952,7 @@ public abstract class BaseTable<D> {
         return readData(sql);
     }
 
-    public List<D> queryConditions(String condition, int start, int size) {
+    public List<D> queryConditions(String condition, long start, long size) {
         List<D> dataList = new ArrayList<>();
         if (start < 0 || size <= 0) {
             return dataList;
@@ -965,7 +965,7 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public List<D> queryConditions(Connection conn, String condition, int start, int size) {
+    public List<D> queryConditions(Connection conn, String condition, long start, long size) {
         if (conn == null || start < 0 || size <= 0) {
             return new ArrayList<>();
         }

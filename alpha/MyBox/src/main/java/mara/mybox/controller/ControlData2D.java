@@ -1,28 +1,17 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
-import mara.mybox.db.data.Data2Column;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -35,6 +24,7 @@ public class ControlData2D extends BaseController {
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
+    protected ControlData2DEditTable tableController;
 
     @FXML
     protected TabPane tabPane;
@@ -51,25 +41,42 @@ public class ControlData2D extends BaseController {
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
-    protected Label pageLabel, totalLabel;
+    protected Label pageLabel, dataSizeLabel;
 
-    public void setDataType(Data2D.Type type) {
+    @Override
+    public void initValues() {
         try {
-            data2D = Data2D.create(type);
+            super.initValues();
+
+            tableController = editController.tableController;
 
             tableData2DDefinition = new TableData2DDefinition();
             tableData2DColumn = new TableData2DColumn();
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    // parent should call this before initControls()
+    public void setDataType(Data2D.Type type) {
+        try {
+            data2D = Data2D.create(type);
             data2D.setTableData2DDefinition(tableData2DDefinition);
             data2D.setTableData2DColumn(tableData2DColumn);
+            data2D.setTableController(tableController);
+            data2D.setTableData(tableController.tableData);
 
             editController.setParameters(this);
             viewController.setParameters(this);
             defineController.setParameters(this);
 
-            initPagination();
+            data2D.getTableChangedNotify().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        viewController.loadData();
+                    });
 
-            data2D.getPageDataChangedNotify().addListener(
+            data2D.getPageLoadedNotify().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         dataChanged();
                     });
@@ -84,15 +91,9 @@ public class ControlData2D extends BaseController {
 
     }
 
-    public void updateInterface() {
-        editController.loadData();
-        viewController.loadData();
+    public void loadData() {
+        tableController.loadData();
         defineController.loadTableData();
-    }
-
-    public void loadData(List<List<String>> data, List<Data2Column> dataColumns) {
-        data2D.loadPageData(data, dataColumns);
-        updateInterface();
     }
 
     @FXML
@@ -111,216 +112,65 @@ public class ControlData2D extends BaseController {
     /*
         paigination
      */
-    protected void initPagination() {
-        try {
-            data2D.firstPage();
-
-            if (pageSelector == null) {
-                return;
-            }
-            pageSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkCurrentPage();
-                    });
-
-            int pageSize = UserConfig.getInt(baseName + "PageSize", 50);
-            pageSize = pageSize < 1 ? 50 : pageSize;
-            data2D.setPageSize(pageSize);
-            pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
-                    "500", "1000", "2000", "5000", "10000"));
-            pageSizeSelector.setValue(pageSize + "");
-            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue.trim());
-                            if (v <= 0) {
-                                pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                            } else {
-                                UserConfig.setInt(baseName + "PageSize", v);
-                                data2D.setPageSize(v);
-                                pageSizeSelector.getEditor().setStyle(null);
-                                if (!isSettingValues) {
-                                    loadPage(data2D.getCurrentPage());
-                                }
-                            }
-                        } catch (Exception e) {
-                            pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    });
-
-            paginationBox.setVisible(false);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void loadPage(long pageNumber) {
-        if (data2D == null || !data2D.hasData()) {
-            return;
-        }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    countPagination(pageNumber);
-                    data2D.readPageData(task);
-                    return !isCancelled() && error == null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    data2D.setPageDataChanged(false);
-                    editController.loadData();
-                    setPagination();
-                }
-
-                @Override
-                protected void finalAction() {
-                    data2D.notifyPageDataLoaded();
-                    updateLabel();
-                    task = null;
-                }
-
-            };
-            start(task);
-        }
-    }
-
-    protected void countPagination(long pageNumber) {
-        long dataNumber = data2D.getDataNumber(), pageSize = data2D.getPageSize();
-        long pagesNumber;
-        if (dataNumber <= pageSize) {
-            pagesNumber = 1;
-        } else {
-            pagesNumber = dataNumber / pageSize;
-            if (dataNumber % pageSize > 0) {
-                pagesNumber++;
-            }
-        }
-        data2D.setPagesNumber(pagesNumber);
-        long currentPage = pageNumber;
-        if (currentPage < 0) {
-            currentPage = 0;
-        }
-        if (currentPage > pagesNumber - 1) {
-            currentPage = pagesNumber - 1;
-        }
-        data2D.setStartRowOfCurrentPage(pageSize * currentPage);
-        data2D.setCurrentPage(currentPage);
-    }
-
-    protected void setPagination() {
-        try {
-            if (paginationBox == null) {
-                return;
-            }
-            if (data2D.isNew()) {
-                paginationBox.setVisible(false);
-                return;
-            }
-            paginationBox.setVisible(true);
-            isSettingValues = true;
-            pageSelector.setDisable(false);
-            long currentPage = data2D.getCurrentPage(), pagesNumber = data2D.getPagesNumber();
-            List<String> pages = new ArrayList<>();
-            for (long i = Math.max(1, currentPage - 20);
-                    i <= Math.min(pagesNumber, currentPage + 20); i++) {
-                pages.add(i + "");
-            }
-            pageSelector.getItems().clear();
-            pageSelector.getItems().addAll(pages);
-            pageSelector.getSelectionModel().select((currentPage + 1) + "");
-
-            pageLabel.setText("/" + pagesNumber);
-            if (currentPage > 0) {
-                pagePreviousButton.setDisable(false);
-                pageFirstButton.setDisable(false);
-            } else {
-                pagePreviousButton.setDisable(true);
-                pageFirstButton.setDisable(true);
-            }
-            if (currentPage >= pagesNumber - 1) {
-                pageNextButton.setDisable(true);
-                pageLastButton.setDisable(true);
-            } else {
-                pageNextButton.setDisable(false);
-                pageLastButton.setDisable(false);
-            }
-            isSettingValues = false;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-
-    }
-
-    protected void updateLabel() {
-        totalLabel.setText(data2D.pageRowsNumber() + "/" + data2D.getDataNumber());
-    }
-
-    protected boolean checkCurrentPage() {
-        if (isSettingValues || pageSelector == null) {
-            return false;
-        }
-        String value = pageSelector.getEditor().getText();
-        try {
-            int v = Integer.parseInt(value);
-            if (v < 1) {
-                pageSelector.getEditor().setStyle(UserConfig.badStyle());
-                return false;
-            } else {
-                pageSelector.getEditor().setStyle(null);
-                loadPage(v - 1);
-                return true;
-            }
-        } catch (Exception e) {
-            pageSelector.getEditor().setStyle(UserConfig.badStyle());
-            return false;
-        }
-    }
-
     @FXML
     public void goPage() {
-        checkCurrentPage();
+        tableController.goPage();
     }
 
     @FXML
     @Override
     public void pageNextAction() {
-        loadPage(data2D.getCurrentPage() + data2D.pageRowsNumber() / data2D.getPageSize());
+        tableController.pageNextAction();
     }
 
     @FXML
     @Override
     public void pagePreviousAction() {
-        loadPage(data2D.getCurrentPage() - 1);
+        tableController.pagePreviousAction();
     }
 
     @FXML
     @Override
     public void pageFirstAction() {
-        loadPage(0);
+        tableController.pageFirstAction();
     }
 
     @FXML
     @Override
     public void pageLastAction() {
-        loadPage(Integer.MAX_VALUE);
+        tableController.pageLastAction();
+    }
+
+    protected void updateLabel() {
+        tableController.updateSizeLabel();
     }
 
     /*
         interface
      */
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            try {
+                Tab tab = tabPane.getSelectionModel().getSelectedItem();
+                if (tab == editTab) {
+                    return editController.keyEventsFilter(event);
+
+                } else if (tab == viewTab) {
+                    return viewController.keyEventsFilter(event);
+
+                } else if (tab == defineTab) {
+                    return defineController.keyEventsFilter(event);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @FXML
     @Override
     public boolean popAction() {
@@ -386,47 +236,10 @@ public class ControlData2D extends BaseController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        boolean goOn;
-        if (!data2D.isPageDataChanged()) {
-            goOn = true;
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(getMyStage().getTitle());
-            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
-            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSave) {
-                saveAction();
-                goOn = false;
-            } else {
-                goOn = result.get() == buttonNotSave;
-            }
-        }
-        if (goOn) {
-            if (task != null) {
-                task.cancel();
-            }
-            if (backgroundTask != null) {
-                backgroundTask.cancel();
-            }
-            data2D.setPageDataChanged(false);
-        }
-        return goOn;
-    }
-
-    @Override
     public void cleanPane() {
         try {
+            tableController = null;
+            data2D = null;
             tableData2DDefinition = null;
             tableData2DColumn = null;
         } catch (Exception e) {

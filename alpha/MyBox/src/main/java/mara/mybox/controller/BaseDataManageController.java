@@ -37,7 +37,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-5-2
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataManageController<P> extends BaseDataTableController<P> {
+public abstract class BaseDataManageController<P> extends BaseSysTableController<P> {
 
     protected BaseTable viewDefinition;
     protected String finalTitle, dataQueryString, pageQueryString,
@@ -194,7 +194,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
     }
 
     @Override
-    public boolean preLoadingTableData() {
+    public boolean checkBeforeLoadingTableData() {
         if (isSettingValues) {
             return false;
         }
@@ -409,7 +409,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
                     html += "<SPAN class=\"boldText\">" + message("DataQuery") + ": </SPAN></BR>";
                     html += "<SPAN class=\"valueText\">" + dataQueryString + "</SPAN></BR>";
                     html += "<SPAN class=\"boldText\">" + message("DataNumber") + ": </SPAN>";
-                    html += "<SPAN class=\"valueText\">" + totalSize + "</SPAN></BR></BR>";
+                    html += "<SPAN class=\"valueText\">" + dataSize + "</SPAN></BR></BR>";
                 }
                 if (queryCondition.getFetch() != null && !queryCondition.getFetch().isBlank()) {
                     html += "<SPAN class=\"boldText\">" + message("CurrentPage") + ": </SPAN></BR>";
@@ -450,7 +450,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
     }
 
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
 //        MyBoxLog.debug(sizeQuerySQL);
         return DerbyBase.size(sizeQuerySQL);
     }

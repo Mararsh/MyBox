@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-3
  * @License Apache License Version 2.0
  */
-public class TextInMyBoxClipboardController extends BaseDataTableController<TextClipboard> {
+public class TextInMyBoxClipboardController extends BaseSysTableController<TextClipboard> {
 
     protected Clipboard clipboard;
 

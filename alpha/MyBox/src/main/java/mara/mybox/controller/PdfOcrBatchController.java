@@ -25,12 +25,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.AlphaTools;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageConvolution;
@@ -38,17 +33,17 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITesseract;
@@ -105,6 +100,11 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     public PdfOcrBatchController() {
         baseTitle = Languages.message("PdfOCRBatch");
         browseTargets = false;
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Text);
     }
 
     @Override

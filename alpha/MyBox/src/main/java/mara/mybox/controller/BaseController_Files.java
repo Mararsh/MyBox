@@ -169,7 +169,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         recordFileWritten(file, fileType, fileType);
     }
 
-    private void recordFileWritten(final File file, int TargetPathType, int TargetFileType) {
+    public void recordFileWritten(final File file, int TargetPathType, int TargetFileType) {
         if (file == null) {
             return;
         }

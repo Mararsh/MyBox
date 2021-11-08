@@ -135,7 +135,13 @@ public class MyBoxLanguagesController extends BaseController {
                     if (row == null) {
                         return;
                     }
-                    row.setValue(t.getNewValue());
+                    String v = t.getNewValue();
+                    String o = row.getValue();
+                    if (v == null && o == null
+                            || v != null && v.equals(o)) {
+                        return;
+                    }
+                    row.setValue(v);
                     interfaceChanged(true);
                 }
             });
@@ -183,7 +189,13 @@ public class MyBoxLanguagesController extends BaseController {
                     if (row == null) {
                         return;
                     }
-                    row.setValue(t.getNewValue());
+                    String v = t.getNewValue();
+                    String o = row.getValue();
+                    if (v == null && o == null
+                            || v != null && v.equals(o)) {
+                        return;
+                    }
+                    row.setValue(v);
                     tableChanged(true);
                 }
             });

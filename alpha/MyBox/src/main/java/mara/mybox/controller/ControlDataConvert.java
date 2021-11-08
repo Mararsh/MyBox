@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.JsonTools;
@@ -517,14 +518,14 @@ public class ControlDataConvert extends BaseController {
             if (csvPrinter != null && csvFile != null) {
                 csvPrinter.flush();
                 csvPrinter.close();
-                targetFileGenerated(csvFile);
+                parent.targetFileGenerated(csvFile, VisitHistory.FileType.CSV);
                 csvPrinter = null;
             }
 
             if (textWriter != null && textFile != null) {
                 textWriter.flush();
                 textWriter.close();
-                targetFileGenerated(textFile);
+                parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
                 textWriter = null;
             }
 
@@ -533,7 +534,7 @@ public class ControlDataConvert extends BaseController {
                 htmlWriter.write(indent + "<BODY>\n</HTML>\n");
                 htmlWriter.flush();
                 htmlWriter.close();
-                targetFileGenerated(htmlFile);
+                parent.targetFileGenerated(htmlFile, VisitHistory.FileType.Html);
                 htmlWriter = null;
             }
 
@@ -541,7 +542,7 @@ public class ControlDataConvert extends BaseController {
                 xmlWriter.write("</Data>\n");
                 xmlWriter.flush();
                 xmlWriter.close();
-                targetFileGenerated(xmlFile);
+                parent.targetFileGenerated(xmlFile, VisitHistory.FileType.Xml);
                 xmlWriter = null;
             }
 
@@ -549,7 +550,7 @@ public class ControlDataConvert extends BaseController {
                 jsonWriter.write("\n]}\n");
                 jsonWriter.flush();
                 jsonWriter.close();
-                targetFileGenerated(jsonFile);
+                parent.targetFileGenerated(jsonFile, VisitHistory.FileType.Text);
                 jsonWriter = null;
             }
 
@@ -559,7 +560,7 @@ public class ControlDataConvert extends BaseController {
                     pageRows = null;
                 }
                 pdfTable.closeDoc();
-                targetFileGenerated(pdfFile);
+                parent.targetFileGenerated(pdfFile, VisitHistory.FileType.PDF);
                 pdfTable = null;
             }
 
@@ -571,7 +572,7 @@ public class ControlDataConvert extends BaseController {
                     xssfBook.write(fileOut);
                 }
                 xssfBook.close();
-                targetFileGenerated(xlsxFile);
+                parent.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
                 xssfBook = null;
             }
 
@@ -583,10 +584,6 @@ public class ControlDataConvert extends BaseController {
 
     public void updateLogs(String logs) {
         parent.updateLogs(logs);
-    }
-
-    public void targetFileGenerated(File file) {
-        parent.targetFileGenerated(file);
     }
 
 }

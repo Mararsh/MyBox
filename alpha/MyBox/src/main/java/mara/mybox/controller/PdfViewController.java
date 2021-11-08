@@ -3,14 +3,11 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -53,7 +50,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfViewController extends PdfViewController_Html {
 
     protected SimpleBooleanProperty infoLoaded;
-    protected Task outlineTask;
+    protected SingletonTask outlineTask;
 
     @FXML
     protected CheckBox transparentBackgroundCheck, bookmarksCheck,
@@ -249,6 +246,10 @@ public class PdfViewController extends PdfViewController_Html {
     public void loadFile(File file, PdfInformation pdfInfo, int page) {
         try {
             initPage(file, page);
+            if (outlineTask != null) {
+                outlineTask.cancel();
+                outlineTask = null;
+            }
             infoLoaded.set(false);
             outlineTree.setRoot(null);
             ocrArea.clear();
@@ -392,42 +393,32 @@ public class PdfViewController extends PdfViewController_Html {
     }
 
     protected void loadOutline() {
-        if (!infoLoaded.get() || outlineTree.getRoot() != null) {
+        if (!infoLoaded.get()) {
             return;
         }
         synchronized (this) {
-            if (outlineTask != null) {
-                outlineTask.cancel();
+            if (outlineTask != null && !outlineTask.isQuit()) {
+                return;
             }
+            TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
+            outlineRoot.setExpanded(true);
+            outlineTree.setRoot(outlineRoot);
             outlineTask = new SingletonTask<Void>(this) {
-                protected PDDocument doc;
 
                 @Override
                 protected boolean handle() {
-                    try {
-                        doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage);
-                        return doc != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(e.toString());
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    try {
+                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                         PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                        TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
-                        outlineRoot.setExpanded(true);
-                        outlineTree.setRoot(outlineRoot);
                         if (outline != null) {
                             loadOutlineItem(outline, outlineRoot);
                         }
                         doc.close();
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        error = e.toString();
+                        MyBoxLog.debug(e);
+                        return false;
                     }
+                    return true;
                 }
 
                 @Override
@@ -440,7 +431,7 @@ public class PdfViewController extends PdfViewController_Html {
                 }
 
             };
-            start(outlineTask);
+            start(outlineTask, false);
         }
     }
 
@@ -448,6 +439,9 @@ public class PdfViewController extends PdfViewController_Html {
         try {
             PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
             while (childOutlineItem != null) {
+                if (outlineTask == null || outlineTask.isCancelled()) {
+                    break;
+                }
                 int pageNumber = 0;
                 if (childOutlineItem.getDestination() instanceof PDPageDestination) {
                     PDPageDestination pd = (PDPageDestination) childOutlineItem.getDestination();
@@ -481,32 +475,32 @@ public class PdfViewController extends PdfViewController_Html {
     }
 
     @Override
-    protected Map<Integer, Image> readThumbs(int pos, int end) {
-        Map<Integer, Image> images = null;
+    protected boolean loadThumbs(List<Integer> missed) {
         try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
-            images = new HashMap<>();
-            for (int i = pos; i < end; ++i) {
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+            for (Integer index : missed) {
+                if (thumbTask == null || thumbTask.isCancelled()) {
+                    break;
+                }
+                ImageView view = (ImageView) thumbBox.getChildren().get(2 * index);
                 if (view.getImage() != null) {
                     continue;
                 }
-                try {
-                    BufferedImage bufferedImage = renderer.renderImageWithDPI(i, 72, ImageType.RGB);  // 0-based
-                    if (bufferedImage.getWidth() > ThumbWidth) {
-                        bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, ThumbWidth);
-                    }
-                    Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
-                    images.put(i, thumb);
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                BufferedImage bufferedImage = renderer.renderImageWithDPI(index, 72, ImageType.RGB);  // 0-based
+                if (bufferedImage.getWidth() > ThumbWidth) {
+                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, ThumbWidth);
                 }
+                Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
+                view.setImage(thumb);
+                view.setFitHeight(view.getImage().getHeight());
             }
             doc.close();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            thumbTask.setError(e.toString());
+            MyBoxLog.debug(e);
+            return false;
         }
-        return images;
+        return true;
     }
 
     @FXML

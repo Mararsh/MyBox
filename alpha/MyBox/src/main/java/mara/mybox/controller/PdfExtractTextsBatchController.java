@@ -6,12 +6,11 @@ import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -37,6 +36,11 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
     public PdfExtractTextsBatchController() {
         baseTitle = Languages.message("PdfExtractTextsBatch");
         browseTargets = true;
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Text);
     }
 
     @Override

@@ -5,15 +5,14 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javafx.collections.FXCollections;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 /**
@@ -31,10 +30,10 @@ public class DataFileCSV extends DataFile {
     }
 
     @Override
-    public boolean readDataDefinition(SingletonTask<Void> task) {
+    public long readDataDefinition() {
         d2did = -1;
         if (file == null) {
-            return false;
+            return -1;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             Data2DDefinition definition = tableData2DDefinition.queryFile(conn, type, file);
@@ -80,52 +79,39 @@ public class DataFileCSV extends DataFile {
                 task.setError(e.toString());
             }
             MyBoxLog.debug(e);
-            return false;
+            return -1;
         }
-        return d2did >= 0;
+        return d2did;
+    }
+
+    private void checkCVSFormat() {
+        if (sourceCsvFormat == null) {
+            sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
+                    .withDelimiter(sourceCsvDelimiter);
+            if (hasHeader) {
+                sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
+            }
+        }
     }
 
     @Override
-    public boolean readColumns(SingletonTask<Void> task) {
-        columns = new ArrayList<>();
-        sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(sourceCsvDelimiter);
-        if (d2did < 0) {
-            return false;
-        }
-        if (!hasHeader) {
-            return true;
-        }
-        sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
+    public List<Data2DColumn> readColumns() {
+        List<String> names = null;
+        checkCVSFormat();
         try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
-            List<String> names = parser.getHeaderNames();
-            if (names == null) {
-                hasHeader = false;
-                return true;
+            if (hasHeader) {
+                names = parser.getHeaderNames();
+                if (names == null) {
+                    hasHeader = false;
+                }
             }
-            for (String name : names) {
-                boolean found = false;
-                if (savedColumns != null) {
-                    for (Data2Column def : savedColumns) {
-                        if (def.getName().equals(name)) {
-                            columns.add(def);
-                            found = true;
-                            break;
-                        }
+            if (!hasHeader) {
+                for (CSVRecord record : parser) {
+                    names = new ArrayList<>();
+                    for (int i = 1; i <= record.size(); i++) {
+                        names.add(colPrefix() + i);
                     }
-                }
-                if (!found) {
-                    Data2Column column = new Data2Column(name, Data2Column.ColumnType.String);
-                    columns.add(column);
-                }
-            }
-            if (columns != null && !columns.isEmpty()) {
-                StringTable validateTable = Data2Column.validate(columns);
-                if (validateTable == null || validateTable.isEmpty()) {
-                    tableData2DColumn.save(d2did, columns);
-                    return true;
-                } else {
-                    return false;
+                    break;
                 }
             }
         } catch (Exception e) {
@@ -133,50 +119,56 @@ public class DataFileCSV extends DataFile {
                 task.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return false;
         }
-        return true;
+        if (names != null) {
+            List<Data2DColumn> fileColumns = new ArrayList<>();
+            for (String name : names) {
+                Data2DColumn column = new Data2DColumn(name, Data2DColumn.ColumnType.String);
+                fileColumns.add(column);
+            }
+            return fileColumns;
+        } else {
+            hasHeader = false;
+            return null;
+        }
     }
 
     @Override
-    public boolean readTotal(SingletonTask<Void> task) {
-        sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(sourceCsvDelimiter);
-        if (hasHeader) {
-            sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
-        }
-        dataNumber = 0;
+    public long readTotal() {
+        checkCVSFormat();
+        dataSize = 0;
         try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
-                while (task != null && !task.isCancelled() && iterator.hasNext()) {
+                while (backgroundTask != null && !backgroundTask.isCancelled() && iterator.hasNext()) {
                     iterator.next();
-                    dataNumber++;
+                    dataSize++;
                 }
-                if (task == null || task.isCancelled()) {
-                    dataNumber = 0;
+                if (backgroundTask == null || backgroundTask.isCancelled()) {
+                    dataSize = 0;
                 }
             }
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            if (backgroundTask != null) {
+                backgroundTask.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return false;
+            return -1;
         }
-        return true;
+        return dataSize;
     }
 
     @Override
-    public boolean readPageData(SingletonTask<Void> task) {
+    public List<List<String>> readPageData() {
+        checkCVSFormat();
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
         }
         long end = startRowOfCurrentPage + pageSize;
-        pageData = FXCollections.observableArrayList();
         try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
-            int rowIndex = -1, maxCol = 0;
-            List<List<String>> fileRows = new ArrayList<>();
+            long rowIndex = -1;
+            int columnsNumber = columnsNumber();
+            List<List<String>> rows = new ArrayList<>();
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {
                     break;
@@ -191,21 +183,34 @@ public class DataFileCSV extends DataFile {
                 for (int i = 0; i < record.size(); i++) {
                     row.add(record.get(i));
                 }
-                fileRows.add(row);
-                if (maxCol < row.size()) {
-                    maxCol = row.size();
+                for (int col = row.size(); col < columnsNumber; col++) {
+                    row.add(defaultColValue());
                 }
+                rows.add(row);
             }
-            loadPageData(fileRows, hasHeader ? columns.size() : maxCol);
+            return rows;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return false;
+            return null;
         }
-        return true;
     }
+
+    protected void writePageData(CSVPrinter csvPrinter) {
+        try {
+//            if (csvPrinter == null || sheetInputs == null) {
+//                return;
+//            }
+//            for (int r = 0; r < sheetInputs.length; r++) {
+//                csvPrinter.printRecord(row(r));
+//            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
 
     /*
         get/set

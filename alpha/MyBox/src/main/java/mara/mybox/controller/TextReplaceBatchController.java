@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
@@ -29,6 +30,11 @@ public class TextReplaceBatchController extends BaseBatchFileController {
 
     public TextReplaceBatchController() {
         baseTitle = message("TextReplaceBatch");
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

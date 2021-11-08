@@ -36,9 +36,6 @@ public class SingletonTask<Void> extends BaseTask<Void> {
         }
     }
 
-    @Override
-    protected void finalAction() {
-    }
 
     /*
         get/set

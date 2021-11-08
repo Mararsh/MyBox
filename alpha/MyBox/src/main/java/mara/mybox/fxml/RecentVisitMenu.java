@@ -8,7 +8,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
@@ -90,7 +89,7 @@ public abstract class RecentVisitMenu {
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
                 for (String fname : files) {
-                    menu = new MenuItem(fname);
+                    menu = new MenuItem(limitMenuName(fname));
                     menu.setOnAction((ActionEvent event1) -> {
                         handleFile(fname);
                     });
@@ -105,14 +104,13 @@ public abstract class RecentVisitMenu {
             menu.setStyle("-fx-text-fill: #2e598a;");
             popMenu.getItems().add(menu);
             for (String example : examples) {
-                menu = new MenuItem(example);
+                menu = new MenuItem(limitMenuName(example));
                 menu.setOnAction((ActionEvent event1) -> {
                     handleFile(example);
                 });
                 popMenu.getItems().add(menu);
             }
         }
-
         List<String> paths = paths();
         if (paths != null && !paths.isEmpty()) {
             popMenu.getItems().add(new SeparatorMenuItem());
@@ -120,7 +118,7 @@ public abstract class RecentVisitMenu {
             menu.setStyle("-fx-text-fill: #2e598a;");
             popMenu.getItems().add(menu);
             for (String path : paths) {
-                menu = new MenuItem(path);
+                menu = new MenuItem(limitMenuName(path));
                 menu.setOnAction((ActionEvent event1) -> {
                     handlePath(path);
                 });
@@ -131,7 +129,6 @@ public abstract class RecentVisitMenu {
         if (popMenu.getItems().isEmpty()) {
             return;
         }
-
         controller.setPopMenu(popMenu);
         popMenu.getItems().add(new SeparatorMenuItem());
         menu = new MenuItem(Languages.message("PopupClose"));
@@ -142,8 +139,16 @@ public abstract class RecentVisitMenu {
         });
         popMenu.getItems().add(menu);
 
-        LocateTools.locateBelow((Region) event.getSource(), popMenu);
+        LocateTools.locateMouse(event, popMenu);
+    }
 
+    // https://github.com/Mararsh/MyBox/issues/1266
+    // Error popped when menu name is longer than 56. Not sure whether this is a bug of javafx
+    public String limitMenuName(String name) {
+        if (name == null) {
+            return null;
+        }
+        return name.length() > 50 ? "..." + name.substring(name.length() - 50) : name;
     }
 
     public abstract void handleSelect();

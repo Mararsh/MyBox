@@ -10,6 +10,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Toggle;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
@@ -38,7 +39,11 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
     public PdfConvertImagesBatchController() {
         baseTitle = Languages.message("PdfConvertImagesBatch");
         browseTargets = true;
+    }
 
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
     }
 
     @Override

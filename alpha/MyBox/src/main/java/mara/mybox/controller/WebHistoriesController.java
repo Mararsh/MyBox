@@ -27,7 +27,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class WebHistoriesController extends BaseDataTableController<WebHistory> {
+public class WebHistoriesController extends BaseSysTableController<WebHistory> {
 
     protected TableWebHistory tableWebHistory;
 

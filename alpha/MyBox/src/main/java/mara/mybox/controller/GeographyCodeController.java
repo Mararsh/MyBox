@@ -149,7 +149,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     public boolean mapCurrentPage() {
-        return !paginate || mapController.mapOptionsController.currentPageRadio.isSelected();
+        return mapController.mapOptionsController.currentPageRadio.isSelected();
     }
 
     @FXML

@@ -191,7 +191,7 @@ public class ControlData2DView extends BaseController {
         if (columnCheck.isSelected()) {
             colsNames = data2D.columnNames();
         }
-        List<List<String>> pageData = data2D.getPageData();
+        List<List<String>> pageData = data2D.getTableData();
         if (rowCheck.isSelected()) {
             rowsNames = pageData == null ? null : data2D.rowNames(pageData.size());
         }

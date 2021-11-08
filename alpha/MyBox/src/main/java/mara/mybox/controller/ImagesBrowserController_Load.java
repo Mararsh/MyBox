@@ -184,6 +184,14 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
 
     public void loadImages() {
         try {
+            if (task != null) {
+                task.cancel();
+                task = null;
+            }
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
+                backgroundTask = null;
+            }
             path = null;
             filesNumber = 0;
             totalLabel.setText("");
@@ -239,15 +247,15 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
         }
     }
 
-    protected ImageInformation loadImageInfo(File file) {
-        if (displayMode != ImagesBrowserController_Load.DisplayMode.FilesList) {
-            return ImageFileReaders.readInfo(file, thumbWidth);
-        } else {
+    protected ImageInformation loadInfo(File file) {
+        if (displayMode == ImagesBrowserController_Load.DisplayMode.FilesList) {
             ImageFileInformation finfo = ImageFileInformation.create(file);
             if (finfo == null) {
                 return null;
             }
             return finfo.getImageInformation();
+        } else {
+            return ImageFileReaders.readInfo(file, thumbWidth);
         }
     }
 

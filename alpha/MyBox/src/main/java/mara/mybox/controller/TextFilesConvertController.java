@@ -16,11 +16,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -43,11 +43,9 @@ public class TextFilesConvertController extends BaseBatchFileController {
     @FXML
     protected CheckBox targetBomCheck;
 
-    public TextFilesConvertController() {
-        baseTitle = message("TextConvertSplit");
-
-        sourceExtensionFilter = FileFilters.TextExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

@@ -32,7 +32,7 @@ import thridparty.TableAutoCommitCell;
  * @CreateDate 2020-2-4
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsEditController extends BaseDataTableController<EpidemicReport> {
+public class EpidemicReportsEditController extends BaseSysTableController<EpidemicReport> {
 
     protected EpidemicReportsController reportsController;
     protected long time;

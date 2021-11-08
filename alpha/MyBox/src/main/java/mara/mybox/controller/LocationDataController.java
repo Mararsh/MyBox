@@ -284,8 +284,8 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     @Override
-    public boolean preLoadingTableData() {
-        if (super.preLoadingTableData()) {
+    public boolean checkBeforeLoadingTableData() {
+        if (super.checkBeforeLoadingTableData()) {
             if (mapCurrentPage()) {
                 mapController.clearAction();
             }
@@ -304,7 +304,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     public boolean mapCurrentPage() {
-        return paginate && mapController.mapOptionsController.currentPageRadio.isSelected();
+        return mapController.mapOptionsController.currentPageRadio.isSelected();
     }
 
     @Override

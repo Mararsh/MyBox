@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.Charset;
 import java.util.List;
-import mara.mybox.db.data.Data2Column;
+import mara.mybox.controller.BaseData2DFileController;
+import mara.mybox.db.data.Data2DColumn;
 
 /**
  * @Author Mara
@@ -14,9 +15,10 @@ import mara.mybox.db.data.Data2Column;
  */
 public abstract class DataFile extends Data2D {
 
+    protected BaseData2DFileController fileController;
     protected Charset targetCharset;
     protected boolean userSavedDataDefinition, autoDetermineSourceCharset, targetWithNames;
-    protected List<Data2Column> savedColumns;
+    protected List<Data2DColumn> savedColumns;
 
     @Override
     public String titleName() {
@@ -91,16 +93,17 @@ public abstract class DataFile extends Data2D {
         return null;
     }
 
-    @Override
-    public void loadPageData(List<List<String>> data, List<Data2Column> dataColumns) {
-        file = null;
-        super.loadPageData(data, dataColumns);
-    }
-
     public void initFile(File file) {
         resetData();
         this.file = file;
         savedColumns = null;
+    }
+
+    @Override
+    public void savePageData() {
+        if (fileController != null) {
+            fileController.saveAction();
+        }
     }
 
     /*
@@ -138,12 +141,20 @@ public abstract class DataFile extends Data2D {
         this.targetWithNames = targetWithNames;
     }
 
-    public List<Data2Column> getSavedColumns() {
+    public List<Data2DColumn> getSavedColumns() {
         return savedColumns;
     }
 
-    public void setSavedColumns(List<Data2Column> savedColumns) {
+    public void setSavedColumns(List<Data2DColumn> savedColumns) {
         this.savedColumns = savedColumns;
+    }
+
+    public BaseData2DFileController getFileController() {
+        return fileController;
+    }
+
+    public void setFileController(BaseData2DFileController fileController) {
+        this.fileController = fileController;
     }
 
 }

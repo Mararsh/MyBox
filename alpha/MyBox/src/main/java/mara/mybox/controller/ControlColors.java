@@ -73,7 +73,7 @@ import thridparty.TableAutoCommitCell;
  * @CreateDate 2020-1-7
  * @License Apache License Version 2.0
  */
-public class ControlColors extends BaseDataTableController<ColorData> {
+public class ControlColors extends BaseSysTableController<ColorData> {
 
     protected ColorsManageController manageController;
     protected TableColorPaletteName tableColorPaletteName;
@@ -222,7 +222,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
                 ColorData row = t.getRowValue();
                 Float v = t.getNewValue();
-                if (row == null || v == null) {
+                if (row == null || v == null || v == row.getOrderNumner()) {
                     return;
                 }
                 row.setOrderNumner(v);
@@ -238,8 +238,13 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     return;
                 }
                 ColorData row = t.getRowValue();
+                if (row == null) {
+                    return;
+                }
                 String v = t.getNewValue();
-                if (row == null || v == null) {
+                String o = row.getColorName();
+                if (v == null && o == null
+                        || v != null && v.equals(o)) {
                     return;
                 }
                 row.setColorName(v);
@@ -1058,8 +1063,8 @@ public class ControlColors extends BaseDataTableController<ColorData> {
     }
 
     @Override
-    public void clearView() {
-        super.clearView();
+    public void resetView() {
+        super.resetView();
         colorsPane.getChildren().clear();
         colorArea.clear();
     }
@@ -1099,7 +1104,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
        Data
      */
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         if (isAllColors()) {
             return tableColor.size();
         } else {

@@ -165,7 +165,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                     }
                     ImageInformation row = t.getRowValue();
                     Long v = t.getNewValue();
-                    if (row == null || v == null || v <= 0) {
+                    if (row == null || v == null || v <= 0 || v == row.getDuration()) {
                         return;
                     }
                     row.setDuration(v);

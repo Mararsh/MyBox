@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,10 +7,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Notebook;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -118,7 +118,7 @@ public class TableNote extends BaseTable<Note> {
         return notes;
     }
 
-    public List<Note> withSub(TableNotebook tableNotebook, long bookid, int start, int size) {
+    public List<Note> withSub(TableNotebook tableNotebook, long bookid, long start, long size) {
         List<Note> notes = new ArrayList<>();
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement qNotes = conn.prepareStatement(QueryNotebook)) {
@@ -133,7 +133,7 @@ public class TableNote extends BaseTable<Note> {
     }
 
     public int withSub(Connection conn, PreparedStatement qNotes,
-            TableNotebook tableNotebook, long bookid, int start, int size, List<Note> notes, int index) {
+            TableNotebook tableNotebook, long bookid, long start, long size, List<Note> notes, int index) {
         if (conn == null || bookid < 1 || notes == null || tableNotebook == null
                 || qNotes == null || start < 0 || size <= 0 || notes.size() >= size) {
             return index;

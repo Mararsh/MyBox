@@ -19,7 +19,8 @@ import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Data2Column;
+import mara.mybox.db.data.Data2DColumn;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -35,7 +36,7 @@ import thridparty.TableAutoCommitCell;
  * @CreateDate 2021-10-16
  * @License Apache License Version 2.0
  */
-public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
+public class ControlData2DDefine extends BaseTableViewController<Data2DColumn> {
 
     protected ControlData2D dataController;
     protected TableData2DDefinition tableData2DDefinition;
@@ -46,11 +47,11 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
     protected boolean changed;
 
     @FXML
-    protected TableColumn<Data2Column, String> nameColumn, typeColumn;
+    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn;
     @FXML
-    protected TableColumn<Data2Column, Boolean> notNullColumn;
+    protected TableColumn<Data2DColumn, Boolean> notNullColumn;
     @FXML
-    protected TableColumn<Data2Column, Integer> indexColumn, lengthColumn, widthColumn;
+    protected TableColumn<Data2DColumn, Integer> indexColumn, lengthColumn, widthColumn;
     @FXML
     protected Label idLabel;
     @FXML
@@ -71,13 +72,13 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
 
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             nameColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
-            nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2Column, String>>() {
+            nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<Data2Column, String> t) {
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
                     if (t == null) {
                         return;
                     }
-                    Data2Column column = t.getRowValue();
+                    Data2DColumn column = t.getRowValue();
                     String v = t.getNewValue();
                     if (column == null || v == null) {
                         return;
@@ -91,22 +92,22 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeString"));
             ObservableList<String> types = FXCollections.observableArrayList();
-            for (ColumnType type : Data2Column.editTypes()) {
+            for (ColumnType type : Data2DColumn.editTypes()) {
                 types.add(message(type.name()));
             }
             typeColumn.setCellFactory(TableComboBoxCell.forTableColumn(types));
-            typeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2Column, String>>() {
+            typeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<Data2Column, String> t) {
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
                     if (t == null) {
                         return;
                     }
-                    Data2Column column = t.getRowValue();
+                    Data2DColumn column = t.getRowValue();
                     String v = t.getNewValue();
                     if (column == null || v == null) {
                         return;
                     }
-                    for (ColumnType type : Data2Column.editTypes()) {
+                    for (ColumnType type : Data2DColumn.editTypes()) {
                         if (type.name().equals(v) || message(type.name()).equals(v)) {
                             if (type != column.getType()) {
                                 column.setType(type);
@@ -120,13 +121,13 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
 
             notNullColumn.setCellValueFactory(new PropertyValueFactory<>("notNull"));
             notNullColumn.setCellFactory(CheckBoxTableCell.forTableColumn(notNullColumn));
-            notNullColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2Column, Boolean>>() {
+            notNullColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Boolean>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<Data2Column, Boolean> t) {
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, Boolean> t) {
                     if (t == null) {
                         return;
                     }
-                    Data2Column column = t.getRowValue();
+                    Data2DColumn column = t.getRowValue();
                     Boolean v = t.getNewValue();
                     if (column == null || v == null) {
                         return;
@@ -140,18 +141,21 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
 
             lengthColumn.setCellValueFactory(new PropertyValueFactory<>("length"));
             lengthColumn.setCellFactory(TableAutoCommitCell.forIntegerColumn());
-            lengthColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2Column, Integer>>() {
+            lengthColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Integer>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<Data2Column, Integer> t) {
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, Integer> t) {
                     if (t == null) {
                         return;
                     }
-                    Data2Column column = t.getRowValue();
+                    Data2DColumn column = t.getRowValue();
                     Integer v = t.getNewValue();
                     if (column == null || v == null) {
                         return;
                     }
                     if (v != column.getLength()) {
+                        if (v < 0 || v > StringMaxLength) {
+                            v = StringMaxLength;
+                        }
                         column.setLength(v);
                         changed(true);
                     }
@@ -160,13 +164,13 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
 
             widthColumn.setCellValueFactory(new PropertyValueFactory<>("width"));
             widthColumn.setCellFactory(TableAutoCommitCell.forIntegerColumn());
-            widthColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2Column, Integer>>() {
+            widthColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Integer>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<Data2Column, Integer> t) {
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, Integer> t) {
                     if (t == null) {
                         return;
                     }
-                    Data2Column column = t.getRowValue();
+                    Data2DColumn column = t.getRowValue();
                     Integer v = t.getNewValue();
                     if (column == null || v == null) {
                         return;
@@ -188,7 +192,6 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
             this.dataController = dataController;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
-            tableDefinition = dataController.tableData2DColumn;
             baseName = dataController.baseName;
             data2D = dataController.data2D;
 
@@ -281,12 +284,11 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
             randomSelector.setValue(data2D.getMaxRandom() + "");
             isSettingValues = false;
             if (data2D.isColumnsValid()) {
-                for (Data2Column column : data2D.getColumns()) {
+                for (Data2DColumn column : data2D.getColumns()) {
                     tableData.add(column.cloneBase());
                 }
             }
-            tableView.refresh();
-            checkSelected();
+            postLoadedTableData();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -300,11 +302,11 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
     @FXML
     @Override
     public void copyAction() {
-        List<Data2Column> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Data2DColumn> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        for (Data2Column column : selected) {
+        for (Data2DColumn column : selected) {
             tableData.add(column.cloneBase());
         }
     }
@@ -344,7 +346,7 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
             popError(message("InvalidParameter") + ": " + message("ColumnName"));
             return;
         }
-        StringTable validateTable = Data2Column.validate(tableData);
+        StringTable validateTable = Data2DColumn.validate(tableData);
         if (validateTable != null && !validateTable.isEmpty()) {
             validateTable.htmlTable();
         }
@@ -369,9 +371,9 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
 //                        data2D.setDefinition(def);
 //
 //                        long defid = def.getDfid();
-//                        List<Data2Column> columns = new ArrayList<>();
+//                        List<Data2DColumn> columns = new ArrayList<>();
 //                        for (int i = 0; i < tableData.size(); i++) {
-//                            Data2Column column = tableData.get(i);
+//                            Data2DColumn column = tableData.get(i);
 //                            column.setDataDefinition(def);
 //                            column.setDataid(defid);
 //                            column.setIndex(i);
@@ -389,7 +391,7 @@ public class ControlData2DDefine extends BaseDataTableController<Data2Column> {
 
                 @Override
                 protected void whenSucceeded() {
-                    dataController.updateInterface();
+                    dataController.loadData();
                     popSuccessful();
                 }
             };

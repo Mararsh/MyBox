@@ -90,7 +90,7 @@ public class DataClipboard extends DataDefinition {
         return tableDataDefinition.conditionSize(condition);
     }
 
-    public static List<DataDefinition> queryPage(TableDataDefinition tableDataDefinition, int start, int size) {
+    public static List<DataDefinition> queryPage(TableDataDefinition tableDataDefinition, long start, long size) {
         if (tableDataDefinition == null) {
             return null;
         }

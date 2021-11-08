@@ -13,116 +13,112 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DEditTable">
     <children>
-      <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-         <children>
-            <HBox fx:id="tableBottunsBox" alignment="CENTER_RIGHT" spacing="2.0">
-               <children>
-                  <Button fx:id="equalSheetButton" mnemonicParsing="false" onAction="#setDataAction">
-                     <graphic>
+        <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+            <children>
+                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                    <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/buttons/Red/iconEqual.png" />
-                           </image>
+                            <image>
+                                <Image url="@../buttons/Red/iconMenu.png" />
+                            </image>
                         </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="deleteColumnsButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconDelete.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="copyColumnButton" mnemonicParsing="false" onAction="#copyAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconCopy.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="addColumnButton" mnemonicParsing="false" onAction="#addAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconAdd.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
-            <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                    </graphic>
+                </Button>
+            <Button fx:id="copyButton" mnemonicParsing="false">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconMenu.png" />
+                        <Image url="@../buttons/Red/iconCopy.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+            <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconPop.png" />
+                        <Image url="@../buttons/Red/iconDelete.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="refreshDataButton" mnemonicParsing="false" onAction="#refreshAction">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconRefresh.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="synchronizeButton" mnemonicParsing="false" onAction="#synchronizeAction">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconSynchronize.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                  <Button fx:id="equalButton" mnemonicParsing="false">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/buttons/Red/iconEqual.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+            <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconSave.png" />
+                        <Image url="@../buttons/Red/iconUp.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+            <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconFunction.png" />
+                        <Image url="@../buttons/Red/iconDown.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-         </children>
-      </FlowPane>
-            <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-         <columns>
-            <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="-1.0">
+            <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction">
                <graphic>
-                  <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconInsert.png" />
+                     </image>
+                  </ImageView>
                </graphic>
-            </TableColumn>
-         </columns></TableView>
+            </Button>
+                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/Red/iconAdd.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconSave.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFunction.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </FlowPane>
+        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <columns> 
+                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="-1.0">
+                    <graphic>
+                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
+                    </graphic>
+                </TableColumn>
+            </columns>
+        </TableView>
     </children>
 </VBox>

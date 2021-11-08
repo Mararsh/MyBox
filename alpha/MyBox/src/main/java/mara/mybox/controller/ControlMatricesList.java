@@ -19,7 +19,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-12-15
  * @License Apache License Version 2.0
  */
-public class ControlMatricesList extends BaseDataTableController<DataDefinition> {
+public class ControlMatricesList extends BaseSysTableController<DataDefinition> {
 
     @FXML
     protected ControlMatrixEdit editController;

@@ -29,7 +29,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-4-22
  * @License Apache License Version 2.0
  */
-public class MyBoxDataController extends BaseDataTableController<BaseTable> {
+public class MyBoxDataController extends BaseSysTableController<BaseTable> {
 
     @FXML
     protected ListView<String> tablesList;
@@ -200,17 +200,11 @@ public class MyBoxDataController extends BaseDataTableController<BaseTable> {
         return 1;
     }
 
-    @Override
-    public void clearView() {
-        super.clearView();
-
-    }
-
     /*
        Data
      */
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         return 1;
     }
 

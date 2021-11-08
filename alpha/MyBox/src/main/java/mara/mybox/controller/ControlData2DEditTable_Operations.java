@@ -12,6 +12,8 @@ import java.util.Random;
 import javafx.fxml.FXML;
 import mara.mybox.data.Data2D;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -34,12 +36,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class ControlData2DEditTable_Operations extends BaseDataTableController<List<String>> {
+public abstract class ControlData2DEditTable_Operations extends BaseTableViewController<List<String>> {
 
     protected ControlData2D dataController;
     protected ControlData2DEdit editController;
     protected Data2D data2D;
-    protected boolean changed;
+    protected TableData2DDefinition tableData2DDefinition;
+    protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
 
     protected String cellString(int row, int col) {
@@ -179,16 +182,15 @@ public abstract class ControlData2DEditTable_Operations extends BaseDataTableCon
         if (sourceController.pagesNumber > 1 && !sourceController.checkBeforeNextAction()) {
             return;
         }
-        String[][] data;
-//        pickData();
+        //        pickData();
         sourceController.pickData();
-        if (data2D.getPageData() == null) {
+        if (data2D.getTableData() == null) {
             if (enlarge) {
-                if (sourceController.pagesNumber <= 1) {
-                    data = sourceController.pageData;
-                } else {
-                    data = sourceController.readAll();
-                }
+//                if (sourceController.pagesNumber <= 1) {
+//                    data = sourceController.pageData;
+//                } else {
+//                    data = sourceController.readAll();
+//                }
 //                makeSheet(data); // ####
             }
             return;
@@ -388,7 +390,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseDataTableCon
             if (number < 1 || !data2D.isColumnsValid()) {
                 return;
             }
-            List<List<String>> current = data2D.getPageData();
+            List<List<String>> current = data2D.getTableData();
             String[][] values;
             int cNumber = data2D.columnsNumber();
             if (current == null) {

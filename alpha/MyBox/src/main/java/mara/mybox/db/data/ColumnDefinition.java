@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import mara.mybox.data.Era;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -54,7 +55,7 @@ public class ColumnDefinition extends BaseData {
         index = -1;
         isPrimaryKey = notNull = isID = false;
         editable = true;
-        length = 4096;
+        length = StringMaxLength;
         width = 100; // px
         onDelete = OnDelete.Restrict;
         onUpdate = OnUpdate.Restrict;

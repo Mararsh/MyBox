@@ -223,6 +223,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             if (handledColumn != null) {
                 handledColumn.setCellValueFactory(new PropertyValueFactory<>("handled"));
             }
+            currentIndex = -1;
             if (currentIndexColumn != null) {
                 currentIndexColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));  // not care column value
                 currentIndexColumn.setCellFactory(new Callback<TableColumn<P, Long>, TableCell<P, Long>>() {

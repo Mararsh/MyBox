@@ -322,7 +322,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                         BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
                         bufferedImage = TransformTools.rotateImage(bufferedImage, rotateAngle);
                         ImageFileWriters.writeImageFile(bufferedImage, file);
-                        ImageInformation newInfo = loadImageInfo(file);
+                        ImageInformation newInfo = loadInfo(file);
                         return newInfo;
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());

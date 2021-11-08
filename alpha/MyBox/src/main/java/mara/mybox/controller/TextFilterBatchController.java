@@ -4,6 +4,7 @@ import java.io.File;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -22,6 +23,11 @@ public class TextFilterBatchController extends BaseBatchFileController {
 
     public TextFilterBatchController() {
         baseTitle = Languages.message("TextFilterBatch");
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

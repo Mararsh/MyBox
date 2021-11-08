@@ -211,6 +211,9 @@
 <a href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
 <a href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
 <a href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br>
+<a href="https://openjfx.io/">OpenJFX Community Site</a><br><br>
+<a href="https://fxdocs.github.io/docs/html5/">JavaFX Documentation Project</a><br><br>
+<a href="http://tutorials.jenkov.com/javafx/index.html">JavaFX Tutorial</a><br><br>
 <a href="https://icons8.com/">icons8</a><br>
 <a href="https://mvnrepository.com/">mvnrepository</a><br>
 

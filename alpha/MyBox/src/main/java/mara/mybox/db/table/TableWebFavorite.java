@@ -1,15 +1,15 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebFavorite;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -131,7 +131,7 @@ public class TableWebFavorite extends BaseTable<WebFavorite> {
         return addresses;
     }
 
-    public List<WebFavorite> withSub(TableTree tableTree, long parent, int start, int size) {
+    public List<WebFavorite> withSub(TableTree tableTree, long parent, long start, long size) {
         List<WebFavorite> notes = new ArrayList<>();
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement qFavoriteAddresss = conn.prepareStatement(QueryOwner)) {
@@ -145,13 +145,13 @@ public class TableWebFavorite extends BaseTable<WebFavorite> {
         return notes;
     }
 
-    public int withSub(Connection conn, PreparedStatement qFavoriteAddresss,
-            TableTree tableTree, long parent, int start, int size, List<WebFavorite> addresses, int index) {
+    public long withSub(Connection conn, PreparedStatement qFavoriteAddresss,
+            TableTree tableTree, long parent, long start, long size, List<WebFavorite> addresses, long index) {
         if (conn == null || parent < 1 || addresses == null || tableTree == null
                 || qFavoriteAddresss == null || start < 0 || size <= 0 || addresses.size() >= size) {
             return index;
         }
-        int thisIndex = index;
+        long thisIndex = index;
         try {
             int thisSize = addresses.size();
             boolean ok = false;

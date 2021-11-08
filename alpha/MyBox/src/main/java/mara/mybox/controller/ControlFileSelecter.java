@@ -181,7 +181,6 @@ public class ControlFileSelecter extends BaseController {
         }
         fileInput.setStyle(null);
         setFile(inputfile);
-        valid.set(true);
     }
 
     protected void setFile(File file) {
@@ -197,6 +196,7 @@ public class ControlFileSelecter extends BaseController {
         } else {
             recordFileWritten(file);
         }
+        valid.set(true);
         notify.set(!notify.get());
     }
 

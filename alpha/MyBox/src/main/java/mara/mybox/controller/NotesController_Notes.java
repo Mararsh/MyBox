@@ -139,7 +139,7 @@ public abstract class NotesController_Notes extends NotesController_Tags {
     }
 
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         if (notebooksController.selectedNode != null && subCheck.isSelected()) {
             return TableNote.withSubSize(tableNotebook, notebooksController.selectedNode.getNbid());
 

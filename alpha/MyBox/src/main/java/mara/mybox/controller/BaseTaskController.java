@@ -172,11 +172,15 @@ public class BaseTaskController extends BaseController {
     }
 
     protected boolean targetFileGenerated(File target) {
+        return targetFileGenerated(target, TargetFileType);
+    }
+
+    protected boolean targetFileGenerated(File target, int type) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
         updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), target.getAbsolutePath()));
-        recordFileWritten(target);
+        recordFileWritten(target, type, type);
         return true;
     }
 

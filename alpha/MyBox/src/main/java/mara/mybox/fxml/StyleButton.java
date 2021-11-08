@@ -570,7 +570,14 @@ public class StyleButton {
             return new StyleData(id, message("MoveRight"), "", "iconRight.png");
         }
         if (id.startsWith("insert")) {
-            return new StyleData(id, message("Insert"), "", "iconInsert.png");
+            switch (id) {
+                case "insertFilesButton":
+                    return new StyleData("insertFilesButton", message("InsertFiles"), "", "iconFileInsert.png");
+                case "insertDirectoryButton":
+                    return new StyleData("insertDirectoryButton", message("InsertDirectory"), "", "iconFolderInsert.png");
+                default:
+                    return new StyleData(id, message("Insert"), "", "iconInsert.png");
+            }
         }
         return null;
     }
@@ -618,10 +625,7 @@ public class StyleButton {
                 return new StyleData("replaceAllButton", message("ReplaceAll"), "CTRL+w", "iconReplaceAll.png");
             case "withdrawButton":
                 return new StyleData("withdrawButton", message("Withdraw"), "ESC / CTRL+w / ALT+w", "iconWithdraw.png");
-            case "insertFilesButton":
-                return new StyleData("insertFilesButton", message("InsertFiles"), "", "iconFileInsert.png");
-            case "insertDirectoryButton":
-                return new StyleData("insertDirectoryButton", message("InsertDirectory"), "", "iconFolderInsert.png");
+
             case "openTargetButton":
                 return new StyleData("openTargetButton", message("Open"), "", "iconOpen.png");
             case "browseButton":
