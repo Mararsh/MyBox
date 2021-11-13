@@ -45,14 +45,26 @@ License:    Apache License Version 2.0
                         </VBox>  
                     </content>
                 </Tab>
-                <Tab fx:id="defineTab" text="%Define">
+                <Tab fx:id="attributesTab" text="%Attributes">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DAttributes.fxml" VBox.vgrow="ALWAYS" />
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="columnsTab" text="%Columns">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <fx:include fx:id="define" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DDefine.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DColumns.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>
-                                <Insets top="2.0" />
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                         </VBox>
                     </content>
@@ -114,7 +126,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconNext.png" />
+                                        <Image url="@../buttons/Red/iconNext.png" /> 
                                     </image>
                                 </ImageView>
                             </graphic>

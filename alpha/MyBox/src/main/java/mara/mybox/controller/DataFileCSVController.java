@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Iterator;
@@ -25,9 +24,6 @@ import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -81,7 +77,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     @Override
     public void pickOptions() {
         dataFileCSV.setCharset(csvReadController.charset);
-        dataFileCSV.setSourceCsvDelimiter(csvReadController.delimiter);
+        dataFileCSV.setDelimiter(csvReadController.delimiter + "");
         dataFileCSV.setAutoDetermineSourceCharset(csvReadController.autoDetermine);
         dataFileCSV.setHasHeader(csvReadController.withNamesCheck.isSelected());
     }
@@ -93,7 +89,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         csvReadController.setCharset(charset);
         dataFileCSV.setUserSavedDataDefinition(false);
         dataFileCSV.setCharset(charset);
-        dataFileCSV.setSourceCsvDelimiter(delimiter);
+        dataFileCSV.setDelimiter(delimiter + "");
         dataFileCSV.setAutoDetermineSourceCharset(false);
         dataFileCSV.setHasHeader(withName);
         loadFile();
@@ -106,7 +102,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
                     + message("Charset") + ": " + dataFileCSV.getCharset() + "\n"
-                    + message("Delimiter") + ": " + TextTools.delimiterMessage(dataFileCSV.getSourceCsvDelimiter() + "") + "\n"
+                    + message("Delimiter") + ": " + TextTools.delimiterMessage(dataFileCSV.getDelimiter()) + "\n"
                     + message("FirstLineAsNames") + ": " + (dataFileCSV.isHasHeader() ? message("Yes") : message("No")) + "\n";
         }
         if (!dataFileCSV.isMutiplePages()) {
@@ -128,12 +124,12 @@ public class DataFileCSVController extends BaseData2DFileController {
     }
 
     @Override
-    public String savePageData() {
-        return savePageData(dataFileCSV.getFile(), dataFileCSV.getCharset(), dataFileCSV.getSourceCsvFormat(), dataFileCSV.isHasHeader());
+    public boolean savePageData(File tfile) {
+        return dataFileCSV.savePageData(tfile, dataFileCSV.getCharset(), dataFileCSV.getSourceCsvFormat(), dataFileCSV.isHasHeader());
     }
 
     @Override
-    public String savePageDataAs(File file) {
+    public boolean savePageDataAs(File tfile) {
         CSVFormat targetCsvFormat = CSVFormat.DEFAULT
                 .withDelimiter(csvWriteController.delimiter)
                 .withIgnoreEmptyLines().withTrim().withNullString("");
@@ -141,65 +137,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         if (hasHeader) {
             targetCsvFormat = targetCsvFormat.withFirstRecordAsHeader();
         }
-        return savePageData(file, csvWriteController.charset, targetCsvFormat, hasHeader);
-    }
-
-    public String savePageData(File tfile, Charset charset, CSVFormat csvFormat, boolean withName) {
-        File tmpFile = TmpFileTools.getTempFile();
-        if (charset == null) {
-            charset = Charset.forName("UTF-8");
-        }
-        if (sourceFile != null) {
-            try ( CSVParser parser = CSVParser.parse(sourceFile, dataFileCSV.getCharset(), dataFileCSV.getSourceCsvFormat());
-                     CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), csvFormat)) {
-                if (withName) {
-                    csvPrinter.printRecord(dataFileCSV.columnNames());
-                }
-                long index = -1;
-                for (CSVRecord record : parser) {
-                    if (++index < dataFileCSV.getStartRowOfCurrentPage() || index >= dataFileCSV.getEndRowOfCurrentPage()) {
-                        csvPrinter.printRecord(record);
-                    } else if (index == dataFileCSV.getStartRowOfCurrentPage()) {
-                        writePageData(csvPrinter);
-                    }
-                }
-                if (index < 0) {
-                    writePageData(csvPrinter);
-                }
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-                return e.toString();
-            }
-        } else {
-            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), csvFormat)) {
-                if (withName) {
-                    csvPrinter.printRecord(dataFileCSV.columnNames());
-                }
-                writePageData(csvPrinter);
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-                return e.toString();
-            }
-        }
-        if (FileTools.rename(tmpFile, tfile, false)) {
-//            saveDefinition(tfile.getAbsolutePath(), dataType, charset, csvFormat.getDelimiter() + "", withName, columns);
-            return null;
-        } else {
-            return "Failed";
-        }
-    }
-
-    protected void writePageData(CSVPrinter csvPrinter) {
-        try {
-            if (csvPrinter == null) {
-                return;
-            }
-            for (int r = 0; r < dataFileCSV.columnsNumber(); r++) {
-                csvPrinter.printRecord(dataFileCSV.rowList(r));
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
+        return dataFileCSV.savePageData(tfile, csvWriteController.charset, targetCsvFormat, hasHeader);
     }
 
     @Override

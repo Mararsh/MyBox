@@ -390,41 +390,41 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
             if (number < 1 || !data2D.isColumnsValid()) {
                 return;
             }
-            List<List<String>> current = data2D.getTableData();
-            String[][] values;
-            int cNumber = data2D.columnsNumber();
-            if (current == null) {
-                values = new String[number][cNumber];
-                for (int r = 0; r < number; ++r) {
-                    for (int c = 0; c < cNumber; ++c) {
-                        values[r][c] = data2D.defaultColValue();
-                    }
-                }
-            } else {
-                int rNumber = current.size();
-                values = new String[data2D.pageRowsNumber() + number][cNumber];
-                int base;
-                if (row < 0) {
-                    base = 0;
-                } else {
-                    base = row + (above ? 0 : 1);
-                }
-                for (int r = 0; r < base; ++r) {
-                    for (int c = 0; c < cNumber; ++c) {
-                        values[r][c] = data2D.cell(r, c);
-                    }
-                }
-                for (int r = base; r < base + number; ++r) {
-                    for (int c = 0; c < cNumber; ++c) {
-                        values[r][c] = data2D.defaultColValue();
-                    }
-                }
-                for (int r = base + number; r < rNumber + number; ++r) {
-                    for (int c = 0; c < cNumber; ++c) {
-                        values[r][c] = data2D.cell(r - number, c);
-                    }
-                }
-            }
+//            List<List<String>> current = data2D.getTableData();
+//            String[][] values;
+//            int cNumber = data2D.columnsNumber();
+//            if (current == null) {
+//                values = new String[number][cNumber];
+//                for (int r = 0; r < number; ++r) {
+//                    for (int c = 0; c < cNumber; ++c) {
+//                        values[r][c] = data2D.defaultColValue();
+//                    }
+//                }
+//            } else {
+//                int rNumber = current.size();
+//                values = new String[data2D.pageRowsNumber() + number][cNumber];
+//                int base;
+//                if (row < 0) {
+//                    base = 0;
+//                } else {
+//                    base = row + (above ? 0 : 1);
+//                }
+//                for (int r = 0; r < base; ++r) {
+//                    for (int c = 0; c < cNumber; ++c) {
+//                        values[r][c] = data2D.cell(r, c);
+//                    }
+//                }
+//                for (int r = base; r < base + number; ++r) {
+//                    for (int c = 0; c < cNumber; ++c) {
+//                        values[r][c] = data2D.defaultColValue();
+//                    }
+//                }
+//                for (int r = base + number; r < rNumber + number; ++r) {
+//                    for (int c = 0; c < cNumber; ++c) {
+//                        values[r][c] = data2D.cell(r - number, c);
+//                    }
+//                }
+//            }
 //            makeSheet(values);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -620,7 +620,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
                     try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
                         csvPrinter.printRecord(data2D.columnNames());
                         for (int r = 0; r < data2D.pageRowsNumber(); r++) {
-                            csvPrinter.printRecord(data2D.rowList(r));
+                            csvPrinter.printRecord(data2D.row(r));
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -664,7 +664,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
                         }
                         for (int r = 0; r < data2D.pageRowsNumber(); r++) {
                             targetRow = targetSheet.createRow(index++);
-                            for (int c = 0; c < data2D.rowList(r).size(); c++) {
+                            for (int c = 0; c < data2D.row(r).size(); c++) {
                                 Cell targetCell = targetRow.createCell(c, CellType.STRING);
                                 targetCell.setCellValue(cellString(r, c));
                             }

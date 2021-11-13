@@ -88,8 +88,8 @@ public abstract class ControlSheet_Base extends BaseController {
     protected Label pageLabel, totalLabel;
     @FXML
     protected TextField warnThresholdInput;
-    @FXML
-    protected ControlData2DDefine columnsController;
+//    @FXML
+//    protected ControlData2DDefine columnsController;
 
     public ControlSheet_Base() {
         baseTitle = message("Data");

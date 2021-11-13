@@ -8,7 +8,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 
 /**
  * @Author Mara
@@ -54,6 +53,7 @@ public class FilesRenameTableController extends FilesTableController {
         } else {
             addFilesButton.setDisable(false);
             addDirectoryButton.setDisable(false);
+            clearFilesButton.setDisable(false);
             super.checkButtons();
         }
     }

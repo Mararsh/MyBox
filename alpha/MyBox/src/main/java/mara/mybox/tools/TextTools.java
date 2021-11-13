@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.IndexRange;
+import mara.mybox.data.Data2D;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
@@ -29,7 +30,7 @@ import thridparty.EncodingDetect;
  * @License Apache License Version 2.0
  */
 public class TextTools {
-
+    
     public static List<Charset> getCharsets() {
         List<Charset> sets = new ArrayList<>();
         sets.addAll(Arrays.asList(Charset.forName("UTF-8"),
@@ -43,7 +44,7 @@ public class TextTools {
             sets.remove(Charset.defaultCharset());
         }
         sets.add(0, Charset.defaultCharset());
-
+        
         Map<String, Charset> all = Charset.availableCharsets();
         for (Charset set : all.values()) {
             if (Charset.isSupported(set.name()) && !sets.contains(set)) {
@@ -52,7 +53,7 @@ public class TextTools {
         }
         return sets;
     }
-
+    
     public static List<String> getCharsetNames() {
         try {
             List<Charset> sets = getCharsets();
@@ -65,7 +66,7 @@ public class TextTools {
             return null;
         }
     }
-
+    
     public static String checkCharsetByBom(byte[] bytes) {
         if (bytes.length < 2) {
             return null;
@@ -95,7 +96,7 @@ public class TextTools {
         }
         return null;
     }
-
+    
     public static boolean checkCharset(FileEditInformation info) {
         try {
             if (info == null || info.getFile() == null) {
@@ -124,7 +125,7 @@ public class TextTools {
             return false;
         }
     }
-
+    
     public static int bomSize(String charset) {
         switch (charset) {
             case "UTF-16":
@@ -142,7 +143,7 @@ public class TextTools {
         }
         return 0;
     }
-
+    
     public static String bomHex(String charset) {
         switch (charset) {
             case "UTF-16":
@@ -160,7 +161,7 @@ public class TextTools {
         }
         return null;
     }
-
+    
     public static byte[] bomBytes(String charset) {
         switch (charset) {
             case "UTF-16":
@@ -180,11 +181,11 @@ public class TextTools {
         }
         return null;
     }
-
+    
     public static String readText(File file) {
         return readText(new TextEditInformation(file));
     }
-
+    
     public static String readText(FileEditInformation info) {
         try {
             if (info == null || info.getFile() == null) {
@@ -208,7 +209,7 @@ public class TextTools {
             return null;
         }
     }
-
+    
     public static boolean writeText(FileEditInformation info, String text) {
         try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
@@ -218,13 +219,13 @@ public class TextTools {
             }
             writer.write(text);
             return true;
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
     }
-
+    
     public static boolean convertCharset(FileEditInformation source, FileEditInformation target) {
         try {
             if (source == null || source.getFile() == null
@@ -257,7 +258,7 @@ public class TextTools {
             return false;
         }
     }
-
+    
     public static boolean convertLineBreak(FileEditInformation source, FileEditInformation target) {
         try {
             if (source == null || source.getFile() == null
@@ -292,7 +293,7 @@ public class TextTools {
             return false;
         }
     }
-
+    
     public static long checkCharsNumber(String string) {
         try {
             String strV = string.trim().toLowerCase();
@@ -317,7 +318,7 @@ public class TextTools {
             return -1;
         }
     }
-
+    
     public static List<File> convert(FileEditInformation source, FileEditInformation target, int maxLines) {
         try {
             if (source == null || source.getFile() == null
@@ -403,7 +404,7 @@ public class TextTools {
             return null;
         }
     }
-
+    
     public static IndexRange hexIndex(String text, Charset charset, String lineBreakValue, IndexRange textRange) {
         int hIndex = 0;
         int hBegin = 0;
@@ -436,7 +437,7 @@ public class TextTools {
         }
         return new IndexRange(hBegin, hEnd);
     }
-
+    
     public static Line_Break checkLineBreak(File file) {
         try ( InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)))) {
             int c;
@@ -459,7 +460,7 @@ public class TextTools {
         }
         return Line_Break.LF;
     }
-
+    
     public static String lineBreakValue(Line_Break lb) {
         switch (lb) {
             case LF:
@@ -472,7 +473,7 @@ public class TextTools {
                 return "\n";
         }
     }
-
+    
     public static byte[] lineBreakBytes(Line_Break lb, Charset charset) {
         switch (lb) {
             case LF:
@@ -485,15 +486,15 @@ public class TextTools {
                 return "\n".getBytes(charset);
         }
     }
-
+    
     public static String lineBreakHex(Line_Break lb, Charset charset) {
         return ByteTools.bytesToHex(lineBreakBytes(lb, charset));
     }
-
+    
     public static String lineBreakHexFormat(Line_Break lb, Charset charset) {
         return ByteTools.bytesToHexFormat(lineBreakBytes(lb, charset));
     }
-
+    
     public static String delimiterValue(String delimiterName) {
         if (delimiterName == null) {
             return null;
@@ -521,7 +522,7 @@ public class TextTools {
         }
         return text;
     }
-
+    
     public static String delimiterMessage(String delimiterName) {
         if (delimiterName == null) {
             return null;
@@ -557,11 +558,11 @@ public class TextTools {
         }
         return msg;
     }
-
+    
     public static String dataText(Object[][] data, String delimiterName) {
         return dataText(data, delimiterName, null, null);
     }
-
+    
     public static String dataText(Object[][] data, String delimiterName,
             List<String> colsNames, List<String> rowsNames) {
         if (data == null || data.length == 0 || delimiterName == null) {
@@ -610,16 +611,66 @@ public class TextTools {
             return "";
         }
     }
-
+    
     public static String dataText(List<List<String>> rows, String delimiterName) {
         return dataText(toArray(rows), delimiterName, null, null);
     }
-
+    
     public static String dataText(List<List<String>> rows, String delimiterName,
             List<String> colsNames, List<String> rowsNames) {
         return dataText(toArray(rows), delimiterName, colsNames, rowsNames);
     }
-
+    
+    public static String dataPage(Data2D data2D, String delimiterName, boolean displayRowNames, boolean displayColNames) {
+        if (data2D == null || delimiterName == null) {
+            return "";
+        }
+        try {
+            StringBuilder s = new StringBuilder();
+            String delimiter = delimiterValue(delimiterName);
+            int rowsNumber = data2D.pageRowsNumber();
+            int colsNumber = data2D.tableColsNumber();
+            int colEnd;
+            if (displayColNames) {
+                if (displayRowNames) {
+                    s.append(delimiter);
+                }
+                List<String> colNames = data2D.columnNames();
+                colEnd = colNames.size() - 1;
+                for (int c = 0; c <= colEnd; c++) {
+                    s.append(colNames.get(c));
+                    if (c < colEnd) {
+                        s.append(delimiter);
+                    }
+                }
+                s.append("\n");
+            }
+            Object v;
+            int rowEnd = rowsNumber - 1;
+            List<String> rowNames = data2D.rowNames();
+            for (int i = 0; i <= rowEnd; i++) {
+                if (displayRowNames) {
+                    s.append(rowNames.get(i)).append(delimiter);
+                }
+                colEnd = colsNumber - 1;
+                for (int c = 0; c <= colEnd; c++) {
+                    v = data2D.cell(i, c);
+                    s.append(v == null ? "" : v);
+                    if (c < colEnd) {
+                        s.append(delimiter);
+                    }
+                }
+                if (i < rowEnd) {
+                    s.append("\n");
+                }
+            }
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return "";
+        }
+    }
+    
     public static List<String> parseLine(String line, String delimiterName) {
         try {
             if (line == null || delimiterName == null) {
@@ -656,7 +707,7 @@ public class TextTools {
                         values = line.split(delimiterName, -1);
                     }
                     break;
-
+                
             }
             if (values == null || values.length == 0) {
                 return null;
@@ -671,7 +722,7 @@ public class TextTools {
             return null;
         }
     }
-
+    
     public static String[][] toArray(List<List<String>> rows) {
         try {
             if (rows == null || rows.isEmpty()) {
@@ -698,5 +749,5 @@ public class TextTools {
             return null;
         }
     }
-
+    
 }

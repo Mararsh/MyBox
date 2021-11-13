@@ -12,7 +12,7 @@
 }
 
 .column-header.editable-column > .label {
-    -fx-text-fill: darkblue;
+    -fx-text-fill: #003472;
     -fx-font-weight: bolder;
 }
 

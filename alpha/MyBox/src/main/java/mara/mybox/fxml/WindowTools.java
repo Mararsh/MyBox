@@ -120,9 +120,8 @@ public class WindowTools {
 
             controller.afterSceneLoaded();
 
-            String fxml = controller.getMyFxml();
-            if (controller.getMainMenuController() != null && !controller.isIsPop()) {
-                VisitHistoryTools.visitMenu(controller.getBaseTitle(), fxml);
+            if (controller.isNeedRecordVisit()) {
+                VisitHistoryTools.visitMenu(controller.getBaseTitle(), controller.getMyFxml());
             }
             Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
 

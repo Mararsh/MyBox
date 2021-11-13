@@ -22,13 +22,11 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
     protected boolean selectingRow, checkingBox;
     protected ChangeListener<Boolean> checkedListener;
     protected ChangeListener<Number> selectedListener;
-    protected long startIndex;
 
-    public TableRowSelectionCell(TableView tableView, long start) {
+    public TableRowSelectionCell(TableView tableView) {
         this.tableView = tableView;
         checked = new SimpleBooleanProperty(false);
         selectingRow = checkingBox = false;
-        startIndex = start;
 
         initListeners();
 
@@ -44,7 +42,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
                 if (row < 0) {
                     return null;
                 }
-                setText("" + (startIndex + row + 1));
+                setText("" + (row + 1));
                 checked = new SimpleBooleanProperty(tableView.getSelectionModel().isSelected(row));
                 checked.addListener(checkedListener);
                 tableView.getSelectionModel().selectedIndexProperty().addListener(selectedListener);
@@ -92,11 +90,12 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
     }
 
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(TableView tableView) {
-        return list -> new TableRowSelectionCell<S, T>(tableView, 0);
-    }
-
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(TableView tableView, long start) {
-        return list -> new TableRowSelectionCell<S, T>(tableView, start);
+        return new Callback<TableColumn<S, T>, TableCell<S, T>>() {
+            @Override
+            public TableCell<S, T> call(TableColumn<S, T> param) {
+                return new TableRowSelectionCell<>(tableView);
+            }
+        };
     }
 
     public SimpleBooleanProperty getSelected() {
@@ -105,14 +104,6 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
 
     public void setSelected(SimpleBooleanProperty selected) {
         this.checked = selected;
-    }
-
-    public long getStartIndex() {
-        return startIndex;
-    }
-
-    public void setStartIndex(long startIndex) {
-        this.startIndex = startIndex;
     }
 
 }

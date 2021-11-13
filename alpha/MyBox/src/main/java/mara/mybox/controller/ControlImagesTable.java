@@ -112,7 +112,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void checkThumb() {
         if (tableThumbCheck.isSelected()) {
             if (!tableView.getColumns().contains(imageColumn)) {
-                tableView.getColumns().add(1, imageColumn);
+                tableView.getColumns().add(2, imageColumn);
             }
         } else {
             if (tableView.getColumns().contains(imageColumn)) {
@@ -148,32 +148,36 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 durationColumn.setCellFactory((TableColumn<ImageInformation, Long> param) -> {
                     TableAutoCommitCell<ImageInformation, Long> cell
                             = new TableAutoCommitCell<ImageInformation, Long>(new LongStringConverter()) {
+
                         @Override
-                        public void commitEdit(Long val) {
-                            if (val <= 0) {
-                                cancelEdit();
-                            } else {
-                                super.commitEdit(val);
+                        public boolean valid(Long value) {
+                            return value > 0;
+                        }
+
+                        @Override
+                        public void commitEdit(Long value) {
+                            try {
+                                int rowIndex = rowIndex();
+                                if (rowIndex < 0 || !valid(value)) {
+                                    cancelEdit();
+                                    return;
+                                }
+                                ImageInformation row = tableData.get(rowIndex);
+                                if (value != row.getDuration()) {
+                                    super.commitEdit(value);
+                                    row.setDuration(value);
+                                    if (!isSettingValues) {
+                                        Platform.runLater(() -> {
+                                            updateLabel();
+                                        });
+                                    }
+                                }
+                            } catch (Exception e) {
+                                MyBoxLog.debug(e);
                             }
                         }
                     };
                     return cell;
-                });
-                durationColumn.setOnEditCommit((TableColumn.CellEditEvent<ImageInformation, Long> t) -> {
-                    if (t == null) {
-                        return;
-                    }
-                    ImageInformation row = t.getRowValue();
-                    Long v = t.getNewValue();
-                    if (row == null || v == null || v <= 0 || v == row.getDuration()) {
-                        return;
-                    }
-                    row.setDuration(v);
-                    if (!isSettingValues) {
-                        Platform.runLater(() -> {
-                            updateLabel();
-                        });
-                    }
                 });
                 durationColumn.getStyleClass().add("editable-column");
             }

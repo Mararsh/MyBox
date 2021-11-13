@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextFileTools;
@@ -27,6 +26,7 @@ public class DataFileText extends DataFile {
     @Override
     public long readDataDefinition() {
         d2did = -1;
+        savedColumns = null;
         if (file == null) {
             return -1;
         }
@@ -34,11 +34,8 @@ public class DataFileText extends DataFile {
             Data2DDefinition definition = tableData2DDefinition.queryFile(conn, type, file);
             if (userSavedDataDefinition) {
                 if (definition != null) {
-                    hasHeader = definition.isHasHeader();
-                    charset = definition.getCharset();
-                    delimiter = definition.getDelimiter();
+                    load(definition);
                 } else {
-                    hasHeader = true;
                     charset = TextFileTools.charset(file);
                     delimiter = guessDelimiter();
                 }
@@ -49,25 +46,17 @@ public class DataFileText extends DataFile {
             if (delimiter == null) {
                 delimiter = ",";
             }
+            dataName = file.getName();
             if (definition == null) {
-                definition = Data2DDefinition.create()
-                        .setType(type).setFile(file)
-                        .setCharset(charset)
-                        .setHasHeader(hasHeader)
-                        .setDelimiter(delimiter);
-                definition = tableData2DDefinition.insertData(conn, definition);
+                definition = tableData2DDefinition.insertData(conn, this);
                 conn.commit();
+                d2did = definition.getD2did();
             } else {
-                if (!userSavedDataDefinition) {
-                    definition.setCharset(charset)
-                            .setHasHeader(hasHeader)
-                            .setDelimiter(delimiter);
-                    definition = tableData2DDefinition.updateData(conn, definition);
-                    conn.commit();
-                }
-                savedColumns = tableData2DColumn.read(conn, definition.getD2did());
+                tableData2DDefinition.updateData(conn, this);
+                conn.commit();
+                d2did = definition.getD2did();
+                savedColumns = tableData2DColumn.read(conn, d2did);
             }
-            d2did = definition.getD2did();
             userSavedDataDefinition = true;
         } catch (Exception e) {
             if (task != null) {
@@ -80,7 +69,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public List<Data2DColumn> readColumns() {
+    public List<String> readColumns() {
         List<String> names = null;
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             names = readNames(reader);
@@ -90,17 +79,10 @@ public class DataFileText extends DataFile {
             }
             MyBoxLog.console(e);
         }
-        if (names != null) {
-            List<Data2DColumn> fileColumns = new ArrayList<>();
-            for (String name : names) {
-                Data2DColumn column = new Data2DColumn(name, Data2DColumn.ColumnType.String);
-                fileColumns.add(column);
-            }
-            return fileColumns;
-        } else {
+        if (names == null) {
             hasHeader = false;
-            return null;
         }
+        return names;
     }
 
     @Override
@@ -136,6 +118,7 @@ public class DataFileText extends DataFile {
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
         }
+        endRowOfCurrentPage = startRowOfCurrentPage;
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readNames(reader);
@@ -161,6 +144,7 @@ public class DataFileText extends DataFile {
                 }
                 rows.add(row);
             }
+            endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
             return rows;
         } catch (Exception e) {
             if (task != null) {

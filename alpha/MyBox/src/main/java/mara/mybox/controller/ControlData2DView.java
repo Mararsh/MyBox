@@ -154,7 +154,7 @@ public class ControlData2DView extends BaseController {
                 if (rowCheck.isSelected()) {
                     values.add(message("Row") + (index + 1));
                 }
-                values.addAll(data2D.rowList(r));
+                values.addAll(data2D.row(r));
                 table.add(values);
                 index++;
             }
@@ -182,20 +182,11 @@ public class ControlData2DView extends BaseController {
     }
 
     protected void displayPageText() {
-        List<String> colsNames = null;
-        List<String> rowsNames = null;
         String title = null;
         if (titleCheck.isSelected()) {
             title = data2D.titleName();
         }
-        if (columnCheck.isSelected()) {
-            colsNames = data2D.columnNames();
-        }
-        List<List<String>> pageData = data2D.getTableData();
-        if (rowCheck.isSelected()) {
-            rowsNames = pageData == null ? null : data2D.rowNames(pageData.size());
-        }
-        String text = TextTools.dataText(pageData, displayDelimiterName, colsNames, rowsNames);
+        String text = TextTools.dataPage(data2D, displayDelimiterName, rowCheck.isSelected(), columnCheck.isSelected());
         if (title != null && !title.isBlank()) {
             textArea.setText(title + "\n\n" + text);
         } else {
@@ -234,7 +225,7 @@ public class ControlData2DView extends BaseController {
         try {
             int len = data2D.pageRowsNumber();
             for (int r = 0; r < len; r++) {
-                rowText(s, index++, data2D.rowList(r), delimiter);
+                rowText(s, index++, data2D.row(r), delimiter);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

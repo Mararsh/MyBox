@@ -445,6 +445,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setAsPopup(String baseName) {
         try {
             isPop = true;
+            needRecordVisit = false;
             this.interfaceName = baseName;
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));

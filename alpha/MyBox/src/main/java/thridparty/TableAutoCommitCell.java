@@ -21,14 +21,14 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DateTimeStringConverter;
 import javafx.util.converter.DefaultStringConverter;
-import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.FloatStringConverter;
-import javafx.util.converter.IntegerStringConverter;
-import javafx.util.converter.LongStringConverter;
-import javafx.util.converter.ShortStringConverter;
 import mara.mybox.data.Era;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.DoubleStringFromatConverter;
 import mara.mybox.fxml.EraStringConverter;
+import mara.mybox.fxml.FloatStringFromatConverter;
+import mara.mybox.fxml.IntegerStringFromatConverter;
+import mara.mybox.fxml.LongStringFromatConverter;
+import mara.mybox.fxml.ShortStringFromatConverter;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
 
@@ -70,8 +70,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
 
     public boolean valid() {
         try {
-            getConverter().fromString(textFieldRef.getText());
-            return true;
+            return valid(getConverter().fromString(textFieldRef.getText()));
         } catch (Exception e) {
             return false;
         }
@@ -178,25 +177,28 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (isEditing()) {
                 if (valid) {
                     super.commitEdit(value);
+                } else {
+                    cancelEdit();
                 }
             } else {
                 TableView<S> table = getTableView();
-                if (valid) {
-                    if (table != null) {
-                        final TablePosition<S, T> pos = new TablePosition<>(table, getTableRow().getIndex(), getTableColumn()); // instead of tbl.getEditingCell()
-                        final CellEditEvent<S, T> ev = new CellEditEvent<>(table, pos, TableColumn.editCommitEvent(), value);
-                        Event.fireEvent(getTableColumn(), ev);
-                    }
+                TableRow<S> row = getTableRow();
+                TableColumn<S, T> column = getTableColumn();
+                if (valid && table != null && row != null && column != null) {
+                    final TablePosition<S, T> pos = new TablePosition<>(table, row.getIndex(), column); // instead of tbl.getEditingCell()
+                    final CellEditEvent<S, T> ev = new CellEditEvent<>(table, pos, TableColumn.editCommitEvent(), value);
+                    Event.fireEvent(column, ev);
                     updateItem(value, false);
+                } else {
+                    cancelEdit();
                 }
                 if (table != null) {
                     table.edit(-1, null);
                 }
-                // TODO ControlUtils.requestFocusOnControlOnlyIfCurrentFocusOwnerIsChild(tbl);
             }
             if (textFieldRef != null) {
                 textFieldRef.focusedProperty().removeListener(focusListener);
-                textFieldRef.setOnKeyPressed(keyPressedHandler);
+                textFieldRef.setOnKeyPressed(null);
                 textFieldRef.textProperty().removeListener(editListener);
                 textFieldRef.setStyle(null);
             }
@@ -209,35 +211,75 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         static 
      */
     public static <S> Callback<TableColumn<S, String>, TableCell<S, String>> forStringColumn() {
-        return list -> new TableAutoCommitCell<>(new DefaultStringConverter());
+        return new Callback<TableColumn<S, String>, TableCell<S, String>>() {
+            @Override
+            public TableCell<S, String> call(TableColumn<S, String> param) {
+                return new TableAutoCommitCell<>(new DefaultStringConverter());
+            }
+        };
     }
 
     public static <S> Callback<TableColumn<S, Integer>, TableCell<S, Integer>> forIntegerColumn() {
-        return list -> new TableAutoCommitCell<>(new IntegerStringConverter());
+        return new Callback<TableColumn<S, Integer>, TableCell<S, Integer>>() {
+            @Override
+            public TableCell<S, Integer> call(TableColumn<S, Integer> param) {
+                return new TableAutoCommitCell<>(new IntegerStringFromatConverter());
+            }
+        };
     }
 
     public static <S> Callback<TableColumn<S, Long>, TableCell<S, Long>> forLongColumn() {
-        return list -> new TableAutoCommitCell<>(new LongStringConverter());
+        return new Callback<TableColumn<S, Long>, TableCell<S, Long>>() {
+            @Override
+            public TableCell<S, Long> call(TableColumn<S, Long> param) {
+                return new TableAutoCommitCell<>(new LongStringFromatConverter());
+            }
+        };
     }
 
     public static <S> Callback<TableColumn<S, Float>, TableCell<S, Float>> forFloatColumn() {
-        return list -> new TableAutoCommitCell<>(new FloatStringConverter());
+        return new Callback<TableColumn<S, Float>, TableCell<S, Float>>() {
+            @Override
+            public TableCell<S, Float> call(TableColumn<S, Float> param) {
+                return new TableAutoCommitCell<>(new FloatStringFromatConverter());
+            }
+        };
     }
 
     public static <S> Callback<TableColumn<S, Double>, TableCell<S, Double>> forDoubleColumn() {
-        return list -> new TableAutoCommitCell<>(new DoubleStringConverter());
+        return new Callback<TableColumn<S, Double>, TableCell<S, Double>>() {
+            @Override
+            public TableCell<S, Double> call(TableColumn<S, Double> param) {
+                return new TableAutoCommitCell<>(new DoubleStringFromatConverter());
+            }
+        };
     }
 
     public static <S> Callback<TableColumn<S, Short>, TableCell<S, Short>> forShortColumn() {
-        return list -> new TableAutoCommitCell<>(new ShortStringConverter());
+        return new Callback<TableColumn<S, Short>, TableCell<S, Short>>() {
+            @Override
+            public TableCell<S, Short> call(TableColumn<S, Short> param) {
+                return new TableAutoCommitCell<>(new ShortStringFromatConverter());
+            }
+        };
     }
 
     public static <S> Callback<TableColumn<S, Date>, TableCell<S, Date>> forDateTimeColumn() {
-        return list -> new TableAutoCommitCell<>(new DateTimeStringConverter(new SimpleDateFormat(TimeFormats.DatetimeFormat)));
+        return new Callback<TableColumn<S, Date>, TableCell<S, Date>>() {
+            @Override
+            public TableCell<S, Date> call(TableColumn<S, Date> param) {
+                return new TableAutoCommitCell<>(new DateTimeStringConverter(new SimpleDateFormat(TimeFormats.DatetimeFormat)));
+            }
+        };
     }
 
     public static <S> Callback<TableColumn<S, Era>, TableCell<S, Era>> forEraColumn() {
-        return list -> new TableAutoCommitCell<>(new EraStringConverter());
+        return new Callback<TableColumn<S, Era>, TableCell<S, Era>>() {
+            @Override
+            public TableCell<S, Era> call(TableColumn<S, Era> param) {
+                return new TableAutoCommitCell<>(new EraStringConverter());
+            }
+        };
     }
 
 }

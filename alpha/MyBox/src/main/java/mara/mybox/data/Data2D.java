@@ -46,13 +46,13 @@ public abstract class Data2D extends Data2DDefinition {
      */
     public abstract long readDataDefinition();
 
-    public abstract List<Data2DColumn> readColumns();
+    public abstract List<String> readColumns();
 
     public abstract long readTotal();
 
     public abstract List<List<String>> readPageData();
 
-    public abstract void savePageData();
+    public abstract boolean savePageData();
 
     /*
         page data
@@ -79,51 +79,18 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void newData() {
         resetData();
-        for (int r = 0; r < 3; r++) {
-            List<String> row = new ArrayList<>();
-            for (int col = 0; col < 3; col++) {
-                row.add(defaultColValue());
-            }
-            tableData.add(row);
-        }
+//        for (int r = 0; r < 3; r++) {
+//            List<String> row = new HashMap<>();
+//            for (int col = 0; col < 3; col++) {
+//                row.add(defaultColValue());
+//            }
+//            tableData.add(row);
+//        }
         dataSize = 3;
         pagesNumber = 1;
         currentPage = startRowOfCurrentPage = 0;
         endRowOfCurrentPage = 3;
         totalRead = false;
-    }
-
-    public void loadPageData(List<List<String>> rows, int colsNumber) {
-        tableData.clear();
-        if (!rows.isEmpty() && colsNumber > 0) {
-            for (int row = 0; row < rows.size(); row++) {
-                List<String> sourceRow = rows.get(row);
-                List<String> pageRow = new ArrayList<>();
-                int size = sourceRow.size();
-                for (int col = 0; col < Math.min(size, colsNumber); col++) {
-                    pageRow.add(sourceRow.get(col));
-                }
-                for (int col = pageRow.size(); col < colsNumber; col++) {
-                    pageRow.add(defaultColValue());
-                }
-                tableData.add(pageRow);
-            }
-        }
-        endRowOfCurrentPage = startRowOfCurrentPage + tableData.size();
-    }
-
-    public void loadPageData2(List<List<String>> data, List<Data2DColumn> dataColumns) {
-        resetData();
-        tableData.clear();
-        columns = dataColumns;
-        if (data != null) {
-            tableData.addAll(data);
-            endRowOfCurrentPage = data.size();
-        }
-    }
-
-    public long pageEnd() {
-        return startRowOfCurrentPage + (tableData == null ? 0 : tableData.size());
     }
 
     public boolean isMutiplePages() {
@@ -147,17 +114,13 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public int tableColsNumber() {
-        return tableData == null || tableData.isEmpty() ? 0 : tableData.get(0).size() - 1;
+        return tableData == null || tableData.isEmpty() ? 0 : tableData.get(0).size() - 2;
     }
 
     public String cell(int row, int col) {
         String value = null;
         try {
-            value = tableData.get(row).get(col);
-            Data2DColumn column = column(col);
-            if (value != null && column.isNumberType()) {
-                value = value.replaceAll(",", "");
-            }
+            value = tableData.get(row).get(col + 1);
         } catch (Exception e) {
         }
         return value == null ? defaultColValue() : value;
@@ -171,18 +134,19 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    public List<String> rowList(int row) {
+    public List<String> row(int row) {
         if (tableData == null || row < 0 || row > tableData.size() - 1) {
             return null;
         }
-        List<String> values = new ArrayList<>();
         try {
-            for (int col = 0; col < tableData.get(row).size(); col++) {
+            List<String> values = new ArrayList<>();
+            for (int col = 0; col < columnsNumber(); col++) {
                 values.add(cell(row, col));
             }
+            return values;
         } catch (Exception e) {
+            return null;
         }
-        return values;
     }
 
     public boolean needSavePageData() {
@@ -265,6 +229,14 @@ public abstract class Data2D extends Data2DDefinition {
 
     public String rowName(int row) {
         return message("Row") + (startRowOfCurrentPage + row + 1);
+    }
+
+    public List<String> rowNames() {
+        try {
+            return rowNames(tableData.size());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public List<String> rowNames(int end) {
@@ -428,6 +400,14 @@ public abstract class Data2D extends Data2DDefinition {
         this.pageLoadedNotify = pageLoadedNotify;
     }
 
+    public ObservableList<List<String>> getTableData() {
+        return tableData;
+    }
+
+    public void setTableData(ObservableList<List<String>> tableData) {
+        this.tableData = tableData;
+    }
+
     public SimpleBooleanProperty getTableChangedNotify() {
         return tableChangedNotify;
     }
@@ -446,14 +426,6 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void setTotalRead(boolean totalRead) {
         this.totalRead = totalRead;
-    }
-
-    public ObservableList<List<String>> getTableData() {
-        return tableData;
-    }
-
-    public void setTableData(ObservableList<List<String>> tableData) {
-        this.tableData = tableData;
     }
 
     public ControlData2DEditTable getTableController() {

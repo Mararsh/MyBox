@@ -20,6 +20,7 @@ import mara.mybox.db.data.VisitHistory.OperationType;
 import mara.mybox.db.data.VisitHistory.ResourceType;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -98,6 +99,89 @@ public class VisitHistoryTools {
         } else {
             return FileFilters.AllExtensionFilter;
         }
+    }
+
+    public static boolean validFile(String name, int resourceType, int fileType) {
+        if (resourceType != ResourceType.File && resourceType != ResourceType.Path) {
+            return true;
+        }
+        if (name == null) {
+            return false;
+        }
+        File file = new File(name);
+        if (!file.exists()) {
+            return false;
+        }
+        if (resourceType == ResourceType.Path) {
+            return true;
+        }
+        String suffix = FileNameTools.getFileSuffix(file.getName());
+        if (fileType == FileType.PDF) {
+            if (!suffix.equalsIgnoreCase("pdf")) {
+                return false;
+            }
+        } else if (fileType == FileType.Tif) {
+            if (!suffix.equalsIgnoreCase("tif") && !suffix.equalsIgnoreCase("tiff")) {
+                return false;
+            }
+        } else if (fileType == FileType.Gif) {
+            if (!suffix.equalsIgnoreCase("gif")) {
+                return false;
+            }
+        } else if (fileType == FileType.Html) {
+            if (!suffix.equalsIgnoreCase("html") && !suffix.equalsIgnoreCase("htm")) {
+                return false;
+            }
+        } else if (fileType == FileType.Xml) {
+            if (!suffix.equalsIgnoreCase("xml")) {
+                return false;
+            }
+        } else if (fileType == FileType.Markdown) {
+            if (!suffix.equalsIgnoreCase("md")) {
+                return false;
+            }
+        } else if (fileType == FileType.TTC) {
+            if (!suffix.equalsIgnoreCase("ttc")) {
+                return false;
+            }
+        } else if (fileType == FileType.TTF) {
+            if (!suffix.equalsIgnoreCase("ttf")) {
+                return false;
+            }
+        } else if (fileType == FileType.Excel) {
+            if (!suffix.equalsIgnoreCase("xls") && !suffix.equalsIgnoreCase("xlsx")) {
+                return false;
+            }
+        } else if (fileType == FileType.CSV) {
+            if (!suffix.equalsIgnoreCase("csv")) {
+                return false;
+            }
+        } else if (fileType == FileType.Word) {
+            if (!suffix.equalsIgnoreCase("doc")) {
+                return false;
+            }
+        } else if (fileType == FileType.WordX) {
+            if (!suffix.equalsIgnoreCase("docx")) {
+                return false;
+            }
+        } else if (fileType == FileType.WordS) {
+            if (!suffix.equalsIgnoreCase("doc") && !suffix.equalsIgnoreCase("docx")) {
+                return false;
+            }
+        } else if (fileType == FileType.PPT) {
+            if (!suffix.equalsIgnoreCase("ppt")) {
+                return false;
+            }
+        } else if (fileType == FileType.PPTX) {
+            if (!suffix.equalsIgnoreCase("pptx")) {
+                return false;
+            }
+        } else if (fileType == FileType.PPTS) {
+            if (!suffix.equalsIgnoreCase("ppt") && !suffix.equalsIgnoreCase("pptx")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /*

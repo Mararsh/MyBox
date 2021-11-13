@@ -12,6 +12,7 @@ import mara.mybox.data.Data2D;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -29,13 +30,15 @@ public class ControlData2D extends BaseController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab editTab, viewTab, defineTab;
+    protected Tab editTab, viewTab, attributesTab, columnsTab;
     @FXML
     protected ControlData2DEdit editController;
     @FXML
     protected ControlData2DView viewController;
     @FXML
-    protected ControlData2DDefine defineController;
+    protected ControlData2DAttributes attributesController;
+    @FXML
+    protected ControlData2DColumns columnsController;
     @FXML
     protected HBox paginationBox;
     @FXML
@@ -69,16 +72,17 @@ public class ControlData2D extends BaseController {
 
             editController.setParameters(this);
             viewController.setParameters(this);
-            defineController.setParameters(this);
+            attributesController.setParameters(this);
+            columnsController.setParameters(this);
 
-            data2D.getTableChangedNotify().addListener(
+            data2D.getPageLoadedNotify().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         viewController.loadData();
                     });
 
-            data2D.getPageLoadedNotify().addListener(
+            data2D.getTableChangedNotify().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        dataChanged();
+                        editTab.setText(message("Edit") + (data2D.isTableChanged() ? "*" : ""));
                     });
 
         } catch (Exception e) {
@@ -86,14 +90,10 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    @Override
-    public void dataChanged() {
-
-    }
-
     public void loadData() {
         tableController.loadData();
-        defineController.loadTableData();
+        attributesController.loadData();
+        columnsController.loadTableData();
     }
 
     @FXML
@@ -149,6 +149,11 @@ public class ControlData2D extends BaseController {
         interface
      */
     @Override
+    public boolean checkBeforeNextAction() {
+        return tableController.checkBeforeNextAction();
+    }
+
+    @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
             try {
@@ -159,8 +164,12 @@ public class ControlData2D extends BaseController {
                 } else if (tab == viewTab) {
                     return viewController.keyEventsFilter(event);
 
-                } else if (tab == defineTab) {
-                    return defineController.keyEventsFilter(event);
+                } else if (tab == attributesTab) {
+                    return attributesController.keyEventsFilter(event);
+
+                } else if (tab == columnsTab) {
+                    return columnsController.keyEventsFilter(event);
+
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);

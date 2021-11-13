@@ -1,20 +1,15 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.util.Arrays;
 import java.util.List;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
@@ -25,10 +20,9 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableComboBoxCell;
-import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import thridparty.TableAutoCommitCell;
 
 /**
@@ -36,30 +30,22 @@ import thridparty.TableAutoCommitCell;
  * @CreateDate 2021-10-16
  * @License Apache License Version 2.0
  */
-public class ControlData2DDefine extends BaseTableViewController<Data2DColumn> {
+public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> {
 
     protected ControlData2D dataController;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
-    protected int maxRandom;
-    protected short scale;
     protected boolean changed;
 
     @FXML
     protected TableColumn<Data2DColumn, String> nameColumn, typeColumn;
     @FXML
-    protected TableColumn<Data2DColumn, Boolean> notNullColumn;
+    protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn;
     @FXML
     protected TableColumn<Data2DColumn, Integer> indexColumn, lengthColumn, widthColumn;
-    @FXML
-    protected Label idLabel;
-    @FXML
-    protected TextField timeInput, dataTypeInput, dataNameInput;
-    @FXML
-    protected ComboBox<String> scaleSelector, randomSelector;
 
-    public ControlData2DDefine() {
+    public ControlData2DColumns() {
     }
 
     @Override
@@ -119,22 +105,82 @@ public class ControlData2DDefine extends BaseTableViewController<Data2DColumn> {
                 }
             });
 
-            notNullColumn.setCellValueFactory(new PropertyValueFactory<>("notNull"));
-            notNullColumn.setCellFactory(CheckBoxTableCell.forTableColumn(notNullColumn));
-            notNullColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Boolean>>() {
+            editableColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<Data2DColumn, Boolean> t) {
-                    if (t == null) {
-                        return;
+                public TableCell<Data2DColumn, Boolean> call(TableColumn<Data2DColumn, Boolean> param) {
+                    try {
+                        TableCheckboxCell<Data2DColumn, Boolean> cell = new TableCheckboxCell<>() {
+                            @Override
+                            protected boolean getCellValue(int rowIndex) {
+                                try {
+                                    return tableData.get(rowIndex).isEditable();
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            }
+
+                            @Override
+                            protected void setCellValue(int rowIndex, boolean value) {
+                                try {
+                                    if (rowIndex < 0) {
+                                        return;
+                                    }
+                                    Data2DColumn column = tableData.get(rowIndex);
+                                    if (column == null) {
+                                        return;
+                                    }
+                                    if (value != column.isEditable()) {
+                                        column.setEditable(value);
+                                        changed(true);
+                                    }
+                                } catch (Exception e) {
+                                    MyBoxLog.debug(e);
+                                }
+                            }
+                        };
+                        return cell;
+                    } catch (Exception e) {
+                        return null;
                     }
-                    Data2DColumn column = t.getRowValue();
-                    Boolean v = t.getNewValue();
-                    if (column == null || v == null) {
-                        return;
-                    }
-                    if (v != column.isNotNull()) {
-                        t.getRowValue().setNotNull(v);
-                        changed(true);
+                }
+            });
+
+            notNullColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
+                @Override
+                public TableCell<Data2DColumn, Boolean> call(TableColumn<Data2DColumn, Boolean> param) {
+                    try {
+                        TableCheckboxCell<Data2DColumn, Boolean> cell = new TableCheckboxCell<>() {
+                            @Override
+                            protected boolean getCellValue(int rowIndex) {
+                                try {
+                                    return tableData.get(rowIndex).isEditable();
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            }
+
+                            @Override
+                            protected void setCellValue(int rowIndex, boolean value) {
+                                try {
+                                    if (rowIndex < 0) {
+                                        return;
+                                    }
+                                    Data2DColumn column = tableData.get(rowIndex);
+                                    if (column == null) {
+                                        return;
+                                    }
+                                    if (value != column.isEditable()) {
+                                        column.setEditable(value);
+                                        changed(true);
+                                    }
+                                } catch (Exception e) {
+                                    MyBoxLog.debug(e);
+                                }
+                            }
+                        };
+                        return cell;
+                    } catch (Exception e) {
+                        return null;
                     }
                 }
             });
@@ -195,68 +241,6 @@ public class ControlData2DDefine extends BaseTableViewController<Data2DColumn> {
             baseName = dataController.baseName;
             data2D = dataController.data2D;
 
-            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
-            if (scale < 0) {
-                scale = 2;
-            }
-            scaleSelector.getItems().addAll(
-                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
-            );
-            scaleSelector.setValue(scale + "");
-            scaleSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(scaleSelector.getValue());
-                            if (v >= 0 && v <= 15) {
-                                scale = (short) v;
-                                UserConfig.setInt(baseName + "Scale", v);
-                                scaleSelector.getEditor().setStyle(null);
-                                changed(true);
-                            } else {
-                                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    });
-
-            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
-            if (maxRandom < 0) {
-                maxRandom = 100000;
-            }
-            randomSelector.getItems().addAll(Arrays.asList("1", "100", "10", "1000", "10000", "1000000", "10000000"));
-            randomSelector.setValue(maxRandom + "");
-            randomSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                maxRandom = v;
-                                UserConfig.setInt(baseName + "MaxRandom", v);
-                                randomSelector.getEditor().setStyle(null);
-                                changed(true);
-                            } else {
-                                randomSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            randomSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    });
-
-            saveButton.disableProperty().bind(Bindings.isEmpty(dataNameInput.textProperty())
-                    .or(dataNameInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(Bindings.isEmpty(scaleSelector.getEditor().textProperty()))
-                    .or(scaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(Bindings.isEmpty(randomSelector.getEditor().textProperty()))
-                    .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -267,22 +251,10 @@ public class ControlData2DDefine extends BaseTableViewController<Data2DColumn> {
         try {
             tableData.clear();
             tableView.refresh();
-            checkSelected();
-            idLabel.setText("");
-            dataNameInput.setText("");
-            editNull();
             changed(false);
             if (data2D == null) {
                 return;
             }
-            isSettingValues = true;
-            idLabel.setText(data2D.getD2did() + "");
-            timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
-            dataTypeInput.setText(message(data2D.getType().name()));
-            dataNameInput.setText(data2D.getDataName());
-            scaleSelector.setValue(data2D.getScale() + "");
-            randomSelector.setValue(data2D.getMaxRandom() + "");
-            isSettingValues = false;
             if (data2D.isColumnsValid()) {
                 for (Data2DColumn column : data2D.getColumns()) {
                     tableData.add(column.cloneBase());
@@ -296,7 +268,7 @@ public class ControlData2DDefine extends BaseTableViewController<Data2DColumn> {
 
     public void changed(boolean changed) {
         this.changed = changed;
-        dataController.defineTab.setText(message("Define") + (changed ? "*" : ""));
+        dataController.columnsTab.setText(message("Columns") + (changed ? "*" : ""));
     }
 
     @FXML
@@ -339,11 +311,6 @@ public class ControlData2DDefine extends BaseTableViewController<Data2DColumn> {
     public void saveAction() {
         if (data2D.isFile() && data2D.getFile() == null) {
             dataController.saveAction();
-            return;
-        }
-        String name = dataNameInput.getText();
-        if (name == null || name.isBlank()) {
-            popError(message("InvalidParameter") + ": " + message("ColumnName"));
             return;
         }
         StringTable validateTable = Data2DColumn.validate(tableData);

@@ -72,7 +72,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     protected Label tableLabel;
 
     public BaseBatchTableController() {
-        TipsLabelKey = "TableTips";
         sourceExtensionFilter = FileFilters.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
@@ -184,13 +183,11 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 });
                 items.add(menu);
             }
-            if (clearFilesButton != null && clearFilesButton.isVisible() && !clearFilesButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Clear"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    clearFilesAction();
-                });
-                items.add(menu);
-            }
+            menu = new MenuItem(Languages.message("Clear"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                clearFilesAction();
+            });
+            items.add(menu);
 
             if (infoButton != null && infoButton.isVisible() && !infoButton.isDisabled()) {
                 menu = new MenuItem(Languages.message("Information") + "  CTRL+i");
@@ -678,9 +675,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         }
         if (deleteFilesButton != null) {
             deleteFilesButton.setDisable(none);
-        }
-        if (clearFilesButton != null) {
-            clearFilesButton.setDisable(isEmpty);
         }
         if (infoButton != null) {
             infoButton.setDisable(none);

@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFile;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -50,6 +51,22 @@ public abstract class BaseData2DFileController extends BaseController {
         TipsLabelKey = "DataFileTips";
     }
 
+    /*
+        abstract
+     */
+    public abstract boolean savePageData(File file);
+
+    public abstract boolean savePageDataAs(File file);
+
+    public abstract void open(File file);
+
+    public abstract void pickOptions();
+
+    protected abstract void updateInfoLabel();
+
+    /*
+        init
+     */
     @Override
     public void initValues() {
         try {
@@ -191,6 +208,9 @@ public abstract class BaseData2DFileController extends BaseController {
                 task.cancel();
             }
             initFile();
+            if (!dataFile.isUserSavedDataDefinition()) {
+                pickOptions();
+            }
             task = new SingletonTask<Void>(this) {
 
                 private StringTable validateTable;
@@ -202,42 +222,38 @@ public abstract class BaseData2DFileController extends BaseController {
                     if (d2did < 0 || isCancelled()) {
                         return false;
                     }
-                    List<Data2DColumn> fileColumns = dataFile.readColumns();
+                    List<String> names = dataFile.readColumns();
                     if (isCancelled()) {
                         return false;
                     }
-                    List<Data2DColumn> columns = new ArrayList<>();
-                    List<Data2DColumn> savedColumns = dataFile.getSavedColumns();
-                    if (fileColumns == null || fileColumns.isEmpty()) {
-                        columns.addAll(savedColumns);
+                    if (names == null || names.isEmpty()) {
+                        dataFile.setHasHeader(false);
+                        tableData2DColumn.clearFile(dataFile);
+                        dataFile.setColumns(null);
                     } else {
-                        for (Data2DColumn c : fileColumns) {
-                            boolean found = false;
-                            if (savedColumns != null) {
-                                for (Data2DColumn def : savedColumns) {
-                                    if (def.getName().equals(c.getName())) {
-                                        columns.add(def);
-                                        found = true;
-                                        break;
-                                    }
+                        List<Data2DColumn> columns = new ArrayList<>();
+                        List<Data2DColumn> savedColumns = dataFile.getSavedColumns();
+                        for (int i = 0; i < names.size(); i++) {
+                            Data2DColumn column;
+                            if (savedColumns != null && i < savedColumns.size()) {
+                                column = savedColumns.get(i);
+                                if (dataFile.isHasHeader()) {
+                                    column.setName(names.get(i));
                                 }
+                            } else {
+                                column = new Data2DColumn(names.get(i), ColumnDefinition.ColumnType.String);
                             }
-                            if (!found) {
-                                columns.add(c);
-                            }
+                            column.setD2id(d2did);
+                            column.setIndex(i);
+                            columns.add(column);
                         }
-                    }
-                    dataFile.setColumns(columns);
-                    if (!columns.isEmpty()) {
+                        dataFile.setColumns(columns);
                         validateTable = Data2DColumn.validate(columns);
                         if (validateTable == null || validateTable.isEmpty()) {
                             tableData2DColumn.save(d2did, columns);
                         }
-                        return true;
-                    } else {
-                        tableData2DColumn.clearFile(dataFile);
-                        return false;
                     }
+                    return true;
                 }
 
                 @Override
@@ -329,22 +345,13 @@ public abstract class BaseData2DFileController extends BaseController {
         }
     }
 
-    public void recover() {
-        dataFile.setTableChanged(false);
-        loadFile();
-    }
-
     @FXML
     public void refreshAction() {
         if (!checkBeforeNextAction()) {
             return;
         }
         dataFile.setUserSavedDataDefinition(false);
-        pickOptions();
         loadFile();
-    }
-
-    public void pickOptions() {
     }
 
     @FXML
@@ -368,10 +375,6 @@ public abstract class BaseData2DFileController extends BaseController {
                 updateInfoLabel();
             }
         });
-
-    }
-
-    protected void updateInfoLabel() {
     }
 
     @FXML
@@ -380,37 +383,50 @@ public abstract class BaseData2DFileController extends BaseController {
         if (dataFile == null) {
             return;
         }
-        if (dataFile.getFile() == null) {
-            saveAsAction();
-            return;
-        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
+            File file = dataFile.getFile();
+            if (file == null) {
+                file = chooseSaveFile();
+                if (file == null) {
+                    return;
+                }
+            }
+            File tFile = file;
             task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
+                    dataFile.setTask(task);
                     backup();
-                    error = savePageData();
-                    return error == null;
+                    return savePageData(tFile);
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     popInformation(message("Saved"));
-                    recordFileWritten(dataFile.getFile());
-                    loadFile();
+                    recordFileWritten(tFile);
+                    if (sourceFile == null) {
+                        sourceFile = tFile;
+                    }
+                    tableController.tableChanged(false);
+                    dataFile.setEndRowOfCurrentPage(dataFile.getStartRowOfCurrentPage() + dataFile.tableRowsNumber());
+                    dataFile.setTotalRead(false);
+                    updateStatus();
+                    loadTotal();
+                }
+
+                @Override
+                protected void finalAction() {
+                    dataFile.setTask(null);
+                    task = null;
                 }
 
             };
             start(task);
         }
-    }
-
-    public String savePageData() {
-        return null;
     }
 
     @FXML
@@ -429,8 +445,8 @@ public abstract class BaseData2DFileController extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    error = savePageDataAs(file);
-                    return error == null;
+                    dataFile.setTask(task);
+                    return savePageDataAs(file);
                 }
 
                 @Override
@@ -443,22 +459,20 @@ public abstract class BaseData2DFileController extends BaseController {
                             return;
                         }
                         sourceFileChanged(file);
-                        return;
+                    } else {
+                        open(file);
                     }
-                    open(file);
+                }
+
+                @Override
+                protected void finalAction() {
+                    dataFile.setTask(null);
+                    task = null;
                 }
 
             };
             start(task);
         }
-    }
-
-    public String savePageDataAs(File file) {
-        return null;
-    }
-
-    public void open(File file) {
-
     }
 
     @FXML

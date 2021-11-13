@@ -66,7 +66,7 @@ public class ControlData2DEditText extends BaseController {
 
     public void loadData() {
         try {
-            String text = TextTools.dataText(data2D.getTableData(), delimiterName);
+            String text = TextTools.dataPage(data2D, delimiterName, false, false);
             isSettingValues = true;
             textArea.setText(text);
             isSettingValues = false;

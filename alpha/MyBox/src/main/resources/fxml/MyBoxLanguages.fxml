@@ -21,7 +21,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.CheckBox?>
 
 <BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLanguagesController">
     <top>
@@ -137,11 +136,6 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                     <columns>
-                                                        <TableColumn fx:id="rowsSelectionColumn"  minWidth="60.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
-                                                            <graphic>
-                                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
-                                                            </graphic>
-                                                        </TableColumn>
                                                         <TableColumn fx:id="tableKeyColumn" editable="false" prefWidth="150.0" text="%Key" />
                                                         <TableColumn fx:id="tableValueColumn" prefWidth="400.0" text="%Translation" />
                                                         <TableColumn fx:id="tableEnglishColumn" editable="false" prefWidth="400.0" text="%English" />

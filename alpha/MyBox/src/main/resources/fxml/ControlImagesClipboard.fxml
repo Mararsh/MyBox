@@ -123,9 +123,9 @@
         </FlowPane>
         <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="rowsSelectionColumn"  minWidth="60.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
                     <graphic>
-                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%Row" />
+                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                     </graphic>
                 </TableColumn>
                 <TableColumn fx:id="thumbColumn" editable="false" prefWidth="120.0" text="%Image" />

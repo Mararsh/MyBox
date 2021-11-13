@@ -214,17 +214,20 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
             return false;
         }
         try {
-            clear(conn, d2id);
-            conn.commit();
-            int index = 0;
-            for (Data2DColumn column : columns) {
-                column.setD2id(d2id);
-                column.setIndex(index++);
-            }
+            boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
-            insertList(conn, columns);
+            for (int i = 0; i < columns.size(); i++) {
+                Data2DColumn column = columns.get(i);
+                column.setD2id(d2id);
+                column.setIndex(i);
+                if (column.getD2cid() >= 0) {
+                    updateData(conn, column);
+                } else {
+                    insertData(conn, column);
+                }
+            }
             conn.commit();
-            conn.setAutoCommit(true);
+            conn.setAutoCommit(ac);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -255,19 +258,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
                         .setFile(file).setDataName(dataName);
                 tableData2DDefinition.insertData(conn, dataDefinition);
             }
-            long d2id = dataDefinition.getD2did();
-            clear(conn, d2id);
-            conn.commit();
-            int index = 0;
-            for (Data2DColumn column : columns) {
-                column.setD2id(d2id);
-                column.setIndex(index++);
-            }
-            conn.setAutoCommit(false);
-            insertList(conn, columns);
-            conn.commit();
-            conn.setAutoCommit(true);
-            return true;
+            return save(conn, dataDefinition.getD2did(), columns);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

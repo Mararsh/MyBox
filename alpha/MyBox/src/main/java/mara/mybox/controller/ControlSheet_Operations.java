@@ -353,7 +353,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                 }
             }
         }
-        columnsController.loadTableData();
+//        columnsController.loadTableData();
         popSuccessful();
     }
 

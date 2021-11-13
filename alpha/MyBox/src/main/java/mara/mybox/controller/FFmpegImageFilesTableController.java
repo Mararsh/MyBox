@@ -4,10 +4,8 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.converter.LongStringConverter;
@@ -80,39 +78,36 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             durationColumn.setCellFactory((TableColumn<FileInformation, Long> param) -> {
                 TableAutoCommitCell<FileInformation, Long> cell
                         = new TableAutoCommitCell<FileInformation, Long>(new LongStringConverter()) {
+
                     @Override
-                    public void commitEdit(Long val) {
-                        if (val <= 0) {
-                            cancelEdit();
-                        } else {
-                            super.commitEdit(val);
+                    public boolean valid(Long value) {
+                        return value > 0;
+                    }
+
+                    @Override
+                    public void commitEdit(Long value) {
+                        try {
+                            int rowIndex = rowIndex();
+                            if (rowIndex < 0 || !valid(value)) {
+                                cancelEdit();
+                                return;
+                            }
+                            FileInformation row = tableData.get(rowIndex);
+                            if (value != row.getDuration()) {
+                                super.commitEdit(value);
+                                row.setDuration(value);
+                                if (!isSettingValues) {
+                                    Platform.runLater(() -> {
+                                        updateLabel();
+                                    });
+                                }
+                            }
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e);
                         }
                     }
                 };
                 return cell;
-            });
-            durationColumn.setOnEditCommit(new EventHandler<CellEditEvent<FileInformation, Long>>() {
-                @Override
-                public void handle(CellEditEvent<FileInformation, Long> t) {
-                    try {
-                        FileInformation row = t.getRowValue();
-                        Long v = t.getNewValue();
-                        if (row == null || v == null || v <= 0 || v == row.getDuration()) {
-                            return;
-                        }
-                        row.setDuration(v);
-                        if (!isSettingValues) {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    updateLabel();
-                                }
-                            });
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                    }
-                }
             });
             durationColumn.getStyleClass().add("editable-column");
 

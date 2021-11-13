@@ -379,30 +379,32 @@ public class GameEliminationController extends BaseController {
                 public TableCell<ScoreRuler, Integer> call(TableColumn<ScoreRuler, Integer> param) {
                     TableAutoCommitCell<ScoreRuler, Integer> cell
                             = new TableAutoCommitCell<ScoreRuler, Integer>(new IntegerStringConverter()) {
+
                         @Override
-                        public void commitEdit(Integer val) {
-                            if (val < 0) {
-                                cancelEdit();
-                            } else {
-                                super.commitEdit(val);
+                        public boolean valid(Integer value) {
+                            return value >= 0;
+                        }
+
+                        @Override
+                        public void commitEdit(Integer value) {
+                            try {
+                                int rowIndex = rowIndex();
+                                if (rowIndex < 0 || !valid(value)) {
+                                    cancelEdit();
+                                    return;
+                                }
+                                ScoreRuler row = scoreRulersData.get(rowIndex);
+                                if (row == null || value == null || value < 0) {
+                                    return;
+                                }
+                                super.commitEdit(value);
+                                row.score = value;
+                            } catch (Exception e) {
+                                MyBoxLog.debug(e);
                             }
                         }
                     };
                     return cell;
-                }
-            });
-            scoreColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<ScoreRuler, Integer>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<ScoreRuler, Integer> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    ScoreRuler row = t.getRowValue();
-                    Integer v = t.getNewValue();
-                    if (row == null || v == null || v < 0) {
-                        return;
-                    }
-                    row.score = v;
                 }
             });
             scoreColumn.getStyleClass().add("editable-column");

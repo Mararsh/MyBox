@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.List;
 import java.util.Optional;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -34,6 +35,9 @@ import thridparty.TableAutoCommitCell;
  */
 public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
+    @FXML
+    protected TableColumn<List<String>, Integer> dataRowColumn;
+
     public ControlData2DEditTable() {
     }
 
@@ -57,6 +61,27 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             pageLastButton = dataController.pageLastButton;
 
             initPagination();
+
+            data2D.setTableData(tableData);
+            tableView.setEditable(true);
+            rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
+
+            dataRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, Integer>, ObservableValue<Integer>>() {
+                @Override
+                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<List<String>, Integer> param) {
+                    try {
+                        List<String> row = (List<String>) param.getValue();
+                        String value = row.get(0);
+                        if (value == null) {
+                            return null;
+                        }
+                        return new ReadOnlyObjectWrapper(Integer.valueOf(value));
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            });
+            dataRowColumn.setEditable(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -102,7 +127,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void postLoadedTableData() {
         super.postLoadedTableData();
         data2D.setTask(null);
-        tableChanged(false);
         data2D.notifyPageLoaded();
     }
 
@@ -133,12 +157,13 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void makeColumns() {
         try {
             tableData.clear();
-            tableView.getColumns().remove(1, tableView.getColumns().size());
+            tableView.getColumns().remove(2, tableView.getColumns().size());
+            tableView.setItems(tableData);
+
             if (data2D == null || !data2D.isColumnsValid()) {
                 return;
             }
-            tableView.setEditable(true);
-            rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView, data2D.getStartRowOfCurrentPage()));
+            data2D.setTableData(tableData);
 
             List<Data2DColumn> columns = data2D.getColumns();
             for (int i = 0; i < columns.size(); i++) {
@@ -146,8 +171,8 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                 String name = column.getName();
                 TableColumn tableColumn = new TableColumn<List<String>, String>(name);
                 tableColumn.setPrefWidth(column.getWidth());
-                tableColumn.setEditable(true);
-                int col = i;
+                tableColumn.setEditable(column.isEditable());
+                int col = i + 1;
 
                 tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>() {
                     @Override
@@ -172,9 +197,31 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                             TableAutoCommitCell<List<String>, String> cell
                                     = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
                                 @Override
-                                public boolean valid(final String value) {
+                                public boolean valid(String value) {
                                     return column.validValue(value);
                                 }
+
+                                @Override
+                                public void commitEdit(String value) {
+                                    try {
+                                        int rowIndex = rowIndex();
+                                        if (rowIndex < 0 || !valid(value)) {
+                                            cancelEdit();
+                                            return;
+                                        }
+                                        List<String> row = tableData.get(rowIndex);
+                                        String oldValue = row.get(col);
+                                        if ((value == null && oldValue != null)
+                                                || (value != null && !value.equals(oldValue))) {
+                                            super.commitEdit(value);
+                                            row.set(col, value);
+                                            tableChanged(true);
+                                        }
+                                    } catch (Exception e) {
+                                        MyBoxLog.debug(e);
+                                    }
+                                }
+
                             };
                             return cell;
                         } catch (Exception e) {
@@ -182,25 +229,9 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                         }
                     }
                 });
-                tableColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<String>, String>>() {
-                    @Override
-                    public void handle(TableColumn.CellEditEvent<List<String>, String> t) {
-                        if (t == null) {
-                            return;
-                        }
-                        List<String> row = t.getRowValue();
-                        String newValue = t.getNewValue();
-                        if (row == null || column.validValue(newValue)) {
-                            return;
-                        }
-                        String oldValue = row.get(col);
-                        if ((newValue == null && oldValue != null)
-                                || (newValue != null && !newValue.equals(oldValue))) {
-                            row.set(col, newValue);
-                            tableChanged(true);
-                        }
-                    }
-                });
+
+                tableColumn.getStyleClass().add("editable-column");
+
                 tableView.getColumns().add(tableColumn);
             }
 
@@ -209,10 +240,27 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
         }
     }
 
+    @Override
     public void tableChanged(boolean changed) {
         editController.tableTab.setText(message("Table") + (changed ? "*" : ""));
-
+        if (changed) {
+            dataController.editTab.setText(message("Edit") + "*");
+        }
+        updateSizeLabel();
         data2D.setTableChanged(changed);
+    }
+
+    @FXML
+    @Override
+    public void deleteAction() {
+        List<List<String>> selected = tableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            return;
+        }
+        isSettingValues = true;
+        tableData.removeAll(selected);
+        isSettingValues = false;
+        tableChanged(true);
     }
 
     @FXML

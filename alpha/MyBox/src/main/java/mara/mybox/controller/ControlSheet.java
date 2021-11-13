@@ -224,7 +224,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
     protected void afterDataChanged() {
         try {
             updateEdit();
-            columnsController.loadTableData();
+//            columnsController.loadTableData();
             updateHtml();
             updateText();
 

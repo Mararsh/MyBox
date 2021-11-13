@@ -68,7 +68,7 @@ public class NoteEditorController extends HtmlEditorController {
     @FXML
     protected TextField idInput, titleInput, timeInput;
     @FXML
-    protected Tab styleTab, tagsTab;
+    protected Tab attributesTab, styleTab, tagsTab;
     @FXML
     protected TextArea styleInput;
     @FXML
@@ -91,11 +91,10 @@ public class NoteEditorController extends HtmlEditorController {
             currentNote = null;
 
             initTabPane();
-
-            titleInput.setText(message("Note"));
-            styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle));
-
+            initAttributesTab();
             initTagsTab();
+            initStyleTab();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -194,6 +193,18 @@ public class NoteEditorController extends HtmlEditorController {
     @FXML
     protected void recoverNote() {
         loadNote();
+    }
+
+    /*
+        attributes
+     */
+    public void initAttributesTab() {
+        try {
+            titleInput.setText(message("Note"));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*
@@ -457,6 +468,15 @@ public class NoteEditorController extends HtmlEditorController {
     /*
         Note style
      */
+    public void initStyleTab() {
+        try {
+            styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @FXML
     public void popDefaultStyle(MouseEvent mouseEvent) {
         try {
@@ -553,6 +573,16 @@ public class NoteEditorController extends HtmlEditorController {
         try {
             super.showTabs();
 
+            if (!UserConfig.getBoolean(baseName + "ShowAttributesTab", true)) {
+                tabPane.getTabs().remove(attributesTab);
+            }
+            attributesTab.setOnCloseRequest(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(baseName + "ShowAttributesTab", false);
+                }
+            });
+
             if (!UserConfig.getBoolean(baseName + "ShowTagsTab", true)) {
                 tabPane.getTabs().remove(tagsTab);
             }
@@ -581,6 +611,26 @@ public class NoteEditorController extends HtmlEditorController {
     public List<MenuItem> makePanesMenu(MouseEvent mouseEvent) {
         List<MenuItem> items = super.makePanesMenu(mouseEvent);
         try {
+            CheckMenuItem attributesMenu = new CheckMenuItem(message("Attributes"));
+            attributesMenu.setSelected(tabPane.getTabs().contains(attributesTab));
+            attributesMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowAttributesTab", attributesMenu.isSelected());
+                    if (attributesMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(attributesTab)) {
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, attributesTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(attributesTab)) {
+                            tabPane.getTabs().remove(attributesTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(tabPane);
+                }
+            });
+            items.add(0, attributesMenu);
+
             CheckMenuItem tagsMenu = new CheckMenuItem(message("Tags"));
             tagsMenu.setSelected(tabPane.getTabs().contains(tagsTab));
             tagsMenu.setOnAction(new EventHandler<ActionEvent>() {

@@ -173,7 +173,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (rowsSelectionColumn != null) {
-                rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView, 0));
+                rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
             }
 
         } catch (Exception e) {
@@ -211,9 +211,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     if (data != null && !data.isEmpty()) {
-                        if (rowsSelectionColumn != null) {
-                            rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView, startRowOfCurrentPage));
-                        }
                         isSettingValues = true;
                         tableData.setAll(data);
                         isSettingValues = false;
@@ -255,6 +252,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         updateSizeLabel();
         editNull();
         viewNull();
+        tableChanged(false);
     }
 
     public long readDataSize() {
@@ -266,7 +264,13 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     protected void tableChanged() {
-        updateSizeLabel();
+        tableChanged(true);
+    }
+
+    public void tableChanged(boolean changed) {
+        if (changed) {
+            updateSizeLabel();
+        }
     }
 
     protected void updateSizeLabel() {
@@ -406,9 +410,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         editNull();
         viewNull();
         updateSizeLabel();
-        if (paginationBox != null) {
-            paginationBox.setVisible(false);
-        }
     }
 
     /*
@@ -590,7 +591,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 protected void whenSucceeded() {
                     popInformation(message("Deleted") + ":" + deletedCount);
                     if (deletedCount > 0) {
-                        resetView();
+
                         afterClear();
                     }
                 }
@@ -600,16 +601,19 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     protected int clearData() {
-        return 0;
+        int size = tableData.size();
+        tableData.clear();
+        return size;
     }
 
     protected void afterClear() {
+        resetView();
         afterDeletion();
     }
 
     @FXML
     public void refreshAction() {
-        loadTableData();
+        loadPage(currentPage);
     }
 
     @FXML

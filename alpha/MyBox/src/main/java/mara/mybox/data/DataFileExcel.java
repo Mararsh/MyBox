@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import static mara.mybox.value.Languages.message;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -38,6 +35,7 @@ public class DataFileExcel extends DataFile {
         if (file == null) {
             return -1;
         }
+        savedColumns = null;
         try ( Connection conn = DerbyBase.getConnection();
                  Workbook wb = WorkbookFactory.create(file)) {
             int sheetsNumber = wb.getNumberOfSheets();
@@ -45,53 +43,28 @@ public class DataFileExcel extends DataFile {
             for (int i = 0; i < sheetsNumber; i++) {
                 sheetNames.add(wb.getSheetName(i));
             }
-            Sheet sheet;
-            if (currentSheetName != null) {
-                sheet = wb.getSheet(currentSheetName);
-            } else {
-                sheet = wb.getSheetAt(0);
-                currentSheetName = sheet.getSheetName();
+            if (currentSheetName == null && sheetsNumber > 0) {
+                currentSheetName = wb.getSheetAt(0).getSheetName();
             }
-
             Data2DDefinition definition = tableData2DDefinition.queryFileName(conn, type, file, currentSheetName);
-
-            if (userSavedDataDefinition && definition != null) {
-                hasHeader = definition.isHasHeader();
-            }
-            boolean changed = !userSavedDataDefinition;
-            if (hasHeader) {
-                Iterator<Row> iterator = sheet.iterator();
-                Row firstRow = null;
-                if (iterator != null) {
-                    while (iterator.hasNext()) {
-                        firstRow = iterator.next();
-                        if (firstRow != null) {
-                            break;
-                        }
-                    }
-                }
-                if (firstRow == null) {
+            if (userSavedDataDefinition) {
+                if (definition != null) {
+                    load(definition);
+                } else {
                     hasHeader = false;
-                    changed = true;
                 }
             }
+            dataName = currentSheetName == null ? file.getName() : currentSheetName;
             if (definition == null) {
-                definition = Data2DDefinition.create().setType(type)
-                        .setFile(file).setDataName(currentSheetName)
-                        .setHasHeader(hasHeader);
-                tableData2DDefinition.insertData(conn, definition);
+                definition = tableData2DDefinition.insertData(conn, this);
                 conn.commit();
+                d2did = definition.getD2did();
             } else {
-                if (changed) {
-                    definition.setType(type)
-                            .setFile(file).setDataName(currentSheetName)
-                            .setHasHeader(hasHeader);
-                    definition = tableData2DDefinition.updateData(conn, definition);
-                    conn.commit();
-                }
-                savedColumns = tableData2DColumn.read(conn, definition.getD2did());
+                tableData2DDefinition.updateData(conn, this);
+                conn.commit();
+                d2did = definition.getD2did();
+                savedColumns = tableData2DColumn.read(conn, d2did);
             }
-            d2did = definition.getD2did();
             userSavedDataDefinition = true;
         } catch (Exception e) {
             if (task != null) {
@@ -103,8 +76,8 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public List<Data2DColumn> readColumns() {
-        List<Data2DColumn> fileColumns = null;
+    public List<String> readColumns() {
+        List<String> names = null;
         try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sheet;
             if (currentSheetName != null) {
@@ -129,38 +102,24 @@ public class DataFileExcel extends DataFile {
                 hasHeader = false;
                 return null;
             }
-            fileColumns = new ArrayList<>();
+            names = new ArrayList<>();
             for (int col = firstRow.getFirstCellNum(); col < firstRow.getLastCellNum(); col++) {
-                String name = (message(colPrefix()) + (col + 1));
-                ColumnType ctype = ColumnType.String;
+                String name = null;
                 if (hasHeader) {
-                    Cell cell = firstRow.getCell(col);
-                    if (cell != null) {
-                        switch (cell.getCellType()) {
-                            case NUMERIC:
-                                ctype = ColumnType.Double;
-                                break;
-                            case BOOLEAN:
-                                ctype = ColumnType.Boolean;
-                                break;
-                        }
-                        String v = MicrosoftDocumentTools.cellString(cell);
-                        if (!v.isBlank()) {
-                            name = v;
-                        }
-                    }
+                    name = MicrosoftDocumentTools.cellString(firstRow.getCell(col));
                 }
-                Data2DColumn column = new Data2DColumn(name, ctype);
-                fileColumns.add(column);
+                if (name == null) {
+                    name = (message(colPrefix()) + (col + 1));
+                }
+                names.add(name);
             }
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.console(e);
-            return null;
         }
-        return fileColumns;
+        return names;
     }
 
     @Override
@@ -176,13 +135,15 @@ public class DataFileExcel extends DataFile {
             }
             Iterator<Row> iterator = sheet.iterator();
             if (iterator != null) {
-                while (backgroundTask != null && !backgroundTask.isCancelled() && iterator.hasNext()) {
+                while (iterator.hasNext()) {
+                    if (backgroundTask == null || backgroundTask.isCancelled()) {
+                        dataSize = 0;
+                        break;
+                    }
                     iterator.next();
                     dataSize++;
                 }
-                if (backgroundTask == null || backgroundTask.isCancelled()) {
-                    dataSize = 0;
-                } else if (hasHeader && dataSize > 0) {
+                if (hasHeader && dataSize > 0) {
                     dataSize--;
                 }
             }
@@ -201,7 +162,7 @@ public class DataFileExcel extends DataFile {
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
         }
-        tableData.clear();
+        endRowOfCurrentPage = startRowOfCurrentPage;
         try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sheet;
             if (currentSheetName != null) {
@@ -241,6 +202,7 @@ public class DataFileExcel extends DataFile {
                     }
                     rows.add(row);
                 }
+                endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
                 return rows;
             }
         } catch (Exception e) {

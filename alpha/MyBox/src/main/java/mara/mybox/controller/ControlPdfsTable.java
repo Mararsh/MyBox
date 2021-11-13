@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,6 +14,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.util.converter.IntegerStringConverter;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -86,35 +86,54 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             userPasswordColumn.getStyleClass().add("editable-column");
 
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("fromPage"));
-            fromColumn.setCellFactory(TableAutoCommitCell.forIntegerColumn());
-            fromColumn.setOnEditCommit((TableColumn.CellEditEvent<PdfInformation, Integer> t) -> {
-                if (t == null) {
-                    return;
-                }
-                PdfInformation row = t.getRowValue();
-                Integer v = t.getNewValue();
-                if (row == null || v == null || v <= 0) {
-                    return;
-                }
-                row.setFromPage(v);
+            fromColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
+                TableAutoCommitCell<PdfInformation, Integer> cell
+                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
+
+                    @Override
+                    public void commitEdit(Integer value) {
+                        try {
+                            int rowIndex = rowIndex();
+                            if (rowIndex < 0 || value == null || value < 0) {
+                                cancelEdit();
+                                return;
+                            }
+                            super.commitEdit(value);
+                            PdfInformation row = tableData.get(rowIndex);
+                            row.setFromPage(value);
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e);
+                        }
+
+                    }
+                };
+                return cell;
             });
             fromColumn.getStyleClass().add("editable-column");
 
             toColumn.setCellValueFactory(new PropertyValueFactory<>("toPage"));
-            toColumn.setCellFactory(TableAutoCommitCell.forIntegerColumn());
-            toColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, Integer>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<PdfInformation, Integer> t) {
-                    if (t == null) {
-                        return;
+            toColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
+                TableAutoCommitCell<PdfInformation, Integer> cell
+                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
+
+                    @Override
+                    public void commitEdit(Integer value) {
+                        try {
+                            int rowIndex = rowIndex();
+                            if (rowIndex < 0 || value == null) {
+                                cancelEdit();
+                                return;
+                            }
+                            super.commitEdit(value);
+                            PdfInformation row = tableData.get(rowIndex);
+                            row.setToPage(value);
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e);
+                        }
+
                     }
-                    PdfInformation row = t.getRowValue();
-                    Integer v = t.getNewValue();
-                    if (row == null || v == null) {
-                        return;
-                    }
-                    row.setToPage(v);
-                }
+                };
+                return cell;
             });
             toColumn.getStyleClass().add("editable-column");
 

@@ -100,10 +100,11 @@ public abstract class DataFile extends Data2D {
     }
 
     @Override
-    public void savePageData() {
+    public boolean savePageData() {
         if (fileController != null) {
             fileController.saveAction();
         }
+        return true;
     }
 
     /*
