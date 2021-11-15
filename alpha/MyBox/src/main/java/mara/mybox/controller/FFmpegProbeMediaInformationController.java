@@ -42,6 +42,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -407,6 +408,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             tabPane.getTabs().add(videoTab);
         }
         String html = HtmlWriteTools.html(Languages.message("VideoStream"),
+                HtmlStyles.styleValue("Default"),
                 streamTable(videoStream, Languages.message("VideoStream")));
         videoView.getEngine().loadContent​(html);
     }
@@ -433,6 +435,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             tabPane.getTabs().add(audioTab);
         }
         String html = HtmlWriteTools.html(Languages.message("AudioStream"),
+                HtmlStyles.styleValue("Default"),
                 streamTable(audioStream, Languages.message("AudioStream")));
         audioView.getEngine().loadContent​(html);
     }
@@ -464,7 +467,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             s.append(streamTable(stream, Languages.message("Stream") + " " + stream.getIndex())).append("</hr>");
         }
 
-        String html = HtmlWriteTools.html(null, s.toString());
+        String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
         streamsView.getEngine().loadContent​(html);
     }
 
@@ -658,7 +661,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             }
             s.append(StringTable.tableDiv(table)).append("</hr>");
         }
-        String html = HtmlWriteTools.html(Languages.message("Format"), s.toString());
+        String html = HtmlWriteTools.html(Languages.message("Format"), HtmlStyles.styleValue("Default"), s.toString());
         pixelFormatsView.getEngine().loadContent​(html);
     }
 
@@ -808,7 +811,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             s.append(StringTable.tableDiv(table)).append("</hr>");
         }
 
-        String html = HtmlWriteTools.html(Languages.message("Frames"), s.toString());
+        String html = HtmlWriteTools.html(Languages.message("Frames"), HtmlStyles.styleValue("Default"), s.toString());
         framesView.getEngine().loadContent​(html);
     }
 
@@ -910,7 +913,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             s.append(StringTable.tableDiv(table)).append("</hr>");
         }
 
-        String html = HtmlWriteTools.html(Languages.message("Packets"), s.toString());
+        String html = HtmlWriteTools.html(Languages.message("Packets"), HtmlStyles.styleValue("Default"), s.toString());
         packetsView.getEngine().loadContent​(html);
     }
 

@@ -51,6 +51,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
@@ -682,7 +683,7 @@ public abstract class BaseMapController extends BaseController {
                             return false;
                         }
 
-                        String html = HtmlWriteTools.html(htmlTitle, s.toString());
+                        String html = HtmlWriteTools.html(htmlTitle, HtmlStyles.styleValue("Default"), s.toString());
                         TextFileTools.writeFile(htmlFile, html, Charset.forName("utf-8"));
 
                         if (task == null || isCancelled()) {

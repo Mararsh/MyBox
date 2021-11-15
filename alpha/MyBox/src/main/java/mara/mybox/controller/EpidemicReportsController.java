@@ -50,6 +50,7 @@ import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -122,7 +123,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                 + new TableEpidemicReport().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + new TableGeographyCode().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + TableEpidemicReport.CreateStatisticView.replaceAll("\n", "</BR>");
-        tableDefinitionString = HtmlWriteTools.html(tableName, html);
+        tableDefinitionString = HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
         viewDefinition = tableDefinition;
     }
 

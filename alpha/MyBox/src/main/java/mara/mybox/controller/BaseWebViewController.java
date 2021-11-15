@@ -9,6 +9,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 
 /**
@@ -25,22 +26,24 @@ public class BaseWebViewController extends BaseController {
     protected ControlWebView webViewController;
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Html);
-    }
-
-    @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            if (webViewController == null) {
-                return;
+            super.initValues();
+
+            if (webViewController != null) {
+                webViewController.setParent(this);
+                webView = webViewController.webView;
+                webEngine = webViewController.webEngine;
             }
-            webViewController.setParent(this);
-            webView = webViewController.webView;
-            webEngine = webViewController.webEngine;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
     @Override
@@ -61,6 +64,7 @@ public class BaseWebViewController extends BaseController {
     }
 
     public boolean loadFile(File file) {
+        MyBoxLog.error(file);
         if (webViewController == null) {
             return false;
         }
@@ -68,6 +72,7 @@ public class BaseWebViewController extends BaseController {
     }
 
     public boolean loadAddress(String value) {
+        MyBoxLog.error(value);
         if (webViewController == null) {
             return false;
         }
@@ -102,6 +107,14 @@ public class BaseWebViewController extends BaseController {
         return webViewController.address;
     }
 
+    public String getStyle() {
+        return webViewController.style;
+    }
+
+    public void setStyle(String style) {
+        webViewController.style = style;
+    }
+
     public void addressChanged() {
     }
 
@@ -113,7 +126,7 @@ public class BaseWebViewController extends BaseController {
 
     }
 
-    protected void afterPageLoaded() {
+    protected void afterPageLoaded(boolean addressChanged) {
         try {
             updateStageTitle();
         } catch (Exception e) {
@@ -228,7 +241,7 @@ public class BaseWebViewController extends BaseController {
         if (webViewController == null) {
             return;
         }
-        webViewController.refreshAction();
+        webViewController.refresh(false);
     }
 
     @FXML
@@ -238,6 +251,11 @@ public class BaseWebViewController extends BaseController {
             return;
         }
         webViewController.cancelAction();
+    }
+
+    @FXML
+    public void popHtmlStyle(MouseEvent mouseEvent) {
+        PopTools.popHtmlStyle(mouseEvent, webViewController);
     }
 
     @FXML

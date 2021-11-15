@@ -379,37 +379,37 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                          <HBox alignment="CENTER_RIGHT" spacing="5.0">
-                                             <children>
-                                                <CheckBox fx:id="refreshSwitchHtmlCheck" mnemonicParsing="false" selected="true">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconRefreshSwitch.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </CheckBox>
-                                                <CheckBox fx:id="refreshChangeHtmlCheck" mnemonicParsing="false">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/red/iconRefresh.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </CheckBox>
-                                                <Button fx:id="refreshHtmlButton" mnemonicParsing="false" onAction="#refreshHtml">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </HBox>
+                                                        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                                            <children>
+                                                                <CheckBox fx:id="refreshSwitchHtmlCheck" mnemonicParsing="false" selected="true">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconRefreshSwitch.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
+                                                                <CheckBox fx:id="refreshChangeHtmlCheck" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/red/iconRefresh.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
+                                                                <Button fx:id="refreshHtmlButton" mnemonicParsing="false" onAction="#refreshHtml">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
                                                         <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                     <padding>
@@ -433,33 +433,33 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </CheckBox>
-                                                <CheckBox fx:id="refreshSwitchCodesCheck" mnemonicParsing="false" selected="true">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconRefreshSwitch.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </CheckBox>
-                                                <CheckBox fx:id="refreshChangeCodesCheck" mnemonicParsing="false">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/red/iconRefresh.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </CheckBox>
-                                                <Button fx:id="refreshCodesButton" mnemonicParsing="false" onAction="#refreshCodes">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
+                                                                <CheckBox fx:id="refreshSwitchCodesCheck" mnemonicParsing="false" selected="true">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconRefreshSwitch.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
+                                                                <CheckBox fx:id="refreshChangeCodesCheck" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/red/iconRefresh.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
+                                                                <Button fx:id="refreshCodesButton" mnemonicParsing="false" onAction="#refreshCodes">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </HBox>
                                                         <TextArea fx:id="codesArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
@@ -470,7 +470,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
-                                        <Tab fx:id="codesTab1" closable="false" text="%ConversionOptions">
+                                        <Tab closable="false" text="%ConversionOptions">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
@@ -497,12 +497,6 @@ License:    Apache License Version 2.0
                                                                 <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                             </children>
                                                         </HBox>
-                                                        <FlowPane hgap="5.0" layoutX="32.0" layoutY="90.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%Style" />
-                                                                <ComboBox fx:id="styleSelector" prefWidth="240.0" />
-                                                            </children>
-                                                        </FlowPane>
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

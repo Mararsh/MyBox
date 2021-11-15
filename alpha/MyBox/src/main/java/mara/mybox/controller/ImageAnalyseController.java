@@ -64,6 +64,7 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -819,7 +820,7 @@ public class ImageAnalyseController extends ImageViewerController {
             s.append(indent).append(indent).append(indent).append("</TABLE >\n");
             s.append(indent).append(indent).append("</DIV>\n");
 
-            final String html = HtmlWriteTools.html(null, s.toString());
+            final String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
             colorsView.getEngine().loadContent​(html);
 
         } catch (Exception e) {
@@ -1374,7 +1375,7 @@ public class ImageAnalyseController extends ImageViewerController {
                                 return false;
                             }
 
-                            String html = HtmlWriteTools.html("", s.toString());
+                            String html = HtmlWriteTools.html("", HtmlStyles.styleValue("Default"), s.toString());
                             TextFileTools.writeFile(file, html);
 
                             if (task == null || isCancelled()) {

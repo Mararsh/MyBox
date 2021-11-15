@@ -232,6 +232,11 @@ public class MenuWebviewController extends MenuController {
     }
 
     @FXML
+    public void popHtmlStyle(MouseEvent mouseEvent) {
+        PopTools.popHtmlStyle(mouseEvent, webViewController);
+    }
+
+    @FXML
     @Override
     public boolean popAction() {
         webViewController.popAction();
@@ -247,7 +252,7 @@ public class MenuWebviewController extends MenuController {
     }
 
     public void refreshAction() {
-        webViewController.refreshAction();
+        webViewController.refresh(false);
     }
 
     public void backAction() {

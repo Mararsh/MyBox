@@ -41,6 +41,7 @@ import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**
@@ -99,7 +100,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 + tableDefinition.createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + tableDataset.createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + TableLocationData.CreateView.replaceAll("\n", "</BR>");
-        tableDefinitionString = HtmlWriteTools.html(tableName, html);
+        tableDefinitionString = HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
     }
 
     @Override

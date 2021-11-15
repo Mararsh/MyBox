@@ -11,9 +11,9 @@ import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,13 +27,10 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.HtmlStyles;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -43,13 +40,12 @@ import mara.mybox.value.UserConfig;
  */
 public class MarkdownEditorController extends TextEditorController {
 
-    protected WebView webView;
-    protected WebEngine webEngine;
     protected MutableDataSet htmlOptions;
     protected Parser htmlParser;
     protected HtmlRenderer htmlRenderer;
     protected int indentSize = 4;
     protected long htmlPage, codesPage;
+    protected double htmlScrollLeft, htmlScrollTop;
 
     @FXML
     protected TabPane tabPane;
@@ -58,7 +54,7 @@ public class MarkdownEditorController extends TextEditorController {
     @FXML
     protected TextArea codesArea;
     @FXML
-    protected ComboBox<String> emulationSelector, indentSelector, styleSelector;
+    protected ComboBox<String> emulationSelector, indentSelector;
     @FXML
     protected CheckBox trimCheck, appendCheck, discardCheck, linesCheck, wrapCodesCheck,
             refreshSwitchHtmlCheck, refreshChangeHtmlCheck, refreshSwitchCodesCheck, refreshChangeCodesCheck;
@@ -68,8 +64,18 @@ public class MarkdownEditorController extends TextEditorController {
     protected ControlWebView webViewController;
 
     public MarkdownEditorController() {
-        baseTitle = Languages.message("MarkdownEditer");
+        baseTitle = message("MarkdownEditer");
         TipsLabelKey = "MarkdownEditerTips";
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            webViewController.setParent(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
@@ -115,10 +121,6 @@ public class MarkdownEditorController extends TextEditorController {
                     }
                 }
             });
-
-            webViewController.setParent(this);
-            webView = webViewController.webView;
-            webEngine = webViewController.webEngine;
 
             refreshSwitchHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchHtml", true));
             refreshSwitchHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -241,20 +243,6 @@ public class MarkdownEditorController extends TextEditorController {
                 }
             });
 
-            List<String> styles = new ArrayList<>();
-            for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
-                styles.add(Languages.message(style.name()));
-            }
-            styleSelector.getItems().addAll(styles);
-            styleSelector.getSelectionModel().select(UserConfig.getString(baseName + "HtmlStyle", Languages.message("Default")));
-            styleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "HtmlStyle", newValue);
-                    updateHtmlConverter();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -283,9 +271,13 @@ public class MarkdownEditorController extends TextEditorController {
 
     @Override
     protected void clearPairArea() {
-        codesArea.setText("");
-        if (webEngine != null) {
-            webEngine.loadContent("");
+        try {
+            codesArea.setText("");
+            if (webViewController != null) {
+                webViewController.loadContents(null);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -335,30 +327,24 @@ public class MarkdownEditorController extends TextEditorController {
     }
 
     protected void markdown2html(boolean updateHtml, boolean updateCodes) {
-        if (!updateHtml && !updateCodes) {
-            return;
-        }
-        if (updateHtml) {
-            webEngine.getLoadWorker().cancel();
-            webEngine.loadContent("");
-        }
-        if (updateCodes) {
-            codesArea.clear();
-        }
-        if (mainArea.getText().isEmpty()) {
+        if (webViewController == null || !updateHtml && !updateCodes) {
             return;
         }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            double htmlScrollLeft = codesArea.getScrollLeft();
-            double htmlScrollTop = codesArea.getScrollTop();
-            int htmlAnchor = codesArea.getAnchor();
-            int htmlCaretPosition = codesArea.getCaretPosition();
-            double htmlWidth = (Integer) webEngine.executeScript("document.documentElement.scrollWidth || document.body.scrollWidth;");
-            double htmlHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
-
+            if (updateHtml) {
+                webViewController.loadContents(null);
+            }
+            htmlScrollLeft = codesArea.getScrollLeft();
+            htmlScrollTop = codesArea.getScrollTop();
+            if (updateCodes) {
+                codesArea.clear();
+            }
+            if (mainArea.getText().isEmpty()) {
+                return;
+            }
             task = new SingletonTask<Void>(this) {
 
                 private String html;
@@ -372,8 +358,7 @@ public class MarkdownEditorController extends TextEditorController {
                         Node document = htmlParser.parse(mainArea.getText());
                         html = htmlRenderer.render(document);
 
-                        String style = UserConfig.getString(baseName + "HtmlStyle", Languages.message("Default"));
-                        html = HtmlWriteTools.html(titleInput.getText(), style, html);
+                        html = HtmlWriteTools.html(titleInput.getText(), html);
                         return html != null;
                     } catch (Exception e) {
                         error = e.toString();
@@ -386,23 +371,25 @@ public class MarkdownEditorController extends TextEditorController {
                     try {
                         if (updateHtml) {
                             Platform.runLater(() -> {
-                                webEngine.loadContent(html);
-                                webEngine.executeScript("window.scrollTo(" + htmlWidth + "," + htmlHeight + ");");
+                                webViewController.loadContents(html);
                                 htmlPage = sourceInformation.getCurrentPage();
                             });
                         }
                         if (updateCodes) {
                             Platform.runLater(() -> {
                                 codesArea.setText(html);
-                                codesArea.setScrollLeft(htmlScrollLeft);
-                                codesArea.setScrollTop(htmlScrollTop);
-                                codesArea.selectRange(htmlAnchor, htmlCaretPosition);
                                 codesPage = sourceInformation.getCurrentPage();
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        codesArea.setScrollLeft(htmlScrollLeft);
+                                        codesArea.setScrollTop(htmlScrollTop);
+                                    }
+                                }, 300);
                             });
                         }
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                        webEngine.getLoadWorker().cancel();
+                        MyBoxLog.error(e);
                     }
                 }
 
@@ -438,7 +425,7 @@ public class MarkdownEditorController extends TextEditorController {
                 return true;
 
             } else if (tab == htmlTab) {
-                HtmlPopController.openWebView(myController, webView);
+                HtmlPopController.openWebView(myController, webViewController.webView);
                 return true;
 
             } else if (tab == codesTab) {
@@ -464,7 +451,7 @@ public class MarkdownEditorController extends TextEditorController {
                 return true;
 
             } else if (tab == htmlTab) {
-                Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
+                Point2D localToScreen = webViewController.webView.localToScreen(webViewController.webView.getWidth() - 80, 80);
                 MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 

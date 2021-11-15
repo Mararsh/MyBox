@@ -236,6 +236,10 @@ public class HtmlReadTools {
         return tag(tag(html, "head", true), "title", false);
     }
 
+    public static String head(String html) {
+        return tag(html, "head", true);
+    }
+
     public static String charsetNameInHead(String head) {
         if (head == null) {
             return null;
@@ -285,6 +289,10 @@ public class HtmlReadTools {
                 }
             }
         }
+    }
+
+    public static String charsetName(String html) {
+        return charsetNameInHead(head(html));
     }
 
     public static Charset charsetInHead(String head) {

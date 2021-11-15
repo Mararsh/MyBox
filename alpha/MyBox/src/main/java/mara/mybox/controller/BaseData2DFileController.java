@@ -67,20 +67,6 @@ public abstract class BaseData2DFileController extends BaseController {
     /*
         init
      */
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            if (leftPaneControl == null) {
-                leftPaneControl = dataController.leftPaneControl;
-            }
-            tableController = dataController.editController.tableController;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     // class should call this before initControls()
     public void setDataType(Data2D.Type type) {
         try {
@@ -88,6 +74,7 @@ public abstract class BaseData2DFileController extends BaseController {
             dataFile = (DataFile) dataController.data2D;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
+            tableController = dataController.editController.tableController;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

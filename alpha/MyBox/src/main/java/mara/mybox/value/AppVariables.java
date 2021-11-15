@@ -68,7 +68,7 @@ public class AppVariables {
             saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;
-            popErrorLogs = true;
+            popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
 
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {

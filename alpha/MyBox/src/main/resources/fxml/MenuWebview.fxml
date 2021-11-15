@@ -134,6 +134,15 @@ License:    Apache License Version 2.0
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="146.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                <children>
+                  <Button fx:id="styleHtmlButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconStyle.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                           <Button fx:id="findButton" mnemonicParsing="false" onAction="#findAction">
                               <graphic>
                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

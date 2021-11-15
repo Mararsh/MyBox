@@ -73,11 +73,6 @@ License:    Apache License Version 2.0
         </TabPane>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
-                <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                    </image>
-                </ImageView>
                 <Label fx:id="dataSizeLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                 <HBox fx:id="paginationBox" alignment="CENTER_LEFT" spacing="2.0">
                     <children>

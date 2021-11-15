@@ -25,4 +25,17 @@ public class ControlHtmlEditor extends ControlWebView {
         }
     }
 
+    @Override
+    public String html() {
+        if (html == null) {
+            html = htmlEditor.getHtmlText();
+        }
+        return html;
+    }
+
+    @Override
+    public void writeContents(String contents) {
+        htmlEditor.setHtmlText(contents);
+    }
+
 }

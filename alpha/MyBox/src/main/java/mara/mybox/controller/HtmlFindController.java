@@ -137,9 +137,9 @@ public class HtmlFindController extends WebAddressController {
     }
 
     @Override
-    public void afterPageLoaded() {
+    public void afterPageLoaded(boolean addressChanged) {
         try {
-            super.afterPageLoaded();
+            super.afterPageLoaded(addressChanged);
 
             if (sourceHtml == null) {
                 sourceHtml = WebViewTools.getHtml(webEngine);
@@ -290,8 +290,7 @@ public class HtmlFindController extends WebAddressController {
                         nextButton.setDisable(false);
                         lastButton.setDisable(false);
                     }
-                    webEngine.getLoadWorker().cancel();
-                    webEngine.loadContent(results.toString());
+                    loadContents(results.toString());
                 }
 
                 @Override

@@ -76,7 +76,6 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             if (findReplaceController != null) {
                 findReplaceController.setEditor(this);
             }
-
             initPage(null);
 
             initFileTab();
@@ -94,7 +93,6 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     @Override

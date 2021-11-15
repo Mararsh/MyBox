@@ -23,8 +23,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -110,9 +110,9 @@ public class HtmlElementsController extends WebAddressController {
     }
 
     @Override
-    protected void afterPageLoaded() {
+    protected void afterPageLoaded(boolean addressChanged) {
         try {
-            super.afterPageLoaded();
+            super.afterPageLoaded(addressChanged);
             bottomLabel.setText(message("Count") + ": " + foundCount);
             if (loadedDoc == null) {
                 loadedDoc = (HTMLDocument) webEngine.getDocument();
@@ -139,7 +139,7 @@ public class HtmlElementsController extends WebAddressController {
                 popInformation(message("NoData"));
                 return;
             }
-            webEngine.loadContent("");
+            loadContents(null);
             NodeList aList = null;
             Element e = null;
             if (tagRadio.isSelected()) {
@@ -187,9 +187,8 @@ public class HtmlElementsController extends WebAddressController {
                 index++;
             }
             foundCount = index - 1;
-            String style = UserConfig.getString(baseName + "HtmlStyle", "Default");
-            String html = HtmlWriteTools.html(null, style, StringTable.tableDiv(table));
-            webEngine.loadContent(html);
+            String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
+            loadContents(html);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

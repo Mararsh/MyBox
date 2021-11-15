@@ -6,8 +6,8 @@ import java.util.List;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -44,11 +44,10 @@ public class ShortcutsController extends HtmlTableController {
             if (table == null) {
                 table();
             }
-            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
             html = "<P class=\"valueText\">" + message("ShortcutsTips") + "</P>\n"
                     + StringTable.tableDiv(table);
-            html = HtmlWriteTools.html(message("Shortcuts"), htmlStyle, html);
-            webView.getEngine().loadContent​(html);
+            html = HtmlWriteTools.html(message("Shortcuts"), HtmlStyles.styleValue("Default"), html);
+            loadContents​(html);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

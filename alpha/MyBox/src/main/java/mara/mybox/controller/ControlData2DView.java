@@ -105,7 +105,7 @@ public class ControlData2DView extends BaseController {
             int rNumber = data2D.pageRowsNumber();
             int cNumber = data2D.pageColsNumber();
             if (rNumber <= 0 || cNumber <= 0) {
-                htmlController.webEngine.loadContent("");
+                htmlController.loadContents("");
                 return;
             }
             List<String> names;
@@ -135,7 +135,7 @@ public class ControlData2DView extends BaseController {
                 }
                 table.add(row);
             }
-            htmlController.webEngine.loadContent(table.html());
+            htmlController.loadContents(table.html());
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

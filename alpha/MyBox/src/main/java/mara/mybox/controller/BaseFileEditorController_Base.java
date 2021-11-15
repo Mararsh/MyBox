@@ -27,7 +27,7 @@ import mara.mybox.data.LongRange;
 public abstract class BaseFileEditorController_Base extends BaseController {
 
     protected Edit_Type editType;
-    protected SimpleBooleanProperty fileChanged;
+    protected final SimpleBooleanProperty fileChanged;
     protected FileEditInformation sourceInformation;
     protected String filterConditionsString = "";
     protected Line_Break lineBreak;
@@ -74,6 +74,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     protected ControlFileBackup backupController;
 
     public BaseFileEditorController_Base() {
+        fileChanged = new SimpleBooleanProperty(false);
     }
 
     protected abstract void updateInterface(boolean changed);

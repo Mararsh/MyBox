@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.util.Arrays;
 import java.util.Date;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -27,8 +26,6 @@ public class ControlData2DAttributes extends BaseController {
     protected ControlData2D dataController;
     protected TableData2DDefinition tableData2DDefinition;
     protected Data2D data2D;
-    protected int maxRandom;
-    protected short scale;
     protected boolean changed;
 
     @FXML
@@ -55,16 +52,18 @@ public class ControlData2DAttributes extends BaseController {
                     if (!isSettingValues) {
                         if (newValue == null && oldValue != null
                                 || newValue != null && !newValue.equals(oldValue)) {
+                            data2D.setDataName(newValue);
                             valuesChanged(true);
                         }
                     }
                 }
             });
 
-            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
+            short scale = (short) UserConfig.getInt(baseName + "Scale", 2);
             if (scale < 0) {
                 scale = 2;
             }
+            data2D.setScale(scale);
             scaleSelector.getItems().addAll(
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
             );
@@ -74,7 +73,7 @@ public class ControlData2DAttributes extends BaseController {
                         try {
                             int v = Integer.parseInt(scaleSelector.getValue());
                             if (v >= 0 && v <= 15) {
-                                scale = (short) v;
+                                data2D.setScale((short) v);
                                 UserConfig.setInt(baseName + "Scale", v);
                                 scaleSelector.getEditor().setStyle(null);
                                 if (!isSettingValues) {
@@ -88,10 +87,11 @@ public class ControlData2DAttributes extends BaseController {
                         }
                     });
 
-            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
+            int maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
             if (maxRandom < 0) {
                 maxRandom = 100000;
             }
+            data2D.setMaxRandom(maxRandom);
             randomSelector.getItems().addAll(Arrays.asList("1", "100", "10", "1000", "10000", "1000000", "10000000"));
             randomSelector.setValue(maxRandom + "");
             randomSelector.getSelectionModel().selectedItemProperty().addListener(
@@ -99,7 +99,7 @@ public class ControlData2DAttributes extends BaseController {
                         try {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
-                                maxRandom = v;
+                                data2D.setMaxRandom(v);
                                 UserConfig.setInt(baseName + "MaxRandom", v);
                                 randomSelector.getEditor().setStyle(null);
                                 if (!isSettingValues) {
@@ -112,14 +112,6 @@ public class ControlData2DAttributes extends BaseController {
                             randomSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
-
-            saveButton.disableProperty().bind(Bindings.isEmpty(dataNameInput.textProperty())
-                    .or(dataNameInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(Bindings.isEmpty(scaleSelector.getEditor().textProperty()))
-                    .or(scaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(Bindings.isEmpty(randomSelector.getEditor().textProperty()))
-                    .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -153,11 +145,6 @@ public class ControlData2DAttributes extends BaseController {
     }
 
     @FXML
-    public void refreshAction() {
-        loadData();
-    }
-
-    @FXML
     @Override
     public void saveAction() {
         if (data2D.isFile() && data2D.getFile() == null) {
@@ -179,8 +166,6 @@ public class ControlData2DAttributes extends BaseController {
                 protected boolean handle() {
                     try {
                         data2D.setDataName(name);
-                        data2D.setScale(scale);
-                        data2D.setMaxRandom(maxRandom);
                         data2D.setModifyTime(new Date());
                         data2D.load(tableData2DDefinition.writeData(data2D));
                     } catch (Exception e) {

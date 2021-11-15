@@ -150,8 +150,9 @@ public class ControlData2DEditText extends BaseController {
     }
 
     @FXML
-    public void refreshAction() {
-
+    @Override
+    public void recoverAction() {
+        loadData();
     }
 
     @FXML

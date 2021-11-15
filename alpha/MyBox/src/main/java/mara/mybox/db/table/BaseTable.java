@@ -21,6 +21,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**
@@ -792,7 +793,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         String html = columnsTable() + "</BR><HR>" + createTableStatement().replaceAll("\n", "</BR>");
-        return HtmlWriteTools.html(tableName, html);
+        return HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
     }
 
     public D exist(D data) {

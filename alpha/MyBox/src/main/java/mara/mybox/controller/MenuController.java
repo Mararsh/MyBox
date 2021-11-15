@@ -42,15 +42,15 @@ public class MenuController extends BaseController {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
+            super.initValues();
+
             parentController = this;
             baseStyle = thisPane.getStyle();
             if (baseStyle == null) {
                 baseStyle = "";
             }
-            String style = UserConfig.getString(baseName + "WindowStyle", "");
-            PopTools.setMenuLabelsStyle(thisPane, baseStyle + style);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -59,6 +59,20 @@ public class MenuController extends BaseController {
     @Override
     public void setStageStatus() {
         setAsPopup(baseName);
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            String style = UserConfig.getString(baseName + "WindowStyle", "");
+            thisPane.setStyle(baseStyle + style);
+            PopTools.setMenuLabelsStyle(thisPane, baseStyle + style);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void setParameters(BaseController parent, Node node, double x, double y) {

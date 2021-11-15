@@ -138,7 +138,7 @@ public class HtmlEditorController extends WebAddressController {
     protected void initEdtiorTab() {
         try {
             htmlEditor = editorController.htmlEditor;
-            editorController.setParent(this);
+            editorController.setParent(null);
 
             // https://stackoverflow.com/questions/31894239/javafx-htmleditor-how-to-implement-a-changelistener
             // As my testing, only DragEvent.DRAG_EXITED, KeyEvent.KEY_TYPED, KeyEvent.KEY_RELEASED working for HtmlEdior
@@ -431,7 +431,7 @@ public class HtmlEditorController extends WebAddressController {
             setAddressChanged(false);
             sourceFile = null;
             urlSelector.getEditor().setText("");
-            webEngine.loadContent(HtmlWriteTools.emptyHmtl());
+            loadContents(HtmlWriteTools.emptyHmtl());
             loadRichEditor("", false);
             loadHtmlCodes("", false);
             loadMarkdown("", false);
@@ -498,19 +498,20 @@ public class HtmlEditorController extends WebAddressController {
         markdownArea.setEditable(false);
         textsArea.setEditable(false);
         if (getAddressChanged()) {
-            String info = getAddress() + "\n" + message("Loading...");
+            String info = getAddress();
+            info += (info == null ? "" : info + "\n") + message("Loading...");
             codesArea.setText(info);
             markdownArea.setText(info);
-            htmlEditor.setHtmlText(info);
+            editorController.writeContents(info);
             textsArea.setText(info);
         }
     }
 
     @Override
-    protected void afterPageLoaded() {
+    protected void afterPageLoaded(boolean addressChanged) {
         try {
             pageLoaded = true;
-            if (getAddressChanged()) {
+            if (addressChanged) {
                 fileChanged = false;
                 String html = htmlInWebview();
                 loadRichEditor(html, false);
@@ -524,6 +525,7 @@ public class HtmlEditorController extends WebAddressController {
                     }
                 });
             }
+            addressChanged = false;
             if (saveButton != null) {
                 saveButton.setDisable(false);
             }
@@ -538,7 +540,7 @@ public class HtmlEditorController extends WebAddressController {
             markdownArea.setEditable(true);
             textsArea.setEditable(true);
             title = webEngine.getTitle();
-            super.afterPageLoaded();
+            super.afterPageLoaded(addressChanged);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -547,8 +549,9 @@ public class HtmlEditorController extends WebAddressController {
     public void loadView(String html, boolean updated) {
         Platform.runLater(() -> {
             try {
-                webEngine.getLoadWorker().cancel();
-                webEngine.loadContent(styleHtml(html));
+                webViewController.addressChanged = false;
+                webViewController.styled = false;
+                webViewController.writeContents(html);
                 viewChanged(updated);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
@@ -557,7 +560,6 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     protected void viewChanged(boolean changed) {
-        codesChanged = changed;
         viewTab.setText(message("View") + (fileChanged ? " *" : ""));
         if (changed) {
             updateFileStatus(true);
@@ -565,11 +567,13 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     public String htmlInWebview() {
-        return WebViewTools.getHtml(webEngine);
+        return webViewController.html();
     }
 
-    public String styleHtml(String html) {
-        return html;
+    @FXML
+    @Override
+    public void refreshAction() {
+        webViewController.refresh(true);
     }
 
     /*
@@ -634,9 +638,9 @@ public class HtmlEditorController extends WebAddressController {
             try {
                 htmlEditor.setDisable(true);
                 if (StringTools.include(html, "<FRAMESET ", true)) {
-                    htmlEditor.setHtmlText("<p>" + message("FrameSetAndSelectFrame") + "</p>");
+                    editorController.loadContents("<p>" + message("FrameSetAndSelectFrame") + "</p>");
                 } else {
-                    htmlEditor.setHtmlText(styleHtml(html));
+                    editorController.loadContents(html);
                 }
                 if (pageLoaded) {
                     htmlEditor.setDisable(false);
@@ -668,7 +672,7 @@ public class HtmlEditorController extends WebAddressController {
 
     @FXML
     public void clearEditor() {
-        htmlEditor.setHtmlText("");
+        editorController.loadContents(null);
     }
 
     /*
@@ -740,6 +744,7 @@ public class HtmlEditorController extends WebAddressController {
         texts
      */
     public void loadText(String html, boolean updated) {
+//        MyBoxLog.error(updated);
         if (!tabPane.getTabs().contains(textsTab)) {
             return;
         }
@@ -763,6 +768,7 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     protected void textsChanged(boolean changed) {
+//        MyBoxLog.debug(changed);
         textsChanged = changed;
         textsTab.setText(message("Texts") + (changed ? " *" : ""));
         textsLabel.setText(message("Count") + ": " + StringTools.format(textsArea.getLength()));
@@ -863,6 +869,7 @@ public class HtmlEditorController extends WebAddressController {
 
     public void synchronizeCodes() {
         Platform.runLater(() -> {
+            MyBoxLog.debug("here");
             String html = htmlByCodes();
             loadRichEditor(html, true);
             loadMarkdown(html, true);

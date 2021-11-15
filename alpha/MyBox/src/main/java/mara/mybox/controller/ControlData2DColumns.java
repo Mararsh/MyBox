@@ -367,4 +367,10 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     }
 
+    @FXML
+    @Override
+    public void recoverAction() {
+        loadTableData();
+    }
+
 }

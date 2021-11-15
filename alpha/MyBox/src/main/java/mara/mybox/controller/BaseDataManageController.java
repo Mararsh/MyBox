@@ -14,7 +14,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.web.WebView;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.QueryCondition;
@@ -30,7 +29,6 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -53,7 +51,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     @FXML
     protected Tab dataTab, infoTab, settingsTab;
     @FXML
-    protected WebView infoView;
+    protected ControlWebView infoViewController;
     @FXML
     protected GeographyCodeConditionTreeController geoController;
     @FXML
@@ -206,7 +204,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             timer.cancel();
             timer = null;
         }
-        infoView.getEngine().loadContent​("");
+        infoViewController.loadContents​(null);
         finalTitle = queryCondition.getTitle().replaceAll("\n", " ");
         setQuerySQL();
         return true;
@@ -264,6 +262,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     public void initControls() {
         try {
             super.initControls();
+            infoViewController.setParent(this);
             setTableValues();
             initOrder();
             if (csvEditController != null) {
@@ -419,9 +418,8 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 }
                 html += loadMoreInfo();
             }
-            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-            html = HtmlWriteTools.html(null, htmlStyle, html);
-            infoView.getEngine().loadContent​(html);
+            html = HtmlWriteTools.html(null, html);
+            infoViewController.loadContents​(html);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -894,11 +892,6 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @FXML
-    public void popLinksStyle(MouseEvent mouseEvent) {
-        popMenu = PopTools.popHtmlStyle(mouseEvent, this, popMenu, infoView.getEngine());
     }
 
     @Override

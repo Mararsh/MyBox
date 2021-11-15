@@ -115,7 +115,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
             if (task != null) {
                 task.cancel();
             }
-            webView.getEngine().loadContent("");
+            loadContents(null);
             certArea.clear();
             host = null;
             chain = null;

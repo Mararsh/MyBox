@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -31,18 +33,19 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.web.WebEngine;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.MenuController;
+import mara.mybox.controller.TextInputController;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -232,39 +235,62 @@ public class PopTools {
         }
     }
 
-    public static ContextMenu popHtmlStyle(MouseEvent mouseEvent, BaseController controller, ContextMenu inPopMenu, WebEngine webEngine) {
+    public static ContextMenu popHtmlStyle(MouseEvent mouseEvent, ControlWebView controller) {
         try {
-            if (inPopMenu != null && inPopMenu.isShowing()) {
-                inPopMenu.hide();
+            if (mouseEvent == null || controller == null) {
+                return null;
+            }
+            ContextMenu cMenu = controller.getPopMenu();
+            if (cMenu != null && cMenu.isShowing()) {
+                cMenu.hide();
             }
             final ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-            String baseName = controller == null ? "" : controller.getBaseName();
+            String baseName = controller.getBaseName();
+
             MenuItem menu;
+            menu = new MenuItem(message("None"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString(baseName + "HtmlStyle", null);
+                    controller.refresh(false);
+                }
+            });
+            popMenu.getItems().add(menu);
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
                 menu = new MenuItem(message(style.name()));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        try {
-                            UserConfig.setString(baseName + "HtmlStyle", style.name());
-                            if (webEngine == null) {
-                                return;
-                            }
-                            Object c = webEngine.executeScript("document.documentElement.outerHTML");
-                            if (c == null) {
-                                return;
-                            }
-                            String html = (String) c;
-                            html = HtmlWriteTools.setStyle(html, style);
-                            webEngine.loadContent(html);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
-                        }
+                        UserConfig.setString(baseName + "HtmlStyle", HtmlStyles.styleValue(style));
+                        controller.refresh(false);
                     }
                 });
                 popMenu.getItems().add(menu);
             }
+            menu = new MenuItem(message("Input") + "...");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    TextInputController inputController = (TextInputController) controller.openChildStage(Fxmls.TextInputFxml, true);
+                    inputController.setParameters(controller, message("Style"), UserConfig.getString(baseName + "HtmlStyle", null));
+                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                            String value = inputController.getText();
+                            if (value == null || value.isBlank()) {
+                                return;
+                            }
+                            UserConfig.setString(baseName + "HtmlStyle", value);
+                            controller.refresh(false);
+                            inputController.closeStage();
+                        }
+                    });
+                }
+            });
+            popMenu.getItems().add(menu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -275,6 +301,7 @@ public class PopTools {
                 }
             });
             popMenu.getItems().add(menu);
+            controller.setPopMenu(popMenu);
             LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
             return popMenu;
         } catch (Exception e) {

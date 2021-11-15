@@ -7,11 +7,9 @@ import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -125,6 +123,7 @@ public class HtmlPopController extends BaseWebViewController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         if (sourceWebView == null) {
             refreshChangeCheck.setVisible(false);
@@ -132,11 +131,6 @@ public class HtmlPopController extends BaseWebViewController {
             return;
         }
         loadContents(getAddress(), WebViewTools.getHtml(sourceWebView));
-    }
-
-    @FXML
-    public void popLinksStyle(MouseEvent mouseEvent) {
-        popMenu = PopTools.popHtmlStyle(mouseEvent, this, popMenu, webView.getEngine());
     }
 
     @Override

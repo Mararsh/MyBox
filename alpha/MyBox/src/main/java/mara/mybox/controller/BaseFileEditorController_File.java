@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import mara.mybox.data.FileEditInformation;
 import static mara.mybox.data.FileEditInformation.defaultCharset;
@@ -48,7 +47,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
                 @Override
                 protected boolean handle() {
-                    if (sourceInformation == null) {
+                    if (sourceInformation == null || sourceFile == null) {
                         return false;
                     }
                     if (!sourceInformation.isCharsetDetermined()) {
@@ -118,7 +117,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             isSettingValues = true;
 
-            fileChanged = new SimpleBooleanProperty(false);
+            fileChanged.set(false);
             sourceFile = file;
             if (backupController != null) {
                 backupController.loadBackups(sourceFile);
@@ -166,11 +165,10 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 findReplaceController.findReplace = null;
                 setControlsStyle();
             }
-
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            isSettingValues = false;
+            MyBoxLog.error(e);
         }
+        isSettingValues = false;
     }
 
     protected void loadTotalNumbers() {

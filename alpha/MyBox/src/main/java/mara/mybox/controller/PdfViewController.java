@@ -256,7 +256,9 @@ public class PdfViewController extends PdfViewController_Html {
             ocrLabel.setText("");
             textsArea.clear();
             textsLabel.setText("");
-            webEngine.loadContent("");
+            if (webViewController != null) {
+                webViewController.loadContents(null);
+            }
             if (file == null) {
                 return;
             }

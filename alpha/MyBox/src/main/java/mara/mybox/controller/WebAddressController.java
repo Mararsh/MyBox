@@ -90,6 +90,7 @@ public class WebAddressController extends BaseWebViewController {
 
     @Override
     public void addressChanged() {
+        sourceFile = webViewController.sourceFile;
         String address = getAddress();
         if (urlSelector != null) {
             Platform.runLater(() -> {
@@ -112,16 +113,10 @@ public class WebAddressController extends BaseWebViewController {
         webViewController.goAddress(urlSelector.getEditor().getText());
     }
 
-    @FXML
     @Override
-    public void refreshAction() {
-        webViewController.refreshAction();
-    }
-
-    @Override
-    protected void afterPageLoaded() {
+    protected void afterPageLoaded(boolean addressChanged) {
         try {
-            super.afterPageLoaded();
+            super.afterPageLoaded(addressChanged);
             if (addressTab != null) {
                 String title = webEngine.getTitle();
                 addressTab.setText(title != null ? title.substring(0, Math.min(10, title.length())) : "");

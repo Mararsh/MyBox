@@ -16,7 +16,6 @@ import mara.mybox.fxml.ControllerTools;
 import static mara.mybox.tools.HtmlReadTools.charsetInHead;
 import static mara.mybox.tools.HtmlReadTools.tag;
 import static mara.mybox.value.AppValues.Indent;
-import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
@@ -66,13 +65,18 @@ public class HtmlWriteTools {
         build html
      */
     public static String emptyHmtl() {
-        return htmlWithStyleValue(null, null, "<BODY>\n\n\n</BODY>\n");
+        return html(null, "utf-8", null, "<BODY>\n\n\n</BODY>\n");
     }
 
-    public static String htmlPrefix(String title, String styleValue) {
+    public static String htmlPrefix(String title, String charset, String styleValue) {
         StringBuilder s = new StringBuilder();
-        s.append("<!DOCTYPE html><HTML>\n").append(Indent).append("<HEAD>\n").append(Indent).append(Indent)
-                .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
+        s.append("<!DOCTYPE html><HTML>\n").append(Indent).append("<HEAD>\n");
+        if (charset == null || charset.isBlank()) {
+            charset = "utf-8";
+        }
+        s.append(Indent).append(Indent)
+                .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")
+                .append(charset).append("\" />\n");
         if (title != null && !title.trim().isEmpty()) {
             s.append(Indent).append(Indent).append("<TITLE>").append(title).append("</TITLE>\n");
         }
@@ -86,41 +90,52 @@ public class HtmlWriteTools {
     }
 
     public static String htmlPrefix() {
-        return htmlPrefix(null, HtmlStyles.DefaultStyle);
+        return htmlPrefix(null, "utf-8", null);
     }
 
     public static String html(String title, String body) {
-        return htmlWithStyleValue(title, HtmlStyles.DefaultStyle, body);
+        return html(title, "utf-8", null, body);
     }
 
-    public static String html(String title, HtmlStyles.HtmlStyle style, String body) {
-        return htmlWithStyleValue(title, HtmlStyles.styleValue(style), body);
+    public static String html(String title, String style, String body) {
+        return html(title, "utf-8", style, body);
     }
 
-    public static String html(String title, String styleName, String body) {
-        return html(title, HtmlStyles.styleName(styleName), body);
-    }
-
-    public static String setStyle(String html, HtmlStyles.HtmlStyle style) {
-        return setStyleValue(html, HtmlStyles.styleValue(style));
-    }
-
-    public static String setStyle(String html, String styleName) {
-        return setStyle(html, HtmlStyles.styleName(styleName));
-    }
-
-    public static String htmlWithStyleValue(String title, String styleValue, String body) {
+    public static String html(String title, String charset, String styleValue, String body) {
         StringBuilder s = new StringBuilder();
-        s.append(htmlPrefix(title, styleValue));
+        s.append(htmlPrefix(title, charset, styleValue));
         s.append(body);
         s.append("</HTML>\n");
         return s.toString();
     }
 
-    public static String setStyleValue(String html, String styleValue) {
-        String title = HtmlReadTools.htmlTitle(html);
-        String body = HtmlReadTools.body(html, true);
-        return htmlWithStyleValue(title, styleValue, body);
+    public static String style(String html, String styleValue) {
+        return html(HtmlReadTools.htmlTitle(html),
+                HtmlReadTools.charsetName(html),
+                styleValue,
+                HtmlReadTools.body(html, true));
+    }
+
+    public static String addStyle(String html, String style) {
+        try {
+            if (html == null || style == null) {
+                return "InvalidData";
+            }
+            String preHtml = HtmlReadTools.preHtml(html);
+            String head = HtmlReadTools.tag(html, "head", false);
+            String body = HtmlReadTools.body(html, true);
+            html = preHtml + "<html>\n"
+                    + "    <head>\n"
+                    + head + "\n"
+                    + "        <style type=\"text/css\">\n"
+                    + style + "        </style>\n"
+                    + "    </head>\n"
+                    + body + "\n</html>";
+            return html;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     /*

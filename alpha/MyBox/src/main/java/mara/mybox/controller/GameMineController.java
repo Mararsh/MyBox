@@ -39,20 +39,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.StringValues;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -61,8 +60,8 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-3
  * @License Apache License Version 2.0
  */
-public class GameMineController extends BaseController {
-
+public class GameMineController extends BaseWebViewController {
+    
     protected int chessSize, vNumber, hNumber, spacing, minesNumber,
             total, disclosed, historiesNumber;
     protected AnchorPane[][] chessBoard;
@@ -72,11 +71,11 @@ public class GameMineController extends BaseController {
     protected DropShadow dropShadow;
     protected String mineImage;
     protected long startTime, cost;
-
+    
     protected enum ChessStatus {
         Disclosed, Closed, Marked, Suspected
     }
-
+    
     @FXML
     protected TabPane tabPane;
     @FXML
@@ -99,15 +98,13 @@ public class GameMineController extends BaseController {
     @FXML
     protected Label timeLabel, minesLabel;
     @FXML
-    protected WebView hisView;
-    @FXML
     protected CheckBox miaowCheck;
-
+    
     public GameMineController() {
         baseTitle = Languages.message("GameMine");
         TipsLabelKey = "GameMineComments";
     }
-
+    
     @Override
     public void initValues() {
         try {
@@ -115,37 +112,37 @@ public class GameMineController extends BaseController {
             random = new Random();
             dropShadow = new DropShadow();
             mineImage = StyleTools.getIconPath(AppVariables.ControlColor) + "iconClear.png";
-
+            
             spacing = 0;
             chessSize = UserConfig.getInt(baseName + "ChessSize", 20);
             vNumber = UserConfig.getInt(baseName + "BoardHeight", 16);
             hNumber = UserConfig.getInt(baseName + "BoardWidth", 30);
             minesNumber = UserConfig.getInt(baseName + "MinesNumber", 99);
             historiesNumber = UserConfig.getInt(baseName + "HistoriesNumber", 50);
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             minesLabel.setStyle("-fx-background-color: black ; -fx-text-fill: lightgreen;");
             timeLabel.setStyle("-fx-background-color: black ; -fx-text-fill: lightgreen;");
-
+            
             chessSizeSelector.getItems().addAll(Arrays.asList("20", "15", "10", "18", "25", "30"));
-
+            
             boardWidthInput.setText(hNumber + "");
             boardHeightInput.setText(vNumber + "");
             boardMinesInput.setText(minesNumber + "");
             chessSizeSelector.setValue(chessSize + "");
-
+            
             historiesNumberSelector.getItems().addAll(Arrays.asList("50", "100", "200", "20", "10", "300", "500"));
             historiesNumberSelector.getSelectionModel().select(UserConfig.getString(baseName + "HistoriesNumber", "50"));
-
+            
             miaowCheck.setSelected(UserConfig.getBoolean(baseName + "Miaow", true));
             miaowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -153,15 +150,15 @@ public class GameMineController extends BaseController {
                     UserConfig.setBoolean(baseName + "Miaow", miaowCheck.isSelected());
                 }
             });
-
+            
             loadRecords();
             createAction();
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @Override
     public boolean keyFilter(KeyEvent event) {
         KeyCode code = event.getCode();
@@ -183,7 +180,7 @@ public class GameMineController extends BaseController {
         }
         return super.keyFilter(event);
     }
-
+    
     @Override
     public void setControlsStyle() {
         try {
@@ -196,7 +193,7 @@ public class GameMineController extends BaseController {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @FXML
     @Override
     public void createAction() {
@@ -209,12 +206,12 @@ public class GameMineController extends BaseController {
             chessStatus = new ChessStatus[vNumber][hNumber];
             total = vNumber * hNumber - minesNumber;
             resetPanes();
-
+            
             chessboardPane.getChildren().clear();
             chessboardPane.setPrefWidth((chessSize + spacing * 2) * hNumber);
             chessboardPane.setPrefHeight((chessSize + spacing * 2) * vNumber);
             chessboardPane.setSpacing(spacing);
-
+            
             for (int v = 0; v < vNumber; ++v) {
                 HBox line = new HBox();
                 line.setAlignment(Pos.CENTER);
@@ -276,10 +273,10 @@ public class GameMineController extends BaseController {
                             }
                         }
                     });
-
+                    
                 }
             }
-
+            
             int mines = 0;
             while (mines < minesNumber) {
                 int h = random.nextInt(hNumber);
@@ -289,7 +286,7 @@ public class GameMineController extends BaseController {
                     mines++;
                 }
             }
-
+            
             for (int v = 0; v < vNumber; ++v) {
                 for (int h = 0; h < hNumber; ++h) {
                     int n = 0;
@@ -331,7 +328,7 @@ public class GameMineController extends BaseController {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     public void timing() {
         if (timer != null) {
             timer.cancel();
@@ -401,11 +398,11 @@ public class GameMineController extends BaseController {
         disclose(v + 1, h);
         disclose(v + 1, h + 1);
     }
-
+    
     protected boolean valid(int v, int h) {
         return v >= 0 && v < vNumber && h >= 0 && h < hNumber;
     }
-
+    
     protected void discloseAll(int v, int h) {
         if (!valid(v, h)) {
             return;
@@ -426,7 +423,7 @@ public class GameMineController extends BaseController {
         discloseUnmarked(v + 1, h);
         discloseUnmarked(v + 1, h + 1);
     }
-
+    
     protected void discloseUnmarked(int v, int h) {
         if (!valid(v, h)) {
             return;
@@ -439,17 +436,17 @@ public class GameMineController extends BaseController {
             disclose(v, h);
         }
     }
-
+    
     protected void loadRecords() {
-        hisView.getEngine().loadContent("");
+        webViewController.loadContents(null);
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>(this) {
-
+                
                 private String html;
-
+                
                 @Override
                 protected boolean handle() {
                     List<String> names = new ArrayList<>();
@@ -471,25 +468,19 @@ public class GameMineController extends BaseController {
                         ));
                         table.add(row);
                     }
-                    String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-                    html = HtmlWriteTools.html(null, htmlStyle, StringTable.tableDiv(table));
+                    html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
                     return true;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
-                    hisView.getEngine().loadContent(html);
+                    webViewController.loadContents(html);
                 }
             };
-//            start(task);
+            start(task);
         }
     }
-
-    @FXML
-    public void popLinksStyle(MouseEvent mouseEvent) {
-        popMenu = PopTools.popHtmlStyle(mouseEvent, this, popMenu, hisView.getEngine());
-    }
-
+    
     @FXML
     public void clearHistories() {
         synchronized (this) {
@@ -502,16 +493,16 @@ public class GameMineController extends BaseController {
                     TableStringValues.clear("GameMineHistory");
                     return true;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
-                    hisView.getEngine().loadContent("");
+                    webViewController.loadContents(null);
                 }
             };
-//            start(task);
+            start(task);
         }
     }
-
+    
     public void failed() {
         if (timer != null) {
             timer.cancel();
@@ -527,7 +518,7 @@ public class GameMineController extends BaseController {
         }
         undoButton.setDisable(false);
     }
-
+    
     @FXML
     public void helpMe() {
         for (int v = 0; v < vNumber; ++v) {
@@ -537,7 +528,7 @@ public class GameMineController extends BaseController {
         }
         undoButton.setDisable(false);
     }
-
+    
     @FXML
     @Override
     public void undoAction() {
@@ -551,11 +542,11 @@ public class GameMineController extends BaseController {
             timing();
         }
     }
-
+    
     protected void displayChess(int v, int h) {
         displayChess(v, h, chessStatus[v][h], chessValue[v][h]);
     }
-
+    
     protected void displayChess(int v, int h, ChessStatus status, int value) {
         AnchorPane apane = chessBoard[v][h];
         apane.getChildren().clear();
@@ -631,7 +622,7 @@ public class GameMineController extends BaseController {
                 break;
         }
     }
-
+    
     @FXML
     @Override
     public void recoverAction() {
@@ -647,7 +638,7 @@ public class GameMineController extends BaseController {
             }
         }
     }
-
+    
     public void resetPanes() {
         if (timer != null) {
             timer.cancel();
@@ -659,7 +650,7 @@ public class GameMineController extends BaseController {
         timeLabel.setText("");
         undoButton.setDisable(true);
     }
-
+    
     @FXML
     public void popBoardMenu(MouseEvent mouseEvent) {
         try {
@@ -668,7 +659,7 @@ public class GameMineController extends BaseController {
             }
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-
+            
             MenuItem menu;
             menu = new MenuItem(Languages.message("Easy"));
             menu.setOnAction((ActionEvent event) -> {
@@ -677,7 +668,7 @@ public class GameMineController extends BaseController {
                 boardMinesInput.setText("10");
             });
             popMenu.getItems().add(menu);
-
+            
             menu = new MenuItem(Languages.message("Medium"));
             menu.setOnAction((ActionEvent event) -> {
                 boardWidthInput.setText("16");
@@ -685,7 +676,7 @@ public class GameMineController extends BaseController {
                 boardMinesInput.setText("40");
             });
             popMenu.getItems().add(menu);
-
+            
             menu = new MenuItem(Languages.message("Hard"));
             menu.setOnAction((ActionEvent event) -> {
                 boardWidthInput.setText("30");
@@ -693,7 +684,7 @@ public class GameMineController extends BaseController {
                 boardMinesInput.setText("99");
             });
             popMenu.getItems().add(menu);
-
+            
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(Languages.message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -704,14 +695,14 @@ public class GameMineController extends BaseController {
                 }
             });
             popMenu.getItems().add(menu);
-
+            
             LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     protected void okOptionsAction() {
         try {
@@ -772,7 +763,7 @@ public class GameMineController extends BaseController {
         createAction();
         tabPane.getSelectionModel().select(playTab);
     }
-
+    
     @FXML
     protected void okHistoriesNumber() {
         try {
@@ -799,15 +790,15 @@ public class GameMineController extends BaseController {
                     TableStringValues.max("GameMineHistory", historiesNumber);
                     return true;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     loadRecords();
                 }
             };
-//            start(task);
+            start(task);
         }
-
+        
     }
-
+    
 }

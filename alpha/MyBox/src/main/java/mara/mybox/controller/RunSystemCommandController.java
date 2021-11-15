@@ -15,7 +15,6 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -52,7 +51,7 @@ public class RunSystemCommandController extends HtmlTableController {
             cancel();
             return;
         }
-        webView.getEngine().loadContent("");
+        loadContents(null);
         String cmd = cmdController.value();
         if (cmd == null || cmd.isBlank()) {
             popError(Languages.message("InvalidData"));
@@ -69,13 +68,12 @@ public class RunSystemCommandController extends HtmlTableController {
             startButton.setUserData("started");
             task = new SingletonTask<Void>(this) {
 
-                private String lastText, htmlStyle;
+                private String lastText;
 
                 @Override
                 protected boolean handle() {
                     try {
                         lastText = "";
-                        htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
                         List<String> p = new ArrayList<>();
                         p.addAll(Arrays.asList(StringTools.splitBySpace(cmd)));
                         ProcessBuilder pb = new ProcessBuilder(p).redirectErrorStream(true);
@@ -87,7 +85,7 @@ public class RunSystemCommandController extends HtmlTableController {
                                 String msg = line + "\n";
                                 Platform.runLater(() -> {
                                     lastText += msg;
-                                    String html = HtmlWriteTools.html(null, htmlStyle, "<body><PRE>" + lastText + "</PRE></body>");
+                                    String html = HtmlWriteTools.html(null, "<body><PRE>" + lastText + "</PRE></body>");
                                     displayHtml(html);
                                 });
                             }
@@ -101,7 +99,7 @@ public class RunSystemCommandController extends HtmlTableController {
                 }
 
                 protected void setStatus(String msg) {
-                    String html = HtmlWriteTools.html(null, htmlStyle, "<body><PRE>" + lastText + "</PRE>"
+                    String html = HtmlWriteTools.html(null, "<body><PRE>" + lastText + "</PRE>"
                             + "<br><hr>\n" + msg + "</body>");
                     displayHtml(html);
                 }

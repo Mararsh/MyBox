@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -58,6 +57,7 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -72,21 +72,15 @@ import org.w3c.dom.events.EventTarget;
 public class ControlWebView extends BaseController {
 
     protected WebEngine webEngine;
-    protected final SimpleIntegerProperty stateNotify;
-    protected boolean addressChanged;
-    protected double linkX, linkY;
+    protected boolean addressChanged, styled;
+    protected double linkX, linkY, scrollTop, scrollLeft;
     protected float zoomScale;
-    protected String address;
+    protected String address, style, html;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
-
     protected Element element;
-
-    public static final int TmpState = -9;
-    public static final int NoDoc = -3;
-    public static final int DocLoading = -2;
-    public static final int DocLoaded = -1;
+    protected final String onScrollScript;
 
     @FXML
     protected WebView webView;
@@ -98,7 +92,12 @@ public class ControlWebView extends BaseController {
         zoomScale = 1.0f;
         framesDoc = new HashMap<>();
         charset = Charset.defaultCharset();
-        stateNotify = new SimpleIntegerProperty(NoDoc);
+        onScrollScript = "window.onscroll = function(){ "
+                + "    var topValue = document.documentElement.scrollTop || document.body.scrollTop;"
+                + "    alert('scrollTop-' + topValue);"
+                + "    var leftValue = document.documentElement.scrollTop || document.body.scrollLeft;"
+                + "    alert('scrollLeft-' + leftValue);"
+                + "} ";
     }
 
     @Override
@@ -161,7 +160,10 @@ public class ControlWebView extends BaseController {
             webView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
-                    parentController.closePopup();
+                    closePopup();
+                    if (parentController != null) {
+                        parentController.closePopup();
+                    }
                     linkX = mouseEvent.getScreenX();
                     linkY = mouseEvent.getScreenY();
                 }
@@ -248,10 +250,7 @@ public class ControlWebView extends BaseController {
                     if (webViewLabel != null) {
                         webViewLabel.setText(nt.getMessage());
                     }
-                    if (parentController != null) {
-                        parentController.alertError(nt.getMessage());
-                    }
-
+                    alertError(nt.getMessage());
                 }
             });
 
@@ -267,7 +266,7 @@ public class ControlWebView extends BaseController {
             webEngine.locationProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    if (webViewLabel != null) {
+                    if (webViewLabel != null && newv != null) {
                         webViewLabel.setText(URLDecoder.decode(newv, charset));
                     }
                 }
@@ -277,12 +276,10 @@ public class ControlWebView extends BaseController {
                 @Override
                 public String call(PromptData p) {
 //                    MyBoxLog.console("here:" + p.getMessage());
-                    if (parentController != null) {
-                        String value = PopTools.askValue(parentController.getBaseTitle(), null, p.getMessage(), p.getDefaultValue());
-                        return value;
-                    } else {
-                        return null;
-                    }
+                    String value = PopTools.askValue(
+                            parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle(),
+                            null, p.getMessage(), p.getDefaultValue());
+                    return value;
                 }
             });
 
@@ -290,12 +287,9 @@ public class ControlWebView extends BaseController {
                 @Override
                 public Boolean call(String message) {
                     try {
-                        if (parentController == null) {
-                            return false;
-                        }
 //                        MyBoxLog.console("here:" + message);
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle(parentController.getBaseTitle());
+                        alert.setTitle(parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle());
                         alert.setHeaderText(null);
                         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         alert.getDialogPane().setContent(new Label(message));
@@ -317,12 +311,18 @@ public class ControlWebView extends BaseController {
                 @Override
                 public void handle(WebEvent<String> ev) {
                     String msg = ev.getData();
+                    if (msg == null) {
+                        return;
+                    }
                     int value = -1;
                     if (msg.startsWith("FrameReadyIndex-")) {
                         value = Integer.parseInt(msg.substring("FrameReadyIndex-".length()));
-//                        MyBoxLog.console("Frame " + index + " ready");
                     } else if (msg.startsWith("FrameReadyName-")) {
                         value = WebViewTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
+                    } else if (msg.startsWith("scrollTop-")) {
+                        scrollTop = Double.valueOf(msg.substring("scrollTop-".length()));
+                    } else if (msg.startsWith("scrollLeft-")) {
+                        scrollLeft = Double.valueOf(msg.substring("scrollLeft-".length()));
                     }
                     if (value < 0) {
                         return;
@@ -334,7 +334,6 @@ public class ControlWebView extends BaseController {
                         public void run() {
                             Platform.runLater(() -> {
                                 addFrameListener(frameIndex);
-                                changeDocState(frameIndex);
                             });
                         }
                     }, 500);
@@ -391,10 +390,14 @@ public class ControlWebView extends BaseController {
             return false;
         }
         setAddress(address);
-        addressChanged = true;
+        html = contents;
+        writeContents(contents);
+        return true;
+    }
+
+    public void writeContents(String contents) {
         webEngine.getLoadWorker().cancel();
         webEngine.loadContent(contents);
-        return true;
     }
 
     public void setAddress(String value) {
@@ -406,79 +409,79 @@ public class ControlWebView extends BaseController {
                 setSourceFile(file);
             }
         }
-        if (parentController instanceof BaseWebViewController) {
+        if (parentController != null && (parentController instanceof BaseWebViewController)) {
             ((BaseWebViewController) parentController).addressChanged();
         }
+        addressChanged = true;
+        styled = false;
+        html = null;
     }
 
     @Override
     public void setSourceFile(File file) {
         this.sourceFile = file;
-        parentController.sourceFile = sourceFile;
         if (address == null && sourceFile != null) {
             address = sourceFile.getAbsolutePath();
         }
     }
 
     public void goAddress(String value) {
-        if (parentController instanceof BaseWebViewController) {
+        if (parentController != null && (parentController instanceof BaseWebViewController)) {
             if (!((BaseWebViewController) parentController).validAddress(value)) {
                 return;
             }
         }
         try {
             setAddress(value);
-            addressChanged = true;
-            if (webViewLabel != null) {
-                webViewLabel.setText(message("Loading..."));
-            }
-            webEngine.getLoadWorker().cancel();
-            webEngine.load(address);
+            writeAddress();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
 
+    public void writeAddress() {
+        setWebViewLabel(message("Loading..."));
+        webEngine.getLoadWorker().cancel();
+        webEngine.load(address);
     }
 
     protected void setWebViewLabel(String string) {
-        webViewLabel.setText(string);
-    }
-
-    // Listener should ignore state change from TmpState
-    // positive is frame index, and negative is status
-    public void changeDocState(int newState) {
-        synchronized (stateNotify) {
-            if (stateNotify.get() == newState) { // make sure state will change
-                stateNotify.set(TmpState);
-            }
-            stateNotify.set(newState);
+        if (webViewLabel != null) {
+            webViewLabel.setText(string);
         }
     }
 
     protected void pageIsLoading() {
-        if (webViewLabel != null) {
-            webViewLabel.setText(message("Loading..."));
+        if (styled) {
+            return;
         }
-        changeDocState(DocLoading);
-        if (parentController instanceof BaseWebViewController) {
+        setWebViewLabel(message("Loading..."));
+        if (parentController != null && (parentController instanceof BaseWebViewController)) {
             ((BaseWebViewController) parentController).pageIsLoading();
         }
     }
 
     protected void afterPageLoaded() {
         try {
-            if (parentController instanceof BaseWebViewController) {
-                ((BaseWebViewController) parentController).afterPageLoaded();
+            html = html();
+            style = UserConfig.getString(baseName + "HtmlStyle", null);
+            if (!styled && html != null && style != null && !style.isBlank()) {
+                styled = true;
+                writeContents(HtmlWriteTools.style(html, style));
+                return;
+            }
+            if (parentController != null && (parentController instanceof BaseWebViewController)) {
+                ((BaseWebViewController) parentController).afterPageLoaded(addressChanged);
             }
             addressChanged = false;
-            if (webViewLabel != null) {
-                webViewLabel.setText(message("Loaded"));
-            }
+            setWebViewLabel(message("Loaded"));
+            webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+
             Document doc = webEngine.getDocument();
             charset = HtmlReadTools.charset(doc);
             framesDoc.clear();
             addDocListener(doc);
-            changeDocState(DocLoaded);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -499,6 +502,8 @@ public class ControlWebView extends BaseController {
             t.addEventListener("mouseover", docListener, false);
             t.addEventListener("mouseout", docListener, false);
             t.addEventListener("contextmenu", docListener, false);
+
+            webEngine.executeScript(onScrollScript);
 
             NodeList frameList = doc.getElementsByTagName("frame");
             for (int i = 0; i < frameList.getLength(); i++) {
@@ -530,8 +535,15 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public String html() {
+        if (html == null) {
+            html = WebViewTools.getHtml(webEngine);
+        }
+        return html;
+    }
+
     public void popLinkMenu(Element element) {
-        if (linkX < 0 || linkY < 0 || element == null || parentController == null) {
+        if (linkX < 0 || linkY < 0 || element == null) {
             return;
         }
         String tag = element.getTagName();
@@ -666,20 +678,20 @@ public class ControlWebView extends BaseController {
 
         menu = new MenuItem(message("CopyLink"));
         menu.setOnAction((ActionEvent event) -> {
-            TextClipboardTools.copyToSystemClipboard(parentController, finalAddress);
+            TextClipboardTools.copyToSystemClipboard(myController, finalAddress);
         });
         items.add(menu);
 
         if (showName) {
             menu = new MenuItem(message("CopyLinkName"));
             menu.setOnAction((ActionEvent event) -> {
-                TextClipboardTools.copyToSystemClipboard(parentController, name);
+                TextClipboardTools.copyToSystemClipboard(myController, name);
             });
             items.add(menu);
 
             menu = new MenuItem(message("CopyLinkAndName"));
             menu.setOnAction((ActionEvent event) -> {
-                TextClipboardTools.copyToSystemClipboard(parentController, name + "\n" + finalAddress);
+                TextClipboardTools.copyToSystemClipboard(myController, name + "\n" + finalAddress);
             });
             items.add(menu);
         }
@@ -692,7 +704,7 @@ public class ControlWebView extends BaseController {
             } else {
                 code = "<a href=\"" + finalAddress + "\">" + (name == null || name.isBlank() ? finalAddress : name) + "</a>";
             }
-            TextClipboardTools.copyToSystemClipboard(parentController, code);
+            TextClipboardTools.copyToSystemClipboard(myController, code);
         });
         items.add(menu);
 
@@ -708,12 +720,16 @@ public class ControlWebView extends BaseController {
         items.add(menu);
 
         closePopup();
-        parentController.closePopup();
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
+        if (parentController != null) {
+            parentController.closePopup();
+            parentController.setPopMenu(popMenu);
+        }
         popMenu.show(webView, linkX, linkY);
-        parentController.setPopMenu(popMenu);
+
     }
 
     public void popElementMenu(Element element) {
@@ -793,15 +809,19 @@ public class ControlWebView extends BaseController {
         webEngine.executeScript("window.history.forward();");
     }
 
-    public void refreshAction() {
+    public void refresh(boolean addressChanged) {
+        this.addressChanged = addressChanged;
+        styled = false;
         if (address != null) {
-            goAddress(address);
+            writeAddress();
+        } else {
+            writeContents(html);
         }
     }
 
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
-            String html = WebViewTools.getHtml(webEngine);
+            html = html();
             Document doc = webEngine.getDocument();
             boolean isFrameset = framesDoc != null && framesDoc.size() > 0;
 
@@ -831,7 +851,7 @@ public class ControlWebView extends BaseController {
 
             menu = new MenuItem(message("Refresh"));
             menu.setOnAction((ActionEvent event) -> {
-                refreshAction();
+                refresh(false);
             });
             items.add(menu);
 
@@ -893,7 +913,7 @@ public class ControlWebView extends BaseController {
 
             List<MenuItem> editItems = new ArrayList<>();
 
-            if (!(parentController instanceof HtmlEditorController) && html != null && !html.isBlank()) {
+            if (html != null && !html.isBlank()) {
                 menu = new MenuItem(message("HtmlEditor"));
                 menu.setOnAction((ActionEvent event) -> {
                     edit(html);
@@ -901,7 +921,7 @@ public class ControlWebView extends BaseController {
                 editItems.add(menu);
             }
 
-            if (!(parentController instanceof HtmlSnapController) && html != null && !html.isBlank()) {
+            if (html != null && !html.isBlank()) {
                 menu = new MenuItem(message("HtmlSnap"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlSnapController controller = (HtmlSnapController) WindowTools.openStage(Fxmls.HtmlSnapFxml);
@@ -1075,7 +1095,7 @@ public class ControlWebView extends BaseController {
 
     @FXML
     public void editAction() {
-        edit(WebViewTools.getHtml(webEngine));
+        edit(html());
     }
 
     public HtmlEditorController edit(String html) {
@@ -1335,7 +1355,7 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public void findAction() {
-        find(WebViewTools.getHtml(webEngine));
+        find(html());
     }
 
     public void find(String html) {
@@ -1343,10 +1363,6 @@ public class ControlWebView extends BaseController {
         controller.loadContents(html);
         controller.setAddress(address);
         controller.toFront();
-    }
-
-    public String currentHtml() {
-        return WebViewTools.getHtml(webEngine);
     }
 
     @FXML
@@ -1360,7 +1376,7 @@ public class ControlWebView extends BaseController {
             if (file == null) {
                 return;
             }
-            String html = currentHtml();
+            html = html();
             if (html == null || html.isBlank()) {
                 popError(message("NoData"));
                 return;
@@ -1376,7 +1392,7 @@ public class ControlWebView extends BaseController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    if (parentController instanceof BaseWebViewController) {
+                    if (parentController != null && (parentController instanceof BaseWebViewController)) {
                         ((BaseWebViewController) parentController).afterSaveAs(file);
                     }
                 }
@@ -1394,7 +1410,7 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public boolean popAction() {
-        HtmlPopController.openWebView(parentController, webView);
+        HtmlPopController.openWebView(parentController != null ? parentController : myController, webView);
         return true;
     }
 

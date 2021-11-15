@@ -436,50 +436,6 @@ License:    Apache License Version 2.0
                           </VBox>
                       </content>
                   </Tab>
-                  <Tab fx:id="styleTab" text="%Style">
-                      <content>
-                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                              <padding>
-                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                              </padding>
-                              <children>
-                                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                      <children>
-                                          <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popDefaultStyle">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconStyle.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
-                                          <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="clearStyleButton" mnemonicParsing="false" onAction="#clearStyle">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconClear.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
-                                          <Button fx:id="okStyleButton" layoutX="576.0" layoutY="10.0" mnemonicParsing="false" onAction="#setStyle">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconOK.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
-                                      </children>
-                                  </HBox>
-                                  <TextArea fx:id="styleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                              </children>
-                          </VBox>
-                      </content>
-                  </Tab>
                   <Tab closable="false">
                       <graphic>
                           <Button fx:id="panesMenuButton" mnemonicParsing="false" onMouseEntered="#popPanesMenu">

@@ -344,8 +344,8 @@ public class Fxmls {
         common
      */
     public static final String LoadingFxml = "/fxml/Loading.fxml";
-
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
+    public static final String TextInputFxml = "/fxml/TextInput.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";
