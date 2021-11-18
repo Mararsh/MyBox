@@ -39,6 +39,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlReadTools;
+import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -83,6 +84,8 @@ public class NoteEditorController extends HtmlEditorController {
             tableNoteTag = notesController.tableNoteTag;
             saveButton = notesController.saveButton;
             currentNote = null;
+            webViewController.defaultStyle = HtmlStyles.styleValue("Default");
+            editorController.defaultStyle = HtmlStyles.styleValue("Default");
 
             initTabPane();
             initAttributesTab();
@@ -99,7 +102,7 @@ public class NoteEditorController extends HtmlEditorController {
         }
         updateFileStatus(false);
         currentNote = note;
-        setAddressChanged(true);
+        addressChanged = true;
         loadNote();
     }
 

@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import thridparty.TTC;
+import mara.mybox.data.TTC;
 
 /**
  * @Author Mara

@@ -252,7 +252,7 @@ public class MenuWebviewController extends MenuController {
     }
 
     public void refreshAction() {
-        webViewController.refresh(false);
+        webViewController.refresh();
     }
 
     public void backAction() {

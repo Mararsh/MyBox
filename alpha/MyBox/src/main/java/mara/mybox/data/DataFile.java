@@ -97,14 +97,7 @@ public abstract class DataFile extends Data2D {
         resetData();
         this.file = file;
         savedColumns = null;
-    }
-
-    @Override
-    public boolean savePageData() {
-        if (fileController != null) {
-            fileController.saveAction();
-        }
-        return true;
+        tableController.resetView();
     }
 
     /*

@@ -29,7 +29,7 @@ public abstract class Data2D extends Data2DDefinition {
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected ObservableList<List<String>> tableData;
-    protected SimpleBooleanProperty pageLoadedNotify, tableChangedNotify;
+    protected final SimpleBooleanProperty pageLoadedNotify, tableChangedNotify;
     protected boolean totalRead, tableChanged;
     protected SingletonTask task, backgroundTask;
     protected String error;
@@ -51,8 +51,6 @@ public abstract class Data2D extends Data2DDefinition {
     public abstract long readTotal();
 
     public abstract List<List<String>> readPageData();
-
-    public abstract boolean savePageData();
 
     /*
         page data
@@ -278,6 +276,7 @@ public abstract class Data2D extends Data2DDefinition {
         return isValid() && tableData != null && !tableData.isEmpty();
     }
 
+
     /*
         static
      */
@@ -396,10 +395,6 @@ public abstract class Data2D extends Data2DDefinition {
         return pageLoadedNotify;
     }
 
-    public void setPageLoadedNotify(SimpleBooleanProperty pageLoadedNotify) {
-        this.pageLoadedNotify = pageLoadedNotify;
-    }
-
     public ObservableList<List<String>> getTableData() {
         return tableData;
     }
@@ -410,10 +405,6 @@ public abstract class Data2D extends Data2DDefinition {
 
     public SimpleBooleanProperty getTableChangedNotify() {
         return tableChangedNotify;
-    }
-
-    public void setTableChangedNotify(SimpleBooleanProperty tableChangedNotify) {
-        this.tableChangedNotify = tableChangedNotify;
     }
 
     public boolean isTableChanged() {

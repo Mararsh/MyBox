@@ -72,8 +72,8 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import thridparty.LabeledBarChart;
-import thridparty.LabeledHorizontalBarChart;
+import mara.mybox.fxml.LabeledBarChart;
+import mara.mybox.fxml.LabeledHorizontalBarChart;
 
 /**
  * @Author Mara

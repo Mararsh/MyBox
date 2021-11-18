@@ -200,7 +200,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (d2id < 0 || columns.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             save(conn, d2id, columns);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -216,6 +216,21 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         try {
             boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
+            List<Data2DColumn> existed = read(conn, d2id);
+            conn.setAutoCommit(true);
+            for (Data2DColumn ecolumn : existed) {
+                boolean keep = false;
+                for (Data2DColumn icolumn : columns) {
+                    if (ecolumn.getD2cid() == icolumn.getD2cid()) {
+                        keep = true;
+                        break;
+                    }
+                }
+                if (!keep) {
+                    deleteData(conn, ecolumn);
+                }
+            }
+            existed = null;
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);
                 column.setD2id(d2id);

@@ -1,4 +1,4 @@
-package thridparty;
+package mara.mybox.fxml;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,19 +15,17 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.Logarithmic10Coordinate;
-import mara.mybox.fxml.LogarithmicECoordinate;
-import mara.mybox.fxml.SquareRootCoordinate;
-import mara.mybox.fxml.ChartTools;
 import mara.mybox.fxml.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.ChartTools.LabelType;
 import mara.mybox.tools.StringTools;
 
 /**
- * @Author Roland
+ * Reference:
  * https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789
+ * By Roland
  *
- * Changed by Mara
+ * @Author Mara
+ * @License Apache License Version 2.0
  */
 public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
 

@@ -66,7 +66,7 @@ import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import thridparty.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -382,7 +382,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
         menu = new MenuItem(message("AddPalette"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            palettesController.addPaltte();
+            palettesController.addPalette();
         });
         items.add(menu);
 

@@ -22,7 +22,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import thridparty.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara

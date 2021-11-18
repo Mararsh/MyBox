@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -43,6 +44,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
@@ -72,15 +74,17 @@ import org.w3c.dom.events.EventTarget;
 public class ControlWebView extends BaseController {
 
     protected WebEngine webEngine;
-    protected boolean addressChanged, styled;
     protected double linkX, linkY, scrollTop, scrollLeft;
     protected float zoomScale;
-    protected String address, style, html;
+    protected String address, style, defaultStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
     protected Element element;
     protected final String onScrollScript;
+    protected final SimpleBooleanProperty addressChangedNotify, addressInvalidNotify,
+            pageLoadingNotify, pageLoadedNotify;
+    protected final String StyleNodeID = "MyBox__Html_Style20211118";
 
     @FXML
     protected WebView webView;
@@ -98,6 +102,10 @@ public class ControlWebView extends BaseController {
                 + "    var leftValue = document.documentElement.scrollTop || document.body.scrollLeft;"
                 + "    alert('scrollLeft-' + leftValue);"
                 + "} ";
+        addressChangedNotify = new SimpleBooleanProperty(false);
+        addressInvalidNotify = new SimpleBooleanProperty(false);
+        pageLoadingNotify = new SimpleBooleanProperty(false);
+        pageLoadedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -357,7 +365,7 @@ public class ControlWebView extends BaseController {
 
     public boolean loadFile(File file) {
         if (file == null || !file.exists()) {
-            popError(message("InvalidData"));
+            addressInvalidNotify.set(!addressInvalidNotify.get());
             return false;
         }
         return loadAddress(UrlTools.decodeURL(file, Charset.defaultCharset()));
@@ -365,7 +373,7 @@ public class ControlWebView extends BaseController {
 
     public boolean loadURI(URI uri) {
         if (uri == null) {
-            popError(message("InvalidData"));
+            addressInvalidNotify.set(!addressInvalidNotify.get());
             return false;
         }
         return loadAddress(uri.toString());
@@ -374,7 +382,7 @@ public class ControlWebView extends BaseController {
     public boolean loadAddress(String value) {
         value = UrlTools.checkURL(value, Charset.forName("UTF-8"));
         if (value == null) {
-            popError(message("InvalidData"));
+            addressInvalidNotify.set(!addressInvalidNotify.get());
             return false;
         }
         goAddress(value);
@@ -386,11 +394,7 @@ public class ControlWebView extends BaseController {
     }
 
     public boolean loadContents(String address, String contents) {
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
         setAddress(address);
-        html = contents;
         writeContents(contents);
         return true;
     }
@@ -400,49 +404,44 @@ public class ControlWebView extends BaseController {
         webEngine.loadContent(contents);
     }
 
-    public void setAddress(String value) {
-        setSourceFile(null);
-        address = UrlTools.checkURL(value, Charset.forName("UTF-8"));
-        if (address != null && address.startsWith("file:/")) {
-            File file = new File(address.substring(6));
-            if (file.exists()) {
-                setSourceFile(file);
+    private boolean setAddress(String value) {
+        try {
+            setSourceFile(null);
+            address = UrlTools.checkURL(value, Charset.forName("UTF-8"));
+            if (address != null && address.startsWith("file:/")) {
+                File file = new File(address.substring(6));
+                if (file.exists()) {
+                    setSourceFile(file);
+                }
             }
+            addressChangedNotify.set(!addressChangedNotify.get());
+            return true;
+        } catch (Exception e) {
+            addressInvalidNotify.set(!addressInvalidNotify.get());
+            return false;
         }
-        if (parentController != null && (parentController instanceof BaseWebViewController)) {
-            ((BaseWebViewController) parentController).addressChanged();
-        }
-        addressChanged = true;
-        styled = false;
-        html = null;
     }
 
     @Override
     public void setSourceFile(File file) {
         this.sourceFile = file;
         if (address == null && sourceFile != null) {
-            address = sourceFile.getAbsolutePath();
+            address = sourceFile.toURI().toString();
         }
     }
 
-    public void goAddress(String value) {
-        if (parentController != null && (parentController instanceof BaseWebViewController)) {
-            if (!((BaseWebViewController) parentController).validAddress(value)) {
+    private void goAddress(String value) {
+        try {
+            if (!setAddress(value)) {
                 return;
             }
-        }
-        try {
-            setAddress(value);
-            writeAddress();
+            setWebViewLabel(message("Loading..."));
+            webEngine.getLoadWorker().cancel();
+            webEngine.load(address);
         } catch (Exception e) {
             MyBoxLog.error(e);
+            addressInvalidNotify.set(!addressInvalidNotify.get());
         }
-    }
-
-    public void writeAddress() {
-        setWebViewLabel(message("Loading..."));
-        webEngine.getLoadWorker().cancel();
-        webEngine.load(address);
     }
 
     protected void setWebViewLabel(String string) {
@@ -451,30 +450,17 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    protected void pageIsLoading() {
-        if (styled) {
-            return;
-        }
+    private void pageIsLoading() {
         setWebViewLabel(message("Loading..."));
-        if (parentController != null && (parentController instanceof BaseWebViewController)) {
-            ((BaseWebViewController) parentController).pageIsLoading();
-        }
+        pageLoadingNotify.set(!pageLoadingNotify.get());
     }
 
-    protected void afterPageLoaded() {
+    private void afterPageLoaded() {
         try {
-            html = html();
-            style = UserConfig.getString(baseName + "HtmlStyle", null);
-            if (!styled && html != null && style != null && !style.isBlank()) {
-                styled = true;
-                writeContents(HtmlWriteTools.style(html, style));
-                return;
-            }
-            if (parentController != null && (parentController instanceof BaseWebViewController)) {
-                ((BaseWebViewController) parentController).afterPageLoaded(addressChanged);
-            }
-            addressChanged = false;
+            style(UserConfig.getString(baseName + "HtmlStyle", defaultStyle));
+            pageLoadedNotify.set(!pageLoadedNotify.get());
             setWebViewLabel(message("Loaded"));
+
             webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
 
             Document doc = webEngine.getDocument();
@@ -535,11 +521,21 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    public String html() {
-        if (html == null) {
-            html = WebViewTools.getHtml(webEngine);
+    public String loadedHtml() {
+        return HtmlReadTools.removeNode(WebViewTools.getHtml(webEngine), StyleNodeID);
+    }
+
+    public void setStyle(String style) {
+        UserConfig.setString(baseName + "HtmlStyle", style);
+        style(style);
+    }
+
+    private void style(String style) {
+        WebViewTools.removeNode(webEngine, StyleNodeID);
+        this.style = style;
+        if (style != null && !style.isBlank()) {
+            WebViewTools.addStyle(webEngine, style, StyleNodeID);
         }
-        return html;
     }
 
     public void popLinkMenu(Element element) {
@@ -720,7 +716,6 @@ public class ControlWebView extends BaseController {
         items.add(menu);
 
         closePopup();
-
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
@@ -809,19 +804,17 @@ public class ControlWebView extends BaseController {
         webEngine.executeScript("window.history.forward();");
     }
 
-    public void refresh(boolean addressChanged) {
-        this.addressChanged = addressChanged;
-        styled = false;
+    public void refresh() {
         if (address != null) {
-            writeAddress();
+            goAddress(address);
         } else {
-            writeContents(html);
+            loadContents(loadedHtml());
         }
     }
 
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
-            html = html();
+            String html = loadedHtml();
             Document doc = webEngine.getDocument();
             boolean isFrameset = framesDoc != null && framesDoc.size() > 0;
 
@@ -851,7 +844,7 @@ public class ControlWebView extends BaseController {
 
             menu = new MenuItem(message("Refresh"));
             menu.setOnAction((ActionEvent event) -> {
-                refresh(false);
+                refresh();
             });
             items.add(menu);
 
@@ -1009,7 +1002,7 @@ public class ControlWebView extends BaseController {
 
                 menu = new MenuItem(message("Table"));
                 menu.setOnAction((ActionEvent event) -> {
-                    tables(html, sourceFile != null ? sourceFile.getName() : "");
+                    tables(html, sourceFile != null ? sourceFile.getName() : address);
                 });
                 menu.setDisable(isFrameset);
                 elementsItems.add(menu);
@@ -1095,12 +1088,14 @@ public class ControlWebView extends BaseController {
 
     @FXML
     public void editAction() {
-        edit(html());
+        edit(loadedHtml());
     }
 
     public HtmlEditorController edit(String html) {
         HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-        if (address != null && !address.isBlank()) {
+        if (sourceFile != null && sourceFile.exists()) {
+            controller.loadFile(sourceFile);
+        } else if (address != null && !address.isBlank()) {
             controller.loadAddress(address);
         } else if (html != null && !html.isBlank()) {
             controller.loadContents(html);
@@ -1355,13 +1350,12 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public void findAction() {
-        find(html());
+        find(loadedHtml());
     }
 
     public void find(String html) {
         HtmlFindController controller = (HtmlFindController) WindowTools.openStage(Fxmls.HtmlFindFxml);
-        controller.loadContents(html);
-        controller.setAddress(address);
+        controller.loadContents(address, html);
         controller.toFront();
     }
 
@@ -1376,7 +1370,7 @@ public class ControlWebView extends BaseController {
             if (file == null) {
                 return;
             }
-            html = html();
+            String html = loadedHtml();
             if (html == null || html.isBlank()) {
                 popError(message("NoData"));
                 return;
@@ -1392,8 +1386,8 @@ public class ControlWebView extends BaseController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    if (parentController != null && (parentController instanceof BaseWebViewController)) {
-                        ((BaseWebViewController) parentController).afterSaveAs(file);
+                    if (saveAsType == BaseController_Attributes.SaveAsType.Open) {
+                        ControllerTools.openHtmlEditor(null, file);
                     }
                 }
             };
@@ -1483,12 +1477,12 @@ public class ControlWebView extends BaseController {
         if (webView == null) {
             return false;
         }
-        String html = WebViewTools.selectedHtml(webView.getEngine());
-        if (html == null || html.isEmpty()) {
+        String chtml = WebViewTools.selectedHtml(webView.getEngine());
+        if (chtml == null || chtml.isEmpty()) {
             popError(message("SelectedNone"));
             return false;
         }
-        TextClipboardTools.copyToSystemClipboard(myController, html);
+        TextClipboardTools.copyToSystemClipboard(myController, chtml);
         return true;
     }
 
@@ -1497,12 +1491,12 @@ public class ControlWebView extends BaseController {
         if (webView == null) {
             return false;
         }
-        String html = WebViewTools.selectedHtml(webView.getEngine());
-        if (html == null || html.isEmpty()) {
+        String chtml = WebViewTools.selectedHtml(webView.getEngine());
+        if (chtml == null || chtml.isEmpty()) {
             popError(message("SelectedNone"));
             return false;
         }
-        TextClipboardTools.copyToMyBoxClipboard(myController, html);
+        TextClipboardTools.copyToMyBoxClipboard(myController, chtml);
         return true;
     }
 

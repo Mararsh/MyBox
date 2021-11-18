@@ -25,7 +25,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import thridparty.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara

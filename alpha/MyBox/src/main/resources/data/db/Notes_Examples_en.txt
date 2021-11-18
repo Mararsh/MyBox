@@ -315,6 +315,7 @@ Items in one sentence about java
     <li>When handle money, store integer number for each unit.</li>
     <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
     <li>To determine value's broken, write if (abs(x - 7.3) < TOLERANCE) instead of if (x == 7.3).</li></ol>
+    <li>Value of final static constant should be determined at compling time.</li></ol>
 
 ##MyBox#
 Notebook > Note Examples > Coding > MyBox

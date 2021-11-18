@@ -137,9 +137,9 @@ public class HtmlFindController extends WebAddressController {
     }
 
     @Override
-    public void afterPageLoaded(boolean addressChanged) {
+    public void pageLoaded() {
         try {
-            super.afterPageLoaded(addressChanged);
+            super.pageLoaded();
 
             if (sourceHtml == null) {
                 sourceHtml = WebViewTools.getHtml(webEngine);

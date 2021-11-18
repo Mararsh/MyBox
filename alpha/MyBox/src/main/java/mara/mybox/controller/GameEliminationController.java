@@ -75,13 +75,13 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageCheckBoxCell;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import thridparty.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -220,6 +220,33 @@ public class GameEliminationController extends BaseController {
             }
         }
         return super.keyFilter(event);
+    }
+
+    @Override
+    public boolean controlAltA() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        setAutoplay();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltH() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        helpMeAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltN() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        createAction();
+        return true;
     }
 
     @Override

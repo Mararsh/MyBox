@@ -1,4 +1,4 @@
-package thridparty;
+package mara.mybox.data;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,8 +6,6 @@ import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -17,10 +15,12 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 /**
- * @Author Eduardo Lomonaco
- * https://github.com/eduardohl/Paginated-PDFBox-Table-Sample
+ * Reference: https://github.com/eduardohl/Paginated-PDFBox-Table-Sample By
+ * Eduardo Lomonaco
  *
- * Changed by Mara Update Date: 2020-12-10
+ * @Author Mara
+ * @CreateDate 2020-12-10
+ * @License Apache License Version 2.0
  */
 public class PaginatedPdfTable {
 

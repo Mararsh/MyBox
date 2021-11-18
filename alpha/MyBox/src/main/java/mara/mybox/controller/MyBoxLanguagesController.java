@@ -39,7 +39,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import thridparty.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara

@@ -131,6 +131,37 @@ public class WebViewTools {
         }
     }
 
+    // https://blog.csdn.net/weixin_29251337/article/details/117888001
+    public static void addStyle(WebEngine webEngine, String style, String styleid) {
+        try {
+            if (webEngine == null || style == null || style.isBlank()) {
+                return;
+            }
+            removeNode(webEngine, styleid);
+            String js = "var node = document.createElement(\"style\");\n"
+                    + "node.id = \"" + styleid + "\";\n"
+                    + "node.type = \"text/css\";\n"
+                    + "node.innerHTML = \"" + style.replaceAll("\n", "  ") + "\";\n"
+                    + "document.getElementsByTagName(\"HEAD\").item(0).appendChild(node);";
+            webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public static void removeNode(WebEngine webEngine, String id) {
+        try {
+            if (webEngine == null || id == null || id.isBlank()) {
+                return;
+            }
+            String js = "var node = document.getElementById(\"" + id + "\");\n"
+                    + "if ( node != null ) node.parentNode.removeChild(node);";
+            webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
     public static HTMLEditor editor(WebView webView) {
         if (webView == null) {
             return null;

@@ -142,16 +142,21 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <TableView fx:id="linksTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TableColumn fx:id="addressPathColumn" prefWidth="250.0" text="%AddressPath" />
-                                                <TableColumn fx:id="addressFileColumn" prefWidth="150.0" text="%AddressFile" />
-                                                <TableColumn fx:id="indexColumn" text="%Index" />
-                                                <TableColumn fx:id="pathColumn" prefWidth="150.0" text="%SubdirectoryName" />
-                                                <TableColumn fx:id="filenameColumn" prefWidth="150.0" text="%TargetFile" />
-                                                <TableColumn fx:id="nameColumn" prefWidth="120.0" text="%LinkName" />
-                                                <TableColumn fx:id="titleColumn" prefWidth="120.0" text="%LinkTitle" />
-                                                <TableColumn fx:id="fileColumn" prefWidth="600.0" text="%FullTargetFilename" />
+                                    <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0">
+                                       <graphic>
+                                          <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                       </graphic>
+                                    </TableColumn>
+                                                <TableColumn fx:id="addressPathColumn" editable="false" prefWidth="250.0" text="%AddressPath" />
+                                                <TableColumn fx:id="addressFileColumn" editable="false" prefWidth="150.0" text="%AddressFile" />
+                                                <TableColumn fx:id="indexColumn" editable="false" text="%Index" />
+                                                <TableColumn fx:id="pathColumn" editable="false" prefWidth="150.0" text="%SubdirectoryName" />
+                                                <TableColumn fx:id="filenameColumn" editable="false" prefWidth="150.0" text="%TargetFile" />
+                                                <TableColumn fx:id="nameColumn" editable="false" prefWidth="120.0" text="%LinkName" />
+                                                <TableColumn fx:id="titleColumn" editable="false" prefWidth="120.0" text="%LinkTitle" />
+                                                <TableColumn fx:id="fileColumn" editable="false" prefWidth="600.0" text="%FullTargetFilename" />
                                             </columns>
                                         </TableView>
                                     </children>
@@ -167,7 +172,7 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
                                             <children>
-                                                <fx:include fx:id="targetPathInput" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS"  maxWidth="1.7976931348623157E308" />
+                                                <fx:include fx:id="targetPathInput" maxWidth="1.7976931348623157E308" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS" />
                                                 <Separator prefWidth="200.0" />
                                                 <Label text="%ForHtmlInSubdirectories" />
                                                 <VBox fx:id="htmlOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">

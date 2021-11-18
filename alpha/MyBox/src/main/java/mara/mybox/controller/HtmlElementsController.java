@@ -103,16 +103,16 @@ public class HtmlElementsController extends WebAddressController {
     }
 
     @Override
-    public void pageIsLoading() {
-        super.pageIsLoading();
+    public void pageLoading() {
+        super.pageLoading();
         queryElementButton.setDisable(true);
         recoverButton.setDisable(true);
     }
 
     @Override
-    protected void afterPageLoaded(boolean addressChanged) {
+    public void pageLoaded() {
         try {
-            super.afterPageLoaded(addressChanged);
+            super.pageLoaded();
             bottomLabel.setText(message("Count") + ": " + foundCount);
             if (loadedDoc == null) {
                 loadedDoc = (HTMLDocument) webEngine.getDocument();
@@ -197,7 +197,7 @@ public class HtmlElementsController extends WebAddressController {
     @FXML
     @Override
     public void recoverAction() {
-        String address = getAddress();
+        String address = webViewController.address;
         if (address != null && !address.isBlank()) {
             loadAddress(address);
         } else {

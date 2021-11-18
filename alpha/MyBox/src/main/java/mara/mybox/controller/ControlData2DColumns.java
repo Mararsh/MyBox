@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -12,7 +14,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -20,10 +21,10 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableComboBoxCell;
 import static mara.mybox.value.Languages.message;
-import thridparty.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -306,71 +307,40 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         }
     }
 
-    @FXML
-    @Override
-    public void saveAction() {
-        if (data2D.isFile() && data2D.getFile() == null) {
-            dataController.saveAction();
-            return;
+    public boolean save(SingletonTask saveTask, Connection conn) {
+        if (data2D == null || conn == null) {
+            return false;
         }
-        StringTable validateTable = Data2DColumn.validate(tableData);
-        if (validateTable != null && !validateTable.isEmpty()) {
-            validateTable.htmlTable();
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        try {
+            long d2did = data2D.getD2did();
+            if (d2did < 0) {
+                return false;
             }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-//                        Data2DDefinition def = data2D.getDefinition();
-//                        if (def == null) {
-//                            def = new DataDefinition();
-//                        }
-//                        def.setDataName(name);
-//                        def.setScale(scale);
-//                        def.setMaxRandom(maxRandom);
-//                        def.setModifyTime(new Date());
-//                        def = tableData2DDefinition.writeData(conn, def);
-//                        data2D.setDefinition(def);
-//
-//                        long defid = def.getDfid();
-//                        List<Data2DColumn> columns = new ArrayList<>();
-//                        for (int i = 0; i < tableData.size(); i++) {
-//                            Data2DColumn column = tableData.get(i);
-//                            column.setDataDefinition(def);
-//                            column.setDataid(defid);
-//                            column.setIndex(i);
-//                            columns.add(column);
-//                        }
-//                        tableData2DColumn.save(defid, columns);
-//                        data2D.setColumns(columns);
-
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                        return false;
+            StringTable validateTable = Data2DColumn.validate(tableData);
+            if (validateTable != null && !validateTable.isEmpty()) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        validateTable.htmlTable();
                     }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    dataController.loadData();
-                    popSuccessful();
-                }
-            };
-            start(task);
+                });
+                return false;
+            }
+            List<Data2DColumn> columns = new ArrayList<>();
+            for (int i = 0; i < tableData.size(); i++) {
+                Data2DColumn column = tableData.get(i);
+                columns.add(column);
+            }
+            tableData2DColumn.save(conn, d2did, columns);
+            data2D.setColumns(columns);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (saveTask != null) {
+                saveTask.setError(e.toString());
+            }
+            return false;
         }
-
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        loadTableData();
     }
 
 }

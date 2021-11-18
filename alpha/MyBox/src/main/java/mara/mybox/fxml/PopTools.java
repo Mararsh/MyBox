@@ -24,12 +24,14 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -248,29 +250,46 @@ public class PopTools {
             popMenu.setAutoHide(true);
             String baseName = controller.getBaseName();
 
-            MenuItem menu;
-            menu = new MenuItem(message("None"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            MenuItem menu = new MenuItem(message("HtmlStyle"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            ToggleGroup sgroup = new ToggleGroup();
+            String currentStyle = UserConfig.getString(baseName + "HtmlStyle", null);
+
+            RadioMenuItem rmenu = new RadioMenuItem(message("None"));
+            rmenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString(baseName + "HtmlStyle", null);
-                    controller.refresh(false);
+                    controller.setStyle(null);
                 }
             });
-            popMenu.getItems().add(menu);
+            rmenu.setSelected(currentStyle == null);
+            rmenu.setToggleGroup(sgroup);
+            popMenu.getItems().add(rmenu);
+
+            boolean predefinedValue = false;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
-                menu = new MenuItem(message(style.name()));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
+                rmenu = new RadioMenuItem(message(style.name()));
+                String styleValue = HtmlStyles.styleValue(style);
+                rmenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setString(baseName + "HtmlStyle", HtmlStyles.styleValue(style));
-                        controller.refresh(false);
+                        controller.setStyle(styleValue);
                     }
                 });
-                popMenu.getItems().add(menu);
+                boolean isCurrent = currentStyle != null && currentStyle.equals(styleValue);
+                rmenu.setSelected(isCurrent);
+                rmenu.setToggleGroup(sgroup);
+                popMenu.getItems().add(rmenu);
+                if (isCurrent) {
+                    predefinedValue = true;
+                }
             }
-            menu = new MenuItem(message("Input") + "...");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+
+            rmenu = new RadioMenuItem(message("Input") + "...");
+            rmenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     TextInputController inputController = (TextInputController) controller.openChildStage(Fxmls.TextInputFxml, true);
@@ -280,16 +299,17 @@ public class PopTools {
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                             String value = inputController.getText();
                             if (value == null || value.isBlank()) {
-                                return;
+                                value = null;
                             }
-                            UserConfig.setString(baseName + "HtmlStyle", value);
-                            controller.refresh(false);
+                            controller.setStyle(value);
                             inputController.closeStage();
                         }
                     });
                 }
             });
-            popMenu.getItems().add(menu);
+            rmenu.setSelected(currentStyle != null && !predefinedValue);
+            rmenu.setToggleGroup(sgroup);
+            popMenu.getItems().add(rmenu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"));
@@ -528,26 +548,35 @@ public class PopTools {
             ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            MenuItem menu;
+            MenuItem menu = new MenuItem(message("WindowStyle"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
             Map<String, String> styles = new LinkedHashMap<>();
-            styles.put("Default", "");
+            styles.put("None", "");
             styles.put("Transparent", "; -fx-text-fill: black; -fx-background-color: transparent;");
             styles.put("Console", "; -fx-text-fill: #CCFF99; -fx-background-color: black;");
             styles.put("Blackboard", "; -fx-text-fill: white; -fx-background-color: #336633;");
             styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
             styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
+            ToggleGroup sgroup = new ToggleGroup();
+            String baseName = parent.getBaseName();
+            String currentStyle = UserConfig.getString(baseName + "WindowStyle", "");
             for (String name : styles.keySet()) {
-                menu = new MenuItem(message(name));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
+                RadioMenuItem rmenu = new RadioMenuItem(message(name));
+                String style = styles.get(name);
+                rmenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        String style = styles.get(name);
-                        UserConfig.setString(parent.getBaseName() + "WindowStyle", style);
+                        UserConfig.setString(baseName + "WindowStyle", style);
                         parent.getThisPane().setStyle(baseStyle + style);
                         setMenuLabelsStyle(parent.getThisPane(), baseStyle + style);
                     }
                 });
-                popMenu.getItems().add(menu);
+                rmenu.setSelected(currentStyle != null && currentStyle.equals(style));
+                rmenu.setToggleGroup(sgroup);
+                popMenu.getItems().add(rmenu);
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());

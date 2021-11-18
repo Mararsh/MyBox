@@ -319,6 +319,7 @@ startButton.disableProperty().bind(
     <li>若处理货币，应当用整型保存各个货币单位。</li>
     <li>BigDecimal比double慢很多。大多数情况下double的精度够用。</li>
     <li>若是判断数字范围，应当用 if (abs(x - 7.3) < TOLERANCE) 而不是 if (x == 7.3)。</li>
+    <li>final static常量必须在编译时刻可以确定。</li>
 </ol>
 
 ##MyBox#

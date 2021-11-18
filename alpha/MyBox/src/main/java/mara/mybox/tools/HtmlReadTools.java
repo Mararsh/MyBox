@@ -10,18 +10,25 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
+import javafx.concurrent.Task;
 import javafx.scene.control.IndexRange;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.HtmlTableController;
+import mara.mybox.data.DownloadTask;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
@@ -216,6 +223,151 @@ public class HtmlReadTools {
 
     public static HtmlTableController htmlTable(String title, String body) {
         return ControllerTools.openHtmlTable(null, body);
+    }
+
+    public static void requestHead(BaseController controller, String link) {
+        if (controller == null || link == null) {
+            return;
+        }
+        Task infoTask = new DownloadTask() {
+
+            @Override
+            protected boolean initValues() {
+                readHead = true;
+                address = link;
+                return super.initValues();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (head == null) {
+                    controller.popError(Languages.message("InvalidData"));
+                    return;
+                }
+                String table = requestHeadTable(url, head);
+                ControllerTools.openHtmlTable(null, table);
+            }
+
+            @Override
+            protected void whenFailed() {
+                if (error != null) {
+                    controller.popError(error);
+                } else {
+                    controller.popFailed();
+                }
+            }
+
+        };
+        controller.start(infoTask);
+    }
+
+    public static HttpURLConnection getConnection(URL url) {
+        try {
+            if ("https".equals(url.getProtocol())) {
+                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+                SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
+                sc.init(null, null, null);
+                conn.setSSLSocketFactory(sc.getSocketFactory());
+                return conn;
+            } else {
+                return (HttpURLConnection) url.openConnection();
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public static Map<String, String> requestHead(URL url) {
+        try {
+            HttpURLConnection connection = getConnection(url);
+            Map<String, String> head = HtmlReadTools.requestHead(connection);
+            connection.disconnect();
+            return head;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public static Map<String, String> requestHead(HttpURLConnection connection) {
+        try {
+            Map<String, String> head = new HashMap();
+            connection.setRequestMethod("HEAD");
+            head.put("ResponseCode", connection.getResponseCode() + "");
+            head.put("ResponseMessage", connection.getResponseMessage());
+            head.put("RequestMethod", connection.getRequestMethod());
+            head.put("ContentEncoding", connection.getContentEncoding());
+            head.put("ContentType", connection.getContentType());
+            head.put("ContentLength", connection.getContentLength() + "");
+            head.put("Expiration", DateTools.datetimeToString(connection.getExpiration()));
+            head.put("LastModified", DateTools.datetimeToString(connection.getLastModified()));
+            for (String key : connection.getHeaderFields().keySet()) {
+                head.put("HeaderField_" + key, connection.getHeaderFields().get(key).toString());
+            }
+            for (String key : connection.getRequestProperties().keySet()) {
+                head.put("RequestProperty_" + key, connection.getRequestProperties().get(key).toString());
+            }
+            return head;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public static String requestHeadTable(URL url) {
+        return requestHeadTable(url, HtmlReadTools.requestHead(url));
+    }
+
+    public static String requestHeadTable(URL url, Map<String, String> head) {
+        try {
+            if (head == null) {
+                return null;
+            }
+            StringBuilder s = new StringBuilder();
+            s.append("<h1  class=\"center\">").append(url.toString()).append("</h1>\n");
+            s.append("<hr>\n");
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(Languages.message("Name"), Languages.message("Value")));
+            StringTable table = new StringTable(names);
+            for (String name : head.keySet()) {
+                if (name.startsWith("HeaderField_") || name.startsWith("RequestProperty_")) {
+                    continue;
+                }
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(name, head.get(name)));
+                table.add(row);
+            }
+            s.append(StringTable.tableDiv(table));
+            s.append("<h2  class=\"center\">").append("Header Fields").append("</h2>\n");
+            int hlen = "HeaderField_".length();
+            for (Object key : head.keySet()) {
+                String name = (String) key;
+                if (!name.startsWith("HeaderField_")) {
+                    continue;
+                }
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(name.substring(hlen), (String) head.get(key)));
+                table.add(row);
+            }
+            s.append(StringTable.tableDiv(table));
+            s.append("<h2  class=\"center\">").append("Request Property").append("</h2>\n");
+            int rlen = "RequestProperty_".length();
+            for (String name : head.keySet()) {
+                if (!name.startsWith("RequestProperty_")) {
+                    continue;
+                }
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(name.substring(rlen), head.get(name)));
+                table.add(row);
+            }
+            s.append(StringTable.tableDiv(table));
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+
     }
 
     /*
@@ -703,6 +855,25 @@ public class HtmlReadTools {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
+        }
+    }
+
+    public static String removeNode(String html, String id) {
+        try {
+            if (html == null || id == null || id.isBlank()) {
+                return html;
+            }
+            org.jsoup.nodes.Document doc = Jsoup.parse(html);
+            org.jsoup.nodes.Element element = doc.getElementById(id);
+            if (element != null) {
+                element.remove();
+                return doc.html();
+            } else {
+                return html;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return html;
         }
     }
 

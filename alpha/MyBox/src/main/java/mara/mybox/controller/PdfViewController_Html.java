@@ -208,7 +208,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     @FXML
     public void editHtml() {
         HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(webViewController.html());
+        controller.loadContents(webViewController.loadedHtml());
     }
 
 }

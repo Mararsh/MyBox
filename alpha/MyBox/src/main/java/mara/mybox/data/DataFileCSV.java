@@ -212,6 +212,7 @@ public class DataFileCSV extends DataFile {
             tCharset = Charset.forName("UTF-8");
         }
         if (file != null) {
+            checkCVSFormat();
             try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat);
                      CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (withName) {

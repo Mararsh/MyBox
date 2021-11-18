@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,11 +8,12 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
 import mara.mybox.db.data.ColorPaletteName;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,7 +22,6 @@ import mara.mybox.value.Languages;
  */
 public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
 
-    public final static String DefaultPalette = Languages.message("DefaultPalette");
     protected TableColor tableColor;
     protected TableColorPalette tableColorPalette;
 
@@ -42,6 +41,10 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
         addColumn(new ColumnDefinition("cpnid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("palette_name", ColumnType.String, true).setLength(4096));
         return this;
+    }
+
+    public static String defaultPaletteName() {
+        return message("DefaultPalette");
     }
 
     public static final String Create_Unique_Index
@@ -122,7 +125,10 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
 
     public ColorPaletteName defaultPalette(Connection conn) {
         try {
-            ColorPaletteName palette = findAndCreate(conn, DefaultPalette);
+            ColorPaletteName palette = findAndCreate(conn, defaultPaletteName());
+            if (palette == null) {
+                return null;
+            }
             long paletteid = palette.getCpnid();
             if (getTableColorPalette().size(paletteid) == 0) {
                 insert(conn, paletteid, FxColorTools.color2rgba(Color.WHITE), Languages.message("White"), 1f);

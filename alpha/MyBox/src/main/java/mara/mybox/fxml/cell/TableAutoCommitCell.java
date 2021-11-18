@@ -1,4 +1,4 @@
-package thridparty;
+package mara.mybox.fxml.cell;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,10 +33,13 @@ import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
 
 /**
- * @Author Ogmios
+ * Reference:
  * https://stackoverflow.com/questions/24694616/how-to-enable-commit-on-focuslost-for-tableview-treetableview
+ * By Ogmios
  *
- * Changed by Mara
+ * @Author Mara
+ * @CreateDate 2020-12-03
+ * @License Apache License Version 2.0
  *
  * This is an old issue since 2011
  * https://bugs.openjdk.java.net/browse/JDK-8089514

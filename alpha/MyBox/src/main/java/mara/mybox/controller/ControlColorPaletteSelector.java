@@ -12,7 +12,6 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPaletteName;
-import static mara.mybox.db.table.TableColorPaletteName.DefaultPalette;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
@@ -110,7 +109,7 @@ public class ControlColorPaletteSelector extends BaseController {
                         } else {
                             palettesList.getItems().addAll(palettes);
                         }
-                        String s = UserConfig.getString(baseName + "Palette", DefaultPalette);
+                        String s = UserConfig.getString(baseName + "Palette", TableColorPaletteName.defaultPaletteName());
                         for (ColorPaletteName palette : palettes) {
                             if (palette.getName().equals(s)) {
                                 palettesList.getSelectionModel().select(palette);
@@ -127,7 +126,7 @@ public class ControlColorPaletteSelector extends BaseController {
     }
 
     @FXML
-    public void addPaltte() {
+    public void addPalette() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

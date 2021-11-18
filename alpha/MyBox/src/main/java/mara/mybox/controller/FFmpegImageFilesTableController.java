@@ -13,7 +13,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import thridparty.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara

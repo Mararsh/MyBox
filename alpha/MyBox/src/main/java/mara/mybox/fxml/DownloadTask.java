@@ -1,6 +1,5 @@
 package mara.mybox.data;
 
-import mara.mybox.fxml.BaseTask;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -10,18 +9,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DateTools;
+import mara.mybox.fxml.BaseTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -92,23 +88,8 @@ public class DownloadTask<Void> extends BaseTask<Void> {
 
     protected void readHead() {
         try {
-            head = new HashMap();
             connection = getConnection();
-            connection.setRequestMethod("HEAD");
-            head.put("ResponseCode", connection.getResponseCode() + "");
-            head.put("ResponseMessage", connection.getResponseMessage());
-            head.put("RequestMethod", connection.getRequestMethod());
-            head.put("ContentEncoding", connection.getContentEncoding());
-            head.put("ContentType", connection.getContentType());
-            head.put("ContentLength", connection.getContentLength() + "");
-            head.put("Expiration", DateTools.datetimeToString(connection.getExpiration()));
-            head.put("LastModified", DateTools.datetimeToString(connection.getLastModified()));
-            for (String key : connection.getHeaderFields().keySet()) {
-                head.put("HeaderField_" + key, connection.getHeaderFields().get(key).toString());
-            }
-            for (String key : connection.getRequestProperties().keySet()) {
-                head.put("RequestProperty_" + key, connection.getRequestProperties().get(key).toString());
-            }
+            head = HtmlReadTools.requestHead(connection);
             connection.disconnect();
             connection = null;
         } catch (Exception e) {

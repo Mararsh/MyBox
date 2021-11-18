@@ -1,24 +1,29 @@
 package mara.mybox.controller;
 
+import java.util.Optional;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
- *
  */
 public class ControlData2D extends BaseController {
 
@@ -62,8 +67,10 @@ public class ControlData2D extends BaseController {
     }
 
     // parent should call this before initControls()
-    public void setDataType(Data2D.Type type) {
+    public void setDataType(BaseController parent, Data2D.Type type) {
         try {
+            parentController = parent;
+
             data2D = Data2D.create(type);
             data2D.setTableData2DDefinition(tableData2DDefinition);
             data2D.setTableData2DColumn(tableData2DColumn);
@@ -141,16 +148,46 @@ public class ControlData2D extends BaseController {
         tableController.pageLastAction();
     }
 
-    protected void updateLabel() {
-        tableController.updateSizeLabel();
-    }
 
     /*
         interface
      */
     @Override
     public boolean checkBeforeNextAction() {
-        return tableController.checkBeforeNextAction();
+        boolean goOn;
+        if (!editController.changed && !attributesController.changed && !columnsController.changed) {
+            goOn = true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setHeaderText(getMyStage().getTitle());
+            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
+            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonSave) {
+                parentController.saveAction();
+                goOn = false;
+            } else {
+                goOn = result.get() == buttonNotSave;
+            }
+        }
+        if (goOn) {
+            if (task != null) {
+                task.cancel();
+            }
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
+            }
+        }
+        return goOn;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package thridparty;
+package mara.mybox.data;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -15,7 +15,6 @@ import static mara.mybox.tools.ByteTools.bytesToUshort;
 import static mara.mybox.tools.ByteTools.subBytes;
 import static mara.mybox.tools.ByteTools.uIntToBytes;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Languages;
 

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Date;
 import javafx.beans.value.ChangeListener;
@@ -9,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import mara.mybox.data.Data2D;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -144,46 +146,36 @@ public class ControlData2DAttributes extends BaseController {
         dataController.attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
     }
 
-    @FXML
-    @Override
-    public void saveAction() {
-        if (data2D.isFile() && data2D.getFile() == null) {
-            dataController.saveAction();
-            return;
+    public boolean save(SingletonTask saveTask, Connection conn) {
+        if (data2D == null || conn == null) {
+            return false;
         }
         String name = dataNameInput.getText();
         if (name == null || name.isBlank()) {
-            popError(message("InvalidParameter") + ": " + message("ColumnName"));
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (saveTask != null) {
+                saveTask.setError(message("InvalidParameter") + ": " + message("DataName"));
             }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        data2D.setDataName(name);
-                        data2D.setModifyTime(new Date());
-                        data2D.load(tableData2DDefinition.writeData(data2D));
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadData();
-                    popSuccessful();
-                }
-            };
-            start(task);
+            return false;
         }
-
+        try {
+            data2D.setDataName(name);
+            data2D.setModifyTime(new Date());
+            Data2DDefinition def;
+            if (data2D.getD2did() >= 0) {
+                def = tableData2DDefinition.updateData(conn, data2D);
+            } else {
+                def = tableData2DDefinition.insertData(conn, data2D);
+            }
+            conn.commit();
+            data2D.load(def);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (saveTask != null) {
+                saveTask.setError(e.toString());
+            }
+            return false;
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFile;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DColumn;
@@ -35,6 +37,8 @@ public abstract class BaseData2DFileController extends BaseController {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected ControlData2DEditTable tableController;
+    protected ControlData2DAttributes attributesController;
+    protected ControlData2DColumns columnsController;
 
     @FXML
     protected TitledPane filePane, saveAsPane, backupPane, formatPane;
@@ -70,11 +74,13 @@ public abstract class BaseData2DFileController extends BaseController {
     // class should call this before initControls()
     public void setDataType(Data2D.Type type) {
         try {
-            dataController.setDataType(type);
+            dataController.setDataType(this, type);
             dataFile = (DataFile) dataController.data2D;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             tableController = dataController.editController.tableController;
+            attributesController = dataController.attributesController;
+            columnsController = dataController.columnsController;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -178,8 +184,6 @@ public abstract class BaseData2DFileController extends BaseController {
 
     public void initFile() {
         dataFile.initFile(sourceFile);
-        tableController.resetView();
-        dataController.updateLabel();
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }
@@ -341,12 +345,6 @@ public abstract class BaseData2DFileController extends BaseController {
         loadFile();
     }
 
-    @FXML
-    @Override
-    public void recoverAction() {
-        dataController.recoverAction();
-    }
-
     protected void updateStatus() {
         Platform.runLater(new Runnable() {
             @Override
@@ -367,36 +365,48 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (dataFile == null) {
+        if (dataFile == null || dataFile.columnsNumber() <= 0) {
             return;
         }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            File file = dataFile.getFile();
-            if (file == null) {
-                file = chooseSaveFile();
-                if (file == null) {
+            targetFile = dataFile.getFile();
+            if (targetFile == null) {
+                targetFile = chooseSaveFile();
+                if (targetFile == null) {
                     return;
                 }
             }
-            File tFile = file;
             task = new SingletonTask<Void>(this) {
+
+                private boolean attributesSaved, columnsSaved;
 
                 @Override
                 protected boolean handle() {
-                    dataFile.setTask(task);
-                    backup();
-                    return savePageData(tFile);
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        attributesSaved = attributesController.save(task, conn);
+                        columnsSaved = columnsController.save(task, conn);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        backup();
+                        dataFile.setTask(task);
+                        return savePageData(targetFile);
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     popInformation(message("Saved"));
-                    recordFileWritten(tFile);
+                    recordFileWritten(targetFile);
                     if (sourceFile == null) {
-                        sourceFile = tFile;
+                        sourceFile = targetFile;
                     }
                     tableController.tableChanged(false);
                     dataFile.setEndRowOfCurrentPage(dataFile.getStartRowOfCurrentPage() + dataFile.tableRowsNumber());
@@ -409,6 +419,16 @@ public abstract class BaseData2DFileController extends BaseController {
                 protected void finalAction() {
                     dataFile.setTask(null);
                     task = null;
+                    if (!attributesSaved) {
+                        dataController.tabPane.getSelectionModel().select(dataController.attributesTab);
+                    } else {
+                        attributesController.loadData();
+                    }
+                    if (!columnsSaved) {
+                        dataController.tabPane.getSelectionModel().select(dataController.columnsTab);
+                    } else {
+                        columnsController.loadTableData();
+                    }
                 }
 
             };

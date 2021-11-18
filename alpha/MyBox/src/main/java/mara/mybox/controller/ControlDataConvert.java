@@ -36,7 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import thridparty.PaginatedPdfTable;
+import mara.mybox.data.PaginatedPdfTable;
 
 /**
  * @Author Mara

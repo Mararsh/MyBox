@@ -63,7 +63,7 @@ public class WordViewController extends BaseWebViewController {
     }
 
     @Override
-    protected void afterPageLoaded(boolean addressChanged) {
+    public void pageLoaded() {
 
     }
 

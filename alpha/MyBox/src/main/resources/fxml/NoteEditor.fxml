@@ -66,8 +66,18 @@ License:    Apache License Version 2.0
                       <content>
                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                               <children>
-                                  <FlowPane alignment="TOP_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0">
-                                      <children>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                              <Button fx:id="styleViewButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconStyle.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                           <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                               <graphic>
                                                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -104,8 +114,8 @@ License:    Apache License Version 2.0
                                                   </ImageView>
                                               </graphic>
                                           </Button>
-                                      </children>
-                                  </FlowPane>
+                           </children>
+                        </HBox>
                                   <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                               </children>
                               <padding>
@@ -189,8 +199,18 @@ License:    Apache License Version 2.0
                       <content>
                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                               <children>
-                                  <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                                      <children>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                              <Button fx:id="styleEditorButton" mnemonicParsing="false" onMouseEntered="#popEditorStyle">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconStyle.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                           <Button fx:id="popButton2" mnemonicParsing="false" onAction="#popAction">
                                               <graphic>
                                                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -218,8 +238,8 @@ License:    Apache License Version 2.0
                                                   </ImageView>
                                               </graphic>
                                           </Button>
-                                      </children>
-                                  </FlowPane>
+                           </children>
+                        </HBox>
                                   <fx:include fx:id="editor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlEditor.fxml" VBox.vgrow="ALWAYS" />
                               </children>
                               <padding>

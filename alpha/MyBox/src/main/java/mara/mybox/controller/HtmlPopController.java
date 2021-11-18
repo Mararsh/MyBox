@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -9,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -130,12 +128,7 @@ public class HtmlPopController extends BaseWebViewController {
             refreshButton.setVisible(false);
             return;
         }
-        loadContents(getAddress(), WebViewTools.getHtml(sourceWebView));
-    }
-
-    @Override
-    protected void afterSaveAs(File file) {
-        ControllerTools.openHtmlEditor(null, file);
+        loadContents(webViewController.address, WebViewTools.getHtml(sourceWebView));
     }
 
     @Override
@@ -162,7 +155,7 @@ public class HtmlPopController extends BaseWebViewController {
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
-                controller.openWebView(parent.baseName, srcWebView, c.getAddress());
+                controller.openWebView(parent.baseName, srcWebView, c.webViewController == null ? null : c.webViewController.address);
             } else {
                 controller.openWebView(parent.baseName, srcWebView, null);
             }
@@ -181,7 +174,7 @@ public class HtmlPopController extends BaseWebViewController {
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
-                controller.openHtml(parent.baseName, html, c.getAddress());
+                controller.openHtml(parent.baseName, html, c.webViewController == null ? null : c.webViewController.address);
             } else {
                 controller.openHtml(parent.baseName, html, null);
             }

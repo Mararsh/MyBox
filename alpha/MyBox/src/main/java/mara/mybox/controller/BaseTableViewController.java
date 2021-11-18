@@ -173,6 +173,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (rowsSelectionColumn != null) {
+                tableView.setEditable(true);
                 rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
             }
 

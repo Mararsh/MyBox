@@ -1,15 +1,12 @@
 package mara.mybox.controller;
 
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -17,16 +14,13 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.cell.TableRowSelectionCell;
-import mara.mybox.value.Languages;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import static mara.mybox.value.Languages.message;
-import thridparty.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -63,8 +57,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             initPagination();
 
             data2D.setTableData(tableData);
-            tableView.setEditable(true);
-            rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
 
             dataRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, Integer>, ObservableValue<Integer>>() {
                 @Override
@@ -90,7 +82,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     public void loadData() {
         try {
-            data2D.setTableChanged(false);
             makeColumns();
             loadPage(0);
         } catch (Exception e) {
@@ -100,7 +91,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        return checkBeforeNextAction();
+        return dataController.checkBeforeNextAction();
     }
 
     @Override
@@ -242,12 +233,12 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     @Override
     public void tableChanged(boolean changed) {
-        editController.tableTab.setText(message("Table") + (changed ? "*" : ""));
-        if (changed) {
-            dataController.editTab.setText(message("Edit") + "*");
-        }
-        updateSizeLabel();
+        dataController.editTab.setText(message("Edit") + (changed ? "*" : ""));
         data2D.setTableChanged(changed);
+        updateSizeLabel();
+        if (changed) {
+            editController.changed(changed);
+        }
     }
 
     @FXML
@@ -272,12 +263,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     @FXML
     public void insertAction() {
 
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        data2D.savePageData();
     }
 
     @FXML
@@ -318,45 +303,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public boolean checkBeforeNextAction() {
-        boolean goOn;
-        if (!data2D.isTableChanged()) {
-            goOn = true;
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(getMyStage().getTitle());
-            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
-            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSave) {
-                saveAction();
-                goOn = false;
-            } else {
-                goOn = result.get() == buttonNotSave;
-            }
-        }
-        if (goOn) {
-            if (task != null) {
-                task.cancel();
-            }
-            if (backgroundTask != null) {
-                backgroundTask.cancel();
-            }
-            data2D.setTableChanged(false);
-        }
-        return goOn;
     }
 
     @Override
