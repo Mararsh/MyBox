@@ -102,8 +102,8 @@ public class ControlData2DView extends BaseController {
 
     protected void displayPageHtml() {
         try {
-            int rNumber = data2D.pageRowsNumber();
-            int cNumber = data2D.pageColsNumber();
+            int rNumber = data2D.tableRowsNumber();
+            int cNumber = data2D.tableColsNumber();
             if (rNumber <= 0 || cNumber <= 0) {
                 htmlController.loadContents("");
                 return;
@@ -125,14 +125,13 @@ public class ControlData2DView extends BaseController {
                 title = data2D.titleName();
             }
             StringTable table = new StringTable(names, title);
+
             for (int i = 0; i < rNumber; i++) {
                 List<String> row = new ArrayList<>();
                 if (rowCheck.isSelected()) {
                     row.add(data2D.rowName(i));
                 }
-                for (int j = 0; j < cNumber; j++) {
-                    row.add(data2D.cell(i, j));
-                }
+                row.addAll(data2D.pageRow(i));
                 table.add(row);
             }
             htmlController.loadContents(table.html());
@@ -148,13 +147,13 @@ public class ControlData2DView extends BaseController {
     protected int pageHtml(StringTable table, int inIndex) {
         int index = inIndex;
         try {
-            int len = data2D.pageRowsNumber();
+            int len = data2D.tableRowsNumber();
             for (int r = 0; r < len; r++) {
                 List<String> values = new ArrayList<>();
                 if (rowCheck.isSelected()) {
                     values.add(message("Row") + (index + 1));
                 }
-                values.addAll(data2D.row(r));
+                values.addAll(data2D.pageRow(r));
                 table.add(values);
                 index++;
             }
@@ -223,9 +222,9 @@ public class ControlData2DView extends BaseController {
     protected int pageText(StringBuilder s, int inIndex, String delimiter) {
         int index = inIndex;
         try {
-            int len = data2D.pageRowsNumber();
+            int len = data2D.tableRowsNumber();
             for (int r = 0; r < len; r++) {
-                rowText(s, index++, data2D.row(r), delimiter);
+                rowText(s, index++, data2D.pageRow(r), delimiter);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

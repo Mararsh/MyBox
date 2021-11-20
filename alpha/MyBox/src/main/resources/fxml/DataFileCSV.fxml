@@ -157,11 +157,11 @@ License:    Apache License Version 2.0
                                  </image>
                               </ImageView>
                               <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="refreshDataButton" mnemonicParsing="false" onAction="#refreshAction">
+                              <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                          <Image url="@../buttons/Red/iconRecover.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>

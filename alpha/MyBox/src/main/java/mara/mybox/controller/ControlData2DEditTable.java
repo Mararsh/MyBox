@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -29,6 +30,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
+    protected ControlData2DView viewController;
+
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
 
@@ -39,6 +42,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
         try {
             this.editController = editController;
             dataController = editController.dataController;
+            viewController = dataController.viewController;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             this.data2D = dataController.data2D;
@@ -56,7 +60,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
             initPagination();
 
-            data2D.setTableData(tableData);
+            data2D.setTableView(tableView);
 
             dataRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, Integer>, ObservableValue<Integer>>() {
                 @Override
@@ -83,7 +87,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void loadData() {
         try {
             makeColumns();
-            loadPage(0);
+            loadPage(currentPage);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -91,7 +95,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        return dataController.checkBeforeNextAction();
+        return dataController.needSave();
     }
 
     @Override
@@ -154,15 +158,16 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             if (data2D == null || !data2D.isColumnsValid()) {
                 return;
             }
-            data2D.setTableData(tableData);
+            data2D.setTableView(tableView);
 
             List<Data2DColumn> columns = data2D.getColumns();
             for (int i = 0; i < columns.size(); i++) {
-                Data2DColumn column = columns.get(i);
-                String name = column.getName();
+                Data2DColumn dataColumn = columns.get(i);
+                String name = dataColumn.getName();
                 TableColumn tableColumn = new TableColumn<List<String>, String>(name);
-                tableColumn.setPrefWidth(column.getWidth());
-                tableColumn.setEditable(column.isEditable());
+                tableColumn.setPrefWidth(dataColumn.getWidth());
+                tableColumn.setEditable(dataColumn.isEditable());
+                tableColumn.setUserData(dataColumn.getIndex());
                 int col = i + 1;
 
                 tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>() {
@@ -189,7 +194,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                                     = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
                                 @Override
                                 public boolean valid(String value) {
-                                    return column.validValue(value);
+                                    return dataColumn.validValue(value);
                                 }
 
                                 @Override
@@ -233,12 +238,10 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     @Override
     public void tableChanged(boolean changed) {
-        dataController.editTab.setText(message("Edit") + (changed ? "*" : ""));
         data2D.setTableChanged(changed);
         updateSizeLabel();
-        if (changed) {
-            editController.changed(changed);
-        }
+        dataController.checkStatus();
+        viewController.loadData();
     }
 
     @FXML
@@ -263,6 +266,31 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     @FXML
     public void insertAction() {
 
+    }
+
+    public boolean applyColumns() {
+        try {
+            List<List<String>> newData = new ArrayList<>();
+            if (data2D.columnsNumber() > 0) {
+                for (List<String> rowValues : tableData) {
+                    List<String> newRow = new ArrayList<>();
+                    newRow.add(rowValues.get(0));
+                    for (int pageCol = 0; pageCol < data2D.columnsNumber(); pageCol++) {
+                        newRow.add(data2D.pageCell(rowValues, pageCol));
+                    }
+                    newData.add(newRow);
+                }
+            }
+            makeColumns();
+            isSettingValues = true;
+            tableData.setAll(newData);
+            isSettingValues = false;
+            tableChanged(true);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
     }
 
     @FXML

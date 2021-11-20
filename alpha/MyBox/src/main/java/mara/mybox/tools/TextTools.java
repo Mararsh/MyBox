@@ -631,7 +631,7 @@ public class TextTools {
         try {
             StringBuilder s = new StringBuilder();
             String delimiter = delimiterValue(delimiterName);
-            int rowsNumber = data2D.pageRowsNumber();
+            int rowsNumber = data2D.tableRowsNumber();
             int colsNumber = data2D.tableColsNumber();
             int colEnd;
             if (displayColNames) {
@@ -656,8 +656,9 @@ public class TextTools {
                     s.append(rowNames.get(i)).append(delimiter);
                 }
                 colEnd = colsNumber - 1;
+                List<String> rowValues = data2D.tableRowRaw(i);
                 for (int c = 0; c <= colEnd; c++) {
-                    v = data2D.cell(i, c);
+                    v = data2D.pageCell(rowValues, c);
                     s.append(v == null ? "" : v);
                     if (c < colEnd) {
                         s.append(delimiter);

@@ -529,9 +529,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         } else {
                             thisPane.requestFocus();
                         }
-                        if (mainMenuController != null) {
-                            LocateTools.mouseCenter(myStage);
-                        }
+                        LocateTools.mouseCenter(myStage);
                         if (leftPane != null) {
                             leftPane.setHvalue(0);
                         }

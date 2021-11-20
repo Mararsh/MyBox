@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.ObservableList;
-import mara.mybox.controller.ControlData2DEditTable;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -21,14 +21,13 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class Data2D extends Data2DDefinition {
 
-    protected ControlData2DEditTable tableController;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected List<Data2DColumn> columns;
     protected int pageSize;
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
-    protected ObservableList<List<String>> tableData;
+    protected TableView<List<String>> tableView;
     protected final SimpleBooleanProperty pageLoadedNotify, tableChangedNotify;
     protected boolean totalRead, tableChanged;
     protected SingletonTask task, backgroundTask;
@@ -55,23 +54,15 @@ public abstract class Data2D extends Data2DDefinition {
     /*
         page data
      */
-    public int pageRowsNumber() {
-        return tableData == null ? 0 : tableData.size();
-    }
-
-    public int pageColsNumber() {
-        return tableData == null || tableData.isEmpty() ? 0 : tableData.get(0).size();
-    }
-
     public final void resetData() {
         resetDefinition();
-        columns = null;
         dataSize = 0;
         pagesNumber = 1;
         currentPage = startRowOfCurrentPage = endRowOfCurrentPage = 0;
+        columns = null;
         totalRead = tableChanged = false;
-        if (tableData != null) {
-            tableData.clear();
+        if (tableView != null) {
+            tableView.getItems().clear();
         }
     }
 
@@ -99,6 +90,67 @@ public abstract class Data2D extends Data2DDefinition {
         pageLoadedNotify.set(!pageLoadedNotify.get());
     }
 
+    public String pageCell(List<String> tableRowValues, int pageCol) {
+        try {
+            int tableCol = index(pageCol);
+            if (tableCol < 0) {
+                return defaultColValue();
+            } else {
+                String value = tableRowValues.get(tableCol);
+                if (value == null) {
+                    return defaultColValue();
+                } else {
+                    return value;
+                }
+            }
+        } catch (Exception e) {
+            return defaultColValue();
+        }
+    }
+
+    public int index(int pageCol) {
+        try {
+            int index = columns.get(pageCol).getIndex();
+            for (int i = 1; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                if (tableColumn.getUserData() != null && index == (int) tableColumn.getUserData()) {
+                    return i - 1;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return -1;
+    }
+
+    public List<Integer> indices() {
+        try {
+            List<Integer> indices = new ArrayList<>();
+            for (int i = 0; i < columns.size(); i++) {
+                indices.add(index(i));
+            }
+            return indices;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<String> pageRow(int row) {
+        if (tableView == null || row < 0 || row > tableView.getItems().size() - 1) {
+            return null;
+        }
+        try {
+            List<String> tableRowValues = tableView.getItems().get(row);
+            List<String> values = new ArrayList<>();
+            for (int pageCol = 0; pageCol < columns.size(); pageCol++) {
+                values.add(pageCell(tableRowValues, pageCol));
+            }
+            return values;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
     /*
         table
      */
@@ -108,47 +160,22 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public int tableRowsNumber() {
-        return tableData == null ? 0 : tableData.size();
+        return tableView == null ? 0 : tableView.getItems().size();
     }
 
     public int tableColsNumber() {
-        return tableData == null || tableData.isEmpty() ? 0 : tableData.get(0).size() - 2;
+        return columns == null ? 0 : columns.size();
     }
 
-    public String cell(int row, int col) {
-        String value = null;
-        try {
-            value = tableData.get(row).get(col + 1);
-        } catch (Exception e) {
-        }
-        return value == null ? defaultColValue() : value;
-    }
-
-    public boolean isCellValid(int col, String value) {
-        try {
-            return column(col).validValue(value);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public List<String> row(int row) {
-        if (tableData == null || row < 0 || row > tableData.size() - 1) {
+    public List<String> tableRowRaw(int row) {
+        if (tableView == null || row < 0 || row > tableView.getItems().size() - 1) {
             return null;
         }
         try {
-            List<String> values = new ArrayList<>();
-            for (int col = 0; col < columnsNumber(); col++) {
-                values.add(cell(row, col));
-            }
-            return values;
+            return tableView.getItems().get(row);
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public boolean needSavePageData() {
-        return isMutiplePages() && isTableChanged();
     }
 
     public void notifyTableChanged() {
@@ -231,7 +258,7 @@ public abstract class Data2D extends Data2DDefinition {
 
     public List<String> rowNames() {
         try {
-            return rowNames(tableData.size());
+            return rowNames(tableView.getItems().size());
         } catch (Exception e) {
             return null;
         }
@@ -273,7 +300,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public boolean hasData() {
-        return isValid() && tableData != null && !tableData.isEmpty();
+        return isValid() && tableView.getItems() != null && !tableView.getItems().isEmpty();
     }
 
 
@@ -395,14 +422,6 @@ public abstract class Data2D extends Data2DDefinition {
         return pageLoadedNotify;
     }
 
-    public ObservableList<List<String>> getTableData() {
-        return tableData;
-    }
-
-    public void setTableData(ObservableList<List<String>> tableData) {
-        this.tableData = tableData;
-    }
-
     public SimpleBooleanProperty getTableChangedNotify() {
         return tableChangedNotify;
     }
@@ -419,12 +438,12 @@ public abstract class Data2D extends Data2DDefinition {
         this.totalRead = totalRead;
     }
 
-    public ControlData2DEditTable getTableController() {
-        return tableController;
+    public TableView<List<String>> getTableView() {
+        return tableView;
     }
 
-    public void setTableController(ControlData2DEditTable tableController) {
-        this.tableController = tableController;
+    public void setTableView(TableView<List<String>> tableView) {
+        this.tableView = tableView;
     }
 
     public SingletonTask getTask() {

@@ -1,8 +1,9 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Date;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -10,10 +11,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import mara.mybox.data.Data2D;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -28,7 +27,15 @@ public class ControlData2DAttributes extends BaseController {
     protected ControlData2D dataController;
     protected TableData2DDefinition tableData2DDefinition;
     protected Data2D data2D;
-    protected boolean changed;
+    protected String dataName;
+    protected short scale;
+    protected int maxRandom;
+    protected Status lastStatus, status;
+    protected final SimpleBooleanProperty invalid;
+
+    public enum Status {
+        Loaded, Modified, Applied
+    }
 
     @FXML
     protected Label idLabel;
@@ -38,6 +45,7 @@ public class ControlData2DAttributes extends BaseController {
     protected ComboBox<String> scaleSelector, randomSelector;
 
     public ControlData2DAttributes() {
+        invalid = new SimpleBooleanProperty(false);
     }
 
     protected void setParameters(ControlData2D dataController) {
@@ -54,18 +62,16 @@ public class ControlData2DAttributes extends BaseController {
                     if (!isSettingValues) {
                         if (newValue == null && oldValue != null
                                 || newValue != null && !newValue.equals(oldValue)) {
-                            data2D.setDataName(newValue);
-                            valuesChanged(true);
+                            status(Status.Modified);
                         }
                     }
                 }
             });
 
-            short scale = (short) UserConfig.getInt(baseName + "Scale", 2);
+            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
             if (scale < 0) {
                 scale = 2;
             }
-            data2D.setScale(scale);
             scaleSelector.getItems().addAll(
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
             );
@@ -75,11 +81,11 @@ public class ControlData2DAttributes extends BaseController {
                         try {
                             int v = Integer.parseInt(scaleSelector.getValue());
                             if (v >= 0 && v <= 15) {
-                                data2D.setScale((short) v);
+                                scale = (short) v;
                                 UserConfig.setInt(baseName + "Scale", v);
                                 scaleSelector.getEditor().setStyle(null);
                                 if (!isSettingValues) {
-                                    valuesChanged(true);
+                                    status(Status.Modified);
                                 }
                             } else {
                                 scaleSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -89,11 +95,10 @@ public class ControlData2DAttributes extends BaseController {
                         }
                     });
 
-            int maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
+            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
             if (maxRandom < 0) {
                 maxRandom = 100000;
             }
-            data2D.setMaxRandom(maxRandom);
             randomSelector.getItems().addAll(Arrays.asList("1", "100", "10", "1000", "10000", "1000000", "10000000"));
             randomSelector.setValue(maxRandom + "");
             randomSelector.getSelectionModel().selectedItemProperty().addListener(
@@ -101,11 +106,11 @@ public class ControlData2DAttributes extends BaseController {
                         try {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
-                                data2D.setMaxRandom(v);
+                                maxRandom = v;
                                 UserConfig.setInt(baseName + "MaxRandom", v);
                                 randomSelector.getEditor().setStyle(null);
                                 if (!isSettingValues) {
-                                    valuesChanged(true);
+                                    status(Status.Modified);
                                 }
                             } else {
                                 randomSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -115,16 +120,28 @@ public class ControlData2DAttributes extends BaseController {
                         }
                     });
 
+            invalid.bind(Bindings.isEmpty(dataNameInput.textProperty())
+                    .or(Bindings.isEmpty(randomSelector.getEditor().textProperty()))
+                    .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(Bindings.isEmpty(randomSelector.getEditor().textProperty()))
+                    .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+            );
+            okButton.setDisable(true);
+            cancelButton.setDisable(true);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     public void loadData() {
+        status = null;
+        loadAttributes();
+        status(Status.Loaded);
+    }
+
+    public void loadAttributes() {
         try {
-            idLabel.setText("");
-            dataNameInput.setText("");
-            valuesChanged(false);
             if (data2D == null) {
                 return;
             }
@@ -141,41 +158,55 @@ public class ControlData2DAttributes extends BaseController {
         }
     }
 
-    public void valuesChanged(boolean changed) {
-        this.changed = changed;
-        dataController.attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
+    public void status(Status newStatus) {
+        okButton.setDisable(newStatus != Status.Modified || invalid.get());
+        cancelButton.setDisable(newStatus != Status.Modified);
+        if (status == newStatus) {
+            return;
+        }
+        lastStatus = status;
+        status = newStatus;
+        dataController.checkStatus();
+
     }
 
-    public boolean save(SingletonTask saveTask, Connection conn) {
-        if (data2D == null || conn == null) {
-            return false;
+    public boolean isChanged() {
+        return status == Status.Modified || status == Status.Applied;
+    }
+
+    @FXML
+    @Override
+    public void okAction() {
+        if (!isChanged()) {
+            return;
         }
+        if (pickValues()) {
+            status(Status.Applied);
+        } else {
+            popError(message("InvalidParameter") + ": " + message("DataName"));
+        }
+    }
+
+    public boolean pickValues() {
         String name = dataNameInput.getText();
         if (name == null || name.isBlank()) {
-            if (saveTask != null) {
-                saveTask.setError(message("InvalidParameter") + ": " + message("DataName"));
-            }
             return false;
         }
-        try {
-            data2D.setDataName(name);
-            data2D.setModifyTime(new Date());
-            Data2DDefinition def;
-            if (data2D.getD2did() >= 0) {
-                def = tableData2DDefinition.updateData(conn, data2D);
-            } else {
-                def = tableData2DDefinition.insertData(conn, data2D);
-            }
-            conn.commit();
-            data2D.load(def);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (saveTask != null) {
-                saveTask.setError(e.toString());
-            }
-            return false;
+        data2D.setDataName(name);
+        data2D.setScale(scale);
+        data2D.setMaxRandom(maxRandom);
+        data2D.setModifyTime(new Date());
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        if (!isChanged()) {
+            return;
         }
+        status(lastStatus);
+        loadAttributes();
     }
 
 }

@@ -70,12 +70,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
             super.initValues();
 
             tableData = FXCollections.observableArrayList();
-            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
-            if (pageSize < 1) {
-                pageSize = 50;
-            };
             pagesNumber = 1;
-            currentPage = 0;
+            currentPage = startRowOfCurrentPage = 0;
             dataSize = 0;
             editingIndex = viewingIndex = -1;
         } catch (Exception e) {
@@ -269,9 +265,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void tableChanged(boolean changed) {
-        if (changed) {
-            updateSizeLabel();
-        }
+        updateSizeLabel();
     }
 
     protected void updateSizeLabel() {
@@ -404,7 +398,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public void resetView() {
         tableData.clear();
         pagesNumber = 1;
-        currentPage = 0;
         dataSize = 0;
         startRowOfCurrentPage = 0;
         checkSelected();
@@ -674,6 +667,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
      */
     protected void initPagination() {
         try {
+            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
+            if (pageSize < 1) {
+                pageSize = 50;
+            }
             if (pageSelector == null) {
                 return;
             }
@@ -724,8 +721,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (isSettingValues || pageSelector == null) {
             return false;
         }
-        String value = pageSelector.getEditor().getText();
         try {
+            String value = pageSelector.getEditor().getText();
             int v = Integer.parseInt(value);
             if (v <= 0) {
                 pageSelector.getEditor().setStyle(UserConfig.badStyle());

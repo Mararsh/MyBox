@@ -9,7 +9,6 @@ import mara.mybox.data.Data2D;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -56,15 +55,9 @@ public class ControlData2DEdit extends BaseController {
         try {
             tableController.loadTableData();
             textController.loadData();
-            changed(false);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
-    }
-
-    public void changed(boolean changed) {
-        this.changed = changed;
-        dataController.editTab.setText(message("Edit") + (changed ? "*" : ""));
     }
 
     @Override

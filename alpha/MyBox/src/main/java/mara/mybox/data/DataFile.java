@@ -97,7 +97,6 @@ public abstract class DataFile extends Data2D {
         resetData();
         this.file = file;
         savedColumns = null;
-        tableController.resetView();
     }
 
     /*

@@ -210,7 +210,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
     }
 
     public boolean save(Connection conn, long d2id, List<Data2DColumn> columns) {
-        if (d2id < 0 || columns == null || columns.isEmpty()) {
+        if (d2id < 0 || columns == null) {
             return false;
         }
         try {

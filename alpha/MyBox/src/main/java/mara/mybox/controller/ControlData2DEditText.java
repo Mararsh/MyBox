@@ -32,8 +32,12 @@ public class ControlData2DEditText extends BaseController {
     protected ControlData2D dataController;
     protected ControlData2DEdit editController;
     protected Data2D data2D;
-    protected boolean textChanged;
     protected String delimiterName;
+    protected Status lastStatus, status;
+
+    public enum Status {
+        Loaded, Modified, Applied
+    }
 
     @FXML
     protected TextArea textArea;
@@ -55,7 +59,7 @@ public class ControlData2DEditText extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    textChanged(true);
+                    status(Status.Modified);
                 }
             });
 
@@ -66,34 +70,55 @@ public class ControlData2DEditText extends BaseController {
 
     public void loadData() {
         try {
+            status = null;
+            loadText();
+            status(Status.Loaded);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
+    }
+
+    public void loadText() {
+        try {
             String text = TextTools.dataPage(data2D, delimiterName, false, false);
             isSettingValues = true;
             textArea.setText(text);
             isSettingValues = false;
-            textChanged(false);
         } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
-    public void textChanged(boolean changed) {
-        try {
-            textChanged = changed;
-            editController.textTab.setText(message("Texts") + (changed ? " *" : ""));
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+    public void status(Status newStatus) {
+        okButton.setDisable(newStatus != Status.Modified);
+        cancelButton.setDisable(newStatus != Status.Modified);
+        if (status == newStatus) {
+            return;
+        }
+        lastStatus = status;
+        this.status = newStatus;
+        dataController.checkStatus();
+    }
+
+    public boolean isChanged() {
+        return status == Status.Modified && status == Status.Applied;
+    }
+
+    @FXML
+    @Override
+    public void okAction() {
+        if (!isChanged()) {
+            return;
+        }
+        if (pickValues()) {
+            status(Status.Applied);
+        } else {
+            popError(message("InvalidParameter") + ": " + message("DataName"));
         }
     }
 
-    public void synchronize() {
-        synchronize(delimiterName);
-    }
-
-    public void synchronize(String delimiterName) {
+    public boolean pickValues() {
         try {
-            if (isSettingValues) {
-                return;
-            }
             String s = textArea.getText();
             String[] lines = s.split("\n");
             int colsSize = 0;
@@ -119,7 +144,7 @@ public class ControlData2DEditText extends BaseController {
             }
             if (rowsSize == 0 || colsSize == 0) {
 //                makeSheet(null);
-                return;
+                return true;
             }
             String[][] data = new String[rowsSize][colsSize];
             for (int r = 0; r < rowsSize; r++) {
@@ -129,30 +154,33 @@ public class ControlData2DEditText extends BaseController {
                 }
             }
 //            makeSheet(data, true, true);
+            return true;
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
-        }
-    }
-
-    public void loadText(String text) {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            editController.tabPane.getSelectionModel().select(editController.textTab);
-            isSettingValues = true;
-            textArea.setText(text);
-            isSettingValues = false;
-            synchronize();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
     @FXML
     @Override
-    public void recoverAction() {
-        loadData();
+    public void cancelAction() {
+        if (!isChanged()) {
+            return;
+        }
+        status(lastStatus);
+        loadText();
+    }
+
+    public void loadText(String text) {
+        try {
+            editController.tabPane.getSelectionModel().select(editController.textTab);
+            isSettingValues = true;
+            textArea.setText(text);
+            isSettingValues = false;
+            okAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML

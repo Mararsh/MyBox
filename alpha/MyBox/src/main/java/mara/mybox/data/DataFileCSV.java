@@ -287,7 +287,7 @@ public class DataFileCSV extends DataFile {
                     }
                     return false;
                 }
-                csvPrinter.printRecord(row(r));
+                csvPrinter.printRecord(pageRow(r));
             }
             return true;
         } catch (Exception e) {
