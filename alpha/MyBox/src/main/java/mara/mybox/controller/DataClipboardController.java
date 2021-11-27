@@ -36,11 +36,6 @@ public class DataClipboardController extends BaseController {
         return true;
     }
 
-    @Override
-    public boolean controlAltM() {
-        clipboardController.sheetController.myBoxClipBoard();
-        return true;
-    }
 
     /*
         static

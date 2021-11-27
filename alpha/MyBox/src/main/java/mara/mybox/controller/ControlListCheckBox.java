@@ -274,4 +274,11 @@ public class ControlListCheckBox extends BaseController {
         return listView.getSelectionModel().getSelectedIndex();
     }
 
+    public boolean isChecked(int index) {
+        if (checkBoxs == null || index < 0 || index >= checkBoxs.size()) {
+            return false;
+        }
+        return checkBoxs.get(index).isSelected();
+    }
+
 }

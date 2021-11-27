@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 
 /**
  * @Author Mara
@@ -31,38 +32,6 @@ public class Data2DDefinition extends BaseData {
         resetDefinition();
     }
 
-    public Data2DDefinition(Type type, String dataName) {
-        resetDefinition();
-        this.type = type;
-        this.dataName = dataName;
-    }
-
-    public final void resetDefinition() {
-        d2did = -1;
-        file = null;
-        dataName = null;
-        hasHeader = false;
-        charset = Charset.defaultCharset();
-        delimiter = ",";
-        colsNumber = rowsNumber = 0;
-        scale = 2;
-        maxRandom = 1000;
-        modifyTime = new Date();
-        comments = null;
-    }
-
-    public boolean isValid() {
-        return valid(this);
-    }
-
-    public Data2DDefinition setCharsetName(String charsetName) {
-        try {
-            charset = Charset.forName(charsetName);
-        } catch (Exception e) {
-        }
-        return this;
-    }
-
     public void load(Data2DDefinition def) {
         try {
             if (def == null) {
@@ -84,6 +53,54 @@ public class Data2DDefinition extends BaseData {
         } catch (Exception e) {
         }
     }
+
+    public Data2DDefinition cloneAll() {
+        try {
+            Data2DDefinition newData = new Data2DDefinition();
+            newData.load(this);
+            return newData;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public final void resetDefinition() {
+        d2did = -1;
+        file = null;
+        dataName = null;
+        hasHeader = true;
+        charset = null;
+        delimiter = null;
+        colsNumber = rowsNumber = 0;
+        scale = 2;
+        maxRandom = 1000;
+        modifyTime = new Date();
+        comments = null;
+    }
+
+    public boolean isValid() {
+        return valid(this);
+    }
+
+    public Data2DDefinition setCharsetName(String charsetName) {
+        try {
+            charset = Charset.forName(charsetName);
+        } catch (Exception e) {
+        }
+        return this;
+    }
+
+    public void checkBeforeSaving() {
+        if (dataName == null || dataName.isBlank()) {
+            if (file != null) {
+                dataName = file.getName();
+            } else {
+                dataName = DateTools.nowString();
+            }
+        }
+    }
+
 
     /*
         static methods
@@ -111,7 +128,7 @@ public class Data2DDefinition extends BaseData {
             case "file":
                 return data.getFile() == null ? null : data.getFile().getAbsolutePath();
             case "charset":
-                return data.getCharset() == null ? Charset.defaultCharset() : data.getCharset().name();
+                return data.getCharset() == null ? Charset.defaultCharset().name() : data.getCharset().name();
             case "delimiter":
                 return data.getDelimiter();
             case "has_header":
@@ -199,52 +216,6 @@ public class Data2DDefinition extends BaseData {
         return types[type];
     }
 
-//    public static StringTable saveDefinition(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
-//            String dataName, Data2DDefinition.Type type,
-//            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
-//        if (dataName == null) {
-//            return null;
-//        }
-//        try ( Connection conn = DerbyBase.getConnection()) {
-//            return saveDefinition(tableDataDefinition, tableDataColumn,
-//                    conn, dataName, type, charset, delimiterName, withName, columns);
-//        } catch (Exception e) {
-//            MyBoxLog.error(e);
-//            return null;
-//        }
-//    }
-//    public static StringTable saveDefinition(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
-//            Connection conn, String dataName, Type type,
-//            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
-//        if (conn == null || dataName == null) {
-//            return null;
-//        }
-//        try {
-////            Data2DDefinition def = tableDataDefinition.queryName(conn, type, dataName);
-//            if (def == null) {
-//                def = Data2DDefinition.create()
-//                        .setDataName(dataName).setType(type)
-//                        .setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
-////                tableDataDefinition.insertData(conn, def);
-//            } else {
-//                def.setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
-////                tableDataDefinition.updateData(conn, def);
-//                tableDataColumn.clear(conn, def.getDfid());
-//            }
-//            StringTable validateTable = null;
-//            if (columns != null && !columns.isEmpty()) {
-//                validateTable = ColumnDefinition.validate(columns);
-//                if (validateTable != null && validateTable.isEmpty()) {
-//                    tableDataColumn.save(conn, def.getDfid(), columns);
-//                    conn.commit();
-//                }
-//            }
-//            return validateTable;
-//        } catch (Exception e) {
-//            MyBoxLog.error(e);
-//            return null;
-//        }
-//    }
 
     /*
         get/set

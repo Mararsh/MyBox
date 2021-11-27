@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
+import mara.mybox.data.DataFile;
 import mara.mybox.data.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
@@ -16,14 +17,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CsvTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TextTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVFormat;
 
 /**
  * @Author Mara
@@ -50,7 +47,6 @@ public class DataFileCSVController extends BaseData2DFileController {
 
             setDataType(Data2D.Type.DataFileCSV);
             dataFileCSV = (DataFileCSV) dataController.data2D;
-            dataFileCSV.setFileController(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -76,13 +72,19 @@ public class DataFileCSVController extends BaseData2DFileController {
 
     @Override
     public void pickOptions() {
-        dataFileCSV.setCharset(csvReadController.charset);
         dataFileCSV.setDelimiter(csvReadController.delimiter + "");
-        dataFileCSV.setAutoDetermineSourceCharset(csvReadController.autoDetermine);
+        if (csvReadController.autoDetermine) {
+            dataFileCSV.setCharset(TextFileTools.charset(dataFileCSV.getFile()));
+        } else {
+            dataFileCSV.setCharset(csvReadController.charset);
+        }
         dataFileCSV.setHasHeader(csvReadController.withNamesCheck.isSelected());
     }
 
     public void setFile(File file, Charset charset, boolean withName, char delimiter) {
+        if (file == null || !checkBeforeNextAction()) {
+            return;
+        }
         sourceFile = file;
         csvReadController.withNamesCheck.setSelected(withName);
         csvReadController.setDelimiter(delimiter);
@@ -90,83 +92,25 @@ public class DataFileCSVController extends BaseData2DFileController {
         dataFileCSV.setUserSavedDataDefinition(false);
         dataFileCSV.setCharset(charset);
         dataFileCSV.setDelimiter(delimiter + "");
-        dataFileCSV.setAutoDetermineSourceCharset(false);
         dataFileCSV.setHasHeader(withName);
         loadFile();
     }
 
     @Override
-    protected void updateInfoLabel() {
-        String info = "";
-        if (sourceFile != null) {
-            info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + message("Charset") + ": " + dataFileCSV.getCharset() + "\n"
-                    + message("Delimiter") + ": " + TextTools.delimiterMessage(dataFileCSV.getDelimiter()) + "\n"
-                    + message("FirstLineAsNames") + ": " + (dataFileCSV.isHasHeader() ? message("Yes") : message("No")) + "\n";
-        }
-        if (!dataFileCSV.isMutiplePages()) {
-            info += message("RowsNumber") + ":" + dataFileCSV.tableRowsNumber() + "\n";
-        } else {
-            info += message("LinesNumberInFile") + ":" + dataFileCSV.getDataSize() + "\n";
-        }
-        info += message("ColumnsNumber") + ": " + dataFileCSV.columnsNumber() + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(dataFileCSV.getCurrentPage() + 1)
-                + " / " + StringTools.format(dataFileCSV.getPagesNumber()) + "\n";
-        if (dataFileCSV.isMutiplePages() && dataFileCSV.hasData()) {
-            info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(dataFileCSV.getStartRowOfCurrentPage() + 1) + " - "
-                    + StringTools.format(dataFileCSV.getStartRowOfCurrentPage() + dataFileCSV.tableRowsNumber())
-                    + " ( " + StringTools.format(dataFileCSV.tableRowsNumber()) + " )\n";
-        }
-        info += message("PageModifyTime") + ": " + DateTools.nowString();
-        fileInfoLabel.setText(info);
-    }
-
-    @Override
-    public boolean savePageData(File tfile) {
-        return dataFileCSV.savePageData(tfile, dataFileCSV.getCharset(), dataFileCSV.getSourceCsvFormat(), dataFileCSV.isHasHeader());
-    }
-
-    @Override
-    public boolean savePageDataAs(File tfile) {
-        CSVFormat targetCsvFormat = CSVFormat.DEFAULT
-                .withDelimiter(csvWriteController.delimiter)
-                .withIgnoreEmptyLines().withTrim().withNullString("");
-        boolean hasHeader = csvWriteController.withNamesCheck.isSelected();
-        if (hasHeader) {
-            targetCsvFormat = targetCsvFormat.withFirstRecordAsHeader();
-        }
-        return dataFileCSV.savePageData(tfile, csvWriteController.charset, targetCsvFormat, hasHeader);
-    }
-
-    @Override
-    public void open(File file) {
-        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.sourceFileChanged(file);
+    public DataFile makeTargetDataFile(File file) {
+        DataFileCSV targetCSVFile = (DataFileCSV) dataFileCSV.cloneAll();
+        targetCSVFile.setFile(file);
+        targetCSVFile.setD2did(-1);
+        targetCSVFile.setCharset(csvWriteController.charset);
+        targetCSVFile.setDelimiter(csvWriteController.delimiter + "");
+        targetCSVFile.setHasHeader(csvWriteController.withNamesCheck.isSelected());
+        return targetCSVFile;
     }
 
     public void loadData(List<StringTable> tables) {
         if (tables == null || tables.isEmpty()) {
             return;
         }
-//        if (tables.size() == 1) {
-//            StringTable table = tables.get(0);
-//            String[][] data = TextTools.toArray(table.getData());
-//            if (data == null || data.length == 0) {
-//                return;
-//            }
-//            List<ColumnDefinition> dataColumns = null;
-//            List<String> names = table.getNames();
-//            if (names != null && !names.isEmpty()) {
-//                dataColumns = new ArrayList<>();
-//                for (String name : names) {
-//                    dataColumns.add(new ColumnDefinition(name, ColumnDefinition.ColumnType.String));
-//                }
-//            }
-//            loadData(data, dataColumns);
-//            return;
-//        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

@@ -7,6 +7,7 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
@@ -18,11 +19,20 @@ License:    Apache License Version 2.0
     <children>
       <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
          <children>
-            <Button fx:id="deleteColumnsButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+            <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/red/iconWrap.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Button fx:id="delimiterButton" mnemonicParsing="false" onAction="#delimiterActon">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconDelete.png" />
+                        <Image url="@../buttons/Red/iconDelimiter.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -65,7 +75,7 @@ License:    Apache License Version 2.0
             </Button>
          </children>
       </FlowPane>
-      <Label fx:id="columnsLabel" text="Label" />
+      <Label fx:id="columnsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="Label" wrapText="true" />
           <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%DataInputComments" VBox.vgrow="ALWAYS" />
     </children>
 </VBox>

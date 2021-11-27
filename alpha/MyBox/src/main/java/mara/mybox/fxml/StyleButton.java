@@ -78,12 +78,8 @@ public class StyleButton {
                     return new StyleData(id, message("AddFiles"), "", "iconFileAdd.png");
                 case "addDirectoryButton":
                     return new StyleData(id, message("AddDirectory"), "", "iconFolderAdd.png");
-                case "rowAddButton":
-                    return new StyleData(id, message("Add"), "", "iconRowAdd.png");
-                case "addImageButton":
-                    return new StyleData(id, message("Image"), "", "iconLoadSize.png");
-                case "addTableButton":
-                    return new StyleData(id, message("Table"), "", "iconSplit.png");
+                case "addMenuButton":
+                    return new StyleData(id, "", "", "iconAdd.png");
                 default:
                     return new StyleData(id, message("Add"), "", "iconAdd.png");
             }
@@ -387,7 +383,7 @@ public class StyleButton {
             return new StyleData(id, message("Count"), "", "iconCalculator.png");
         }
         if (id.startsWith("delimiter")) {
-            return new StyleData(id, message("Delimiter"), "", "iconDelimiter.png");
+            return new StyleData(id, "", message("Delimiter"), "iconDelimiter.png");
         }
         if (id.startsWith("comma")) {
             return new StyleData(id, message("Comma"), "", "iconDelimiter.png");
@@ -532,9 +528,11 @@ public class StyleButton {
         if (id.startsWith("set")) {
             switch (id) {
                 case "setButton":
-                    return new StyleData("setButton", message("Set"), "F1", "iconEqual.png");
+                    return new StyleData(id, message("Set"), "F1", "iconEqual.png");
                 case "setAllOrSelectedButton":
                     return new StyleData(id, message("SetAllOrSelected"), "", "iconEqual.png");
+                case "setValuesButton":
+                    return new StyleData(id, message("SetValues"), "", "iconEqual.png");
                 default:
                     return new StyleData(id, message("Set"), "", "iconEqual.png");
             }

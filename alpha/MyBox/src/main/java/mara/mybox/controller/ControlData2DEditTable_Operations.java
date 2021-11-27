@@ -39,7 +39,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public abstract class ControlData2DEditTable_Operations extends BaseTableViewController<List<String>> {
 
     protected ControlData2D dataController;
-    protected ControlData2DEdit editController;
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;

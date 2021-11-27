@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -98,7 +97,7 @@ public class TableSizeController extends BaseController {
     @FXML
     @Override
     public void cancelAction() {
-        closeStage();
+        close();
     }
 
 }

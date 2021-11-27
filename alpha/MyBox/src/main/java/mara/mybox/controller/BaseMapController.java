@@ -236,7 +236,6 @@ public abstract class BaseMapController extends BaseController {
 
             webEngine = mapView.getEngine();
             webEngine.setJavaScriptEnabled(true);
-//            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
 
             webEngine.setOnAlert((WebEvent<String> ev) -> {
                 mapEvents(ev.getData());

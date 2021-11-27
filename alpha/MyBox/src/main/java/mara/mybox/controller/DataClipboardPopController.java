@@ -19,30 +19,31 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataClipboardPopController extends DataClipboardController {
 
-    protected ControlSheet targetController;
+    protected ControlData2D sourceController;
+    protected ControlData2D targetController;
 
     @FXML
     protected Label targetLabel;
     @FXML
     protected Button pasteDataButton;
 
-    public void setParameters(ControlSheet parent) {
+    public void setParameters(ControlData2D parent) {
         try {
             this.parentController = parent;
             targetController = parent;
 
+            sourceController = clipboardController.dataController;
+
             updateTitle();
-            targetController.sheetChangedNotify.addListener(
+            targetController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         updateTitle();
                     });
 
-            clipboardController.sheetController.dataChangedNotify.addListener(
+            clipboardController.dataController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        pasteDataButton.setDisable(
-                                clipboardController.sheetController.rowsTotal() == 0
-                                || (clipboardController.sheetController.pagesNumber > 1
-                                && clipboardController.sheetController.dataChangedNotify.get()));
+                        pasteDataButton.setDisable(!sourceController.data2D.hasData()
+                                || (sourceController.data2D.isMutiplePages() && sourceController.data2D.isTableChanged()));
                     });
 
         } catch (Exception e) {
@@ -57,16 +58,15 @@ public class DataClipboardPopController extends DataClipboardController {
     @FXML
     @Override
     public void pasteAction() {
-        if (clipboardController.sheetController.rowsTotal() == 0) {
+        if (!clipboardController.dataController.data2D.hasData()) {
             popError(message("NoData"));
             return;
         }
-        if (clipboardController.sheetController.pagesNumber > 1
-                && !clipboardController.sheetController.checkBeforeNextAction()) {
-            return;
-        }
-        SheetPasteController controller = (SheetPasteController) openChildStage(Fxmls.SheetPasteFxml, false);
-        controller.setParameters(clipboardController.sheetController, targetController);
+//        if (sourceController.data2D.isMutiplePages() && !sourceController.needSave()) {
+//            return;
+//        }
+//        SheetPasteController controller = (SheetPasteController) openChildStage(Fxmls.SheetPasteFxml, false);
+//        controller.setParameters(clipboardController.sheetController, targetController);
     }
 
     @FXML
@@ -105,7 +105,7 @@ public class DataClipboardPopController extends DataClipboardController {
         }
     }
 
-    public static DataClipboardPopController open(ControlSheet parent) {
+    public static DataClipboardPopController open(ControlData2D parent) {
         try {
             if (parent == null) {
                 return null;

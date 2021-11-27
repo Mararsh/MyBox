@@ -238,6 +238,10 @@ public class WindowTools {
         return openStage(parent, newFxml, AppVariables.currentBundle, false, Modality.NONE, null);
     }
 
+    public static BaseController openChildStage(Window parent, String newFxml) {
+        return openChildStage(parent, newFxml, true);
+    }
+
     public static BaseController openChildStage(Window parent, String newFxml, boolean isModal) {
         return openStage(parent, newFxml, AppVariables.currentBundle, true, isModal ? Modality.WINDOW_MODAL : Modality.NONE, null);
     }

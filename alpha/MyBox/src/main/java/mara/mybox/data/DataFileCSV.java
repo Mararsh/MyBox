@@ -3,15 +3,11 @@ package mara.mybox.data;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -23,80 +19,32 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2021-10-17
  * @License Apache License Version 2.0
  */
-public class DataFileCSV extends DataFile {
-
-    protected CSVFormat sourceCsvFormat;
+public class DataFileCSV extends DataFileText {
 
     public DataFileCSV() {
         type = Type.DataFileCSV;
     }
 
-    @Override
-    public long readDataDefinition() {
-        d2did = -1;
-        savedColumns = null;
-        sourceCsvFormat = null;
-        if (file == null) {
-            return -1;
+    public CSVFormat cvsFormat() {
+        if (delimiter == null || delimiter.isEmpty()) {
+            delimiter = ",";
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            Data2DDefinition definition = tableData2DDefinition.queryFile(conn, type, file);
-            if (userSavedDataDefinition) {
-                if (definition != null) {
-                    load(definition);
-                } else {
-                    charset = TextFileTools.charset(file);
-                    delimiter = guessDelimiter();
-                }
-            }
-            if (charset == null) {
-                charset = Charset.defaultCharset();
-            }
-            if (delimiter == null || delimiter.isEmpty()) {
-                delimiter = ",";
-            }
-            if (dataName == null || dataName.isBlank()) {
-                dataName = file.getName();
-            }
-            if (definition == null) {
-                definition = tableData2DDefinition.insertData(conn, this);
-                conn.commit();
-                d2did = definition.getD2did();
-            } else {
-                tableData2DDefinition.updateData(conn, this);
-                conn.commit();
-                d2did = definition.getD2did();
-                savedColumns = tableData2DColumn.read(conn, d2did);
-            }
-            userSavedDataDefinition = true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.debug(e);
-            return -1;
+        CSVFormat csvFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(delimiter.charAt(0));
+        if (hasHeader) {
+            csvFormat = csvFormat.withFirstRecordAsHeader();
         }
-        return d2did;
-    }
-
-    private void checkCVSFormat() {
-        if (sourceCsvFormat == null) {
-            if (delimiter == null || delimiter.isEmpty()) {
-                delimiter = ",";
-            }
-            sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString(defaultColValue())
-                    .withDelimiter(delimiter.charAt(0));
-            if (hasHeader) {
-                sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
-            }
-        }
+        return csvFormat;
     }
 
     @Override
     public List<String> readColumns() {
+        if (file == null) {
+            return null;
+        }
         List<String> names = null;
-        checkCVSFormat();
-        try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             if (hasHeader) {
                 names = parser.getHeaderNames();
             } else {
@@ -122,9 +70,11 @@ public class DataFileCSV extends DataFile {
 
     @Override
     public long readTotal() {
-        checkCVSFormat();
         dataSize = 0;
-        try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
+        if (file == null) {
+            return dataSize;
+        }
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext()) {
@@ -152,26 +102,23 @@ public class DataFileCSV extends DataFile {
 
     @Override
     public List<List<String>> readPageData() {
-        checkCVSFormat();
+        if (file == null) {
+            startRowOfCurrentPage = endRowOfCurrentPage = 0;
+            return null;
+        }
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
-        long end = startRowOfCurrentPage + pageSize;
-        List<List<String>> rows;
-        try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat)) {
+        List<List<String>> rows = new ArrayList<>();
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             long rowIndex = -1;
             int columnsNumber = columnsNumber();
-            rows = new ArrayList<>();
+            long end = startRowOfCurrentPage + pageSize;
+
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
-                while (iterator.hasNext()) {
-                    if (task == null || task.isCancelled()) {
-                        if (task != null) {
-                            task.setError("Canceled");
-                        }
-                        break;
-                    }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
                         if (record != null) {
@@ -206,16 +153,27 @@ public class DataFileCSV extends DataFile {
         return rows;
     }
 
-    public boolean savePageData(File tFile, Charset tCharset, CSVFormat tFormat, boolean withName) {
+    @Override
+    public boolean savePageData(Data2D targetData) {
+        if (targetData == null || !(targetData instanceof DataFileCSV)) {
+            return false;
+        }
+        DataFileCSV targetCSVFile = (DataFileCSV) targetData;
         File tmpFile = TmpFileTools.getTempFile();
+        File tFile = targetCSVFile.getFile();
+        if (tFile == null) {
+            return false;
+        }
+        Charset tCharset = targetCSVFile.getCharset();
         if (tCharset == null) {
             tCharset = Charset.forName("UTF-8");
         }
+        boolean tHasHeader = targetCSVFile.isHasHeader();
+        CSVFormat tFormat = targetCSVFile.cvsFormat();
         if (file != null) {
-            checkCVSFormat();
-            try ( CSVParser parser = CSVParser.parse(file, charset, sourceCsvFormat);
+            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
                      CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
-                if (withName) {
+                if (tHasHeader) {
                     csvPrinter.printRecord(columnNames());
                 }
                 long index = -1;
@@ -224,16 +182,13 @@ public class DataFileCSV extends DataFile {
                 if (iterator != null) {
                     while (iterator.hasNext()) {
                         if (task == null || task.isCancelled()) {
-                            if (task != null) {
-                                task.setError("Canceled");
-                            }
                             break;
                         }
                         try {
                             CSVRecord record = iterator.next();
                             if (record != null) {
                                 if (++index < pageStart || index >= pageEnd) {
-                                    csvPrinter.printRecord(record);
+                                    csvPrinter.printRecord(recordRow(record));
                                 } else if (index == pageStart) {
                                     if (!writePageData(csvPrinter)) {
                                         return false;
@@ -241,6 +196,7 @@ public class DataFileCSV extends DataFile {
                                 }
                             }
                         } catch (Exception e) {  // skip  bad lines
+//                            MyBoxLog.debug(e);
                         }
                     }
                 }
@@ -250,7 +206,7 @@ public class DataFileCSV extends DataFile {
                     }
                 }
             } catch (Exception e) {
-                MyBoxLog.debug(e);
+                MyBoxLog.error(e);
                 if (task != null) {
                     task.setError(e.toString());
                 }
@@ -258,14 +214,14 @@ public class DataFileCSV extends DataFile {
             }
         } else {
             try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
-                if (withName) {
+                if (tHasHeader) {
                     csvPrinter.printRecord(columnNames());
                 }
                 if (!writePageData(csvPrinter)) {
                     return false;
                 }
             } catch (Exception e) {
-                MyBoxLog.console(e);
+                MyBoxLog.error(e);
                 if (task != null) {
                     task.setError(e.toString());
                 }
@@ -282,33 +238,18 @@ public class DataFileCSV extends DataFile {
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
                 if (task == null || task.isCancelled()) {
-                    if (task != null) {
-                        task.setError("Canceled");
-                    }
                     return false;
                 }
                 csvPrinter.printRecord(pageRow(r));
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
             }
             return false;
         }
-    }
-
-
-    /*
-        get/set
-     */
-    public CSVFormat getSourceCsvFormat() {
-        return sourceCsvFormat;
-    }
-
-    public void setSourceCsvFormat(CSVFormat sourceCsvFormat) {
-        this.sourceCsvFormat = sourceCsvFormat;
     }
 
 }

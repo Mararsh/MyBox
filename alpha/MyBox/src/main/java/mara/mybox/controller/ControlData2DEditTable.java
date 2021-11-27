@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -20,6 +21,7 @@ import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import static mara.mybox.value.Languages.message;
 
@@ -30,19 +32,17 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
-    protected ControlData2DView viewController;
-
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
+    @FXML
+    protected Button setValuesButton;
 
     public ControlData2DEditTable() {
     }
 
     protected void setParameters(ControlData2DEdit editController) {
         try {
-            this.editController = editController;
             dataController = editController.dataController;
-            viewController = dataController.viewController;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             this.data2D = dataController.data2D;
@@ -67,11 +67,11 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                 public ObservableValue<Integer> call(TableColumn.CellDataFeatures<List<String>, Integer> param) {
                     try {
                         List<String> row = (List<String>) param.getValue();
-                        String value = row.get(0);
-                        if (value == null) {
+                        Integer v = Integer.valueOf(row.get(0));
+                        if (v < 0) {
                             return null;
                         }
-                        return new ReadOnlyObjectWrapper(Integer.valueOf(value));
+                        return new ReadOnlyObjectWrapper(v);
                     } catch (Exception e) {
                         return null;
                     }
@@ -87,7 +87,28 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void loadData() {
         try {
             makeColumns();
+            if (isNullValues()) {
+                return;
+            }
             loadPage(currentPage);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void loadData(List<List<String>> data) {
+        try {
+            makeColumns();
+            if (data == null || isNullValues()) {
+                return;
+            }
+            dataSize = data.size();
+            data2D.setDataSize(dataSize);
+            isSettingValues = true;
+            tableData.setAll(data);
+            isSettingValues = false;
+            dataSizeLoaded = true;
+            postLoadedTableData();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -95,12 +116,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        return dataController.needSave();
-    }
-
-    @Override
-    public long readDataSize() {
-        return data2D.getDataSize();
+        return dataController.checkBeforeNextAction();
     }
 
     @Override
@@ -122,23 +138,59 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void postLoadedTableData() {
         super.postLoadedTableData();
         data2D.setTask(null);
-        data2D.notifyPageLoaded();
     }
 
     @Override
-    protected void setPagination() {
-        try {
-            if (data2D == null) {
-                return;
+    public long readDataSize() {
+        return data2D.getDataSize();
+    }
+
+    @Override
+    public void loadDataSize() {
+        if (data2D == null || dataSizeLoaded) {
+            return;
+        }
+        synchronized (this) {
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
             }
-            if (!data2D.isTotalRead()) {
-                paginationBox.setVisible(false);
-                return;
-            }
-            paginationBox.setVisible(true);
-            super.setPagination();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            data2D.setDataSize(0);
+            dataController.paginationBox.setVisible(false);
+            backgroundTask = new SingletonTask<Void>(this) {
+
+                @Override
+                protected boolean handle() {
+                    data2D.setBackgroundTask(backgroundTask);
+                    return data2D.readTotal() >= 0;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    dataSizeLoaded = true;
+                    dataController.notifyStatus();
+                }
+
+                @Override
+                protected void whenFailed() {
+                    if (isCancelled()) {
+                        return;
+                    }
+                    if (error != null) {
+                        popError(message(error));
+                    } else {
+                        popFailed();
+                    }
+                }
+
+                @Override
+                protected void finalAction() {
+                    data2D.setBackgroundTask(null);
+                    backgroundTask = null;
+                    refreshPagination();
+                }
+
+            };
+            start(backgroundTask, false);
         }
 
     }
@@ -149,16 +201,30 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
         updateSizeLabel();
     }
 
+    public boolean isNullValues() {
+        if (data2D == null || !data2D.isColumnsValid()) {
+            addButton.setDisable(true);
+            setValuesButton.setDisable(true);
+            return true;
+        } else {
+            addButton.setDisable(false);
+            setValuesButton.setDisable(false);
+            return false;
+        }
+    }
+
     public void makeColumns() {
         try {
+            isSettingValues = true;
             tableData.clear();
             tableView.getColumns().remove(2, tableView.getColumns().size());
             tableView.setItems(tableData);
+            isSettingValues = false;
+            data2D.setTableView(tableView);
 
-            if (data2D == null || !data2D.isColumnsValid()) {
+            if (isNullValues()) {
                 return;
             }
-            data2D.setTableView(tableView);
 
             List<Data2DColumn> columns = data2D.getColumns();
             for (int i = 0; i < columns.size(); i++) {
@@ -226,7 +292,9 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                     }
                 });
 
-                tableColumn.getStyleClass().add("editable-column");
+                if (tableColumn.isEditable()) {
+                    tableColumn.getStyleClass().add("editable-column");
+                }
 
                 tableView.getColumns().add(tableColumn);
             }
@@ -238,50 +306,53 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     @Override
     public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
         data2D.setTableChanged(changed);
         updateSizeLabel();
-        dataController.checkStatus();
-        viewController.loadData();
+        dataController.textController.loadData();
+        dataController.viewController.loadData();
+    }
+
+    @Override
+    public List<String> newData() {
+        return data2D.newRow();
+    }
+
+    @Override
+    public List<String> dataCopy(List<String> data) {
+        return data2D.copyRow(data);
+    }
+
+    @FXML
+    @Override
+    public void addAction() {
+        if (isNullValues()) {
+            return;
+        }
+        addRowsAction();
     }
 
     @FXML
     @Override
     public void deleteAction() {
-        List<List<String>> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
+        deleteRowsAction();
+    }
+
+    @FXML
+    public void setValuesAction() {
+        if (isNullValues()) {
             return;
         }
-        isSettingValues = true;
-        tableData.removeAll(selected);
-        isSettingValues = false;
-        tableChanged(true);
+        TableSetValuesController.open(this);
     }
 
-    @FXML
-    @Override
-    public void copyAction() {
-
-    }
-
-    @FXML
-    public void insertAction() {
-
-    }
-
-    public boolean applyColumns() {
+    public boolean loadData(List<List<String>> newData, boolean columnsChanged) {
         try {
-            List<List<String>> newData = new ArrayList<>();
-            if (data2D.columnsNumber() > 0) {
-                for (List<String> rowValues : tableData) {
-                    List<String> newRow = new ArrayList<>();
-                    newRow.add(rowValues.get(0));
-                    for (int pageCol = 0; pageCol < data2D.columnsNumber(); pageCol++) {
-                        newRow.add(data2D.pageCell(rowValues, pageCol));
-                    }
-                    newData.add(newRow);
-                }
+            if (columnsChanged) {
+                makeColumns();
             }
-            makeColumns();
             isSettingValues = true;
             tableData.setAll(newData);
             isSettingValues = false;
@@ -291,6 +362,68 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    public void afterSaved() {
+        try {
+            isSettingValues = true;
+            data2D.setEndRowOfCurrentPage(data2D.getStartRowOfCurrentPage() + tableData.size());
+            long offset = startRowOfCurrentPage + 1;
+            for (int i = 0; i < tableData.size(); i++) {
+                List<String> row = tableData.get(i);
+                row.set(0, (offset + i) + "");
+            }
+            for (int i = 0; i < data2D.columnsNumber(); i++) {
+                Data2DColumn dataColumn = data2D.getColumns().get(i);
+                TableColumn tableColumn = tableView.getColumns().get(i + 2);
+                tableColumn.setUserData(dataColumn.getIndex());
+            }
+            tableView.refresh();
+            isSettingValues = false;
+            tableChanged(false);
+            dataController.resetStatus();
+            dataController.checkStatus();
+            dataSizeLoaded = false;
+            loadDataSize();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public synchronized void createTable() {
+        data2D.resetData();
+        MyBoxLog.debug(data2D.isHasHeader());
+
+        List<Data2DColumn> columns = new ArrayList<>();
+        for (int col = 1; col <= 3; col++) {
+            Data2DColumn column = new Data2DColumn(data2D.colPrefix() + col, data2D.defaultColumnType());
+            columns.add(column);
+        }
+        data2D.setColumns(columns);
+        makeColumns();
+
+        List<List<String>> rows = new ArrayList<>();
+        for (int r = 1; r <= 3; r++) {
+            List<String> row = new ArrayList<>();
+            row.add("-1");
+            for (int col = 0; col < 3; col++) {
+                row.add(data2D.defaultColValue());
+            }
+            rows.add(row);
+        }
+        isSettingValues = true;
+        tableData.setAll(rows);
+        isSettingValues = false;
+
+        dataSize = 3;
+        pagesNumber = 1;
+        currentPage = startRowOfCurrentPage = 0;
+        data2D.setEndRowOfCurrentPage(dataSize);
+        data2D.setDataSize(dataSize);
+        tableChanged(false);
+
+        dataController.attributesController.loadData();
+        dataController.columnsController.loadData();
     }
 
     @FXML
@@ -336,7 +469,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     @Override
     public void cleanPane() {
         try {
-            editController = null;
             dataController = null;
             data2D = null;
         } catch (Exception e) {

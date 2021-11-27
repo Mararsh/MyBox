@@ -4,21 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
+import javafx.geometry.Point2D;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.data.Data2D;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.tools.TextTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -31,6 +25,7 @@ public class ControlData2DEditText extends BaseController {
 
     protected ControlData2D dataController;
     protected ControlData2DEdit editController;
+    protected ControlData2DEditTable tableController;
     protected Data2D data2D;
     protected String delimiterName;
     protected Status lastStatus, status;
@@ -43,11 +38,19 @@ public class ControlData2DEditText extends BaseController {
     protected TextArea textArea;
     @FXML
     protected Label columnsLabel;
+    @FXML
+    protected CheckBox wrapCheck;
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
+    }
 
     protected void setParameters(ControlData2DEdit editController) {
         try {
             this.editController = editController;
             dataController = editController.dataController;
+            tableController = editController.tableController;
             this.data2D = dataController.data2D;
             this.baseName = dataController.baseName;
 
@@ -63,6 +66,16 @@ public class ControlData2DEditText extends BaseController {
                 }
             });
 
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "EditTextWrap", true));
+            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "EditTextWrap", newValue);
+                    textArea.setWrapText(newValue);
+                }
+            });
+            textArea.setWrapText(wrapCheck.isSelected());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -70,9 +83,12 @@ public class ControlData2DEditText extends BaseController {
 
     public void loadData() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             status = null;
             loadText();
-            status(Status.Loaded);
+            status(data2D.isTableChanged() ? Status.Applied : Status.Loaded);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -80,6 +96,18 @@ public class ControlData2DEditText extends BaseController {
 
     public void loadText() {
         try {
+            if (!hasData()) {
+                return;
+            }
+            String delimiter = TextTools.delimiterValue(delimiterName);
+            String label = "";
+            for (String name : data2D.columnNames()) {
+                if (!label.isEmpty()) {
+                    label += delimiter;
+                }
+                label += name;
+            }
+            columnsLabel.setText(label);
             String text = TextTools.dataPage(data2D, delimiterName, false, false);
             isSettingValues = true;
             textArea.setText(text);
@@ -89,6 +117,19 @@ public class ControlData2DEditText extends BaseController {
         }
     }
 
+    public boolean hasData() {
+        if (!data2D.isColumnsValid()) {
+            columnsLabel.setText("");
+            isSettingValues = true;
+            textArea.setText("");
+            isSettingValues = false;
+            thisPane.setDisable(true);
+            return false;
+        }
+        thisPane.setDisable(false);
+        return true;
+    }
+
     public void status(Status newStatus) {
         okButton.setDisable(newStatus != Status.Modified);
         cancelButton.setDisable(newStatus != Status.Modified);
@@ -96,68 +137,54 @@ public class ControlData2DEditText extends BaseController {
             return;
         }
         lastStatus = status;
-        this.status = newStatus;
+        status = newStatus;
         dataController.checkStatus();
     }
 
     public boolean isChanged() {
-        return status == Status.Modified && status == Status.Applied;
+        return status == Status.Modified || status == Status.Applied;
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (!isChanged()) {
+        if (!isChanged() || !hasData() || delimiterName == null) {
             return;
         }
-        if (pickValues()) {
-            status(Status.Applied);
-        } else {
-            popError(message("InvalidParameter") + ": " + message("DataName"));
-        }
-    }
-
-    public boolean pickValues() {
         try {
-            String s = textArea.getText();
-            String[] lines = s.split("\n");
-            int colsSize = 0;
             List<List<String>> rows = new ArrayList<>();
-            for (String line : lines) {
-                line = line.trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
-                List<String> row = TextTools.parseLine(line, delimiterName);
-                if (row == null || row.isEmpty()) {
-                    continue;
-                }
-                int size = row.size();
-                if (size > colsSize) {
-                    colsSize = size;
-                }
-                rows.add(row);
-            }
-            int rowsSize = rows.size();
-            if (data2D.isMutiplePages()) {
-                colsSize = data2D.columnsNumber();
-            }
-            if (rowsSize == 0 || colsSize == 0) {
-//                makeSheet(null);
-                return true;
-            }
-            String[][] data = new String[rowsSize][colsSize];
-            for (int r = 0; r < rowsSize; r++) {
-                List<String> row = rows.get(r);
-                for (int c = 0; c < Math.min(colsSize, row.size()); c++) {
-                    data[r][c] = row.get(c);
+            String text = textArea.getText();
+            if (text != null && !text.isEmpty()) {
+                int colsNumber = data2D.columnsNumber();
+                String[] lines = text.split("\n");
+                int rowIndex = 0;
+                for (String line : lines) {
+                    line = line.trim();
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    List<String> row = TextTools.parseLine(line, delimiterName);
+                    if (row == null || row.isEmpty()) {
+                        continue;
+                    }
+                    int len = row.size();
+                    if (len > colsNumber) {
+                        row = row.subList(0, colsNumber);
+                    } else {
+                        for (int c = len; c < colsNumber; c++) {
+                            row.add(null);
+                        }
+                    }
+                    row.add(0, (data2D.getStartRowOfCurrentPage() + rowIndex++) + "");
+                    rows.add(row);
                 }
             }
-//            makeSheet(data, true, true);
-            return true;
+            isSettingValues = true;
+            tableController.loadData(rows, false);
+            isSettingValues = false;
+            status(Status.Applied);
         } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-            return false;
+            MyBoxLog.error(e);
         }
     }
 
@@ -184,43 +211,30 @@ public class ControlData2DEditText extends BaseController {
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
+    public void delimiterActon() {
+        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, false);
+        controller.okNotify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                delimiterName = controller.delimiterName;
+                loadData();
             }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+        });
+    }
 
-            MenuItem menu;
+    @FXML
+    @Override
+    public boolean popAction() {
+        TextPopController.openInput(this, textArea);
+        return true;
+    }
 
-            menu = new MenuItem(message("Copy"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyAction();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Pop"));
-            menu.setOnAction((ActionEvent event) -> {
-                popAction();
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
+        MenuTextEditController.open(myController, textArea, localToScreen.getX(), localToScreen.getY());
+        return true;
     }
 
 }

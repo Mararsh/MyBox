@@ -172,6 +172,11 @@ public class Fxmls {
         data
      */
     public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
+
+    public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
+    public static final String TableSetValuesFxml = "/fxml/TableSetValues.fxml";
+    public static final String TableTextFxml = "/fxml/TableText.fxml";
+
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
     public static final String DataClipboardPopFxml = "/fxml/DataClipboardPop.fxml";
     public static final String SheetCopyToSystemClipboardFxml = "/fxml/SheetCopyToSystemClipboard.fxml";
@@ -346,6 +351,7 @@ public class Fxmls {
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
     public static final String TextInputFxml = "/fxml/TextInput.fxml";
+    public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

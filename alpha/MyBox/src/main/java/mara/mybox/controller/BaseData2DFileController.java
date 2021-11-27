@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,13 +11,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFile;
-import mara.mybox.data.StringTable;
-import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -57,15 +57,10 @@ public abstract class BaseData2DFileController extends BaseController {
     /*
         abstract
      */
-    public abstract boolean savePageData(File file);
-
-    public abstract boolean savePageDataAs(File file);
-
-    public abstract void open(File file);
+    public abstract DataFile makeTargetDataFile(File file);
 
     public abstract void pickOptions();
 
-    protected abstract void updateInfoLabel();
 
     /*
         init
@@ -74,6 +69,7 @@ public abstract class BaseData2DFileController extends BaseController {
     public void setDataType(Data2D.Type type) {
         try {
             dataController.setDataType(this, type);
+            dataController.backupController = backupController;
             dataFile = (DataFile) dataController.data2D;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
@@ -99,6 +95,13 @@ public abstract class BaseData2DFileController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     updateStatus();
+                }
+            });
+
+            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    afterFileLoaded();
                 }
             });
 
@@ -154,17 +157,14 @@ public abstract class BaseData2DFileController extends BaseController {
         }
     }
 
-    @FXML
     @Override
-    public void createAction() {
+    public void afterSceneLoaded() {
         try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            sourceFile = null;
-            dataFile.resetData();
+            super.afterSceneLoaded();
+
+            createFile();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -174,184 +174,40 @@ public abstract class BaseData2DFileController extends BaseController {
             return;
         }
         sourceFile = file;
-        dataFile.setFile(file);
+        initFile(file);
         dataFile.setUserSavedDataDefinition(true);
         loadFile();
     }
 
-    public void initFile() {
-        dataFile.initFile(sourceFile);
-        tableController.resetView();
-        if (backupController != null) {
-            backupController.loadBackups(sourceFile);
-        }
-//        BaseDataOperationController.closeAll(this);
-    }
-
     public void loadFile() {
-        if (dataFile == null || !checkBeforeNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            initFile();
-            if (!dataFile.isUserSavedDataDefinition()) {
-                pickOptions();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private StringTable validateTable;
-
-                @Override
-                protected boolean handle() {
-                    dataFile.setTask(task);
-                    long d2did = dataFile.readDataDefinition();
-                    if (d2did < 0 || isCancelled()) {
-                        return false;
-                    }
-                    List<String> names = dataFile.readColumns();
-                    if (isCancelled()) {
-                        return false;
-                    }
-                    if (names == null || names.isEmpty()) {
-                        dataFile.setHasHeader(false);
-                        tableData2DColumn.clearFile(dataFile);
-                        dataFile.setColumns(null);
-                    } else {
-                        List<Data2DColumn> columns = new ArrayList<>();
-                        List<Data2DColumn> savedColumns = dataFile.getSavedColumns();
-                        for (int i = 0; i < names.size(); i++) {
-                            Data2DColumn column;
-                            if (savedColumns != null && i < savedColumns.size()) {
-                                column = savedColumns.get(i);
-                                if (dataFile.isHasHeader()) {
-                                    column.setName(names.get(i));
-                                }
-                            } else {
-                                column = new Data2DColumn(names.get(i), dataFile.defaultColumnType());
-                            }
-                            column.setD2id(d2did);
-                            column.setIndex(i);
-                            columns.add(column);
-                        }
-                        dataFile.setColumns(columns);
-                        validateTable = Data2DColumn.validate(columns);
-                        if (validateTable == null || validateTable.isEmpty()) {
-                            tableData2DColumn.save(d2did, columns);
-                        }
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (validateTable != null && !validateTable.isEmpty()) {
-                        validateTable.editHtml();
-                    }
-                    loadTotal();
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (isCancelled()) {
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    dataFile.setTask(null);
-                    dataController.loadData();
-                    task = null;
-                    updateStatus();
-                }
-
-            };
-            start(task);
-        }
+        dataController.loadDefinition();
     }
 
-    public void loadTotal() {
-        if (sourceFile == null) {
-            return;
+    protected void afterFileLoaded() {
+        if (dataFile.isTmpFile()) {
+            sourceFile = null;
+        } else {
+            sourceFile = dataFile.getFile();
         }
-        synchronized (this) {
-            if (backgroundTask != null) {
-                backgroundTask.cancel();
-            }
-            dataFile.setDataSize(0);
-            dataFile.setTotalRead(false);
-            dataController.paginationBox.setVisible(false);
-            backgroundTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    dataFile.setBackgroundTask(backgroundTask);
-                    return dataFile.readTotal() >= 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    dataFile.setTotalRead(true);
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (isCancelled()) {
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    dataFile.setBackgroundTask(null);
-                    backgroundTask = null;
-                    tableController.refreshPagination();
-                    updateStatus();
-                }
-
-            };
-            start(backgroundTask, false);
-        }
-
-    }
-
-    public void backup() {
-        if (backupController != null && backupController.isBack()) {
-            backupController.addBackup(sourceFile);
-        }
-    }
-
-    @FXML
-    public void refreshAction() {
-        dataFile.setUserSavedDataDefinition(false);
-        loadFile();
+        updateStatus();
     }
 
     protected void updateStatus() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                saveButton.setDisable(!dataController.changed);
-                recoverButton.setDisable(!dataController.changed);
+                boolean changed = dataController.isChanged();
+                saveButton.setDisable(!changed);
+                recoverButton.setDisable(!changed);
 
                 String title = baseTitle;
                 if (sourceFile != null) {
                     title += " " + sourceFile.getAbsolutePath();
                 }
-                if (dataController.changed) {
+                if (changed) {
                     title += " *";
                 }
                 getMyStage().setTitle(title);
@@ -360,137 +216,138 @@ public abstract class BaseData2DFileController extends BaseController {
         });
     }
 
-    @FXML
-    @Override
-    public void saveAction() {
-        if (dataFile == null || !dataController.changed) {
-            return;
+    protected void updateInfoLabel() {
+        String info = "";
+        if (sourceFile != null) {
+            info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
+                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n";
+            if (dataFile instanceof DataFileExcel) {
+                DataFileExcel e = (DataFileExcel) dataFile;
+                String sheet = e.getCurrentSheetName();
+                info += message("CurrentSheet") + ": " + (sheet == null ? "" : sheet)
+                        + (e.getSheetNames() == null ? "" : " / " + e.getSheetNames().size()) + "\n";
+            } else {
+                info += message("Charset") + ": " + dataFile.getCharset() + "\n"
+                        + message("Delimiter") + ": " + TextTools.delimiterMessage(dataFile.getDelimiter()) + "\n";
+            }
+            info += message("FirstLineAsNames") + ": " + (dataFile.isHasHeader() ? message("Yes") : message("No")) + "\n";
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
+        if (!dataFile.isMutiplePages()) {
+            info += message("RowsNumber") + ":" + dataFile.tableRowsNumber() + "\n";
+        } else {
+            info += message("LinesNumberInFile") + ":" + dataFile.getDataSize() + "\n";
+        }
+        info += message("ColumnsNumber") + ": " + dataFile.columnsNumber() + "\n"
+                + message("CurrentPage") + ": " + StringTools.format(dataFile.getCurrentPage() + 1)
+                + " / " + StringTools.format(dataFile.getPagesNumber()) + "\n";
+        if (dataFile.isMutiplePages() && dataFile.hasData()) {
+            info += message("RowsRangeInPage")
+                    + ": " + StringTools.format(dataFile.getStartRowOfCurrentPage() + 1) + " - "
+                    + StringTools.format(dataFile.getStartRowOfCurrentPage() + dataFile.tableRowsNumber())
+                    + " ( " + StringTools.format(dataFile.tableRowsNumber()) + " )\n";
+        }
+        info += message("PageModifyTime") + ": " + DateTools.nowString();
+        fileInfoLabel.setText(info);
+    }
+
+    public void initFile(File file) {
+        dataFile.initFile(file);
+    }
+
+    @FXML
+    public void createFile() {
+        try {
+            if (!checkBeforeNextAction()) {
                 return;
             }
-            if (dataController.checkBeforeSave() < 0) {
-                return;
-            }
-            File file = dataFile.getFile();
-            if (file == null) {
-                file = chooseSaveFile();
-                if (file == null) {
-                    return;
-                }
-                dataFile.setFile(file);
-            }
-            task = new SingletonTask<Void>(this) {
+            loadTmpFile();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
-                @Override
-                protected boolean handle() {
-                    dataController.saveDefinition();
-                    if (task == null || task.isCancelled()) {
-                        return false;
-                    }
-                    try {
-                        backup();
-                        dataFile.setTask(task);
-                        return savePageData(targetFile);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    recordFileWritten(targetFile);
-                    if (sourceFile == null) {
-                        sourceFile = targetFile;
-                    }
-                    tableController.tableChanged(false);
-                    dataFile.setEndRowOfCurrentPage(dataFile.getStartRowOfCurrentPage() + dataFile.tableRowsNumber());
-                    dataFile.setTotalRead(false);
-
-                    updateStatus();
-                    loadTotal();
-                }
-
-                @Override
-                protected void finalAction() {
-                    dataFile.setTask(null);
-                    task = null;
-                }
-            };
-            start(task);
+    public void loadTmpFile() {
+        try {
+            sourceFile = null;
+            initFile(dataFile.tmpFile());
+            loadFile();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
     @Override
+    public void loadContentInSystemClipboard() {
+        dataController.loadContentInSystemClipboard();
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        if (dataFile == null || !dataController.isChanged()) {
+            return;
+        }
+        if (dataFile.isTmpFile()) {
+            saveAs(true);
+            return;
+        }
+        dataController.save();
+    }
+
+    @FXML
+    @Override
     public void saveAsAction() {
+        saveAs(false);
+    }
+
+    public void saveAs(boolean load) {
+        if (dataController.checkBeforeSave() < 0) {
+            return;
+        }
         File file = chooseSaveFile();
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                String[][] data;
-
-                @Override
-                protected boolean handle() {
-                    dataFile.setTask(task);
-                    return savePageDataAs(file);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    recordFileWritten(file);
-                    if (sourceFile == null || saveAsType == BaseController_Attributes.SaveAsType.Load) {
-                        if (parentController != null) {
-                            parentController.sourceFileChanged(file);
-                            return;
-                        }
-                        sourceFileChanged(file);
-                    } else {
-                        open(file);
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    dataFile.setTask(null);
-                    task = null;
-                }
-
-            };
-            start(task);
+        DataFile targetData = makeTargetDataFile(file);
+        if (targetData == null) {
+            return;
         }
+        dataController.saveAs(targetData, load || saveAsType == BaseController_Attributes.SaveAsType.Load);
     }
 
     @FXML
     @Override
     public void recoverAction() {
         dataController.resetStatus();
-        dataFile.setUserSavedDataDefinition(true);
+        if (dataFile.isTmpFile()) {
+            loadTmpFile();
+        } else {
+            sourceFileChanged(sourceFile);
+        }
+    }
+
+    @FXML
+    public void refreshFile() {
+        initFile(dataFile.getFile());
+        dataFile.setUserSavedDataDefinition(false);
+        pickOptions();
         loadFile();
     }
 
     @FXML
     public void editTextFile() {
-        if (sourceFile == null) {
+        if (dataFile == null || dataFile.getFile() == null) {
             return;
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.sourceFileChanged(sourceFile);
+        controller.sourceFileChanged(dataFile.getFile());
         controller.toFront();
     }
 
     @Override
     public boolean checkBeforeNextAction() {
-        return dataController.needSave();
+        return dataController.checkBeforeNextAction();
     }
 
     @Override

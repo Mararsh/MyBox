@@ -419,16 +419,15 @@ public class MarkdownEditorController extends TextEditorController {
     @Override
     public boolean popAction() {
         try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == markdownTab) {
+            if (markdownTab.isSelected()) {
                 MarkdownPopController.open(this, mainArea);
                 return true;
 
-            } else if (tab == htmlTab) {
+            } else if (htmlTab.isSelected()) {
                 HtmlPopController.openWebView(myController, webViewController.webView);
                 return true;
 
-            } else if (tab == codesTab) {
+            } else if (codesTab.isSelected()) {
                 HtmlCodesPopController.openInput(myController, codesArea);
                 return true;
 
@@ -444,18 +443,17 @@ public class MarkdownEditorController extends TextEditorController {
     public boolean menuAction() {
         try {
             closePopup();
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == markdownTab) {
+            if (markdownTab.isSelected()) {
                 Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
                 MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
                 return true;
 
-            } else if (tab == htmlTab) {
+            } else if (htmlTab.isSelected()) {
                 Point2D localToScreen = webViewController.webView.localToScreen(webViewController.webView.getWidth() - 80, 80);
                 MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
-            } else if (tab == codesTab) {
+            } else if (codesTab.isSelected()) {
                 Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
                 MenuHtmlCodesController.open(myController, codesArea, localToScreen.getX(), localToScreen.getY());
                 return true;

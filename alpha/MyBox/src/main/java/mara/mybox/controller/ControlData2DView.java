@@ -3,17 +3,22 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -34,11 +39,13 @@ public class ControlData2DView extends BaseController {
     @FXML
     protected Tab htmlTab, textTab;
     @FXML
-    protected CheckBox formCheck, titleCheck, columnCheck, rowCheck, allCheck;
+    protected CheckBox formCheck, titleCheck, columnCheck, rowCheck, wrapCheck;
     @FXML
     protected TextArea textArea;
     @FXML
     protected ControlWebView htmlController;
+    @FXML
+    protected HBox textButtonsBox;
 
     protected void setParameters(ControlData2D dataController) {
         try {
@@ -48,59 +55,135 @@ public class ControlData2DView extends BaseController {
 
             htmlController.setParent(parentController);
 
-            titleCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlTitle", true));
+            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                @Override
+                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                    textButtonsBox.setVisible(newValue == textTab);
+                }
+            });
+            textButtonsBox.setVisible(textTab.isSelected());
+
+            titleCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayTitle", true));
             titleCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayTitle", newValue);
                 updateHtml();
-                UserConfig.setBoolean(baseName + "HtmlTitle", newValue);
+                updateText();
             });
-            columnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlColumn", false));
+            columnCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayColumn", false));
             columnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayColumn", newValue);
                 updateHtml();
-                UserConfig.setBoolean(baseName + "HtmlColumn", newValue);
+                updateText();
             });
-            rowCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlRow", false));
+            rowCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayRow", false));
             rowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayRow", newValue);
                 updateHtml();
-                UserConfig.setBoolean(baseName + "HtmlRow", newValue);
+                updateText();
             });
-            if (allCheck != null) {
-//            allCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlAll", false));
-                allCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                    updateHtml();
-//                UserConfig.setBoolean(baseName + "HtmlAll", newValue);
-                });
-            }
+
+            formCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayForm", false));
+            formCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayForm", newValue);
+                updateHtml();
+                updateText();
+            });
+
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayTextWrap", true));
+            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "DisplayTextWrap", newValue);
+                    textArea.setWrapText(newValue);
+                }
+            });
+            textArea.setWrapText(wrapCheck.isSelected());
+
+            displayDelimiterName = UserConfig.getString(baseName + "DisplayDelimiter", ",");
+
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
 
     public void loadData() {
-        try {
-            updateHtml();
-            updateText();
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
+        updateHtml();
+        updateText();
     }
 
     @FXML
     public void editAction() {
+        if (htmlTab.isSelected()) {
+            editHtml();
+        } else {
+            editText();
+        }
+    }
 
+    @FXML
+    public void refreshAction() {
+        if (htmlTab.isSelected()) {
+            updateHtml();
+        } else if (textTab.isSelected()) {
+            updateText();
+        }
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (htmlTab.isSelected()) {
+            HtmlPopController.openWebView(this, htmlController.webView);
+            return true;
+        } else if (textTab.isSelected()) {
+            TextPopController.openInput(this, textArea);
+            return true;
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        closePopup();
+        if (htmlTab.isSelected()) {
+            Point2D localToScreen = htmlController.webView.localToScreen(htmlController.webView.getWidth() - 80, 80);
+            MenuWebviewController.pop(htmlController, null, localToScreen.getX(), localToScreen.getY());
+            return true;
+        } else if (textTab.isSelected()) {
+            Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
+            MenuTextEditController.open(myController, textArea, localToScreen.getX(), localToScreen.getY());
+            return true;
+        }
+        return false;
+    }
+
+    @FXML
+    public void delimiterActon() {
+        TextDelimiterController controller = TextDelimiterController.open(this, displayDelimiterName, false);
+        controller.okNotify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                displayDelimiterName = controller.delimiterName;
+                if (!formCheck.isSelected()) {
+                    textInTable();
+                }
+            }
+        });
     }
 
     /*
         Display Html
      */
     protected void updateHtml() {
-        if (data2D.isMutiplePages() && allCheck != null && allCheck.isSelected()) {
-            displayAllHtml();
+        if (formCheck.isSelected()) {
+            htmlInForm();
         } else {
-            displayPageHtml();
+            htmlInTable();
         }
     }
 
-    protected void displayPageHtml() {
+    protected void htmlInTable() {
         try {
             int rNumber = data2D.tableRowsNumber();
             int cNumber = data2D.tableColsNumber();
@@ -112,7 +195,7 @@ public class ControlData2DView extends BaseController {
             if (columnCheck.isSelected()) {
                 names = new ArrayList<>();
                 if (rowCheck.isSelected()) {
-                    names.add("");
+                    names.add(message("RowNumber"));
                 }
                 for (int i = 0; i < cNumber; i++) {
                     names.add(data2D.colName(i));
@@ -140,27 +223,38 @@ public class ControlData2DView extends BaseController {
         }
     }
 
-    protected void displayAllHtml() {
-        displayPageHtml();
-    }
-
-    protected int pageHtml(StringTable table, int inIndex) {
-        int index = inIndex;
+    protected void htmlInForm() {
         try {
-            int len = data2D.tableRowsNumber();
-            for (int r = 0; r < len; r++) {
-                List<String> values = new ArrayList<>();
-                if (rowCheck.isSelected()) {
-                    values.add(message("Row") + (index + 1));
-                }
-                values.addAll(data2D.pageRow(r));
-                table.add(values);
-                index++;
+            StringBuilder s = new StringBuilder();
+            if (titleCheck.isSelected()) {
+                s.append("<H2>").append(data2D.titleName()).append("</H2>\n");
             }
+            for (int r = 0; r < data2D.tableRowsNumber(); r++) {
+                StringTable table = new StringTable();
+                if (rowCheck.isSelected()) {
+                    List<String> row = new ArrayList<>();
+                    row.add(data2D.rowName(r));
+                    if (columnCheck.isSelected()) {
+                        row.add(null);
+                    }
+                    table.add(row);
+                }
+                List<String> drow = data2D.pageRow(r);
+                for (int col = 0; col < data2D.columnsNumber(); col++) {
+                    List<String> row = new ArrayList<>();
+                    if (columnCheck.isSelected()) {
+                        row.add(data2D.colName(col));
+                    }
+                    row.add(drow.get(col));
+                    table.add(row);
+                }
+                s.append(table.div()).append("\n<BR><BR>\n");
+            }
+            htmlController.loadContents(HtmlWriteTools.html(data2D.titleName(),
+                    "utf-8", HtmlStyles.DefaultStyle, s.toString()));
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.console(e);
         }
-        return index;
     }
 
     @FXML
@@ -173,14 +267,14 @@ public class ControlData2DView extends BaseController {
         Display Text
      */
     protected void updateText() {
-        if (data2D.isMutiplePages() && allCheck != null && allCheck.isSelected()) {
-            displayAllText();
+        if (formCheck.isSelected()) {
+            textInForm();
         } else {
-            displayPageText();
+            textInTable();
         }
     }
 
-    protected void displayPageText() {
+    protected void textInTable() {
         String title = null;
         if (titleCheck.isSelected()) {
             title = data2D.titleName();
@@ -193,43 +287,25 @@ public class ControlData2DView extends BaseController {
         }
     }
 
-    protected void displayAllText() {
-        displayPageText();
-    }
-
-    protected void rowText(StringBuilder s, int index, List<String> values, String delimiter) {
-        try {
+    protected void textInForm() {
+        StringBuilder s = new StringBuilder();
+        if (titleCheck.isSelected()) {
+            s.append(data2D.titleName()).append("\n\n");
+        }
+        for (int r = 0; r < data2D.tableRowsNumber(); r++) {
             if (rowCheck.isSelected()) {
-                if (index == -1) {
-                    s.append(delimiter);
-                } else if (index >= 0) {
-                    s.append(message("Row")).append(index + 1).append(delimiter);
-                }
+                s.append(data2D.rowName(r)).append("\n");
             }
-            int end = values.size() - 1;
-            for (int c = 0; c <= end; c++) {
-                s.append(values.get(c));
-                if (c < end) {
-                    s.append(delimiter);
+            List<String> drow = data2D.pageRow(r);
+            for (int col = 0; col < data2D.columnsNumber(); col++) {
+                if (columnCheck.isSelected()) {
+                    s.append(data2D.colName(col)).append(": ");
                 }
+                s.append(drow.get(col)).append("\n");
             }
             s.append("\n");
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+            textArea.setText(s.toString());
         }
-    }
-
-    protected int pageText(StringBuilder s, int inIndex, String delimiter) {
-        int index = inIndex;
-        try {
-            int len = data2D.tableRowsNumber();
-            for (int r = 0; r < len; r++) {
-                rowText(s, index++, data2D.pageRow(r), delimiter);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return index;
     }
 
     @FXML
@@ -237,4 +313,5 @@ public class ControlData2DView extends BaseController {
         TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.loadContents(textArea.getText());
     }
+
 }

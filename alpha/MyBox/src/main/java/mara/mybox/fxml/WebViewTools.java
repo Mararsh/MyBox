@@ -22,6 +22,10 @@ import org.w3c.dom.Element;
  */
 public class WebViewTools {
 
+    public static String userAgent() {
+        return new WebView().getEngine().getUserAgent();
+    }
+
     public static String getHtml(WebView webView) {
         if (webView == null) {
             return "";

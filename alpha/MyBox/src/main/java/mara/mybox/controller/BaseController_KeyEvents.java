@@ -17,6 +17,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     private KeyEvent keyEvent;
 
+    // Flter from top level. Always handle at higher level at first.
     public void monitorKeyEvents() {
         try {
             if (thisPane != null) {

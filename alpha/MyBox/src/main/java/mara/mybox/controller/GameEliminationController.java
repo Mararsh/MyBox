@@ -204,52 +204,6 @@ public class GameEliminationController extends BaseController {
     }
 
     @Override
-    public boolean keyFilter(KeyEvent event) {
-        KeyCode code = event.getCode();
-        if (code != null) {
-            switch (code) {
-                case H:
-                    helpMeAction();
-                    return true;
-                case N:
-                    createAction();
-                    return true;
-                case A:
-                    setAutoplay();
-                    return true;
-            }
-        }
-        return super.keyFilter(event);
-    }
-
-    @Override
-    public boolean controlAltA() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        setAutoplay();
-        return true;
-    }
-
-    @Override
-    public boolean controlAltH() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        helpMeAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAltN() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        createAction();
-        return true;
-    }
-
-    @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
 
@@ -327,9 +281,9 @@ public class GameEliminationController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / N");
-            NodeStyleTools.setTooltip(helpMeButton, Languages.message("HelpMeFindExchange") + "\nh / H");
-            NodeStyleTools.setTooltip(catButton, Languages.message("AutoPlayGame") + "\na / A");
+            NodeStyleTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / Ctrl+n");
+            NodeStyleTools.setTooltip(helpMeButton, Languages.message("HelpMeFindExchange") + "\nh / Ctrl+h");
+            NodeStyleTools.setTooltip(catButton, Languages.message("AutoPlayGame") + "\np / Ctrl+p");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1698,6 +1652,52 @@ public class GameEliminationController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    @Override
+    public boolean keyFilter(KeyEvent event) {
+        KeyCode code = event.getCode();
+        if (code != null) {
+            switch (code) {
+                case H:
+                    helpMeAction();
+                    return true;
+                case N:
+                    createAction();
+                    return true;
+                case P:
+                    setAutoplay();
+                    return true;
+            }
+        }
+        return super.keyFilter(event);
+    }
+
+    @Override
+    public boolean controlAltP() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        setAutoplay();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltH() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        helpMeAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltN() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        createAction();
+        return true;
     }
 
     @Override

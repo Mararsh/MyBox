@@ -1,12 +1,10 @@
 package mara.mybox.data;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.nio.charset.Charset;
-import java.util.List;
-import mara.mybox.controller.BaseData2DFileController;
-import mara.mybox.db.data.Data2DColumn;
+import java.sql.Connection;
+import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.tools.TextFileTools;
 
 /**
  * @Author Mara
@@ -15,10 +13,10 @@ import mara.mybox.db.data.Data2DColumn;
  */
 public abstract class DataFile extends Data2D {
 
-    protected BaseData2DFileController fileController;
-    protected Charset targetCharset;
-    protected boolean userSavedDataDefinition, autoDetermineSourceCharset, targetWithNames;
-    protected List<Data2DColumn> savedColumns;
+    @Override
+    public Data2DDefinition queryDefinition(Connection conn) {
+        return tableData2DDefinition.queryFile(conn, type, file);
+    }
 
     @Override
     public String titleName() {
@@ -28,16 +26,12 @@ public abstract class DataFile extends Data2D {
         return file.getAbsolutePath();
     }
 
-    @Override
-    public void newData() {
-        file = null;
-        super.newData();
-    }
-
     public String guessDelimiter() {
-        hasHeader = false;
-        if (file == null || charset == null) {
+        if (file == null) {
             return null;
+        }
+        if (charset == null) {
+            charset = TextFileTools.charset(file);
         }
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line1 = reader.readLine();
@@ -60,9 +54,9 @@ public abstract class DataFile extends Data2D {
             String line2 = reader.readLine();
             if (line2 == null) {
                 if (maxCountIndex1 >= 0) {
-                    hasHeader = true;
                     return values[maxCountIndex1];
                 } else {
+                    hasHeader = false;
                     return null;
                 }
             }
@@ -78,76 +72,25 @@ public abstract class DataFile extends Data2D {
             }
 //            MyBoxLog.console(maxCount2);
             if (maxCountIndex2 >= 0) {
-                hasHeader = true;
                 return values[maxCountIndex2];
             } else {
                 if (maxCountIndex1 >= 0) {
-                    hasHeader = true;
                     return values[maxCountIndex1];
                 } else {
+                    hasHeader = false;
                     return null;
                 }
             }
         } catch (Exception e) {
         }
+        hasHeader = false;
         return null;
     }
 
-    public void initFile(File file) {
-        resetData();
-        this.file = file;
-        savedColumns = null;
-    }
-
-    /*
-        get/set
-     */
-    public Charset getTargetCharset() {
-        return targetCharset;
-    }
-
-    public void setTargetCharset(Charset targetCharset) {
-        this.targetCharset = targetCharset;
-    }
-
-    public boolean isUserSavedDataDefinition() {
-        return userSavedDataDefinition;
-    }
-
-    public void setUserSavedDataDefinition(boolean userSavedDataDefinition) {
-        this.userSavedDataDefinition = userSavedDataDefinition;
-    }
-
-    public boolean isAutoDetermineSourceCharset() {
-        return autoDetermineSourceCharset;
-    }
-
-    public void setAutoDetermineSourceCharset(boolean autoDetermineSourceCharset) {
-        this.autoDetermineSourceCharset = autoDetermineSourceCharset;
-    }
-
-    public boolean isTargetWithNames() {
-        return targetWithNames;
-    }
-
-    public void setTargetWithNames(boolean targetWithNames) {
-        this.targetWithNames = targetWithNames;
-    }
-
-    public List<Data2DColumn> getSavedColumns() {
-        return savedColumns;
-    }
-
-    public void setSavedColumns(List<Data2DColumn> savedColumns) {
-        this.savedColumns = savedColumns;
-    }
-
-    public BaseData2DFileController getFileController() {
-        return fileController;
-    }
-
-    public void setFileController(BaseData2DFileController fileController) {
-        this.fileController = fileController;
+    public void asTmpFile() {
+        file = tmpFile();
+        hasHeader = false;
+        userSavedDataDefinition = false;
     }
 
 }

@@ -1,9 +1,15 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -11,16 +17,22 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -36,8 +48,8 @@ public class ControlData2D extends BaseController {
     protected TableData2DColumn tableData2DColumn;
     protected ControlData2DEditTable tableController;
     protected ControlData2DEditText textController;
-    protected boolean changed;
-    protected final SimpleBooleanProperty statusNotify;
+    protected final SimpleBooleanProperty statusNotify, loadedNotify;
+    protected ControlFileBackup backupController;
 
     @FXML
     protected TabPane tabPane;
@@ -60,6 +72,7 @@ public class ControlData2D extends BaseController {
 
     public ControlData2D() {
         statusNotify = new SimpleBooleanProperty(false);
+        loadedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -69,9 +82,6 @@ public class ControlData2D extends BaseController {
 
             tableController = editController.tableController;
             textController = editController.textController;
-
-            tableData2DDefinition = new TableData2DDefinition();
-            tableData2DColumn = new TableData2DColumn();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -84,9 +94,10 @@ public class ControlData2D extends BaseController {
             parentController = parent;
 
             data2D = Data2D.create(type);
-            data2D.setTableData2DDefinition(tableData2DDefinition);
-            data2D.setTableData2DColumn(tableData2DColumn);
             data2D.setTableView(tableController.tableView);
+
+            tableData2DDefinition = data2D.getTableData2DDefinition();
+            tableData2DColumn = data2D.getTableData2DColumn();
 
             editController.setParameters(this);
             viewController.setParameters(this);
@@ -98,61 +109,172 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public synchronized void loadData() {
+    public void loadDefinition() {
+        if (data2D == null || !checkBeforeNextAction()) {
+            return;
+        }
+        sourceFile = data2D.getFile();
+        if (sourceFile != null && !sourceFile.exists()) {
+            tableData2DDefinition.deleteData(data2D);
+            loadNull();
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                task.cancel();
+            }
+            isSettingValues = true;
+            tableController.resetView();
+            isSettingValues = false;
+            task = new SingletonTask<Void>(this) {
+
+                private StringTable validateTable;
+
+                @Override
+                protected boolean handle() {
+                    data2D.setTask(task);
+                    long d2did = data2D.readDataDefinition();
+                    boolean isTmpFile = data2D.isTmpFile();
+                    List<String> names = data2D.readColumns();
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    if (names == null || names.isEmpty()) {
+                        data2D.setHasHeader(false);
+                        tableData2DColumn.clearFile(data2D);
+                        data2D.setColumns(null);
+                    } else {
+                        List<Data2DColumn> columns = new ArrayList<>();
+                        List<Data2DColumn> savedColumns = data2D.getSavedColumns();
+                        for (int i = 0; i < names.size(); i++) {
+                            Data2DColumn column;
+                            if (savedColumns != null && i < savedColumns.size()) {
+                                column = savedColumns.get(i);
+                                if (data2D.isHasHeader()) {
+                                    column.setName(names.get(i));
+                                }
+                            } else {
+                                column = new Data2DColumn(names.get(i), data2D.defaultColumnType());
+                            }
+                            column.setD2id(d2did);
+                            column.setIndex(i);
+                            columns.add(column);
+                        }
+                        data2D.setColumns(columns);
+                        if (!data2D.isFile() || !isTmpFile) {
+                            validateTable = Data2DColumn.validate(columns);
+                            if (validateTable == null || validateTable.isEmpty()) {
+                                tableData2DColumn.save(d2did, columns);
+                            }
+                        }
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (validateTable != null && !validateTable.isEmpty()) {
+                        validateTable.htmlTable();
+                    }
+                }
+
+                @Override
+                protected void whenFailed() {
+                    if (isCancelled()) {
+                        return;
+                    }
+                    if (error != null) {
+                        popError(message(error));
+                    } else {
+                        popFailed();
+                    }
+                }
+
+                @Override
+                protected void finalAction() {
+                    data2D.setTask(null);
+                    task = null;
+                    loadData();
+                    notifyLoaded();
+                }
+
+            };
+            start(task);
+        }
+    }
+
+    public void loadData() {
         tableController.loadData();
         attributesController.loadData();
         columnsController.loadData();
     }
 
-    public synchronized void checkStatus() {
-        changed = false;
+    public void loadNull() {
+        sourceFile = null;
+        data2D.resetData();
+        loadData();
+        notifyLoaded();
+    }
 
-        editController.changed = false;
+    public boolean isChanged() {
+        return editController.isChanged()
+                || attributesController.isChanged()
+                || columnsController.isChanged();
+    }
+
+    public synchronized void checkStatus() {
         String title = message("Table");
         if (data2D.isTableChanged()) {
             title += "*";
-            editController.changed = true;
         }
         editController.tableTab.setText(title);
 
         title = message("Text");
         if (textController.status == ControlData2DEditText.Status.Applied) {
             title += "*";
-            editController.changed = true;
         } else if (textController.status == ControlData2DEditText.Status.Modified) {
             title += "**";
-            editController.changed = true;
         }
         editController.textTab.setText(title);
 
         title = message("Edit");
-        if (editController.changed) {
+        if (editController.isChanged()) {
             title += "*";
-            changed = true;
         }
         editTab.setText(title);
 
         title = message("Attributes");
         if (attributesController.status == ControlData2DAttributes.Status.Applied) {
             title += "*";
-            changed = true;
         } else if (attributesController.status == ControlData2DAttributes.Status.Modified) {
             title += "**";
-            changed = true;
         }
         attributesTab.setText(title);
 
         title = message("Columns");
         if (columnsController.status == ControlData2DColumns.Status.Applied) {
             title += "*";
-            changed = true;
         } else if (columnsController.status == ControlData2DColumns.Status.Modified) {
             title += "**";
-            changed = true;
         }
         columnsTab.setText(title);
 
+        notifyStatus();
+    }
+
+    public void notifyStatus() {
         statusNotify.set(!statusNotify.get());
+    }
+
+    public void notifyLoaded() {
+        if (backupController != null) {
+            if (data2D.isTmpFile()) {
+                backupController.loadBackups(null);
+            } else {
+                backupController.loadBackups(data2D.getFile());
+            }
+        }
+        loadedNotify.set(!loadedNotify.get());
     }
 
     public synchronized void resetStatus() {
@@ -237,83 +359,258 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void saveDefinition() {
-        if (data2D == null) {
+    public void save() {
+        if (!isChanged()) {
             return;
         }
-        if (data2D.getD2did() >= 0
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            if (checkBeforeSave() < 0) {
+                return;
+            }
+            task = new SingletonTask<Void>(this) {
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        backup();
+                        data2D.setTask(task);
+                        if (!data2D.savePageData(data2D)) {
+                            return false;
+                        }
+                        saveDefinition(data2D, true);
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(message("Saved"));
+                    if (data2D.isFile()) {
+                        recordFileWritten(data2D.getFile());
+                    }
+                    tableController.afterSaved();
+                }
+
+                @Override
+                protected void finalAction() {
+                    data2D.setTask(null);
+                    task = null;
+                    notifyLoaded();
+                }
+            };
+            start(task);
+        }
+    }
+
+    public void backup() {
+        if (backupController != null && backupController.isBack() && !data2D.isTmpFile()) {
+            backupController.addBackup(data2D.getFile());
+        }
+    }
+
+    @FXML
+    public void saveAs(Data2D targetData) {
+        saveAs(targetData, false);
+    }
+
+    public void saveAs(Data2D targetData, boolean load) {
+        if (targetData == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>(this) {
+                String[][] data;
+
+                @Override
+                protected boolean handle() {
+                    data2D.setTask(task);
+                    if (!data2D.savePageData(targetData)) {
+                        return false;
+                    }
+                    saveDefinition(targetData, load);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(message("Saved"));
+                    File file = targetData.getFile();
+                    if (file != null) {
+                        recordFileWritten(file);
+                    }
+                    if (load) {
+                        sourceFile = file;
+                        data2D.load(targetData);
+                        resetStatus();
+                        tableController.afterSaved();
+                        notifyLoaded();
+                        if (parentController instanceof ControlDataClipboard) {
+                            ((ControlDataClipboard) parentController).refreshAction();
+                        }
+                    } else {
+                        if (targetData.isFile()) {
+                            data2D.open(file);
+                        }
+                    }
+                }
+
+                @Override
+                protected void finalAction() {
+                    data2D.setTask(null);
+                    task = null;
+                }
+
+            };
+            start(task);
+        }
+    }
+
+    public void saveDefinition(Data2D d, boolean load) {
+        if (d == null || d.isTmpFile()) {
+            return;
+        }
+        if (d.getD2did() >= 0
                 && attributesController.status != ControlData2DAttributes.Status.Applied
                 && columnsController.status != ControlData2DColumns.Status.Applied) {
             return;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            if (data2D.getD2did() <= 0 || attributesController.status == ControlData2DAttributes.Status.Applied) {
-                Data2DDefinition def;
-                if (data2D.getD2did() >= 0) {
-                    def = tableData2DDefinition.updateData(conn, data2D);
+            Data2DDefinition def;
+            if (d.getD2did() < 0) {
+                def = d.queryDefinition(conn);
+                if (def != null) {
+                    d.setD2did(def.getD2did());
+                }
+            }
+            if (d.getD2did() < 0 || attributesController.status == ControlData2DAttributes.Status.Applied) {
+                d.checkBeforeSaving();
+                if (d.getD2did() >= 0) {
+                    def = tableData2DDefinition.updateData(conn, d);
                 } else {
-                    def = tableData2DDefinition.insertData(conn, data2D);
+                    def = tableData2DDefinition.insertData(conn, d);
                 }
                 conn.commit();
-                data2D.load(def);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        attributesController.status(ControlData2DAttributes.Status.Loaded);
-                    }
-                });
+                d.load(def);
+                if (load) {
+                    data2D.load(d);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            attributesController.loadData();
+                        }
+                    });
+                }
             }
-            long d2did = data2D.getD2did();
+            long d2did = d.getD2did();
             if (d2did < 0) {
                 return;
             }
             if (columnsController.status == ControlData2DColumns.Status.Applied) {
-                tableData2DColumn.save(conn, d2did, data2D.getColumns());
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        columnsController.status(ControlData2DColumns.Status.Loaded);
-                    }
-                });
+                tableData2DColumn.save(conn, d2did, d.getColumns());
+                if (load) {
+                    data2D.load(d);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            columnsController.loadData();
+                        }
+                    });
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public boolean needSave() {
-        boolean goOn;
-        if (!editController.changed
-                && !attributesController.isChanged()
-                && !columnsController.isChanged()) {
-            goOn = true;
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(getMyStage().getTitle());
-            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
-            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSave) {
-                parentController.saveAction();
-                goOn = false;
-            } else {
-                goOn = result.get() == buttonNotSave;
+    @FXML
+    public void newData() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
             }
+            sourceFile = null;
+            data2D.initFile(data2D.tmpFile());
+            loadDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        if (goOn) {
-            resetStatus();
-        }
-        return goOn;
     }
+
+    @FXML
+    @Override
+    public void myBoxClipBoard() {
+        DataClipboardPopController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void loadContentInSystemClipboard() {
+        try {
+            if (data2D == null || !checkBeforeNextAction()) {
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            TableTextController controller = (TableTextController) WindowTools.openStage(Fxmls.TableTextFxml);
+            controller.setParameters(this, text);
+            controller.okNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    loadContentInSystemClipboard(controller);
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void loadContentInSystemClipboard(TableTextController controller) {
+        if (controller == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                task.cancel();
+            }
+            task = new SingletonTask<Void>(this) {
+
+                @Override
+                protected boolean handle() {
+                    data2D.setTask(task);
+                    File tmpFile = data2D.tmpFile(controller.columnNames, controller.data);
+                    data2D.initFile(tmpFile);
+                    data2D.setHasHeader(controller.columnNames != null);
+                    data2D.setCharset(Charset.forName("UTF-8"));
+                    data2D.setDelimiter(",");
+                    data2D.setUserSavedDataDefinition(false);
+                    return true;
+                }
+
+                @Override
+                protected void finalAction() {
+                    data2D.setTask(null);
+                    task = null;
+                    controller.close();
+                    loadDefinition();
+                }
+
+            };
+            start(task);
+        }
+    }
+
 
     /*
         paigination
@@ -354,23 +651,18 @@ public class ControlData2D extends BaseController {
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
-            try {
-                Tab tab = tabPane.getSelectionModel().getSelectedItem();
-                if (tab == editTab) {
-                    return editController.keyEventsFilter(event);
+            if (editTab.isSelected()) {
+                return editController.keyEventsFilter(event);
 
-                } else if (tab == viewTab) {
-                    return viewController.keyEventsFilter(event);
+            } else if (viewTab.isSelected()) {
+                return viewController.keyEventsFilter(event);
 
-                } else if (tab == attributesTab) {
-                    return attributesController.keyEventsFilter(event);
+            } else if (attributesTab.isSelected()) {
+                return attributesController.keyEventsFilter(event);
 
-                } else if (tab == columnsTab) {
-                    return columnsController.keyEventsFilter(event);
+            } else if (columnsTab.isSelected()) {
+                return columnsController.keyEventsFilter(event);
 
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
             }
             return false;
         } else {
@@ -378,68 +670,37 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    @FXML
     @Override
-    public boolean popAction() {
-        try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == viewTab) {
-//                HtmlPopController.openWebView(this, webView);
-                return true;
+    public boolean checkBeforeNextAction() {
+        boolean goOn;
+        if (!isChanged()) {
+            goOn = true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setHeaderText(getMyStage().getTitle());
+            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
+            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
-            } else if (tab == editTab) {
-//                MarkdownPopController.open(this, markdownArea);
-                return true;
-
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonSave) {
+                parentController.saveAction();
+                goOn = false;
+            } else {
+                goOn = result.get() == buttonNotSave;
             }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
-        return false;
-    }
-
-    @FXML
-    @Override
-    public boolean synchronizeAction() {
-        try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == viewTab) {
-
-                return true;
-
-            } else if (tab == editTab) {
-
-                return true;
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+        if (goOn) {
+            resetStatus();
         }
-        return false;
-    }
-
-    @FXML
-    @Override
-    public boolean menuAction() {
-        try {
-            closePopup();
-
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == editTab) {
-//                Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-//                MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            } else if (tab == viewTab) {
-//                Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
-//                MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        return false;
+        return goOn;
     }
 
     @Override

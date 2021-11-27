@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
-import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -110,11 +109,11 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                     if (toSystemClipboard) {
                         return data != null;
                     } else {
-                        File dFile = DataClipboard.writeFile(data);
-                        List<ColumnDefinition> dColumns = new ArrayList<>();
-                        for (int c : cols) {
-                            dColumns.add(columns.get(c));
-                        }
+//                        File dFile = DataClipboard.writeFile(data);
+//                        List<ColumnDefinition> dColumns = new ArrayList<>();
+//                        for (int c : cols) {
+//                            dColumns.add(columns.get(c));
+//                        }
 //                        DataDefinition def = DataClipboard.create(tableDataDefinition, tableDataColumn, dFile, dColumns);
 //                        return def != null;
                         return false;
@@ -142,12 +141,6 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
             };
             start(task);
         }
-    }
-
-    @FXML
-    @Override
-    public void myBoxClipBoard() {
-        DataClipboardPopController.open((ControlSheet) this);
     }
 
     public void paste(ControlSheetCSV sourceController, int row, int col, boolean enlarge) {

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
@@ -12,29 +11,29 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
+import mara.mybox.data.Data2D;
+import mara.mybox.data.DataFile;
+import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * @Author Mara
  * @CreateDate 2021-1-17
  * @License Apache License Version 2.0
  */
-public class DataFileExcelController extends BaseDataFileController {
+public class DataFileExcelController extends BaseData2DFileController {
+
+    protected DataFileExcel dataFileExcel;
 
     @FXML
     protected TitledPane sheetsPane;
@@ -43,30 +42,29 @@ public class DataFileExcelController extends BaseDataFileController {
     @FXML
     protected CheckBox sourceWithNamesCheck, targetWithNamesCheck, currentOnlyCheck;
     @FXML
-    protected Button okSheetButton, plusSheetButton, renameSheetButton, deleteSheetButton2;
+    protected Button okSheetButton, plusSheetButton, renameSheetButton, deleteSheetButton,
+            nextSheetButton, previousSheetButton;
     @FXML
     protected VBox sheetsBox;
-    @FXML
-    protected ControlSheetExcel sheetController;
 
     public DataFileExcelController() {
         baseTitle = message("EditExcel");
     }
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Excel);
-    }
-
-    @Override
     public void initValues() {
         try {
             super.initValues();
-            dataController = sheetController;
-            dataController.setParent(this);
+            setDataType(Data2D.Type.DataFileExcel);
+            dataFileExcel = (DataFileExcel) dataController.data2D;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Excel);
     }
 
     @Override
@@ -101,31 +99,47 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    public void pickOptions() {
-        sheetController.sourceWithNames = sourceWithNamesCheck.isSelected();
-    }
-
-    public void setFile(File file, boolean withName) {
-        sourceFile = file;
-        sourceWithNamesCheck.setSelected(withName);
-        sheetController.initCurrentPage();
-        sheetController.userSavedDataDefinition = false;
-        loadFile();
+    public void initFile(File file) {
+        File cfile = dataFileExcel.getFile();
+        String sheet = dataFileExcel.getCurrentSheetName();
+        List<String> sheetNames = dataFileExcel.getSheetNames();
+        dataFileExcel.initFile(file);
+        if (file != null && file.equals(cfile)) {
+            dataFileExcel.setCurrentSheetName(sheet);
+            dataFileExcel.setSheetNames(sheetNames);
+        } else {
+            dataFileExcel.setCurrentSheetName(null);
+            dataFileExcel.setSheetNames(null);
+        }
     }
 
     @Override
-    protected void fileLoaded() {
+    public void pickOptions() {
+        dataFileExcel.setHasHeader(sourceWithNamesCheck.isSelected());
+    }
+
+    @Override
+    protected void afterFileLoaded() {
+        super.afterFileLoaded();
         sheetSelector.getItems().clear();
-        if (sheetController.sheetNames != null) {
-            sheetSelector.getItems().setAll(sheetController.sheetNames);
-        }
-        sheetSelector.setValue(sheetController.currentSheetName);
-        deleteSheetButton2.setDisable(sheetController.sheetNames == null || sheetController.sheetNames.size() <= 1);
+        List<String> sheets = dataFileExcel.getSheetNames();
+        sheetSelector.getItems().setAll(sheets);
+        sheetSelector.setValue(dataFileExcel.getCurrentSheetName());
+        deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
         int current = sheetSelector.getSelectionModel().getSelectedIndex();
-        nextButton.setDisable(current >= sheetSelector.getItems().size() - 1);
-        previousButton.setDisable(current <= 0);
+        nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
+        previousSheetButton.setDisable(current <= 0);
         sheetsPane.setExpanded(true);
-        updateStatus();
+    }
+
+    @Override
+    protected void updateStatus() {
+        super.updateStatus();
+        if (dataFileExcel.isTmpFile() || dataController.isChanged()) {
+            sheetsBox.setDisable(true);
+        } else {
+            sheetsBox.setDisable(false);
+        }
     }
 
     @Override
@@ -134,38 +148,75 @@ public class DataFileExcelController extends BaseDataFileController {
         if (sourceFile != null) {
             info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + message("CurrentSheet") + ": " + (sheetController.currentSheetName == null ? "" : sheetController.currentSheetName + "\n")
-                    + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n";
+                    + message("CurrentSheet") + ": " + (dataFileExcel.getCurrentSheetName() == null ? "" : dataFileExcel.getCurrentSheetName() + "\n")
+                    + message("FirstLineAsNames") + ": " + (dataFileExcel.isHasHeader() ? message("Yes") : message("No")) + "\n";
         }
-        if (sheetController.pagesNumber <= 1) {
-            info += message("RowsNumber") + ":" + (sheetController.sheetInputs == null ? 0 : sheetController.sheetInputs.length) + "\n";
+        if (!dataFileExcel.isMutiplePages()) {
+            info += message("RowsNumber") + ":" + dataFileExcel.tableRowsNumber() + "\n";
         } else {
-            info += message("LinesNumberInFile") + ":" + sheetController.totalSize + "\n";
+            info += message("LinesNumberInFile") + ":" + dataFileExcel.getDataSize() + "\n";
         }
-        info += message("ColumnsNumber") + ": " + (sheetController.columns == null ? "0" : sheetController.columns.size()) + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage + 1)
-                + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
-        if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
+        info += message("ColumnsNumber") + ": " + dataFileExcel.columnsNumber() + "\n"
+                + message("CurrentPage") + ": " + StringTools.format(dataFileExcel.getCurrentPage() + 1)
+                + " / " + StringTools.format(dataFileExcel.getPagesNumber()) + "\n";
+        if (dataFileExcel.isMutiplePages() && dataFileExcel.hasData()) {
             info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(sheetController.startRowOfCurrentPage + 1) + " - "
-                    + StringTools.format(sheetController.startRowOfCurrentPage + sheetController.sheetInputs.length)
-                    + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
+                    + ": " + StringTools.format(dataFileExcel.getStartRowOfCurrentPage() + 1) + " - "
+                    + StringTools.format(dataFileExcel.getStartRowOfCurrentPage() + dataFileExcel.tableRowsNumber())
+                    + " ( " + StringTools.format(dataFileExcel.tableRowsNumber()) + " )\n";
         }
         info += message("PageModifyTime") + ": " + DateTools.nowString();
         fileInfoLabel.setText(info);
     }
 
+    @Override
+    public DataFile makeTargetDataFile(File file) {
+        DataFileExcel targetCSVFile = (DataFileExcel) dataFileExcel.cloneAll();
+        targetCSVFile.setFile(file);
+        targetCSVFile.setD2did(-1);
+        targetCSVFile.setHasHeader(targetWithNamesCheck.isSelected());
+        targetCSVFile.setCurrentSheetOnly(currentOnlyCheck.isSelected());
+        return targetCSVFile;
+    }
+
     @FXML
-    protected void plusSheet() {
-        if (sourceFile == null || sheetController.sheetNames == null || !checkBeforeNextAction()) {
+    public void loadSheet() {
+        loadSheetIndex(sheetSelector.getSelectionModel().getSelectedIndex());
+    }
+
+    public void loadSheetIndex(int index) {
+        if (sourceFile == null || !checkBeforeNextAction()) {
             return;
         }
-        String newName = message("Sheet") + (sheetController.sheetNames.size() + 1);
-        while (sheetController.sheetNames != null && sheetController.sheetNames.contains(newName)) {
-            newName += "m";
+        List<String> sheets = sheetSelector.getItems();
+        if (index > sheets.size() - 1 || index < 0) {
+            return;
         }
-        String value = PopTools.askValue(null, message("Create"), message("SheetName"), newName);
-        if (value == null || value.isBlank()) {
+        loadSheetName(sheets.get(index));
+    }
+
+    public void loadSheetName(String name) {
+        if (sourceFile == null || !checkBeforeNextAction() || name == null) {
+            return;
+        }
+        dataFileExcel.initFile(sourceFile);
+        dataFileExcel.setCurrentSheetName(name);
+        dataFileExcel.setUserSavedDataDefinition(true);
+        loadFile();
+    }
+
+    @FXML
+    protected void plusSheet() {
+        List<String> sheets = dataFileExcel.getSheetNames();
+        if (sourceFile == null || !checkBeforeNextAction() || sheets == null) {
+            return;
+        }
+        String tryName = message("Sheet") + (sheets.size() + 1);
+        while (sheets.contains(tryName)) {
+            tryName += "m";
+        }
+        String newName = PopTools.askValue(null, message("Create"), message("SheetName"), tryName);
+        if (newName == null || newName.isBlank()) {
             popError(message("InvalidData"));
             return;
         }
@@ -177,29 +228,19 @@ public class DataFileExcelController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = TmpFileTools.getTempFile();
-                    File tmpDataFile = TmpFileTools.getTempFile();
-                    FileCopyTools.copyFile(sourceFile, tmpDataFile);
-                    try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
-                        targetBook.createSheet(value);
-
-                        try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                            targetBook.write(fileOut);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    FileDeleteTools.delete(tmpDataFile);
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, sourceFile);
+                    dataFileExcel.setTask(task);
+                    return dataFileExcel.newSheet(newName, true);
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    sheetController.loadSheet(value);
+                    dataController.loadDefinition();
+                }
+
+                @Override
+                protected void finalAction() {
+                    dataFileExcel.setTask(null);
+                    task = null;
                 }
 
             };
@@ -212,26 +253,54 @@ public class DataFileExcelController extends BaseDataFileController {
         if (sourceFile == null || !checkBeforeNextAction()) {
             return;
         }
-        String newName = sheetController.currentSheetName + "m";
-        while (sheetController.sheetNames != null && sheetController.sheetNames.contains(newName)) {
-            newName += "m";
+        String currentSheetName = dataFileExcel.getCurrentSheetName();
+        List<String> sheets = dataFileExcel.getSheetNames();
+        String tryName = currentSheetName + "m";
+        while (dataFileExcel.getSheetNames() != null && sheets.contains(tryName)) {
+            tryName += "m";
         }
-        String value = PopTools.askValue(null, message("CurrentName") + ": " + sheetController.currentSheetName, message("NewName"), newName);
-        if (value == null || value.isBlank() || value.equals(sheetController.currentSheetName)
-                || (sheetController.sheetNames != null && sheetController.sheetNames.contains(value))) {
+        String newName = PopTools.askValue(null, message("CurrentName") + ": " + currentSheetName, message("NewName"), tryName);
+        if (newName == null || newName.isBlank() || newName.equals(currentSheetName)
+                || (sheets != null && sheets.contains(newName))) {
             popError(message("InvalidData"));
             return;
         }
-        sheetController.targetSheetName = value;
-        sheetController.saveFile();
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>(this) {
+
+                @Override
+                protected boolean handle() {
+                    dataFileExcel.setTask(task);
+                    return dataFileExcel.renameSheet(newName);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    dataController.loadDefinition();
+                }
+
+                @Override
+                protected void finalAction() {
+                    dataFileExcel.setTask(null);
+                    task = null;
+                }
+
+            };
+            start(task);
+        }
     }
 
     @FXML
     protected void deleteSheet() {
-        if (sourceFile == null || sheetController.sheetNames == null || sheetController.sheetNames.size() <= 1) {
+        List<String> sheets = dataFileExcel.getSheetNames();
+        if (sourceFile == null || sheets == null || sheets.size() <= 1) {
             return;
         }
-        if (!PopTools.askSure(baseTitle, sheetController.currentSheetName, message("SureDelete"))) {
+        String currentSheetName = dataFileExcel.getCurrentSheetName();
+        if (!PopTools.askSure(baseTitle, currentSheetName, message("SureDelete"))) {
             return;
         }
         synchronized (this) {
@@ -243,33 +312,16 @@ public class DataFileExcelController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = TmpFileTools.getTempFile();
-                    File tmpDataFile = TmpFileTools.getTempFile();
-                    FileCopyTools.copyFile(sourceFile, tmpDataFile);
-                    try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
-                        index = targetBook.getSheetIndex(sheetController.currentSheetName);
-                        targetBook.removeSheetAt(index);
-
-                        try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                            targetBook.write(fileOut);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    FileDeleteTools.delete(tmpDataFile);
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, sourceFile);
+                    index = dataFileExcel.deleteSheet(currentSheetName);
+                    return index >= 0;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (sheetController.sheetNames == null || index >= sheetController.sheetNames.size() - 1) {
-                        loadSheet(0);
+                    if (sheets == null || index >= sheets.size() - 1) {
+                        loadSheetIndex(0);
                     } else {
-                        loadSheet(index + 1);
+                        loadSheetIndex(index + 1);
                     }
                 }
 
@@ -279,57 +331,35 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @FXML
-    @Override
-    public void nextAction() {
+    public void nextSheetAction() {
         int current = sheetSelector.getSelectionModel().getSelectedIndex();
         if (current >= sheetSelector.getItems().size() - 1) {
             popError(message("NoMore"));
             return;
         }
-        loadSheet(current + 1);
+        loadSheetIndex(current + 1);
     }
 
     @FXML
-    @Override
-    public void previousAction() {
+    public void previousSheetAction() {
         int current = sheetSelector.getSelectionModel().getSelectedIndex();
         if (current == 0) {
             popError(message("NoMore"));
             return;
         }
-        loadSheet(current - 1);
+        loadSheetIndex(current - 1);
     }
 
-    @FXML
-    public void loadSheet() {
-        loadSheet(sheetSelector.getSelectionModel().getSelectedIndex());
-    }
-
-    @FXML
-    public void loadSheet(int index) {
-        if (sourceFile == null || !checkBeforeNextAction()) {
+    public void setFile(File file, boolean withName) {
+        if (file == null || !checkBeforeNextAction()) {
             return;
         }
-        if (index > sheetSelector.getItems().size() - 1 || index < 0) {
-            return;
-        }
-        String name = sheetSelector.getItems().get(index);
-        sheetSelector.getSelectionModel().select(name);
-        sheetController.loadSheet(name);
-
-        nextButton.setDisable(index >= sheetSelector.getItems().size() - 1);
-        previousButton.setDisable(index <= 0);
+        sourceFile = file;
+        dataFileExcel.initFile(sourceFile);
+        dataFileExcel.setHasHeader(withName);
+        loadFile();
     }
 
-    @FXML
-    @Override
-    public void saveAsAction() {
-        sheetController.sourceFile = sourceFile;
-        sheetController.targetWithNames = targetWithNamesCheck.isSelected();
-        sheetController.currentSheetOnly = currentOnlyCheck.isSelected();
-        sheetController.saveAsType = saveAsType;
-        sheetController.saveAs();
-    }
 
     /*
         static

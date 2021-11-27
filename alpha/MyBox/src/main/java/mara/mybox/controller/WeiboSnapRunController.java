@@ -43,11 +43,11 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import mara.mybox.fxml.BaseTask;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.BaseTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
@@ -251,6 +251,7 @@ public class WeiboSnapRunController extends BaseController {
             webEngine = webView.getEngine();
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
+            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
 
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override

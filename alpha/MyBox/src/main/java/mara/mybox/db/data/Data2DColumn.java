@@ -55,7 +55,6 @@ public class Data2DColumn extends ColumnDefinition {
     public Object clone() throws CloneNotSupportedException {
         try {
             Data2DColumn newColumn = (Data2DColumn) super.clone();
-            newColumn.setD2cid(-1);
             return newColumn;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -67,6 +66,27 @@ public class Data2DColumn extends ColumnDefinition {
     public Data2DColumn cloneBase() {
         try {
             return (Data2DColumn) clone();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Data2DColumn cloneAll() {
+        try {
+            Data2DColumn column = cloneBase();
+            column.setData2DDefinition(data2DDefinition);
+            return column;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Data2DColumn copy() {
+        try {
+            Data2DColumn column = cloneBase();
+            column.setD2cid(-1);
+            column.setIndex(-1);
+            return column;
         } catch (Exception e) {
             return null;
         }

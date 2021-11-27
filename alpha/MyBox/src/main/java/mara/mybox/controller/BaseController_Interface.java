@@ -529,7 +529,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         } else {
                             thisPane.requestFocus();
                         }
-                        LocateTools.mouseCenter(myStage);
+                        if (isPop) {
+                            LocateTools.mouseCenter(myStage);
+                        }
                         if (leftPane != null) {
                             leftPane.setHvalue(0);
                         }

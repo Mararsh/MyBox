@@ -18,8 +18,8 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DCell;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
@@ -46,6 +46,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
@@ -144,9 +145,9 @@ public class DataMigration {
                         continue;
                     }
                     File file = null;
-                    if (type == 2) {
+                    if (type == 2) {               // Matrix
                         type = 4;
-                    } else if (type == 1) {
+                    } else if (type == 1) {       // DataFile
                         file = new File(name);
                         if (!file.exists()) {
                             continue;
@@ -159,7 +160,12 @@ public class DataMigration {
                             type = 3;
                         }
                         name = file.getName();
-                    } else if (type == 4) {
+                    } else if (type == 4) {          // DataClipboard
+                        file = new File(name);
+                        if (!file.exists()) {
+                            continue;
+                        }
+                        name = file.getName();
                         type = 5;
                     } else {
                         continue;
@@ -1073,8 +1079,8 @@ public class DataMigration {
             public void run() {
                 try {
                     MyBoxLog.info("Reloading internal doc...");
-                    mara.mybox.fxml.FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
-                    mara.mybox.fxml.FxFileTools.getInternalFile("/doc/zh/README.md", "doc", "README-zh.md", true);
+                    FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
+                    FxFileTools.getInternalFile("/doc/zh/README.md", "doc", "README-zh.md", true);
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
                 }
@@ -1105,7 +1111,7 @@ public class DataMigration {
                             "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt"
                     );
                     for (String name : names) {
-                        mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/" + name, "data", name, true);
+                        FxFileTools.getInternalFile("/data/db/" + name, "data", name, true);
                     }
                     MyBoxLog.info("Internal data loaded.");
                 } catch (Exception e) {

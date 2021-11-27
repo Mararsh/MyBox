@@ -5,65 +5,56 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
+import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.data.DataDefinition.DataType;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVFormat;
 
 /**
  * @Author Mara
  * @CreateDate 2021-3-11
  * @License Apache License Version 2.0
  */
-public class ControlDataClipboard extends BaseSysTableController<DataDefinition> {
+public class ControlDataClipboard extends BaseSysTableController<Data2DDefinition> {
 
-    protected TableDataDefinition tableDataDefinition;
+    protected DataClipboard dataClipboard;
+    protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected boolean checkedInvalid;
-    protected DataDefinition currentData;
+    protected boolean invalidChecked;
 
     @FXML
-    protected TableColumn<DataDefinition, Long> dfidColumn;
+    protected TableColumn<Data2DDefinition, Long> d2dColumn;
     @FXML
-    protected TableColumn<DataDefinition, String> nameColumn;
+    protected TableColumn<Data2DDefinition, String> nameColumn;
     @FXML
     protected Label nameLabel;
     @FXML
-    protected ControlSheetCSV sheetController;
+    protected ControlData2D dataController;
 
     public ControlDataClipboard() {
         baseTitle = message("DataClipboard");
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.CSV);
     }
 
     @Override
@@ -71,24 +62,24 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
         try {
             super.initValues();
 
-            sheetController.setParent(this);
-            sheetController.targetCharset = Charset.forName("UTF-8");
-            sheetController.targetCsvDelimiter = ',';
-            sheetController.targetWithNames = false;
-            sheetController.saveAsType = saveAsType;
-            sheetController.dataType = DataType.DataClipboard;
+            dataController.setDataType(this, Data2D.Type.DataClipboard);
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
+            dataClipboard = (DataClipboard) dataController.data2D;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @Override
-    public void setTableDefinition() {
-        tableDataDefinition = sheetController.tableDataDefinition;
-//        tableData2DColumn = sheetController.tableData2DColumn;
-        tableDefinition = tableDataDefinition;
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
+    }
 
-        tableDataDefinition.setOrderColumns("dfid DESC");
+    @Override
+    public void setTableDefinition() {
+        tableDefinition = tableData2DDefinition;
     }
 
     @Override
@@ -96,54 +87,36 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
         try {
             super.initControls();
 
-            sheetController.fileLoadedNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        updateStatus();
-                    });
-            sheetController.sheetChangedNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        updateStatus();
-                    });
+            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    updateStatus();
+                }
+            });
+
+            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    updateStatus();
+                }
+            });
 
             loadTableData();
-            loadNull();
-            sheetController.newSheet(3, 3);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    /*
+        table
+     */
     @Override
     protected void initColumns() {
         try {
             super.initColumns();
-            dfidColumn.setCellValueFactory(new PropertyValueFactory<>("dfid"));
+            d2dColumn.setCellValueFactory(new PropertyValueFactory<>("d2did"));
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("dataName"));
-            nameColumn.setCellFactory(new Callback<TableColumn<DataDefinition, String>, TableCell<DataDefinition, String>>() {
-                @Override
-                public TableCell<DataDefinition, String> call(TableColumn<DataDefinition, String> param) {
-                    TableCell<DataDefinition, String> cell = new TableCell<DataDefinition, String>() {
-                        @Override
-                        public void updateItem(String item, boolean empty) {
-                            super.updateItem(item, empty);
-                            setGraphic(null);
-                            setText(null);
-                            if (empty || item == null) {
-                                return;
-                            }
-                            try {
-                                File file = new File(item);
-                                if (file.exists()) {
-                                    setText(FileNameTools.namePrefix(file.getName()));
-                                }
-                            } catch (Exception e) {
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -181,37 +154,38 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
 
     @Override
     public long readDataSize() {
-        if (checkedInvalid) {
-            return DataClipboard.size(tableDataDefinition);
+        if (invalidChecked) {
+            String condition = "data_type=" + dataClipboard.type();
+            return tableData2DDefinition.conditionSize(condition);
         } else {
-            int size = DataClipboard.checkValid(tableDataDefinition);
-            checkedInvalid = true;
-            return size;
+            int count = dataClipboard.checkValid();
+            invalidChecked = true;
+            return count;
         }
     }
 
     @Override
-    public List<DataDefinition> readPageData() {
-        return DataClipboard.queryPage(tableDataDefinition, startRowOfCurrentPage, pageSize);
+    public List<Data2DDefinition> readPageData() {
+        String condition = "data_type=" + dataClipboard.type() + " ORDER BY d2did DESC ";
+        return tableData2DDefinition.queryConditions(condition, startRowOfCurrentPage, pageSize);
     }
 
     @Override
-    protected int deleteData(List<DataDefinition> data) {
+    protected int deleteData(List<Data2DDefinition> data) {
         if (data == null || data.isEmpty()) {
             return 0;
         }
-        for (DataDefinition d : data) {
-            FileDeleteTools.delete(d.getDataName());
+        for (Data2DDefinition d : data) {
+            FileDeleteTools.delete(d.getFile());
         }
-        return tableDefinition.deleteData(data);
+        return tableData2DDefinition.deleteData(data);
     }
 
     @Override
     protected void afterDeletion() {
         refreshAction();
-        if (sheetController.sourceFile != null && !sheetController.sourceFile.exists()) {
-            loadNull();
-            sheetController.makeSheet(null, false, false);
+        if (dataController.sourceFile != null && !dataController.sourceFile.exists()) {
+            dataController.loadNull();
         }
     }
 
@@ -219,8 +193,7 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
     protected void afterClear() {
         FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
         refreshAction();
-        loadNull();
-        sheetController.makeSheet(null, false, false);
+        dataController.loadNull();
     }
 
     @Override
@@ -237,76 +210,6 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
         renameButton.setDisable(tableView.getSelectionModel().getSelectedIndex() < 0);
     }
 
-    public void loadData(DataDefinition data) {
-        if (data == null || !sheetController.checkBeforeNextAction()) {
-            return;
-        }
-        File file = new File(data.getDataName());
-        if (!file.exists()) {
-            tableDefinition.deleteData(data);
-            refreshAction();
-            return;
-        }
-        currentData = data;
-        sheetController.sourceFile = file;
-        sheetController.userSavedDataDefinition = true;
-        sheetController.sourceCharset = Charset.forName(currentData.getCharset());
-        sheetController.sourceCsvDelimiter = currentData.getDelimiter().charAt(0);
-        sheetController.autoDetermineSourceCharset = false;
-        sheetController.sourceWithNames = currentData.isHasHeader();
-        sheetController.initCurrentPage();
-        sheetController.loadFile();
-    }
-
-    public void loadNull() {
-        currentData = null;
-        sheetController.sourceFile = null;
-        sheetController.sourceCharset = Charset.forName("UTF-8");
-        sheetController.sourceCsvDelimiter = ',';
-        sheetController.autoDetermineSourceCharset = false;
-        sheetController.sourceWithNames = false;
-        sheetController.initCurrentPage();
-        sheetController.initFile();
-    }
-
-    public void load(String[][] data, List<ColumnDefinition> columns) {
-        loadNull();
-        sheetController.makeSheet(data, columns);
-    }
-
-    @FXML
-    @Override
-    public void createAction() {
-        try {
-            if (!sheetController.checkBeforeNextAction()) {
-                return;
-            }
-            loadNull();
-            sheetController.createAction();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void loadContentInSystemClipboard() {
-        try {
-            if (!sheetController.checkBeforeNextAction()) {
-                return;
-            }
-            if (!TextClipboardTools.systemClipboardHasString()) {
-                popError(message("NoTextInClipboard"));
-                return;
-            }
-            loadNull();
-            sheetController.loadText(TextClipboardTools.getSystemClipboardString());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     @FXML
     public void openPath() {
         try {
@@ -316,100 +219,79 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
         }
     }
 
+    /*
+        clipboard
+     */
+    public void loadData(Data2DDefinition data) {
+        if (data == null || !checkBeforeNextAction()) {
+            return;
+        }
+        sourceFile = data.getFile();
+        dataClipboard.initFile(sourceFile);
+        dataClipboard.load(data);
+        dataClipboard.setUserSavedDataDefinition(true);
+        dataController.loadDefinition();
+    }
+
+    @FXML
+    @Override
+    public void createAction() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            sourceFile = null;
+            dataClipboard.initFile(dataClipboard.tmpFile());
+            dataController.loadDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void loadContentInSystemClipboard() {
+        dataController.loadContentInSystemClipboard();
+    }
+
     @FXML
     @Override
     public void recoverAction() {
-        sheetController.recover();
+        dataController.resetStatus();
+        if (dataClipboard.isTmpFile()) {
+            dataClipboard.initFile(dataClipboard.tmpFile());
+            dataController.loadDefinition();
+        } else {
+            dataClipboard.initFile(sourceFile);
+            dataClipboard.setUserSavedDataDefinition(true);
+            dataController.loadDefinition();
+        }
     }
 
     @FXML
     @Override
     public void saveAction() {
-        if (currentData != null) {
-            saveCurrent();
+        if (dataClipboard.isTmpFile()) {
+            File file = dataClipboard.newFile();
+            if (file == null) {
+                return;
+            }
+            DataClipboard targetData = (DataClipboard) dataClipboard.cloneAll();
+            targetData.setFile(file);
+            targetData.setD2did(-1);
+            targetData.setCharset(Charset.forName("UTF-8"));
+            targetData.setDelimiter(",");
+            targetData.setHasHeader(true);
+            dataController.saveAs(targetData, true);
         } else {
-            saveNew();
-        }
-    }
-
-    public void saveCurrent() {
-        if (currentData == null) {
-            saveNew();
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    sheetController.backup();
-                    error = sheetController.save(sheetController.sourceFile, sheetController.sourceCharset,
-                            sheetController.sourceCsvFormat, false);
-                    return error == null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    sheetController.dataChangedNotify.set(false);
-                    sheetController.loadFile();
-                }
-
-            };
-            start(task);
-        }
-    }
-
-    public void saveNew() {
-        if (currentData != null) {
-            saveCurrent();
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private DataDefinition def;
-
-                @Override
-                protected boolean handle() {
-                    File file = TmpFileTools.getTempFile();
-                    CSVFormat csvFormat = CSVFormat.DEFAULT
-                            .withDelimiter(',').withIgnoreEmptyLines().withTrim()
-                            .withNullString("");
-                    error = sheetController.save(file, Charset.forName("UTF-8"), csvFormat, false);
-                    if (error != null) {
-                        return false;
-                    }
-                    def = DataClipboard.create(tableDataDefinition, tableData2DColumn, file, sheetController.columns);
-                    return def != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    sheetController.dataChangedNotify.set(false);
-                    loadTableData();
-                    loadData(def);
-                }
-
-            };
-            start(task);
+            dataController.save();
         }
     }
 
     protected void updateStatus() {
-        String title = baseTitle;
-        nameLabel.setText("");
-        if (sheetController.sourceFile != null) {
-            title += " " + sheetController.sourceFile.getAbsolutePath();
-            nameLabel.setText(FileNameTools.namePrefix(sheetController.sourceFile.getName()));
-        }
-        if (sheetController.dataChangedNotify.get()) {
+        String title = baseTitle + " - " + dataClipboard.getFile().getAbsolutePath();
+        nameLabel.setText(dataClipboard.getDataName());
+        if (dataController.isChanged()) {
             title += " *";
         }
         getMyStage().setTitle(title);
@@ -417,15 +299,18 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
 
     @FXML
     public void renameAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
         int index = tableView.getSelectionModel().getSelectedIndex();
-        DataDefinition selected = tableView.getSelectionModel().getSelectedItem();
+        Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
-        File file = new File(selected.getDataName());
+        File file = selected.getFile();
         if (!file.exists()) {
-            tableDefinition.deleteData(selected);
-            refreshAction();
+            tableData2DDefinition.deleteData(selected);
+            dataController.loadNull();
             return;
         }
         FileRenameController controller = (FileRenameController) openStage(Fxmls.FileRenameFxml);
@@ -438,7 +323,7 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
         controller.set(file);
     }
 
-    public void fileRenamed(int index, DataDefinition selected, File newFile) {
+    public void fileRenamed(int index, Data2DDefinition selected, File newFile) {
         if (selected == null || newFile == null) {
             return;
         }
@@ -447,12 +332,13 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
                 return;
             }
             task = new SingletonTask<Void>(this) {
-                private DataDefinition df;
+                private Data2DDefinition df;
 
                 @Override
                 protected boolean handle() {
-                    selected.setDataName(newFile.getAbsolutePath());
-                    df = tableDataDefinition.updateData(selected);
+                    selected.setFile(newFile);
+                    selected.setDataName(newFile.getName());
+                    df = tableData2DDefinition.updateData(selected);
                     return df != null;
                 }
 
@@ -460,10 +346,7 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
                 protected void whenSucceeded() {
                     popSuccessful();
                     tableData.set(index, df);
-                    if (currentData == df) {
-                        sheetController.sourceFile = newFile;
-                        updateStatus();
-                    }
+                    loadData(df);
                 }
 
             };
@@ -471,16 +354,32 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
         }
     }
 
-    @FXML
+    /*
+        interface
+     */
     @Override
-    public boolean popAction() {
-        return sheetController.popAction();
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return dataController.keyEventsFilter(event);
+        } else {
+            return true;
+        }
     }
 
-    @FXML
     @Override
-    public boolean menuAction() {
-        return sheetController.menuAction();
+    public boolean checkBeforeNextAction() {
+        return dataController.checkBeforeNextAction();
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            dataClipboard = null;
+            tableData2DDefinition = null;
+            tableData2DColumn = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*
@@ -488,7 +387,7 @@ public class ControlDataClipboard extends BaseSysTableController<DataDefinition>
      */
     public static ControlDataClipboard open(String[][] data, List<ColumnDefinition> columns) {
         ControlDataClipboard controller = (ControlDataClipboard) WindowTools.openStage(Fxmls.DataClipboardFxml);
-        controller.load(data, columns);
+//        controller.load(data, columns);
         controller.toFront();
         return controller;
     }

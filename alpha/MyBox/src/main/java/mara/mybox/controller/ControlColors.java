@@ -55,18 +55,17 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -359,7 +358,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     /*
         palettes list
      */
-    protected void refreshPalettes() {
+    public void refreshPalettes() {
         palettesController.loadPalettes();
     }
 
@@ -579,157 +578,13 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-            menu = new MenuItem(message("WebCommonColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsWeb.csv", "data", "ColorsWeb.csv");
-                importColors(file, message("WebCommonColors"), true);
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChineseTraditionalColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsChinese.csv", "data", "ColorsChinese.csv");
-                importColors(file, message("ChineseTraditionalColors"), true);
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("JapaneseTraditionalColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsJapanese.csv", "data", "ColorsJapanese.csv");
-                importColors(file, message("JapaneseTraditionalColors"), true);
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("HexaColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv");
-                importColors(file, message("HexaColors"), true);
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("MyBoxColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                importMyBoxColors();
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void importMyBoxColors() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    List<ColorData> data = new ArrayList<>();
-                    data.add(new ColorData(Colors.MyBoxDarkRed.getRGB(), message("MyBoxDarkRed")));
-                    data.add(new ColorData(Colors.MyBoxLightRed.getRGB(), message("MyBoxLightRed")));
-                    data.add(new ColorData(Colors.MyBoxDarkPink.getRGB(), message("MyBoxDarkPink")));
-                    data.add(new ColorData(Colors.MyBoxLightPink.getRGB(), message("MyBoxLightPink")));
-                    data.add(new ColorData(Colors.MyBoxDarkGreyBlue.getRGB(), message("MyBoxDarkGreyBlue")));
-                    data.add(new ColorData(Colors.MyBoxGreyBlue.getRGB(), message("MyBoxGreyBlue")));
-                    data.add(new ColorData(Colors.MyBoxDarkBlue.getRGB(), message("MyBoxDarkBlue")));
-                    data.add(new ColorData(Colors.MyBoxLightBlue.getRGB(), message("MyBoxLightBlue")));
-                    data.add(new ColorData(Colors.MyBoxOrange.getRGB(), message("MyBoxOrange")));
-                    data.add(new ColorData(Colors.MyBoxLightOrange.getRGB(), message("MyBoxLightOrange")));
-                    data.add(new ColorData(Colors.MyBoxDarkGreen.getRGB(), message("MyBoxDarkGreen")));
-                    data.add(new ColorData(Colors.MyBoxLightGreen.getRGB(), message("MyBoxLightGreen")));
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        tableColor.writeData(conn, data, false);
-                        ColorPaletteName palette = tableColorPaletteName.findAndCreate(conn, message("MyBoxColors"));
-                        tableColorPalette.write(conn, palette.getCpnid(), data, true);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshPalettes();
-                    popSuccessful();
-                }
-            };
-            start(task);
-        }
-    }
-
-    protected void importColors(File file, String paletteName, boolean reOrder) {
-        if (file == null || !file.exists()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    List<ColorData> data = ColorDataTools.readCSV(file, reOrder);
-                    if (data == null) {
-                        return false;
-                    }
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        tableColor.writeData(conn, data, false);
-                        if (paletteName != null && !paletteName.isBlank()) {
-                            ColorPaletteName palette = tableColorPaletteName.findAndCreate(conn, paletteName);
-                            tableColorPalette.write(conn, palette.getCpnid(), data, true);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (paletteName != null && !paletteName.isBlank()) {
-                        if (currentPalette != null && currentPalette.getName().equals(paletteName)) {
-                            refreshPalette();
-                        } else {
-                            refreshPalettes();
-                        }
-                    } else {
-                        refreshPalette();
-                    }
-                    popSuccessful();
-                }
-            };
-            start(task);
-        }
+        PaletteTools.popPaletteExamplesMenu(this, mouseEvent, tableColorPaletteName, tableColorPalette, tableColor);
     }
 
     /*
        Palette
      */
-    protected void refreshPalette() {
+    public void refreshPalette() {
         paletteLabel.setText(isAllColors() ? message("AllColors") : currentPalette.getName());
 
         checkColumns();
@@ -752,6 +607,10 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         isSettingValues = false;
         palettesController.palettesList.getSelectionModel().select(currentPalette);
         paletteTabPane.getSelectionModel().select(colorsTab);
+    }
+
+    public boolean isCurrent(String paletteName) {
+        return currentPalette != null && currentPalette.getName().equals(paletteName);
     }
 
     @FXML
@@ -1015,7 +874,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
     @Override
     public void sourceFileChanged(File file) {
-        importColors(file, isAllColors() ? null : currentPalette.getName(), false);
+        PaletteTools.importPalette(this, tableColorPaletteName, tableColorPalette, tableColor,
+                file, isAllColors() ? null : currentPalette.getName(), false);
     }
 
     @FXML

@@ -9,9 +9,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
@@ -23,20 +25,21 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
+import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -45,16 +48,17 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ColorPalettePopupController extends BaseController {
-    
+
     protected TableColorPaletteName tableColorPaletteName;
     protected TableColorPalette tableColorPalette;
+    protected TableColor tableColor;
     protected List<ColorPaletteName> palettes;
     protected ColorPaletteName currentPalette;
     protected ColorSet setController;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
     protected double rectSize;
-    
+
     @FXML
     protected HBox barBox;
     @FXML
@@ -63,63 +67,67 @@ public class ColorPalettePopupController extends BaseController {
     protected FlowPane colorsPane;
     @FXML
     protected Label label;
-    
+    @FXML
+    protected Button paletteButton;
+
     public ColorPalettePopupController() {
-        baseTitle = Languages.message("ColorPalette");
-        
+        baseTitle = message("ColorPalette");
+
     }
-    
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         return setController.keyEventsFilter(event);
     }
-    
+
     @Override
     public void initValues() {
         try {
             super.initValues();
-            
+
             tableColorPaletteName = new TableColorPaletteName();
             tableColorPalette = new TableColorPalette();
+            tableColor = new TableColor();
+            tableColorPalette.setTableColor(tableColor);
             rectSize = AppVariables.iconSize * 0.8;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(cancelButton, Languages.message("PopupClose"));
+            NodeStyleTools.setTooltip(cancelButton, message("PopupClose"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-    
-    public void load(ColorSet parent) {
+
+    public void load(ColorSet parent, boolean pop) {
         try {
             thisPane.setStyle(" -fx-background-color: white;");
             refreshStyle(thisPane);
-            
+
             this.setController = parent;
             shadowEffect = new DropShadow();
-            loadColors();
+            loadColors(pop);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
-    public void loadColors() {
+
+    public void loadColors(boolean popMenu) {
         synchronized (this) {
             if ((task != null && !task.isQuit())) {
                 return;
             }
             thisPane.setDisable(true);
             task = new SingletonTask<Void>(this) {
-                
+
                 protected List<ColorData> colors;
-                
+
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
@@ -145,7 +153,7 @@ public class ColorPalettePopupController extends BaseController {
                     }
                     return colors != null;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     isSettingValues = true;
@@ -164,27 +172,30 @@ public class ColorPalettePopupController extends BaseController {
                             Platform.runLater(() -> {
                                 colorsPane.applyCss();
                                 colorsPane.layout();
+                                if (popMenu) {
+                                    popPaletteMenu();
+                                }
                             });
                         }
                     }, 600);
                 }
-                
+
                 @Override
                 protected void whenFailed() {
                 }
-                
+
                 @Override
                 protected void finalAction() {
                     task = null;
                     thisPane.setDisable(false);
                 }
-                
+
             };
             start(task, false);
         }
-        
+
     }
-    
+
     protected Rectangle makeColorRect(ColorData data) {
         try {
             if (data == null) {
@@ -209,7 +220,7 @@ public class ColorPalettePopupController extends BaseController {
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                     }
-                    
+
                 });
             });
             rect.setOnMouseEntered((MouseEvent event) -> {
@@ -239,12 +250,12 @@ public class ColorPalettePopupController extends BaseController {
             return null;
         }
     }
-    
+
     @FXML
-    protected void popPaletteMenu(MouseEvent mouseEvent) {
+    protected void popPaletteMenu() {
         try {
             List<MenuItem> items = new ArrayList<>();
-            
+
             if (palettes != null) {
                 ToggleGroup pgroup = new ToggleGroup();
                 String currentName = UserConfig.getString(baseName + "Palette", null);
@@ -253,25 +264,29 @@ public class ColorPalettePopupController extends BaseController {
                     RadioMenuItem rmenu = new RadioMenuItem(name);
                     rmenu.setOnAction((ActionEvent menuItemEvent) -> {
                         UserConfig.setString(baseName + "Palette", name);
-                        loadColors();
+                        loadColors(false);
                     });
                     rmenu.setToggleGroup(pgroup);
                     rmenu.setSelected(name.equals(currentName));
                     items.add(rmenu);
                 }
             }
-            
+
             items.add(new SeparatorMenuItem());
-            
-            MenuItem menu = new MenuItem(Languages.message("ManageColors"));
+
+            MenuItem menu = new MenuItem(message("ManageColors"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 ColorsManageController.oneOpen();
             });
             items.add(menu);
-            
+
+            Menu exmaplesMenu = new Menu(message("ExamplePalettes"));
+            exmaplesMenu.getItems().addAll(PaletteTools.paletteExamplesMenu(setController, tableColorPaletteName, tableColorPalette, tableColor));
+            items.add(exmaplesMenu);
+
             items.add(new SeparatorMenuItem());
-            
-            CheckMenuItem checkMenu = new CheckMenuItem(Languages.message("PopColorSetWhenMousePassing"));
+
+            CheckMenuItem checkMenu = new CheckMenuItem(message("PopColorSetWhenMousePassing"));
             checkMenu.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -280,10 +295,10 @@ public class ColorPalettePopupController extends BaseController {
                 }
             });
             items.add(checkMenu);
-            
+
             items.add(new SeparatorMenuItem());
-            
-            menu = new MenuItem(Languages.message("PopupClose"));
+
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -292,26 +307,26 @@ public class ColorPalettePopupController extends BaseController {
                 popMenu = null;
             });
             items.add(menu);
-            
+
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
             }
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
             popMenu.getItems().addAll(items);
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
-            
+            LocateTools.locateCenter(paletteButton, popMenu);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     @Override
     public void closePopup() {
         setController.closePopup();
     }
-    
+
     @FXML
     public void exitPane() {
         if (enteredRect != null && !enteredRect.equals(clickedRect)) {
@@ -321,5 +336,5 @@ public class ColorPalettePopupController extends BaseController {
             enteredRect = null;
         }
     }
-    
+
 }

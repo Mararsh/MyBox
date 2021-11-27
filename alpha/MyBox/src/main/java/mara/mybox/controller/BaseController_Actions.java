@@ -135,8 +135,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (this instanceof BaseImageController) {
             ImageInMyBoxClipboardController.oneOpen();
 
-        } else if (this instanceof ControlSheet) {
-            DataClipboardPopController.open((ControlSheet) this);
+        } else if (this instanceof ControlData2D) {
+            DataClipboardPopController.open((ControlData2D) this);
 
         } else {
             TextInMyBoxClipboardController.oneOpen();

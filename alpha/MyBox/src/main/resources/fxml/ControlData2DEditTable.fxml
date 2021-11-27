@@ -36,16 +36,7 @@ License:    Apache License Version 2.0
                               </ImageView>
                           </graphic>
                       </Button>
-                  <Button fx:id="copyButton" mnemonicParsing="false">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconCopy.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                  <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteRowsAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -54,7 +45,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                        <Button fx:id="equalButton" mnemonicParsing="false">
+                        <Button fx:id="setValuesButton" mnemonicParsing="false" onAction="#setValuesAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -81,16 +72,16 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction">
+                  <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconInsert.png" />
+                              <Image url="@../buttons/Red/iconCopy.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
-                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addRowsAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

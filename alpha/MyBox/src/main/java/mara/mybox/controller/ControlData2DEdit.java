@@ -22,7 +22,6 @@ public class ControlData2DEdit extends BaseController {
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected boolean changed;
 
     @FXML
     protected TabPane tabPane;
@@ -51,29 +50,19 @@ public class ControlData2DEdit extends BaseController {
         }
     }
 
-    public void loadData() {
-        try {
-            tableController.loadTableData();
-            textController.loadData();
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
+    public boolean isChanged() {
+        return data2D.isTableChanged() || textController.isChanged();
     }
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
-            try {
-                Tab tab = tabPane.getSelectionModel().getSelectedItem();
-                if (tab == tableTab) {
-                    return tableController.keyEventsFilter(event);
+            if (tableTab.isSelected()) {
+                return tableController.keyEventsFilter(event);
 
-                } else if (tab == textTab) {
-                    return textController.keyEventsFilter(event);
+            } else if (textTab.isSelected()) {
+                return textController.keyEventsFilter(event);
 
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
             }
             return false;
         } else {

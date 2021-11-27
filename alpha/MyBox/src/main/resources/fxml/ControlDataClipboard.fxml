@@ -7,6 +7,7 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -18,9 +19,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.CheckBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlDataClipboard">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlDataClipboard">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -86,14 +86,14 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </children>
                                 </HBox>
-                                <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                        <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0">
                                             <graphic>
                                                 <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="dfidColumn" text="%ID" />
+                                        <TableColumn fx:id="d2dColumn" text="%ID" />
                                         <TableColumn fx:id="nameColumn" prefWidth="300.0" text="%Name" />
                                     </columns>
                                 </TableView>
@@ -215,7 +215,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children> 
                                 </HBox>
-                                <fx:include fx:id="sheet" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSheetCSV.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

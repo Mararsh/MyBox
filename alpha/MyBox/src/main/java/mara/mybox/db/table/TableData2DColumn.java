@@ -61,9 +61,6 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         return this;
     }
 
-    public static final String Create_Index_unique
-            = "CREATE UNIQUE INDEX Data2D_Column_unique_index on Data2D_Column (d2id, column_name)";
-
     /*
         View
      */
@@ -250,35 +247,6 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
     }
 
-    public boolean save(Data2DDefinition.Type type, File file, String dataName, List<Data2DColumn> columns) {
-        if (file == null || dataName == null || columns == null || columns.isEmpty()) {
-            return false;
-        }
-        try ( Connection conn = DerbyBase.getConnection();) {
-            return save(conn, type, file, dataName, columns);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean save(Connection conn, Data2DDefinition.Type type, File file, String dataName, List<Data2DColumn> columns) {
-        if (file == null || dataName == null || columns == null || columns.isEmpty()) {
-            return false;
-        }
-        try {
-            Data2DDefinition dataDefinition = getTableData2DDefinition().queryFileName(conn, type, file, dataName);
-            if (dataDefinition == null) {
-                dataDefinition = Data2DDefinition.create().setType(type)
-                        .setFile(file).setDataName(dataName);
-                tableData2DDefinition.insertData(conn, dataDefinition);
-            }
-            return save(conn, dataDefinition.getD2did(), columns);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
 
     /*
         get/set
