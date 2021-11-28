@@ -1,15 +1,12 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -31,8 +28,6 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -92,6 +87,7 @@ public class ControlData2D extends BaseController {
     public void setDataType(BaseController parent, Data2D.Type type) {
         try {
             parentController = parent;
+            setFileType(parent.getSourceFileType(), parent.getTargetFileType());
 
             data2D = Data2D.create(type);
             data2D.setTableView(tableController.tableView);
@@ -113,8 +109,8 @@ public class ControlData2D extends BaseController {
         if (data2D == null || !checkBeforeNextAction()) {
             return;
         }
-        sourceFile = data2D.getFile();
-        if (sourceFile != null && !sourceFile.exists()) {
+        File file = data2D.getFile();
+        if (file != null && !file.exists()) {
             tableData2DDefinition.deleteData(data2D);
             loadNull();
             return;
@@ -161,8 +157,8 @@ public class ControlData2D extends BaseController {
                             columns.add(column);
                         }
                         data2D.setColumns(columns);
-                        if (!data2D.isFile() || !isTmpFile) {
-                            validateTable = Data2DColumn.validate(columns);
+                        validateTable = Data2DColumn.validate(columns);
+                        if (!isTmpFile) {
                             if (validateTable == null || validateTable.isEmpty()) {
                                 tableData2DColumn.save(d2did, columns);
                             }
@@ -210,7 +206,6 @@ public class ControlData2D extends BaseController {
     }
 
     public void loadNull() {
-        sourceFile = null;
         data2D.resetData();
         loadData();
         notifyLoaded();
@@ -391,7 +386,7 @@ public class ControlData2D extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     popInformation(message("Saved"));
-                    if (data2D.isFile()) {
+                    if (data2D.getFile() != null) {
                         recordFileWritten(data2D.getFile());
                     }
                     tableController.afterSaved();
@@ -448,7 +443,6 @@ public class ControlData2D extends BaseController {
                         recordFileWritten(file);
                     }
                     if (load) {
-                        sourceFile = file;
                         data2D.load(targetData);
                         resetStatus();
                         tableController.afterSaved();
@@ -457,7 +451,7 @@ public class ControlData2D extends BaseController {
                             ((ControlDataClipboard) parentController).refreshAction();
                         }
                     } else {
-                        if (targetData.isFile()) {
+                        if (file != null) {
                             data2D.open(file);
                         }
                     }
@@ -532,20 +526,6 @@ public class ControlData2D extends BaseController {
     }
 
     @FXML
-    public void newData() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            sourceFile = null;
-            data2D.initFile(data2D.tmpFile());
-            loadDefinition();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
     @Override
     public void myBoxClipBoard() {
         DataClipboardPopController.open(this);
@@ -562,55 +542,11 @@ public class ControlData2D extends BaseController {
             if (text == null || text.isBlank()) {
                 popError(message("NoTextInClipboard"));
             }
-            TableTextController controller = (TableTextController) WindowTools.openStage(Fxmls.TableTextFxml);
-            controller.setParameters(this, text);
-            controller.okNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    loadContentInSystemClipboard(controller);
-                }
-            });
-
+            DataTextController.open(this, text);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
-    public void loadContentInSystemClipboard(TableTextController controller) {
-        if (controller == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    data2D.setTask(task);
-                    File tmpFile = data2D.tmpFile(controller.columnNames, controller.data);
-                    data2D.initFile(tmpFile);
-                    data2D.setHasHeader(controller.columnNames != null);
-                    data2D.setCharset(Charset.forName("UTF-8"));
-                    data2D.setDelimiter(",");
-                    data2D.setUserSavedDataDefinition(false);
-                    return true;
-                }
-
-                @Override
-                protected void finalAction() {
-                    data2D.setTask(null);
-                    task = null;
-                    controller.close();
-                    loadDefinition();
-                }
-
-            };
-            start(task);
-        }
-    }
-
 
     /*
         paigination

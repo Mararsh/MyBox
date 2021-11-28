@@ -197,7 +197,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(Type.DataClipboard));
+            statement.setShort(1, Data2DDefinition.type(Type.Clipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
         } catch (Exception e) {
@@ -211,7 +211,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -1;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(Type.DataClipboard));
+            statement.setShort(1, Data2DDefinition.type(Type.Clipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -246,11 +246,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         int count = 0;
         try {
             conn.setAutoCommit(true);
-            String sql = "SELECT * FROM Data2D_Definition WHERE data_type="
-                    + Data2DDefinition.type(Type.DataClipboard)
-                    + " OR data_type=" + Data2DDefinition.type(Type.DataFileCSV)
-                    + " OR data_type=" + Data2DDefinition.type(Type.DataFileExcel)
-                    + " OR data_type=" + Data2DDefinition.type(Type.DataFileText);
+            String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 5";
             List<Data2DDefinition> invalid = new ArrayList<>();
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
@@ -258,7 +254,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                     Data2DDefinition data = readData(results);
                     try {
                         File file = data.getFile();
-                        if (!file.exists()) {
+                        if (file == null || !file.exists()) {
                             invalid.add(data);
                         }
                     } catch (Exception e) {

@@ -173,25 +173,12 @@ public abstract class BaseData2DFileController extends BaseController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        sourceFile = file;
         initFile(file);
-        dataFile.setUserSavedDataDefinition(true);
-        loadFile();
-    }
-
-    public void loadFile() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
+        dataFile.setUserSavedDataDefinition(!dataFile.isTmpFile());
         dataController.loadDefinition();
     }
 
     protected void afterFileLoaded() {
-        if (dataFile.isTmpFile()) {
-            sourceFile = null;
-        } else {
-            sourceFile = dataFile.getFile();
-        }
         updateStatus();
     }
 
@@ -204,8 +191,8 @@ public abstract class BaseData2DFileController extends BaseController {
                 recoverButton.setDisable(!changed);
 
                 String title = baseTitle;
-                if (sourceFile != null) {
-                    title += " " + sourceFile.getAbsolutePath();
+                if (!dataFile.isTmpFile()) {
+                    title += " " + dataFile.getFile().getAbsolutePath();
                 }
                 if (changed) {
                     title += " *";
@@ -218,9 +205,9 @@ public abstract class BaseData2DFileController extends BaseController {
 
     protected void updateInfoLabel() {
         String info = "";
-        if (sourceFile != null) {
-            info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n";
+        if (!dataFile.isTmpFile()) {
+            info = message("FileSize") + ": " + FileTools.showFileSize(dataFile.getFile().length()) + "\n"
+                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(dataFile.getFile().lastModified()) + "\n";
             if (dataFile instanceof DataFileExcel) {
                 DataFileExcel e = (DataFileExcel) dataFile;
                 String sheet = e.getCurrentSheetName();
@@ -260,17 +247,7 @@ public abstract class BaseData2DFileController extends BaseController {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            loadTmpFile();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void loadTmpFile() {
-        try {
-            sourceFile = null;
-            initFile(dataFile.tmpFile());
-            loadFile();
+            sourceFileChanged(dataFile.tmpFile());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -320,19 +297,16 @@ public abstract class BaseData2DFileController extends BaseController {
     @Override
     public void recoverAction() {
         dataController.resetStatus();
-        if (dataFile.isTmpFile()) {
-            loadTmpFile();
-        } else {
-            sourceFileChanged(sourceFile);
-        }
+        sourceFileChanged(dataFile.getFile());
     }
 
     @FXML
     public void refreshFile() {
+        dataController.resetStatus();
         initFile(dataFile.getFile());
         dataFile.setUserSavedDataDefinition(false);
         pickOptions();
-        loadFile();
+        dataController.loadDefinition();
     }
 
     @FXML

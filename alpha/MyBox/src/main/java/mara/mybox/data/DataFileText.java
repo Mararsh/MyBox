@@ -23,11 +23,18 @@ import mara.mybox.tools.TmpFileTools;
  * @License Apache License Version 2.0
  */
 public class DataFileText extends DataFile {
-
+    
     public DataFileText() {
-        type = Type.DataFileText;
+        type = Type.Text;
     }
-
+    
+    public String guessDelimiter() {
+        String[] values = {",", " ", "    ", "        ", "\t", "|", "@",
+            "#", ";", ":", "*", ".", "%", "$", "_", "&", "-", "=", "!", "\"",
+            "'", "<", ">"};
+        return guessDelimiter(values);
+    }
+    
     @Override
     public long readDataDefinition() {
         d2did = -1;
@@ -37,7 +44,7 @@ public class DataFileText extends DataFile {
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             Data2DDefinition definition = null;
-            if (userSavedDataDefinition) {
+            if (!isTmpFile() && userSavedDataDefinition) {
                 definition = tableData2DDefinition.queryFile(conn, type, file);
                 if (definition != null) {
                     load(definition);
@@ -46,8 +53,14 @@ public class DataFileText extends DataFile {
             if (charset == null) {
                 charset = TextFileTools.charset(file);
             }
+            if (charset == null) {
+                charset = Charset.forName("UTF-8");
+            }
             if (delimiter == null || delimiter.isEmpty()) {
                 delimiter = guessDelimiter();
+            }
+            if (delimiter == null || delimiter.isEmpty()) {
+                delimiter = ",";
             }
             if (!isTmpFile()) {
                 checkBeforeSaving();
@@ -74,7 +87,7 @@ public class DataFileText extends DataFile {
         }
         return d2did;
     }
-
+    
     @Override
     public List<String> readColumns() {
         List<String> names = null;
@@ -95,11 +108,11 @@ public class DataFileText extends DataFile {
         }
         return names;
     }
-
+    
     protected List<String> parseFileLine(String line) {
         return TextTools.parseLine(line, delimiter);
     }
-
+    
     protected List<String> readValidLine(BufferedReader reader) {
         List<String> names = null;
         try {
@@ -118,7 +131,7 @@ public class DataFileText extends DataFile {
         }
         return names;
     }
-
+    
     @Override
     public long readTotal() {
         dataSize = 0;
@@ -146,7 +159,7 @@ public class DataFileText extends DataFile {
         }
         return dataSize;
     }
-
+    
     @Override
     public List<List<String>> readPageData() {
         if (startRowOfCurrentPage < 0) {
@@ -174,13 +187,13 @@ public class DataFileText extends DataFile {
                     break;
                 }
                 List<String> row = new ArrayList<>();
-                row.add("" + (rowIndex + 1));
-                for (int i = 0; i < record.size(); i++) {
+                for (int i = 0; i < Math.min(record.size(), columnsNumber); i++) {
                     row.add(record.get(i));
                 }
                 for (int col = row.size(); col < columnsNumber; col++) {
                     row.add(defaultColValue());
                 }
+                row.add(0, "" + (rowIndex + 1));
                 rows.add(row);
             }
         } catch (Exception e) {
@@ -193,7 +206,7 @@ public class DataFileText extends DataFile {
         endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
         return rows;
     }
-
+    
     @Override
     public boolean savePageData(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileText)) {
@@ -265,7 +278,7 @@ public class DataFileText extends DataFile {
         }
         return FileTools.rename(tmpFile, tFile, false);
     }
-
+    
     public boolean writePageData(BufferedWriter writer, String delimiter) {
         try {
             if (writer == null || delimiter == null) {
@@ -286,7 +299,7 @@ public class DataFileText extends DataFile {
             return false;
         }
     }
-
+    
     @Override
     public File tmpFile(List<String> cols, List<List<String>> data) {
         try {
@@ -295,7 +308,7 @@ public class DataFileText extends DataFile {
                     return null;
                 }
             }
-            File tmpFile = TmpFileTools.getTempFile(type == Type.DataFileCSV ? ".csv" : ".txt");
+            File tmpFile = TmpFileTools.getTempFile(".txt");
             String fDelimiter = ",";
             try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
                 if (cols != null && !cols.isEmpty()) {
@@ -319,5 +332,5 @@ public class DataFileText extends DataFile {
             return null;
         }
     }
-
+    
 }

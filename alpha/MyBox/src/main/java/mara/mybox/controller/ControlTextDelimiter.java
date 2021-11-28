@@ -8,8 +8,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -26,7 +27,10 @@ public class ControlTextDelimiter extends BaseController {
     protected ToggleGroup delimiterGroup;
     @FXML
     protected RadioButton blankRadio, blank4Radio, blank8Radio, blanksRadio, tabRadio, commaRadio,
-            lineRadio, atRadio, sharpRadio, semicolonsRadio, stringRadio;
+            lineRadio, atRadio, sharpRadio, semicolonsRadio, stringRadio,
+            hyphenRadio, plusRadio, colonRadio, andRadio, percentRadio, exclamationRadio, quoteRadio,
+            questionRadio, dotRadio, asteriskRadio, slashRadio, backslashRadio,
+            underlineRadio, equalRadio, lessRadio, greateRadio, singleQuoteRadio;
     @FXML
     protected TextField delimiterInput;
 
@@ -51,7 +55,6 @@ public class ControlTextDelimiter extends BaseController {
                             return;
                         }
                         delimiterName = v;
-                        delimiterInput.setStyle(null);
                     } else if (blankRadio.isSelected()) {
                         delimiterName = "Blank";
                     } else if (blank4Radio.isSelected()) {
@@ -72,6 +75,40 @@ public class ControlTextDelimiter extends BaseController {
                         delimiterName = "#";
                     } else if (semicolonsRadio.isSelected()) {
                         delimiterName = ";";
+                    } else if (hyphenRadio.isSelected()) {
+                        delimiterName = "-";
+                    } else if (plusRadio.isSelected()) {
+                        delimiterName = "+";
+                    } else if (colonRadio.isSelected()) {
+                        delimiterName = ":";
+                    } else if (andRadio.isSelected()) {
+                        delimiterName = "&";
+                    } else if (percentRadio.isSelected()) {
+                        delimiterName = "%";
+                    } else if (exclamationRadio.isSelected()) {
+                        delimiterName = "!";
+                    } else if (quoteRadio.isSelected()) {
+                        delimiterName = "\"";
+                    } else if (singleQuoteRadio.isSelected()) {
+                        delimiterName = "'";
+                    } else if (questionRadio.isSelected()) {
+                        delimiterName = "?";
+                    } else if (dotRadio.isSelected()) {
+                        delimiterName = ".";
+                    } else if (asteriskRadio.isSelected()) {
+                        delimiterName = "*";
+                    } else if (slashRadio.isSelected()) {
+                        delimiterName = "\\";
+                    } else if (backslashRadio.isSelected()) {
+                        delimiterName = "/";
+                    } else if (underlineRadio.isSelected()) {
+                        delimiterName = "_";
+                    } else if (equalRadio.isSelected()) {
+                        delimiterName = "=";
+                    } else if (lessRadio.isSelected()) {
+                        delimiterName = "<";
+                    } else if (greateRadio.isSelected()) {
+                        delimiterName = ">";
                     }
                     UserConfig.setString(baseName + "TextDelimiter", delimiterName);
                     changedNotify.set(!changedNotify.get());
@@ -99,7 +136,7 @@ public class ControlTextDelimiter extends BaseController {
                 if (blanksRadio.isSelected()) {
                     blankRadio.fire();
                 }
-                thisPane.getChildren().remove(blanksRadio);
+                blanksRadio.setDisable(true);
             }
 
         } catch (Exception e) {
@@ -109,6 +146,9 @@ public class ControlTextDelimiter extends BaseController {
 
     public void setDelimiter(String name) {
         try {
+            if (name == null) {
+                return;
+            }
             delimiterName = name;
             switch (delimiterName.toLowerCase()) {
                 case "blank":
@@ -145,6 +185,57 @@ public class ControlTextDelimiter extends BaseController {
                 case ";":
                     semicolonsRadio.fire();
                     break;
+                case "-":
+                    hyphenRadio.fire();
+                    break;
+                case "+":
+                    plusRadio.fire();
+                    break;
+                case ":":
+                    colonRadio.fire();
+                    break;
+                case "&":
+                    andRadio.fire();
+                    break;
+                case "%":
+                    percentRadio.fire();
+                    break;
+                case "!":
+                    exclamationRadio.fire();
+                    break;
+                case "\"":
+                    quoteRadio.fire();
+                    break;
+                case "'":
+                    singleQuoteRadio.fire();
+                    break;
+                case "?":
+                    questionRadio.fire();
+                    break;
+                case ".":
+                    dotRadio.fire();
+                    break;
+                case "*":
+                    asteriskRadio.fire();
+                    break;
+                case "\\":
+                    slashRadio.fire();
+                    break;
+                case "/":
+                    backslashRadio.fire();
+                    break;
+                case "_":
+                    underlineRadio.fire();
+                    break;
+                case "=":
+                    equalRadio.fire();
+                    break;
+                case "<":
+                    lessRadio.fire();
+                    break;
+                case ">":
+                    greateRadio.fire();
+                    break;
                 default:
                     if (delimiterName.isBlank()) {
                         blanksRadio.fire();
@@ -157,6 +248,15 @@ public class ControlTextDelimiter extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public String getDelimiter() {
+        return delimiterName;
+    }
+
+    @FXML
+    public void popRegexExample(MouseEvent mouseEvent) {
+        PopTools.popRegexExample(this, delimiterInput, mouseEvent);
     }
 
 }

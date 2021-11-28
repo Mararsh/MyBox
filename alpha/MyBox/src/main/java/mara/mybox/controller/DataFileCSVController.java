@@ -45,7 +45,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         try {
             super.initValues();
 
-            setDataType(Data2D.Type.DataFileCSV);
+            setDataType(Data2D.Type.CSV);
             dataFileCSV = (DataFileCSV) dataController.data2D;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -93,7 +93,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         dataFileCSV.setCharset(charset);
         dataFileCSV.setDelimiter(delimiter + "");
         dataFileCSV.setHasHeader(withName);
-        loadFile();
+        dataController.loadDefinition();
     }
 
     @Override

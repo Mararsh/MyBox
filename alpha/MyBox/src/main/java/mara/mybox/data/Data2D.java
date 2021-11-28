@@ -16,6 +16,7 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -40,6 +41,24 @@ public abstract class Data2D extends Data2DDefinition {
     protected SingletonTask task, backgroundTask;
     protected String error;
 
+    /*
+        abstract
+     */
+    public abstract long readDataDefinition();
+
+    public abstract List<String> readColumns();
+
+    public abstract long readTotal();
+
+    public abstract List<List<String>> readPageData();
+
+    public abstract boolean savePageData(Data2D targetData);
+
+    public abstract File tmpFile(List<String> columns, List<List<String>> data);
+
+    /*
+        class
+     */
     public Data2D() {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
@@ -59,12 +78,15 @@ public abstract class Data2D extends Data2DDefinition {
         tableChanged = false;
     }
 
-    public void initFile(File file) {
-        resetData();
-        this.file = file;
-        if (isTmpFile()) {
-            hasHeader = false;
-            userSavedDataDefinition = false;
+    @Override
+    public Data2D cloneAll() {
+        try {
+            Data2D newData = (Data2D) super.clone();
+            newData.load(this);
+            return newData;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
         }
     }
 
@@ -94,33 +116,71 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    @Override
-    public Data2D cloneAll() {
-        try {
-            Data2D newData = (Data2D) super.clone();
-            newData.load(this);
-            return newData;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
+    /*
+        file
+     */
+    public void initFile(File file) {
+        resetData();
+        this.file = file;
     }
 
+    public List<List<String>> tmpData() {
+        Random random = new Random();
+        List<List<String>> data = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            List<String> row = new ArrayList<>();
+            for (int j = 0; j < 3; j++) {
+                if (type == Type.Matrix) {
+                    row.add(randomDouble(random));
+                } else {
+                    row.add(randomString(random));
+                }
+            }
+            data.add(row);
+        }
+        return data;
+    }
 
-    /*
-        abstract
-     */
-    public abstract long readDataDefinition();
+    public File tmpFile() {
+        List<String> cols = new ArrayList<>();
+        for (int c = 1; c <= 3; c++) {
+            cols.add(this.colPrefix() + c);
+        }
+        return tmpFile(cols, tmpData());
+    }
 
-    public abstract List<String> readColumns();
+    public boolean isTmpFile() {
+        return file == null || file.getAbsolutePath().startsWith(AppVariables.MyBoxTempPath.getAbsolutePath());
+    }
 
-    public abstract long readTotal();
+    public void open(File file) {
+        if (file == null) {
+            return;
+        }
+        String fxml;
+        switch (type) {
+            case CSV:
+            case Clipboard:
+                fxml = Fxmls.DataFileCSVFxml;
+                break;
+            case Excel:
+                fxml = Fxmls.DataFileExcelFxml;
+                break;
+            default:
+                fxml = Fxmls.DataFileTextFxml;
+        }
+        BaseController controller = WindowTools.openStage(fxml);
+        controller.sourceFileChanged(file);
+    }
 
-    public abstract List<List<String>> readPageData();
+    public String randomDouble(Random random) {
+        return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+    }
 
-    public abstract boolean savePageData(Data2D targetData);
+    public String randomString(Random random) {
+        return (char) ('a' + random.nextInt(25)) + "";
+    }
 
-    public abstract File tmpFile(List<String> columns, List<List<String>> data);
 
     /*
         page data
@@ -369,62 +429,6 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     /*
-        file
-     */
-    public boolean isFile() {
-        return type == Type.DataFileCSV || type == Type.DataFileExcel
-                || type == Type.DataFileText || type == Type.DataClipboard;
-    }
-
-    public boolean isExcel() {
-        return type == Type.DataFileExcel;
-    }
-
-    public List<List<String>> tmpData() {
-        Random random = new Random();
-        List<List<String>> data = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            List<String> row = new ArrayList<>();
-            for (int j = 0; j < 3; j++) {
-                row.add((char) ('a' + random.nextInt(25)) + "");
-            }
-            data.add(row);
-        }
-        return data;
-    }
-
-    public File tmpFile() {
-        return tmpFile(null, tmpData());
-    }
-
-    public boolean isTmpFile() {
-        return file == null || file.getAbsolutePath().startsWith(AppVariables.MyBoxTempPath.getAbsolutePath());
-    }
-
-    public void open(File file) {
-        if (file == null) {
-            return;
-        }
-        String fxml;
-        switch (type) {
-            case DataFileCSV:
-            case DataClipboard:
-                fxml = Fxmls.DataFileCSVFxml;
-                break;
-            case DataFileExcel:
-                fxml = Fxmls.DataFileExcelFxml;
-                break;
-            case DataFileText:
-                fxml = Fxmls.TextEditorFxml;
-                break;
-            default:
-                return;
-        }
-        BaseController controller = WindowTools.openStage(fxml);
-        controller.sourceFileChanged(file);
-    }
-
-    /*
         static
      */
     public static Data2D create(Type type) {
@@ -433,19 +437,19 @@ public abstract class Data2D extends Data2DDefinition {
         }
         Data2D data;
         switch (type) {
-            case DataFileCSV:
+            case CSV:
                 data = new DataFileCSV();
                 break;
-            case DataFileExcel:
+            case Excel:
                 data = new DataFileExcel();
                 break;
-            case DataFileText:
+            case Text:
                 data = new DataFileText();
                 break;
             case Matrix:
                 data = new DataFileCSV();
                 break;
-            case DataClipboard:
+            case Clipboard:
                 data = new DataClipboard();
                 break;
             default:

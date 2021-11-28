@@ -2,6 +2,7 @@ package mara.mybox.data;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.tools.TextFileTools;
@@ -26,20 +27,21 @@ public abstract class DataFile extends Data2D {
         return file.getAbsolutePath();
     }
 
-    public String guessDelimiter() {
-        if (file == null) {
+    public String guessDelimiter(String[] values) {
+        if (file == null || values == null) {
             return null;
         }
         if (charset == null) {
             charset = TextFileTools.charset(file);
+        }
+        if (charset == null) {
+            charset = Charset.forName("UTF-8");
         }
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line1 = reader.readLine();
             if (line1 == null) {
                 return null;
             }
-            String[] values = {",", " ", "    ", "        ", "\t", "|", "@",
-                "#", ";", ":", "*", ".", "%", "$", "_", "&"};
             int[] count1 = new int[values.length];
             int maxCount1 = 0, maxCountIndex1 = -1;
             for (int i = 0; i < values.length; i++) {

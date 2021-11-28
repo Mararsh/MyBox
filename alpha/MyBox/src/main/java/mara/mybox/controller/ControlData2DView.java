@@ -50,7 +50,6 @@ public class ControlData2DView extends BaseController {
     protected void setParameters(ControlData2D dataController) {
         try {
             this.dataController = dataController;
-            this.baseName = dataController.baseName;
             data2D = dataController.data2D;
 
             htmlController.setParent(parentController);
@@ -165,6 +164,7 @@ public class ControlData2DView extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 displayDelimiterName = controller.delimiterName;
+                UserConfig.setString(baseName + "DisplayDelimiter", displayDelimiterName);
                 if (!formCheck.isSelected()) {
                     textInTable();
                 }

@@ -22,7 +22,14 @@ import org.apache.commons.csv.CSVRecord;
 public class DataFileCSV extends DataFileText {
 
     public DataFileCSV() {
-        type = Type.DataFileCSV;
+        type = Type.CSV;
+    }
+
+    @Override
+    public String guessDelimiter() {
+        String[] values = {",", " ", "|", "@", "#", ";", ":", "*", ".",
+            "%", "$", "_", "&", "-", "=", "!", "\"", "'", "<", ">"};
+        return guessDelimiter(values);
     }
 
     public CSVFormat cvsFormat() {
@@ -129,13 +136,13 @@ public class DataFileCSV extends DataFileText {
                                 break;
                             }
                             List<String> row = new ArrayList<>();
-                            row.add("" + (rowIndex + 1));
-                            for (int i = 0; i < record.size(); i++) {
+                            for (int i = 0; i < Math.min(record.size(), columnsNumber); i++) {
                                 row.add(record.get(i));
                             }
                             for (int col = row.size(); col < columnsNumber; col++) {
                                 row.add(defaultColValue());
                             }
+                            row.add(0, "" + (rowIndex + 1));
                             rows.add(row);
                         }
                     } catch (Exception e) {  // skip  bad lines
@@ -249,6 +256,42 @@ public class DataFileCSV extends DataFileText {
                 task.setError(e.toString());
             }
             return false;
+        }
+    }
+
+    @Override
+    public File tmpFile(List<String> cols, List<List<String>> data) {
+        if (cols == null || cols.isEmpty()) {
+            if (data == null || data.isEmpty()) {
+                return null;
+            }
+        }
+        CSVFormat csvFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(',');
+        if (cols != null && !cols.isEmpty()) {
+            csvFormat = csvFormat.withFirstRecordAsHeader();
+        }
+        File tmpFile = TmpFileTools.getTempFile(".csv");
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
+            if (cols != null && !cols.isEmpty()) {
+                csvPrinter.printRecord(cols);
+            }
+            if (data != null) {
+                for (int r = 0; r < data.size(); r++) {
+                    if (task != null && task.isCancelled()) {
+                        break;
+                    }
+                    csvPrinter.printRecord(data.get(r));
+                }
+            }
+            return tmpFile;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return null;
         }
     }
 

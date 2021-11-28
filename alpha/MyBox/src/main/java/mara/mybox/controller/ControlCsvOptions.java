@@ -11,7 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -101,6 +100,22 @@ public class ControlCsvOptions extends BaseController {
                 }
             });
 
+            delimiterInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (!delimiterInputRadio.isSelected()) {
+                        return;
+                    }
+                    if (newValue == null || newValue.isBlank()) {
+                        delimiterInput.setStyle(UserConfig.badStyle());
+                        return;
+                    }
+                    delimiter = newValue.charAt(0);
+                    UserConfig.setInt(baseName + "CsvDelimiter", delimiter);
+                    delimiterInput.setStyle(null);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -155,6 +170,10 @@ public class ControlCsvOptions extends BaseController {
         if (charset != null) {
             charsetSelector.setValue(charset.name());
         }
+    }
+
+    public char getDelimiter() {
+        return delimiter;
     }
 
 }

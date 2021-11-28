@@ -31,7 +31,7 @@ public class DataFileTextController extends BaseData2DFileController {
         try {
             super.initValues();
 
-            setDataType(Data2D.Type.DataFileText);
+            setDataType(Data2D.Type.Text);
             dataFileText = (DataFileText) dataController.data2D;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

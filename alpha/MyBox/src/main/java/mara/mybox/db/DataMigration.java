@@ -146,7 +146,7 @@ public class DataMigration {
                     }
                     File file = null;
                     if (type == 2) {               // Matrix
-                        type = 4;
+                        type = 3;
                     } else if (type == 1) {       // DataFile
                         file = new File(name);
                         if (!file.exists()) {
@@ -157,7 +157,7 @@ public class DataMigration {
                         } else if (name.endsWith(".xls") || name.endsWith(".xlsx")) {
                             type = 2;
                         } else {
-                            type = 3;
+                            type = 0;
                         }
                         name = file.getName();
                     } else if (type == 4) {          // DataClipboard
@@ -166,7 +166,7 @@ public class DataMigration {
                             continue;
                         }
                         name = file.getName();
-                        type = 5;
+                        type = 4;
                     } else {
                         continue;
                     }

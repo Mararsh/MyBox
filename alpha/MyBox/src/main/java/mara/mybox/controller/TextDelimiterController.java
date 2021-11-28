@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -11,21 +13,32 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2021-9-16
  * @License Apache License Version 2.0
  */
-public class TextDelimiterController extends ControlTextDelimiter {
+public class TextDelimiterController extends BaseController {
 
+    protected String delimiterName;
     protected SimpleBooleanProperty okNotify;
 
+    @FXML
+    protected ControlTextDelimiter delimiterController;
+
     public TextDelimiterController() {
+        okNotify = new SimpleBooleanProperty();
     }
 
     public void setParameters(BaseController parent, String initName, boolean hasBlanks) {
         try {
-            this.parentController = parent;
-            this.baseName = parent.baseName;
-            okNotify = new SimpleBooleanProperty();
+            parentController = parent;
+            baseName = parent.baseName;
+            delimiterName = initName;
 
-            setControls(baseName, hasBlanks);
-            setDelimiter(initName);
+            delimiterController.setControls(baseName, hasBlanks);
+            delimiterController.setDelimiter(initName);
+            delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    delimiterName = delimiterController.delimiterName;
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

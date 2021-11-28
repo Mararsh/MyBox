@@ -25,7 +25,7 @@ public class Data2DDefinition extends BaseData {
     protected Date modifyTime;
 
     public static enum Type {
-        Unknown, DataFileCSV, DataFileExcel, DataFileText, Matrix, DataClipboard, DataTable
+        Text, CSV, Excel, Matrix, Clipboard, Table
     }
 
     public Data2DDefinition() {
@@ -211,7 +211,7 @@ public class Data2DDefinition extends BaseData {
     public static Type type(short type) {
         Type[] types = Type.values();
         if (type < 0 || type > types.length) {
-            return Type.Unknown;
+            return Type.Text;
         }
         return types[type];
     }

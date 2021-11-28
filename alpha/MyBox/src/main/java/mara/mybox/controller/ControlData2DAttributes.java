@@ -52,7 +52,6 @@ public class ControlData2DAttributes extends BaseController {
         try {
             this.dataController = dataController;
             tableData2DDefinition = dataController.tableData2DDefinition;
-            baseName = dataController.baseName;
             data2D = dataController.data2D;
 
             dataNameInput.textProperty().addListener(new ChangeListener<String>() {

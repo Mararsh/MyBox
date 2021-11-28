@@ -55,7 +55,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     public void initValues() {
         try {
             super.initValues();
-            setDataType(Data2D.Type.DataFileExcel);
+            setDataType(Data2D.Type.Excel);
             dataFileExcel = (DataFileExcel) dataController.data2D;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -202,7 +202,7 @@ public class DataFileExcelController extends BaseData2DFileController {
         dataFileExcel.initFile(sourceFile);
         dataFileExcel.setCurrentSheetName(name);
         dataFileExcel.setUserSavedDataDefinition(true);
-        loadFile();
+        dataController.loadDefinition();
     }
 
     @FXML
@@ -357,7 +357,7 @@ public class DataFileExcelController extends BaseData2DFileController {
         sourceFile = file;
         dataFileExcel.initFile(sourceFile);
         dataFileExcel.setHasHeader(withName);
-        loadFile();
+        dataController.loadDefinition();
     }
 
 

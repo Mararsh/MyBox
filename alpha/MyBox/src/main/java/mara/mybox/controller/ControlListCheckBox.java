@@ -235,6 +235,13 @@ public class ControlListCheckBox extends BaseController {
     /*
         query
      */
+    public String value(int index) {
+        if (listView.getItems() == null || index < 0 || index > listView.getItems().size()) {
+            return null;
+        }
+        return listView.getItems().get(index);
+    }
+
     public List<String> getValues() {
         return listView.getItems();
     }

@@ -289,7 +289,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             tableController = dataController.tableController;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
-            baseName = dataController.baseName;
             data2D = dataController.data2D;
 
         } catch (Exception e) {

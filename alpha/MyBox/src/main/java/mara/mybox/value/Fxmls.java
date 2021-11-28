@@ -174,8 +174,9 @@ public class Fxmls {
     public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
 
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
-    public static final String TableSetValuesFxml = "/fxml/TableSetValues.fxml";
-    public static final String TableTextFxml = "/fxml/TableText.fxml";
+    public static final String DataSetValuesFxml = "/fxml/DataSetValues.fxml";
+    public static final String DataCopyFxml = "/fxml/DataCopy.fxml";
+    public static final String DataTextFxml = "/fxml/DataText.fxml";
 
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
     public static final String DataClipboardPopFxml = "/fxml/DataClipboardPop.fxml";

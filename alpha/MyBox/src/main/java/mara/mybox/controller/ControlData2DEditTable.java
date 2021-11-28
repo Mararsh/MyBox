@@ -46,7 +46,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             this.data2D = dataController.data2D;
-            this.baseName = dataController.baseName;
 
             paginationBox = dataController.paginationBox;
             pageSizeSelector = dataController.pageSizeSelector;
@@ -341,11 +340,17 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     }
 
     @FXML
+    @Override
+    public void copyAction() {
+        DataCopyController.open(this);
+    }
+
+    @FXML
     public void setValuesAction() {
         if (isNullValues()) {
             return;
         }
-        TableSetValuesController.open(this);
+        DataSetValuesController.open(this);
     }
 
     public boolean loadData(List<List<String>> newData, boolean columnsChanged) {

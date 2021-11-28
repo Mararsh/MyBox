@@ -36,7 +36,7 @@ public class DataFileExcel extends DataFile {
     protected boolean currentSheetOnly;
 
     public DataFileExcel() {
-        type = Type.DataFileExcel;
+        type = Type.Excel;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class DataFileExcel extends DataFile {
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             Data2DDefinition definition = null;
-            if (userSavedDataDefinition) {
+            if (!isTmpFile() && userSavedDataDefinition) {
                 definition = queryDefinition(conn);
                 if (definition != null) {
                     load(definition);
@@ -229,7 +229,7 @@ public class DataFileExcel extends DataFile {
                 }
                 long rowIndex = -1;
                 int columnsNumber = columnsNumber();
-                long end = startRowOfCurrentPage + pageSize;
+                long rowsEnd = startRowOfCurrentPage + pageSize;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         Row fileRow = iterator.next();
@@ -239,18 +239,21 @@ public class DataFileExcel extends DataFile {
                         if (++rowIndex < startRowOfCurrentPage) {
                             continue;
                         }
-                        if (rowIndex >= end) {
+                        if (rowIndex >= rowsEnd) {
                             break;
                         }
                         List<String> row = new ArrayList<>();
-                        row.add("" + (rowIndex + 1));
                         for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
                             String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
                             row.add(v);
+                            if (row.size() >= columnsNumber) {
+                                break;
+                            }
                         }
                         for (int col = row.size(); col < columnsNumber; col++) {
                             row.add(defaultColValue());
                         }
+                        row.add(0, "" + (rowIndex + 1));
                         rows.add(row);
                     } catch (Exception e) {  // skip  bad lines
                     }

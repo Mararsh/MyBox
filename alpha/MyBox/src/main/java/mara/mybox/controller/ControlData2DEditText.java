@@ -52,7 +52,6 @@ public class ControlData2DEditText extends BaseController {
             dataController = editController.dataController;
             tableController = editController.tableController;
             this.data2D = dataController.data2D;
-            this.baseName = dataController.baseName;
 
             delimiterName = UserConfig.getString(baseName + "EditDelimiter", ",");
 
@@ -217,6 +216,7 @@ public class ControlData2DEditText extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 delimiterName = controller.delimiterName;
+                UserConfig.setString(baseName + "EditDelimiter", delimiterName);
                 loadData();
             }
         });

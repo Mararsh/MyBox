@@ -4,32 +4,29 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.WindowEvent;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppPaths;
-import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -42,16 +39,19 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     protected DataClipboard dataClipboard;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected boolean invalidChecked;
 
     @FXML
     protected TableColumn<Data2DDefinition, Long> d2dColumn;
     @FXML
     protected TableColumn<Data2DDefinition, String> nameColumn;
     @FXML
+    protected TableColumn<Data2DDefinition, File> fileColumn;
+    @FXML
     protected Label nameLabel;
     @FXML
     protected ControlData2D dataController;
+    @FXML
+    protected Button clearClipsButton, deleteClipsButton, renameClipButton;
 
     public ControlDataClipboard() {
         baseTitle = message("DataClipboard");
@@ -62,10 +62,14 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         try {
             super.initValues();
 
-            dataController.setDataType(this, Data2D.Type.DataClipboard);
+            dataController.setDataType(this, Data2D.Type.Clipboard);
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             dataClipboard = (DataClipboard) dataController.data2D;
+
+            clearButton = clearClipsButton;
+            deleteButton = deleteClipsButton;
+            renameButton = renameClipButton;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -117,6 +121,8 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             super.initColumns();
             d2dColumn.setCellValueFactory(new PropertyValueFactory<>("d2did"));
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("dataName"));
+            fileColumn.setCellValueFactory(new PropertyValueFactory<>("file"));
+            fileColumn.setCellFactory(new TableFileNameCell());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -128,14 +134,14 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(Languages.message("Rename"));
+            MenuItem menu = new MenuItem(message("Rename"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });
             menu.setDisable(renameButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("OpenPath"));
+            menu = new MenuItem(message("OpenPath"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 openPath();
             });
@@ -154,14 +160,8 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
 
     @Override
     public long readDataSize() {
-        if (invalidChecked) {
-            String condition = "data_type=" + dataClipboard.type();
-            return tableData2DDefinition.conditionSize(condition);
-        } else {
-            int count = dataClipboard.checkValid();
-            invalidChecked = true;
-            return count;
-        }
+        String condition = "data_type=" + dataClipboard.type();
+        return tableData2DDefinition.conditionSize(condition);
     }
 
     @Override
@@ -184,7 +184,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @Override
     protected void afterDeletion() {
         refreshAction();
-        if (dataController.sourceFile != null && !dataController.sourceFile.exists()) {
+        if (dataClipboard.getFile() != null && !dataClipboard.getFile().exists()) {
             dataController.loadNull();
         }
     }
@@ -226,22 +226,21 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         if (data == null || !checkBeforeNextAction()) {
             return;
         }
-        sourceFile = data.getFile();
-        dataClipboard.initFile(sourceFile);
+        dataClipboard.initFile(data.getFile());
         dataClipboard.load(data);
         dataClipboard.setUserSavedDataDefinition(true);
         dataController.loadDefinition();
     }
 
     @FXML
-    @Override
-    public void createAction() {
+    public void createClip() {
         try {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            sourceFile = null;
             dataClipboard.initFile(dataClipboard.tmpFile());
+            dataClipboard.setHasHeader(true);
+            dataClipboard.setUserSavedDataDefinition(false);
             dataController.loadDefinition();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -258,14 +257,9 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @Override
     public void recoverAction() {
         dataController.resetStatus();
-        if (dataClipboard.isTmpFile()) {
-            dataClipboard.initFile(dataClipboard.tmpFile());
-            dataController.loadDefinition();
-        } else {
-            dataClipboard.initFile(sourceFile);
-            dataClipboard.setUserSavedDataDefinition(true);
-            dataController.loadDefinition();
-        }
+        dataClipboard.initFile(dataClipboard.getFile());
+        dataClipboard.setUserSavedDataDefinition(!dataClipboard.isTmpFile());
+        dataController.loadDefinition();
     }
 
     @FXML
@@ -313,18 +307,9 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             dataController.loadNull();
             return;
         }
-        FileRenameController controller = (FileRenameController) openStage(Fxmls.FileRenameFxml);
-        controller.getMyStage().setOnHiding((WindowEvent event) -> {
-            File newFile = controller.getNewFile();
-            Platform.runLater(() -> {
-                fileRenamed(index, selected, newFile);
-            });
-        });
-        controller.set(file);
-    }
-
-    public void fileRenamed(int index, Data2DDefinition selected, File newFile) {
-        if (selected == null || newFile == null) {
+        String newName = PopTools.askValue(getBaseTitle(), message("CurrentName") + ":" + selected.getDataName(),
+                message("NewName"), selected.getDataName() + "m");
+        if (newName == null || newName.isBlank()) {
             return;
         }
         synchronized (this) {
@@ -336,8 +321,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
 
                 @Override
                 protected boolean handle() {
-                    selected.setFile(newFile);
-                    selected.setDataName(newFile.getName());
+                    selected.setDataName(newName);
                     df = tableData2DDefinition.updateData(selected);
                     return df != null;
                 }
@@ -380,16 +364,6 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         } catch (Exception e) {
         }
         super.cleanPane();
-    }
-
-    /*
-        static
-     */
-    public static ControlDataClipboard open(String[][] data, List<ColumnDefinition> columns) {
-        ControlDataClipboard controller = (ControlDataClipboard) WindowTools.openStage(Fxmls.DataClipboardFxml);
-//        controller.load(data, columns);
-        controller.toFront();
-        return controller;
     }
 
 }

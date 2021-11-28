@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                <Button fx:id="clearClipsButton" mnemonicParsing="false" onAction="#clearAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                                                <Button fx:id="deleteClipsButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -68,7 +68,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="renameButton" disable="true" mnemonicParsing="false" onAction="#renameAction">
+                                                <Button fx:id="renameClipButton" disable="true" mnemonicParsing="false" onAction="#renameAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -93,8 +93,9 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="d2dColumn" text="%ID" />
-                                        <TableColumn fx:id="nameColumn" prefWidth="300.0" text="%Name" />
+                                        <TableColumn fx:id="d2dColumn" editable="false" text="%ID" />
+                                        <TableColumn fx:id="nameColumn" editable="false" prefWidth="200.0" text="%Name" />
+                              <TableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
                                     </columns>
                                 </TableView>
                                 <HBox fx:id="paginationBox" alignment="TOP_RIGHT" spacing="2.0">
@@ -177,7 +178,7 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                                        <Button fx:id="createClipButton" mnemonicParsing="false" onAction="#createClip">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
