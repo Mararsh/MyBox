@@ -6,12 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -23,74 +21,107 @@ import mara.mybox.tools.TmpFileTools;
  * @License Apache License Version 2.0
  */
 public class DataFileText extends DataFile {
-    
+
     public DataFileText() {
         type = Type.Text;
     }
-    
+
+    @Override
+    public void checkAttributes() {
+        if (charset == null) {
+            charset = TextFileTools.charset(file);
+        }
+        if (charset == null) {
+            charset = Charset.forName("UTF-8");
+        }
+        if (delimiter == null || delimiter.isEmpty()) {
+            delimiter = guessDelimiter();
+        }
+        if (delimiter == null || delimiter.isEmpty()) {
+            delimiter = ",";
+        }
+        if (dataName == null || dataName.isBlank()) {
+            if (!isTmpFile()) {
+                dataName = file.getName();
+            } else {
+                dataName = DateTools.nowString();
+            }
+        }
+    }
+
     public String guessDelimiter() {
         String[] values = {",", " ", "    ", "        ", "\t", "|", "@",
             "#", ";", ":", "*", ".", "%", "$", "_", "&", "-", "=", "!", "\"",
             "'", "<", ">"};
         return guessDelimiter(values);
     }
-    
-    @Override
-    public long readDataDefinition() {
-        d2did = -1;
-        savedColumns = null;
-        if (file == null) {
-            return -1;
+
+    public String guessDelimiter(String[] values) {
+        if (file == null || values == null) {
+            return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            Data2DDefinition definition = null;
-            if (!isTmpFile() && userSavedDataDefinition) {
-                definition = tableData2DDefinition.queryFile(conn, type, file);
-                if (definition != null) {
-                    load(definition);
+        if (charset == null) {
+            charset = TextFileTools.charset(file);
+        }
+        if (charset == null) {
+            charset = Charset.forName("UTF-8");
+        }
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            String line1 = reader.readLine();
+            if (line1 == null) {
+                return null;
+            }
+            int[] count1 = new int[values.length];
+            int maxCount1 = 0, maxCountIndex1 = -1;
+            for (int i = 0; i < values.length; i++) {
+                count1[i] = FindReplaceString.count(line1, values[i]);
+//                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
+                if (count1[i] > maxCount1) {
+                    maxCount1 = count1[i];
+                    maxCountIndex1 = i;
                 }
             }
-            if (charset == null) {
-                charset = TextFileTools.charset(file);
-            }
-            if (charset == null) {
-                charset = Charset.forName("UTF-8");
-            }
-            if (delimiter == null || delimiter.isEmpty()) {
-                delimiter = guessDelimiter();
-            }
-            if (delimiter == null || delimiter.isEmpty()) {
-                delimiter = ",";
-            }
-            if (!isTmpFile()) {
-                checkBeforeSaving();
-                if (definition == null) {
-                    definition = tableData2DDefinition.insertData(conn, this);
-                    conn.commit();
-                    d2did = definition.getD2did();
+//            MyBoxLog.console(maxCount1);
+            String line2 = reader.readLine();
+            if (line2 == null) {
+                if (maxCountIndex1 >= 0) {
+                    return values[maxCountIndex1];
                 } else {
-                    tableData2DDefinition.updateData(conn, this);
-                    conn.commit();
-                    d2did = definition.getD2did();
-                    if (userSavedDataDefinition) {
-                        savedColumns = tableData2DColumn.read(conn, d2did);
-                    }
+                    hasHeader = false;
+                    return null;
                 }
             }
-            userSavedDataDefinition = true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            int[] count2 = new int[values.length];
+            int maxCount2 = 0, maxCountIndex2 = -1;
+            for (int i = 0; i < values.length; i++) {
+                count2[i] = FindReplaceString.count(line2, values[i]);
+//                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
+                if (count1[i] == count2[i] && count2[i] > maxCount2) {
+                    maxCount2 = count2[i];
+                    maxCountIndex2 = i;
+                }
             }
-            MyBoxLog.console(e);
-            return -1;
+//            MyBoxLog.console(maxCount2);
+            if (maxCountIndex2 >= 0) {
+                return values[maxCountIndex2];
+            } else {
+                if (maxCountIndex1 >= 0) {
+                    return values[maxCountIndex1];
+                } else {
+                    hasHeader = false;
+                    return null;
+                }
+            }
+        } catch (Exception e) {
         }
-        return d2did;
+        hasHeader = false;
+        return null;
     }
-    
+
     @Override
     public List<String> readColumns() {
         List<String> names = null;
+        checkAttributes();
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             names = readValidLine(reader);
             if (!hasHeader && names != null) {
@@ -108,11 +139,11 @@ public class DataFileText extends DataFile {
         }
         return names;
     }
-    
+
     protected List<String> parseFileLine(String line) {
         return TextTools.parseLine(line, delimiter);
     }
-    
+
     protected List<String> readValidLine(BufferedReader reader) {
         List<String> names = null;
         try {
@@ -131,7 +162,7 @@ public class DataFileText extends DataFile {
         }
         return names;
     }
-    
+
     @Override
     public long readTotal() {
         dataSize = 0;
@@ -159,7 +190,7 @@ public class DataFileText extends DataFile {
         }
         return dataSize;
     }
-    
+
     @Override
     public List<List<String>> readPageData() {
         if (startRowOfCurrentPage < 0) {
@@ -206,7 +237,7 @@ public class DataFileText extends DataFile {
         endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
         return rows;
     }
-    
+
     @Override
     public boolean savePageData(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileText)) {
@@ -218,14 +249,10 @@ public class DataFileText extends DataFile {
         if (tFile == null) {
             return false;
         }
+        targetTextFile.checkAttributes();
         Charset tCharset = targetTextFile.getCharset();
-        if (tCharset == null) {
-            tCharset = Charset.forName("UTF-8");
-        }
         String tDelimiter = targetTextFile.getDelimiter();
-        if (tDelimiter == null || tDelimiter.isEmpty()) {
-            tDelimiter = ",";
-        }
+        checkAttributes();
         boolean tHasHeader = targetTextFile.isHasHeader();
         if (file != null) {
             try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
@@ -234,7 +261,7 @@ public class DataFileText extends DataFile {
                 if (hasHeader) {
                     readValidLine(reader);
                 }
-                if (tHasHeader) {
+                if (tHasHeader && colsNames != null) {
                     TextFileTools.writeLine(writer, colsNames, tDelimiter);
                 }
                 long rowIndex = -1;
@@ -245,7 +272,7 @@ public class DataFileText extends DataFile {
                         continue;
                     }
                     if (++rowIndex < startRowOfCurrentPage || rowIndex >= endRowOfCurrentPage) {
-                        TextFileTools.writeLine(writer, row, tDelimiter);
+                        TextFileTools.writeLine(writer, fileRow(row), tDelimiter);
                     } else if (rowIndex == startRowOfCurrentPage) {
                         writePageData(writer, tDelimiter);
                     }
@@ -262,9 +289,9 @@ public class DataFileText extends DataFile {
                 return false;
             }
         } else {
-            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
-                if (tHasHeader) {
+                if (tHasHeader && colsNames != null) {
                     TextFileTools.writeLine(writer, colsNames, tDelimiter);
                 }
                 writePageData(writer, tDelimiter);
@@ -278,17 +305,17 @@ public class DataFileText extends DataFile {
         }
         return FileTools.rename(tmpFile, tFile, false);
     }
-    
+
     public boolean writePageData(BufferedWriter writer, String delimiter) {
         try {
-            if (writer == null || delimiter == null) {
+            if (writer == null || delimiter == null || !isColumnsValid()) {
                 return false;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                TextFileTools.writeLine(writer, pageRow(r), delimiter);
+                TextFileTools.writeLine(writer, tableRow(r), delimiter);
             }
             return true;
         } catch (Exception e) {
@@ -299,7 +326,7 @@ public class DataFileText extends DataFile {
             return false;
         }
     }
-    
+
     @Override
     public File tmpFile(List<String> cols, List<List<String>> data) {
         try {
@@ -332,5 +359,5 @@ public class DataFileText extends DataFile {
             return null;
         }
     }
-    
+
 }

@@ -43,7 +43,7 @@ public class ControlData2D extends BaseController {
     protected TableData2DColumn tableData2DColumn;
     protected ControlData2DEditTable tableController;
     protected ControlData2DEditText textController;
-    protected final SimpleBooleanProperty statusNotify, loadedNotify;
+    protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
 
     @FXML
@@ -68,6 +68,7 @@ public class ControlData2D extends BaseController {
     public ControlData2D() {
         statusNotify = new SimpleBooleanProperty(false);
         loadedNotify = new SimpleBooleanProperty(false);
+        savedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -105,14 +106,21 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void loadDefinition() {
-        if (data2D == null || !checkBeforeNextAction()) {
-            return;
+    public void loadFile(File file) {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            data2D.initFile(file);
+            data2D.setUserSavedDataDefinition(true);
+            readDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        File file = data2D.getFile();
-        if (file != null && !file.exists()) {
-            tableData2DDefinition.deleteData(data2D);
-            loadNull();
+    }
+
+    public void readDefinition() {
+        if (data2D == null || !checkBeforeNextAction()) {
             return;
         }
         synchronized (this) {
@@ -128,6 +136,12 @@ public class ControlData2D extends BaseController {
 
                 @Override
                 protected boolean handle() {
+                    File file = data2D.getFile();
+                    if (file != null && !file.exists()) {
+                        tableData2DDefinition.deleteData(data2D);
+                        loadNull();
+                        return false;
+                    }
                     data2D.setTask(task);
                     long d2did = data2D.readDataDefinition();
                     boolean isTmpFile = data2D.isTmpFile();
@@ -206,9 +220,14 @@ public class ControlData2D extends BaseController {
     }
 
     public void loadNull() {
-        data2D.resetData();
-        loadData();
-        notifyLoaded();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                data2D.resetData();
+                loadData();
+                notifyLoaded();
+            }
+        });
     }
 
     public boolean isChanged() {
@@ -270,6 +289,10 @@ public class ControlData2D extends BaseController {
             }
         }
         loadedNotify.set(!loadedNotify.get());
+    }
+
+    public void notifySaved() {
+        savedNotify.set(!savedNotify.get());
     }
 
     public synchronized void resetStatus() {
@@ -390,13 +413,13 @@ public class ControlData2D extends BaseController {
                         recordFileWritten(data2D.getFile());
                     }
                     tableController.afterSaved();
+                    notifySaved();
                 }
 
                 @Override
                 protected void finalAction() {
                     data2D.setTask(null);
                     task = null;
-                    notifyLoaded();
                 }
             };
             start(task);
@@ -444,9 +467,8 @@ public class ControlData2D extends BaseController {
                     }
                     if (load) {
                         data2D.load(targetData);
-                        resetStatus();
                         tableController.afterSaved();
-                        notifyLoaded();
+                        notifySaved();
                         if (parentController instanceof ControlDataClipboard) {
                             ((ControlDataClipboard) parentController).refreshAction();
                         }
@@ -486,7 +508,7 @@ public class ControlData2D extends BaseController {
                 }
             }
             if (d.getD2did() < 0 || attributesController.status == ControlData2DAttributes.Status.Applied) {
-                d.checkBeforeSaving();
+                d.checkAttributes();
                 if (d.getD2did() >= 0) {
                     def = tableData2DDefinition.updateData(conn, d);
                 } else {
@@ -523,6 +545,25 @@ public class ControlData2D extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void create() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            data2D.initFile(data2D.tmpFile());
+            data2D.setHasHeader(true);
+            data2D.setUserSavedDataDefinition(false);
+            readDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void recover() {
+        resetStatus();
+        loadFile(data2D.getFile());
     }
 
     @FXML

@@ -9,7 +9,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFile;
 import mara.mybox.data.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
@@ -85,19 +84,19 @@ public class DataFileCSVController extends BaseData2DFileController {
         if (file == null || !checkBeforeNextAction()) {
             return;
         }
-        sourceFile = file;
         csvReadController.withNamesCheck.setSelected(withName);
         csvReadController.setDelimiter(delimiter);
         csvReadController.setCharset(charset);
-        dataFileCSV.setUserSavedDataDefinition(false);
+        dataFileCSV.initFile(file);
         dataFileCSV.setCharset(charset);
         dataFileCSV.setDelimiter(delimiter + "");
         dataFileCSV.setHasHeader(withName);
-        dataController.loadDefinition();
+        dataFileCSV.setUserSavedDataDefinition(false);
+        dataController.readDefinition();
     }
 
     @Override
-    public DataFile makeTargetDataFile(File file) {
+    public Data2D makeTargetDataFile(File file) {
         DataFileCSV targetCSVFile = (DataFileCSV) dataFileCSV.cloneAll();
         targetCSVFile.setFile(file);
         targetCSVFile.setD2did(-1);

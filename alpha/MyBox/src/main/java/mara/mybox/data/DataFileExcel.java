@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -46,15 +45,17 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public void initFile(File file) {
+        if (file == null || !file.equals(this.file)) {
+            currentSheetName = null;
+            sheetNames = null;
+        }
         super.initFile(file);
-        currentSheetName = null;
-        sheetNames = null;
     }
 
     @Override
-    public void checkBeforeSaving() {
+    public void checkAttributes() {
         if (dataName == null || dataName.isBlank()) {
-            if (file != null) {
+            if (!isTmpFile()) {
                 dataName = file.getName();
             } else {
                 dataName = DateTools.nowString();
@@ -68,11 +69,6 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public long readDataDefinition() {
-        d2did = -1;
-        if (file == null) {
-            return -1;
-        }
-        savedColumns = null;
         try ( Workbook wb = WorkbookFactory.create(file)) {
             int sheetsNumber = wb.getNumberOfSheets();
             sheetNames = new ArrayList<>();
@@ -85,38 +81,7 @@ public class DataFileExcel extends DataFile {
             wb.close();
         } catch (Exception e) {
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            Data2DDefinition definition = null;
-            if (!isTmpFile() && userSavedDataDefinition) {
-                definition = queryDefinition(conn);
-                if (definition != null) {
-                    load(definition);
-                }
-            }
-            if (!isTmpFile()) {
-                checkBeforeSaving();
-                if (definition == null) {
-                    definition = tableData2DDefinition.insertData(conn, this);
-                    conn.commit();
-                    d2did = definition.getD2did();
-                } else {
-                    tableData2DDefinition.updateData(conn, this);
-                    conn.commit();
-                    d2did = definition.getD2did();
-                    if (userSavedDataDefinition) {
-                        savedColumns = tableData2DColumn.read(conn, d2did);
-                    }
-                }
-            }
-            userSavedDataDefinition = true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.debug(e);
-            return -1;
-        }
-        return d2did;
+        return super.readDataDefinition();
     }
 
     @Override
@@ -251,7 +216,7 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         for (int col = row.size(); col < columnsNumber; col++) {
-                            row.add(defaultColValue());
+                            row.add(null);
                         }
                         row.add(0, "" + (rowIndex + 1));
                         rows.add(row);
@@ -331,7 +296,7 @@ public class DataFileExcel extends DataFile {
                         }
                         if (++sourceRowIndex < startRowOfCurrentPage || sourceRowIndex >= endRowOfCurrentPage) {
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            MicrosoftDocumentTools.copyRow(sourceRow, targetRow);
+                            writeFileRow(sourceRow, targetRow);
                         } else if (sourceRowIndex == startRowOfCurrentPage) {
                             targetRowIndex = writePageData(targetSheet, targetRowIndex);
                         }
@@ -402,7 +367,7 @@ public class DataFileExcel extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return index;
                 }
-                List<String> values = pageRow(r);
+                List<String> values = tableRow(r);
                 Row targetRow = targetSheet.createRow(index++);
                 for (int col = 0; col < values.size(); col++) {
                     Cell targetCell = targetRow.createCell(col, CellType.STRING);
@@ -416,6 +381,23 @@ public class DataFileExcel extends DataFile {
             }
         }
         return index;
+    }
+
+    public void writeFileRow(Row sourceRow, Row targetRow) {
+        try {
+            List<String> row = new ArrayList<>();
+            for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
+                String v = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
+                row.add(v);
+            }
+            List<String> fileRow = fileRow(row);
+            for (int col = 0; col < fileRow.size(); col++) {
+                Cell targetCell = targetRow.createCell(col, CellType.STRING);
+                targetCell.setCellValue(fileRow.get(col));
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
@@ -513,6 +495,7 @@ public class DataFileExcel extends DataFile {
         if (file == null || currentSheetName == null) {
             return false;
         }
+        String oldName = currentSheetName;
         File tmpFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(file, tmpDataFile);
@@ -532,6 +515,8 @@ public class DataFileExcel extends DataFile {
             }
             if (FileTools.rename(tmpFile, file)) {
                 currentSheetName = newName;
+                delimiter = currentSheetName;
+                sheetNames.set(sheetNames.indexOf(oldName), currentSheetName);
                 tableData2DDefinition.updateData(this);
                 userSavedDataDefinition = true;
                 return true;

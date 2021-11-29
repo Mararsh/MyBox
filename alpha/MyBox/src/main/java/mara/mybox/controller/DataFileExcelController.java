@@ -12,16 +12,12 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFile;
 import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -99,21 +95,6 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     @Override
-    public void initFile(File file) {
-        File cfile = dataFileExcel.getFile();
-        String sheet = dataFileExcel.getCurrentSheetName();
-        List<String> sheetNames = dataFileExcel.getSheetNames();
-        dataFileExcel.initFile(file);
-        if (file != null && file.equals(cfile)) {
-            dataFileExcel.setCurrentSheetName(sheet);
-            dataFileExcel.setSheetNames(sheetNames);
-        } else {
-            dataFileExcel.setCurrentSheetName(null);
-            dataFileExcel.setSheetNames(null);
-        }
-    }
-
-    @Override
     public void pickOptions() {
         dataFileExcel.setHasHeader(sourceWithNamesCheck.isSelected());
     }
@@ -143,34 +124,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     @Override
-    protected void updateInfoLabel() {
-        String info = "";
-        if (sourceFile != null) {
-            info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + message("CurrentSheet") + ": " + (dataFileExcel.getCurrentSheetName() == null ? "" : dataFileExcel.getCurrentSheetName() + "\n")
-                    + message("FirstLineAsNames") + ": " + (dataFileExcel.isHasHeader() ? message("Yes") : message("No")) + "\n";
-        }
-        if (!dataFileExcel.isMutiplePages()) {
-            info += message("RowsNumber") + ":" + dataFileExcel.tableRowsNumber() + "\n";
-        } else {
-            info += message("LinesNumberInFile") + ":" + dataFileExcel.getDataSize() + "\n";
-        }
-        info += message("ColumnsNumber") + ": " + dataFileExcel.columnsNumber() + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(dataFileExcel.getCurrentPage() + 1)
-                + " / " + StringTools.format(dataFileExcel.getPagesNumber()) + "\n";
-        if (dataFileExcel.isMutiplePages() && dataFileExcel.hasData()) {
-            info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(dataFileExcel.getStartRowOfCurrentPage() + 1) + " - "
-                    + StringTools.format(dataFileExcel.getStartRowOfCurrentPage() + dataFileExcel.tableRowsNumber())
-                    + " ( " + StringTools.format(dataFileExcel.tableRowsNumber()) + " )\n";
-        }
-        info += message("PageModifyTime") + ": " + DateTools.nowString();
-        fileInfoLabel.setText(info);
-    }
-
-    @Override
-    public DataFile makeTargetDataFile(File file) {
+    public Data2D makeTargetDataFile(File file) {
         DataFileExcel targetCSVFile = (DataFileExcel) dataFileExcel.cloneAll();
         targetCSVFile.setFile(file);
         targetCSVFile.setD2did(-1);
@@ -185,9 +139,6 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     public void loadSheetIndex(int index) {
-        if (sourceFile == null || !checkBeforeNextAction()) {
-            return;
-        }
         List<String> sheets = sheetSelector.getItems();
         if (index > sheets.size() - 1 || index < 0) {
             return;
@@ -196,19 +147,23 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     public void loadSheetName(String name) {
-        if (sourceFile == null || !checkBeforeNextAction() || name == null) {
-            return;
+        try {
+            if (!checkBeforeNextAction() || name == null) {
+                return;
+            }
+            dataFileExcel.initFile(dataFileExcel.getFile());
+            dataFileExcel.setCurrentSheetName(name);
+            dataFileExcel.setUserSavedDataDefinition(true);
+            dataController.readDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        dataFileExcel.initFile(sourceFile);
-        dataFileExcel.setCurrentSheetName(name);
-        dataFileExcel.setUserSavedDataDefinition(true);
-        dataController.loadDefinition();
     }
 
     @FXML
     protected void plusSheet() {
         List<String> sheets = dataFileExcel.getSheetNames();
-        if (sourceFile == null || !checkBeforeNextAction() || sheets == null) {
+        if (!checkBeforeNextAction() || sheets == null) {
             return;
         }
         String tryName = message("Sheet") + (sheets.size() + 1);
@@ -234,7 +189,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
                 @Override
                 protected void whenSucceeded() {
-                    dataController.loadDefinition();
+                    dataController.readDefinition();
                 }
 
                 @Override
@@ -250,7 +205,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
     @FXML
     protected void renameSheet() {
-        if (sourceFile == null || !checkBeforeNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         String currentSheetName = dataFileExcel.getCurrentSheetName();
@@ -279,7 +234,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
                 @Override
                 protected void whenSucceeded() {
-                    dataController.loadDefinition();
+                    afterFileLoaded();
                 }
 
                 @Override
@@ -296,7 +251,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     @FXML
     protected void deleteSheet() {
         List<String> sheets = dataFileExcel.getSheetNames();
-        if (sourceFile == null || sheets == null || sheets.size() <= 1) {
+        if (sheets == null || sheets.size() <= 1) {
             return;
         }
         String currentSheetName = dataFileExcel.getCurrentSheetName();
@@ -354,10 +309,10 @@ public class DataFileExcelController extends BaseData2DFileController {
         if (file == null || !checkBeforeNextAction()) {
             return;
         }
-        sourceFile = file;
-        dataFileExcel.initFile(sourceFile);
+        dataFileExcel.initFile(file);
         dataFileExcel.setHasHeader(withName);
-        dataController.loadDefinition();
+        dataFileExcel.setUserSavedDataDefinition(false);
+        dataController.readDefinition();
     }
 
 

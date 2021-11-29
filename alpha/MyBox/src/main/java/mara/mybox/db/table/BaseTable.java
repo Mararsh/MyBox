@@ -1295,6 +1295,7 @@ public abstract class BaseTable<D> {
     }
 
     public int deleteCondition(String condition) {
+        MyBoxLog.console(condition);
         String sql = "DELETE FROM " + tableName
                 + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
         return DerbyBase.update(sql);

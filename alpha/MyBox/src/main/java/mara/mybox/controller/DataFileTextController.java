@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFile;
 import mara.mybox.data.DataFileText;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -67,7 +66,7 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     @Override
-    public DataFile makeTargetDataFile(File file) {
+    public Data2D makeTargetDataFile(File file) {
         DataFileText targetTextFile = (DataFileText) dataFileText.cloneAll();
         targetTextFile.setFile(file);
         targetTextFile.setD2did(-1);

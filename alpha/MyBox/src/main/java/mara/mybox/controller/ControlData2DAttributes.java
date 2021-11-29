@@ -173,6 +173,12 @@ public class ControlData2DAttributes extends BaseController {
         return status == Status.Modified || status == Status.Applied;
     }
 
+    public void updateDataName() {
+        isSettingValues = true;
+        dataNameInput.setText(data2D.getDataName());
+        isSettingValues = false;
+    }
+
     @FXML
     @Override
     public void okAction() {

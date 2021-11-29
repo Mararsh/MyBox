@@ -246,6 +246,10 @@ public class ControlListCheckBox extends BaseController {
         return listView.getItems();
     }
 
+    public int size() {
+        return listView.getItems().size();
+    }
+
     public List<Integer> checkedOrders() {
         return checkedOrders;
     }

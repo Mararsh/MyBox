@@ -5,9 +5,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import mara.mybox.controller.BaseController;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -20,7 +20,6 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -44,7 +43,7 @@ public abstract class Data2D extends Data2DDefinition {
     /*
         abstract
      */
-    public abstract long readDataDefinition();
+    public abstract Data2DDefinition queryDefinition(Connection conn);
 
     public abstract List<String> readColumns();
 
@@ -116,6 +115,11 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    @Override
+    public boolean isValid() {
+        return super.isValid() && columns != null && !columns.isEmpty();
+    }
+
     /*
         file
      */
@@ -173,6 +177,79 @@ public abstract class Data2D extends Data2DDefinition {
         controller.sourceFileChanged(file);
     }
 
+    public boolean isMutiplePages() {
+        return pagesNumber > 1;
+    }
+
+    // file columns are not necessary in order of columns definition.
+    // column's index remembers the order of columns
+    // when index is less than 0, it is new column
+    public List<String> fileRow(List<String> fileRow) {
+        try {
+            if (fileRow == null) {
+                return null;
+            }
+            List<String> row = new ArrayList<>();
+            int len = fileRow.size();
+            for (int i = 0; i < columns.size(); i++) {
+                String value = null;
+                int index = columns.get(i).getIndex();
+                if (index >= 0 && index < len) {
+                    value = fileRow.get(index);
+                }
+                row.add(value);
+            }
+            return row;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /*
+        database
+     */
+    public long readDataDefinition() {
+        d2did = -1;
+        savedColumns = null;
+        if (isTmpFile()) {
+            checkAttributes();
+            return -1;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            Data2DDefinition definition = null;
+            if (userSavedDataDefinition) {
+                definition = queryDefinition(conn);
+                if (definition != null) {
+                    load(definition);
+                }
+            }
+            checkAttributes();
+            if (definition == null) {
+                definition = tableData2DDefinition.insertData(conn, this);
+                conn.commit();
+                d2did = definition.getD2did();
+            } else {
+                tableData2DDefinition.updateData(conn, this);
+                conn.commit();
+                d2did = definition.getD2did();
+                if (userSavedDataDefinition) {
+                    savedColumns = tableData2DColumn.read(conn, d2did);
+                }
+            }
+            userSavedDataDefinition = true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.console(e);
+            return -1;
+        }
+        return d2did;
+    }
+
+    public void checkAttributes() {
+    }
+
     public String randomDouble(Random random) {
         return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
     }
@@ -181,28 +258,27 @@ public abstract class Data2D extends Data2DDefinition {
         return (char) ('a' + random.nextInt(25)) + "";
     }
 
-
     /*
-        page data
+        table data
      */
-    public boolean isMutiplePages() {
-        return pagesNumber > 1;
+    public void setTableChanged(boolean tableChanged) {
+        this.tableChanged = tableChanged;
     }
 
-    public String pageCell(List<String> rowValues, int pageCol) {
-        try {
-            return rowValues.get(dataCol(columns.get(pageCol).getIndex()));
-        } catch (Exception e) {
-            return null;
-        }
+    public int tableRowsNumber() {
+        return tableView == null ? 0 : tableView.getItems().size();
     }
 
-    public int dataCol(int index) {
+    public int tableColsNumber() {
+        return columns == null ? 0 : columns.size();
+    }
+
+    // Column's index, instead of column name or table index, is the key to determine the column.
+    public int tableCol(int index) {
         try {
-            for (int i = 2; i < tableView.getColumns().size(); i++) {
-                TableColumn tableColumn = tableView.getColumns().get(i);
-                if (tableColumn.getUserData() != null && index == (int) tableColumn.getUserData()) {
-                    return i - 1;
+            for (int i = 0; i < columns.size(); i++) {
+                if (index == columns.get(i).getIndex()) {
+                    return i;
                 }
             }
         } catch (Exception e) {
@@ -210,45 +286,22 @@ public abstract class Data2D extends Data2DDefinition {
         return -1;
     }
 
-    public List<String> pageRow(int row) {
+    public int tableCol(String name) {
         try {
-            return pageRow(tableView.getItems().get(row));
-        } catch (Exception e) {
-            return pageRow(null);
-        }
-    }
-
-    public List<String> pageRow(List<String> rowValues) {
-        try {
-            if (rowValues == null) {
-                return null;
-            }
-            List<String> values = new ArrayList<>();
             for (int i = 0; i < columns.size(); i++) {
-                values.add(pageCell(rowValues, i));
-            }
-            return values;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<String> recordRow(CSVRecord record) {
-        try {
-            if (record == null) {
-                return null;
-            }
-            List<String> row = new ArrayList<>();
-            int len = record.size();
-            for (int i = 0; i < columns.size(); i++) {
-                String value = null;
-                int index = columns.get(i).getIndex();
-                if (index >= 0 && index < len) {
-                    value = record.get(index);
+                if (name.equals(columns.get(i).getName())) {
+                    return i;
                 }
-                row.add(value);
             }
-            return row;
+        } catch (Exception e) {
+        }
+        return -1;
+    }
+
+    public List<String> tableRow(int row) {
+        try {
+            List<String> values = tableView.getItems().get(row);
+            return values.subList(1, values.size());
         } catch (Exception e) {
             return null;
         }
@@ -263,7 +316,7 @@ public abstract class Data2D extends Data2DDefinition {
             }
             return newRow;
         } catch (Exception e) {
-            return pageRow(null);
+            return null;
         }
     }
 
@@ -277,22 +330,15 @@ public abstract class Data2D extends Data2DDefinition {
         return newRow;
     }
 
+    public boolean hasData() {
+        return isValid() && tableView.getItems() != null && !tableView.getItems().isEmpty();
+    }
+
+
     /*
-        table
+        table view
      */
-    public void setTableChanged(boolean tableChanged) {
-        this.tableChanged = tableChanged;
-    }
-
-    public int tableRowsNumber() {
-        return tableView == null ? 0 : tableView.getItems().size();
-    }
-
-    public int tableColsNumber() {
-        return columns == null ? 0 : columns.size();
-    }
-
-    public List<String> tableRow(int row) {
+    public List<String> tableViewRow(int row) {
         if (tableView == null || row < 0 || row > tableView.getItems().size() - 1) {
             return null;
         }
@@ -358,13 +404,22 @@ public abstract class Data2D extends Data2DDefinition {
         return --newColumnIndex;
     }
 
+    public List<String> editableColumnNames() {
+        if (columns == null) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        for (Data2DColumn col : columns) {
+            if (col.isEditable()) {
+                names.add(col.getName());
+            }
+        }
+        return names;
+    }
+
     /*
         attributes
      */
-    public Data2DDefinition queryDefinition(Connection conn) {
-        return tableData2DDefinition.queryName(conn, type, dataName);
-    }
-
     public boolean isMatrix() {
         return type == Type.Matrix;
     }
@@ -417,15 +472,6 @@ public abstract class Data2D extends Data2DDefinition {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    @Override
-    public boolean isValid() {
-        return super.isValid() && columns != null && !columns.isEmpty();
-    }
-
-    public boolean hasData() {
-        return isValid() && tableView.getItems() != null && !tableView.getItems().isEmpty();
     }
 
     /*

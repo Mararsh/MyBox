@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,18 +49,10 @@ public class DataSetValuesController extends BaseController {
         try {
             this.tableController = tableController;
             this.baseName = tableController.baseName;
+            rowsListController.setParent(tableController);
+            colsListController.setParent(tableController);
 
             getMyStage().setTitle(tableController.getBaseTitle());
-
-            rowsListController.setParent(tableController);
-            List<String> rows = new ArrayList<>();
-            for (long i = 0; i < tableController.tableData.size(); i++) {
-                rows.add("" + (i + 1));
-            }
-            rowsListController.setValues(rows);
-
-            colsListController.setParent(tableController);
-            colsListController.setValues(tableController.data2D.columnNames());
 
             value = UserConfig.getString(baseName + "Value", "0");
             switch (value) {
@@ -100,6 +94,22 @@ public class DataSetValuesController extends BaseController {
                 }
             });
 
+            makeControls();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void makeControls() {
+        try {
+            List<String> rows = new ArrayList<>();
+            for (long i = 0; i < tableController.tableData.size(); i++) {
+                rows.add("" + (i + 1));
+            }
+            rowsListController.setValues(rows);
+
+            colsListController.setValues(tableController.data2D.editableColumnNames());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -145,14 +155,22 @@ public class DataSetValuesController extends BaseController {
             Random random = new Random();
             tableController.isSettingValues = true;
             boolean rowChanged = false, colChanged;
+            Map<String, Integer> colIndex = new HashMap<>();
+            for (String name : colsListController.getValues()) {
+                colIndex.put(name, tableController.data2D.tableCol(name));
+            }
             for (int row = 0; row < tableController.tableData.size(); row++) {
                 if (!rowsListController.isChecked(row)) {
                     continue;
                 }
                 List<String> values = tableController.tableData.get(row);
                 colChanged = false;
-                for (int col = 0; col < tableController.data2D.columnsNumber(); col++) {
-                    if (!colsListController.isChecked(col)) {
+                for (int i = 0; i < colsListController.size(); i++) {
+                    if (!colsListController.isChecked(i)) {
+                        continue;
+                    }
+                    int col = colIndex.get(colsListController.value(i));
+                    if (col < 0) {
                         continue;
                     }
                     String v = value;

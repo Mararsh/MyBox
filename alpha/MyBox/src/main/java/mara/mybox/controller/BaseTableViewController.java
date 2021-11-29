@@ -156,33 +156,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    protected void initColumns() {
-        try {
-            if (allRowsCheck != null) {
-                allRowsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        if (newValue) {
-                            for (int i = 0; i < tableData.size(); i++) {  // Fail to listen to selectAll() 
-                                tableView.getSelectionModel().select(i);
-                            }
-                        } else {
-                            tableView.getSelectionModel().clearSelection();
-                        }
-                    }
-                });
-            }
-
-            if (rowsSelectionColumn != null) {
-                tableView.setEditable(true);
-                rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public boolean checkBeforeLoadingTableData() {
         return true;
     }
@@ -450,6 +423,36 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     /*
+        columns
+     */
+    protected void initColumns() {
+        try {
+            if (allRowsCheck != null) {
+                allRowsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (newValue) {
+                            for (int i = 0; i < tableData.size(); i++) {  // Fail to listen to selectAll() 
+                                tableView.getSelectionModel().select(i);
+                            }
+                        } else {
+                            tableView.getSelectionModel().clearSelection();
+                        }
+                    }
+                });
+            }
+
+            if (rowsSelectionColumn != null) {
+                tableView.setEditable(true);
+                rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
         data
      */
     public P newData() {
@@ -498,6 +501,14 @@ public abstract class BaseTableViewController<P> extends BaseController {
         tableChanged(true);
     }
 
+    public String cellString(int row, int col) {
+        try {
+            return tableView.getColumns().get(col).getCellData(row).toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /*
         buttons
      */
@@ -523,6 +534,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         if (editButton != null) {
             editButton.setDisable(none);
+        }
+        if (copyButton != null) {
+            copyButton.setDisable(none);
         }
         if (clearButton != null) {
             clearButton.setDisable(isEmpty);

@@ -51,6 +51,7 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
         List<String> names = null;
+        checkAttributes();
         try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             if (hasHeader) {
                 names = parser.getHeaderNames();
@@ -171,17 +172,16 @@ public class DataFileCSV extends DataFileText {
         if (tFile == null) {
             return false;
         }
+        targetCSVFile.checkAttributes();
         Charset tCharset = targetCSVFile.getCharset();
-        if (tCharset == null) {
-            tCharset = Charset.forName("UTF-8");
-        }
         boolean tHasHeader = targetCSVFile.isHasHeader();
         CSVFormat tFormat = targetCSVFile.cvsFormat();
+        checkAttributes();
         if (file != null) {
             try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
                      CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
-                    csvPrinter.printRecord(columnNames());
+                    writeHeader(csvPrinter);
                 }
                 long index = -1;
                 long pageStart = getStartRowOfCurrentPage(), pageEnd = getEndRowOfCurrentPage();
@@ -195,7 +195,7 @@ public class DataFileCSV extends DataFileText {
                             CSVRecord record = iterator.next();
                             if (record != null) {
                                 if (++index < pageStart || index >= pageEnd) {
-                                    csvPrinter.printRecord(recordRow(record));
+                                    writeFileRow(csvPrinter, record);
                                 } else if (index == pageStart) {
                                     if (!writePageData(csvPrinter)) {
                                         return false;
@@ -222,7 +222,7 @@ public class DataFileCSV extends DataFileText {
         } else {
             try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
-                    csvPrinter.printRecord(columnNames());
+                    writeHeader(csvPrinter);
                 }
                 if (!writePageData(csvPrinter)) {
                     return false;
@@ -238,16 +238,14 @@ public class DataFileCSV extends DataFileText {
         return FileTools.rename(tmpFile, tFile, false);
     }
 
-    public boolean writePageData(CSVPrinter csvPrinter) {
+    public boolean writeHeader(CSVPrinter csvPrinter) {
         try {
-            if (csvPrinter == null) {
+            if (csvPrinter == null || !isColumnsValid()) {
                 return false;
             }
-            for (int r = 0; r < tableRowsNumber(); r++) {
-                if (task == null || task.isCancelled()) {
-                    return false;
-                }
-                csvPrinter.printRecord(pageRow(r));
+            List<String> names = columnNames();
+            if (names != null) {
+                csvPrinter.printRecord(columnNames());
             }
             return true;
         } catch (Exception e) {
@@ -256,6 +254,39 @@ public class DataFileCSV extends DataFileText {
                 task.setError(e.toString());
             }
             return false;
+        }
+    }
+
+    public boolean writePageData(CSVPrinter csvPrinter) {
+        try {
+            if (csvPrinter == null || !isColumnsValid()) {
+                return false;
+            }
+            for (int r = 0; r < tableRowsNumber(); r++) {
+                if (task == null || task.isCancelled()) {
+                    return false;
+                }
+                csvPrinter.printRecord(tableRow(r));
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+    public void writeFileRow(CSVPrinter csvPrinter, CSVRecord record) {
+        try {
+            List<String> row = new ArrayList<>();
+            for (String v : record) {
+                row.add(v);
+            }
+            csvPrinter.printRecord(fileRow(row));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

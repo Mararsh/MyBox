@@ -291,6 +291,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             tableData2DColumn = dataController.tableData2DColumn;
             data2D = dataController.data2D;
 
+            trimColumnsButton.setDisable(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -331,6 +332,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         } else {
             status(Status.Loaded);
         }
+        trimColumnsButton.setDisable(tableData.isEmpty());
     }
 
     public void status(Status newStatus) {
@@ -419,20 +421,20 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 });
                 return false;
             }
-            List<List<String>> newData = new ArrayList<>();
+            List<List<String>> newTableData = new ArrayList<>();
             if (tableData.size() > 0) {
                 for (List<String> rowValues : tableController.tableData) {
                     List<String> newRow = new ArrayList<>();
                     newRow.add(rowValues.get(0));
-                    for (Data2DColumn col : tableData) {
-                        int dataCol = data2D.dataCol(col.getIndex());
-                        if (dataCol < 0 || dataCol >= rowValues.size()) {
+                    for (Data2DColumn row : tableData) {
+                        int col = data2D.tableCol(row.getIndex()) + 1;
+                        if (col < 0 || col >= rowValues.size()) {
                             newRow.add(null);
                         } else {
-                            newRow.add(rowValues.get(dataCol));
+                            newRow.add(rowValues.get(col));
                         }
                     }
-                    newData.add(newRow);
+                    newTableData.add(newRow);
                 }
             }
             List<Data2DColumn> columns = new ArrayList<>();
@@ -440,7 +442,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 columns.add(tableData.get(i).cloneAll());
             }
             data2D.setColumns(columns);
-            return tableController.loadData(newData, true);
+            return tableController.loadData(newTableData, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

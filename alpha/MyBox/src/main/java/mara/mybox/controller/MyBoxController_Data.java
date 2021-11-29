@@ -75,8 +75,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileTextMergeFxml);
         });
 
-        Menu DataFile = new Menu(message("DataFile"));
-        DataFile.getItems().addAll(
+        Menu Data2D = new Menu(message("DataFile"));
+        Data2D.getItems().addAll(
                 EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
                 EditExcel, ExcelConvert, ExcelMerge, ExtractTextsFromMS, new SeparatorMenuItem(),
                 TextData, TextDataConvert, TextDataMerge
@@ -177,7 +177,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                DataFile, DataClipboard, new SeparatorMenuItem(),
+                Data2D, DataClipboard, new SeparatorMenuItem(),
                 MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationData, ConvertCoordinate, new SeparatorMenuItem(),
                 EpidemicReport, new SeparatorMenuItem(),

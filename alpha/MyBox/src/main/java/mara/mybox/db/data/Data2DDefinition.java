@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DateTools;
 
 /**
  * @Author Mara
@@ -90,17 +89,6 @@ public class Data2DDefinition extends BaseData {
         }
         return this;
     }
-
-    public void checkBeforeSaving() {
-        if (dataName == null || dataName.isBlank()) {
-            if (file != null) {
-                dataName = file.getName();
-            } else {
-                dataName = DateTools.nowString();
-            }
-        }
-    }
-
 
     /*
         static methods

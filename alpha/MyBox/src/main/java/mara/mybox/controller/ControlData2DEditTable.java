@@ -45,7 +45,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             dataController = editController.dataController;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
-            this.data2D = dataController.data2D;
+            data2D = dataController.data2D;
 
             paginationBox = dataController.paginationBox;
             pageSizeSelector = dataController.pageSizeSelector;
@@ -77,6 +77,10 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                 }
             });
             dataRowColumn.setEditable(false);
+
+            addButton.setDisable(true);
+            copyButton.setDisable(true);
+            setValuesButton.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -137,6 +141,9 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void postLoadedTableData() {
         super.postLoadedTableData();
         data2D.setTask(null);
+        if (data2D.isTmpFile()) {
+            tableChanged(true);
+        }
     }
 
     @Override
@@ -309,6 +316,9 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             return;
         }
         data2D.setTableChanged(changed);
+        addButton.setDisable(!data2D.isColumnsValid());
+        copyButton.setDisable(tableData.isEmpty());
+        setValuesButton.setDisable(tableData.isEmpty());
         updateSizeLabel();
         dataController.textController.loadData();
         dataController.viewController.loadData();

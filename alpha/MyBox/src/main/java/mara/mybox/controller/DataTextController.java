@@ -215,7 +215,7 @@ public class DataTextController extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     close();
-                    dataController.loadDefinition();
+                    dataController.readDefinition();
                 }
 
                 @Override

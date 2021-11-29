@@ -57,13 +57,13 @@ public class WebFavoritesImportController extends BaseBatchFileController {
         tableTree = favoritesController.tableTree;
         tableWebFavorite = favoritesController.tableWebFavorite;
         String lang = Languages.isChinese() ? "zh" : "en";
-        File dataFile = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
+        File data2D = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
                 "data", "WebFavorites_Examples_" + lang + ".txt");
         isSettingValues = true;
         overrideRadio.fire();
         iconCheck.setSelected(false);
         isSettingValues = false;
-        startFile(dataFile);
+        startFile(data2D);
     }
 
     @Override

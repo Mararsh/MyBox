@@ -10,7 +10,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFile;
 import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -31,7 +30,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseData2DFileController extends BaseController {
 
-    protected DataFile dataFile;
+    protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected ControlData2DEditTable tableController;
@@ -57,7 +56,7 @@ public abstract class BaseData2DFileController extends BaseController {
     /*
         abstract
      */
-    public abstract DataFile makeTargetDataFile(File file);
+    public abstract Data2D makeTargetDataFile(File file);
 
     public abstract void pickOptions();
 
@@ -70,7 +69,7 @@ public abstract class BaseData2DFileController extends BaseController {
         try {
             dataController.setDataType(this, type);
             dataController.backupController = backupController;
-            dataFile = (DataFile) dataController.data2D;
+            data2D = dataController.data2D;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             tableController = dataController.editController.tableController;
@@ -105,6 +104,8 @@ public abstract class BaseData2DFileController extends BaseController {
                 }
             });
 
+            saveButton.setDisable(true);
+            recoverButton.setDisable(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -162,7 +163,7 @@ public abstract class BaseData2DFileController extends BaseController {
         try {
             super.afterSceneLoaded();
 
-            createFile();
+//            createFile();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -170,12 +171,7 @@ public abstract class BaseData2DFileController extends BaseController {
 
     @Override
     public void sourceFileChanged(File file) {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        initFile(file);
-        dataFile.setUserSavedDataDefinition(!dataFile.isTmpFile());
-        dataController.loadDefinition();
+        dataController.loadFile(file);
     }
 
     protected void afterFileLoaded() {
@@ -191,8 +187,8 @@ public abstract class BaseData2DFileController extends BaseController {
                 recoverButton.setDisable(!changed);
 
                 String title = baseTitle;
-                if (!dataFile.isTmpFile()) {
-                    title += " " + dataFile.getFile().getAbsolutePath();
+                if (!data2D.isTmpFile()) {
+                    title += " " + data2D.getFile().getAbsolutePath();
                 }
                 if (changed) {
                     title += " *";
@@ -205,52 +201,41 @@ public abstract class BaseData2DFileController extends BaseController {
 
     protected void updateInfoLabel() {
         String info = "";
-        if (!dataFile.isTmpFile()) {
-            info = message("FileSize") + ": " + FileTools.showFileSize(dataFile.getFile().length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(dataFile.getFile().lastModified()) + "\n";
-            if (dataFile instanceof DataFileExcel) {
-                DataFileExcel e = (DataFileExcel) dataFile;
+        if (!data2D.isTmpFile()) {
+            info = message("FileSize") + ": " + FileTools.showFileSize(data2D.getFile().length()) + "\n"
+                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(data2D.getFile().lastModified()) + "\n";
+            if (data2D instanceof DataFileExcel) {
+                DataFileExcel e = (DataFileExcel) data2D;
                 String sheet = e.getCurrentSheetName();
                 info += message("CurrentSheet") + ": " + (sheet == null ? "" : sheet)
                         + (e.getSheetNames() == null ? "" : " / " + e.getSheetNames().size()) + "\n";
             } else {
-                info += message("Charset") + ": " + dataFile.getCharset() + "\n"
-                        + message("Delimiter") + ": " + TextTools.delimiterMessage(dataFile.getDelimiter()) + "\n";
+                info += message("Charset") + ": " + data2D.getCharset() + "\n"
+                        + message("Delimiter") + ": " + TextTools.delimiterMessage(data2D.getDelimiter()) + "\n";
             }
-            info += message("FirstLineAsNames") + ": " + (dataFile.isHasHeader() ? message("Yes") : message("No")) + "\n";
+            info += message("FirstLineAsNames") + ": " + (data2D.isHasHeader() ? message("Yes") : message("No")) + "\n";
         }
-        if (!dataFile.isMutiplePages()) {
-            info += message("RowsNumber") + ":" + dataFile.tableRowsNumber() + "\n";
+        if (!data2D.isMutiplePages()) {
+            info += message("RowsNumber") + ":" + data2D.tableRowsNumber() + "\n";
         } else {
-            info += message("LinesNumberInFile") + ":" + dataFile.getDataSize() + "\n";
+            info += message("LinesNumberInFile") + ":" + data2D.getDataSize() + "\n";
         }
-        info += message("ColumnsNumber") + ": " + dataFile.columnsNumber() + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(dataFile.getCurrentPage() + 1)
-                + " / " + StringTools.format(dataFile.getPagesNumber()) + "\n";
-        if (dataFile.isMutiplePages() && dataFile.hasData()) {
+        info += message("ColumnsNumber") + ": " + data2D.columnsNumber() + "\n"
+                + message("CurrentPage") + ": " + StringTools.format(data2D.getCurrentPage() + 1)
+                + " / " + StringTools.format(data2D.getPagesNumber()) + "\n";
+        if (data2D.isMutiplePages() && data2D.hasData()) {
             info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(dataFile.getStartRowOfCurrentPage() + 1) + " - "
-                    + StringTools.format(dataFile.getStartRowOfCurrentPage() + dataFile.tableRowsNumber())
-                    + " ( " + StringTools.format(dataFile.tableRowsNumber()) + " )\n";
+                    + ": " + StringTools.format(data2D.getStartRowOfCurrentPage() + 1) + " - "
+                    + StringTools.format(data2D.getStartRowOfCurrentPage() + data2D.tableRowsNumber())
+                    + " ( " + StringTools.format(data2D.tableRowsNumber()) + " )\n";
         }
         info += message("PageModifyTime") + ": " + DateTools.nowString();
         fileInfoLabel.setText(info);
     }
 
-    public void initFile(File file) {
-        dataFile.initFile(file);
-    }
-
     @FXML
     public void createFile() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            sourceFileChanged(dataFile.tmpFile());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        dataController.create();
     }
 
     @FXML
@@ -262,10 +247,10 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (dataFile == null || !dataController.isChanged()) {
+        if (data2D == null || !dataController.isChanged()) {
             return;
         }
-        if (dataFile.isTmpFile()) {
+        if (data2D.isTmpFile()) {
             saveAs(true);
             return;
         }
@@ -286,7 +271,7 @@ public abstract class BaseData2DFileController extends BaseController {
         if (file == null) {
             return;
         }
-        DataFile targetData = makeTargetDataFile(file);
+        Data2D targetData = makeTargetDataFile(file);
         if (targetData == null) {
             return;
         }
@@ -296,26 +281,25 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void recoverAction() {
-        dataController.resetStatus();
-        sourceFileChanged(dataFile.getFile());
+        dataController.recover();
     }
 
     @FXML
     public void refreshFile() {
         dataController.resetStatus();
-        initFile(dataFile.getFile());
-        dataFile.setUserSavedDataDefinition(false);
+        data2D.initFile(data2D.getFile());
+        data2D.setUserSavedDataDefinition(false);
         pickOptions();
-        dataController.loadDefinition();
+        dataController.readDefinition();
     }
 
     @FXML
     public void editTextFile() {
-        if (dataFile == null || dataFile.getFile() == null) {
+        if (data2D == null || data2D.getFile() == null) {
             return;
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.sourceFileChanged(dataFile.getFile());
+        controller.sourceFileChanged(data2D.getFile());
         controller.toFront();
     }
 
@@ -336,7 +320,7 @@ public abstract class BaseData2DFileController extends BaseController {
     public void cleanPane() {
         try {
             tableController = null;
-            dataFile = null;
+            data2D = null;
             tableData2DDefinition = null;
             tableData2DColumn = null;
         } catch (Exception e) {

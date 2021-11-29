@@ -44,10 +44,6 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
 
-    protected String cellString(int row, int col) {
-        return null;
-    }
-
     public List<Integer> rowsIndex(boolean isAll) {
         return null;
     }
@@ -135,10 +131,10 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
 //                        File dFile = DataClipboard.writeFile(data);
 //                        List<ColumnDefinition> dColumns = new ArrayList<>();
 //                        for (int c : cols) {
-//                            dColumns.add(data2D.column(c));
+//                            dColumns.add(data2D .column(c));
 //                        }
 //                        DataDefinition def
-//                                = DataClipboard.create(data2D.getTableData2DDefinition(), data2D.getTableDataColumn(), dFile, dColumns);
+//                                = DataClipboard.create(data2D .getTableData2DDefinition(), data2D.getTableDataColumn(), dFile, dColumns);
 //                        return def != null;
                         return true;
                     }
@@ -151,7 +147,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
                         if (withNames) {
                             colsNames = new ArrayList<>();
                             for (int c : cols) {
-                                colsNames.add(data2D.colName(c));
+                                colsNames.add(data2D .colName(c));
                             }
                         }
                         TextClipboardTools.copyToSystemClipboard(myController,
@@ -183,7 +179,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
         }
         //        pickData();
         sourceController.pickData();
-        if (data2D.getTableView() == null) {
+        if (data2D .getTableView() == null) {
             if (enlarge) {
 //                if (sourceController.pagesNumber <= 1) {
 //                    data = sourceController.pageData;
@@ -202,7 +198,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
         }
         int sourceRowsSize = (int) sourceController.rowsTotal();
         int sourceColsSize = sourceController.colsNumber;
-        if (data2D.getPagesNumber() <= 1
+        if (data2D .getPagesNumber() <= 1
                 || (row + sourceRowsSize <= data2D.tableRowsNumber() && col + sourceColsSize <= data2D.tableColsNumber())) {
             pastePage(sourceController, row, col, enlarge);
         } else {
@@ -218,7 +214,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
             if (enlarge) {
                 source = sourceController.readAll();
             } else {
-                source = sourceController.read(data2D.tableRowsNumber() - row, data2D.tableColsNumber() - col);
+                source = sourceController.read(data2D .tableRowsNumber() - row, data2D.tableColsNumber() - col);
             }
         }
         int sourceRowsSize = source.length, targetRowsSize = data2D.tableRowsNumber();
@@ -231,7 +227,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
         }
         String[][] values = new String[targetRowsSize][targetColsSize];
         for (int r = 0; r < targetRowsSize; r++) {
-            List<String> pageRow = data2D.pageRow(r);
+            List<String> pageRow = data2D.tableRow(r);
             for (int c = 0; c < targetColsSize; c++) {
                 if (r >= row && r < row + sourceRowsSize && c >= col && c < col + sourceColsSize) {
                     values[r][c] = source[r - row][c - col];
@@ -482,7 +478,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
         if (number < 1) {
             return;
         }
-        if (data2D.getColumns() == null) {
+        if (data2D .getColumns() == null) {
             data2D.setColumns(new ArrayList<>());
         }
         int base;
@@ -496,7 +492,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
         int cNumber = data2D.tableColsNumber() + number;
         String[][] values = new String[rNumber][cNumber];
         for (int r = 0; r < rNumber; ++r) {
-            List<String> pageRow = data2D.pageRow(r);
+            List<String> pageRow = data2D.tableRow(r);
             for (int c = 0; c < base; ++c) {
                 values[r][c] = pageRow.get(c);
             }
@@ -526,7 +522,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
         for (int c = 0; c < data2D.columnsNumber(); ++c) {
             if (!cols.contains(c)) {
                 leftColumnsIndex.add(c);
-                leftColumns.add(data2D.column(c));
+                leftColumns.add(data2D .column(c));
             }
         }
         String[][] values = null;
@@ -544,7 +540,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
     }
 
     public void deleteAllCols() {
-        if (data2D.getColumns() == null) {
+        if (data2D .getColumns() == null) {
             data2D.setColumns(new ArrayList<>());
         }
 //        makeSheet(null);
@@ -576,7 +572,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
             }
             List<String> names = new ArrayList<>();
             for (int c : cols) {
-                names.add(data2D.colName(c));
+                names.add(data2D .colName(c));
             }
             exportController.convertController.names = names;
             exportController.convertController.openWriters(exportController.filePrefix, skip);
@@ -604,7 +600,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
 
     @FXML
     public void csvAction() {
-        if (data2D.tableRowsNumber() <= 0) {
+        if (data2D .tableRowsNumber() <= 0) {
             popError(message("NoData"));
             return;
         }
@@ -619,9 +615,9 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
                             .withDelimiter(',').withFirstRecordAsHeader()
                             .withIgnoreEmptyLines().withTrim().withNullString("");
                     try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
-                        csvPrinter.printRecord(data2D.columnNames());
+                        csvPrinter.printRecord(data2D .columnNames());
                         for (int r = 0; r < data2D.tableRowsNumber(); r++) {
-                            csvPrinter.printRecord(data2D.pageRow(r));
+                            csvPrinter.printRecord(data2D .tableRow(r));
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -642,7 +638,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
 
     @FXML
     public void excelAction() {
-        if (data2D.tableRowsNumber() <= 0) {
+        if (data2D .tableRowsNumber() <= 0) {
             popError(message("NoData"));
             return;
         }
@@ -665,7 +661,7 @@ public abstract class ControlData2DEditTable_Operations extends BaseTableViewCon
                         }
                         for (int r = 0; r < data2D.tableRowsNumber(); r++) {
                             targetRow = targetSheet.createRow(index++);
-                            for (int c = 0; c < data2D.pageRow(r).size(); c++) {
+                            for (int c = 0; c < data2D.tableRow(r).size(); c++) {
                                 Cell targetCell = targetRow.createCell(c, CellType.STRING);
                                 targetCell.setCellValue(cellString(r, c));
                             }

@@ -51,7 +51,7 @@ public class ControlData2DEditText extends BaseController {
             this.editController = editController;
             dataController = editController.dataController;
             tableController = editController.tableController;
-            this.data2D = dataController.data2D;
+            data2D = dataController.data2D;
 
             delimiterName = UserConfig.getString(baseName + "EditDelimiter", ",");
 
@@ -74,6 +74,8 @@ public class ControlData2DEditText extends BaseController {
                 }
             });
             textArea.setWrapText(wrapCheck.isSelected());
+
+            thisPane.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
