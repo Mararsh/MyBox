@@ -216,9 +216,12 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             tableData.clear();
             backgroundTask = new SingletonTask<Void>(this) {
 
+                private List<Integer> mfList;
+
                 @Override
                 protected boolean handle() {
                     try {
+                        mfList = new ArrayList<>();
                         for (int i = 0; i < imageFileList.size(); ++i) {
                             if (backgroundTask == null || backgroundTask.isCancelled()) {
                                 break;
@@ -231,10 +234,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                             }
                             iView.setImage(imageInfo.getThumbnail());
                             if (imageInfo.isIsMultipleFrames()) {
-                                Label titleLabel = imageTitleList.get(i);
-                                String title = file.getName() + " " + Languages.message("MultipleFrames");
-                                titleLabel.setText(title);
-                                titleLabel.setStyle("-fx-text-box-border: purple;   -fx-text-fill: purple;");
+                                mfList.add(i);
                             }
                             tableData.add(imageInfo);
                         }
@@ -247,6 +247,12 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
 
                 @Override
                 protected void whenSucceeded() {
+                    for (Integer i : mfList) {
+                        Label titleLabel = imageTitleList.get(i);
+                        String title = imageFileList.get(i).getName() + " " + Languages.message("MultipleFrames");
+                        titleLabel.setText(title);
+                        titleLabel.setStyle("-fx-text-box-border: purple;   -fx-text-fill: purple;");
+                    }
                 }
 
                 @Override

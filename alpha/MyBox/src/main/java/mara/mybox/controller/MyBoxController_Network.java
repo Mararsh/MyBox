@@ -7,8 +7,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -74,9 +72,9 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
                 webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
                 QueryAddress, QueryDNSBatch, ConvertUrl, new SeparatorMenuItem(),
+                DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
                 SecurityCertificates
         );
 

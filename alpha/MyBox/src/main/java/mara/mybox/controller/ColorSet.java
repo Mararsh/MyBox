@@ -114,23 +114,23 @@ public class ColorSet extends BaseController {
 
     @FXML
     public void openColorPalette(ActionEvent event) {
-        showColorPalette(false);
+        showColorPalette();
     }
 
     @FXML
     public void popColorPalette(MouseEvent event) {
         if (UserConfig.getBoolean("PopColorSetWhenMousePassing", true)) {
-            showColorPalette(false);
+            showColorPalette();
         }
     }
 
-    public void showColorPalette(boolean popMenu) {
+    public void showColorPalette() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(
                     WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
-            controller.load(this, popMenu);
+            controller.load(this);
 
             popup = makePopup();
             popup.getContent().add(pane);

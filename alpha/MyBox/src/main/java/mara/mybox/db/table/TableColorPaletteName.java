@@ -12,7 +12,6 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -125,23 +124,28 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
 
     public ColorPaletteName defaultPalette(Connection conn) {
         try {
+            boolean ac = conn.getAutoCommit();
+            conn.setAutoCommit(true);
             ColorPaletteName palette = findAndCreate(conn, defaultPaletteName());
             if (palette == null) {
+                conn.setAutoCommit(ac);
                 return null;
             }
+            conn.setAutoCommit(false);
             long paletteid = palette.getCpnid();
             if (getTableColorPalette().size(paletteid) == 0) {
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.WHITE), Languages.message("White"), 1f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.BLACK), Languages.message("Black"), 2f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.RED), Languages.message("Red"), 3f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.GREEN), Languages.message("Green"), 4f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.BLUE), Languages.message("Blue"), 5f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.YELLOW), Languages.message("Yellow"), 6f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.PURPLE), Languages.message("Purple"), 6f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.CYAN), Languages.message("Cyan"), 6f);
-                insert(conn, paletteid, FxColorTools.color2rgba(Color.TRANSPARENT), Languages.message("Transparent"), 7f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.WHITE), message("White"), 1f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.BLACK), message("Black"), 2f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.RED), message("Red"), 3f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.GREEN), message("Green"), 4f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.BLUE), message("Blue"), 5f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.YELLOW), message("Yellow"), 6f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.PURPLE), message("Purple"), 6f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.CYAN), message("Cyan"), 6f);
+                insert(conn, paletteid, FxColorTools.color2rgba(Color.TRANSPARENT), message("Transparent"), 7f);
             }
             conn.commit();
+            conn.setAutoCommit(ac);
             return palette;
         } catch (Exception e) {
             MyBoxLog.error(e);

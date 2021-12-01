@@ -41,7 +41,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
-    protected Status lastStatus, status;
+    protected Status status;
 
     public enum Status {
         Loaded, Modified, Applied
@@ -265,8 +265,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             widthColumn.setEditable(true);
             widthColumn.getStyleClass().add("editable-column");
 
-            okButton.setDisable(true);
-            cancelButton.setDisable(true);
+            checkData();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -332,16 +331,18 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         } else {
             status(Status.Loaded);
         }
+        checkData();
+    }
+
+    public void checkData() {
+        checkButtons();
         trimColumnsButton.setDisable(tableData.isEmpty());
     }
 
     public void status(Status newStatus) {
-        okButton.setDisable(newStatus != Status.Modified);
-        cancelButton.setDisable(newStatus != Status.Modified);
         if (status == newStatus) {
             return;
         }
-        lastStatus = status;
         status = newStatus;
         dataController.checkStatus();
     }
@@ -400,7 +401,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     @Override
     public void okAction() {
-        if (!isChanged()) {
+        if (status != Status.Modified) {
             return;
         }
         if (pickValues()) {
@@ -453,8 +454,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @Override
     public void cancelAction() {
         if (status == Status.Modified) {
-            status(lastStatus);
             loadColumns();
+            status(Status.Applied);
         }
     }
 

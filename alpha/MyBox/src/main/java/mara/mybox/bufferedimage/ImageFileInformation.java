@@ -113,8 +113,8 @@ public class ImageFileInformation extends FileInformation {
             fileInfo.setNumberOfImages(num);
             List<ImageInformation> imagesInfo = new ArrayList<>();
             ImageInformation imageInfo;
-            int width = (int) Math.round(ppt.getPageSize().getWidth());
-            int height = (int) Math.round(ppt.getPageSize().getHeight());
+            int width = (int) Math.ceil(ppt.getPageSize().getWidth());
+            int height = (int) Math.ceil(ppt.getPageSize().getHeight());
             for (int i = 0; i < num; ++i) {
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);

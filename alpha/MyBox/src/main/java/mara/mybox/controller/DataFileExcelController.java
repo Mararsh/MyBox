@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -89,6 +90,13 @@ public class DataFileExcelController extends BaseData2DFileController {
                 }
             });
 
+            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    afterFileLoaded();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -96,12 +104,10 @@ public class DataFileExcelController extends BaseData2DFileController {
 
     @Override
     public void pickOptions() {
-        dataFileExcel.setHasHeader(sourceWithNamesCheck.isSelected());
+        dataFileExcel.setOptions(sourceWithNamesCheck.isSelected());
     }
 
-    @Override
     protected void afterFileLoaded() {
-        super.afterFileLoaded();
         sheetSelector.getItems().clear();
         List<String> sheets = dataFileExcel.getSheetNames();
         sheetSelector.getItems().setAll(sheets);
@@ -110,17 +116,14 @@ public class DataFileExcelController extends BaseData2DFileController {
         int current = sheetSelector.getSelectionModel().getSelectedIndex();
         nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
         previousSheetButton.setDisable(current <= 0);
-        sheetsPane.setExpanded(true);
     }
 
     @Override
-    protected void updateStatus() {
-        super.updateStatus();
-        if (dataFileExcel.isTmpFile() || dataController.isChanged()) {
-            sheetsBox.setDisable(true);
-        } else {
-            sheetsBox.setDisable(false);
-        }
+    protected void checkStatus() {
+        super.checkStatus();
+        boolean invalid = dataFileExcel.isTmpFile() || dataController.isChanged();
+        sheetsPane.setExpanded(!invalid);
+        sheetsPane.setDisable(invalid);
     }
 
     @Override
@@ -152,8 +155,7 @@ public class DataFileExcelController extends BaseData2DFileController {
                 return;
             }
             dataFileExcel.initFile(dataFileExcel.getFile());
-            dataFileExcel.setCurrentSheetName(name);
-            dataFileExcel.setUserSavedDataDefinition(true);
+            dataFileExcel.setOptions(name);
             dataController.readDefinition();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -184,7 +186,7 @@ public class DataFileExcelController extends BaseData2DFileController {
                 @Override
                 protected boolean handle() {
                     dataFileExcel.setTask(task);
-                    return dataFileExcel.newSheet(newName, true);
+                    return dataFileExcel.newSheet(newName);
                 }
 
                 @Override
@@ -310,8 +312,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             return;
         }
         dataFileExcel.initFile(file);
-        dataFileExcel.setHasHeader(withName);
-        dataFileExcel.setUserSavedDataDefinition(false);
+        dataFileExcel.setOptions(withName);
         dataController.readDefinition();
     }
 

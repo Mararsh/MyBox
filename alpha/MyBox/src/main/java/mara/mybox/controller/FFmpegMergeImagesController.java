@@ -29,7 +29,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -95,7 +95,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         }
         String v = targetFileController.text();
         if (v == null || v.isBlank()) {
-            targetFileController.input(AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString() + "." + ext);
+            targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
             targetFileController.input(FileNameTools.getFilePrefix(v) + "." + ext);
         }

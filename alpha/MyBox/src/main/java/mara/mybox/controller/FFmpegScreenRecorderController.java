@@ -30,7 +30,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -118,7 +118,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         }
         String v = targetFileController.text();
         if (v == null || v.isBlank()) {
-            targetFileController.input(AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString() + "." + ext);
+            targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
             targetFileController.input(FileNameTools.getFilePrefix(v) + "." + ext);
         }

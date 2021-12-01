@@ -76,16 +76,16 @@ License:    Apache License Version 2.0
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
+                                                </Button> 
+                                                <Button fx:id="editClipButton" layoutX="92.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconEdit.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
                                                 </Button>
-                                    <Button fx:id="editClipButton" layoutX="92.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconEdit.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
                                             </children>
                                         </FlowPane>
                                         <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -104,7 +104,8 @@ License:    Apache License Version 2.0
                                         </TableColumn>
                                         <TableColumn fx:id="d2dColumn" editable="false" text="%ID" />
                                         <TableColumn fx:id="nameColumn" editable="false" prefWidth="200.0" text="%Name" />
-                              <TableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
+                                        <TableColumn fx:id="timeColumn" editable="false" prefWidth="140.0" text="%ModifyTime" />
+                                        <TableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
                                     </columns>
                                 </TableView>
                                 <HBox fx:id="paginationBox" alignment="TOP_RIGHT" spacing="2.0">

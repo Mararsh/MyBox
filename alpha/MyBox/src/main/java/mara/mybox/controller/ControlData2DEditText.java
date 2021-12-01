@@ -13,6 +13,7 @@ import mara.mybox.data.Data2D;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -28,7 +29,7 @@ public class ControlData2DEditText extends BaseController {
     protected ControlData2DEditTable tableController;
     protected Data2D data2D;
     protected String delimiterName;
-    protected Status lastStatus, status;
+    protected Status status;
 
     public enum Status {
         Loaded, Modified, Applied
@@ -75,7 +76,7 @@ public class ControlData2DEditText extends BaseController {
             });
             textArea.setWrapText(wrapCheck.isSelected());
 
-            thisPane.setDisable(true);
+            checkData();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -97,7 +98,7 @@ public class ControlData2DEditText extends BaseController {
 
     public void loadText() {
         try {
-            if (!hasData()) {
+            if (!checkData()) {
                 return;
             }
             String delimiter = TextTools.delimiterValue(delimiterName);
@@ -118,28 +119,25 @@ public class ControlData2DEditText extends BaseController {
         }
     }
 
-    public boolean hasData() {
-        if (!data2D.isColumnsValid()) {
+    public void status(Status newStatus) {
+        checkData();
+        if (status == newStatus) {
+            return;
+        }
+        status = newStatus;
+        dataController.checkStatus();
+    }
+
+    public boolean checkData() {
+        boolean invalid = data2D == null || !data2D.isColumnsValid();
+        if (invalid) {
             columnsLabel.setText("");
             isSettingValues = true;
             textArea.setText("");
             isSettingValues = false;
-            thisPane.setDisable(true);
-            return false;
         }
-        thisPane.setDisable(false);
-        return true;
-    }
-
-    public void status(Status newStatus) {
-        okButton.setDisable(newStatus != Status.Modified);
-        cancelButton.setDisable(newStatus != Status.Modified);
-        if (status == newStatus) {
-            return;
-        }
-        lastStatus = status;
-        status = newStatus;
-        dataController.checkStatus();
+        thisPane.setDisable(invalid);
+        return !invalid;
     }
 
     public boolean isChanged() {
@@ -149,7 +147,8 @@ public class ControlData2DEditText extends BaseController {
     @FXML
     @Override
     public void okAction() {
-        if (!isChanged() || !hasData() || delimiterName == null) {
+        if (status != Status.Modified || !checkData() || delimiterName == null) {
+            popError(message("InvalidData"));
             return;
         }
         try {
@@ -192,11 +191,10 @@ public class ControlData2DEditText extends BaseController {
     @FXML
     @Override
     public void cancelAction() {
-        if (!isChanged()) {
-            return;
+        if (status == Status.Modified) {
+            loadText();
+            status(Status.Applied);
         }
-        status(lastStatus);
-        loadText();
     }
 
     public void loadText(String text) {

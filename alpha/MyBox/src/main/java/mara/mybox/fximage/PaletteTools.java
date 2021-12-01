@@ -25,6 +25,7 @@ import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Colors;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -208,8 +209,9 @@ public class PaletteTools {
             }
             parent.popSuccessful();
         } else if (parent instanceof ColorSet) {
+            UserConfig.setString("ColorPalettePopupPalette", paletteName);
             ColorSet controller = (ColorSet) parent;
-            controller.showColorPalette(true);
+            controller.showColorPalette();
         }
     }
 

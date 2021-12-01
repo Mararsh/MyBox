@@ -8,20 +8,24 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
+import mara.mybox.data.Data2D;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import static mara.mybox.value.Languages.message;
 
@@ -30,12 +34,16 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
+public class ControlData2DEditTable extends BaseTableViewController<List<String>> {
+
+    protected ControlData2D dataController;
+    protected Data2D data2D;
+    protected TableData2DDefinition tableData2DDefinition;
+    protected TableData2DColumn tableData2DColumn;
+    protected char copyDelimiter = ',';
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
-    @FXML
-    protected Button setValuesButton;
 
     public ControlData2DEditTable() {
     }
@@ -57,7 +65,11 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             pageFirstButton = dataController.pageFirstButton;
             pageLastButton = dataController.pageLastButton;
 
-            initPagination();
+            if (data2D.isMatrix()) {
+                dataController.thisPane.getChildren().remove(paginationBox);
+            } else {
+                initPagination();
+            }
 
             data2D.setTableView(tableView);
 
@@ -78,9 +90,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             });
             dataRowColumn.setEditable(false);
 
-            addButton.setDisable(true);
-            copyButton.setDisable(true);
-            setValuesButton.setDisable(true);
+            checkData();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -90,7 +100,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void loadData() {
         try {
             makeColumns();
-            if (isNullValues()) {
+            if (!checkData()) {
                 return;
             }
             loadPage(currentPage);
@@ -99,22 +109,12 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
         }
     }
 
-    public void loadData(List<List<String>> data) {
-        try {
-            makeColumns();
-            if (data == null || isNullValues()) {
-                return;
-            }
-            dataSize = data.size();
-            data2D.setDataSize(dataSize);
-            isSettingValues = true;
-            tableData.setAll(data);
-            isSettingValues = false;
-            dataSizeLoaded = true;
-            postLoadedTableData();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public boolean checkData() {
+        boolean invalid = data2D == null || !data2D.isColumnsValid();
+        thisPane.setDisable(invalid);
+        copyButton.setDisable(invalid || tableData.isEmpty());
+        updateSizeLabel();
+        return !invalid;
     }
 
     @Override
@@ -141,9 +141,6 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     public void postLoadedTableData() {
         super.postLoadedTableData();
         data2D.setTask(null);
-        if (data2D.isTmpFile()) {
-            tableChanged(true);
-        }
     }
 
     @Override
@@ -173,7 +170,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
                 @Override
                 protected void whenSucceeded() {
                     dataSizeLoaded = true;
-                    dataController.notifyStatus();
+                    dataController.checkStatus();
                 }
 
                 @Override
@@ -207,16 +204,18 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
         updateSizeLabel();
     }
 
-    public boolean isNullValues() {
-        if (data2D == null || !data2D.isColumnsValid()) {
-            addButton.setDisable(true);
-            setValuesButton.setDisable(true);
-            return true;
-        } else {
-            addButton.setDisable(false);
-            setValuesButton.setDisable(false);
-            return false;
+    @Override
+    protected void setPagination() {
+        try {
+            if (data2D == null || data2D.isMatrix()) {
+                paginationBox.setVisible(false);
+                return;
+            }
+            super.setPagination();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
+
     }
 
     public void makeColumns() {
@@ -228,10 +227,9 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             isSettingValues = false;
             data2D.setTableView(tableView);
 
-            if (isNullValues()) {
+            if (!checkData()) {
                 return;
             }
-
             List<Data2DColumn> columns = data2D.getColumns();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
@@ -316,10 +314,8 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             return;
         }
         data2D.setTableChanged(changed);
-        addButton.setDisable(!data2D.isColumnsValid());
-        copyButton.setDisable(tableData.isEmpty());
-        setValuesButton.setDisable(tableData.isEmpty());
-        updateSizeLabel();
+        checkData();
+
         dataController.textController.loadData();
         dataController.viewController.loadData();
     }
@@ -337,7 +333,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
     @FXML
     @Override
     public void addAction() {
-        if (isNullValues()) {
+        if (!checkData()) {
             return;
         }
         addRowsAction();
@@ -357,10 +353,27 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
     @FXML
     public void setValuesAction() {
-        if (isNullValues()) {
+        if (!checkData()) {
             return;
         }
         DataSetValuesController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void pasteContentInSystemClipboard() {
+        try {
+            if (data2D == null) {
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            DataPasteController.open(this, text, true);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public boolean loadData(List<List<String>> newData, boolean columnsChanged) {
@@ -400,6 +413,7 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
             dataController.checkStatus();
             dataSizeLoaded = false;
             loadDataSize();
+            dataController.notifySaved();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -452,15 +466,41 @@ public class ControlData2DEditTable extends ControlData2DEditTable_Operations {
 
             MenuItem menu;
 
-            menu = new MenuItem(message("Copy"));
+            menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
             menu.setOnAction((ActionEvent event) -> {
-                copyAction();
+                dataController.parentController.saveAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Pop"));
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
             menu.setOnAction((ActionEvent event) -> {
-                popAction();
+                dataController.recover();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Create"), StyleTools.getIconImage("iconAdd.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.create();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImage("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.loadContentInSystemClipboard();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SaveAs"), StyleTools.getIconImage("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.parentController.saveAsAction();
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                setValuesAction();
             });
             popMenu.getItems().add(menu);
 

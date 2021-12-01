@@ -32,7 +32,7 @@ public class AppVariables {
     public static String[] appArgs;
     public static File MyboxConfigFile, MyBoxLogsPath;
     public static String MyboxDataPath, AlarmClocksFile;
-    public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath, MyBoxDownloadsPath;
+    public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath;
     public static List<File> MyBoxReservePaths;
     public static ResourceBundle currentBundle, currentTableBundle;
     public static Map<String, String> userConfigValues = new HashMap<>();

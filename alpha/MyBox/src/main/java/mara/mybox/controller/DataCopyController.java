@@ -6,12 +6,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import mara.mybox.data.DataClipboard;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextTools;
@@ -39,6 +42,8 @@ public class DataCopyController extends BaseController {
     protected ComboBox<String> rowSelector;
     @FXML
     protected HBox rowBox;
+    @FXML
+    protected CheckBox nameCheck;
     @FXML
     protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
 
@@ -70,11 +75,21 @@ public class DataCopyController extends BaseController {
                 frontRadio.fire();
             }
             rowBox.setVisible(belowRadio.isSelected() || aboveRadio.isSelected());
+            nameCheck.setVisible(scRadio.isSelected() || mcRadio.isSelected());
             locationGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     UserConfig.setString(baseName + "CopyRowsLocation", ((RadioButton) newValue).getText());
                     rowBox.setVisible(belowRadio.isSelected() || aboveRadio.isSelected());
+                    nameCheck.setVisible(scRadio.isSelected() || mcRadio.isSelected());
+                }
+            });
+
+            nameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyWithNames", true));
+            nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "CopyWithNames", nameCheck.isSelected());
                 }
             });
 
@@ -178,32 +193,67 @@ public class DataCopyController extends BaseController {
 
     public void copyToClipboard() {
         try {
-            List<List<String>> data = new ArrayList<>();
-            List<String> names = new ArrayList<>();
-            int colsNumber = tableController.data2D.columnsNumber();
-            for (int col = 0; col < colsNumber; col++) {
-                if (colsListController.isChecked(col)) {
-                    names.add(colsListController.value(col));
+            synchronized (this) {
+                if (task != null) {
+                    task.cancel();
                 }
-            }
-            for (int row = 0; row < tableController.tableData.size(); row++) {
-                if (!rowsListController.isChecked(row)) {
-                    continue;
-                }
-                List<String> dataRow = tableController.tableData.get(row);
-                List<String> newRow = new ArrayList<>();
-                for (int col = 0; col < colsNumber; col++) {
-                    if (!colsListController.isChecked(col)) {
-                        continue;
-                    }
-                    newRow.add(dataRow.get(col + 1));
-                }
-                data.add(newRow);
-            }
+                task = new SingletonTask<Void>(this) {
 
-            if (scRadio.isSelected()) {
-                String text = TextTools.dataText(data, ",", names, null);
-                TextClipboardTools.copyToSystemClipboard(this, text);
+                    private String text;
+
+                    @Override
+                    protected boolean handle() {
+                        List<List<String>> data = new ArrayList<>();
+                        int colsNumber = tableController.data2D.columnsNumber();
+                        List<String> names = null;
+                        if (nameCheck.isSelected()) {
+                            names = new ArrayList<>();
+                            for (int col = 0; col < colsNumber; col++) {
+                                if (colsListController.isChecked(col)) {
+                                    names.add(colsListController.value(col));
+                                }
+                            }
+                        }
+                        for (int row = 0; row < tableController.tableData.size(); row++) {
+                            if (!rowsListController.isChecked(row)) {
+                                continue;
+                            }
+                            List<String> dataRow = tableController.tableData.get(row);
+                            List<String> newRow = new ArrayList<>();
+                            for (int col = 0; col < colsNumber; col++) {
+                                if (!colsListController.isChecked(col)) {
+                                    continue;
+                                }
+                                newRow.add(dataRow.get(col + 1));
+                            }
+                            data.add(newRow);
+                        }
+                        if (data.isEmpty()) {
+                            error = message("NoData");
+                            return false;
+                        }
+                        if (scRadio.isSelected()) {
+                            text = TextTools.dataText(data, ",", names, null);
+                            ok = text != null;
+                        } else if (mcRadio.isSelected()) {
+                            MyBoxLog.console(data.size());
+                            ok = DataClipboard.create(task, names, data) != null;
+                        }
+                        return ok;
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        if (scRadio.isSelected()) {
+                            TextClipboardTools.copyToSystemClipboard(tableController, text);
+
+                        } else if (mcRadio.isSelected()) {
+                            popInformation(message("Saved"));
+                        }
+                    }
+
+                };
+                start(task);
             }
 
         } catch (Exception e) {

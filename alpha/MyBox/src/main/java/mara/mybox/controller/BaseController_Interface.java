@@ -37,6 +37,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -91,7 +92,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         checkSourcetPathInput();
                     }
                 });
-                sourcePathInput.setText(UserConfig.getString(baseName + "SourcePath", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
+                sourcePathInput.setText(UserConfig.getString(baseName + "SourcePath", AppPaths.getGeneratedPath()));
             }
 
             if (targetPrefixInput != null) {

@@ -71,10 +71,10 @@ License:    Apache License Version 2.0
                 </Tab>
             </tabs>
         </TabPane>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+        <HBox fx:id="paginationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
                 <Label fx:id="dataSizeLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                <HBox fx:id="paginationBox" alignment="CENTER_LEFT" spacing="2.0">
+                <HBox alignment="CENTER_LEFT" spacing="2.0">
                     <children>
                         <Label minWidth="-Infinity" text="%RowsPerPage" />
                         <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="100.0" />

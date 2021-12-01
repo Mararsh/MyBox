@@ -1,7 +1,7 @@
 package mara.mybox.fxml;
 
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -13,6 +13,9 @@ public class StyleToggleButton {
     public static StyleData toggleButtonStyle(String id) {
         if (id == null || id.isEmpty()) {
             return null;
+        }
+        if (id.startsWith("cat")) {
+            return new StyleData(id, message("Meow"), "", "iconCat.png");
         }
         switch (id) {
             case "pickColorButton":

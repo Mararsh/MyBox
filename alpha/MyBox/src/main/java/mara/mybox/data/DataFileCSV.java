@@ -316,7 +316,6 @@ public class DataFileCSV extends DataFileText {
                     csvPrinter.printRecord(data.get(r));
                 }
             }
-            return tmpFile;
         } catch (Exception e) {
             MyBoxLog.console(e);
             if (task != null) {
@@ -324,6 +323,7 @@ public class DataFileCSV extends DataFileText {
             }
             return null;
         }
+        return tmpFile;
     }
 
 }

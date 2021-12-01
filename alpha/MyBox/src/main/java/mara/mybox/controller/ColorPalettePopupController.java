@@ -72,7 +72,6 @@ public class ColorPalettePopupController extends BaseController {
 
     public ColorPalettePopupController() {
         baseTitle = message("ColorPalette");
-
     }
 
     @Override
@@ -105,20 +104,20 @@ public class ColorPalettePopupController extends BaseController {
         }
     }
 
-    public void load(ColorSet parent, boolean pop) {
+    public void load(ColorSet parent) {
         try {
             thisPane.setStyle(" -fx-background-color: white;");
             refreshStyle(thisPane);
 
             this.setController = parent;
             shadowEffect = new DropShadow();
-            loadColors(pop);
+            loadColors();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void loadColors(boolean popMenu) {
+    public void loadColors() {
         synchronized (this) {
             if ((task != null && !task.isQuit())) {
                 return;
@@ -172,9 +171,6 @@ public class ColorPalettePopupController extends BaseController {
                             Platform.runLater(() -> {
                                 colorsPane.applyCss();
                                 colorsPane.layout();
-                                if (popMenu) {
-                                    popPaletteMenu();
-                                }
                             });
                         }
                     }, 600);
@@ -264,7 +260,7 @@ public class ColorPalettePopupController extends BaseController {
                     RadioMenuItem rmenu = new RadioMenuItem(name);
                     rmenu.setOnAction((ActionEvent menuItemEvent) -> {
                         UserConfig.setString(baseName + "Palette", name);
-                        loadColors(false);
+                        loadColors();
                     });
                     rmenu.setToggleGroup(pgroup);
                     rmenu.setSelected(name.equals(currentName));

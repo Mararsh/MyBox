@@ -30,6 +30,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -302,16 +303,6 @@ public class MyBoxLoadingController implements Initializable {
                 }
             }
 
-            AppVariables.MyBoxDownloadsPath = new File(AppVariables.MyboxDataPath + File.separator + "downloads");
-            if (!AppVariables.MyBoxDownloadsPath.exists()) {
-                if (!AppVariables.MyBoxDownloadsPath.mkdirs()) {
-                    Platform.runLater(() -> {
-                        PopTools.alertError(MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxDownloadsPath));
-                    });
-                    return false;
-                }
-            }
-
             AppVariables.MyBoxTempPath = new File(AppVariables.MyboxDataPath + File.separator + "AppTemp");
             if (!AppVariables.MyBoxTempPath.exists()) {
                 if (!AppVariables.MyBoxTempPath.mkdirs()) {
@@ -329,7 +320,7 @@ public class MyBoxLoadingController implements Initializable {
                     add(AppVariables.MyBoxTempPath);
                     add(AppVariables.MyBoxDerbyPath);
                     add(AppVariables.MyBoxLanguagesPath);
-                    add(AppVariables.MyBoxDownloadsPath);
+                    add(new File(AppPaths.getDownloadsPath()));
                     add(AppVariables.MyBoxLogsPath);
                 }
             };

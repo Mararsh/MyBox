@@ -194,7 +194,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 }
 
             };
-            start(backgroundTask, false, null);
+            start(backgroundTask, false);
         }
     }
 

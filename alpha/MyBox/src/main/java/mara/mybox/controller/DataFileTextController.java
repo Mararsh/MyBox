@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileText;
@@ -56,13 +57,14 @@ public class DataFileTextController extends BaseData2DFileController {
 
     @Override
     public void pickOptions() {
-        dataFileText.setDelimiter(readOptionsController.delimiterName);
+        Charset charset;
         if (readOptionsController.autoDetermine) {
-            dataFileText.setCharset(TextFileTools.charset(dataFileText.getFile()));
+            charset = TextFileTools.charset(dataFileText.getFile());
         } else {
-            dataFileText.setCharset(readOptionsController.charset);
+            charset = readOptionsController.charset;
         }
-        dataFileText.setHasHeader(readOptionsController.withNamesCheck.isSelected());
+        dataFileText.setOptions(readOptionsController.withNamesCheck.isSelected(),
+                charset, readOptionsController.delimiterName);
     }
 
     @Override

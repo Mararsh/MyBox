@@ -114,20 +114,20 @@ License:    Apache License Version 2.0
                                                                 </HBox>
                                                             </children>
                                                         </VBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                             <children>
-                                                              <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconCalculator.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                <Label fx:id="checkLabel" />
-                                             </children>
-                                          </HBox>
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconCalculator.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Label fx:id="checkLabel" />
+                                                            </children>
+                                                        </HBox>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -137,16 +137,16 @@ License:    Apache License Version 2.0
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <Label fx:id="resultLabel" minHeight="-Infinity" VBox.vgrow="NEVER" />
-                                          <VBox fx:id="resultBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <TextArea fx:id="resultArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                <ScrollPane fx:id="resultTablePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                   <content>
-                                                                    <fx:include fx:id="resultTable" source="ControlMatrixEdit.fxml" />
-                                                   </content>
-                                                </ScrollPane>
-                                             </children>
-                                          </VBox>
+                                                        <VBox fx:id="resultBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                            <children>
+                                                                <TextArea fx:id="resultArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                <ScrollPane fx:id="resultTablePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                                    <content>
+                                                                        <fx:include fx:id="result" source="ControlData2D.fxml" />
+                                                                    </content>
+                                                                </ScrollPane>
+                                                            </children>
+                                                        </VBox>
                                                     </children>
                                                 </VBox>
                                             </content>

@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javafx.scene.control.TableView;
 import mara.mybox.controller.BaseController;
@@ -30,13 +31,13 @@ public abstract class Data2D extends Data2DDefinition {
 
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected List<Data2DColumn> columns;
-    protected List<Data2DColumn> savedColumns;
+    protected List<Data2DColumn> columns, savedColumns;
+    protected Map<String, Object> options;
     protected int pageSize, newColumnIndex;
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected TableView<List<String>> tableView;
-    protected boolean userSavedDataDefinition, tableChanged;
+    protected boolean tableChanged;
     protected SingletonTask task, backgroundTask;
     protected String error;
 
@@ -44,6 +45,8 @@ public abstract class Data2D extends Data2DDefinition {
         abstract
      */
     public abstract Data2DDefinition queryDefinition(Connection conn);
+
+    public abstract void applyOptions();
 
     public abstract List<String> readColumns();
 
@@ -62,7 +65,6 @@ public abstract class Data2D extends Data2DDefinition {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
         pageSize = 50;
-        userSavedDataDefinition = true;
         resetData();
     }
 
@@ -75,13 +77,14 @@ public abstract class Data2D extends Data2DDefinition {
         savedColumns = null;
         newColumnIndex = -1;
         tableChanged = false;
+        options = null;
     }
 
     @Override
     public Data2D cloneAll() {
         try {
             Data2D newData = (Data2D) super.clone();
-            newData.load(this);
+            newData.cloneAll(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -89,12 +92,12 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    public void load(Data2D d) {
+    public void cloneAll(Data2D d) {
         try {
             if (d == null) {
                 return;
             }
-            super.load(d);
+            super.cloneAll(d);
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;
             columns = d.columns;
@@ -111,6 +114,7 @@ public abstract class Data2D extends Data2DDefinition {
             task = d.task;
             backgroundTask = d.backgroundTask;
             error = d.error;
+            options = d.options;
         } catch (Exception e) {
         }
     }
@@ -119,6 +123,38 @@ public abstract class Data2D extends Data2DDefinition {
     public boolean isValid() {
         return super.isValid() && columns != null && !columns.isEmpty();
     }
+
+    /*
+        static
+     */
+    public static Data2D create(Type type) {
+        if (type == null) {
+            return null;
+        }
+        Data2D data;
+        switch (type) {
+            case CSV:
+                data = new DataFileCSV();
+                break;
+            case Excel:
+                data = new DataFileExcel();
+                break;
+            case Text:
+                data = new DataFileText();
+                break;
+            case Matrix:
+                data = new DataMatrix();
+                break;
+            case Clipboard:
+                data = new DataClipboard();
+                break;
+            default:
+                return null;
+        }
+        data.setType(type);
+        return data;
+    }
+
 
     /*
         file
@@ -210,19 +246,16 @@ public abstract class Data2D extends Data2DDefinition {
      */
     public long readDataDefinition() {
         d2did = -1;
-        savedColumns = null;
         if (isTmpFile()) {
             checkAttributes();
             return -1;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            Data2DDefinition definition = null;
-            if (userSavedDataDefinition) {
-                definition = queryDefinition(conn);
-                if (definition != null) {
-                    load(definition);
-                }
+            Data2DDefinition definition = queryDefinition(conn);
+            if (definition != null) {
+                cloneAll(definition);
             }
+            applyOptions();
             checkAttributes();
             if (definition == null) {
                 definition = tableData2DDefinition.insertData(conn, this);
@@ -232,11 +265,9 @@ public abstract class Data2D extends Data2DDefinition {
                 tableData2DDefinition.updateData(conn, this);
                 conn.commit();
                 d2did = definition.getD2did();
-                if (userSavedDataDefinition) {
-                    savedColumns = tableData2DColumn.read(conn, d2did);
-                }
+                savedColumns = tableData2DColumn.read(conn, d2did);
             }
-            userSavedDataDefinition = true;
+            options = null;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -475,37 +506,6 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     /*
-        static
-     */
-    public static Data2D create(Type type) {
-        if (type == null) {
-            return null;
-        }
-        Data2D data;
-        switch (type) {
-            case CSV:
-                data = new DataFileCSV();
-                break;
-            case Excel:
-                data = new DataFileExcel();
-                break;
-            case Text:
-                data = new DataFileText();
-                break;
-            case Matrix:
-                data = new DataFileCSV();
-                break;
-            case Clipboard:
-                data = new DataClipboard();
-                break;
-            default:
-                return null;
-        }
-        data.setType(type);
-        return data;
-    }
-
-    /*
         get/set
      */
     public TableData2DDefinition getTableData2DDefinition() {
@@ -600,12 +600,12 @@ public abstract class Data2D extends Data2DDefinition {
         this.tableView = tableView;
     }
 
-    public boolean isUserSavedDataDefinition() {
-        return userSavedDataDefinition;
+    public Map<String, Object> getOptions() {
+        return options;
     }
 
-    public void setUserSavedDataDefinition(boolean userSavedDataDefinition) {
-        this.userSavedDataDefinition = userSavedDataDefinition;
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
     }
 
     public List<Data2DColumn> getSavedColumns() {

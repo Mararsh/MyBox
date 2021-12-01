@@ -55,6 +55,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     @FXML
     @Override
     public void saveAction() {
+        if (sourceFile != null && !sourceInformation.isTotalNumberRead()) {
+            popError(message("CountingTotalNumber"));
+            return;
+        }
         if (!validateMainArea()) {
             popError(message("InvalidData"));
             return;
@@ -66,7 +70,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         }
     }
 
-    protected void saveNew() {
+    private void saveNew() {
         final File file = chooseSaveFile();
         if (file == null) {
             return;
@@ -104,7 +108,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         }
     }
 
-    protected void saveExisted() {
+    private void saveExisted() {
         if (confirmCheck.isVisible() && confirmCheck.isSelected() && (autoSaveTimer == null)) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());

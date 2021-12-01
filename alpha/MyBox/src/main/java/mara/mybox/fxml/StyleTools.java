@@ -203,6 +203,44 @@ public class StyleTools {
         }
     }
 
+    public static ImageView getIconImage(String iconName) {
+        if (iconName == null || iconName.isBlank()) {
+            return null;
+        }
+        try {
+            String stylePath = getIconPath(AppVariables.ControlColor);
+            ImageView view = null;
+            if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
+                String hiName = iconName.substring(0, iconName.length() - 4) + "_100.png";
+                try {
+                    view = new ImageView(ButtonsPath + hiName);
+                } catch (Exception e) {
+                    try {
+                        view = new ImageView(stylePath + hiName);
+                    } catch (Exception ex) {
+                    }
+                }
+            }
+            if (view == null) {
+                try {
+                    view = new ImageView(ButtonsPath + iconName);
+                } catch (Exception e) {
+                    try {
+                        view = new ImageView(stylePath + iconName);
+                    } catch (Exception ex) {
+                    }
+                }
+            }
+            if (view != null) {
+                view.setFitWidth(AppVariables.iconSize);
+                view.setFitHeight(AppVariables.iconSize);
+            }
+            return view;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String getIcon(String iconName) {
         return getIcon(AppVariables.ControlColor, iconName);
     }

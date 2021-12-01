@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -93,19 +92,10 @@ public abstract class BaseData2DFileController extends BaseController {
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    updateStatus();
+                    checkStatus();
                 }
             });
 
-            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    afterFileLoaded();
-                }
-            });
-
-            saveButton.setDisable(true);
-            recoverButton.setDisable(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -116,9 +106,10 @@ public abstract class BaseData2DFileController extends BaseController {
             if (formatPane == null) {
                 return;
             }
-            formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", true));
             formatPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
+                }
             });
 
         } catch (Exception e) {
@@ -131,9 +122,10 @@ public abstract class BaseData2DFileController extends BaseController {
             if (backupPane == null) {
                 return;
             }
-            backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
             backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
+                }
             });
 
             backupController.setControls(this, baseName);
@@ -163,7 +155,7 @@ public abstract class BaseData2DFileController extends BaseController {
         try {
             super.afterSceneLoaded();
 
-//            createFile();
+            createFile();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -174,18 +166,34 @@ public abstract class BaseData2DFileController extends BaseController {
         dataController.loadFile(file);
     }
 
-    protected void afterFileLoaded() {
-        updateStatus();
-    }
+    protected void checkStatus() {
+        try {
+            boolean changed = dataController.isChanged();
+            if (data2D.isTmpFile()) {
+                isSettingValues = true;
+                if (formatPane != null) {
+                    formatPane.setExpanded(false);
+                    formatPane.setDisable(true);
+                }
+                if (backupPane != null) {
+                    backupPane.setExpanded(false);
+                    backupPane.setDisable(true);
+                }
+                isSettingValues = false;
+            } else {
+                isSettingValues = true;
+                if (formatPane != null) {
+                    formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", true));
+                    formatPane.setDisable(false);
+                }
+                if (backupPane != null) {
+                    backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
+                    backupPane.setDisable(false);
+                }
+                isSettingValues = false;
+            }
 
-    protected void updateStatus() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                boolean changed = dataController.isChanged();
-                saveButton.setDisable(!changed);
-                recoverButton.setDisable(!changed);
-
+            if (myStage != null) {
                 String title = baseTitle;
                 if (!data2D.isTmpFile()) {
                     title += " " + data2D.getFile().getAbsolutePath();
@@ -193,10 +201,12 @@ public abstract class BaseData2DFileController extends BaseController {
                 if (changed) {
                     title += " *";
                 }
-                getMyStage().setTitle(title);
-                updateInfoLabel();
+                myStage.setTitle(title);
             }
-        });
+            updateInfoLabel();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     protected void updateInfoLabel() {
@@ -247,9 +257,6 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (data2D == null || !dataController.isChanged()) {
-            return;
-        }
         if (data2D.isTmpFile()) {
             saveAs(true);
             return;
@@ -288,7 +295,6 @@ public abstract class BaseData2DFileController extends BaseController {
     public void refreshFile() {
         dataController.resetStatus();
         data2D.initFile(data2D.getFile());
-        data2D.setUserSavedDataDefinition(false);
         pickOptions();
         dataController.readDefinition();
     }

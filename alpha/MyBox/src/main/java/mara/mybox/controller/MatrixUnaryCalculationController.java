@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Date;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,6 +14,8 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.Data2D;
+import mara.mybox.data.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
@@ -28,6 +31,7 @@ import mara.mybox.value.UserConfig;
  */
 public class MatrixUnaryCalculationController extends MatricesManageController {
 
+    protected DataMatrix resultMatrix;
     protected int column, row, power;
     protected double number, resultValue;
     protected double[][] result;
@@ -47,7 +51,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected Label resultLabel, checkLabel;
     @FXML
-    protected ControlMatrixEdit resultTableController;
+    protected ControlData2D resultController;
     @FXML
     protected TextArea resultArea;
     @FXML
@@ -58,9 +62,29 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            resultController.setDataType(this, Data2D.Type.Matrix);
+            resultMatrix = (DataMatrix) resultController.data2D;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
+
+            resultController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    checkMatrix();
+                }
+            });
 
             resultBox.getChildren().clear();
 
@@ -135,7 +159,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 return true;
             }
             int v = Integer.parseInt(rowInput.getText().trim());
-            if (v > 0 && v <= editController.matrixDouble().length) {
+            if (v > 0 && v <= dataMatrix.getRowsNumber()) {
                 row = v;
                 rowInput.setStyle(null);
                 UserConfig.setInt(baseName + "Row", v);
@@ -149,7 +173,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         }
         try {
             int v = Integer.parseInt(columnInput.getText().trim());
-            if (v > 0 && v <= editController.matrixDouble().length) {
+            if (v > 0 && v <= dataMatrix.getColsNumber()) {
                 column = v;
                 columnInput.setStyle(null);
                 UserConfig.setInt(baseName + "Column", v);
@@ -214,7 +238,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         numberInput.setStyle(null);
         powerInput.setStyle(null);
         checkLabel.setText("");
-        if (editController.colsNumber != editController.rowsNumber
+        if (!dataMatrix.isSquare()
                 && (message("DeterminantByElimination").equals(op)
                 || message("DeterminantByComplementMinor").equals(op)
                 || message("InverseMatrixByElimination").equals(op)
@@ -256,12 +280,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
 
-        resultTableController.setManager(listController);
-
-        editController.sheetChangedNotify.addListener(
-                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    checkMatrix();
-                });
     }
 
     @FXML
@@ -285,46 +303,46 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         resultValue = AppValues.InvalidDouble;
                         op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                         if (message("Transpose").equals(op)) {
-                            result = MatrixDoubleTools.transpose(editController.matrixDouble());
+                            result = MatrixDoubleTools.transpose(dataMatrix.matrixDouble());
 
                         } else if (message("RowEchelonForm").equals(op)) {
-                            result = MatrixDoubleTools.rowEchelonForm(editController.matrixDouble());
+                            result = MatrixDoubleTools.rowEchelonForm(dataMatrix.matrixDouble());
 
                         } else if (message("ReducedRowEchelonForm").equals(op)) {
-                            result = MatrixDoubleTools.reducedRowEchelonForm(editController.matrixDouble());
+                            result = MatrixDoubleTools.reducedRowEchelonForm(dataMatrix.matrixDouble());
 
                         } else if (message("ComplementMinor").equals(op)) {
-                            result = MatrixDoubleTools.complementMinor(editController.matrixDouble(), row - 1, column - 1);
+                            result = MatrixDoubleTools.complementMinor(dataMatrix.matrixDouble(), row - 1, column - 1);
 
                         } else if (message("Normalize").equals(op)) {
-                            result = MatrixDoubleTools.normalize(editController.matrixDouble());
+                            result = MatrixDoubleTools.normalize(dataMatrix.matrixDouble());
 
                         } else if (message("MultiplyNumber").equals(op)) {
-                            result = MatrixDoubleTools.multiply(editController.matrixDouble(), number);
+                            result = MatrixDoubleTools.multiply(dataMatrix.matrixDouble(), number);
 
                         } else if (message("DivideNumber").equals(op)) {
-                            result = MatrixDoubleTools.divide(editController.matrixDouble(), number);
+                            result = MatrixDoubleTools.divide(dataMatrix.matrixDouble(), number);
 
                         } else if (message("DeterminantByElimination").equals(op)) {
-                            resultValue = MatrixDoubleTools.determinantByElimination(editController.matrixDouble());
+                            resultValue = MatrixDoubleTools.determinantByElimination(dataMatrix.matrixDouble());
 
                         } else if (message("DeterminantByComplementMinor").equals(op)) {
-                            resultValue = MatrixDoubleTools.determinantByComplementMinor(editController.matrixDouble());
+                            resultValue = MatrixDoubleTools.determinantByComplementMinor(dataMatrix.matrixDouble());
 
                         } else if (message("InverseMatrixByElimination").equals(op)) {
-                            result = MatrixDoubleTools.inverseByElimination(editController.matrixDouble());
+                            result = MatrixDoubleTools.inverseByElimination(dataMatrix.matrixDouble());
 
                         } else if (message("InverseMatrixByAdjoint").equals(op)) {
-                            result = MatrixDoubleTools.inverseByAdjoint(editController.matrixDouble());
+                            result = MatrixDoubleTools.inverseByAdjoint(dataMatrix.matrixDouble());
 
                         } else if (message("MatrixRank").equals(op)) {
-                            resultValue = MatrixDoubleTools.rank(editController.matrixDouble());
+                            resultValue = MatrixDoubleTools.rank(dataMatrix.matrixDouble());
 
                         } else if (message("AdjointMatrix").equals(op)) {
-                            result = MatrixDoubleTools.adjoint(editController.matrixDouble());
+                            result = MatrixDoubleTools.adjoint(dataMatrix.matrixDouble());
 
                         } else if (message("Power").equals(op)) {
-                            result = MatrixDoubleTools.power(editController.matrixDouble(), power);
+                            result = MatrixDoubleTools.power(dataMatrix.matrixDouble(), power);
 
                         }
                     } catch (Exception e) {
@@ -340,11 +358,10 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
                     if (result != null) {
                         resultBox.getChildren().add(resultTablePane);
-                        resultTableController.idInput.clear();
-                        resultTableController.loadMatrix(result);
-                        if (resultTableController.autoNameCheck.isSelected()) {
-                            resultTableController.nameInput.setText(editController.nameInput.getText() + " " + op);
-                        }
+                        resultController.createMatrix(result);
+//                        if (resultTableController.autoNameCheck.isSelected()) {
+//                            resultTableController.nameInput.setText(dataMatrix.getDataName() + " " + op);
+//                        }
                     } else if (resultValue != AppValues.InvalidDouble) {
                         resultBox.getChildren().add(resultArea);
                         resultArea.setText(resultValue + "");
@@ -357,4 +374,5 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         }
 
     }
+
 }

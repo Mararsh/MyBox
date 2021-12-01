@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,7 +20,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.DataDefinition;
+import mara.mybox.data.Data2D;
+import mara.mybox.data.DataMatrix;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
@@ -36,10 +39,11 @@ import mara.mybox.value.UserConfig;
  */
 public class MatricesBinaryCalculationController extends ControlMatricesList {
 
+    protected DataMatrix dataMatrix2, resultMatrix;
     protected double[][] result;
 
     @FXML
-    protected ControlMatrixEdit edit2Controller, resultTableController;
+    protected ControlData2D data2Controller, resultController;
     @FXML
     protected ToggleGroup opGroup;
     @FXML
@@ -58,6 +62,22 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
 
     public MatricesBinaryCalculationController() {
         baseTitle = message("MatricesBinaryCalculation");
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            data2Controller.setDataType(this, Data2D.Type.Matrix);
+            dataMatrix2 = (DataMatrix) data2Controller.data2D;
+
+            resultController.setDataType(this, Data2D.Type.Matrix);
+            resultMatrix = (DataMatrix) resultController.data2D;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -128,17 +148,21 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         super.afterSceneLoaded();
 
         loadTableData();
-        editController.setManager(this);
-        edit2Controller.setManager(this);
-        resultTableController.setManager(this);
-        editController.sheetChangedNotify.addListener(
-                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    checkMatrices();
-                });
-        edit2Controller.sheetChangedNotify.addListener(
-                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    checkMatrices();
-                });
+
+        dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                checkMatrices();
+            }
+        });
+
+        data2Controller.statusNotify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                checkMatrices();
+            }
+        });
+
     }
 
     @Override
@@ -199,11 +223,11 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     @FXML
     public void matrixAAction() {
         try {
-            DataDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
             if (selected == null) {
                 return;
             }
-            editController.loadMatrix(selected);
+            dataController.loadMatrix(selected);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -212,11 +236,11 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     @FXML
     public void matrixBAction() {
         try {
-            DataDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
             if (selected == null) {
                 return;
             }
-            edit2Controller.loadMatrix(selected);
+            data2Controller.loadMatrix(selected);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -225,29 +249,29 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     protected boolean checkMatrices() {
         checkLabel.setText("");
         if (plusRadio.isSelected() || minusRadio.isSelected() || hadamardProductRadio.isSelected()) {
-            if (editController.colsNumber != edit2Controller.colsNumber
-                    || editController.rowsNumber != edit2Controller.rowsNumber) {
+            if (dataMatrix.getColsNumber() != dataMatrix2.getColsNumber()
+                    || dataMatrix.getRowsNumber() != dataMatrix2.getRowsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateShouldSame"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (multiplyRadio.isSelected()) {
-            if (editController.colsNumber != edit2Controller.rowsNumber) {
+            if (dataMatrix.getColsNumber() != dataMatrix2.getRowsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateMultiply"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (verticalMergeRadio.isSelected()) {
-            if (editController.colsNumber != edit2Controller.colsNumber) {
+            if (dataMatrix.getColsNumber() != dataMatrix2.getColsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateShouldSameCols"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (horizontalMergeRadio.isSelected()) {
-            if (editController.rowsNumber != edit2Controller.rowsNumber) {
+            if (dataMatrix.getRowsNumber() != dataMatrix2.getRowsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateShouldSameRows"));
                 calculateButton.setDisable(true);
                 return false;
@@ -274,25 +298,25 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                 protected boolean handle() {
                     try {
                         if (plusRadio.isSelected()) {
-                            result = MatrixDoubleTools.add(editController.matrixDouble(), edit2Controller.matrixDouble());
+                            result = MatrixDoubleTools.add(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
 
                         } else if (minusRadio.isSelected()) {
-                            result = MatrixDoubleTools.subtract(editController.matrixDouble(), edit2Controller.matrixDouble());
+                            result = MatrixDoubleTools.subtract(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
 
                         } else if (multiplyRadio.isSelected()) {
-                            result = MatrixDoubleTools.multiply(editController.matrixDouble(), edit2Controller.matrixDouble());
+                            result = MatrixDoubleTools.multiply(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
 
                         } else if (hadamardProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.hadamardProduct(editController.matrixDouble(), edit2Controller.matrixDouble());
+                            result = MatrixDoubleTools.hadamardProduct(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
 
                         } else if (kroneckerProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.kroneckerProduct(editController.matrixDouble(), edit2Controller.matrixDouble());
+                            result = MatrixDoubleTools.kroneckerProduct(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
 
                         } else if (verticalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.vertivalMerge(editController.matrixDouble(), edit2Controller.matrixDouble());
+                            result = MatrixDoubleTools.vertivalMerge(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
 
                         } else if (horizontalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.horizontalMerge(editController.matrixDouble(), edit2Controller.matrixDouble());
+                            result = MatrixDoubleTools.horizontalMerge(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
 
                         }
                     } catch (Exception e) {
@@ -307,11 +331,10 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                     cost = new Date().getTime() - startTime.getTime();
                     String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                     resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-                    resultTableController.idInput.clear();
-                    resultTableController.loadMatrix(result);
-                    if (resultTableController.autoNameCheck.isSelected()) {
-                        resultTableController.nameInput.setText(op);
-                    }
+                    resultController.createMatrix(result);
+//                    if (resultController.autoNameCheck.isSelected()) {
+//                        resultController.nameInput.setText(op);
+//                    }
                 }
 
             };

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.db.data.Data2DDefinition;
@@ -36,6 +37,38 @@ public class DataFileExcel extends DataFile {
 
     public DataFileExcel() {
         type = Type.Excel;
+    }
+
+    public void setOptions(boolean hasHeader) {
+        options = new HashMap<>();
+        options.put("hasHeader", hasHeader);
+    }
+
+    public void setOptions(boolean hasHeader, String currentSheetName) {
+        options = new HashMap<>();
+        options.put("currentSheetName", currentSheetName);
+        options.put("hasHeader", hasHeader);
+    }
+
+    public void setOptions(String currentSheetName) {
+        options = new HashMap<>();
+        options.put("currentSheetName", currentSheetName);
+    }
+
+    @Override
+    public void applyOptions() {
+        try {
+            if (options == null) {
+                return;
+            }
+            if (options.containsKey("hasHeader")) {
+                hasHeader = (boolean) (options.get("hasHeader"));
+            }
+            if (options.containsKey("currentSheetName")) {
+                currentSheetName = (String) (options.get("currentSheetName"));
+            }
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -445,7 +478,7 @@ public class DataFileExcel extends DataFile {
         }
     }
 
-    public boolean newSheet(String name, boolean load) {
+    public boolean newSheet(String sheetName) {
         if (file == null) {
             return false;
         }
@@ -453,7 +486,7 @@ public class DataFileExcel extends DataFile {
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(file, tmpDataFile);
         try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
-            Sheet targetSheet = targetBook.createSheet(name);
+            Sheet targetSheet = targetBook.createSheet(sheetName);
             List<List<String>> data = tmpData();
             for (int r = 0; r < data.size(); r++) {
                 if (task == null || task.isCancelled()) {
@@ -473,22 +506,25 @@ public class DataFileExcel extends DataFile {
             error = e.toString();
             return false;
         }
-        FileDeleteTools.delete(tmpDataFile);
-        if (tmpFile == null || !tmpFile.exists()) {
-            return false;
-        }
-        if (FileTools.rename(tmpFile, file)) {
-            if (load) {
-                initFile(file);
-                currentSheetName = name;
-                hasHeader = false;
-                userSavedDataDefinition = false;
+        try {
+            FileDeleteTools.delete(tmpDataFile);
+            if (tmpFile == null || !tmpFile.exists()) {
+                return false;
             }
-            return true;
-        } else {
+            if (FileTools.rename(tmpFile, file)) {
+                initFile(file);
+                hasHeader = false;
+                currentSheetName = sheetName;
+                delimiter = currentSheetName;
+                tableData2DDefinition.insertData(this);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            error = e.toString();
             return false;
         }
-
     }
 
     public boolean renameSheet(String newName) {
@@ -518,7 +554,6 @@ public class DataFileExcel extends DataFile {
                 delimiter = currentSheetName;
                 sheetNames.set(sheetNames.indexOf(oldName), currentSheetName);
                 tableData2DDefinition.updateData(this);
-                userSavedDataDefinition = true;
                 return true;
             } else {
                 return false;

@@ -30,7 +30,7 @@ public class ControlData2DAttributes extends BaseController {
     protected String dataName;
     protected short scale;
     protected int maxRandom;
-    protected Status lastStatus, status;
+    protected Status status;
     protected final SimpleBooleanProperty invalid;
 
     public enum Status {
@@ -125,8 +125,6 @@ public class ControlData2DAttributes extends BaseController {
                     .or(Bindings.isEmpty(randomSelector.getEditor().textProperty()))
                     .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
-            okButton.setDisable(true);
-            cancelButton.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -158,12 +156,9 @@ public class ControlData2DAttributes extends BaseController {
     }
 
     public void status(Status newStatus) {
-        okButton.setDisable(newStatus != Status.Modified || invalid.get());
-        cancelButton.setDisable(newStatus != Status.Modified);
         if (status == newStatus) {
             return;
         }
-        lastStatus = status;
         status = newStatus;
         dataController.checkStatus();
 
@@ -182,7 +177,7 @@ public class ControlData2DAttributes extends BaseController {
     @FXML
     @Override
     public void okAction() {
-        if (!isChanged()) {
+        if (status != Status.Modified) {
             return;
         }
         if (pickValues()) {
@@ -207,11 +202,10 @@ public class ControlData2DAttributes extends BaseController {
     @FXML
     @Override
     public void cancelAction() {
-        if (!isChanged()) {
-            return;
+        if (status == Status.Modified) {
+            loadAttributes();
+            status(Status.Applied);
         }
-        status(lastStatus);
-        loadAttributes();
     }
 
 }

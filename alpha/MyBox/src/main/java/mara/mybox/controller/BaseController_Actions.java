@@ -9,6 +9,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
@@ -432,6 +433,20 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         thread.setDaemon(false);
         thread.start();
         return controller;
+    }
+
+    public void start(Task<?> task, Node node) {
+        if (task instanceof SingletonTask) {
+            SingletonTask sTask = (SingletonTask) task;
+            sTask.setController(myController);
+            sTask.setSelf(sTask);
+            if (node != null) {
+                sTask.setDisbaleNode(node);
+            }
+        }
+        Thread thread = new Thread(task);
+        thread.setDaemon(false);
+        thread.start();
     }
 
     public void multipleFilesGenerated(final List<String> fileNames) {

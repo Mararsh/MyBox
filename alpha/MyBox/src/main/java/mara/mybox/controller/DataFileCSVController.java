@@ -71,13 +71,14 @@ public class DataFileCSVController extends BaseData2DFileController {
 
     @Override
     public void pickOptions() {
-        dataFileCSV.setDelimiter(csvReadController.delimiter + "");
+        Charset charset;
         if (csvReadController.autoDetermine) {
-            dataFileCSV.setCharset(TextFileTools.charset(dataFileCSV.getFile()));
+            charset = TextFileTools.charset(dataFileCSV.getFile());
         } else {
-            dataFileCSV.setCharset(csvReadController.charset);
+            charset = csvReadController.charset;
         }
-        dataFileCSV.setHasHeader(csvReadController.withNamesCheck.isSelected());
+        dataFileCSV.setOptions(csvReadController.withNamesCheck.isSelected(),
+                charset, csvReadController.delimiter + "");
     }
 
     public void setFile(File file, Charset charset, boolean withName, char delimiter) {
@@ -88,10 +89,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         csvReadController.setDelimiter(delimiter);
         csvReadController.setCharset(charset);
         dataFileCSV.initFile(file);
-        dataFileCSV.setCharset(charset);
-        dataFileCSV.setDelimiter(delimiter + "");
-        dataFileCSV.setHasHeader(withName);
-        dataFileCSV.setUserSavedDataDefinition(false);
+        dataFileCSV.setOptions(withName, charset, delimiter + "");
         dataController.readDefinition();
     }
 

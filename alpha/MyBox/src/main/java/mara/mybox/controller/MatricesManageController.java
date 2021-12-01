@@ -2,9 +2,9 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
+import mara.mybox.data.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -17,7 +17,8 @@ import mara.mybox.value.Languages;
  */
 public class MatricesManageController extends BaseController {
 
-    protected ControlMatrixEdit editController;
+    protected ControlData2D dataController;
+    protected DataMatrix dataMatrix;
 
     @FXML
     protected ControlMatricesList listController;
@@ -32,43 +33,20 @@ public class MatricesManageController extends BaseController {
             super.initValues();
             listController.baseTitle = baseTitle;
             listController.baseName = baseName;
-            editController = listController.editController;
+
+            dataController = listController.dataController;
+            dataMatrix = listController.dataMatrix;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        editController.setManager(listController);
-        editController.sheetChangedNotify.addListener(
-                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    updateStatus();
-                });
-        listController.loadTableData();
-    }
-
-    protected void updateStatus() {
-        if (getMyStage() == null) {
-            return;
-        }
-        String title = baseTitle;
-        String name = editController.nameInput.getText();
-        if (name != null && !name.isBlank()) {
-            title += " - " + name.trim();
-        }
-        if (editController.dataChangedNotify.get()) {
-            title += " *";
-        }
-        getMyStage().setTitle(title);
-    }
-
-    @Override
-    public boolean checkBeforeNextAction() {
-        return editController.checkBeforeNextAction();
-    }
-
+//    @Override
+//    public void afterSceneLoaded() {
+//        super.afterSceneLoaded();
+//
+//        listController.loadTableData();
+//    }
     public static MatricesManageController oneOpen() {
         MatricesManageController controller = null;
         List<Window> windows = new ArrayList<>();

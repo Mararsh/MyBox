@@ -31,7 +31,7 @@ public class Data2DDefinition extends BaseData {
         resetDefinition();
     }
 
-    public void load(Data2DDefinition def) {
+    public void cloneAll(Data2DDefinition def) {
         try {
             if (def == null) {
                 return;
@@ -56,7 +56,7 @@ public class Data2DDefinition extends BaseData {
     public Data2DDefinition cloneAll() {
         try {
             Data2DDefinition newData = new Data2DDefinition();
-            newData.load(this);
+            newData.cloneAll(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

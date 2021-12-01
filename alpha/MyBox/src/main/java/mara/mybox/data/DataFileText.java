@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -24,6 +25,32 @@ public class DataFileText extends DataFile {
 
     public DataFileText() {
         type = Type.Text;
+    }
+
+    public void setOptions(boolean hasHeader, Charset charset, String delimiter) {
+        options = new HashMap<>();
+        options.put("hasHeader", hasHeader);
+        options.put("charset", charset);
+        options.put("delimiter", delimiter);
+    }
+
+    @Override
+    public void applyOptions() {
+        try {
+            if (options == null) {
+                return;
+            }
+            if (options.containsKey("hasHeader")) {
+                hasHeader = (boolean) (options.get("hasHeader"));
+            }
+            if (options.containsKey("charset")) {
+                charset = (Charset) (options.get("charset"));
+            }
+            if (options.containsKey("delimiter")) {
+                delimiter = (String) (options.get("delimiter"));
+            }
+        } catch (Exception e) {
+        }
     }
 
     @Override

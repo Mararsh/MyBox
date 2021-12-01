@@ -3,13 +3,17 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileText;
 import mara.mybox.data.StringTable;
@@ -27,14 +31,16 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-11-27
  * @License Apache License Version 2.0
  */
-public class DataTextController extends BaseController {
+public class DataPasteController extends BaseController {
 
-    protected ControlData2D dataController;
+    protected ControlData2DEditTable tableController;
+    protected Data2D data2D;
     protected DataFileText dataFileText;
     protected List<List<String>> data;
     protected List<String> columnNames;
     protected String delimiterName;
     protected SimpleBooleanProperty okNotify;
+    protected boolean forPaste;
 
     @FXML
     protected TextArea textArea;
@@ -44,15 +50,26 @@ public class DataTextController extends BaseController {
     protected ControlWebView htmlController;
     @FXML
     protected ControlTextDelimiter delimiterController;
+    @FXML
+    protected HBox pasteBox;
+    @FXML
+    protected ComboBox<String> rowSelector, colSelector;
 
-    public DataTextController() {
+    public DataPasteController() {
         okNotify = new SimpleBooleanProperty();
     }
 
-    public void setParameters(ControlData2D parent, String text) {
+    public void setParameters(ControlData2DEditTable parent, String text, boolean forPaste) {
         try {
-            dataController = parent;
+            tableController = parent;
+            data2D = tableController.data2D;
             baseName = parent.baseName;
+
+            this.forPaste = forPaste;
+            if (!forPaste) {
+                thisPane.getChildren().remove(pasteBox);
+
+            }
 
             htmlController.setParent(parent);
 
@@ -71,6 +88,28 @@ public class DataTextController extends BaseController {
                 delimiterName = null;  // guess at first 
                 goAction();
             }
+
+            makeControls(0, 0);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void makeControls(int row, int col) {
+        try {
+            if (!forPaste) {
+                return;
+            }
+            List<String> rows = new ArrayList<>();
+            for (long i = 0; i < tableController.tableData.size(); i++) {
+                rows.add("" + (i + 1));
+            }
+            rowSelector.getItems().setAll(rows);
+            rowSelector.getSelectionModel().select(row);
+
+            colSelector.getItems().setAll(data2D.columnNames());
+            colSelector.getSelectionModel().select(col);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -191,31 +230,36 @@ public class DataTextController extends BaseController {
             popError(message("NoData"));
             return;
         }
+        if (forPaste) {
+            pasteData();
+        } else {
+            loadData();
+        }
+    }
+
+    public void loadData() {
         synchronized (this) {
             if (task != null) {
                 task.cancel();
             }
             task = new SingletonTask<Void>(this) {
 
-                private Data2D data2D;
-
                 @Override
                 protected boolean handle() {
-                    data2D = dataController.data2D;
                     data2D.setTask(task);
                     File tmpFile = data2D.tmpFile(columnNames, data);
                     data2D.initFile(tmpFile);
-                    data2D.setHasHeader(columnNames != null);
-                    data2D.setCharset(Charset.forName("UTF-8"));
-                    data2D.setDelimiter(",");
-                    data2D.setUserSavedDataDefinition(false);
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("hasHeader", columnNames != null);
+                    options.put("charset", Charset.forName("UTF-8"));
+                    options.put("delimiter", ",");
+                    data2D.setOptions(options);
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    close();
-                    dataController.readDefinition();
+                    tableController.dataController.readDefinition();
                 }
 
                 @Override
@@ -229,6 +273,32 @@ public class DataTextController extends BaseController {
         }
     }
 
+    public void pasteData() {
+        try {
+            int row = rowSelector.getSelectionModel().getSelectedIndex();
+            int col = colSelector.getSelectionModel().getSelectedIndex();
+            if (row < 0 || row >= data2D.tableRowsNumber() || col < 0 || col >= data2D.tableColsNumber()) {
+                popError(message("InvalidParameters"));
+                return;
+            }
+            int rowsNumber = data2D.tableRowsNumber();
+            int colsNumber = data2D.tableColsNumber();
+            for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
+                List<String> tableRow = tableController.tableData.get(row);
+                List<String> dataRow = data.get(r - row);
+                for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
+                    tableRow.set(col + 1, dataRow.get(c - col));
+                }
+                tableController.tableData.set(row, tableRow);
+            }
+            tableController.tableChanged(true);
+
+            makeControls(row, col);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @FXML
     @Override
     public void cancelAction() {
@@ -239,11 +309,11 @@ public class DataTextController extends BaseController {
     /*
         static
      */
-    public static DataTextController open(ControlData2D parent, String text) {
+    public static DataPasteController open(ControlData2DEditTable parent, String text, boolean forPaste) {
         try {
-            DataTextController controller = (DataTextController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.DataTextFxml);
-            controller.setParameters(parent, text);
+            DataPasteController controller = (DataPasteController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.DataPasteFxml);
+            controller.setParameters(parent, text, forPaste);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

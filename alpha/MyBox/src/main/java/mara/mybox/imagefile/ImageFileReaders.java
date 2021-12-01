@@ -349,11 +349,11 @@ public class ImageFileReaders {
             if (region != null) {
                 param.setSourceRegion(region);
                 if (width <= 0) {
-                    requriedWidth = (int) region.getWidth();
+                    requriedWidth = (int) Math.ceil(region.getWidth());
                     scale = 1;
                 } else {
                     requriedWidth = width;
-                    scale = (int) region.getWidth() / width;
+                    scale = (int) Math.ceil(region.getWidth() / width);
                 }
             } else {
                 if (width <= 0) {
@@ -361,7 +361,7 @@ public class ImageFileReaders {
                     scale = 1;
                 } else {
                     requriedWidth = width;
-                    scale = imageWidth / width;
+                    scale = (int) Math.ceil(imageWidth / width);
                 }
             }
             if (scale > 1) {
@@ -414,11 +414,11 @@ public class ImageFileReaders {
             if (region != null) {
                 param.setSourceRegion(region);
                 if (height <= 0) {
-                    requriedHeight = (int) region.getWidth();
+                    requriedHeight = (int) Math.ceil(region.getWidth());
                     scale = 1;
                 } else {
                     requriedHeight = height;
-                    scale = (int) region.getWidth() / height;
+                    scale = (int) Math.ceil(region.getWidth() / height);
                 }
             } else {
                 if (height <= 0) {
@@ -426,7 +426,7 @@ public class ImageFileReaders {
                     scale = 1;
                 } else {
                     requriedHeight = height;
-                    scale = imageHeight / height;
+                    scale = (int) Math.ceil(imageHeight / height);
                 }
             }
             if (scale > 1) {

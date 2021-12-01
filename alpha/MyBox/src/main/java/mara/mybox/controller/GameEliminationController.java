@@ -80,7 +80,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -146,8 +146,7 @@ public class GameEliminationController extends BaseController {
     protected ColorSet colorSetController;
 
     public GameEliminationController() {
-        baseTitle = Languages.message("GameElimniation");
-
+        baseTitle = message("GameElimniation");
         TipsLabelKey = "GameEliminationComments";
     }
 
@@ -188,9 +187,13 @@ public class GameEliminationController extends BaseController {
             catButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (firstClick != null) {
+                        recoverStyle(firstClick.getX(), firstClick.getY());
+                        firstClick = null;
+                    }
                     autoPlaying = catButton.isSelected();
                     if (autoPlaying) {
-                        autoLabel.setText(Languages.message("Autoplaying"));
+                        autoLabel.setText(message("Autoplaying"));
                         findAdjacentAndEliminate();
                     } else {
                         autoLabel.setText("");
@@ -198,6 +201,18 @@ public class GameEliminationController extends BaseController {
                 }
             });
 
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(createButton, message("NewGame") + "\nn / Ctrl+n");
+            NodeStyleTools.setTooltip(helpMeButton, message("HelpMeFindExchange") + "\nh / Ctrl+h");
+            NodeStyleTools.setTooltip(catButton, message("AutoPlayGame") + "\np / Ctrl+p");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -275,18 +290,6 @@ public class GameEliminationController extends BaseController {
             start(task);
         }
 
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / Ctrl+n");
-            NodeStyleTools.setTooltip(helpMeButton, Languages.message("HelpMeFindExchange") + "\nh / Ctrl+h");
-            NodeStyleTools.setTooltip(catButton, Languages.message("AutoPlayGame") + "\np / Ctrl+p");
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     protected void initChessesTab(List<ImageItem> items, String defaultSelected) {
@@ -662,7 +665,7 @@ public class GameEliminationController extends BaseController {
                 count++;
             }
         }
-        chessesLabel.setText(MessageFormat.format(Languages.message("SelectChesses"), count));
+        chessesLabel.setText(MessageFormat.format(message("SelectChesses"), count));
     }
 
     public void viewImage() {
@@ -680,7 +683,7 @@ public class GameEliminationController extends BaseController {
             imageView.setImage(new Image(address));
             imageView.setPreserveRatio(true);
             imageView.setFitHeight(Math.min(scrollPane.getHeight(), imageView.getImage().getHeight()));
-            imageLabel.setText(Languages.message(selected.getComments()));
+            imageLabel.setText(message(selected.getComments()));
         } else if (selected.isColor()) {
 
         } else {
@@ -733,7 +736,7 @@ public class GameEliminationController extends BaseController {
                 }
             }
             if (countedChesses.isEmpty()) {
-                if (!PopTools.askSure(getBaseTitle(), Languages.message("SureNoScore"))) {
+                if (!PopTools.askSure(getBaseTitle(), message("SureNoScore"))) {
                     return;
                 }
             }
@@ -769,7 +772,7 @@ public class GameEliminationController extends BaseController {
             item.setSelected(false);
         }
         isSettingValues = false;
-        chessesLabel.setText(MessageFormat.format(Languages.message("SelectChesses"), 0));
+        chessesLabel.setText(MessageFormat.format(message("SelectChesses"), 0));
         imagesListview.refresh();
     }
 
@@ -870,7 +873,7 @@ public class GameEliminationController extends BaseController {
         String suffix = FileNameTools.getFileSuffix(file);
         if (suffix == null
                 || (!"mp3".equals(suffix.toLowerCase()) && !"wav".equals(suffix.toLowerCase()))) {
-            alertError(Languages.message("OnlySupportMp3Wav"));
+            alertError(message("OnlySupportMp3Wav"));
             return;
         }
         soundFile = file;
@@ -973,7 +976,7 @@ public class GameEliminationController extends BaseController {
         if (selectedChesses.size() <= minimumAdjacent) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(getBaseTitle());
-            alert.setContentText(MessageFormat.format(Languages.message("ChessesNumberTooSmall"), minimumAdjacent + ""));
+            alert.setContentText(MessageFormat.format(message("ChessesNumberTooSmall"), minimumAdjacent + ""));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
@@ -1090,6 +1093,10 @@ public class GameEliminationController extends BaseController {
             return;
         }
         try {
+            if (firstClick != null) {
+                recoverStyle(firstClick.getX(), firstClick.getY());
+                firstClick = null;
+            }
             for (int i = 1; i <= boardSize; ++i) {
                 for (int j = 1; j <= boardSize; ++j) {
                     setRandomImage(i, j);
@@ -1128,8 +1135,7 @@ public class GameEliminationController extends BaseController {
         }
     }
 
-    protected Adjacent exchange(int i1, int j1, int i2, int j2,
-            boolean justCheck) {
+    protected Adjacent exchange(int i1, int j1, int i2, int j2, boolean justCheck) {
         if (isSettingValues) {
             return null;
         }
@@ -1461,7 +1467,7 @@ public class GameEliminationController extends BaseController {
             int add = scoreRulers.get(size);
             totalScore += add;
             long cost = new Date().getTime() - startTime.getTime();
-            scoreLabel.setText(Languages.message("Score") + ": " + totalScore + "  " + Languages.message("Cost") + ": "
+            scoreLabel.setText(message("Score") + ": " + totalScore + "  " + message("Cost") + ": "
                     + DateTools.timeDuration(cost));
 
             if (add > 0) {
@@ -1569,12 +1575,12 @@ public class GameEliminationController extends BaseController {
 
             if (autoPlaying || deadRenewRadio.isSelected()) {
                 newGame(false);
-                popInformation(Languages.message("DeadlockDetectRenew"));
+                popInformation(message("DeadlockDetectRenew"));
             } else if (lastRandom == null || deadPromptRadio.isSelected()) {
                 promptDeadlock();
             } else {
                 makeChance();
-                popInformation(Languages.message("DeadlockDetectChance"));
+                popInformation(message("DeadlockDetectChance"));
             }
 
         } catch (Exception e) {
@@ -1633,10 +1639,10 @@ public class GameEliminationController extends BaseController {
             SoundTools.BenWu2();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(getBaseTitle());
-            alert.setContentText(Languages.message("NoValidElimination"));
+            alert.setContentText(message("NoValidElimination"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonRenew = new ButtonType(Languages.message("RenewGame"));
-            ButtonType buttonChance = new ButtonType(Languages.message("MakeChance"));
+            ButtonType buttonRenew = new ButtonType(message("RenewGame"));
+            ButtonType buttonChance = new ButtonType(message("MakeChance"));
             alert.getButtonTypes().setAll(buttonRenew, buttonChance);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
@@ -1644,10 +1650,10 @@ public class GameEliminationController extends BaseController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonRenew) {
                 newGame(false);
-                popInformation(Languages.message("DeadlockDetectRenew"));
+                popInformation(message("DeadlockDetectRenew"));
             } else if (result.get() == buttonChance) {
                 makeChance();
-                popInformation(Languages.message("DeadlockDetectChance"));
+                popInformation(message("DeadlockDetectChance"));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -1773,6 +1779,7 @@ public class GameEliminationController extends BaseController {
             VBox vbox = getBox(i, j);
             vbox.getChildren().clear();
             vbox.getChildren().add(node);
+            vbox.setStyle(currentStyle);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1819,8 +1826,8 @@ public class GameEliminationController extends BaseController {
 
     protected void focusStyle(int i, int j) {
         try {
-            final VBox vbox1 = chessBoard.get(i + "-" + j);
-            vbox1.setStyle(focusStyle);
+            VBox vbox = getBox(i, j);
+            vbox.setStyle(focusStyle);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1828,8 +1835,8 @@ public class GameEliminationController extends BaseController {
 
     protected void recoverStyle(int i, int j) {
         try {
-            final VBox vbox1 = chessBoard.get(i + "-" + j);
-            vbox1.setStyle(currentStyle);
+            VBox vbox = getBox(i, j);
+            vbox.setStyle(currentStyle);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1852,8 +1859,7 @@ public class GameEliminationController extends BaseController {
             this.endj = endj;
         }
 
-        public void setExchange(int exchangei1, int exchangej1, int exchangei2,
-                int exchangej2) {
+        public void setExchange(int exchangei1, int exchangej1, int exchangei2, int exchangej2) {
             this.exchangei1 = exchangei1;
             this.exchangej1 = exchangej1;
             this.exchangei2 = exchangei2;

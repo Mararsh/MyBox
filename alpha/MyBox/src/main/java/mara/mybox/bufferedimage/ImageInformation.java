@@ -276,7 +276,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPDF(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try (PDDocument doc = PDDocument.load(imageInfo.getFile(), AppVariables.pdfMemUsage)) {
+        try ( PDDocument doc = PDDocument.load(imageInfo.getFile(), AppVariables.pdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             int dpi = imageInfo.getDpi();
             if (dpi <= 0) {
@@ -299,7 +299,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPPT(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try (SlideShow ppt = SlideShowFactory.create(imageInfo.getFile())) {
+        try ( SlideShow ppt = SlideShowFactory.create(imageInfo.getFile())) {
             List<Slide> slides = ppt.getSlides();
             int pptWidth = ppt.getPageSize().width;
             int pptHeight = ppt.getPageSize().height;
@@ -399,7 +399,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 double ratio = Math.sqrt(1d * availableMem / requiredMem);
                 imageInfo.setSampleScale(1);
                 imageInfo.setNeedSample(false);
-                return (int) (imageInfo.getWidth() * ratio);
+                return (int) Math.ceil(imageInfo.getWidth() * ratio);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

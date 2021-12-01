@@ -66,4 +66,12 @@ public class AppPaths {
         return fileBackupsPath;
     }
 
+    public static String getDownloadsPath() {
+        return getPath("downloads");
+    }
+
+    public static String getGeneratedPath() {
+        return getPath("generated");
+    }
+
 }

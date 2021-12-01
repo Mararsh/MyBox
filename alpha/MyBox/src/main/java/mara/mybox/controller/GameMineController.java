@@ -52,7 +52,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.HtmlStyles;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -61,7 +61,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class GameMineController extends BaseWebViewController {
-    
+
     protected int chessSize, vNumber, hNumber, spacing, minesNumber,
             total, disclosed, historiesNumber;
     protected AnchorPane[][] chessBoard;
@@ -71,11 +71,11 @@ public class GameMineController extends BaseWebViewController {
     protected DropShadow dropShadow;
     protected String mineImage;
     protected long startTime, cost;
-    
+
     protected enum ChessStatus {
         Disclosed, Closed, Marked, Suspected
     }
-    
+
     @FXML
     protected TabPane tabPane;
     @FXML
@@ -99,12 +99,12 @@ public class GameMineController extends BaseWebViewController {
     protected Label timeLabel, minesLabel;
     @FXML
     protected CheckBox miaowCheck;
-    
+
     public GameMineController() {
-        baseTitle = Languages.message("GameMine");
+        baseTitle = message("GameMine");
         TipsLabelKey = "GameMineComments";
     }
-    
+
     @Override
     public void initValues() {
         try {
@@ -112,37 +112,37 @@ public class GameMineController extends BaseWebViewController {
             random = new Random();
             dropShadow = new DropShadow();
             mineImage = StyleTools.getIconPath(AppVariables.ControlColor) + "iconClear.png";
-            
+
             spacing = 0;
             chessSize = UserConfig.getInt(baseName + "ChessSize", 20);
             vNumber = UserConfig.getInt(baseName + "BoardHeight", 16);
             hNumber = UserConfig.getInt(baseName + "BoardWidth", 30);
             minesNumber = UserConfig.getInt(baseName + "MinesNumber", 99);
             historiesNumber = UserConfig.getInt(baseName + "HistoriesNumber", 50);
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             minesLabel.setStyle("-fx-background-color: black ; -fx-text-fill: lightgreen;");
             timeLabel.setStyle("-fx-background-color: black ; -fx-text-fill: lightgreen;");
-            
+
             chessSizeSelector.getItems().addAll(Arrays.asList("20", "15", "10", "18", "25", "30"));
-            
+
             boardWidthInput.setText(hNumber + "");
             boardHeightInput.setText(vNumber + "");
             boardMinesInput.setText(minesNumber + "");
             chessSizeSelector.setValue(chessSize + "");
-            
+
             historiesNumberSelector.getItems().addAll(Arrays.asList("50", "100", "200", "20", "10", "300", "500"));
             historiesNumberSelector.getSelectionModel().select(UserConfig.getString(baseName + "HistoriesNumber", "50"));
-            
+
             miaowCheck.setSelected(UserConfig.getBoolean(baseName + "Miaow", true));
             miaowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -150,50 +150,28 @@ public class GameMineController extends BaseWebViewController {
                     UserConfig.setBoolean(baseName + "Miaow", miaowCheck.isSelected());
                 }
             });
-            
+
             loadRecords();
             createAction();
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-    
-    @Override
-    public boolean keyFilter(KeyEvent event) {
-        KeyCode code = event.getCode();
-        if (code != null) {
-            switch (code) {
-                case H:
-                    helpMe();
-                    return true;
-                case N:
-                    createAction();
-                    return true;
-                case R:
-                    recoverAction();
-                    return true;
-                case Z:
-                    undoAction();
-                    return true;
-            }
-        }
-        return super.keyFilter(event);
-    }
-    
+
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(undoButton, Languages.message("Undo") + "\nz / Z");
-            NodeStyleTools.setTooltip(recoverButton, Languages.message("Replay") + "\nr / R");
-            NodeStyleTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / N");
-            NodeStyleTools.setTooltip(helpMeButton, Languages.message("HelpMe") + "\nh / H");
+            NodeStyleTools.setTooltip(undoButton, message("Undo") + "\nz / Ctrl+z");
+            NodeStyleTools.setTooltip(recoverButton, message("Replay") + "\nr / Ctrl+r");
+            NodeStyleTools.setTooltip(createButton, message("NewGame") + "\nn / Ctrl+n");
+            NodeStyleTools.setTooltip(helpMeButton, message("HelpMe") + "\nh / Ctrl+h");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     @FXML
     @Override
     public void createAction() {
@@ -206,12 +184,12 @@ public class GameMineController extends BaseWebViewController {
             chessStatus = new ChessStatus[vNumber][hNumber];
             total = vNumber * hNumber - minesNumber;
             resetPanes();
-            
+
             chessboardPane.getChildren().clear();
             chessboardPane.setPrefWidth((chessSize + spacing * 2) * hNumber);
             chessboardPane.setPrefHeight((chessSize + spacing * 2) * vNumber);
             chessboardPane.setSpacing(spacing);
-            
+
             for (int v = 0; v < vNumber; ++v) {
                 HBox line = new HBox();
                 line.setAlignment(Pos.CENTER);
@@ -273,10 +251,10 @@ public class GameMineController extends BaseWebViewController {
                             }
                         }
                     });
-                    
+
                 }
             }
-            
+
             int mines = 0;
             while (mines < minesNumber) {
                 int h = random.nextInt(hNumber);
@@ -286,7 +264,7 @@ public class GameMineController extends BaseWebViewController {
                     mines++;
                 }
             }
-            
+
             for (int v = 0; v < vNumber; ++v) {
                 for (int h = 0; h < hNumber; ++h) {
                     int n = 0;
@@ -328,7 +306,7 @@ public class GameMineController extends BaseWebViewController {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     public void timing() {
         if (timer != null) {
             timer.cancel();
@@ -378,7 +356,7 @@ public class GameMineController extends BaseWebViewController {
                 timer.cancel();
                 timer = null;
             }
-            popInformation(Languages.message("Congratulations"));
+            popInformation(message("Congratulations"));
             if (miaowCheck.isSelected()) {
                 SoundTools.miao3();
             }
@@ -398,11 +376,11 @@ public class GameMineController extends BaseWebViewController {
         disclose(v + 1, h);
         disclose(v + 1, h + 1);
     }
-    
+
     protected boolean valid(int v, int h) {
         return v >= 0 && v < vNumber && h >= 0 && h < hNumber;
     }
-    
+
     protected void discloseAll(int v, int h) {
         if (!valid(v, h)) {
             return;
@@ -423,7 +401,7 @@ public class GameMineController extends BaseWebViewController {
         discloseUnmarked(v + 1, h);
         discloseUnmarked(v + 1, h + 1);
     }
-    
+
     protected void discloseUnmarked(int v, int h) {
         if (!valid(v, h)) {
             return;
@@ -436,7 +414,7 @@ public class GameMineController extends BaseWebViewController {
             disclose(v, h);
         }
     }
-    
+
     protected void loadRecords() {
         webViewController.loadContents(null);
         synchronized (this) {
@@ -444,14 +422,14 @@ public class GameMineController extends BaseWebViewController {
                 return;
             }
             task = new SingletonTask<Void>(this) {
-                
+
                 private String html;
-                
+
                 @Override
                 protected boolean handle() {
                     List<String> names = new ArrayList<>();
-                    names.addAll(Arrays.asList(Languages.message("Height"), Languages.message("Width"), Languages.message("MinesNumber"),
-                            Languages.message("Cost"), Languages.message("Time")
+                    names.addAll(Arrays.asList(message("Height"), message("Width"), message("MinesNumber"),
+                            message("Cost"), message("Time")
                     ));
                     StringTable table = new StringTable(names);
                     List<StringValues> records = TableStringValues.values("GameMineHistory");
@@ -471,7 +449,7 @@ public class GameMineController extends BaseWebViewController {
                     html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
                     return true;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     webViewController.loadContents(html);
@@ -480,7 +458,7 @@ public class GameMineController extends BaseWebViewController {
             start(task);
         }
     }
-    
+
     @FXML
     public void clearHistories() {
         synchronized (this) {
@@ -493,7 +471,7 @@ public class GameMineController extends BaseWebViewController {
                     TableStringValues.clear("GameMineHistory");
                     return true;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     webViewController.loadContents(null);
@@ -502,7 +480,7 @@ public class GameMineController extends BaseWebViewController {
             start(task);
         }
     }
-    
+
     public void failed() {
         if (timer != null) {
             timer.cancel();
@@ -518,7 +496,7 @@ public class GameMineController extends BaseWebViewController {
         }
         undoButton.setDisable(false);
     }
-    
+
     @FXML
     public void helpMe() {
         for (int v = 0; v < vNumber; ++v) {
@@ -528,7 +506,7 @@ public class GameMineController extends BaseWebViewController {
         }
         undoButton.setDisable(false);
     }
-    
+
     @FXML
     @Override
     public void undoAction() {
@@ -542,11 +520,11 @@ public class GameMineController extends BaseWebViewController {
             timing();
         }
     }
-    
+
     protected void displayChess(int v, int h) {
         displayChess(v, h, chessStatus[v][h], chessValue[v][h]);
     }
-    
+
     protected void displayChess(int v, int h, ChessStatus status, int value) {
         AnchorPane apane = chessBoard[v][h];
         apane.getChildren().clear();
@@ -622,7 +600,7 @@ public class GameMineController extends BaseWebViewController {
                 break;
         }
     }
-    
+
     @FXML
     @Override
     public void recoverAction() {
@@ -638,7 +616,7 @@ public class GameMineController extends BaseWebViewController {
             }
         }
     }
-    
+
     public void resetPanes() {
         if (timer != null) {
             timer.cancel();
@@ -650,7 +628,7 @@ public class GameMineController extends BaseWebViewController {
         timeLabel.setText("");
         undoButton.setDisable(true);
     }
-    
+
     @FXML
     public void popBoardMenu(MouseEvent mouseEvent) {
         try {
@@ -659,34 +637,34 @@ public class GameMineController extends BaseWebViewController {
             }
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-            
+
             MenuItem menu;
-            menu = new MenuItem(Languages.message("Easy"));
+            menu = new MenuItem(message("Easy"));
             menu.setOnAction((ActionEvent event) -> {
                 boardWidthInput.setText("9");
                 boardHeightInput.setText("9");
                 boardMinesInput.setText("10");
             });
             popMenu.getItems().add(menu);
-            
-            menu = new MenuItem(Languages.message("Medium"));
+
+            menu = new MenuItem(message("Medium"));
             menu.setOnAction((ActionEvent event) -> {
                 boardWidthInput.setText("16");
                 boardHeightInput.setText("16");
                 boardMinesInput.setText("40");
             });
             popMenu.getItems().add(menu);
-            
-            menu = new MenuItem(Languages.message("Hard"));
+
+            menu = new MenuItem(message("Hard"));
             menu.setOnAction((ActionEvent event) -> {
                 boardWidthInput.setText("30");
                 boardHeightInput.setText("16");
                 boardMinesInput.setText("99");
             });
             popMenu.getItems().add(menu);
-            
+
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -695,21 +673,21 @@ public class GameMineController extends BaseWebViewController {
                 }
             });
             popMenu.getItems().add(menu);
-            
+
             LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     protected void okOptionsAction() {
         try {
             int v = Integer.parseInt(chessSizeSelector.getValue());
             if (v < 10) {
                 chessSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                popError(Languages.message("TooSmall"));
+                popError(message("TooSmall"));
                 return;
             }
             chessSize = v;
@@ -721,7 +699,7 @@ public class GameMineController extends BaseWebViewController {
         try {
             int v = Integer.parseInt(boardWidthInput.getText());
             if (v < 2) {
-                popError(Languages.message("TooSmall"));
+                popError(message("TooSmall"));
                 boardWidthInput.setStyle(UserConfig.badStyle());
                 return;
             }
@@ -734,7 +712,7 @@ public class GameMineController extends BaseWebViewController {
         try {
             int v = Integer.parseInt(boardHeightInput.getText());
             if (v < 2) {
-                popError(Languages.message("TooSmall"));
+                popError(message("TooSmall"));
                 boardHeightInput.setStyle(UserConfig.badStyle());
                 return;
             }
@@ -747,7 +725,7 @@ public class GameMineController extends BaseWebViewController {
         try {
             int v = Integer.parseInt(boardMinesInput.getText());
             if (v <= 0 || v >= hNumber * vNumber) {
-                popError(Languages.message("InvalidData"));
+                popError(message("InvalidData"));
                 boardMinesInput.setStyle(UserConfig.badStyle());
                 return;
             }
@@ -763,14 +741,14 @@ public class GameMineController extends BaseWebViewController {
         createAction();
         tabPane.getSelectionModel().select(playTab);
     }
-    
+
     @FXML
     protected void okHistoriesNumber() {
         try {
             int v = Integer.parseInt(historiesNumberSelector.getValue());
             if (v < 1) {
                 historiesNumberSelector.getEditor().setStyle(UserConfig.badStyle());
-                popError(Languages.message("TooSmall"));
+                popError(message("TooSmall"));
                 return;
             }
             historiesNumber = v;
@@ -790,7 +768,7 @@ public class GameMineController extends BaseWebViewController {
                     TableStringValues.max("GameMineHistory", historiesNumber);
                     return true;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     loadRecords();
@@ -798,7 +776,65 @@ public class GameMineController extends BaseWebViewController {
             };
             start(task);
         }
-        
+
     }
-    
+
+    @Override
+    public boolean keyFilter(KeyEvent event) {
+        KeyCode code = event.getCode();
+        if (code != null) {
+            switch (code) {
+                case H:
+                    helpMe();
+                    return true;
+                case N:
+                    createAction();
+                    return true;
+                case R:
+                    recoverAction();
+                    return true;
+                case Z:
+                    undoAction();
+                    return true;
+            }
+        }
+        return super.keyFilter(event);
+    }
+
+    @Override
+    public boolean controlAltR() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        recoverAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltZ() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        undoAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltH() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        helpMe();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltN() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        createAction();
+        return true;
+    }
+
 }

@@ -1,7 +1,8 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.beans.property.SimpleBooleanProperty;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 
 /**
  * @Author Mara
@@ -17,7 +18,7 @@ public class ControlTargetPath extends ControlTargetFile {
         permitNull = false;
         mustExist = true;
         notify = new SimpleBooleanProperty(false);
-        defaultFile = AppVariables.MyBoxDownloadsPath;
+        defaultFile = new File(AppPaths.getGeneratedPath());
     }
 
 }
