@@ -144,7 +144,7 @@ public class ImageFileReaders {
                 int size = fileInfo.getNumberOfImages();
                 if (size > 0) {
                     if (targetIndex < 0) {
-                        targetIndex = size > 0 ? size - 1 : 0;
+                        targetIndex = size - 1;
                     }
                     if (targetIndex >= size) {
                         targetIndex = 0;
@@ -169,7 +169,7 @@ public class ImageFileReaders {
                         int size = fileInfo.getNumberOfImages();
                         if (size > 0) {
                             if (targetIndex < 0) {
-                                targetIndex = size > 0 ? size - 1 : 0;
+                                targetIndex = size - 1;
                             }
                             if (targetIndex >= size) {
                                 targetIndex = 0;
@@ -338,36 +338,54 @@ public class ImageFileReaders {
         return frame;
     }
 
-    public static Object readFrameByWidth(ImageReader reader, int index, Rectangle region, int width) {
+    public static double maxReadWidth(int imageWidth, int imageHeight, int channels, int m) {
+        try {
+            Runtime r = Runtime.getRuntime();
+            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
+
+            long bytesSize = channels * imageWidth * imageHeight;
+            long requiredMem = bytesSize * m;
+
+            if (availableMem < requiredMem) {
+                double scale = Math.sqrt(1d * requiredMem / availableMem);
+                return imageWidth / scale;
+            } else {
+                double ratio = Math.sqrt(1d * availableMem / requiredMem);
+                return imageWidth * ratio;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return -1;
+        }
+    }
+
+    private static Object readFrameByWidth(ImageReader reader, int index, Rectangle region, int width) {
         if (reader == null || index < 0) {
             return null;
         }
         try {
             ImageReadParam param = reader.getDefaultReadParam();
             int imageWidth = reader.getWidth(index);
-            int requriedWidth, scale;
+            int imageHeight = reader.getHeight(index);
+            int requriedWidth = width, scale = 1;
             if (region != null) {
                 param.setSourceRegion(region);
                 if (width <= 0) {
                     requriedWidth = (int) Math.ceil(region.getWidth());
-                    scale = 1;
-                } else {
-                    requriedWidth = width;
-                    scale = (int) Math.ceil(region.getWidth() / width);
                 }
-            } else {
-                if (width <= 0) {
-                    requriedWidth = imageWidth;
-                    scale = 1;
-                } else {
-                    requriedWidth = width;
-                    scale = (int) Math.ceil(imageWidth / width);
+            } else if (width <= 0) {
+                requriedWidth = imageWidth;
+            }
+            double maxReadWidth = maxReadWidth(imageWidth, imageHeight, 4, 6);
+            if (maxReadWidth < requriedWidth) {
+                System.gc();
+                maxReadWidth = maxReadWidth(imageWidth, imageHeight, 4, 6);
+                if (maxReadWidth < requriedWidth) {
+                    scale = (int) (requriedWidth / maxReadWidth);
                 }
             }
             if (scale > 1) {
                 param.setSourceSubsampling(scale, scale, 0, 0);
-            } else {
-                scale = 1;
             }
             BufferedImage frame;
             try {
@@ -384,6 +402,27 @@ public class ImageFileReaders {
 
     public static BufferedImage readFrameByHeight(String format, String filename, int index, int height) {
         return readFrameByHeight(format, filename, index, null, height);
+    }
+
+    public static double maxReadHeight(int imageWidth, int imageHeight, int channels, int m) {
+        try {
+            Runtime r = Runtime.getRuntime();
+            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
+
+            long bytesSize = channels * imageWidth * imageHeight;
+            long requiredMem = bytesSize * m;
+
+            if (availableMem < requiredMem) {
+                double scale = Math.sqrt(1d * requiredMem / availableMem);
+                return imageHeight / scale;
+            } else {
+                double ratio = Math.sqrt(1d * availableMem / requiredMem);
+                return imageHeight * ratio;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return -1;
+        }
     }
 
     public static BufferedImage readFrameByHeight(String format, String filename, int index, Rectangle region, int height) {
@@ -409,24 +448,24 @@ public class ImageFileReaders {
             }
             reader.setInput(iis, true, true);
             ImageReadParam param = reader.getDefaultReadParam();
+
+            int imageWidth = reader.getWidth(index);
             int imageHeight = reader.getHeight(index);
-            int requriedHeight, scale;
+            int requriedHeight = height, scale = 1;
             if (region != null) {
                 param.setSourceRegion(region);
                 if (height <= 0) {
-                    requriedHeight = (int) Math.ceil(region.getWidth());
-                    scale = 1;
-                } else {
-                    requriedHeight = height;
-                    scale = (int) Math.ceil(region.getWidth() / height);
+                    requriedHeight = (int) Math.ceil(region.getHeight());
                 }
-            } else {
-                if (height <= 0) {
-                    requriedHeight = imageHeight;
-                    scale = 1;
-                } else {
-                    requriedHeight = height;
-                    scale = (int) Math.ceil(imageHeight / height);
+            } else if (height <= 0) {
+                requriedHeight = imageHeight;
+            }
+            double maxReadHeight = maxReadHeight(imageWidth, imageHeight, 4, 6);
+            if (maxReadHeight < requriedHeight) {
+                System.gc();
+                maxReadHeight = maxReadHeight(imageWidth, imageHeight, 4, 6);
+                if (maxReadHeight < requriedHeight) {
+                    scale = (int) (requriedHeight / maxReadHeight);
                 }
             }
             if (scale > 1) {

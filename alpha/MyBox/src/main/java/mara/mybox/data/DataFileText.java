@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -67,13 +66,7 @@ public class DataFileText extends DataFile {
         if (delimiter == null || delimiter.isEmpty()) {
             delimiter = ",";
         }
-        if (dataName == null || dataName.isBlank()) {
-            if (!isTmpFile()) {
-                dataName = file.getName();
-            } else {
-                dataName = DateTools.nowString();
-            }
-        }
+        super.checkAttributes();
     }
 
     public String guessDelimiter() {

@@ -54,7 +54,7 @@ public class WeiboSnapController extends BaseController {
     private List<String> addressList;
 
     @FXML
-    protected ControlFileSelecter targetPathInputController;
+    protected ControlPathInput targetPathInputController;
     @FXML
     protected ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
     @FXML
@@ -861,13 +861,11 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
 
+        targetPathInputController.baseName(baseName).init();
         targetPathInputController.notify.addListener(
                 (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                     targetPath = targetPathInputController.file;
                 });
-        targetPathInputController.label(Languages.message("TargetPath"))
-                .baseName(baseName).savedName(baseName + "TargatPath")
-                .isSource(false).isDirectory(true).mustExist(false).init();
 
         startButton.disableProperty().bind(targetPathInputController.valid.not()
                 .or(startMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))

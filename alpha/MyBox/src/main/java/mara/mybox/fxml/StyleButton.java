@@ -66,6 +66,8 @@ public class StyleButton {
             switch (id) {
                 case "createButton":
                     return new StyleData(id, message("Create"), "CTRL+n", "iconAdd.png");
+                case "createDataButton":
+                    return new StyleData(id, message("CreateData"), "", "iconFileAdd.png");
                 default:
                     return new StyleData(id, message("Create"), "", "iconAdd.png");
             }

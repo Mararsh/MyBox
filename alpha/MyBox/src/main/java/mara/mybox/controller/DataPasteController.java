@@ -68,7 +68,6 @@ public class DataPasteController extends BaseController {
             this.forPaste = forPaste;
             if (!forPaste) {
                 thisPane.getChildren().remove(pasteBox);
-
             }
 
             htmlController.setParent(parent);
@@ -277,20 +276,22 @@ public class DataPasteController extends BaseController {
         try {
             int row = rowSelector.getSelectionModel().getSelectedIndex();
             int col = colSelector.getSelectionModel().getSelectedIndex();
-            if (row < 0 || row >= data2D.tableRowsNumber() || col < 0 || col >= data2D.tableColsNumber()) {
+            int rowsNumber = data2D.tableRowsNumber();
+            int colsNumber = data2D.tableColsNumber();
+            if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
                 popError(message("InvalidParameters"));
                 return;
             }
-            int rowsNumber = data2D.tableRowsNumber();
-            int colsNumber = data2D.tableColsNumber();
+            tableController.isSettingValues = true;
             for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
-                List<String> tableRow = tableController.tableData.get(row);
+                List<String> tableRow = tableController.tableData.get(r);
                 List<String> dataRow = data.get(r - row);
                 for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
-                    tableRow.set(col + 1, dataRow.get(c - col));
+                    tableRow.set(c + 1, dataRow.get(c - col));
                 }
-                tableController.tableData.set(row, tableRow);
+                tableController.tableData.set(r, tableRow);
             }
+            tableController.isSettingValues = false;
             tableController.tableChanged(true);
 
             makeControls(row, col);
@@ -305,6 +306,17 @@ public class DataPasteController extends BaseController {
         close();
     }
 
+    @Override
+    public boolean keyESC() {
+        close();
+        return false;
+    }
+
+    @Override
+    public boolean keyF6() {
+        close();
+        return false;
+    }
 
     /*
         static

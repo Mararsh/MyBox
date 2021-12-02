@@ -123,7 +123,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     @FXML
     protected TableColumn<Link, Integer> indexColumn;
     @FXML
-    protected ControlFileSelecter targetPathInputController;
+    protected ControlPathInput targetPathInputController;
     @FXML
     protected Button downloadButton, equalButton, linkButton, htmlButton,
             clearDownloadingButton, deleteDownloadingButton, copyDownloadingButton,
@@ -187,9 +187,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             textParser = Parser.builder(textOptions).build();
             textCollectingVisitor = new TextCollectingVisitor();
 
-            targetPathInputController.label(Languages.message("TargetPath"))
-                    .baseName(baseName).savedName(baseName + "TargatPath")
-                    .isSource(false).isDirectory(true).mustExist(false).init();
+            targetPathInputController.baseName(baseName).init();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }

@@ -55,7 +55,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @FXML
     protected ControlData2D dataController;
     @FXML
-    protected Button clearClipsButton, deleteClipsButton, editClipsButton, renameClipButton;
+    protected Button clearClipsButton, deleteClipsButton, editClipButton, renameClipButton;
 
     public ControlDataClipboard() {
         baseTitle = message("DataClipboard");
@@ -77,8 +77,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             clearButton = clearClipsButton;
             deleteButton = deleteClipsButton;
             renameButton = renameClipButton;
-            editButton = editClipsButton;
-
+            editButton = editClipButton;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -224,7 +223,9 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             return;
         }
         super.checkButtons();
-        renameButton.setDisable(tableView.getSelectionModel().getSelectedIndex() < 0);
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        renameButton.setDisable(none);
     }
 
     @FXML
@@ -249,7 +250,8 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     }
 
     @FXML
-    public void createClip() {
+    @Override
+    public void createAction() {
         dataController.create();
     }
 
@@ -365,6 +367,11 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         } else {
             return true;
         }
+    }
+
+    @Override
+    public void myBoxClipBoard() {
+        dataController.myBoxClipBoard();
     }
 
     @Override

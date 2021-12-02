@@ -14,6 +14,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -71,11 +72,15 @@ License:    Apache License Version 2.0
                 </Tab>
             </tabs>
         </TabPane>
-        <HBox fx:id="paginationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-            <children>
-                <Label fx:id="dataSizeLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                    <children>
+      <HBox fx:id="paginationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+         <children>
+                <Label fx:id="dataSizeLabel" maxWidth="1.7976931348623157E308" minWidth="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
+            </Label>
+            <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="600.0" vgap="2.0">
+               <children>
                         <Label minWidth="-Infinity" text="%RowsPerPage" />
                         <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="100.0" />
                         <Label minWidth="-Infinity" text="%Page" />
@@ -126,9 +131,9 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                    </children>
-                </HBox>
-            </children>
-        </HBox>
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
     </children>
 </VBox>

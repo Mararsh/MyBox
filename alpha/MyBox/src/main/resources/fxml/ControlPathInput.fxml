@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.paint.*?>
 
 <HBox fx:id="thisPane" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="mara.mybox.controller.ControlFileSelecter">
+      fx:controller="mara.mybox.controller.ControlPathInput">
     <children>
         <Label fx:id="label" HBox.hgrow="NEVER" />
         <TextField fx:id="fileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />

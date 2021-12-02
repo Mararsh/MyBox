@@ -3,8 +3,6 @@ package mara.mybox.bufferedimage;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 
 /**

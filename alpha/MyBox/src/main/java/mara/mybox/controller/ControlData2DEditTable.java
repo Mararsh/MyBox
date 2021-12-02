@@ -112,7 +112,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     public boolean checkData() {
         boolean invalid = data2D == null || !data2D.isColumnsValid();
         thisPane.setDisable(invalid);
-        copyButton.setDisable(invalid || tableData.isEmpty());
         updateSizeLabel();
         return !invalid;
     }
@@ -376,6 +375,18 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         }
     }
 
+    @FXML
+    public void pasteContentInMyboxClipboard() {
+        try {
+            if (data2D == null) {
+                return;
+            }
+            DataClipboardPopController.open(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public boolean loadData(List<List<String>> newData, boolean columnsChanged) {
         try {
             if (columnsChanged) {
@@ -464,23 +475,57 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
+            boolean invalidData = data2D == null || !data2D.isColumnsValid();
+            boolean empty = invalidData || tableData.isEmpty();
             MenuItem menu;
 
             menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
             menu.setOnAction((ActionEvent event) -> {
                 dataController.parentController.saveAction();
             });
+            menu.setDisable(invalidData);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                setValuesAction();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyAction();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                pasteContentInSystemClipboard();
+            });
+            menu.setDisable(invalidData);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInDataClipboard"), StyleTools.getIconImage("iconPaste.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                pasteContentInMyboxClipboard();
+            });
+            menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
             menu.setOnAction((ActionEvent event) -> {
-                dataController.recover();
+                dataController.parentController.recoverAction();
             });
+            menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Create"), StyleTools.getIconImage("iconAdd.png"));
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconFileAdd.png"));
             menu.setOnAction((ActionEvent event) -> {
-                dataController.create();
+                dataController.parentController.createAction();
             });
             popMenu.getItems().add(menu);
 
@@ -494,14 +539,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             menu.setOnAction((ActionEvent event) -> {
                 dataController.parentController.saveAsAction();
             });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                setValuesAction();
-            });
+            menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());

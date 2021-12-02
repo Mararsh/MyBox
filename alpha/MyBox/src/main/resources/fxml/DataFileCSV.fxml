@@ -50,16 +50,16 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="createFileButton" mnemonicParsing="false" onAction="#createFile">
+                                                                <Button fx:id="createDataButton" mnemonicParsing="false" onAction="#createAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/Red/iconAdd.png" />
+                                                                                <Image url="@../buttons/Red/iconFileAdd.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button> 
-                                                                <Button fx:id="loadContentInSystemClipboardButton" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
+                                                                <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

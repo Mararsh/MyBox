@@ -53,7 +53,7 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
     @FXML
     protected Label matrixLabel;
     @FXML
-    protected Button clearMatricesButton, deleteMatricesButton, editClipsButton, renameClipButton;
+    protected Button clearMatricesButton, deleteMatricesButton;
 
     public ControlMatricesList() {
         baseTitle = Languages.message("MatricesManage");
@@ -263,7 +263,8 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
     }
 
     @FXML
-    public void createMatrix() {
+    @Override
+    public void createAction() {
         dataController.create();
     }
 
@@ -278,6 +279,11 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
         } else {
             return true;
         }
+    }
+
+    @Override
+    public void myBoxClipBoard() {
+        dataController.myBoxClipBoard();
     }
 
 }

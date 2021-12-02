@@ -36,6 +36,11 @@ public class DataClipboardController extends BaseController {
         return true;
     }
 
+    @Override
+    public void myBoxClipBoard() {
+        clipboardController.myBoxClipBoard();
+    }
+
 
     /*
         static

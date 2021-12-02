@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/Red/iconTips.png" />
                                                     </image>
                                                 </ImageView>
-                                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectImagesHandle" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectSomeOrNone" wrapText="true" HBox.hgrow="ALWAYS" />
                                                 <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconDoubleRIght.png" />

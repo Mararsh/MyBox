@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Window;
+import mara.mybox.data.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -20,70 +21,109 @@ import static mara.mybox.value.Languages.message;
 public class DataClipboardPopController extends DataClipboardController {
 
     protected ControlData2D sourceController;
-    protected ControlData2D targetController;
+    protected ControlData2DEditTable sourceTableController, targetTableController;
+    protected Data2D dataSource, dataTarget;
 
     @FXML
-    protected Label targetLabel;
+    protected FlowPane pastePane;
     @FXML
-    protected Button pasteDataButton;
+    protected ComboBox<String> rowSelector, colSelector;
 
-    public void setParameters(ControlData2D parent) {
+    public DataClipboardPopController() {
+        TipsLabelKey = "SelectSomeOrNone";
+    }
+
+    public void setParameters(ControlData2DEditTable target) {
         try {
-            this.parentController = parent;
-            targetController = parent;
+            this.parentController = target;
+            targetTableController = target;
+            dataTarget = target.data2D;
 
             sourceController = clipboardController.dataController;
+            sourceTableController = sourceController.tableController;
+            dataSource = sourceController.data2D;
 
-            updateTitle();
-            targetController.statusNotify.addListener(
+            sourceController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        updateTitle();
+                        okButton.setDisable(!dataSource.hasData());
                     });
 
-            clipboardController.dataController.statusNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        pasteDataButton.setDisable(!sourceController.data2D.hasData()
-                                || (sourceController.data2D.isMutiplePages() && sourceController.data2D.isTableChanged()));
-                    });
+            makeControls(0, 0);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void updateTitle() {
-        targetLabel.setText(message("Target") + ": " + targetController.getTitle());
+    public void makeControls(int row, int col) {
+        try {
+            List<String> rows = new ArrayList<>();
+            for (long i = 0; i < dataTarget.tableRowsNumber(); i++) {
+                rows.add("" + (i + 1));
+            }
+            rowSelector.getItems().setAll(rows);
+            rowSelector.getSelectionModel().select(row);
+
+            colSelector.getItems().setAll(dataTarget.columnNames());
+            colSelector.getSelectionModel().select(col);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML
     @Override
-    public void pasteAction() {
-        if (!clipboardController.dataController.data2D.hasData()) {
+    public void okAction() {
+        if (!dataSource.hasData()) {
             popError(message("NoData"));
             return;
         }
-//        if (sourceController.data2D.isMutiplePages() && !sourceController.needSave()) {
-//            return;
-//        }
-//        SheetPasteController controller = (SheetPasteController) openChildStage(Fxmls.SheetPasteFxml, false);
-//        controller.setParameters(clipboardController.sheetController, targetController);
+        try {
+            int row = rowSelector.getSelectionModel().getSelectedIndex();
+            int col = colSelector.getSelectionModel().getSelectedIndex();
+            int targetRowsNumber = dataTarget.tableRowsNumber();
+            int targetColsNumber = dataTarget.tableColsNumber();
+            if (row < 0 || row >= targetRowsNumber || col < 0 || col >= targetColsNumber) {
+                popError(message("InvalidParameters"));
+                return;
+            }
+            List<List<String>> data = sourceTableController.tableView.getSelectionModel().getSelectedItems();
+            if (data == null || data.isEmpty()) {
+                data = sourceTableController.tableData;
+            }
+            targetTableController.isSettingValues = true;
+            for (int r = row; r < Math.min(row + data.size(), targetRowsNumber); r++) {
+                List<String> targetTableRow = targetTableController.tableData.get(r);
+                List<String> sourceDataRow = data.get(r - row);
+                for (int c = col; c < Math.min(col + sourceDataRow.size(), targetColsNumber); c++) {
+                    targetTableRow.set(c + 1, sourceDataRow.get(c - col + 1));
+                }
+                targetTableController.tableData.set(r, targetTableRow);
+            }
+            targetTableController.isSettingValues = false;
+            targetTableController.tableChanged(true);
+
+            makeControls(row, col);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML
     @Override
     public void cancelAction() {
-        closeStage();
+        close();
     }
 
     @Override
     public boolean keyESC() {
-        closeStage();
+        close();
         return false;
     }
 
     @Override
     public boolean keyF6() {
-        closeStage();
+        close();
         return false;
     }
 
@@ -105,15 +145,15 @@ public class DataClipboardPopController extends DataClipboardController {
         }
     }
 
-    public static DataClipboardPopController open(ControlData2D parent) {
+    public static DataClipboardPopController open(ControlData2DEditTable target) {
         try {
-            if (parent == null) {
+            if (target == null) {
                 return null;
             }
             closeAll();
             DataClipboardPopController controller
-                    = (DataClipboardPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.DataClipboardPopFxml, false);
-            controller.setParameters(parent);
+                    = (DataClipboardPopController) WindowTools.openChildStage(target.getMyStage(), Fxmls.DataClipboardPopFxml, false);
+            controller.setParameters(target);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

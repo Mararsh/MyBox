@@ -24,17 +24,15 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.ImageAttributes;
+import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.w3c.dom.NodeList;
 
@@ -71,24 +69,20 @@ public class ImageJpgFile {
             ImageFileInformation fileInfo = new ImageFileInformation(file);
             ImageFileReaders.readImageFileMetaData(reader, fileInfo);
             ImageInformation imageInfo = fileInfo.getImageInformation();
+
             int imageWidth = reader.getWidth(index);
-            int requriedWidth, scale;
+            int imageHeight = reader.getHeight(index);
+            int requriedWidth = width, scale = 1;
             if (region != null) {
                 if (width <= 0) {
-                    requriedWidth = (int) region.getWidth();
-                    scale = 1;
-                } else {
-                    requriedWidth = width;
-                    scale = (int) region.getWidth() / width;
+                    requriedWidth = (int) Math.ceil(region.getWidth());
                 }
-            } else {
-                if (width <= 0) {
-                    requriedWidth = imageWidth;
-                    scale = 1;
-                } else {
-                    requriedWidth = width;
-                    scale = imageWidth / width;
-                }
+            } else if (width <= 0) {
+                requriedWidth = imageWidth;
+            }
+            double maxReadWidth = ImageFileReaders.maxReadWidth(imageWidth, imageHeight, 4, 6);
+            if (maxReadWidth < requriedWidth) {
+                scale = (int) (requriedWidth / maxReadWidth);
             }
             bufferedImage = readBrokenJpgFile(reader, imageInfo, index, region, scale, scale);
             if (bufferedImage != null) {

@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import mara.mybox.data.TTC;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.data.TTC;
 
 /**
  * @Author Mara
@@ -23,7 +23,7 @@ public class FileTTC2TTFController extends HtmlTableController {
     @FXML
     protected ControlFileSelecter ttcController;
     @FXML
-    protected ControlFileSelecter targetPathInputController;
+    protected ControlPathInput targetPathInputController;
 
     public FileTTC2TTFController() {
         baseTitle = Languages.message("TTC2TTF");
@@ -49,11 +49,8 @@ public class FileTTC2TTFController extends HtmlTableController {
                     .baseName(baseName).savedName(baseName + "TTC")
                     .init();
 
-            targetPathInputController.label(message("TargetPath"))
-                    .isSource(false).isDirectory(true).mustExist(true)
-                    .type(VisitHistory.FileType.TTF)
-                    .baseName(baseName).savedName(baseName + "TargatPath").
-                    init();
+            targetPathInputController.mustExist(true).type(VisitHistory.FileType.TTF)
+                    .baseName(baseName).init();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(

@@ -98,6 +98,7 @@ public class DataFileExcel extends DataFile {
             }
         }
         delimiter = currentSheetName;  // use field "delimiter" as currentSheetName
+        super.checkAttributes();
     }
 
     @Override

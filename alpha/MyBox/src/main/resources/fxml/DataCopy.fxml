@@ -15,6 +15,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -95,20 +96,20 @@ License:    Apache License Version 2.0
                 <Label text="%Target" />
                 <VBox fx:id="targetBox" spacing="10.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                            <children>
-                                <RadioButton fx:id="frontRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Front">
+                  <FlowPane alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="2.0">
+                     <children>
+                                <RadioButton fx:id="frontRadio" mnemonicParsing="false" selected="true" text="%Front">
                                     <toggleGroup>
                                         <ToggleGroup fx:id="locationGroup" />
                                     </toggleGroup>
                                 </RadioButton>
-                                <RadioButton fx:id="endRadio" layoutX="129.0" layoutY="10.0" mnemonicParsing="false" text="%End" toggleGroup="$locationGroup" />
+                                <RadioButton fx:id="endRadio" mnemonicParsing="false" text="%End" toggleGroup="$locationGroup" />
                                 <RadioButton fx:id="aboveRadio" mnemonicParsing="false" text="%Above" toggleGroup="$locationGroup" />
-                                <RadioButton fx:id="belowRadio" layoutX="63.0" layoutY="10.0" mnemonicParsing="false" text="%Below" toggleGroup="$locationGroup" />
-                                <RadioButton fx:id="scRadio" layoutX="153.0" layoutY="10.0" mnemonicParsing="false" text="%SystemClipboard" toggleGroup="$locationGroup" />
-                                <RadioButton fx:id="mcRadio" layoutX="200.0" layoutY="10.0" mnemonicParsing="false" text="%MyBoxClipboard" toggleGroup="$locationGroup" />
-                            </children>
-                        </HBox>
+                                <RadioButton fx:id="belowRadio" mnemonicParsing="false" text="%Below" toggleGroup="$locationGroup" />
+                                <RadioButton fx:id="scRadio" mnemonicParsing="false" text="%SystemClipboard" toggleGroup="$locationGroup" />
+                                <RadioButton fx:id="mcRadio" mnemonicParsing="false" text="%MyBoxClipboard" toggleGroup="$locationGroup" />
+                     </children>
+                  </FlowPane>
                         <HBox fx:id="rowBox" alignment="CENTER_LEFT" spacing="2.0">
                             <children>
                                 <Label text="%TableRow" />

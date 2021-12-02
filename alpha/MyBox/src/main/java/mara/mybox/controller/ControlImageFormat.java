@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -19,23 +20,19 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.bufferedimage.ImageAttributes;
+import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
-import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-import mara.mybox.value.FileFilters;
-
 import mara.mybox.value.FileExtensions;
+import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -49,6 +46,7 @@ public class ControlImageFormat extends BaseController {
     protected ImageAttributes attributes;
     protected boolean includeDpi;
     protected ToggleGroup colorSpaceGroup, compressGroup;
+    protected SimpleBooleanProperty notify;
 
     @FXML
     protected ComboBox<String> qualitySelector, icoWidthSelector;
@@ -74,7 +72,7 @@ public class ControlImageFormat extends BaseController {
 
     public ControlImageFormat() {
         baseTitle = Languages.message("ImageConverterBatch");
-
+        notify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -88,6 +86,10 @@ public class ControlImageFormat extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    public void notifyChange() {
+        notify.set(!notify.get());
     }
 
     @Override
@@ -110,6 +112,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue v, Toggle oldV, Toggle newV) {
                     checkFileFormat();
+                    notifyChange();
                 }
             });
 
@@ -118,6 +121,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
                     checkEmbed();
+                    notifyChange();
                 }
             });
 
@@ -125,6 +129,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
                     checkProfile();
+                    notifyChange();
                 }
             });
 
@@ -136,6 +141,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     checkQuality();
+                    notifyChange();
                 }
             });
 
@@ -144,6 +150,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
                     checkBinary();
+                    notifyChange();
                 }
             });
 
@@ -152,6 +159,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
                     checkThreshold();
+                    notifyChange();
                 }
             });
 
@@ -160,6 +168,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
                     checkDither();
+                    notifyChange();
                 }
             });
 
@@ -171,6 +180,7 @@ public class ControlImageFormat extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     checkIcoWidth();
+                    notifyChange();
                 }
             });
 
@@ -180,6 +190,7 @@ public class ControlImageFormat extends BaseController {
                     @Override
                     public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                         checkDpi();
+                        notifyChange();
                     }
                 });
             }
@@ -339,6 +350,7 @@ public class ControlImageFormat extends BaseController {
         checkEmbed();
         checkAlpha();
         refreshStyle(thisPane);
+
     }
 
     public void checkProfile() {

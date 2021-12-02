@@ -50,7 +50,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     protected String strDeleteSuccessfully, strFileDeleteSuccessfully, strDirectoryDeleteSuccessfully;
 
     @FXML
-    protected ControlFileSelecter targetPathInputController;
+    protected ControlPathInput targetPathInputController;
     @FXML
     protected VBox dirsBox, conditionsBox, condBox, logsBox;
     @FXML
@@ -109,9 +109,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 }
             });
 
-            targetPathInputController.label(Languages.message("TargetPath"))
-                    .baseName(baseName).savedName(baseName + "TargatPath")
-                    .isSource(false).isDirectory(true).mustExist(false).init();
+            targetPathInputController.baseName(baseName).init();
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())

@@ -28,6 +28,7 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -120,6 +121,37 @@ public class ControlData2D extends BaseController {
         }
     }
 
+    public boolean checkValidData() {
+        if (data2D == null) {
+            return false;
+        }
+        File file = data2D.getFile();
+        if (file == null || file.exists()) {
+            return true;
+        }
+        synchronized (this) {
+            SingletonTask nullTask = new SingletonTask<Void>(this) {
+                @Override
+                protected boolean handle() {
+                    try {
+                        tableData2DDefinition.deleteData(data2D);
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void finalAction() {
+                    loadNull();
+                }
+            };
+            start(nullTask, false);
+        }
+        return false;
+    }
+
     public void readDefinition() {
         if (data2D == null || !checkBeforeNextAction()) {
             return;
@@ -128,10 +160,7 @@ public class ControlData2D extends BaseController {
             if (task != null) {
                 task.cancel();
             }
-            File file = data2D.getFile();
-            if (file != null && !file.exists()) {
-                tableData2DDefinition.deleteData(data2D);
-                loadNull();
+            if (!checkValidData()) {
                 return;
             }
             isSettingValues = true;
@@ -143,61 +172,47 @@ public class ControlData2D extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    data2D.setTask(task);
-                    long d2did = data2D.readDataDefinition();
-                    boolean isTmpFile = data2D.isTmpFile();
-                    List<String> dataCols = data2D.readColumns();
-                    if (isCancelled()) {
-                        return false;
-                    }
-                    if (dataCols == null || dataCols.isEmpty()) {
-                        data2D.setHasHeader(false);
-                        tableData2DColumn.clearFile(data2D);
-                        data2D.setColumns(null);
-                    } else {
-                        List<Data2DColumn> columns = new ArrayList<>();
-                        List<Data2DColumn> savedColumns = data2D.getSavedColumns();
-                        for (int i = 0; i < dataCols.size(); i++) {
-                            Data2DColumn column;
-                            if (savedColumns != null && i < savedColumns.size()) {
-                                column = savedColumns.get(i);
-                                if (data2D.isHasHeader()) {
-                                    column.setName(dataCols.get(i));
+                    try {
+                        data2D.setTask(task);
+                        long d2did = data2D.readDataDefinition();
+                        boolean isTmpFile = data2D.isTmpFile();
+                        List<String> dataCols = data2D.readColumns();
+                        if (isCancelled()) {
+                            return false;
+                        }
+                        if (dataCols == null || dataCols.isEmpty()) {
+                            data2D.setHasHeader(false);
+                            tableData2DColumn.clearFile(data2D);
+                            data2D.setColumns(null);
+                        } else {
+                            List<Data2DColumn> columns = new ArrayList<>();
+                            List<Data2DColumn> savedColumns = data2D.getSavedColumns();
+                            for (int i = 0; i < dataCols.size(); i++) {
+                                Data2DColumn column;
+                                if (savedColumns != null && i < savedColumns.size()) {
+                                    column = savedColumns.get(i);
+                                    if (data2D.isHasHeader()) {
+                                        column.setName(dataCols.get(i));
+                                    }
+                                } else {
+                                    column = new Data2DColumn(dataCols.get(i), data2D.defaultColumnType());
                                 }
-                            } else {
-                                column = new Data2DColumn(dataCols.get(i), data2D.defaultColumnType());
+                                column.setD2id(d2did);
+                                column.setIndex(i);
+                                columns.add(column);
                             }
-                            column.setD2id(d2did);
-                            column.setIndex(i);
-                            columns.add(column);
-                        }
-                        data2D.setColumns(columns);
-                        validateTable = Data2DColumn.validate(columns);
-                        if (!isTmpFile) {
-                            if (validateTable == null || validateTable.isEmpty()) {
-                                tableData2DColumn.save(d2did, columns);
+                            data2D.setColumns(columns);
+                            validateTable = Data2DColumn.validate(columns);
+                            if (!isTmpFile) {
+                                if (validateTable == null || validateTable.isEmpty()) {
+                                    tableData2DColumn.save(d2did, columns);
+                                }
                             }
                         }
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (validateTable != null && !validateTable.isEmpty()) {
-                        validateTable.htmlTable();
-                    }
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (isCancelled()) {
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
                     }
                 }
 
@@ -208,6 +223,9 @@ public class ControlData2D extends BaseController {
                     task = null;
                     loadData();   // Load data whatever
                     notifyLoaded();
+                    if (validateTable != null && !validateTable.isEmpty()) {
+                        validateTable.htmlTable();
+                    }
                 }
 
             };
@@ -599,12 +617,6 @@ public class ControlData2D extends BaseController {
 
     @FXML
     @Override
-    public void myBoxClipBoard() {
-        DataClipboardPopController.open(this);
-    }
-
-    @FXML
-    @Override
     public void loadContentInSystemClipboard() {
         try {
             if (data2D == null || !checkBeforeNextAction()) {
@@ -676,6 +688,37 @@ public class ControlData2D extends BaseController {
         } else {
             return true;
         }
+    }
+
+    @Override
+    public boolean controlAltC() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        if (editTab.isSelected()) {
+            if (editController.tableTab.isSelected()) {
+                tableController.copyAction();
+
+            } else if (editController.textTab.isSelected()) {
+                TextClipboardTools.copyToMyBoxClipboard(myController, textController.textArea);
+
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAltV() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        if (editTab.isSelected() && editController.tableTab.isSelected()) {
+            DataClipboardPopController.open(tableController);
+            return true;
+
+        }
+        return false;
     }
 
     @Override

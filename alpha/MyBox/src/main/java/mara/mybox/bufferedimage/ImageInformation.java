@@ -391,7 +391,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setRequiredMem(requiredMem);
 
             if (availableMem < requiredMem) {
-                int scale = (int) Math.ceil(1d * requiredMem / availableMem);
+                int scale = (int) Math.sqrt(1d * requiredMem / availableMem);
                 imageInfo.setSampleScale(scale);
                 imageInfo.setNeedSample(true);
                 return imageInfo.getWidth() / scale;
@@ -399,7 +399,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 double ratio = Math.sqrt(1d * availableMem / requiredMem);
                 imageInfo.setSampleScale(1);
                 imageInfo.setNeedSample(false);
-                return (int) Math.ceil(imageInfo.getWidth() * ratio);
+                return (int) (imageInfo.getWidth() * ratio);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

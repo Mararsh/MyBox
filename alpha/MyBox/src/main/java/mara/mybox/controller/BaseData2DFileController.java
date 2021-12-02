@@ -155,7 +155,7 @@ public abstract class BaseData2DFileController extends BaseController {
         try {
             super.afterSceneLoaded();
 
-            createFile();
+            createAction();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -244,7 +244,8 @@ public abstract class BaseData2DFileController extends BaseController {
     }
 
     @FXML
-    public void createFile() {
+    @Override
+    public void createAction() {
         dataController.create();
     }
 
@@ -320,6 +321,11 @@ public abstract class BaseData2DFileController extends BaseController {
             return dataController.keyEventsFilter(event);
         }
         return true;
+    }
+
+    @Override
+    public void myBoxClipBoard() {
+        dataController.myBoxClipBoard();
     }
 
     @Override

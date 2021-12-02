@@ -81,8 +81,7 @@ License:    Apache License Version 2.0
                                                                 <Image url="@../buttons/Red/iconTips.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <Label fx:id="numberLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" 
-                                                               styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
+                                          <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                         <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearTmp">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -94,8 +93,11 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                                <Separator prefWidth="200.0" />
+                                                <Separator prefWidth="200.0" /> 
                                                 <Label fx:id="recordLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                    <Separator layoutX="15.0" layoutY="168.0" prefWidth="200.0" />
+                                                <Label fx:id="numberLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                                <Label fx:id="filesLabel" layoutX="15.0" layoutY="196.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -109,7 +111,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                                                                     <children>
-                                                                        <fx:include fx:id="targetPathInput" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS"  maxWidth="1.7976931348623157E308" />
+                                                                        <fx:include fx:id="targetPathInput" maxWidth="1.7976931348623157E308" source="ControlPathInput.fxml" HBox.hgrow="ALWAYS" />
                                                                         <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openTargetPath">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

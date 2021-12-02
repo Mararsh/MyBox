@@ -17,6 +17,7 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -217,6 +218,10 @@ public abstract class Data2D extends Data2DDefinition {
         return pagesNumber > 1;
     }
 
+    public boolean isMutiplePagesChanged() {
+        return isMutiplePages() && this.isTableChanged();
+    }
+
     // file columns are not necessary in order of columns definition.
     // column's index remembers the order of columns
     // when index is less than 0, it is new column
@@ -279,6 +284,15 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public void checkAttributes() {
+        if (dataName == null || dataName.isBlank()) {
+            if (!isTmpFile()) {
+                dataName = file.getName();
+            } else {
+                dataName = DateTools.nowString();
+            }
+        }
+        colsNumber = columnsNumber();
+        rowsNumber = dataSize;
     }
 
     public String randomDouble(Random random) {

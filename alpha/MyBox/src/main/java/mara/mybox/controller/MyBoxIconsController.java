@@ -13,7 +13,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.Colors;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -24,18 +24,18 @@ import mara.mybox.value.UserConfig;
 public class MyBoxIconsController extends BaseTaskController {
 
     @FXML
-    protected ControlFileSelecter sourceCodesPathController;
+    protected ControlPathInput sourceCodesPathController;
 
     public MyBoxIconsController() {
-        baseTitle = Languages.message("MakeIcons");
+        baseTitle = message("MakeIcons");
     }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
-            sourceCodesPathController.label(Languages.message("sourceCodesPath"))
-                    .isDirectory(true).isSource(false).mustExist(true).permitNull(true)
+            sourceCodesPathController.label(message("sourceCodesPath"))
+                    .isDirectory(true).isSource(false).mustExist(true).permitNull(false)
                     .defaultFile("win".equals(SystemTools.os()) ? new File("D:\\MyBox") : new File("/home/mara/mybox"))
                     .baseName(baseName).savedName(baseName + "SourceCodesPath").init();
 
@@ -62,13 +62,13 @@ public class MyBoxIconsController extends BaseTaskController {
         try {
             String saved = UserConfig.getString("SourceCodesPath", null);
             if (saved == null) {
-                popError(Languages.message("MissSourceCodesPath"));
+                popError(message("MissSourceCodesPath"));
                 return false;
             }
             String srcPath = saved + "/src/main/resources/";
             String lightBluePath = srcPath + StyleTools.ButtonsPath + "LightBlue/";
             if (!new File(lightBluePath).exists()) {
-                popError(Languages.message("WrongSourceCodesPath"));
+                popError(message("WrongSourceCodesPath"));
                 return false;
             }
             updateLogs(srcPath + StyleTools.ButtonsPath);
@@ -97,33 +97,33 @@ public class MyBoxIconsController extends BaseTaskController {
                 if (!filename.startsWith("icon") || !filename.endsWith(".png")) {
                     continue;
                 }
-                updateLogs(Languages.message("SourceFile") + ": " + icon.getAbsolutePath());
+                updateLogs(message("SourceFile") + ": " + icon.getAbsolutePath());
                 src = ImageIO.read(icon);
 
                 operation1.setImage(src).setColorPara2(Colors.MyBoxDarkBlue);
                 operation2.setImage(operation1.operate()).setColorPara2(Colors.MyBoxLightBlue);
                 ImageFileWriters.writeImageFile(operation2.operate(), "png", bluePath + filename);
-                updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), bluePath + filename));
+                updateLogs(MessageFormat.format(message("FilesGenerated"), bluePath + filename));
 
                 operation1.setImage(src).setColorPara2(Colors.MyBoxDarkPink);
                 operation2.setImage(operation1.operate()).setColorPara2(Colors.MyBoxLightPink);
                 ImageFileWriters.writeImageFile(operation2.operate(), "png", pinkPath + filename);
-                updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), pinkPath + filename));
+                updateLogs(MessageFormat.format(message("FilesGenerated"), pinkPath + filename));
 
                 operation1.setImage(src).setColorPara2(Colors.MyBoxDarkRed);
                 operation2.setImage(operation1.operate()).setColorPara2(Colors.MyBoxLightRed);
                 ImageFileWriters.writeImageFile(operation2.operate(), "png", redPath + filename);
-                updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), redPath + filename));
+                updateLogs(MessageFormat.format(message("FilesGenerated"), redPath + filename));
 
                 operation1.setImage(src).setColorPara2(Colors.MyBoxOrange);
                 operation2.setImage(operation1.operate()).setColorPara2(Colors.MyBoxLightOrange);
                 ImageFileWriters.writeImageFile(operation2.operate(), "png", orangePath + filename);
-                updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), orangePath + filename));
+                updateLogs(MessageFormat.format(message("FilesGenerated"), orangePath + filename));
 
                 operation1.setImage(src).setColorPara2(Colors.MyBoxDarkGreen);
                 operation2.setImage(operation1.operate()).setColorPara2(Colors.MyBoxLightGreen);
                 ImageFileWriters.writeImageFile(operation2.operate(), "png", darkGreenPath + filename);
-                updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), darkGreenPath + filename));
+                updateLogs(MessageFormat.format(message("FilesGenerated"), darkGreenPath + filename));
 
             }
             return true;
@@ -135,7 +135,7 @@ public class MyBoxIconsController extends BaseTaskController {
 
     @Override
     protected void afterSuccess() {
-        popInformation(Languages.message("TakeEffectWhenReboot"));
+        popInformation(message("TakeEffectWhenReboot"));
         startButton.setDisable(false);
     }
 

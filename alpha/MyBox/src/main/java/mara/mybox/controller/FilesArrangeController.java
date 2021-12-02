@@ -61,7 +61,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     }
 
     @FXML
-    protected ControlFileSelecter targetPathInputController;
+    protected ControlPathInput targetPathInputController;
     @FXML
     protected ToggleGroup filesGroup, byGroup, dirGroup, replaceGroup;
     @FXML
@@ -84,9 +84,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             initDirTab();
             initConditionTab();
 
-            targetPathInputController.label(Languages.message("TargetPath"))
-                    .baseName(baseName).savedName(baseName + "TargatPath")
-                    .isSource(false).isDirectory(true).mustExist(false).init();
+            targetPathInputController.baseName(baseName).init();
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
