@@ -23,8 +23,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.tools.FileDeleteTools;
@@ -96,7 +94,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    checkStatus();
+                    updateStatus();
                 }
             });
 
@@ -106,8 +104,6 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
                     refreshAction();
                 }
             });
-
-            loadTableData();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -252,7 +248,13 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @FXML
     @Override
     public void createAction() {
-        dataController.create();
+        dataController.createFile();
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        dataController.recoverFile();
     }
 
     @FXML
@@ -263,14 +265,8 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
 
     @FXML
     @Override
-    public void recoverAction() {
-        dataController.recover();
-    }
-
-    @FXML
-    @Override
     public void saveAction() {
-        if (dataClipboard.isTmpFile()) {
+        if (dataClipboard.isTmpData()) {
             File file = dataClipboard.newFile();
             if (file == null) {
                 return;
@@ -289,59 +285,20 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
 
     @FXML
     public void renameAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
         int index = tableView.getSelectionModel().getSelectedIndex();
         Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
-        File file = selected.getFile();
-        if (!file.exists()) {
-            tableData2DDefinition.deleteData(selected);
-            dataController.loadNull();
-            return;
-        }
-        String newName = PopTools.askValue(getBaseTitle(), message("CurrentName") + ":" + selected.getDataName(),
-                message("NewName"), selected.getDataName() + "m");
-        if (newName == null || newName.isBlank()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Data2DDefinition df;
-
-                @Override
-                protected boolean handle() {
-                    selected.setDataName(newName);
-                    df = tableData2DDefinition.updateData(selected);
-                    return df != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    tableData.set(index, df);
-                    if (dataClipboard != null && df.getD2did() == dataClipboard.getD2did()) {
-                        dataClipboard.setDataName(newName);
-                        dataController.attributesController.updateDataName();
-                        checkStatus();
-                    }
-                }
-
-            };
-            start(task);
-        }
+        dataController.renameAction(this, index, selected);
     }
 
-    protected void checkStatus() {
+    @Override
+    public void updateStatus() {
+        super.updateStatus();
         if (getMyStage() != null) {
             String title = baseTitle;
-            if (!dataClipboard.isTmpFile()) {
+            if (!dataClipboard.isTmpData()) {
                 title += " " + dataClipboard.getFile().getAbsolutePath();
             }
             if (dataController.isChanged()) {
@@ -349,7 +306,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             }
             myStage.setTitle(title);
         }
-        if (!dataClipboard.isTmpFile()) {
+        if (!dataClipboard.isTmpData()) {
             nameLabel.setText(dataClipboard.getDataName());
         } else {
             nameLabel.setText("");

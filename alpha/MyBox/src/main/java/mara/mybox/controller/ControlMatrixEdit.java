@@ -132,7 +132,7 @@ public class ControlMatrixEdit extends ControlMatrixEdit_Sheet {
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection();
-                             PreparedStatement query = conn.prepareStatement(TableData2DCell.QeuryData)) {
+                             PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
                         values = new double[rowsNumber][colsNumber];
                         if (tableDataCell == null) {
                             tableDataCell = new TableData2DCell();

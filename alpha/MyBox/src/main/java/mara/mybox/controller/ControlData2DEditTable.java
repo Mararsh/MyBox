@@ -110,9 +110,9 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     }
 
     public boolean checkData() {
+        super.updateStatus();
         boolean invalid = data2D == null || !data2D.isColumnsValid();
         thisPane.setDisable(invalid);
-        updateSizeLabel();
         return !invalid;
     }
 
@@ -129,11 +129,22 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
     @Override
     protected void countPagination(long page) {
-        super.countPagination(page);
+        if (data2D.isMatrix()) {
+            pageSize = Integer.MAX_VALUE;
+            dataSize = data2D.getDataSize();
+            pagesNumber = 1;
+            currentPage = 0;
+            startRowOfCurrentPage = 0;
+        } else {
+            super.countPagination(page);
+        }
         data2D.setPageSize(pageSize);
         data2D.setPagesNumber(pagesNumber);
         data2D.setCurrentPage(currentPage);
         data2D.setStartRowOfCurrentPage(startRowOfCurrentPage);
+        if (data2D.isMatrix()) {
+            dataSizeLoaded = true;
+        }
     }
 
     @Override
@@ -149,7 +160,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
     @Override
     public void loadDataSize() {
-        if (data2D == null || dataSizeLoaded) {
+        if (data2D == null || dataSizeLoaded || data2D.isMatrix()) {
             return;
         }
         synchronized (this) {
@@ -200,7 +211,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     protected void refreshPagination() {
         countPagination(currentPage);
         setPagination();
-        updateSizeLabel();
+        updateStatus();
     }
 
     @Override
@@ -422,7 +433,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             tableChanged(false);
             dataController.resetStatus();
             dataController.checkStatus();
-            dataSizeLoaded = false;
+            dataSizeLoaded = data2D.isMatrix();
             loadDataSize();
             dataController.notifySaved();
         } catch (Exception e) {
@@ -432,7 +443,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
     public synchronized void createTable() {
         data2D.resetData();
-        MyBoxLog.debug(data2D.isHasHeader());
 
         List<Data2DColumn> columns = new ArrayList<>();
         for (int col = 1; col <= 3; col++) {
@@ -483,7 +493,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             menu.setOnAction((ActionEvent event) -> {
                 dataController.parentController.saveAction();
             });
-            menu.setDisable(invalidData);
+            menu.setDisable(invalidData || !dataSizeLoaded);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
@@ -539,7 +549,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             menu.setOnAction((ActionEvent event) -> {
                 dataController.parentController.saveAsAction();
             });
-            menu.setDisable(invalidData);
+            menu.setDisable(invalidData || data2D.isMatrix());
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());

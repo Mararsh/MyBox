@@ -24,7 +24,7 @@ public class Data2DDefinition extends BaseData {
     protected Date modifyTime;
 
     public static enum Type {
-        Text, CSV, Excel, Matrix, Clipboard, Table
+        Text, CSV, Excel, Clipboard, Matrix, Table
     }
 
     public Data2DDefinition() {
@@ -98,7 +98,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public static boolean valid(Data2DDefinition data) {
-        return data != null && data.getDataName() != null && data.getType() != null;
+        return data != null && data.getType() != null;
     }
 
     public static Object getValue(Data2DDefinition data, String column) {

@@ -144,12 +144,16 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
     }
 
-    public boolean clearFile(Data2D data) {
+    public boolean clear(Data2D data) {
         if (data == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
-            return clearFile(conn, data.getType(), data.getFile());
+        try ( Connection conn = DerbyBase.getConnection()) {
+            if (data.getD2did() >= 0) {
+                return clear(conn, data.getD2did());
+            } else {
+                return clearFile(conn, data.getType(), data.getFile());
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

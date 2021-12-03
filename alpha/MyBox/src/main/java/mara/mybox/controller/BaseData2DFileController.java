@@ -169,7 +169,7 @@ public abstract class BaseData2DFileController extends BaseController {
     protected void checkStatus() {
         try {
             boolean changed = dataController.isChanged();
-            if (data2D.isTmpFile()) {
+            if (data2D.isTmpData()) {
                 isSettingValues = true;
                 if (formatPane != null) {
                     formatPane.setExpanded(false);
@@ -195,7 +195,7 @@ public abstract class BaseData2DFileController extends BaseController {
 
             if (myStage != null) {
                 String title = baseTitle;
-                if (!data2D.isTmpFile()) {
+                if (!data2D.isTmpData()) {
                     title += " " + data2D.getFile().getAbsolutePath();
                 }
                 if (changed) {
@@ -211,7 +211,7 @@ public abstract class BaseData2DFileController extends BaseController {
 
     protected void updateInfoLabel() {
         String info = "";
-        if (!data2D.isTmpFile()) {
+        if (!data2D.isTmpData()) {
             info = message("FileSize") + ": " + FileTools.showFileSize(data2D.getFile().length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(data2D.getFile().lastModified()) + "\n";
             if (data2D instanceof DataFileExcel) {
@@ -246,7 +246,13 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void createAction() {
-        dataController.create();
+        dataController.createFile();
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        dataController.recoverFile();
     }
 
     @FXML
@@ -258,7 +264,7 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (data2D.isTmpFile()) {
+        if (data2D.isTmpData()) {
             saveAs(true);
             return;
         }
@@ -284,12 +290,6 @@ public abstract class BaseData2DFileController extends BaseController {
             return;
         }
         dataController.saveAs(targetData, load || saveAsType == BaseController_Attributes.SaveAsType.Load);
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        dataController.recover();
     }
 
     @FXML
@@ -331,6 +331,7 @@ public abstract class BaseData2DFileController extends BaseController {
     @Override
     public void cleanPane() {
         try {
+            dataController = null;
             tableController = null;
             data2D = null;
             tableData2DDefinition = null;

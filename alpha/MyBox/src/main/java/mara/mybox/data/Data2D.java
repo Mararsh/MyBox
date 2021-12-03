@@ -39,6 +39,7 @@ public abstract class Data2D extends Data2DDefinition {
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected TableView<List<String>> tableView;
     protected boolean tableChanged;
+    protected double[][] matrix;
     protected SingletonTask task, backgroundTask;
     protected String error;
 
@@ -79,6 +80,7 @@ public abstract class Data2D extends Data2DDefinition {
         newColumnIndex = -1;
         tableChanged = false;
         options = null;
+        matrix = null;
     }
 
     @Override
@@ -116,6 +118,7 @@ public abstract class Data2D extends Data2DDefinition {
             backgroundTask = d.backgroundTask;
             error = d.error;
             options = d.options;
+            matrix = d.matrix;
         } catch (Exception e) {
         }
     }
@@ -190,10 +193,6 @@ public abstract class Data2D extends Data2DDefinition {
         return tmpFile(cols, tmpData());
     }
 
-    public boolean isTmpFile() {
-        return file == null || file.getAbsolutePath().startsWith(AppVariables.MyBoxTempPath.getAbsolutePath());
-    }
-
     public void open(File file) {
         if (file == null) {
             return;
@@ -247,11 +246,22 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     /*
+        matrix
+     */
+    public void initMatrix(double[][] matrix) {
+        resetData();
+        this.matrix = matrix;
+    }
+
+    public boolean isMatrix() {
+        return type == Type.Matrix;
+    }
+
+    /*
         database
      */
     public long readDataDefinition() {
-        d2did = -1;
-        if (isTmpFile()) {
+        if (isTmpData()) {
             checkAttributes();
             return -1;
         }
@@ -285,14 +295,50 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void checkAttributes() {
         if (dataName == null || dataName.isBlank()) {
-            if (!isTmpFile()) {
+            if (file != null && !isTmpData()) {
                 dataName = file.getName();
             } else {
                 dataName = DateTools.nowString();
             }
         }
-        colsNumber = columnsNumber();
-        rowsNumber = dataSize;
+    }
+
+    public void saveDefinition(Connection conn) {
+        try {
+            checkAttributes();
+            dataSize = tableView.getItems().size();
+            colsNumber = getColsNumber();
+            rowsNumber = dataSize;
+            Data2DDefinition def;
+            if (d2did < 0) {
+                def = queryDefinition(conn);
+                if (def != null) {
+                    d2did = def.getD2did();
+                }
+            }
+            if (d2did >= 0) {
+                def = tableData2DDefinition.updateData(conn, this);
+            } else {
+                def = tableData2DDefinition.insertData(conn, this);
+            }
+            conn.commit();
+            cloneAll(def);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+        }
+    }
+
+    public boolean isTmpData() {
+        if (this.isMatrix()) {
+            return d2did < 0;
+
+        } else {
+            return file == null
+                    || file.getAbsolutePath().startsWith(AppVariables.MyBoxTempPath.getAbsolutePath());
+        }
     }
 
     public String randomDouble(Random random) {
@@ -421,6 +467,14 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    public int columnsNumber() {
+        if (columns == null) {
+            return 0;
+        } else {
+            return columns.size();
+        }
+    }
+
     public List<String> columnNames() {
         try {
             List<String> names = new ArrayList<>();
@@ -435,14 +489,6 @@ public abstract class Data2D extends Data2DDefinition {
 
     public boolean isColumnsValid() {
         return columns != null && !columns.isEmpty();
-    }
-
-    public int columnsNumber() {
-        if (columns == null) {
-            return 0;
-        } else {
-            return columns.size();
-        }
     }
 
     public int newColumnIndex() {
@@ -465,10 +511,6 @@ public abstract class Data2D extends Data2DDefinition {
     /*
         attributes
      */
-    public boolean isMatrix() {
-        return type == Type.Matrix;
-    }
-
     public String colName(int col) {
         try {
             return column(col).getName();

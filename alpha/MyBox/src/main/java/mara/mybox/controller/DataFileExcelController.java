@@ -121,7 +121,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     @Override
     protected void checkStatus() {
         super.checkStatus();
-        boolean invalid = dataFileExcel.isTmpFile() || dataController.isChanged();
+        boolean invalid = dataFileExcel.isTmpData() || dataController.isChanged();
         sheetsPane.setExpanded(!invalid);
         sheetsPane.setDisable(invalid);
     }

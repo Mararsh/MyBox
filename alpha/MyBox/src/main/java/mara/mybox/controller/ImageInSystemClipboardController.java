@@ -272,7 +272,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
     public void updateNumbers() {
         if (imageClipboardMonitor != null) {
-            numberLabel.setText(message("Load") + ": " + imageClipboardMonitor.getRecordNumber() + "   "
+            numberLabel.setText(message("Read") + ": " + imageClipboardMonitor.getRecordNumber() + "   "
                     + message("Saved") + ": " + imageClipboardMonitor.getSavedNumber() + "   "
                     + message("Copied") + ": " + imageClipboardMonitor.getCopiedNumber());
         } else {

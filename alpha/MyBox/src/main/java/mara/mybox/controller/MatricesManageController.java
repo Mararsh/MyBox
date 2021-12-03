@@ -41,12 +41,14 @@ public class MatricesManageController extends BaseController {
         }
     }
 
-//    @Override
-//    public void afterSceneLoaded() {
-//        super.afterSceneLoaded();
-//
-//        listController.loadTableData();
-//    }
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+
+        listController.loadTableData();
+        listController.createAction();
+    }
+
     public static MatricesManageController oneOpen() {
         MatricesManageController controller = null;
         List<Window> windows = new ArrayList<>();

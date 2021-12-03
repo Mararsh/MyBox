@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -22,6 +23,17 @@ public class DataClipboardController extends BaseController {
 
     public DataClipboardController() {
         baseTitle = message("DataClipboard");
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+
+            clipboardController.loadTableData();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     public void refreshAction() {

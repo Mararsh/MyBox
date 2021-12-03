@@ -146,7 +146,7 @@ public class DataMigration {
                     }
                     File file = null;
                     if (type == 2) {               // Matrix
-                        type = 3;
+                        type = 4;
                     } else if (type == 1) {       // DataFile
                         file = new File(name);
                         if (!file.exists()) {
@@ -166,7 +166,7 @@ public class DataMigration {
                             continue;
                         }
                         name = file.getName();
-                        type = 4;
+                        type = 3;
                     } else {
                         continue;
                     }

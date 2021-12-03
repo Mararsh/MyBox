@@ -88,7 +88,7 @@ public class DataFileExcel extends DataFile {
     @Override
     public void checkAttributes() {
         if (dataName == null || dataName.isBlank()) {
-            if (!isTmpFile()) {
+            if (!isTmpData()) {
                 dataName = file.getName();
             } else {
                 dataName = DateTools.nowString();

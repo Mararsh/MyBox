@@ -228,7 +228,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = false;
         setPagination();
         checkSelected();
-        updateSizeLabel();
         editNull();
         viewNull();
         tableChanged(false);
@@ -254,10 +253,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void tableChanged(boolean changed) {
-        updateSizeLabel();
+        updateStatus();
     }
 
-    protected void updateSizeLabel() {
+    public void updateStatus() {
         if (dataSizeLabel != null) {
             dataSizeLabel.setText(message("Rows") + ": "
                     + (tableData == null ? 0 : tableData.size())
@@ -419,7 +418,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         checkSelected();
         editNull();
         viewNull();
-        updateSizeLabel();
     }
 
     /*

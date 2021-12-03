@@ -897,7 +897,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         });
                 checkRightPaneClose();
             }
-            checkRightPaneHide();
+            if (!checkRightPaneHide()) {
+                setSplitDividerPositions();
+                refreshStyle(splitPane);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -921,21 +924,23 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void checkRightPaneHide() {
+    public boolean checkRightPaneHide() {
         try {
             if (isSettingValues || splitPane == null || rightPane == null
                     || rightPaneControl == null || !rightPaneControl.isVisible()
                     || !splitPane.getItems().contains(rightPane)
                     || splitPane.getItems().size() == 1) {
-                return;
+                return false;
             }
             if (!UserConfig.getBoolean(baseName + "ShowRightControl", true)) {
                 hideRightPane();
             }
             setSplitDividerPositions();
             refreshStyle(splitPane);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return false;
         }
     }
 

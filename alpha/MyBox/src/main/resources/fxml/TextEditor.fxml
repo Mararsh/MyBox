@@ -173,7 +173,7 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </VBox>
-                                            </content>
+                                            </content> 
                                         </TitledPane>
                                         <TitledPane fx:id="findPane" layoutX="10.0" layoutY="10.0" text="%FindReplace">
                                             <content>
@@ -353,12 +353,12 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </children>
                                 </HBox>
-                        <AnchorPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                           <children>
-                              <TextArea fx:id="lineArea" editable="false" maxHeight="1.7976931348623157E308" minWidth="-Infinity" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%EditHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
+                                <AnchorPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <TextArea fx:id="lineArea" editable="false" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="200.0" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%EditHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -401,7 +401,7 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </items>
                 </SplitPane>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                     <children>
                         <Label fx:id="bottomLabel" minHeight="-Infinity" wrapText="true" HBox.hgrow="NEVER" />
                         <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">

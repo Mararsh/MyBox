@@ -303,46 +303,46 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         resultValue = AppValues.InvalidDouble;
                         op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                         if (message("Transpose").equals(op)) {
-                            result = MatrixDoubleTools.transpose(dataMatrix.matrixDouble());
+                            result = MatrixDoubleTools.transpose(dataMatrix.toArray());
 
                         } else if (message("RowEchelonForm").equals(op)) {
-                            result = MatrixDoubleTools.rowEchelonForm(dataMatrix.matrixDouble());
+                            result = MatrixDoubleTools.rowEchelonForm(dataMatrix.toArray());
 
                         } else if (message("ReducedRowEchelonForm").equals(op)) {
-                            result = MatrixDoubleTools.reducedRowEchelonForm(dataMatrix.matrixDouble());
+                            result = MatrixDoubleTools.reducedRowEchelonForm(dataMatrix.toArray());
 
                         } else if (message("ComplementMinor").equals(op)) {
-                            result = MatrixDoubleTools.complementMinor(dataMatrix.matrixDouble(), row - 1, column - 1);
+                            result = MatrixDoubleTools.complementMinor(dataMatrix.toArray(), row - 1, column - 1);
 
                         } else if (message("Normalize").equals(op)) {
-                            result = MatrixDoubleTools.normalize(dataMatrix.matrixDouble());
+                            result = MatrixDoubleTools.normalize(dataMatrix.toArray());
 
                         } else if (message("MultiplyNumber").equals(op)) {
-                            result = MatrixDoubleTools.multiply(dataMatrix.matrixDouble(), number);
+                            result = MatrixDoubleTools.multiply(dataMatrix.toArray(), number);
 
                         } else if (message("DivideNumber").equals(op)) {
-                            result = MatrixDoubleTools.divide(dataMatrix.matrixDouble(), number);
+                            result = MatrixDoubleTools.divide(dataMatrix.toArray(), number);
 
                         } else if (message("DeterminantByElimination").equals(op)) {
-                            resultValue = MatrixDoubleTools.determinantByElimination(dataMatrix.matrixDouble());
+                            resultValue = MatrixDoubleTools.determinantByElimination(dataMatrix.toArray());
 
                         } else if (message("DeterminantByComplementMinor").equals(op)) {
-                            resultValue = MatrixDoubleTools.determinantByComplementMinor(dataMatrix.matrixDouble());
+                            resultValue = MatrixDoubleTools.determinantByComplementMinor(dataMatrix.toArray());
 
                         } else if (message("InverseMatrixByElimination").equals(op)) {
-                            result = MatrixDoubleTools.inverseByElimination(dataMatrix.matrixDouble());
+                            result = MatrixDoubleTools.inverseByElimination(dataMatrix.toArray());
 
                         } else if (message("InverseMatrixByAdjoint").equals(op)) {
-                            result = MatrixDoubleTools.inverseByAdjoint(dataMatrix.matrixDouble());
+                            result = MatrixDoubleTools.inverseByAdjoint(dataMatrix.toArray());
 
                         } else if (message("MatrixRank").equals(op)) {
-                            resultValue = MatrixDoubleTools.rank(dataMatrix.matrixDouble());
+                            resultValue = MatrixDoubleTools.rank(dataMatrix.toArray());
 
                         } else if (message("AdjointMatrix").equals(op)) {
-                            result = MatrixDoubleTools.adjoint(dataMatrix.matrixDouble());
+                            result = MatrixDoubleTools.adjoint(dataMatrix.toArray());
 
                         } else if (message("Power").equals(op)) {
-                            result = MatrixDoubleTools.power(dataMatrix.matrixDouble(), power);
+                            result = MatrixDoubleTools.power(dataMatrix.toArray(), power);
 
                         }
                     } catch (Exception e) {
@@ -358,7 +358,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
                     if (result != null) {
                         resultBox.getChildren().add(resultTablePane);
-                        resultController.createMatrix(result);
+                        resultController.loadMatrix(result, false);
 //                        if (resultTableController.autoNameCheck.isSelected()) {
 //                            resultTableController.nameInput.setText(dataMatrix.getDataName() + " " + op);
 //                        }

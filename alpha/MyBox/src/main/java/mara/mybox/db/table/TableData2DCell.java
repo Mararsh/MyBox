@@ -34,7 +34,10 @@ public class TableData2DCell extends BaseTable<Data2DCell> {
         return this;
     }
 
-    public static final String QeuryData
+    public static final String QueryData
             = "SELECT * FROM Data2D_Cell WHERE dcdid=?";
+
+    public static final String ClearData
+            = "DELETE FROM Data2D_Cell WHERE dcdid=?";
 
 }

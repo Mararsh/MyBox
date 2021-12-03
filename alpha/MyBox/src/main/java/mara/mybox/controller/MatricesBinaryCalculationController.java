@@ -148,6 +148,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         super.afterSceneLoaded();
 
         loadTableData();
+        createAction();
 
         dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
             @Override
@@ -298,25 +299,25 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                 protected boolean handle() {
                     try {
                         if (plusRadio.isSelected()) {
-                            result = MatrixDoubleTools.add(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
+                            result = MatrixDoubleTools.add(dataMatrix.toArray(), dataMatrix2.toArray());
 
                         } else if (minusRadio.isSelected()) {
-                            result = MatrixDoubleTools.subtract(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
+                            result = MatrixDoubleTools.subtract(dataMatrix.toArray(), dataMatrix2.toArray());
 
                         } else if (multiplyRadio.isSelected()) {
-                            result = MatrixDoubleTools.multiply(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
+                            result = MatrixDoubleTools.multiply(dataMatrix.toArray(), dataMatrix2.toArray());
 
                         } else if (hadamardProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.hadamardProduct(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
+                            result = MatrixDoubleTools.hadamardProduct(dataMatrix.toArray(), dataMatrix2.toArray());
 
                         } else if (kroneckerProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.kroneckerProduct(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
+                            result = MatrixDoubleTools.kroneckerProduct(dataMatrix.toArray(), dataMatrix2.toArray());
 
                         } else if (verticalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.vertivalMerge(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
+                            result = MatrixDoubleTools.vertivalMerge(dataMatrix.toArray(), dataMatrix2.toArray());
 
                         } else if (horizontalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.horizontalMerge(dataMatrix.matrixDouble(), dataMatrix2.matrixDouble());
+                            result = MatrixDoubleTools.horizontalMerge(dataMatrix.toArray(), dataMatrix2.toArray());
 
                         }
                     } catch (Exception e) {
@@ -331,7 +332,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                     cost = new Date().getTime() - startTime.getTime();
                     String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                     resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-                    resultController.createMatrix(result);
+                    resultController.loadMatrix(result, false);
 //                    if (resultController.autoNameCheck.isSelected()) {
 //                        resultController.nameInput.setText(op);
 //                    }

@@ -35,7 +35,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public final TableData2DDefinition defineColumns() {
         addColumn(new ColumnDefinition("d2did", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("data_type", ColumnType.Short, true));
-        addColumn(new ColumnDefinition("data_name", ColumnType.String, true).setLength(4096));
+        addColumn(new ColumnDefinition("data_name", ColumnType.String).setLength(4096));
         addColumn(new ColumnDefinition("file", ColumnType.File).setLength(32672));
         addColumn(new ColumnDefinition("charset", ColumnType.String).setLength(32));
         addColumn(new ColumnDefinition("delimiter", ColumnType.String).setLength(128));
@@ -46,8 +46,12 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         addColumn(new ColumnDefinition("max_random", ColumnType.Integer));
         addColumn(new ColumnDefinition("modify_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(32672));
+        orderColumns = "d2did DESC";
         return this;
     }
+
+    public static final String QueryID
+            = "SELECT * FROM Data2D_Definition WHERE d2did=?";
 
     public static final String Query_TypeFile
             = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=?";
@@ -76,6 +80,19 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     /*
         local methods
      */
+    public Data2DDefinition queryID(Connection conn, long d2did) {
+        if (conn == null || d2did < 0) {
+            return null;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(QueryID)) {
+            statement.setLong(1, d2did);
+            return query(conn, statement);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public Data2DDefinition queryFile(Type type, File file) {
         if (file == null) {
             return null;
@@ -246,7 +263,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         int count = 0;
         try {
             conn.setAutoCommit(true);
-            String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 5";
+            String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
             List<Data2DDefinition> invalid = new ArrayList<>();
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
