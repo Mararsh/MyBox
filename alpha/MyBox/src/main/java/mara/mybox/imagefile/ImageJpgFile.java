@@ -29,7 +29,6 @@ import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
@@ -49,9 +48,11 @@ public class ImageJpgFile {
         return new JPEGImageWriteParam(null).getCompressionTypes();
     }
 
-    public static BufferedImage readBrokenJpgFile(String filename, int index, Rectangle region, int width) {
-        BufferedImage bufferedImage = null;
-        File file = new File(filename);
+    public static BufferedImage readBrokenJpgFile(ImageInformation readInfo) {
+        if (readInfo == null) {
+            return null;
+        }
+        File file = new File(readInfo.getFileName());
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
             ImageReader reader = null;
@@ -66,76 +67,48 @@ public class ImageJpgFile {
                 return null;
             }
             reader.setInput(iis);
+
+            ImageInformation.checkValues(readInfo);
+
             ImageFileInformation fileInfo = new ImageFileInformation(file);
             ImageFileReaders.readImageFileMetaData(reader, fileInfo);
-            ImageInformation imageInfo = fileInfo.getImageInformation();
+            ImageInformation fileImageInfo = fileInfo.getImagesInformation().get(readInfo.getIndex());
 
-            int imageWidth = reader.getWidth(index);
-            int imageHeight = reader.getHeight(index);
-            int requriedWidth = width, scale = 1;
-            if (region != null) {
-                if (width <= 0) {
-                    requriedWidth = (int) Math.ceil(region.getWidth());
-                }
-            } else if (width <= 0) {
-                requriedWidth = imageWidth;
-            }
-            double maxReadWidth = ImageFileReaders.maxReadWidth(imageWidth, imageHeight, 4, 6);
-            if (maxReadWidth < requriedWidth) {
-                scale = (int) (requriedWidth / maxReadWidth);
-            }
-            bufferedImage = readBrokenJpgFile(reader, imageInfo, index, region, scale, scale);
-            if (bufferedImage != null) {
-                bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requriedWidth);
-            }
+            readInfo.setWidth(fileImageInfo.getWidth());
+            readInfo.setHeight(fileImageInfo.getHeight());
+            readInfo.setColorSpace(fileImageInfo.getColorSpace());
+            readInfo.setColorChannels(fileImageInfo.getColorChannels());
+            readInfo.setNativeAttribute("Adobe", fileImageInfo.getNativeAttribute("Adobe"));
+
+            BufferedImage bufferedImage = readBrokenJpgFile(reader, readInfo);
+            bufferedImage = readInfo.loadBufferedImage(bufferedImage, true);
+            return bufferedImage;
         } catch (Exception ex) {
-            MyBoxLog.error(ex.toString());
+            readInfo.setError(ex.toString());
+            readInfo.loadBufferedImage(null, false);
+            return null;
         }
-        return bufferedImage;
     }
 
-    public static BufferedImage readBrokenJpgFile(String filename, int index, Rectangle region, int xscale, int yscale) {
-        BufferedImage bufferedImage = null;
-        File file = new File(filename);
-        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-            ImageReader reader = null;
-            while (readers.hasNext()) {
-                reader = readers.next();
-                if (reader.canReadRaster()) {
-                    break;
-                }
-            }
-            if (reader == null) {
-                iis.close();
-                return null;
-            }
-            reader.setInput(iis);
-            ImageFileInformation fileInfo = new ImageFileInformation(file);
-            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
-            ImageInformation imageInfo = fileInfo.getImageInformation();
-            bufferedImage = readBrokenJpgFile(reader, imageInfo, index, region, xscale, yscale);
-        } catch (Exception ex) {
-            MyBoxLog.error(ex.toString());
-        }
-        return bufferedImage;
-    }
-
-    public static BufferedImage readBrokenJpgFile(ImageReader reader, ImageInformation imageInfo,
-            int index, Rectangle region, int xscale, int yscale) {
-        if (reader == null || imageInfo == null || imageInfo.getColorChannels() != 4) {
+    private static BufferedImage readBrokenJpgFile(ImageReader reader, ImageInformation readInfo) {
+        if (reader == null || readInfo == null || readInfo.getColorChannels() != 4) {
             return null;
         }
         BufferedImage bufferedImage = null;
         try {
             ImageReadParam param = reader.getDefaultReadParam();
+            Rectangle region = readInfo.getRegion();
             if (region != null) {
                 param.setSourceRegion(region);
             }
-            param.setSourceSubsampling(xscale, yscale, 0, 0);
-            WritableRaster srcRaster = (WritableRaster) reader.readRaster(index, param);
-            boolean isAdobe = (boolean) imageInfo.getNativeAttribute("Adobe");
-            if ("YCCK".equals(imageInfo.getColorSpace())) {
+            int xscale = readInfo.getXscale();
+            int yscale = readInfo.getYscale();
+            if (xscale != 1 || yscale != 1) {
+                param.setSourceSubsampling(xscale, yscale, 0, 0);
+            }
+            WritableRaster srcRaster = (WritableRaster) reader.readRaster(readInfo.getIndex(), param);
+            boolean isAdobe = (boolean) readInfo.getNativeAttribute("Adobe");
+            if ("YCCK".equals(readInfo.getColorSpace())) {
                 ImageConvertTools.ycck2cmyk(srcRaster, isAdobe);
             } else if (isAdobe) {
                 ImageConvertTools.invertPixelValue(srcRaster);
@@ -153,7 +126,7 @@ public class ImageJpgFile {
             cmykToRgb.filter(srcRaster, rgbRaster);
 
         } catch (Exception ex) {
-            MyBoxLog.error(ex.toString());
+            readInfo.setError(ex.toString());
         }
         return bufferedImage;
     }

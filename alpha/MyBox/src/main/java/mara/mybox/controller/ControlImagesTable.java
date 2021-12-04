@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
@@ -31,7 +32,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -41,7 +41,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImagesTable extends BaseBatchTableController<ImageInformation> {
 
-//    protected boolean isOpenning;
     protected SimpleBooleanProperty hasSampled;
     protected Image image;
     protected long duration;
@@ -267,43 +266,32 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             }
             task = new SingletonTask<Void>(this) {
 
-                private int imageIndex;
-                private boolean added;
+                private List<ImageInformation> infos;
 
                 @Override
                 protected boolean handle() {
-                    try {
-                        imageIndex = index;
-                        added = false;
-                        boolean append = index < 0 || index >= tableData.size();
-                        for (File file : files) {
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
-                            ImageFileInformation finfo = ImageFileInformation.create(file);
-                            for (ImageInformation minfo : finfo.getImagesInformation()) {
-                                added = true;
-                                if (append) {
-                                    tableData.add(minfo);
-                                } else {
-                                    tableData.add(imageIndex++, minfo);
-                                }
-                            }
+                    infos = new ArrayList<>();
+                    for (File file : files) {
+                        if (task == null || isCancelled()) {
+                            return false;
                         }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
+                        ImageFileInformation finfo = ImageFileInformation.create(file);
+                        infos.addAll(finfo.getImagesInformation());
                     }
+                    return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (added) {
+                    if (!infos.isEmpty()) {
+                        if (index < 0 || index >= tableData.size()) {
+                            tableData.addAll(infos);
+                        } else {
+                            tableData.addAll(index, infos);
+                        }
+                        tableView.refresh();
                         popDone();
                         recordFileAdded(files);
-                    } else {
-                        popError(message("NoData"));
                     }
                 }
 

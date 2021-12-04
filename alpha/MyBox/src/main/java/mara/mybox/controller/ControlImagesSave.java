@@ -336,10 +336,10 @@ public class ControlImagesSave extends BaseController {
                 }
             } else {
                 if (info.getWidth() > maxW) {
-                    maxW = info.getWidth();
+                    maxW = (int) info.getWidth();
                 }
                 if (info.getHeight() > maxH) {
-                    maxH = info.getHeight();
+                    maxH = (int) info.getHeight();
                 }
             }
         }

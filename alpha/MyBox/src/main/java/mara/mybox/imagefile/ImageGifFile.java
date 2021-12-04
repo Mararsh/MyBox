@@ -3,7 +3,6 @@ package mara.mybox.imagefile;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageMetadata;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriter;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,13 +20,10 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.data.DoubleRectangle;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
@@ -122,7 +118,7 @@ public class ImageGifFile {
         }
     }
 
-    public static BufferedImage readBrokenGifFile(String src, int index) {
+    public static BufferedImage readBrokenGifIndex(String src, int index) {
         BufferedImage bufferedImage = null;
         try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
             GifImage gif = GifDecoder.read(in);
@@ -134,111 +130,19 @@ public class ImageGifFile {
         return bufferedImage;
     }
 
-    public static BufferedImage readBrokenGifFile(String filename, int index, Rectangle region, int xscale, int yscale) {
+    public static BufferedImage readBrokenGifFile(ImageInformation imageInfo) {
         BufferedImage bufferedImage = null;
         try {
-            bufferedImage = readBrokenGifFile(filename, index);
-            if (region == null) {
-                bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, xscale, yscale);
-            } else {
-                bufferedImage = CropTools.sample(bufferedImage, new DoubleRectangle(region), xscale, yscale);
+            ImageInformation.checkValues(imageInfo);
+            bufferedImage = readBrokenGifIndex(imageInfo.getFileName(), imageInfo.getIndex());
+            if (imageInfo.getWidth() <= 0) {
+                imageInfo.setWidth(bufferedImage.getWidth());
+                imageInfo.setHeight(bufferedImage.getHeight());
             }
+            bufferedImage = imageInfo.loadBufferedImage(bufferedImage, false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-        return bufferedImage;
-    }
-
-    public static BufferedImage readBrokenGifFile(String filename, int index, Rectangle region, int width) {
-        BufferedImage bufferedImage = null;
-        try {
-            bufferedImage = readBrokenGifFile(filename, index);
-            if (region == null) {
-                bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
-            } else {
-                bufferedImage = CropTools.sample(bufferedImage, new DoubleRectangle(region), width);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return bufferedImage;
-    }
-
-    public static List<BufferedImage> readBrokenGifFile(String src, int xscale, int yscale) {
-//            MyBoxLog.debug("readBrokenGifFile");
-        List<BufferedImage> images = new ArrayList<>();
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-            final GifImage gif = GifDecoder.read(in);
-            final int frameCount = gif.getFrameCount();
-            for (int i = 0; i < frameCount; ++i) {
-                final BufferedImage img = gif.getFrame(i);
-                int width = img.getWidth() / xscale;
-                int height = img.getHeight() / yscale;
-                images.add(ScaleTools.scaleImageBySize(img, width, height));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-        return images;
-    }
-
-    public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
-        List<BufferedImage> images = new ArrayList<>();
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-            final GifImage gif = GifDecoder.read(in);
-            final int frameCount = gif.getFrameCount();
-            for (int i = 0; i < frameCount; ++i) {
-                final BufferedImage img = gif.getFrame(i);
-                images.add(ScaleTools.scaleImageWidthKeep(img, width));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-        return images;
-    }
-
-    public static List<BufferedImage> readBrokenGifFile(String src, List<ImageInformation> imagesInfo) {
-//            MyBoxLog.debug("readBrokenGifFile");
-        List<BufferedImage> images = new ArrayList<>();
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-            final GifImage gif = GifDecoder.read(in);
-            final int frameCount = gif.getFrameCount();
-            for (int i = 0; i < frameCount; ++i) {
-                ImageInformation info = imagesInfo.get(i);
-                final BufferedImage bufferedImage = gif.getFrame(i);
-                if (info.isNeedSample()) {
-                    images.add(ScaleTools.scaleImageByScale(bufferedImage, 1f / info.getSampleScale()));
-                    info.setIsSampled(true);
-                } else {
-                    images.add(bufferedImage);
-                    info.setIsSampled(false);
-                    info.setBufferedImage(bufferedImage);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-        return images;
-    }
-
-    public static BufferedImage readBrokenGifFile(String src, ImageInformation imageInfo) {
-        BufferedImage bufferedImage = null;
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-            final GifImage gif = GifDecoder.read(in);
-            bufferedImage = gif.getFrame(0);
-            if (imageInfo.isNeedSample()) {
-                bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, 1f / imageInfo.getSampleScale());
-                imageInfo.setIsSampled(true);
-            } else {
-                imageInfo.setIsSampled(false);
-                imageInfo.setBufferedImage(bufferedImage);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
+            imageInfo.loadBufferedImage(null, false);
         }
         return bufferedImage;
     }

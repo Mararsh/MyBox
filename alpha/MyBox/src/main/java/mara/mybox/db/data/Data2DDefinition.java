@@ -1,6 +1,7 @@
 package mara.mybox.db.data;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
@@ -36,19 +37,28 @@ public class Data2DDefinition extends BaseData {
             if (def == null) {
                 return;
             }
-            d2did = def.getD2did();
-            type = def.getType();
-            dataName = def.getDataName();
-            delimiter = def.getDelimiter();
-            file = def.getFile();
-            charset = def.getCharset();
-            hasHeader = def.isHasHeader();
-            colsNumber = def.getColsNumber();
-            rowsNumber = def.getRowsNumber();
-            scale = def.getScale();
-            maxRandom = def.getMaxRandom();
-            modifyTime = def.getModifyTime();
-            comments = def.getComments();
+            Field[] sourceFields = def.getClass().getDeclaredFields();
+            Field[] thisFields = this.getClass().getDeclaredFields();
+            for (int i = 0; i < sourceFields.length; i++) {
+                Field s = sourceFields[i];
+                s.setAccessible(true);
+                Field t = thisFields[i];
+                t.setAccessible(true);
+                t.set(this, s.get(def));
+            }
+//            d2did = def.getD2did();
+//            type = def.getType();
+//            dataName = def.getDataName();
+//            delimiter = def.getDelimiter();
+//            file = def.getFile();
+//            charset = def.getCharset();
+//            hasHeader = def.isHasHeader();
+//            colsNumber = def.getColsNumber();
+//            rowsNumber = def.getRowsNumber();
+//            scale = def.getScale();
+//            maxRandom = def.getMaxRandom();
+//            modifyTime = def.getModifyTime();
+//            comments = def.getComments();
         } catch (Exception e) {
         }
     }

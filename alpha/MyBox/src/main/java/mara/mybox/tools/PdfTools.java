@@ -11,19 +11,18 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
+import mara.mybox.bufferedimage.AlphaTools;
+import mara.mybox.bufferedimage.CropTools;
+import mara.mybox.bufferedimage.ImageAttributes;
+import mara.mybox.bufferedimage.ImageBinary;
+import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.controller.ControlPdfWriteOptions;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.bufferedimage.AlphaTools;
-import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.ImageBinary;
-import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -418,7 +417,8 @@ public class PdfTools {
         return imageList;
     }
 
-    public static InputStream getImageInputStream(PDImageXObject iamge) throws Exception {
+    public static InputStream getImageInputStream(PDImageXObject iamge) throws
+            Exception {
 
         if (null != iamge && null != iamge.getImage()) {
             BufferedImage bufferImage = iamge.getImage();
@@ -452,6 +452,8 @@ public class PdfTools {
                 int count = 0;
                 int total = (rows.size() - 1) * (cols.size() - 1);
                 PDFont font = PdfTools.getFont(document, fontFile);
+                ImageInformation info = new ImageInformation(new File(sourceFile));
+                info.setImageFormat(sourceFormat);
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
@@ -460,7 +462,8 @@ public class PdfTools {
                         x2 = cols.get(j + 1);
                         BufferedImage target;
                         if (wholeSource == null) {
-                            target = ImageFileReaders.readFrame(sourceFormat, sourceFile, x1, y1, x2, y2);
+                            info.setRegion(x1, y1, x2, y2);
+                            target = ImageFileReaders.readFrame(info);
                         } else {
                             target = CropTools.cropOutside(wholeSource, x1, y1, x2, y2);
                         }

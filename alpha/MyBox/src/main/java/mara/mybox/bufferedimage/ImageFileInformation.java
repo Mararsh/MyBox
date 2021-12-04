@@ -88,7 +88,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo.setIsMultipleFrames(num > 1);
                 imageInfo.setIndex(i);
                 imageInfo.setImageType(BufferedImage.TYPE_INT_RGB);
-                ImageInformation.countMaxWidth(imageInfo);
+                ImageInformation.checkValues(imageInfo);
                 imagesInfo.add(imageInfo);
             }
             fileInfo.setImagesInformation(imagesInfo);
@@ -128,7 +128,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo.setIsMultipleFrames(num > 1);
                 imageInfo.setIndex(i);
                 imageInfo.setImageType(BufferedImage.TYPE_INT_ARGB);
-                ImageInformation.countMaxWidth(imageInfo);
+                ImageInformation.checkValues(imageInfo);
                 imagesInfo.add(imageInfo);
             }
             fileInfo.setImagesInformation(imagesInfo);

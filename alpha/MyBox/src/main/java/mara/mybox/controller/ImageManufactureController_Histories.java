@@ -356,7 +356,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
             if (thumbfile.exists()) {
                 bufferedImage = ImageFileReaders.readImage(thumbfile);
             } else {
-                bufferedImage = ImageFileReaders.readImageByWidth("png", fname, width);
+                bufferedImage = ImageFileReaders.readImage(new File(fname), width);
             }
             if (bufferedImage != null) {
                 his.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));

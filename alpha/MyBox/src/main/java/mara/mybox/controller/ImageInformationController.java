@@ -131,13 +131,13 @@ public class ImageInformationController extends HtmlTableController {
 
             if (imageInfo.getXDpi() > 0) {
                 table.add(Arrays.asList(Languages.message("xDensity"), imageInfo.getXDpi() + " dpi"));
-                float xinch = imageInfo.getWidth() / imageInfo.getXDpi();
+                double xinch = imageInfo.getWidth() / imageInfo.getXDpi();
                 table.add(Arrays.asList(Languages.message("xSize"), xinch + " " + Languages.message("inches")
                         + " = " + (xinch * 2.54) + " " + Languages.message("centimetres")));
             }
             if (imageInfo.getYDpi() > 0) {
                 table.add(Arrays.asList(Languages.message("yDensity"), imageInfo.getYDpi() + " dpi"));
-                float yinch = imageInfo.getHeight() / imageInfo.getYDpi();
+                double yinch = imageInfo.getHeight() / imageInfo.getYDpi();
                 table.add(Arrays.asList(Languages.message("ySize"), yinch + " " + Languages.message("inches")
                         + " = " + (yinch * 2.54) + " " + Languages.message("centimetres")));
             }

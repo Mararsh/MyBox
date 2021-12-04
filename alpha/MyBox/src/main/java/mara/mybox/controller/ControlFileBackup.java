@@ -129,7 +129,7 @@ public class ControlFileBackup extends BaseController {
                                     + FileTools.showFileSize(item.getBackup().length()));
                             if (parentController instanceof ImageManufactureController) {
                                 int width = AppVariables.thumbnailWidth;
-                                BufferedImage bufferedImage = ImageFileReaders.readImageByWidth(item.getBackup().getAbsolutePath(), width);
+                                BufferedImage bufferedImage = ImageFileReaders.readImage(item.getBackup(), width);
                                 if (bufferedImage != null) {
                                     view.setFitWidth(width);
                                     view.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
