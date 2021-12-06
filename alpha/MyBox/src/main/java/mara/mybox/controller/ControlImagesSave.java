@@ -87,7 +87,8 @@ public class ControlImagesSave extends BaseController {
     @FXML
     protected ToggleGroup saveGroup;
     @FXML
-    protected RadioButton imagesRadio, spiceRadio, pdfRadio, pptRadio, tifFileRadio, gifFileRadio;
+    protected RadioButton imagesRadio, spliceRadio, pdfRadio, pptRadio,
+            tifFileRadio, gifFileRadio, videoRadio;
     @FXML
     protected Label saveImagesLabel;
     @FXML
@@ -151,7 +152,7 @@ public class ControlImagesSave extends BaseController {
 
     public void imageInfosChanged() {
         thumbsListButton.setDisable(imageInfos.isEmpty());
-        saveButton.setDisable(imageInfos.isEmpty());
+        saveAsButton.setDisable(imageInfos.isEmpty());
     }
 
     public void initSavePane() {
@@ -178,7 +179,7 @@ public class ControlImagesSave extends BaseController {
             setTargetFileType(VisitHistory.FileType.Image);
             saveImagesLabel.setVisible(true);
             convertPane.setExpanded(true);
-        } else if (spiceRadio.isSelected()) {
+        } else if (spliceRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Image);
         } else if (tifFileRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Tif);
@@ -364,7 +365,7 @@ public class ControlImagesSave extends BaseController {
     @FXML
     @Override
     public void popSaveAs(MouseEvent event) {
-        if (spiceRadio.isSelected()) {
+        if (spliceRadio.isSelected() || videoRadio.isSelected()) {
             return;
         }
         super.popSaveAs(event);
@@ -387,7 +388,7 @@ public class ControlImagesSave extends BaseController {
             }
             saveAsImages();
 
-        } else if (spiceRadio.isSelected()) {
+        } else if (spliceRadio.isSelected()) {
             saveAsSplice();
 
         } else if (tifFileRadio.isSelected()) {
@@ -417,6 +418,9 @@ public class ControlImagesSave extends BaseController {
                 return;
             }
             saveAsPPT();
+
+        } else if (videoRadio.isSelected()) {
+            saveAsVideo();
 
         }
     }
@@ -524,6 +528,17 @@ public class ControlImagesSave extends BaseController {
             infos.add(imageInfos.get(i).cloneAttributes());
         }
         ImagesSpliceController.open(infos);
+    }
+
+    protected void saveAsVideo() {
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            return;
+        }
+        List<ImageInformation> infos = new ArrayList<>();
+        for (int i = 0; i < imageInfos.size(); ++i) {
+            infos.add(imageInfos.get(i).cloneAttributes());
+        }
+        FFmpegMergeImagesController.open(infos);
     }
 
     protected void saveAsPdf() {

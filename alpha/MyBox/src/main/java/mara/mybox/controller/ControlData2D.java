@@ -16,7 +16,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
@@ -61,7 +61,7 @@ public class ControlData2D extends BaseController {
     @FXML
     protected ControlData2DColumns columnsController;
     @FXML
-    protected HBox paginationBox;
+    protected FlowPane paginationPane;
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
@@ -359,7 +359,9 @@ public class ControlData2D extends BaseController {
         }
         columnsTab.setText(title);
 
-        saveButton.setDisable(!isTotalLoaded());
+        if (saveButton != null) {
+            saveButton.setDisable(!isTotalLoaded());
+        }
 
         notifyStatus();
     }

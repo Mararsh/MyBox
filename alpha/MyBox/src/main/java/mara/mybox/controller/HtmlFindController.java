@@ -33,8 +33,9 @@ public class HtmlFindController extends WebAddressController {
 
     protected static final String ItemPrefix = "MyBoxSearchLocation";
     protected int foundCount, foundItem;
-    protected String sourceHtml;
+    protected String sourceAddress, sourceHtml;
     protected LoadingController loading;
+    protected boolean isQuerying;
 
     @FXML
     protected ComboBox<String> findFontSelector, foundItemSelector;
@@ -133,7 +134,20 @@ public class HtmlFindController extends WebAddressController {
     public void goAction() {
         foundCount = 0;
         sourceHtml = null;
+        reset();
         super.goAction();
+    }
+
+    protected void reset() {
+        foundCount = 0;
+        foundLabel.setText("");
+        foundItemSelector.getItems().clear();
+        goItemButton.setDisable(true);
+        firstButton.setDisable(true);
+        previousButton.setDisable(true);
+        nextButton.setDisable(true);
+        lastButton.setDisable(true);
+        isQuerying = false;
     }
 
     @Override
@@ -143,8 +157,9 @@ public class HtmlFindController extends WebAddressController {
 
             if (sourceHtml == null) {
                 sourceHtml = WebViewTools.getHtml(webEngine);
+                sourceAddress = webViewController.address;
 
-            } else {
+            } else if (isQuerying) {
                 popInformation(message("Found") + ": " + foundCount);
 
             }
@@ -174,15 +189,8 @@ public class HtmlFindController extends WebAddressController {
                 return;
             }
             findInputController.refreshList();
-
-            foundCount = 0;
-            foundLabel.setText("");
-            foundItemSelector.getItems().clear();
-            goItemButton.setDisable(true);
-            firstButton.setDisable(true);
-            previousButton.setDisable(true);
-            nextButton.setDisable(true);
-            lastButton.setDisable(true);
+            reset();
+            isQuerying = true;
             task = new SingletonTask<Void>(this) {
 
                 private StringBuilder results;
@@ -387,6 +395,13 @@ public class HtmlFindController extends WebAddressController {
     @FXML
     public void popFindExample(MouseEvent mouseEvent) {
         PopTools.popRegexExample(this, findInputController.selector.getEditor(), mouseEvent);
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        reset();
+        loadContents(sourceAddress, sourceHtml);
     }
 
     @Override

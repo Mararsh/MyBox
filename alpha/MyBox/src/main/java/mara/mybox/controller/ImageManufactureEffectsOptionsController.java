@@ -15,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -684,9 +683,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             NodeStyleTools.setTooltip(intInput, new Tooltip("0~255"));
 
             if (imageView != null) {
-                calculatorView.setImage(new Image(StyleTools.getIcon("iconCalculator.png")));
-                calculatorView.setFitWidth(20);
-                calculatorView.setFitHeight(20);
+                calculatorView = StyleTools.getIconImage("iconCalculator.png");
                 button.setGraphic(calculatorView);
                 button.setText("");
                 NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("Calculate")));

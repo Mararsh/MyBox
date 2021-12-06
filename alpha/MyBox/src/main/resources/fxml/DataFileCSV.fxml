@@ -158,7 +158,7 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                         <VBox fx:id="mainBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <HBox fx:id="paginationBox" alignment="CENTER_LEFT" spacing="2.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2.0">
                                     <children>
                                         <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>

@@ -8,8 +8,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageScope;
@@ -80,13 +78,8 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
 
     public class ImageScopeCell extends ListCell<ImageScope> {
 
-        private final ImageView view;
-
         public ImageScopeCell() {
             setContentDisplay(ContentDisplay.LEFT);
-            view = new ImageView();
-            view.setPreserveRatio(true);
-            view.setFitWidth(20);
         }
 
         @Override
@@ -98,41 +91,41 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                 return;
             }
 
-            Image icon;
+            String icon;
             try {
                 switch (item.getScopeType()) {
                     case Rectangle:
-                        icon = new Image(StyleTools.getIcon("iconRectangle.png"));
+                        icon = "iconRectangle.png";
                         break;
                     case Circle:
-                        icon = new Image(StyleTools.getIcon("iconCircle.png"));
+                        icon = "iconCircle.png";
                         break;
                     case Ellipse:
-                        icon = new Image(StyleTools.getIcon("iconEllipse.png"));
+                        icon = "iconEllipse.png";
                         break;
                     case Polygon:
-                        icon = new Image(StyleTools.getIcon("iconStar.png"));
+                        icon = "iconStar.png";
                         break;
                     case RectangleColor:
-                        icon = new Image(StyleTools.getIcon("iconRectangleFilled.png"));
+                        icon = "iconRectangleFilled.png";
                         break;
                     case CircleColor:
-                        icon = new Image(StyleTools.getIcon("iconCircleFilled.png"));
+                        icon = "iconCircleFilled.png";
                         break;
                     case EllipseColor:
-                        icon = new Image(StyleTools.getIcon("iconEllipseFilled.png"));
+                        icon = "iconEllipseFilled.png";
                         break;
                     case PolygonColor:
-                        icon = new Image(StyleTools.getIcon("iconStarFilled.png"));
+                        icon = "iconStarFilled.png";
                         break;
                     case Color:
-                        icon = new Image(StyleTools.getIcon("iconColorWheel.png"));
+                        icon = "iconColorWheel.png";
                         break;
                     case Matting:
-                        icon = new Image(StyleTools.getIcon("iconColorFill.png"));
+                        icon = "iconColorFill.png";
                         break;
                     case Outline:
-                        icon = new Image(StyleTools.getIcon("IconButterfly.png"));
+                        icon = "IconButterfly.png";
                         break;
                     default:
                         return;
@@ -144,8 +137,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                 } else {
                     setStyle("");
                 }
-                view.setImage(icon);
-                setGraphic(view);
+                setGraphic(StyleTools.getIconImage(icon));
                 setText(s);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());

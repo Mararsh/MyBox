@@ -197,6 +197,58 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
     @FXML
     @Override
+    public void zoomOut() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            super.zoomOut();
+
+        } else if (tab == scopeTab) {
+            scopeController.zoomOut();
+
+        }
+    }
+
+    @FXML
+    @Override
+    public void zoomIn() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            super.zoomIn();
+
+        } else if (tab == scopeTab) {
+            scopeController.zoomIn();
+
+        }
+    }
+
+    @FXML
+    @Override
+    public void paneSize() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            super.paneSize();
+
+        } else if (tab == scopeTab) {
+            scopeController.paneSize();
+
+        }
+    }
+
+    @FXML
+    @Override
+    public void loadedSize() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            super.loadedSize();
+
+        } else if (tab == scopeTab) {
+            scopeController.loadedSize();
+
+        }
+    }
+
+    @FXML
+    @Override
     public boolean menuAction() {
         try {
             closePopup();

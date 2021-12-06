@@ -21,7 +21,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.bufferedimage.ImageFileInformation;
@@ -211,6 +210,8 @@ public class ImagesPlayController extends BaseImagesListController {
                         return loadPDF();
                     } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
                         return loadPPT();
+                    } else if (fileFormat.equalsIgnoreCase("ico") || fileFormat.equalsIgnoreCase("icon")) {
+                        return loadIconFile();
                     } else {
                         return loadImageFile();
                     }
@@ -283,8 +284,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 if (notGif) {
                     imageInfo.setDuration(playController.interval);
                 }
-                imageInfo.setRequiredWidth(loadWidth);
-                ImageInformation.checkValues(imageInfo);
+                ImageInformation.checkMem(imageInfo);
                 if (imageInfo.isNeedSample()) {
                     if (task != null) {
                         task.setError(Languages.message("OutOfMeomey"));
@@ -292,24 +292,35 @@ public class ImagesPlayController extends BaseImagesListController {
                     loading.setInfo(Languages.message("OutOfMeomey"));
                     break;
                 }
-                ImageReadParam param = reader.getDefaultReadParam();
-                int scale = imageInfo.getSampleScale();
-                if (scale > 1) {
-                    param.setSourceSubsampling(scale, scale, 0, 0);
-                }
-                BufferedImage frame;
-                try {
-                    frame = reader.read(imageInfo.getIndex(), param);
-                    imageInfo.loadBufferedImage(frame, true);
-                } catch (Exception e) {
-                    ImageFileReaders.readBrokenImage((Exception) e, imageInfo);
-                }
+                BufferedImage bufferedImage = ImageFileReaders.readFrame(reader, imageInfo);
+                imageInfo.loadBufferedImage(bufferedImage);
                 if (task == null || task.isCancelled()) {
                     reader.dispose();
                     return false;
                 }
             }
             reader.dispose();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+        return task != null && !task.isCancelled();
+    }
+
+    protected boolean loadIconFile() {
+        imageInfos.clear();
+        Platform.runLater(() -> {
+            imagesRadio.fire();
+        });
+        if (sourceFile == null) {
+            return false;
+        }
+        try {
+            ImageFileInformation finfo = ImageFileInformation.readIconFile(sourceFile);
+            imageInfos.addAll(finfo.getImagesInformation());
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -504,8 +515,7 @@ public class ImagesPlayController extends BaseImagesListController {
                             if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
                                 continue;
                             }
-                            info.setRequiredWidth(loadWidth);
-                            ImageInformation.checkValues(info);
+                            ImageInformation.checkMem(info);
                             if (info.isNeedSample()) {
                                 if (task != null) {
                                     task.setError(Languages.message("OutOfMeomey"));

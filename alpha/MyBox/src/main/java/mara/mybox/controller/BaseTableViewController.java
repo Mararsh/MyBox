@@ -23,7 +23,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -59,7 +59,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     protected Button moveUpButton, moveDownButton, refreshButton;
     @FXML
-    protected HBox paginationBox;
+    protected FlowPane paginationPane;
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
 
@@ -226,7 +226,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = true;
         tableView.refresh();
         isSettingValues = false;
-        setPagination();
         checkSelected();
         editNull();
         viewNull();
@@ -234,6 +233,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (!dataSizeLoaded) {
             loadDataSize();
         }
+        setPagination();
     }
 
     public long readDataSize() {
@@ -242,6 +242,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     public void loadDataSize() {
         dataSizeLoaded = true;
+//        setPagination();
     }
 
     public List<P> readPageData() {
@@ -249,6 +250,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     protected void tableChanged() {
+        if (isSettingValues) {
+            return;
+        }
         tableChanged(true);
     }
 
@@ -926,12 +930,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     protected void setPagination() {
         try {
-            if (paginationBox != null) {
+            if (paginationPane != null) {
                 if (!dataSizeLoaded) {
-                    paginationBox.setVisible(false);
+                    paginationPane.setVisible(false);
                     return;
                 }
-                paginationBox.setVisible(true);
+                paginationPane.setVisible(true);
             }
             if (pageSelector == null) {
                 return;

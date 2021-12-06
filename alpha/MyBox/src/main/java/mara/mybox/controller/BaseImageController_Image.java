@@ -63,19 +63,15 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
                 @Override
                 protected boolean handle() {
-                    targetInfo = null;
-                    Object ret = ImageFileReaders.readFrame(file, onlyInformation, index, width, imageInformation);
-                    if (ret == null) {
-                        return false;
-                    } else if (ret instanceof ImageInformation) {
-                        targetInfo = (ImageInformation) ret;
-                        return targetInfo != null;
-                    } else if (ret instanceof Exception) {
-                        error = ((Exception) ret).toString();
-                        return false;
-                    } else {
+                    targetInfo = new ImageInformation(file);
+                    targetInfo.setIndex(index);
+                    targetInfo.setRequiredWidth(width);
+                    targetInfo = ImageFileReaders.makeInfo(targetInfo, imageInformation, onlyInformation);
+                    if (targetInfo == null) {
                         return false;
                     }
+                    error = targetInfo.getError();
+                    return true;
                 }
 
                 @Override
@@ -89,6 +85,9 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                         image = targetInfo.getThumbnail();
                         afterInfoLoaded();
                         afterImageLoaded();
+                    }
+                    if (error != null && !error.isBlank()) {
+                        popError(error);
                     }
                 }
 
@@ -184,7 +183,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         setImageChanged(true);
     }
 
-    public void loadImage(File sourceFile, ImageInformation imageInformation, Image image, boolean changed) {
+    public void loadImage(File sourceFile, ImageInformation imageInformation,
+            Image image, boolean changed) {
         this.sourceFile = sourceFile;
         this.imageInformation = imageInformation;
         this.image = image;

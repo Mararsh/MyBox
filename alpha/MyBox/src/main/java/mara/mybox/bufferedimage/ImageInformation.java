@@ -144,30 +144,22 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return readRegion(this, width);
     }
 
-    public BufferedImage loadBufferedImage(BufferedImage bufferedImage, boolean regionHanlded) {
+    public void loadBufferedImage(BufferedImage bufferedImage) {
         if (bufferedImage != null) {
-            int bmWidth = bufferedImage.getWidth();
-            if (regionHanlded || region == null) {
-                if (xscale != 1 || yscale != 1) {
-                    bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, xscale, yscale);
-                } else if (requiredWidth > 0 && (int) bmWidth != (int) requiredWidth) {
-                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, (int) requiredWidth);
-                }
-            } else {
-                if (xscale != 1 || yscale != 1) {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage, new DoubleRectangle(region), xscale, yscale);
-                } else if (requiredWidth > 0 && (int) bmWidth != (int) requiredWidth) {
-                    bufferedImage = mara.mybox.bufferedimage.CropTools.sample(bufferedImage, new DoubleRectangle(region), (int) requiredWidth);
-                }
-            }
             thumbnail = SwingFXUtils.toFXImage(bufferedImage, null);
-            isScaled = (int) bmWidth != (int) width;
+            isScaled = width > 0 && bufferedImage.getWidth() != (int) width;
             imageType = bufferedImage.getType();
+            if (width <= 0) {
+                width = bufferedImage.getWidth();
+                height = bufferedImage.getHeight();
+                image = thumbnail;
+            } else if (!isScaled) {
+                image = thumbnail;
+            }
         } else {
             thumbnail = null;
+            isScaled = false;
         }
-        requiredWidth = -1;
-        return bufferedImage;
     }
 
     public String sampleInformation(Image image) {
@@ -179,7 +171,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             if (width <= 0) {
                 width = 512;
             }
-            checkValues(this);
+            checkMem(this);
             sampledWidth = (int) maxWidth;
             sampledHeight = (int) (maxWidth * height / width);
         }
@@ -214,27 +206,26 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return readImage(imageInfo, width, true);
     }
 
-    public static Image readImage(ImageInformation imageInfo, int width, boolean isReadFile) {
+    public static Image readImage(ImageInformation imageInfo, int requiredWidth, boolean isReadFile) {
         if (imageInfo == null) {
             return null;
         }
         if (imageInfo.getRegion() != null) {
-            return readRegion(imageInfo, width);
+            return readRegion(imageInfo, requiredWidth);
         }
         imageInfo.setIsSampled(false);
         imageInfo.setIsScaled(false);
         Image targetImage = null;
         try {
             double infoWidth = imageInfo.getWidth();
-            double targetWidth = width <= 0 ? infoWidth : width;
-            imageInfo.setRequiredWidth(targetWidth);
+            double targetWidth = requiredWidth <= 0 ? infoWidth : requiredWidth;
             Image image = imageInfo.getImage();
             String fileName = imageInfo.getFileName();
             if (image != null) {
                 double imageWidth = image.getWidth();
                 if (imageWidth == targetWidth) {
                     targetImage = image;
-                } else if (fileName == null || (width > 0 && imageWidth > targetWidth)) {
+                } else if (fileName == null || (requiredWidth > 0 && imageWidth > targetWidth)) {
                     targetImage = mara.mybox.fximage.ScaleTools.scaleImage(image, (int) targetWidth);
                 }
             }
@@ -247,7 +238,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     }
                     if (thumbWidth == targetWidth) {
                         targetImage = thumb;
-                    } else if (fileName == null || (width > 0 && thumbWidth > targetWidth)) {
+                    } else if (fileName == null || (requiredWidth > 0 && thumbWidth > targetWidth)) {
                         targetImage = mara.mybox.fximage.ScaleTools.scaleImage(thumb, (int) targetWidth);
                     }
                 }
@@ -260,8 +251,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
                     bufferedImage = readPPT(imageInfo, (int) targetWidth);
                 } else {
-                    ImageFileReaders.readFrame(imageInfo);
-                    return imageInfo.getThumbnail();
+                    imageInfo.setRequiredWidth(requiredWidth);
+                    bufferedImage = ImageFileReaders.readFrame(imageInfo);
                 }
                 if (bufferedImage != null) {
                     targetImage = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -322,18 +313,18 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static Image readRegion(ImageInformation imageInfo, int width) {
+    public static Image readRegion(ImageInformation imageInfo, int requireWidth) {
         if (imageInfo == null) {
             return null;
         }
         Rectangle region = imageInfo.getRegion();
         if (region == null) {
-            return readImage(imageInfo, width);
+            return readImage(imageInfo, requireWidth);
         }
         Image regionImage = null;
         try {
             double infoWidth = imageInfo.getWidth();
-            double regionWidth = width <= 0 ? region.getWidth() : width;
+            double regionWidth = requireWidth <= 0 ? region.getWidth() : requireWidth;
             imageInfo.setRequiredWidth(regionWidth);
             Image image = imageInfo.getImage();
             if (image != null && image.getWidth() == infoWidth) {
@@ -358,8 +349,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
                 bufferedImage = readPPT(imageInfo, (int) regionWidth);
             } else {
-                ImageFileReaders.readFrame(imageInfo);
-                return imageInfo.getThumbnail();
+                imageInfo.setRequiredWidth(requireWidth);
+                bufferedImage = ImageFileReaders.readFrame(imageInfo);
             }
             if (bufferedImage != null) {
                 regionImage = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -379,7 +370,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public static boolean checkValues(ImageInformation imageInfo) {
+    public static boolean checkMem(ImageInformation imageInfo) {
         if (imageInfo == null) {
             return false;
         }
@@ -411,18 +402,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     imageInfo.setNeedSample(false);
                     imageInfo.setMaxWidth(imageInfo.getWidth() * ratio);
                 }
-
-                double rWidth = imageInfo.getRequiredWidth();
-                Rectangle region = imageInfo.getRegion();
-                if (rWidth <= 0) {
-                    rWidth = region != null ? region.getWidth() : imageInfo.getWidth();
-                }
-                imageInfo.setRequiredWidth(rWidth);
             }
 
-            if (imageInfo.getImageFormat() == null && imageInfo.getFileName() != null) {
-                imageInfo.setImageFormat(FileNameTools.getFileSuffix(imageInfo.getFileName()).toLowerCase());
-            }
             return true;
         } catch (Exception e) {
             imageInfo.setError(e.toString());

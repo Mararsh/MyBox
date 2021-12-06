@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
@@ -22,6 +23,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -31,6 +33,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.FileFilters;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -383,6 +386,20 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             updateLogs(Languages.message("Size") + ": " + FileTools.showFileSize(result.getVideoSize()), true);
         } catch (Exception e) {
             updateLogs(e.toString());
+        }
+    }
+
+    /*
+        static methods
+     */
+    public static FFmpegMergeImagesController open(List<ImageInformation> images) {
+        try {
+            FFmpegMergeImagesController controller = (FFmpegMergeImagesController) WindowTools.openStage(Fxmls.FFmpegMergeImagesFxml);
+            controller.tableController.tableData.setAll(images);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

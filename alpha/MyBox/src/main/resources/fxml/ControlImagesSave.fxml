@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                                         <ToggleGroup fx:id="saveGroup" />
                                     </toggleGroup>
                                 </RadioButton>
-                                <RadioButton fx:id="spiceRadio" mnemonicParsing="false" text="%SpliceAsOneImage" toggleGroup="$saveGroup" />
+                                <RadioButton fx:id="spliceRadio" mnemonicParsing="false" text="%SpliceAsOneImage" toggleGroup="$saveGroup" />
                                 <RadioButton fx:id="tifFileRadio" mnemonicParsing="false" text="%MultipleFramesTifFile" toggleGroup="$saveGroup" />
                                 <RadioButton fx:id="gifFileRadio" mnemonicParsing="false" text="%AnimatedGifFile" toggleGroup="$saveGroup" />
                                 <RadioButton fx:id="pdfRadio" layoutX="90.0" layoutY="10.0" mnemonicParsing="false" text="pdf" toggleGroup="$saveGroup" />
@@ -44,11 +44,11 @@ License:    Apache License Version 2.0
                         </FlowPane>
                   <HBox alignment="CENTER_LEFT" spacing="2.0">
                      <children>
-                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                              <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                                   <graphic>
                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                           <image>
-                                              <Image url="@../buttons/Red/iconSave.png" />
+                                              <Image url="@../buttons/iconSaveAs.png" />
                                           </image>
                                       </ImageView>
                                   </graphic>

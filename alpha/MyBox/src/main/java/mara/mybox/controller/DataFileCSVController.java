@@ -17,7 +17,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -114,14 +114,14 @@ public class DataFileCSVController extends BaseData2DFileController {
             }
             task = new SingletonTask<Void>(this) {
 
-                private File tmpPath;
+                private File filePath;
                 private LinkedHashMap<File, Boolean> files;
                 private int count;
 
                 @Override
                 protected boolean handle() {
-                    tmpPath = TmpFileTools.getTempDirectory();
-                    files = CsvTools.save(tmpPath, "tmp", tables);
+                    filePath = new File(AppPaths.getGeneratedPath());
+                    files = CsvTools.save(filePath, "tmp", tables);
                     count = files != null ? files.size() : 0;
                     return count > 0;
                 }
@@ -132,9 +132,9 @@ public class DataFileCSVController extends BaseData2DFileController {
                     File csvFile = iterator.next();
                     setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ',');
                     if (count > 1) {
-                        browseURI(tmpPath.toURI());
+                        browseURI(filePath.toURI());
                         String info = MessageFormat.format(message("GeneratedFilesResult"),
-                                count, "\"" + tmpPath + "\"");
+                                count, "\"" + filePath + "\"");
                         int num = 1;
                         info += "\n    " + csvFile.getName();
                         while (iterator.hasNext()) {
@@ -144,7 +144,6 @@ public class DataFileCSVController extends BaseData2DFileController {
                                 break;
                             }
                         }
-                        info += "\n\n" + message("NoticeTmpFiles");
                         alertInformation(info);
                     }
                 }

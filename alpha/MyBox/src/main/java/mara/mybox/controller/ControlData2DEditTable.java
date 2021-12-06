@@ -55,7 +55,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             tableData2DColumn = dataController.tableData2DColumn;
             data2D = dataController.data2D;
 
-            paginationBox = dataController.paginationBox;
+            paginationPane = dataController.paginationPane;
             pageSizeSelector = dataController.pageSizeSelector;
             pageSelector = dataController.pageSelector;
             pageLabel = dataController.pageLabel;
@@ -66,7 +66,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             pageLastButton = dataController.pageLastButton;
 
             if (data2D.isMatrix()) {
-                dataController.thisPane.getChildren().remove(paginationBox);
+                dataController.thisPane.getChildren().remove(paginationPane);
             } else {
                 initPagination();
             }
@@ -168,7 +168,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                 backgroundTask.cancel();
             }
             data2D.setDataSize(0);
-            dataController.paginationBox.setVisible(false);
+            dataController.paginationPane.setVisible(false);
             backgroundTask = new SingletonTask<Void>(this) {
 
                 @Override
@@ -218,7 +218,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     protected void setPagination() {
         try {
             if (data2D == null || data2D.isMatrix()) {
-                paginationBox.setVisible(false);
+                paginationPane.setVisible(false);
                 return;
             }
             super.setPagination();
@@ -553,7 +553,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-        <CheckBox fx:id="appendTimestampCheck" mnemonicParsing="false" text="%AppendTimestamp" />
+        <CheckBox fx:id="appendTimestampCheck" mnemonicParsing="false" text="%AppendTimestampInFilename" />
         <FlowPane hgap="5.0" prefWrapLength="800.0" vgap="5.0">
             <children>
                 <Label text="%ExistedFiles" />

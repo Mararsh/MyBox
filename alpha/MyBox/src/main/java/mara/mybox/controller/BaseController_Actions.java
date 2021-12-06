@@ -503,10 +503,6 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     }
 
-    public void dataChanged() {
-
-    }
-
     // pick coordinate from outside
     public void setCoordinate(double longitude, double latitude) {
     }

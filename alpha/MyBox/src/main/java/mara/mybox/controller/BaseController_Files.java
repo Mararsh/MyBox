@@ -739,7 +739,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
         try {
             if (targetFileController != null) {
-                return targetPathController.makeTargetFile(namePrefix, nameSuffix, targetPath);
+                return targetFileController.makeTargetFile(namePrefix, nameSuffix, targetPath);
 
             } else if (targetPathController != null) {
                 return targetPathController.makeTargetFile(namePrefix, nameSuffix, targetPath);

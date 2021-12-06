@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.dev.MyBoxLog;
@@ -24,8 +23,6 @@ public class DataClipboardPopController extends DataClipboardController {
     protected ControlData2DEditTable sourceTableController, targetTableController;
     protected Data2D dataSource, dataTarget;
 
-    @FXML
-    protected FlowPane pastePane;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
 

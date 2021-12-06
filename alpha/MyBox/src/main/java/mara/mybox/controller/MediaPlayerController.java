@@ -15,6 +15,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -117,6 +118,10 @@ public class MediaPlayerController extends BaseController {
                 tableData = FXCollections.observableArrayList();
             }
             currentIndex = 0;
+
+            tableData.addListener((ListChangeListener.Change<? extends MediaInformation> change) -> {
+                dataChanged();
+            });
 
             repeat = 1;
             repeatSelector.getItems().addAll(Arrays.asList("1", "2", "3", message("Infinite")
@@ -458,7 +463,6 @@ public class MediaPlayerController extends BaseController {
         }, 6000);
     }
 
-    @Override
     public void dataChanged() {
         try {
             if (isSettingValues) {

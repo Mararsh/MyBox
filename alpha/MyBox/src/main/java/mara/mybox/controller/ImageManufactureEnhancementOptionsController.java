@@ -17,7 +17,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -338,9 +337,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                         };
                         stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
 
-                        manageView.setImage(new Image(StyleTools.getIcon("iconSetting.png")));
-                        manageView.setFitWidth(20);
-                        manageView.setFitHeight(20);
+                        manageView = StyleTools.getIconImage("iconSetting.png");
                         button.setGraphic(manageView);
                         button.setText("");
                         NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("ManageDot")));

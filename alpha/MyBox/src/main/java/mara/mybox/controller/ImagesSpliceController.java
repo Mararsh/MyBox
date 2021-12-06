@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -81,6 +82,12 @@ public class ImagesSpliceController extends ImageViewerController {
 
             tableData = tableController.tableData;
             tableView = tableController.tableView;
+
+            tableData.addListener((ListChangeListener.Change<? extends ImageInformation> change) -> {
+                if (!tableController.hasSampled()) {
+                    combineImages();
+                }
+            });
 
             initArraySection();
             initSizeSection();
@@ -409,14 +416,6 @@ public class ImagesSpliceController extends ImageViewerController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void dataChanged() {
-        super.dataChanged();
-        if (!tableController.hasSampled()) {
-            combineImages();
         }
     }
 

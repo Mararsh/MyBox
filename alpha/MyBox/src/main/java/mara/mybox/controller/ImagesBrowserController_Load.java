@@ -255,7 +255,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
             }
             return finfo.getImageInformation();
         } else {
-            return ImageFileReaders.readInfo(file, thumbWidth);
+            return ImageFileReaders.makeInfo(file, thumbWidth);
         }
     }
 

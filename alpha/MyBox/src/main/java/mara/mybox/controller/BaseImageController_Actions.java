@@ -26,6 +26,7 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -353,50 +354,56 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
             MenuItem menu;
 
-            menu = new MenuItem(message("Copy"));
+            menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImage("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
-                copyAction();
+                copyToSystemClipboard();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Pop"));
+            menu = new MenuItem(message("CopyToMyBoxClipboard"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyToMyBoxClipboard();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Pop"), StyleTools.getIconImage("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {
                 popAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("View"));
+            menu = new MenuItem(message("View"), StyleTools.getIconImage("iconView.png"));
             menu.setOnAction((ActionEvent event) -> {
                 viewAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Manufacture"));
+            menu = new MenuItem(message("Manufacture"), StyleTools.getIconImage("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 manufactureAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Statistic"));
+            menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 statisticAction();
 
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("OCR"));
+            menu = new MenuItem(message("OCR"), StyleTools.getIconImage("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ocrAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Split"));
+            menu = new MenuItem(message("Split"), StyleTools.getIconImage("iconSplit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 splitAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Sample"));
+            menu = new MenuItem(message("Sample"), StyleTools.getIconImage("iconSample.png"));
             menu.setOnAction((ActionEvent event) -> {
                 sampleAction();
 
@@ -404,13 +411,13 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             popMenu.getItems().add(menu);
 
             if (imageFile() != null) {
-                menu = new MenuItem(message("Convert"));
+                menu = new MenuItem(message("Convert"), StyleTools.getIconImage("iconDelimiter.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     convertAction();
                 });
                 popMenu.getItems().add(menu);
 
-                menu = new MenuItem(message("Browse"));
+                menu = new MenuItem(message("Browse"), StyleTools.getIconImage("iconBrowse.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     browseAction();
                 });
@@ -420,13 +427,13 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (imageInformation != null) {
                 popMenu.getItems().add(new SeparatorMenuItem());
 
-                menu = new MenuItem(message("Information"));
+                menu = new MenuItem(message("Information"), StyleTools.getIconImage("iconInfo.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     infoAction();
                 });
                 popMenu.getItems().add(menu);
 
-                menu = new MenuItem(message("MetaData"));
+                menu = new MenuItem(message("MetaData"), StyleTools.getIconImage("iconMeta.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     metaAction();
                 });
@@ -434,27 +441,27 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("ImagesInMyBoxClipboard"));
+            menu = new MenuItem(message("ImagesInMyBoxClipboard"), StyleTools.getIconImage("iconClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageInMyBoxClipboardController.oneOpen();
 
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("ImagesInSystemClipboard"));
+            menu = new MenuItem(message("ImagesInSystemClipboard"), StyleTools.getIconImage("iconSystemClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageInSystemClipboardController.oneOpen();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Settings"));
+            menu = new MenuItem(message("Settings"), StyleTools.getIconImage("iconSetting.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 settings();
             });
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

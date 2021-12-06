@@ -108,7 +108,7 @@ License:    Apache License Version 2.0
                                                                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                                                     </graphic>
                                                                 </TableColumn>
-                                                                <TableColumn fx:id="mxidColumn" text="%ID" />
+                                                                <TableColumn fx:id="d2didColumn" text="%ID" />
                                                                 <TableColumn fx:id="nameColumn" prefWidth="120.0" text="%Name" />
                                                                 <TableColumn fx:id="widthColumn" prefWidth="60.0" text="%Width" />
                                                                 <TableColumn fx:id="heightColumn" prefWidth="60.0" text="%Height" />

@@ -216,7 +216,7 @@ public class BaseWebViewController extends BaseController {
         if (webViewController == null) {
             return;
         }
-        webViewController.edit(WebViewTools.getHtml(webEngine));
+        webViewController.editAction();
     }
 
     @FXML

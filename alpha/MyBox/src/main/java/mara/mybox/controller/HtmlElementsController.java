@@ -39,7 +39,7 @@ public class HtmlElementsController extends WebAddressController {
 
     protected int foundCount;
     protected HTMLDocument loadedDoc;
-    protected String loadedHtml;
+    protected String sourceAddress, sourceHtml;
 
     @FXML
     protected HBox elementsBox;
@@ -116,7 +116,8 @@ public class HtmlElementsController extends WebAddressController {
             bottomLabel.setText(message("Count") + ": " + foundCount);
             if (loadedDoc == null) {
                 loadedDoc = (HTMLDocument) webEngine.getDocument();
-                loadedHtml = WebViewTools.getHtml(webEngine);
+                sourceHtml = WebViewTools.getHtml(webEngine);
+                sourceAddress = webViewController.address;
             }
             queryElementButton.setDisable(false);
             recoverButton.setDisable(false);
@@ -161,6 +162,7 @@ public class HtmlElementsController extends WebAddressController {
                 elements.add(e);
             }
             if (elements.isEmpty()) {
+                loadContents("");
                 return;
             }
             List<String> names = new ArrayList<>();
@@ -197,13 +199,7 @@ public class HtmlElementsController extends WebAddressController {
     @FXML
     @Override
     public void recoverAction() {
-        String address = webViewController.address;
-        if (address != null && !address.isBlank()) {
-            loadAddress(address);
-        } else {
-            loadContents(loadedHtml);
-        }
-
+        loadContents(sourceAddress, sourceHtml);
     }
 
     @FXML

@@ -531,6 +531,7 @@ public class HtmlEditorController extends WebAddressController {
     @Override
     public void addressChanged() {
         addressChanged = true;
+        super.addressChanged();
     }
 
     @Override

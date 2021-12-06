@@ -226,7 +226,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 currentIndexColumn.setCellFactory(new Callback<TableColumn<P, Long>, TableCell<P, Long>>() {
                     @Override
                     public TableCell<P, Long> call(TableColumn<P, Long> param) {
-                        final ImageView imageview = new ImageView(StyleTools.getIcon("iconStar.png"));
+                        final ImageView imageview = StyleTools.getIconImage("iconStar.png");
                         imageview.setPreserveRatio(true);
                         imageview.setFitWidth(15);
                         imageview.setFitHeight(15);
@@ -279,15 +279,21 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @Override
+    protected void tableChanged() {
+        if (isSettingValues) {
+            return;
+        }
+        super.tableChanged();
+        countSize();
+    }
+
+    @Override
     protected void checkSelected() {
         if (isSettingValues) {
             return;
         }
         checkButtons();
         countSize();
-        if (parentController != null) {
-            parentController.dataChanged();
-        }
     }
 
     @Override

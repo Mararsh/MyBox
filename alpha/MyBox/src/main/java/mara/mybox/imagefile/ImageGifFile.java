@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.IIOImage;
@@ -26,7 +25,6 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
@@ -58,122 +56,16 @@ public class ImageGifFile {
         }
     }
 
-    public static List<BufferedImage> readGifFile(String src) {
-        try {
-            List<BufferedImage> images = new ArrayList<>();
-
-            boolean broken = false;
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(src)))) {
-                ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
-                reader.setInput(iis, false);
-                int count = 0;
-                while (true) {
-                    try {
-                        BufferedImage m = reader.read(count);
-                        if (m != null) {
-                            images.add(m);
-                            count++;
-                        } else {
-                            break;
-                        }
-                    } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-//                        MyBoxLog.error(e.toString());
-                        if (!e.toString().contains("Attempt to read past end of image sequence!")) {
-                            broken = true;
-                        }
-                        break;
-                    }
-                }
-                reader.dispose();
-            }
-            if (broken) {
-                return readBrokenGifFile(src);
-            } else {
-                return images;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
     // https://stackoverflow.com/questions/22259714/arrayindexoutofboundsexception-4096-while-reading-gif-file
     // https://github.com/DhyanB/Open-Imaging
-    public static List<BufferedImage> readBrokenGifFile(String src) {
-        try {
-//            MyBoxLog.debug("readBrokenGifFile");
-            List<BufferedImage> images = new ArrayList<>();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                GifImage gif = GifDecoder.read(in);
-                int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; ++i) {
-                    BufferedImage img = gif.getFrame(i);
-                    images.add(img);
-                }
-            }
-            return images;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static BufferedImage readBrokenGifIndex(String src, int index) {
-        BufferedImage bufferedImage = null;
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-            GifImage gif = GifDecoder.read(in);
-//                MyBoxLog.error(gif.getFrameCount());
-            bufferedImage = gif.getFrame(index);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return bufferedImage;
-    }
-
     public static BufferedImage readBrokenGifFile(ImageInformation imageInfo) {
-        BufferedImage bufferedImage = null;
-        try {
-            ImageInformation.checkValues(imageInfo);
-            bufferedImage = readBrokenGifIndex(imageInfo.getFileName(), imageInfo.getIndex());
-            if (imageInfo.getWidth() <= 0) {
-                imageInfo.setWidth(bufferedImage.getWidth());
-                imageInfo.setHeight(bufferedImage.getHeight());
-            }
-            bufferedImage = imageInfo.loadBufferedImage(bufferedImage, false);
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(imageInfo.getFile()))) {
+            GifImage gif = GifDecoder.read(in);
+            BufferedImage bufferedImage = gif.getFrame(imageInfo.getIndex());
+            return ImageFileReaders.adjust(imageInfo, bufferedImage);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            imageInfo.loadBufferedImage(null, false);
-        }
-        return bufferedImage;
-    }
-
-    // 0-based
-    public static List<String> extractGifImages(File source, String filePrefix, String format, int from, int to) {
-        try {
-            if (source == null || filePrefix == null || format == null
-                    || from < 0 || to < 0 || from > to) {
-                return null;
-            }
-            List<BufferedImage> images = readGifFile(source.getAbsolutePath());
-            if (images == null) {
-                return null;
-            }
-            int size = images.size();
-            if (images.isEmpty() || from >= size || to >= size) {
-                return null;
-            }
-
-            String filename;
-            int digit = (size + "").length();
-            List<String> names = new ArrayList<>();
-            for (int i = from; i <= to; ++i) {
-                filename = filePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + format;
-                ImageFileWriters.writeImageFile(images.get(i), format, filename);
-                names.add(filename);
-            }
-            return names;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            imageInfo.setError(e.toString());
             return null;
         }
     }

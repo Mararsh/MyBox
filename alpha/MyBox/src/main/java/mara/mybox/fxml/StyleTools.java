@@ -156,55 +156,20 @@ public class StyleTools {
         }
     }
 
-    public static String getIcon(StyleData style, StyleColor color) {
+    public static ImageView getIconImage(StyleData style, StyleColor color) {
         try {
             if (style == null || style.getIconName() == null || style.getIconName().isEmpty()) {
                 return null;
             }
-            return getIcon(color, style.getIconName());
+            return getIconImage(color, style.getIconName());
         } catch (Exception e) {
             MyBoxLog.error(e, style.getIconName());
             return null;
         }
     }
 
-    public static String getIcon(StyleColor style, String iconName) {
+    public static ImageView getIconImage(StyleColor style, String iconName) {
         if (style == null || iconName == null || iconName.isBlank()) {
-            return null;
-        }
-        try {
-            String stylePath = getIconPath(style);
-            if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
-                String hiName = iconName.substring(0, iconName.length() - 4) + "_100.png";
-                try {
-                    new ImageView(ButtonsPath + hiName);
-                    return ButtonsPath + hiName;
-                } catch (Exception e) {
-                    try {
-                        new ImageView(stylePath + hiName);
-                        return stylePath + hiName;
-                    } catch (Exception ex) {
-                    }
-                }
-            }
-            try {
-                new ImageView(ButtonsPath + iconName);
-                return ButtonsPath + iconName;
-            } catch (Exception e) {
-                try {
-                    new ImageView(stylePath + iconName);
-                    return stylePath + iconName;
-                } catch (Exception ex) {
-                    return iconName;
-                }
-            }
-        } catch (Exception e) {
-            return iconName;
-        }
-    }
-
-    public static ImageView getIconImage(String iconName) {
-        if (iconName == null || iconName.isBlank()) {
             return null;
         }
         try {
@@ -241,33 +206,32 @@ public class StyleTools {
         }
     }
 
-    public static String getIcon(String iconName) {
-        return getIcon(AppVariables.ControlColor, iconName);
+    public static ImageView getIconImage(String iconName) {
+        return getIconImage(AppVariables.ControlColor, iconName);
     }
 
-    public static void setIcon(Node node, String icon) {
+    public static void setIcon(Node node, ImageView imageView) {
         try {
-            if (node == null || icon == null || icon.isEmpty()) {
+            if (node == null || imageView == null) {
                 return;
             }
-            ImageView v = new ImageView(icon);
             if (node instanceof Labeled) {
                 if (((Labeled) node).getGraphic() != null) {
                     if (node.getStyleClass().contains("big")) {
-                        v.setFitWidth(AppVariables.iconSize * 2);
-                        v.setFitHeight(AppVariables.iconSize * 2);
+                        imageView.setFitWidth(AppVariables.iconSize * 2);
+                        imageView.setFitHeight(AppVariables.iconSize * 2);
                     } else if (node.getStyleClass().contains("halfBig")) {
-                        v.setFitWidth(AppVariables.iconSize * 1.5);
-                        v.setFitHeight(AppVariables.iconSize * 1.5);
+                        imageView.setFitWidth(AppVariables.iconSize * 1.5);
+                        imageView.setFitHeight(AppVariables.iconSize * 1.5);
                     } else {
-                        v.setFitWidth(AppVariables.iconSize);
-                        v.setFitHeight(AppVariables.iconSize);
+                        imageView.setFitWidth(AppVariables.iconSize);
+                        imageView.setFitHeight(AppVariables.iconSize);
                     }
-                    ((Labeled) node).setGraphic(v);
+                    ((Labeled) node).setGraphic(imageView);
                 }
             } else if (node instanceof ImageView) {
                 ImageView nodev = (ImageView) node;
-                nodev.setImage(v.getImage());
+                nodev.setImage(imageView.getImage());
                 if (node.getStyleClass().contains("big")) {
                     nodev.setFitWidth(AppVariables.iconSize * 2);
                     nodev.setFitHeight(AppVariables.iconSize * 2);
@@ -277,7 +241,7 @@ public class StyleTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, node.getId() + " " + icon);
+            MyBoxLog.error(e, node.getId());
         }
     }
 
@@ -299,7 +263,7 @@ public class StyleTools {
 
     public static void setStyleColor(Node node, StyleColor color) {
         StyleData StyleData = getStyleData(node);
-        setIcon(node, getIcon(StyleData, color));
+        setIcon(node, getIconImage(StyleData, color));
     }
 
     public static void setStyleColor(Node node, StyleData style) {
@@ -307,7 +271,7 @@ public class StyleTools {
     }
 
     public static void setStyleColor(Node node, StyleData style, StyleColor color) {
-        setIcon(node, getIcon(style, color));
+        setIcon(node, getIconImage(style, color));
     }
 
     /*
@@ -383,7 +347,7 @@ public class StyleTools {
     }
 
     public static void setIconName(Node node, String iconName) {
-        setIcon(node, getIcon(iconName));
+        setIcon(node, getIconImage(iconName));
     }
 
     /*

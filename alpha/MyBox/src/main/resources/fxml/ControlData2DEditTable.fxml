@@ -13,12 +13,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DEditTable">
     <children>
-        <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="2.0">
+        <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0">
             <children>
                 <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
                     <graphic>
@@ -72,7 +71,6 @@ License:    Apache License Version 2.0
                 </ImageView>
             </children>
         </FlowPane>
-        <HBox alignment="CENTER_LEFT" />
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns> 
                 <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0">
