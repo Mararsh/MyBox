@@ -217,7 +217,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     @Override
     protected void setPagination() {
         try {
-            if (data2D == null || data2D.isMatrix()) {
+            if (data2D == null || data2D.isMatrix() || data2D.isTmpData()) {
                 paginationPane.setVisible(false);
                 return;
             }
@@ -395,6 +395,22 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             DataClipboardPopController.open(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public boolean loadTmpData(List<List<String>> newData) {
+        try {
+            makeColumns();
+            isSettingValues = true;
+            tableData.setAll(newData);
+            isSettingValues = false;
+            dataSizeLoaded = true;
+            setPagination();
+            tableChanged(false);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
         }
     }
 

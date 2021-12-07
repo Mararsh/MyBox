@@ -3,8 +3,10 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
-import mara.mybox.data.DataMatrix;
+import mara.mybox.data.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -17,25 +19,27 @@ import mara.mybox.value.Languages;
  */
 public class MatricesManageController extends BaseController {
 
-    protected ControlData2D dataController;
-    protected DataMatrix dataMatrix;
-
     @FXML
-    protected ControlMatricesList listController;
+    protected ControlMatrixTable listController;
+    @FXML
+    protected ControlData2D dataController;
+    @FXML
+    protected Label matrixLabel;
 
     public MatricesManageController() {
         baseTitle = Languages.message("MatricesManage");
+        TipsLabelKey = "Data2DTips";
     }
 
     @Override
     public void initValues() {
         try {
             super.initValues();
-            listController.baseTitle = baseTitle;
-            listController.baseName = baseName;
+            dataController.setDataType(this, Data2D.Type.Matrix);
 
-            dataController = listController.dataController;
-            dataMatrix = listController.dataMatrix;
+            listController.setParameters(dataController);
+            listController.matrixLabel = matrixLabel;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -43,10 +47,50 @@ public class MatricesManageController extends BaseController {
 
     @Override
     public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+        try {
+            super.afterSceneLoaded();
 
-        listController.loadTableData();
-        listController.createAction();
+            createAction();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void createAction() {
+        dataController.create();
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        dataController.recoverMatrix();
+    }
+
+    @FXML
+    @Override
+    public void loadContentInSystemClipboard() {
+        dataController.loadContentInSystemClipboard();
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        dataController.saveAs(dataController.data2D, true);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return dataController.keyEventsFilter(event);
+        }
+        return true;
+    }
+
+    @Override
+    public void myBoxClipBoard() {
+        dataController.myBoxClipBoard();
     }
 
     public static MatricesManageController oneOpen() {

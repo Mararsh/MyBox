@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  */
 public class MatrixUnaryCalculationController extends MatricesManageController {
 
-    protected DataMatrix resultMatrix;
+    protected DataMatrix dataMatrix, resultMatrix;
     protected int column, row, power;
     protected double number, resultValue;
     protected double[][] result;
@@ -59,12 +59,15 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
 
     public MatrixUnaryCalculationController() {
         baseTitle = message("MatrixUnaryCalculation");
+        TipsLabelKey = "Data2DTips";
     }
 
     @Override
     public void initValues() {
         try {
             super.initValues();
+
+            dataMatrix = (DataMatrix) dataController.data2D;
 
             resultController.setDataType(this, Data2D.Type.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;

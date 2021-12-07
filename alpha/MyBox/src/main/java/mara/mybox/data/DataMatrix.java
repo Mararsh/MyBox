@@ -1,6 +1,5 @@
 package mara.mybox.data;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -188,12 +187,6 @@ public class DataMatrix extends Data2D {
         }
         return true;
     }
-
-    @Override
-    public File tmpFile(List<String> cols, List<List<String>> data) {
-        return null;
-    }
-
 
     /*
         get/set

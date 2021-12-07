@@ -1,7 +1,6 @@
 package mara.mybox.data;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +58,6 @@ public abstract class Data2D extends Data2DDefinition {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract File tmpFile(List<String> columns, List<List<String>> data);
 
     /*
         class
@@ -102,34 +100,26 @@ public abstract class Data2D extends Data2DDefinition {
                 return;
             }
             super.cloneAll(d);
-            Field[] sourceFields = d.getClass().getDeclaredFields();
-            Field[] thisFields = this.getClass().getDeclaredFields();
-            for (int i = 0; i < sourceFields.length; i++) {
-                Field s = sourceFields[i];
-                s.setAccessible(true);
-                Field t = thisFields[i];
-                t.setAccessible(true);
-                t.set(this, s.get(d));
-            }
-//            tableData2DDefinition = d.tableData2DDefinition;
-//            tableData2DColumn = d.tableData2DColumn;
-//            columns = d.columns;
-//            savedColumns = d.savedColumns;
-//            pageSize = d.pageSize;
-//            newColumnIndex = d.newColumnIndex;
-//            dataSize = d.dataSize;
-//            pagesNumber = d.pagesNumber;
-//            currentPage = d.currentPage;
-//            startRowOfCurrentPage = d.startRowOfCurrentPage;
-//            endRowOfCurrentPage = d.endRowOfCurrentPage;
-//            tableView = d.tableView;
-//            tableChanged = d.tableChanged;
-//            task = d.task;
-//            backgroundTask = d.backgroundTask;
-//            error = d.error;
-//            options = d.options;
-//            matrix = d.matrix;
+            tableData2DDefinition = d.tableData2DDefinition;
+            tableData2DColumn = d.tableData2DColumn;
+            columns = d.columns;
+            savedColumns = d.savedColumns;
+            pageSize = d.pageSize;
+            newColumnIndex = d.newColumnIndex;
+            dataSize = d.dataSize;
+            pagesNumber = d.pagesNumber;
+            currentPage = d.currentPage;
+            startRowOfCurrentPage = d.startRowOfCurrentPage;
+            endRowOfCurrentPage = d.endRowOfCurrentPage;
+            tableView = d.tableView;
+            tableChanged = d.tableChanged;
+            task = d.task;
+            backgroundTask = d.backgroundTask;
+            error = d.error;
+            options = d.options;
+            matrix = d.matrix;
         } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -176,31 +166,6 @@ public abstract class Data2D extends Data2DDefinition {
     public void initFile(File file) {
         resetData();
         this.file = file;
-    }
-
-    public List<List<String>> tmpData() {
-        Random random = new Random();
-        List<List<String>> data = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            List<String> row = new ArrayList<>();
-            for (int j = 0; j < 3; j++) {
-                if (type == Type.Matrix) {
-                    row.add(randomDouble(random));
-                } else {
-                    row.add(randomString(random));
-                }
-            }
-            data.add(row);
-        }
-        return data;
-    }
-
-    public File tmpFile() {
-        List<String> cols = new ArrayList<>();
-        for (int c = 1; c <= 3; c++) {
-            cols.add(this.colPrefix() + c);
-        }
-        return tmpFile(cols, tmpData());
     }
 
     public void open(File file) {
@@ -435,6 +400,30 @@ public abstract class Data2D extends Data2DDefinition {
         return isValid() && tableView.getItems() != null && !tableView.getItems().isEmpty();
     }
 
+    public List<String> tmpColumns(int cols) {
+        List<String> names = new ArrayList<>();
+        for (int c = 1; c <= cols; c++) {
+            names.add(colPrefix() + c);
+        }
+        return names;
+    }
+
+    public List<List<String>> tmpData(int rows, int cols) {
+        Random random = new Random();
+        List<List<String>> data = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            List<String> row = new ArrayList<>();
+            for (int j = 0; j < cols; j++) {
+                if (type == Type.Matrix) {
+                    row.add(randomDouble(random));
+                } else {
+                    row.add(randomString(random));
+                }
+            }
+            data.add(row);
+        }
+        return data;
+    }
 
     /*
         table view

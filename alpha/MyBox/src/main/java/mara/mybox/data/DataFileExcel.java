@@ -434,7 +434,6 @@ public class DataFileExcel extends DataFile {
         }
     }
 
-    @Override
     public File tmpFile(List<String> cols, List<List<String>> data) {
         try {
             if (cols == null || cols.isEmpty()) {
@@ -488,7 +487,7 @@ public class DataFileExcel extends DataFile {
         FileCopyTools.copyFile(file, tmpDataFile);
         try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet targetSheet = targetBook.createSheet(sheetName);
-            List<List<String>> data = tmpData();
+            List<List<String>> data = tmpData(3, 3);
             for (int r = 0; r < data.size(); r++) {
                 if (task == null || task.isCancelled()) {
                     break;

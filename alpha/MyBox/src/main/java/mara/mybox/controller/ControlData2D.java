@@ -239,21 +239,10 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void createFile() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            data2D.initFile(data2D.tmpFile());
-            readDefinition();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public void recoverFile() {
         resetStatus();
-        loadFile(data2D.getFile());
+        data2D.initFile(data2D.getFile());
+        readDefinition();
     }
 
     /*
@@ -266,17 +255,6 @@ public class ControlData2D extends BaseController {
         data2D.resetData();
         data2D.cloneAll(data);
         readDefinition();
-    }
-
-    public void createMatrix() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            loadMatrix(new double[3][3], false);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     public void loadMatrix(double[][] matrix, boolean checkChanged) {
@@ -680,6 +658,94 @@ public class ControlData2D extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void create() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            loadTmpData(data2D.tmpColumns(3), data2D.tmpData(3, 3));
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void loadTmpData(List<String> cols, List<List<String>> data) {
+        if (data2D == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                task.cancel();
+            }
+            isSettingValues = true;
+            tableController.resetView();
+            isSettingValues = false;
+            task = new SingletonTask<Void>(this) {
+
+                private StringTable validateTable;
+                private List<List<String>> rows;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        data2D.resetData();
+                        data2D.setTask(task);
+                        List<Data2DColumn> columns = new ArrayList<>();
+                        if (cols == null || cols.isEmpty()) {
+                            data2D.setHasHeader(false);
+                            if (data == null || data.isEmpty()) {
+                                return true;
+                            }
+                            for (int i = 0; i < data.get(0).size(); i++) {
+                                Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
+                                column.setIndex(i);
+                                columns.add(column);
+                            }
+                        } else {
+                            data2D.setHasHeader(true);
+                            for (int i = 0; i < cols.size(); i++) {
+                                Data2DColumn column = new Data2DColumn(cols.get(i), data2D.defaultColumnType());
+                                column.setIndex(i);
+                                columns.add(column);
+                            }
+                        }
+                        data2D.setColumns(columns);
+                        validateTable = Data2DColumn.validate(columns);
+                        if (data != null) {
+                            rows = new ArrayList<>();
+                            for (int i = 0; i < data.size(); i++) {
+                                List<String> row = data.get(i);
+                                row.add(0, ("" + (i + 1)));
+                                rows.add(row);
+                            }
+                        }
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void finalAction() {
+                    super.finalAction();
+                    data2D.setTask(null);
+                    task = null;
+                    tableController.loadTmpData(data);
+                    attributesController.loadData();
+                    columnsController.loadData();
+                    notifyLoaded();
+                    if (validateTable != null && !validateTable.isEmpty()) {
+                        validateTable.htmlTable();
+                    }
+                }
+
+            };
+            start(task);
+        }
+
     }
 
     /*

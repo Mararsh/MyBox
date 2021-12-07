@@ -13,13 +13,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
-import mara.mybox.data.Data2D;
 import mara.mybox.data.DataMatrix;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.table.TableData2DColumn;
-import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -29,11 +26,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-12-15
  * @License Apache License Version 2.0
  */
-public class ControlMatricesList extends BaseSysTableController<Data2DDefinition> {
+public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition> {
 
     protected DataMatrix dataMatrix;
-    protected TableData2DDefinition tableData2DDefinition;
-    protected TableData2DColumn tableData2DColumn;
+    protected ControlData2D dataController;
+    protected Label matrixLabel;
 
     @FXML
     protected TableColumn<Data2DDefinition, Long> d2didColumn;
@@ -44,42 +41,19 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
     @FXML
     protected TableColumn<Data2DDefinition, Date> modifyColumn;
     @FXML
-    protected ControlData2D dataController;
-    @FXML
-    protected Label matrixLabel;
-    @FXML
     protected Button clearMatricesButton, deleteMatricesButton, editMatrixButton, renameMatrixButton;
 
-    public ControlMatricesList() {
+    public ControlMatrixTable() {
         baseTitle = Languages.message("MatricesManage");
     }
 
-    @Override
-    public void initValues() {
+    public void setParameters(ControlData2D dataController) {
         try {
-            super.initValues();
-
-            dataController.setDataType(this, Data2D.Type.Matrix);
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            tableData2DColumn = dataController.tableData2DColumn;
+            this.dataController = dataController;
             dataMatrix = (DataMatrix) dataController.data2D;
 
-            tableDefinition = tableData2DDefinition;
+            tableDefinition = dataController.tableData2DDefinition;
             queryConditions = "data_type=" + dataMatrix.type();
-
-            clearButton = clearMatricesButton;
-            deleteButton = deleteMatricesButton;
-            renameButton = renameMatrixButton;
-            editButton = editMatrixButton;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
 
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -102,9 +76,6 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
         }
     }
 
-    /*
-        table
-     */
     @Override
     protected void initColumns() {
         try {
@@ -126,18 +97,25 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Edit"));
+            MenuItem menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 editAction();
             });
-            menu.setDisable(renameButton.isDisable());
+            menu.setDisable(editMatrixButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("Rename"));
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });
-            menu.setDisable(renameButton.isDisable());
+            menu.setDisable(renameMatrixButton.isDisable());
+            items.add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteAction();
+            });
+            menu.setDisable(deleteMatricesButton.isDisable());
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
@@ -173,11 +151,6 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
             }
             myStage.setTitle(title);
         }
-        if (!dataMatrix.isTmpData()) {
-            matrixLabel.setText(dataMatrix.getDataName());
-        } else {
-            matrixLabel.setText("");
-        }
     }
 
     @Override
@@ -188,22 +161,10 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
         super.checkButtons();
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
-        renameButton.setDisable(none);
-    }
-
-    /*
-        clipboard
-     */
-    @FXML
-    @Override
-    public void createAction() {
-        dataController.createMatrix();
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        dataController.recoverMatrix();
+        clearMatricesButton.setDisable(isEmpty);
+        deleteMatricesButton.setDisable(none);
+        editMatrixButton.setDisable(none);
+        renameMatrixButton.setDisable(none);
     }
 
     @FXML
@@ -226,50 +187,11 @@ public class ControlMatricesList extends BaseSysTableController<Data2DDefinition
         dataController.renameAction(this, index, selected);
     }
 
-    @FXML
-    @Override
-    public void saveAction() {
-        if (dataController.checkBeforeSave() < 0) {
-            return;
-        }
-        dataController.saveAs(dataMatrix, true);
-    }
-
-    @FXML
-    @Override
-    public void loadContentInSystemClipboard() {
-        dataController.loadContentInSystemClipboard();
-    }
-
-    /*
-        interface
-     */
-    @Override
-    public boolean checkBeforeNextAction() {
-        return dataController.checkBeforeNextAction();
-    }
-
-    @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            return dataController.keyEventsFilter(event);
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void myBoxClipBoard() {
-        dataController.myBoxClipBoard();
-    }
-
     @Override
     public void cleanPane() {
         try {
             dataController = null;
             dataMatrix = null;
-            tableData2DDefinition = null;
-            tableData2DColumn = null;
         } catch (Exception e) {
         }
         super.cleanPane();

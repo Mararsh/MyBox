@@ -3,9 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,6 +23,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -32,7 +31,7 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class DataPasteController extends BaseController {
-
+    
     protected ControlData2DEditTable tableController;
     protected Data2D data2D;
     protected DataFileText dataFileText;
@@ -41,7 +40,7 @@ public class DataPasteController extends BaseController {
     protected String delimiterName;
     protected SimpleBooleanProperty okNotify;
     protected boolean forPaste;
-
+    
     @FXML
     protected TextArea textArea;
     @FXML
@@ -54,24 +53,24 @@ public class DataPasteController extends BaseController {
     protected HBox pasteBox;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
-
+    
     public DataPasteController() {
         okNotify = new SimpleBooleanProperty();
     }
-
+    
     public void setParameters(ControlData2DEditTable parent, String text, boolean forPaste) {
         try {
             tableController = parent;
             data2D = tableController.data2D;
             baseName = parent.baseName;
-
+            
             this.forPaste = forPaste;
             if (!forPaste) {
                 thisPane.getChildren().remove(pasteBox);
             }
-
+            
             htmlController.setParent(parent);
-
+            
             delimiterController.setControls(baseName, true);
             delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -80,21 +79,29 @@ public class DataPasteController extends BaseController {
                 }
             });
             delimiterName = delimiterController.delimiterName;
-
+            
+            nameCheck.setSelected(UserConfig.getBoolean(baseName + "WithNames", false));
+            nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WithNames", nameCheck.isSelected());
+                }
+            });
+            
             dataFileText = new DataFileText();
             textArea.setText(text);
             if (text != null && !text.isBlank()) {
                 delimiterName = null;  // guess at first 
                 goAction();
             }
-
+            
             makeControls(0, 0);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void makeControls(int row, int col) {
         try {
             if (!forPaste) {
@@ -106,14 +113,14 @@ public class DataPasteController extends BaseController {
             }
             rowSelector.getItems().setAll(rows);
             rowSelector.getSelectionModel().select(row);
-
+            
             colSelector.getItems().setAll(data2D.columnNames());
             colSelector.getSelectionModel().select(col);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     @Override
     public void goAction() {
@@ -130,9 +137,9 @@ public class DataPasteController extends BaseController {
                 task.cancel();
             }
             task = new SingletonTask<Void>(this) {
-
+                
                 private StringTable validateTable;
-
+                
                 @Override
                 protected boolean handle() {
                     File tmpFile = TmpFileTools.getTempFile();
@@ -166,7 +173,7 @@ public class DataPasteController extends BaseController {
                     data = dataFileText.readPageData();
                     return data != null && !data.isEmpty();
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     try {
@@ -194,7 +201,7 @@ public class DataPasteController extends BaseController {
                         MyBoxLog.console(e);
                     }
                 }
-
+                
                 @Override
                 protected void whenFailed() {
                     if (isCancelled()) {
@@ -206,7 +213,7 @@ public class DataPasteController extends BaseController {
                         popFailed();
                     }
                 }
-
+                
                 @Override
                 protected void finalAction() {
                     dataFileText.setTask(null);
@@ -216,12 +223,12 @@ public class DataPasteController extends BaseController {
                         validateTable.htmlTable();
                     }
                 }
-
+                
             };
             start(task);
         }
     }
-
+    
     @FXML
     @Override
     public void okAction() {
@@ -235,43 +242,11 @@ public class DataPasteController extends BaseController {
             loadData();
         }
     }
-
+    
     public void loadData() {
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    data2D.setTask(task);
-                    File tmpFile = data2D.tmpFile(columnNames, data);
-                    data2D.initFile(tmpFile);
-                    Map<String, Object> options = new HashMap<>();
-                    options.put("hasHeader", columnNames != null);
-                    options.put("charset", Charset.forName("UTF-8"));
-                    options.put("delimiter", ",");
-                    data2D.setOptions(options);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    tableController.dataController.readDefinition();
-                }
-
-                @Override
-                protected void finalAction() {
-                    data2D.setTask(null);
-                    task = null;
-                }
-
-            };
-            start(task);
-        }
+        tableController.dataController.loadTmpData(columnNames, data);
     }
-
+    
     public void pasteData() {
         try {
             int row = rowSelector.getSelectionModel().getSelectedIndex();
@@ -293,25 +268,25 @@ public class DataPasteController extends BaseController {
             }
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
-
+            
             makeControls(row, col);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     @Override
     public void cancelAction() {
         close();
     }
-
+    
     @Override
     public boolean keyESC() {
         close();
         return false;
     }
-
+    
     @Override
     public boolean keyF6() {
         close();
@@ -332,5 +307,5 @@ public class DataPasteController extends BaseController {
             return null;
         }
     }
-
+    
 }

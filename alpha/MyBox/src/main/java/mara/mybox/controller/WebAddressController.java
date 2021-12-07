@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -92,15 +93,74 @@ public class WebAddressController extends BaseWebViewController {
                 } else {
                     address = urlSelector.getValue();
                 }
-                tableWebHistory.insertData(makeHis(address));
                 urlSelector.getItems().clear();
                 List<String> urls = tableWebHistory.recent(20);
                 if (!urls.isEmpty()) {
                     urlSelector.getItems().addAll(urls);
                 }
                 urlSelector.getEditor().setText(address);
+                writeHis(address);
             });
         }
+    }
+
+    public void writeHis(String address) {
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
+
+            private ImageView tabImage = null;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    WebHistory his = new WebHistory();
+                    his.setAddress(address);
+                    his.setVisitTime(new Date());
+                    String title = webEngine.getTitle();
+                    his.setTitle(title != null ? title : "");
+                    his.setIcon("");
+                    if (failedAddress == null || !failedAddress.contains(address)) {
+                        try {
+                            File iconFile = IconTools.readIcon(address, true);
+                            if (iconFile != null && iconFile.exists()) {
+                                his.setIcon(iconFile.getAbsolutePath());
+                                if (addressTab != null) {
+                                    BufferedImage image = ImageIO.read(iconFile);
+                                    if (image != null) {
+                                        tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+                    if (tabImage == null) {
+                        if (failedAddress == null) {
+                            failedAddress = new ArrayList<>();
+                        }
+                        failedAddress.add(address);
+                    }
+                    tableWebHistory.insertData(his);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (addressTab != null) {
+                    if (tabImage == null) {
+                        tabImage = new ImageView("img/MyBox.png");
+                    }
+                    tabImage.setFitWidth(20);
+                    tabImage.setFitHeight(20);
+                    addressTab.setGraphic(tabImage);
+                }
+            }
+
+        };
+        start(bgTask, false);
     }
 
     @Override
@@ -123,47 +183,6 @@ public class WebAddressController extends BaseWebViewController {
             super.pageLoaded();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public WebHistory makeHis(String value) {
-        try {
-            WebHistory his = new WebHistory();
-            his.setAddress(value);
-            his.setVisitTime(new Date());
-            String title = webEngine.getTitle();
-            his.setTitle(title != null ? title : "");
-            his.setIcon("");
-            ImageView tabImage = null;
-            if (failedAddress == null || !failedAddress.contains(value)) {
-                File iconFile = IconTools.readIcon(value, true);
-                if (iconFile != null && iconFile.exists()) {
-                    his.setIcon(iconFile.getAbsolutePath());
-                    if (addressTab != null) {
-                        BufferedImage image = ImageIO.read(iconFile);
-                        if (image != null) {
-                            tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
-                        }
-                    }
-                } else {
-                    if (failedAddress == null) {
-                        failedAddress = new ArrayList<>();
-                    }
-                    failedAddress.add(value);
-                }
-            }
-            if (addressTab != null) {
-                if (tabImage == null) {
-                    tabImage = new ImageView("img/MyBox.png");
-                }
-                tabImage.setFitWidth(20);
-                tabImage.setFitHeight(20);
-                addressTab.setGraphic(tabImage);
-            }
-            return his;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
         }
     }
 

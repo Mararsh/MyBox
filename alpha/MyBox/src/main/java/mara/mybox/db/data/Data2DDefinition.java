@@ -1,7 +1,6 @@
 package mara.mybox.db.data;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
@@ -32,37 +31,6 @@ public class Data2DDefinition extends BaseData {
         resetDefinition();
     }
 
-    public void cloneAll(Data2DDefinition def) {
-        try {
-            if (def == null) {
-                return;
-            }
-            Field[] sourceFields = def.getClass().getDeclaredFields();
-            Field[] thisFields = this.getClass().getDeclaredFields();
-            for (int i = 0; i < sourceFields.length; i++) {
-                Field s = sourceFields[i];
-                s.setAccessible(true);
-                Field t = thisFields[i];
-                t.setAccessible(true);
-                t.set(this, s.get(def));
-            }
-//            d2did = def.getD2did();
-//            type = def.getType();
-//            dataName = def.getDataName();
-//            delimiter = def.getDelimiter();
-//            file = def.getFile();
-//            charset = def.getCharset();
-//            hasHeader = def.isHasHeader();
-//            colsNumber = def.getColsNumber();
-//            rowsNumber = def.getRowsNumber();
-//            scale = def.getScale();
-//            maxRandom = def.getMaxRandom();
-//            modifyTime = def.getModifyTime();
-//            comments = def.getComments();
-        } catch (Exception e) {
-        }
-    }
-
     public Data2DDefinition cloneAll() {
         try {
             Data2DDefinition newData = new Data2DDefinition();
@@ -71,6 +39,29 @@ public class Data2DDefinition extends BaseData {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
+        }
+    }
+
+    public void cloneAll(Data2DDefinition d) {
+        try {
+            if (d == null) {
+                return;
+            }
+            d2did = d.getD2did();
+            type = d.getType();
+            dataName = d.getDataName();
+            delimiter = d.getDelimiter();
+            file = d.getFile();
+            charset = d.getCharset();
+            hasHeader = d.isHasHeader();
+            colsNumber = d.getColsNumber();
+            rowsNumber = d.getRowsNumber();
+            scale = d.getScale();
+            maxRandom = d.getMaxRandom();
+            modifyTime = d.getModifyTime();
+            comments = d.getComments();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
     }
 

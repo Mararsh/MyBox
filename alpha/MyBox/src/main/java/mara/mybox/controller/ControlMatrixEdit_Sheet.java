@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
 
-    protected ControlMatricesList manager;
+//    protected ControlMatricesList manager;
     protected TableData2DCell tableDataCell;
 
     @FXML
@@ -67,7 +67,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
             }
             idInput.clear();
             nameInput.clear();
-            manager.tableView.getSelectionModel().clearSelection();
+//            manager.tableView.getSelectionModel().clearSelection();
             super.createAction();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -94,7 +94,7 @@ public abstract class ControlMatrixEdit_Sheet extends ControlSheet {
             }
             idInput.clear();
             nameInput.setText(nameInput.getText() + "_" + message("Copy"));
-            manager.tableView.getSelectionModel().clearSelection();
+//            manager.tableView.getSelectionModel().clearSelection();
             dataChanged(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -52,10 +52,19 @@ public class DataFileCSV extends DataFileText {
         }
         List<String> names = null;
         checkAttributes();
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
-            if (hasHeader) {
+        if (hasHeader) {
+            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
                 names = parser.getHeaderNames();
-            } else {
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.console(e);
+            }
+        }
+        if (names == null) {
+            hasHeader = false;
+            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
                 Iterator<CSVRecord> iterator = parser.iterator();
                 if (iterator != null && iterator.hasNext()) {
                     CSVRecord record = iterator.next();
@@ -66,12 +75,12 @@ public class DataFileCSV extends DataFileText {
                         }
                     }
                 }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.console(e);
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.console(e);
         }
         return names;
     }

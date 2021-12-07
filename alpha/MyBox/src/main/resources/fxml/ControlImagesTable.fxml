@@ -6,7 +6,6 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -18,11 +17,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesTable">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesTable">
     <children>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-            <children>
-                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="1000.0" vgap="2.0" HBox.hgrow="ALWAYS">
+      <HBox>
+         <children>
+                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
                         <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
                             <graphic>
@@ -69,11 +68,11 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconFileDelete.png" />
+                                        <Image url="@../buttons/Red/iconDelete.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -87,7 +86,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="viewFileButton" mnemonicParsing="false" onAction="#viewFileAction">
+                        <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -96,7 +95,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="editFileButton" mnemonicParsing="false" onAction="#editFileAction">
+                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -139,14 +138,11 @@ License:    Apache License Version 2.0
                         <Image url="@../buttons/Red/iconTipsRight.png" />
                     </image>
                 </ImageView>
-            </children>
-            <padding>
-                <Insets left="2.0" right="2.0" top="2.0" />
-            </padding>
-        </HBox>
-        <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+         </children>
+      </HBox>
+        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0">
                     <graphic>
                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                     </graphic>

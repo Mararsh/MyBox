@@ -57,6 +57,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
 
     public ControlDataClipboard() {
         baseTitle = message("DataClipboard");
+        TipsLabelKey = "Data2DTips";
     }
 
     @Override
@@ -248,7 +249,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @FXML
     @Override
     public void createAction() {
-        dataController.createFile();
+        dataController.create();
     }
 
     @FXML

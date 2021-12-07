@@ -42,11 +42,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
+                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconFileDelete.png" />
+                                <Image url="@../buttons/Red/iconDelete.png" />
                             </image>
                         </ImageView>
                     </graphic>

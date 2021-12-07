@@ -8,14 +8,10 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -32,221 +28,68 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <SplitPane fx:id="listSplitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                    <items>
-                                        <ScrollPane fx:id="listPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <Button fx:id="refreshButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="clearMatricesButton" mnemonicParsing="false" onAction="#clearAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconClear.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="deleteMatricesButton" mnemonicParsing="false" onAction="#deleteAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconDelete.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                <Button fx:id="renameMatrixButton" disable="true" mnemonicParsing="false" onAction="#renameAction">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconRename.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                                <Button fx:id="matrixAButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#matrixAAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconA.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="matrixBButton" layoutX="233.0" layoutY="10.0" mnemonicParsing="false" onAction="#matrixBAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconB.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                            </children>
-                                                        </HBox>
-                                                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                                            <columns>
-                                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0">
-                                                                    <graphic>
-                                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
-                                                                    </graphic>
-                                                                </TableColumn>
-                                                                <TableColumn fx:id="d2didColumn" text="%ID" />
-                                                                <TableColumn fx:id="nameColumn" prefWidth="120.0" text="%Name" />
-                                                                <TableColumn fx:id="widthColumn" prefWidth="60.0" text="%Width" />
-                                                                <TableColumn fx:id="heightColumn" prefWidth="60.0" text="%Height" />
-                                                                <TableColumn fx:id="scaleColumn" prefWidth="60.0" text="%DecimalScale" />
-                                                                <TableColumn fx:id="modifyColumn" prefWidth="160.0" text="%ModifyTime" />
-                                                                <TableColumn fx:id="commentsColumn" prefWidth="120.0" text="%Comments" />
-                                                            </columns>
-                                                        </TableView>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                            <children>
-                                                                <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconFirst.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconLast.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconPrevious.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconNext.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1128.0" spacing="5.0">
-                                                            <children>
-                                                                <Label text="%PageSize" />
-                                                                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
-                                                                <Label text="%Page" />
-                                                                <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
-                                                                <Label fx:id="pageLabel" />
-                                                                <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconGo.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1168.0" spacing="5.0">
-                                                            <children>
-                                                                <Label fx:id="dataSizeLabel" />
-                                                                <Label fx:id="selectedLabel" />
-                                                            </children>
-                                                        </HBox>
-                                                    </children>
-                                                    <padding>
-                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                    </padding>
-                                                </VBox>
-                                            </content>
-                                        </ScrollPane>
-                                        <ScrollPane fx:id="listRightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <ImageView fx:id="leftPaneListControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                                <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </children>
-                                                        </HBox>
-                                                        <TitledPane fx:id="matrixAPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixA" VBox.vgrow="ALWAYS">
-                                                            <content>
-                                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                                    <content>
-                                                                        <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
-                                                                    </content>
-                                                                </ScrollPane>
-                                                            </content>
-                                                        </TitledPane>
-                                                        <TitledPane fx:id="matrixBPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixB" VBox.vgrow="ALWAYS">
-                                                            <content>
-                                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                                    <content>
-                                                                        <fx:include fx:id="data2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
-                                                                    </content>
-                                                                </ScrollPane>
-                                                            </content>
-                                                        </TitledPane>
-                                                    </children>
-                                                    <padding>
-                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                    </padding>
-                                                </VBox>
-                                            </content>
-                                        </ScrollPane>
-                                    </items>
-                                </SplitPane>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMatrixTable2.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
                             </content>
                         </ScrollPane>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                            </image>
+                                        </ImageView>
+                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTips.png" />
+                                 </image>
+                              </ImageView>
+                                        <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <TitledPane fx:id="matrixAPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixA" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                            <content>
+                                                <fx:include fx:id="dataA" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
+                                            </content>
+                                        </ScrollPane>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane fx:id="matrixBPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixB" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                            <content>
+                                                <fx:include fx:id="dataB" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
+                                            </content>
+                                        </ScrollPane>
+                                    </content>
+                                </TitledPane>
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </VBox>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                    </image>
-                                                </ImageView>
                                                 <Label fx:id="matrixLabel1" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%BinaryCalculation" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>

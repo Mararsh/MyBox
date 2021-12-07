@@ -56,8 +56,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
-            deleteFilesButton, clearFilesButton, viewFileButton, editFileButton,
-            listButton, exampleRegexButton;
+            clearFilesButton, listButton, exampleRegexButton;
     @FXML
     protected TableColumn<P, String> handledColumn, fileColumn, typeColumn;
     @FXML
@@ -116,7 +115,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             MenuItem menu;
 
             if (addFilesButton != null && addFilesButton.isVisible() && !addFilesButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("AddFiles"));
+                menu = new MenuItem(Languages.message("AddFiles"), StyleTools.getIconImage("iconFileAdd.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     addFilesAction();
                 });
@@ -124,14 +123,14 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             if (addDirectoryButton != null && addDirectoryButton.isVisible() && !addDirectoryButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("AddDirectory"));
+                menu = new MenuItem(Languages.message("AddDirectory"), StyleTools.getIconImage("iconFolderAdd.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     addDirectoryAction();
                 });
                 items.add(menu);
             }
             if (insertFilesButton != null && insertFilesButton.isVisible() && !insertFilesButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("InsertFiles"));
+                menu = new MenuItem(Languages.message("InsertFiles"), StyleTools.getIconImage("iconFileInsert.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     insertFilesAction();
                 });
@@ -139,7 +138,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             if (insertDirectoryButton != null && insertDirectoryButton.isVisible() && !insertDirectoryButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("InsertDirectory"));
+                menu = new MenuItem(Languages.message("InsertDirectory"), StyleTools.getIconImage("iconFolderInsert.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     insertDirectoryAction();
                 });
@@ -147,7 +146,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             if (moveUpButton != null && moveUpButton.isVisible() && !moveUpButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("MoveUp"));
+                menu = new MenuItem(Languages.message("MoveUp"), StyleTools.getIconImage("iconUp.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     upFilesAction(null);
                 });
@@ -155,49 +154,49 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             if (moveDownButton != null && moveDownButton.isVisible() && !moveDownButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("MoveDown"));
+                menu = new MenuItem(Languages.message("MoveDown"), StyleTools.getIconImage("iconDown.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     downFilesAction(null);
                 });
                 items.add(menu);
             }
-            if (viewFileButton != null && viewFileButton.isVisible() && !viewFileButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("View"));
+            if (viewButton != null && viewButton.isVisible() && !viewButton.isDisabled()) {
+                menu = new MenuItem(Languages.message("View"), StyleTools.getIconImage("iconView.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    viewFileAction();
+                    viewAction();
                 });
                 items.add(menu);
             }
-            if (editFileButton != null && editFileButton.isVisible() && !editFileButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Edit"));
+            if (editButton != null && editButton.isVisible() && !editButton.isDisabled()) {
+                menu = new MenuItem(Languages.message("Edit"), StyleTools.getIconImage("iconEdit.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    editFileAction();
+                    editAction();
                 });
                 items.add(menu);
             }
 
-            if (deleteFilesButton != null && deleteFilesButton.isVisible() && !deleteFilesButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Delete"));
+            if (deleteButton != null && deleteButton.isVisible() && !deleteButton.isDisabled()) {
+                menu = new MenuItem(Languages.message("Delete"), StyleTools.getIconImage("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    deleteFilesAction();
+                    deleteAction();
                 });
                 items.add(menu);
             }
-            menu = new MenuItem(Languages.message("Clear"));
+            menu = new MenuItem(Languages.message("Clear"), StyleTools.getIconImage("iconClear.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 clearFilesAction();
             });
             items.add(menu);
 
             if (infoButton != null && infoButton.isVisible() && !infoButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Information") + "  CTRL+i");
+                menu = new MenuItem(Languages.message("Information") + "  CTRL+i", StyleTools.getIconImage("iconInfo.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     infoAction();
                 });
                 items.add(menu);
             }
             if (metaButton != null && metaButton.isVisible() && !metaButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("MetaData"));
+                menu = new MenuItem(Languages.message("MetaData"), StyleTools.getIconImage("iconMeta.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     metaAction();
                 });
@@ -298,7 +297,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     @Override
     public void itemDoubleClicked() {
-        viewFileAction();
+        viewAction();
     }
 
     public P row(int index) {
@@ -673,15 +672,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (moveDownButton != null) {
             moveDownButton.setDisable(none);
         }
-        if (viewFileButton != null) {
-            viewFileButton.setDisable(none);
-        }
-        if (editFileButton != null) {
-            editFileButton.setDisable(none);
-        }
-        if (deleteFilesButton != null) {
-            deleteFilesButton.setDisable(none);
-        }
         if (infoButton != null) {
             infoButton.setDisable(none);
         }
@@ -704,7 +694,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                     s += "    (" + Languages.message("IncludeFolders") + ")";
                 }
             }
-            if (viewFileButton != null) {
+            if (viewButton != null) {
                 s += "    " + Languages.message("DoubleClickToView");
             }
             tableLabel.setText(s);
@@ -717,7 +707,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    public void viewFileAction() {
+    public void viewAction() {
         int index = tableView.getSelectionModel().getSelectedIndex();
         if (index < 0 || index > tableData.size() - 1) {
             return;
@@ -731,7 +721,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    public void editFileAction() {
+    public void editAction() {
 
     }
 
@@ -1002,7 +992,8 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    public void deleteFilesAction() {
+    @Override
+    public void deleteAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(tableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {

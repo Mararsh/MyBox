@@ -29,6 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -57,7 +58,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     protected CheckBox deleteConfirmCheck, allRowsCheck;
     @FXML
-    protected Button moveUpButton, moveDownButton, refreshButton;
+    protected Button moveUpButton, moveDownButton, refreshButton, deleteItemsButton;
     @FXML
     protected FlowPane paginationPane;
     @FXML
@@ -291,7 +292,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return;
         }
         items.add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(message("PopupClose"));
+        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
@@ -318,7 +319,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             List<MenuItem> group = new ArrayList<>();
 
             if (addButton != null && addButton.isVisible() && !addButton.isDisabled()) {
-                menu = new MenuItem(message("Add"));
+                menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     addAction();
                 });
@@ -326,7 +327,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (viewButton != null && viewButton.isVisible() && !viewButton.isDisabled()) {
-                menu = new MenuItem(message("View"));
+                menu = new MenuItem(message("View"), StyleTools.getIconImage("iconView.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     viewAction();
                 });
@@ -334,7 +335,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (editButton != null && editButton.isVisible() && !editButton.isDisabled()) {
-                menu = new MenuItem(message("Edit"));
+                menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     editAction();
                 });
@@ -342,7 +343,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (deleteButton != null && deleteButton.isVisible() && !deleteButton.isDisabled()) {
-                menu = new MenuItem(message("Delete"));
+                menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteAction();
                 });
@@ -350,7 +351,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (clearButton != null && clearButton.isVisible() && !clearButton.isDisabled()) {
-                menu = new MenuItem(message("Clear"));
+                menu = new MenuItem(message("Clear"), StyleTools.getIconImage("iconClear.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     clearAction();
                 });
@@ -362,24 +363,26 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
-                menu = new MenuItem(message("NextPage"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    pageNextAction();
-                });
-                items.add(menu);
-            }
+            if (paginationPane == null || paginationPane.isVisible()) {
+                if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
+                    menu = new MenuItem(message("NextPage"), StyleTools.getIconImage("iconNext.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        pageNextAction();
+                    });
+                    items.add(menu);
+                }
 
-            if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
-                menu = new MenuItem(message("PreviousPage"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    pagePreviousAction();
-                });
-                items.add(menu);
+                if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
+                    menu = new MenuItem(message("PreviousPage"), StyleTools.getIconImage("iconPrevious.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        pagePreviousAction();
+                    });
+                    items.add(menu);
+                }
             }
 
             if (refreshButton != null && refreshButton.isVisible() && !refreshButton.isDisabled()) {
-                menu = new MenuItem(message("Refresh"));
+                menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     refreshAction();
                 });
@@ -387,7 +390,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (moveUpButton != null && moveUpButton.isVisible() && !moveUpButton.isDisabled()) {
-                menu = new MenuItem(message("MoveUp"));
+                menu = new MenuItem(message("MoveUp"), StyleTools.getIconImage("iconUp.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     moveUpAction();
                 });
@@ -395,7 +398,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             if (moveDownButton != null && moveDownButton.isVisible() && !moveDownButton.isDisabled()) {
-                menu = new MenuItem(message("MoveDown"));
+                menu = new MenuItem(message("MoveDown"), StyleTools.getIconImage("iconDown.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     moveDownAction();
                 });
@@ -530,6 +533,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
         if (deleteButton != null) {
             deleteButton.setDisable(none);
+        }
+        if (deleteItemsButton != null) {
+            deleteItemsButton.setDisable(none);
         }
         if (viewButton != null) {
             viewButton.setDisable(none);

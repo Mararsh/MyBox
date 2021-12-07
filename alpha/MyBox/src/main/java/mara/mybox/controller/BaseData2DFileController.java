@@ -246,7 +246,7 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void createAction() {
-        dataController.createFile();
+        dataController.create();
     }
 
     @FXML

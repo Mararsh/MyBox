@@ -61,9 +61,9 @@ public class SheetExportController extends BaseTaskController {
             }
 
             if (dataController.sheetController.sourceFile == null) {
-                if (dataController.sheetController instanceof ControlMatrixEdit) {
-                    filePrefix = ((ControlMatrixEdit) (dataController.sheetController)).nameInput.getText();
-                }
+//                if (dataController.sheetController instanceof ControlMatrixEdit) {
+//                    filePrefix = ((ControlMatrixEdit) (dataController.sheetController)).nameInput.getText();
+//                }
             } else {
                 filePrefix = FileNameTools.getFilePrefix(dataController.sourceFile.getName());
             }

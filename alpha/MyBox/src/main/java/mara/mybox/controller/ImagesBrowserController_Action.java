@@ -453,7 +453,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
     }
 
     @FXML
-    public void deleteFilesAction() {
+    public void deleteAction() {
         try {
             if (selectedIndexes == null || selectedIndexes.isEmpty()) {
                 return;

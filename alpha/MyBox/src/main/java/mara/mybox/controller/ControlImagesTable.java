@@ -207,7 +207,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             boolean notImageFile = suffix.equalsIgnoreCase("ppt")
                     || suffix.equalsIgnoreCase("pptx")
                     || suffix.equalsIgnoreCase("pdf");
-            editFileButton.setDisable(notImageFile);
+            editButton.setDisable(notImageFile);
             infoButton.setDisable(notImageFile);
             metaButton.setDisable(notImageFile);
 
@@ -234,7 +234,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         }
         s += MessageFormat.format(Languages.message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
-        if (viewFileButton != null) {
+        if (viewButton != null) {
             s += "  " + Languages.message("DoubleClickToView");
         }
         tableLabel.setText(s);
@@ -302,7 +302,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @FXML
     @Override
-    public void viewFileAction() {
+    public void viewAction() {
         try {
             ImageInformation info = tableView.getSelectionModel().getSelectedItem();
             if (info == null) {
@@ -327,7 +327,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @FXML
     @Override
-    public void editFileAction() {
+    public void editAction() {
         try {
             ImageInformation info = tableView.getSelectionModel().getSelectedItem();
             if (info == null) {
