@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -377,6 +378,34 @@ public class DataFileText extends DataFile {
             }
             return null;
         }
+    }
+
+    @Override
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
+        if (convertController == null || file == null
+                || colIndices == null || colIndices.isEmpty()) {
+            return false;
+        }
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            String line;
+            int index = 0;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> dataRow = parseFileLine(line);
+                if (dataRow == null || dataRow.isEmpty()) {
+                    continue;
+                }
+                export(convertController, colIndices, dataRow, ++index);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            convertController.updateLogs(e.toString());
+            return false;
+        }
+        task = null;
+        return true;
     }
 
 }

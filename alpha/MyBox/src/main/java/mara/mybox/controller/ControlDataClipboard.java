@@ -237,12 +237,12 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     /*
         clipboard
      */
-    public void loadClipboard(Data2DDefinition data) {
-        if (data == null || !checkBeforeNextAction()) {
+    public void loadClipboard(Data2DDefinition def) {
+        if (def == null || !checkBeforeNextAction()) {
             return;
         }
-        dataClipboard.initFile(data.getFile());
-        dataClipboard.cloneAll(data);
+        dataClipboard.initFile(def.getFile());
+        dataClipboard.cloneAll(def);
         dataController.readDefinition();
     }
 

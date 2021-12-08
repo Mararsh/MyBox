@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -319,11 +320,11 @@ public class DataFileExcel extends DataFile {
                 Iterator<Row> iterator = sourceSheet.iterator();
                 if (iterator != null && iterator.hasNext()) {
                     if (hasHeader) {
-                        while (iterator.hasNext() && (iterator.next() == null)) {
+                        while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                         }
                     }
                     int sourceRowIndex = -1;
-                    while (iterator.hasNext()) {
+                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         Row sourceRow = iterator.next();
                         if (sourceRow == null) {
                             continue;
@@ -601,6 +602,49 @@ public class DataFileExcel extends DataFile {
             error = e.toString();
             return -1;
         }
+    }
+
+    @Override
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
+        if (convertController == null || file == null
+                || colIndices == null || colIndices.isEmpty()) {
+            return false;
+        }
+        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
+            Sheet sourceSheet;
+            if (currentSheetName != null) {
+                sourceSheet = sourceBook.getSheet(currentSheetName);
+            } else {
+                sourceSheet = sourceBook.getSheetAt(0);
+                currentSheetName = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                int index = 0;
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    Row sourceRow = iterator.next();
+                    if (sourceRow == null) {
+                        continue;
+                    }
+                    List<String> dataRow = new ArrayList<>();
+                    for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
+                        String v = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
+                        dataRow.add(v);
+                    }
+                    export(convertController, colIndices, dataRow, ++index);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            convertController.updateLogs(e.toString());
+            return false;
+        }
+        task = null;
+        return true;
     }
 
     /*

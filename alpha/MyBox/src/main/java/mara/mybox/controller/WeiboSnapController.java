@@ -862,10 +862,6 @@ public class WeiboSnapController extends BaseController {
         checkCategory();
 
         targetPathInputController.baseName(baseName).init();
-        targetPathInputController.notify.addListener(
-                (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    targetPath = targetPathInputController.file;
-                });
 
         startButton.disableProperty().bind(targetPathInputController.valid.not()
                 .or(startMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
@@ -992,6 +988,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     @Override
     public void startAction() {
+        MyBoxLog.debug(webAddress);
         makeParameters(webAddress);
         if (parameters == null) {
             popError(Languages.message("ParametersError"));
@@ -1014,6 +1011,7 @@ public class WeiboSnapController extends BaseController {
         parameters.setWebAddress(exmapleAddress);
         parameters.setStartMonth(DateTools.parseMonth("2014-09"));
         parameters.setEndMonth(DateTools.parseMonth("2014-10"));
+        targetPath = targetPathInputController.file;
         parameters.setTargetPath(targetPath == null ? new File(AppPaths.getGeneratedPath()) : targetPath);
         startSnap();
     }
@@ -1062,6 +1060,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setPageHeight(pageHeight);
             parameters.setMarginSize(marginSize);
             parameters.setAuthor(authorInput.getText());
+            targetPath = targetPathInputController.file;
             parameters.setTargetPath(targetPath);
             parameters.setCreatePDF(pdfCheck.isSelected());
             parameters.setCreateHtml(htmlCheck.isSelected());
@@ -1095,6 +1094,7 @@ public class WeiboSnapController extends BaseController {
 
     protected void startSnap() {
         try {
+            targetPath = targetPathInputController.file;
             if (webAddress == null || webAddress.isEmpty() || parameters == null || targetPath == null) {
                 popError(Languages.message("ParametersError"));
                 return;

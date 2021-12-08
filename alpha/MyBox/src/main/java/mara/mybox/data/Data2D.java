@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.control.TableView;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -57,6 +58,8 @@ public abstract class Data2D extends Data2DDefinition {
     public abstract List<List<String>> readPageData();
 
     public abstract boolean savePageData(Data2D targetData);
+
+    public abstract boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber);
 
 
     /*
@@ -220,6 +223,40 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    public boolean isDataFile() {
+        return type == Type.CSV || type == Type.Excel || type == Type.Text;
+    }
+
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices,
+            List<String> dataRow, int index) {
+        try {
+            if (convertController == null || colIndices == null || colIndices.isEmpty()
+                    || dataRow == null || dataRow.isEmpty()) {
+                return false;
+            }
+            List<String> exportRow = new ArrayList<>();
+            if (index > 0) {
+                exportRow.add(message("Row") + index);
+            }
+            for (Integer col : colIndices) {
+                String value = null;
+                if (col >= 0 && col < dataRow.size()) {
+                    value = dataRow.get(col);
+                }
+                exportRow.add(value);
+            }
+            convertController.writeRow(exportRow);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+
     /*
         matrix
      */
@@ -230,6 +267,10 @@ public abstract class Data2D extends Data2DDefinition {
 
     public boolean isMatrix() {
         return type == Type.Matrix;
+    }
+
+    public boolean isSquareMatrix() {
+        return type == Type.Matrix && tableColsNumber() == tableRowsNumber();
     }
 
     /*
@@ -307,7 +348,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public boolean isTmpData() {
-        if (this.isMatrix()) {
+        if (isMatrix()) {
             return d2did < 0;
 
         } else {

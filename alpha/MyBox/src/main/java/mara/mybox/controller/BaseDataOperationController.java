@@ -220,7 +220,7 @@ public abstract class BaseDataOperationController extends BaseController {
     }
 
     public List<Integer> selectedCols(ControlListCheckBox listController) {
-        List<String> names = listController.checkedValues();
+        List<String> names = listController.checkedOrderedValues();
         if (names == null) {
             return null;
         }

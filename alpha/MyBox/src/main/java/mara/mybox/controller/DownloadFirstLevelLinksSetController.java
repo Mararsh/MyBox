@@ -32,7 +32,7 @@ public class DownloadFirstLevelLinksSetController extends BaseController {
     protected Label downloadingsLabel, linksLabel;
 
     public DownloadFirstLevelLinksSetController() {
-        baseTitle = Languages.message("DownloadFirstLevelLinks");
+        baseTitle = Languages.message("DownloadHtmls");
     }
 
     @Override

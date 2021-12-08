@@ -137,6 +137,7 @@ public class ControlWebView extends BaseController {
 
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
+            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/610.2 (KHTML, like Gecko) JavaFX/17 Safari/610.2");
 
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
@@ -630,7 +631,7 @@ public class ControlWebView extends BaseController {
 
         if (tag.equalsIgnoreCase("img")) {
             if (ImageClipboardTools.isMonitoringCopy()) {
-                menu = new MenuItem(message("CopyImageToClipboards"), StyleTools.getIconImage("iconCopy.png"));
+                menu = new MenuItem(message("CopyImageToClipboards"), StyleTools.getIconImage("iconCopySystem.png"));
             } else {
                 menu = new MenuItem(message("CopyImageToSystemClipboard"), StyleTools.getIconImage("iconCopySystem.png"));
             }
@@ -639,7 +640,7 @@ public class ControlWebView extends BaseController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("CopyImageToMyBoxClipboard"), StyleTools.getIconImage("iconCopySystem.png"));
+            menu = new MenuItem(message("CopyImageToMyBoxClipboard"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
                 handleImage(finalAddress, name, "toMyBoxClipboard");
             });

@@ -59,7 +59,7 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
             loadScene(Fxmls.NetworkQueryDNSBatchFxml);
         });
 
-        MenuItem DownloadFirstLevelLinks = new MenuItem(Languages.message("DownloadFirstLevelLinks"));
+        MenuItem DownloadFirstLevelLinks = new MenuItem(Languages.message("DownloadHtmls"));
         DownloadFirstLevelLinks.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DownloadFirstLevelLinksFxml);
         });

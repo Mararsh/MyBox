@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.dev.MyBoxLog;
@@ -19,12 +20,13 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataClipboardPopController extends DataClipboardController {
 
-    protected ControlData2D sourceController;
     protected ControlData2DEditTable sourceTableController, targetTableController;
     protected Data2D dataSource, dataTarget;
 
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
+    @FXML
+    protected RadioButton replaceRadio, insertRadio, appendRadio;
 
     public DataClipboardPopController() {
         TipsLabelKey = "SelectSomeOrNone";
@@ -36,11 +38,16 @@ public class DataClipboardPopController extends DataClipboardController {
             targetTableController = target;
             dataTarget = target.data2D;
 
-            sourceController = clipboardController.dataController;
-            sourceTableController = sourceController.tableController;
-            dataSource = sourceController.data2D;
+            sourceTableController = clipboardController.dataController.tableController;
+            dataSource = sourceTableController.data2D;
 
-            sourceController.statusNotify.addListener(
+            clipboardController.dataController.statusNotify.addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        makeControls(rowSelector.getSelectionModel().getSelectedIndex(),
+                                colSelector.getSelectionModel().getSelectedIndex());
+                    });
+
+            targetTableController.dataController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         okButton.setDisable(!dataSource.hasData());
                     });
@@ -81,21 +88,38 @@ public class DataClipboardPopController extends DataClipboardController {
             int targetRowsNumber = dataTarget.tableRowsNumber();
             int targetColsNumber = dataTarget.tableColsNumber();
             if (row < 0 || row >= targetRowsNumber || col < 0 || col >= targetColsNumber) {
-                popError(message("InvalidParameters"));
-                return;
+                appendRadio.fire();
             }
             List<List<String>> data = sourceTableController.tableView.getSelectionModel().getSelectedItems();
             if (data == null || data.isEmpty()) {
                 data = sourceTableController.tableData;
             }
             targetTableController.isSettingValues = true;
-            for (int r = row; r < Math.min(row + data.size(), targetRowsNumber); r++) {
-                List<String> targetTableRow = targetTableController.tableData.get(r);
-                List<String> sourceDataRow = data.get(r - row);
-                for (int c = col; c < Math.min(col + sourceDataRow.size(), targetColsNumber); c++) {
-                    targetTableRow.set(c + 1, sourceDataRow.get(c - col + 1));
+            if (replaceRadio.isSelected()) {
+                for (int r = row; r < Math.min(row + data.size(), targetRowsNumber); r++) {
+                    List<String> tableRow = targetTableController.tableData.get(r);
+                    List<String> dataRow = data.get(r - row);
+                    for (int c = col + 1; c < Math.min(col + dataRow.size(), targetColsNumber + 1); c++) {
+                        tableRow.set(c, dataRow.get(c - col));
+                    }
+                    targetTableController.tableData.set(r, tableRow);
                 }
-                targetTableController.tableData.set(r, targetTableRow);
+            } else {
+                List<List<String>> newRows = new ArrayList<>();
+                String defaultValue = targetTableController.data2D.defaultColValue();
+                for (int r = 0; r < data.size(); r++) {
+                    List<String> newRow = new ArrayList<>();
+                    newRow.add("-1");
+                    for (int c = 0; c < targetColsNumber; c++) {
+                        newRow.add(defaultValue);
+                    }
+                    List<String> dataRow = data.get(r);
+                    for (int c = col + 1; c < Math.min(col + dataRow.size(), targetColsNumber + 1); c++) {
+                        newRow.set(c, dataRow.get(c - col));
+                    }
+                    newRows.add(newRow);
+                }
+                targetTableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
             }
             targetTableController.isSettingValues = false;
             targetTableController.tableChanged(true);

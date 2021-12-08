@@ -149,7 +149,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     protected TextArea cssArea;
 
     public DownloadFirstLevelLinksController() {
-        baseTitle = Languages.message("DownloadFirstLevelLinks");
+        baseTitle = Languages.message("DownloadHtmls");
         TipsLabelKey = "DownloadFirstLevelLinksComments";
 
         tableData = FXCollections.observableArrayList();

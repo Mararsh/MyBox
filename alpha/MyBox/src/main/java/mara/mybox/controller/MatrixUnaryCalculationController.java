@@ -361,7 +361,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
                     if (result != null) {
                         resultBox.getChildren().add(resultTablePane);
-                        resultController.loadMatrix(result, false);
+                        resultController.loadMatrix(result);
 //                        if (resultTableController.autoNameCheck.isSelected()) {
 //                            resultTableController.nameInput.setText(dataMatrix.getDataName() + " " + op);
 //                        }

@@ -257,10 +257,7 @@ public class ControlData2D extends BaseController {
         readDefinition();
     }
 
-    public void loadMatrix(double[][] matrix, boolean checkChanged) {
-        if (checkChanged && !checkBeforeNextAction()) {
-            return;
-        }
+    public void loadMatrix(double[][] matrix) {
         data2D.initMatrix(matrix);
         readDefinition();
     }
@@ -654,7 +651,7 @@ public class ControlData2D extends BaseController {
             if (text == null || text.isBlank()) {
                 popError(message("NoTextInClipboard"));
             }
-            DataPasteController.open(tableController, text, false);
+            Data2DPasteController.open(tableController, text, false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

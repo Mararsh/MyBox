@@ -110,7 +110,9 @@ public class DataFileExcelController extends BaseData2DFileController {
     protected void afterFileLoaded() {
         sheetSelector.getItems().clear();
         List<String> sheets = dataFileExcel.getSheetNames();
-        sheetSelector.getItems().setAll(sheets);
+        if (sheets != null && !sheets.isEmpty()) {
+            sheetSelector.getItems().setAll(sheets);
+        }
         sheetSelector.setValue(dataFileExcel.getCurrentSheetName());
         deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
         int current = sheetSelector.getSelectionModel().getSelectedIndex();

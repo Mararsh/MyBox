@@ -393,7 +393,7 @@ public class ControlOCROptions extends BaseController {
         }
         try {
             selectedLanguages = null;
-            List<String> langsList = languageListController.checkedValues();
+            List<String> langsList = languageListController.checkedOrderedValues();
             if (langsList != null) {
                 Map<String, String> names = OCRTools.nameCode();
                 for (String name : langsList) {

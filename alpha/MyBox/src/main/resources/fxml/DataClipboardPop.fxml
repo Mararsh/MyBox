@@ -10,6 +10,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -21,29 +23,7 @@ License:    Apache License Version 2.0
         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
     </padding>
     <children>
-      <HBox fx:id="pasteBox" alignment="CENTER_LEFT">
-         <children>
-                <Button fx:id="closePop2Button" mnemonicParsing="false" onAction="#closeAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconCancel.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%SelectSomeOrNone" HBox.hgrow="ALWAYS" />
-            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconOK.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
+        <fx:include fx:id="clipboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataClipboard.fxml" VBox.vgrow="ALWAYS" />
       <FlowPane fx:id="pastePane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
          <children>
             <Label minHeight="-Infinity" minWidth="-Infinity" text="%PasteLocation" wrapText="true">
@@ -57,6 +37,35 @@ License:    Apache License Version 2.0
             <ComboBox fx:id="colSelector" prefWidth="200.0" />
          </children>
       </FlowPane>
-        <fx:include fx:id="clipboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataClipboard.fxml" VBox.vgrow="ALWAYS" />
+      <HBox fx:id="pasteBox" alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" text="%SelectSomeOrNone" HBox.hgrow="ALWAYS" />
+            <RadioButton fx:id="replaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
+               <toggleGroup>
+                  <ToggleGroup fx:id="opGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%Insert" toggleGroup="$opGroup" />
+            <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="%Append" toggleGroup="$opGroup" />
+                <Button fx:id="closePop2Button" mnemonicParsing="false" onAction="#closeAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
     </children>
 </VBox>

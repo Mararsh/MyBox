@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataCopyController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DCopyController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -31,11 +31,11 @@ License:    Apache License Version 2.0
                 <Label text="%DataSource" />
                 <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="40.0" VBox.vgrow="ALWAYS">
                     <children>
-                  <VBox maxHeight="1.7976931348623157E308" spacing="2.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                           <children>
-                                      <Label minHeight="-Infinity" minWidth="-Infinity" text="%TableRow" />
+                        <VBox maxHeight="1.7976931348623157E308" spacing="2.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%TableRow" />
                                         <Button fx:id="selectAllRowsButton" mnemonicParsing="false" onAction="#selectAllRows">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -54,16 +54,16 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                           </children>
-                        </HBox>
+                                    </children>
+                                </HBox>
                                 <fx:include fx:id="rowsList" prefHeight="300.0" prefWidth="120.0" source="ControlListCheckBox.fxml" />
-                     </children>
-                  </VBox>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                           <children>
-                                      <Label minHeight="-Infinity" minWidth="-Infinity" text="%Columns" />
+                            </children>
+                        </VBox>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%Columns" />
                                         <Button fx:id="selectAllColsButton" mnemonicParsing="false" onAction="#selectAllCols">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -82,11 +82,11 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                           </children>
-                        </HBox>
+                                    </children>
+                                </HBox>
                                 <fx:include fx:id="colsList" maxWidth="1.7976931348623157E308" prefHeight="300.0" source="ControlListCheckBox.fxml" />
-                     </children>
-                  </VBox>
+                            </children>
+                        </VBox>
                     </children>
                 </HBox>
             </children>
@@ -96,8 +96,8 @@ License:    Apache License Version 2.0
                 <Label text="%Target" />
                 <VBox fx:id="targetBox" spacing="10.0">
                     <children>
-                  <FlowPane alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="2.0">
-                     <children>
+                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="2.0">
+                            <children>
                                 <RadioButton fx:id="frontRadio" mnemonicParsing="false" selected="true" text="%Front">
                                     <toggleGroup>
                                         <ToggleGroup fx:id="locationGroup" />
@@ -108,8 +108,8 @@ License:    Apache License Version 2.0
                                 <RadioButton fx:id="belowRadio" mnemonicParsing="false" text="%Below" toggleGroup="$locationGroup" />
                                 <RadioButton fx:id="scRadio" mnemonicParsing="false" text="%SystemClipboard" toggleGroup="$locationGroup" />
                                 <RadioButton fx:id="mcRadio" mnemonicParsing="false" text="%MyBoxClipboard" toggleGroup="$locationGroup" />
-                     </children>
-                  </FlowPane>
+                            </children>
+                        </FlowPane>
                         <HBox fx:id="rowBox" alignment="CENTER_LEFT" spacing="2.0">
                             <children>
                                 <Label text="%TableRow" />
@@ -120,7 +120,7 @@ License:    Apache License Version 2.0
                 </VBox>
             </children>
         </VBox>
-      <CheckBox fx:id="nameCheck" mnemonicParsing="false" text="%ColumnName" />
+        <CheckBox fx:id="nameCheck" mnemonicParsing="false" text="%ColumnName" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

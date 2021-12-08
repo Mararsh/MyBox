@@ -251,7 +251,7 @@ public class WeiboSnapRunController extends BaseController {
             webEngine = webView.getEngine();
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
-            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
+            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/610.2 (KHTML, like Gecko) JavaFX/17 Safari/610.2");
 
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override

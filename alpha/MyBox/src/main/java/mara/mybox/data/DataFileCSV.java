@@ -6,9 +6,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -175,16 +177,15 @@ public class DataFileCSV extends DataFileText {
         if (targetData == null || !(targetData instanceof DataFileCSV)) {
             return false;
         }
-        DataFileCSV targetCSVFile = (DataFileCSV) targetData;
         File tmpFile = TmpFileTools.getTempFile();
-        File tFile = targetCSVFile.getFile();
+        File tFile = getFile();
         if (tFile == null) {
             return false;
         }
-        targetCSVFile.checkAttributes();
-        Charset tCharset = targetCSVFile.getCharset();
-        boolean tHasHeader = targetCSVFile.isHasHeader();
-        CSVFormat tFormat = targetCSVFile.cvsFormat();
+        checkAttributes();
+        Charset tCharset = getCharset();
+        boolean tHasHeader = isHasHeader();
+        CSVFormat tFormat = cvsFormat();
         checkAttributes();
         if (file != null) {
             try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
@@ -196,10 +197,7 @@ public class DataFileCSV extends DataFileText {
                 long pageStart = getStartRowOfCurrentPage(), pageEnd = getEndRowOfCurrentPage();
                 Iterator<CSVRecord> iterator = parser.iterator();
                 if (iterator != null) {
-                    while (iterator.hasNext()) {
-                        if (task == null || task.isCancelled()) {
-                            break;
-                        }
+                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         try {
                             CSVRecord record = iterator.next();
                             if (record != null) {
@@ -333,6 +331,48 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
         return tmpFile;
+    }
+
+    @Override
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
+        if (convertController == null || file == null
+                || colIndices == null || colIndices.isEmpty()) {
+            return false;
+        }
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                int index = 0;
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        CSVRecord record = iterator.next();
+                        if (record == null) {
+                            continue;
+                        }
+                        List<String> exportRow = new ArrayList<>();
+                        if (rowNumber) {
+                            exportRow.add(message("Row") + ++index);
+                        }
+                        for (Integer col : colIndices) {
+                            String value = null;
+                            if (col >= 0 && col < record.size()) {
+                                value = record.get(col);
+                            }
+                            exportRow.add(value);
+                        }
+                        convertController.writeRow(exportRow);
+                    } catch (Exception e) {  // skip  bad lines
+//                            MyBoxLog.debug(e);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            convertController.updateLogs(e.toString());
+            return false;
+        }
+        task = null;
+        return true;
     }
 
 }

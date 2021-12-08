@@ -17,6 +17,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -36,7 +37,6 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import mara.mybox.data.PaginatedPdfTable;
 
 /**
  * @Author Mara
@@ -93,7 +93,8 @@ public class ControlDataConvert extends BaseController {
         setControls(true, true, true, true, true, true, true);
     }
 
-    private void setControls(boolean toCsv, boolean toText, boolean toJson, boolean toXml, boolean toXlsx, boolean toHtml, boolean toPdf) {
+    private void setControls(boolean toCsv, boolean toText, boolean toJson,
+            boolean toXml, boolean toXlsx, boolean toHtml, boolean toPdf) {
         try {
             this.toCsv = toCsv;
             this.toText = toText;
@@ -187,31 +188,34 @@ public class ControlDataConvert extends BaseController {
             refreshStyle(thisPane);
 
             maxLines = -1;
-            maxLinesSelector.getItems().addAll(Arrays.asList(Languages.message("NotSplit"), "1000", "500", "200", "300", "800", "2000", "3000", "5000", "8000"
+            maxLinesSelector.getItems().addAll(Arrays.asList(Languages.message("NotSplit"),
+                    "1000", "500", "200", "300", "800", "2000", "3000", "5000", "8000"
             ));
-            maxLinesSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return;
-                }
-                UserConfig.setString(baseName + "ExportMaxLines", newValue);
-                if (Languages.message("NotSplit").equals(newValue)) {
-                    maxLines = -1;
-                    ValidationTools.setEditorNormal(maxLinesSelector);
-                    return;
-                }
-                try {
-                    int v = Integer.valueOf(newValue);
-                    if (v > 0) {
-                        maxLines = v;
-                        ValidationTools.setEditorNormal(maxLinesSelector);
-                    } else {
-                        ValidationTools.setEditorBadStyle(maxLinesSelector);
-                    }
-                } catch (Exception e) {
-                    ValidationTools.setEditorBadStyle(maxLinesSelector);
-                }
-            });
-            maxLinesSelector.getSelectionModel().select(UserConfig.getString(baseName + "ExportMaxLines", Languages.message("NotSplit")));
+            maxLinesSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return;
+                        }
+                        UserConfig.setString(baseName + "ExportMaxLines", newValue);
+                        if (Languages.message("NotSplit").equals(newValue)) {
+                            maxLines = -1;
+                            ValidationTools.setEditorNormal(maxLinesSelector);
+                            return;
+                        }
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            if (v > 0) {
+                                maxLines = v;
+                                ValidationTools.setEditorNormal(maxLinesSelector);
+                            } else {
+                                ValidationTools.setEditorBadStyle(maxLinesSelector);
+                            }
+                        } catch (Exception e) {
+                            ValidationTools.setEditorBadStyle(maxLinesSelector);
+                        }
+                    });
+            maxLinesSelector.getSelectionModel().select(
+                    UserConfig.getString(baseName + "ExportMaxLines", Languages.message("NotSplit")));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -314,7 +318,7 @@ public class ControlDataConvert extends BaseController {
         }
         try {
             if (toCsv && csvCheck.isSelected()) {
-                csvFile = makeTargetFile(currentPrefix, ".csv", targetPath);
+                csvFile = parent.makeTargetFile(currentPrefix, ".csv", targetPath);
                 if (csvFile != null) {
                     updateLogs(Languages.message("Writing") + " " + csvFile.getAbsolutePath());
                     CSVFormat csvFormat = CSVFormat.DEFAULT
@@ -328,7 +332,7 @@ public class ControlDataConvert extends BaseController {
                 }
             }
             if (toText && textCheck.isSelected()) {
-                textFile = makeTargetFile(currentPrefix, ".txt", targetPath);
+                textFile = parent.makeTargetFile(currentPrefix, ".txt", targetPath);
                 if (textFile != null) {
                     updateLogs(Languages.message("Writing") + " " + textFile.getAbsolutePath());
                     textWriter = new BufferedWriter(new FileWriter(textFile, textWriteOptionsController.charset));
@@ -341,7 +345,7 @@ public class ControlDataConvert extends BaseController {
                 }
             }
             if (toHtml && htmlCheck.isSelected()) {
-                htmlFile = makeTargetFile(currentPrefix, ".html", targetPath);
+                htmlFile = parent.makeTargetFile(currentPrefix, ".html", targetPath);
                 if (htmlFile != null) {
                     updateLogs(Languages.message("Writing") + " " + htmlFile.getAbsolutePath());
                     htmlWriter = new BufferedWriter(new FileWriter(htmlFile, csvWriteController.charset));
@@ -362,7 +366,7 @@ public class ControlDataConvert extends BaseController {
                 }
             }
             if (toXml && xmlCheck.isSelected()) {
-                xmlFile = makeTargetFile(currentPrefix, ".xml", targetPath);
+                xmlFile = parent.makeTargetFile(currentPrefix, ".xml", targetPath);
                 if (xmlFile != null) {
                     updateLogs(Languages.message("Writing") + " " + xmlFile.getAbsolutePath());
                     xmlWriter = new BufferedWriter(new FileWriter(xmlFile, csvWriteController.charset));
@@ -376,7 +380,7 @@ public class ControlDataConvert extends BaseController {
                 }
             }
             if (toJson && jsonCheck.isSelected()) {
-                jsonFile = makeTargetFile(currentPrefix, ".json", targetPath);
+                jsonFile = parent.makeTargetFile(currentPrefix, ".json", targetPath);
                 if (jsonFile != null) {
                     updateLogs(Languages.message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new BufferedWriter(new FileWriter(jsonFile, Charset.forName("utf-8")));
@@ -388,7 +392,7 @@ public class ControlDataConvert extends BaseController {
                 }
             }
             if (toPdf && pdfCheck.isSelected() && pdfTable != null) {
-                pdfFile = makeTargetFile(currentPrefix, ".pdf", targetPath);
+                pdfFile = parent.makeTargetFile(currentPrefix, ".pdf", targetPath);
                 if (pdfFile != null) {
                     updateLogs(Languages.message("Writing") + " " + pdfFile.getAbsolutePath());
                     pdfTable.setColumns(names).createDoc(pdfFile);
@@ -397,7 +401,7 @@ public class ControlDataConvert extends BaseController {
                 }
             }
             if (toXlsx && xlsxCheck.isSelected()) {
-                xlsxFile = makeTargetFile(currentPrefix, ".xlsx", targetPath);
+                xlsxFile = parent.makeTargetFile(currentPrefix, ".xlsx", targetPath);
                 if (xlsxFile != null) {
                     updateLogs(Languages.message("Writing") + " " + xlsxFile.getAbsolutePath());
                     xssfBook = new XSSFWorkbook();

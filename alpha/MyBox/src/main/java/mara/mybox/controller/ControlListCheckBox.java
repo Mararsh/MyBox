@@ -254,11 +254,7 @@ public class ControlListCheckBox extends BaseController {
         return checkedOrders;
     }
 
-    public boolean hasChecked() {
-        return checkedOrders != null && !checkedOrders.isEmpty();
-    }
-
-    public List<String> checkedValues() {
+    public List<String> checkedOrderedValues() {
         if (checkedOrders == null || checkedOrders.isEmpty()) {
             return null;
         }
@@ -269,6 +265,10 @@ public class ControlListCheckBox extends BaseController {
         return checked;
     }
 
+    public boolean hasChecked() {
+        return checkedOrders != null && !checkedOrders.isEmpty();
+    }
+
     public List<Integer> checkedIndices() {
         List<Integer> checked = new ArrayList<>();
         for (int i = 0; i < listView.getItems().size(); i++) {
@@ -276,6 +276,18 @@ public class ControlListCheckBox extends BaseController {
             CheckBox cb = checkBoxs.get(index);
             if (cb != null && cb.isSelected()) {
                 checked.add(index);
+            }
+        }
+        return checked;
+    }
+
+    public List<String> checkedValues() {
+        List<String> checked = new ArrayList<>();
+        for (int i = 0; i < listView.getItems().size(); i++) {
+            Integer index = (Integer) i;
+            CheckBox cb = checkBoxs.get(index);
+            if (cb != null && cb.isSelected()) {
+                checked.add(listView.getItems().get(i));
             }
         }
         return checked;

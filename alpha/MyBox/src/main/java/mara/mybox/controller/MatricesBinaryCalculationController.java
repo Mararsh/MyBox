@@ -243,7 +243,7 @@ public class MatricesBinaryCalculationController extends BaseController {
                     cost = new Date().getTime() - startTime.getTime();
                     String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                     resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-                    resultController.loadMatrix(result, false);
+                    resultController.loadMatrix(result);
 //                    if (resultController.autoNameCheck.isSelected()) {
 //                        resultController.nameInput.setText(op);
 //                    }

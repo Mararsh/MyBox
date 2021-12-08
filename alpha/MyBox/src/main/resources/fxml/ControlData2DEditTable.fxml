@@ -69,11 +69,11 @@ License:    Apache License Version 2.0
                       </Button>
                   </children>
               </FlowPane>
-                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../buttons/Red/iconTipsRight.png" />
-                    </image>
-                </ImageView>
+            <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconTipsRight.png" />
+               </image>
+            </ImageView>
          </children>
       </HBox>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

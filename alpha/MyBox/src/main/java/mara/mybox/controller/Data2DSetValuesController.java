@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class DataSetValuesController extends BaseController {
+public class Data2DSetValuesController extends BaseController {
 
     protected ControlData2DEditTable tableController;
     protected String value;
@@ -204,10 +204,10 @@ public class DataSetValuesController extends BaseController {
     /*
         static
      */
-    public static DataSetValuesController open(ControlData2DEditTable tableController) {
+    public static Data2DSetValuesController open(ControlData2DEditTable tableController) {
         try {
-            DataSetValuesController controller = (DataSetValuesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.DataSetValuesFxml, false);
+            Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DSetValuesFxml, false);
             controller.setParameters(tableController);
             return controller;
         } catch (Exception e) {

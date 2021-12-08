@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class DataCopyController extends BaseController {
+public class Data2DCopyController extends BaseController {
 
     protected ControlData2DEditTable tableController;
     protected String value;
@@ -142,6 +142,10 @@ public class DataCopyController extends BaseController {
     @Override
     public void okAction() {
         try {
+            if (!tableController.data2D.hasData()) {
+                popError(message("NoData"));
+                return;
+            }
             if (scRadio.isSelected() || mcRadio.isSelected()) {
                 copyToClipboard();
             } else {
@@ -205,14 +209,18 @@ public class DataCopyController extends BaseController {
                     protected boolean handle() {
                         List<List<String>> data = new ArrayList<>();
                         int colsNumber = tableController.data2D.columnsNumber();
-                        List<String> names = null;
-                        if (nameCheck.isSelected()) {
-                            names = new ArrayList<>();
-                            for (int col = 0; col < colsNumber; col++) {
-                                if (colsListController.isChecked(col)) {
+                        List<String> names = new ArrayList<>();
+                        List<Integer> selectedIndices = new ArrayList<>();
+                        for (int col = 0; col < colsNumber; col++) {
+                            if (colsListController.isChecked(col)) {
+                                if (nameCheck.isSelected()) {
                                     names.add(colsListController.value(col));
                                 }
+                                selectedIndices.add(col);
                             }
+                        }
+                        if (nameCheck.isSelected()) {
+                            names = null;
                         }
                         for (int row = 0; row < tableController.tableData.size(); row++) {
                             if (!rowsListController.isChecked(row)) {
@@ -220,10 +228,7 @@ public class DataCopyController extends BaseController {
                             }
                             List<String> dataRow = tableController.tableData.get(row);
                             List<String> newRow = new ArrayList<>();
-                            for (int col = 0; col < colsNumber; col++) {
-                                if (!colsListController.isChecked(col)) {
-                                    continue;
-                                }
+                            for (Integer col : selectedIndices) {
                                 newRow.add(dataRow.get(col + 1));
                             }
                             data.add(newRow);
@@ -236,7 +241,6 @@ public class DataCopyController extends BaseController {
                             text = TextTools.dataText(data, ",", names, null);
                             ok = text != null;
                         } else if (mcRadio.isSelected()) {
-                            MyBoxLog.console(data.size());
                             ok = DataClipboard.create(task, names, data) != null;
                         }
                         return ok;
@@ -270,10 +274,10 @@ public class DataCopyController extends BaseController {
     /*
         static
      */
-    public static DataCopyController open(ControlData2DEditTable tableController) {
+    public static Data2DCopyController open(ControlData2DEditTable tableController) {
         try {
-            DataCopyController controller = (DataCopyController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.DataCopyFxml, false);
+            Data2DCopyController controller = (Data2DCopyController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DCopyFxml, false);
             controller.setParameters(tableController);
             return controller;
         } catch (Exception e) {

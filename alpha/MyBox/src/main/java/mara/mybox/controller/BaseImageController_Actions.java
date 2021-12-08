@@ -440,17 +440,17 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 popMenu.getItems().add(menu);
             }
 
+            menu = new MenuItem(message("ImagesInSystemClipboard"), StyleTools.getIconImage("iconSystemClipboard.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageInSystemClipboardController.oneOpen();
+            });
+            popMenu.getItems().add(menu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("ImagesInMyBoxClipboard"), StyleTools.getIconImage("iconClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageInMyBoxClipboardController.oneOpen();
 
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ImagesInSystemClipboard"), StyleTools.getIconImage("iconSystemClipboard.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageInSystemClipboardController.oneOpen();
             });
             popMenu.getItems().add(menu);
 

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,6 +18,7 @@ import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.Data2D;
+import mara.mybox.data.DataMatrix;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -358,7 +358,15 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     @FXML
     @Override
     public void copyAction() {
-        DataCopyController.open(this);
+        Data2DCopyController.open(this);
+    }
+
+    @FXML
+    public void exportAction() {
+        if (!dataController.checkBeforeNextAction()) {
+            return;
+        }
+        Data2DExportController.open(this);
     }
 
     @FXML
@@ -366,7 +374,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         if (!checkData()) {
             return;
         }
-        DataSetValuesController.open(this);
+        Data2DSetValuesController.open(this);
     }
 
     @FXML
@@ -380,7 +388,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             if (text == null || text.isBlank()) {
                 popError(message("NoTextInClipboard"));
             }
-            DataPasteController.open(this, text, true);
+            Data2DPasteController.open(this, text, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -457,41 +465,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         }
     }
 
-    public synchronized void createTable() {
-        data2D.resetData();
-
-        List<Data2DColumn> columns = new ArrayList<>();
-        for (int col = 1; col <= 3; col++) {
-            Data2DColumn column = new Data2DColumn(data2D.colPrefix() + col, data2D.defaultColumnType());
-            columns.add(column);
-        }
-        data2D.setColumns(columns);
-        makeColumns();
-
-        List<List<String>> rows = new ArrayList<>();
-        for (int r = 1; r <= 3; r++) {
-            List<String> row = new ArrayList<>();
-            row.add("-1");
-            for (int col = 0; col < 3; col++) {
-                row.add(data2D.defaultColValue());
-            }
-            rows.add(row);
-        }
-        isSettingValues = true;
-        tableData.setAll(rows);
-        isSettingValues = false;
-
-        dataSize = 3;
-        pagesNumber = 1;
-        currentPage = startRowOfCurrentPage = 0;
-        data2D.setEndRowOfCurrentPage(dataSize);
-        data2D.setDataSize(dataSize);
-        tableChanged(false);
-
-        dataController.attributesController.loadData();
-        dataController.columnsController.loadData();
-    }
-
     @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
@@ -512,12 +485,63 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             menu.setDisable(invalidData || !dataSizeLoaded);
             popMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.parentController.recoverAction();
+            });
+            menu.setDisable(invalidData || !dataSizeLoaded);
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
             menu.setOnAction((ActionEvent event) -> {
                 setValuesAction();
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
+
+            if (data2D.isMatrix()) {
+                DataMatrix dataMatrix = (DataMatrix) data2D;
+
+                menu = new MenuItem(message("Normalization"), StyleTools.getIconImage("iconEqual.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    loadData(dataMatrix.normalization(), false);
+                });
+                menu.setDisable(empty);
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("GaussianDistribution"), StyleTools.getIconImage("iconEqual.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    loadData(dataMatrix.gaussianDistribution(), false);
+                });
+                menu.setDisable(empty || !dataMatrix.isSquareMatrix() || dataMatrix.tableColsNumber() < 3);
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("IdentifyMatrix"), StyleTools.getIconImage("iconEqual.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    loadData(dataMatrix.identifyMatrix(), false);
+                });
+                menu.setDisable(empty);
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("UpperTriangle"), StyleTools.getIconImage("iconEqual.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    loadData(dataMatrix.upperTriangleMatrix(), false);
+                });
+                menu.setDisable(empty);
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("LowerTriangle"), StyleTools.getIconImage("iconEqual.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    loadData(dataMatrix.lowerTriangleMatrix(), false);
+                });
+                menu.setDisable(empty);
+                popMenu.getItems().add(menu);
+
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -540,13 +564,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.parentController.recoverAction();
-            });
-            menu.setDisable(invalidData);
-            popMenu.getItems().add(menu);
-
             popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconFileAdd.png"));
@@ -561,12 +578,23 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SaveAs"), StyleTools.getIconImage("iconSaveAs.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.parentController.saveAsAction();
-            });
-            menu.setDisable(invalidData || data2D.isMatrix());
-            popMenu.getItems().add(menu);
+            if (!invalidData) {
+                popMenu.getItems().add(new SeparatorMenuItem());
+
+                menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    exportAction();
+                });
+                popMenu.getItems().add(menu);
+
+                if (data2D.isDataFile()) {
+                    menu = new MenuItem(message("SaveAs"), StyleTools.getIconImage("iconSaveAs.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        dataController.parentController.saveAsAction();
+                    });
+                    popMenu.getItems().add(menu);
+                }
+            }
 
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
