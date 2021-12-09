@@ -2,12 +2,15 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileText;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -76,6 +79,15 @@ public class DataFileTextController extends BaseData2DFileController {
         targetTextFile.setDelimiter(writeOptionsController.delimiterName);
         targetTextFile.setHasHeader(writeOptionsController.withNamesCheck.isSelected());
         return targetTextFile;
+    }
+
+    /*
+        static
+     */
+    public static DataFileTextController open(List<String> cols, List<List<String>> data) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.dataController.loadTmpData(cols, data);
+        return controller;
     }
 
 }

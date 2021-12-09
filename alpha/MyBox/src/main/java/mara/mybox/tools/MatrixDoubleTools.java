@@ -623,7 +623,8 @@ public class MatrixDoubleTools {
         return determinantByElimination(matrix);
     }
 
-    public static double determinantByComplementMinor(double[][] matrix) throws Exception {
+    public static double determinantByComplementMinor(double[][] matrix) throws
+            Exception {
         try {
             if (matrix == null) {
                 throw new Exception("InvalidValue");
@@ -651,7 +652,8 @@ public class MatrixDoubleTools {
 
     }
 
-    public static double determinantByElimination(double[][] matrix) throws Exception {
+    public static double determinantByElimination(double[][] matrix) throws
+            Exception {
         try {
             if (matrix == null) {
                 throw new Exception("InvalidValue");
@@ -886,6 +888,49 @@ public class MatrixDoubleTools {
             table.add(row);
         }
         return table.html();
+    }
+
+    public static double[][] toArray(List<List<String>> data) {
+        try {
+            int rowsNumber = data.size();
+            int colsNumber = data.get(0).size();
+            if (rowsNumber <= 0 || colsNumber <= 0) {
+                return null;
+            }
+            double[][] array = new double[rowsNumber][colsNumber];
+            for (int r = 0; r < rowsNumber; r++) {
+                List<String> row = data.get(r);
+                for (int c = 0; c < row.size(); c++) {
+                    double d = 0;
+                    try {
+                        d = Double.valueOf(row.get(c));
+                    } catch (Exception e) {
+                    }
+                    array[r][c] = d;
+                }
+            }
+            return array;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<List<String>> toList(double[][] array) {
+        try {
+            int rowsNumber = array.length;
+            int colsNumber = array[0].length;
+            List<List<String>> data = new ArrayList<>();
+            for (int i = 0; i < rowsNumber; i++) {
+                List<String> row = new ArrayList<>();
+                for (int j = 0; j < colsNumber; j++) {
+                    row.add(array[i][j] + "");
+                }
+                data.add(row);
+            }
+            return data;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

@@ -218,6 +218,7 @@ public class ControlData2DEditText extends BaseController {
                 delimiterName = controller.delimiterName;
                 UserConfig.setString(baseName + "EditDelimiter", delimiterName);
                 loadData();
+                popDone();
             }
         });
     }

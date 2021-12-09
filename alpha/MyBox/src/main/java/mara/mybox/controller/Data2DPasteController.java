@@ -61,11 +61,15 @@ public class Data2DPasteController extends BaseController {
         okNotify = new SimpleBooleanProperty();
     }
 
+    @Override
+    public void setStageStatus() {
+        setAsPop(baseName);
+    }
+
     public void setParameters(ControlData2DEditTable parent, String text, boolean forPaste) {
         try {
             tableController = parent;
             data2D = tableController.data2D;
-            baseName = parent.baseName;
 
             this.forPaste = forPaste;
             if (!forPaste) {
@@ -244,6 +248,7 @@ public class Data2DPasteController extends BaseController {
         } else {
             tableController.dataController.loadTmpData(columnNames, data);
         }
+        popDone();
     }
 
     public void pasteData() {
@@ -268,13 +273,8 @@ public class Data2DPasteController extends BaseController {
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
-                String defaultValue = tableController.data2D.defaultColValue();
                 for (int r = 0; r < data.size(); r++) {
-                    List<String> newRow = new ArrayList<>();
-                    newRow.add("-1");
-                    for (int c = 0; c < colsNumber; c++) {
-                        newRow.add(defaultValue);
-                    }
+                    List<String> newRow = tableController.data2D.newRow();
                     List<String> dataRow = data.get(r);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));

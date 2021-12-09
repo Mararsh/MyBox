@@ -4,6 +4,7 @@ import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,13 +13,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataMatrix;
+import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -26,7 +28,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -60,10 +64,12 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             pageSelector = dataController.pageSelector;
             pageLabel = dataController.pageLabel;
             dataSizeLabel = dataController.dataSizeLabel;
+            selectedLabel = dataController.selectedLabel;
             pagePreviousButton = dataController.pagePreviousButton;
             pageNextButton = dataController.pageNextButton;
             pageFirstButton = dataController.pageFirstButton;
             pageLastButton = dataController.pageLastButton;
+            saveButton = dataController.saveButton;
 
             if (data2D.isMatrix()) {
                 dataController.thisPane.getChildren().remove(paginationPane);
@@ -71,7 +77,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                 initPagination();
             }
 
-            data2D.setTableView(tableView);
+            data2D.setTableController(this);
 
             dataRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, Integer>, ObservableValue<Integer>>() {
                 @Override
@@ -101,8 +107,10 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         try {
             makeColumns();
             if (!checkData()) {
+                dataSizeLoaded = true;
                 return;
             }
+            dataSizeLoaded = false;
             loadPage(currentPage);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -160,7 +168,11 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
     @Override
     public void loadDataSize() {
-        if (data2D == null || dataSizeLoaded || data2D.isMatrix()) {
+        if (data2D == null || dataSizeLoaded) {
+            return;
+        }
+        if (data2D.isMatrix()) {
+            dataSizeLoaded = true;
             return;
         }
         synchronized (this) {
@@ -168,7 +180,9 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                 backgroundTask.cancel();
             }
             data2D.setDataSize(0);
-            dataController.paginationPane.setVisible(false);
+            dataSizeLoaded = false;
+            paginationPane.setVisible(false);
+            saveButton.setDisable(true);
             backgroundTask = new SingletonTask<Void>(this) {
 
                 @Override
@@ -179,8 +193,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
                 @Override
                 protected void whenSucceeded() {
-                    dataSizeLoaded = true;
-                    dataController.checkStatus();
                 }
 
                 @Override
@@ -199,7 +211,10 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                 protected void finalAction() {
                     data2D.setBackgroundTask(null);
                     backgroundTask = null;
+                    dataSizeLoaded = true;
+                    dataController.checkStatus();
                     refreshPagination();
+                    saveButton.setDisable(false);
                 }
 
             };
@@ -217,7 +232,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     @Override
     protected void setPagination() {
         try {
-            if (data2D == null || data2D.isMatrix() || data2D.isTmpData()) {
+            if (data2D == null || data2D.isMatrix() || data2D.isTmpData() || !dataSizeLoaded) {
                 paginationPane.setVisible(false);
                 return;
             }
@@ -235,7 +250,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             tableView.getColumns().remove(2, tableView.getColumns().size());
             tableView.setItems(tableData);
             isSettingValues = false;
-            data2D.setTableView(tableView);
+            data2D.setTableController(this);
 
             if (!checkData()) {
                 return;
@@ -355,57 +370,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         deleteRowsAction();
     }
 
-    @FXML
-    @Override
-    public void copyAction() {
-        Data2DCopyController.open(this);
-    }
-
-    @FXML
-    public void exportAction() {
-        if (!dataController.checkBeforeNextAction()) {
-            return;
-        }
-        Data2DExportController.open(this);
-    }
-
-    @FXML
-    public void setValuesAction() {
-        if (!checkData()) {
-            return;
-        }
-        Data2DSetValuesController.open(this);
-    }
-
-    @FXML
-    @Override
-    public void pasteContentInSystemClipboard() {
-        try {
-            if (data2D == null) {
-                return;
-            }
-            String text = Clipboard.getSystemClipboard().getString();
-            if (text == null || text.isBlank()) {
-                popError(message("NoTextInClipboard"));
-            }
-            Data2DPasteController.open(this, text, true);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void pasteContentInMyboxClipboard() {
-        try {
-            if (data2D == null) {
-                return;
-            }
-            DataClipboardPopController.open(this);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public boolean loadTmpData(List<List<String>> newData) {
         try {
             makeColumns();
@@ -435,33 +399,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
-        }
-    }
-
-    public void afterSaved() {
-        try {
-            isSettingValues = true;
-            data2D.setEndRowOfCurrentPage(data2D.getStartRowOfCurrentPage() + tableData.size());
-            long offset = startRowOfCurrentPage + 1;
-            for (int i = 0; i < tableData.size(); i++) {
-                List<String> row = tableData.get(i);
-                row.set(0, (offset + i) + "");
-            }
-            for (int i = 0; i < data2D.columnsNumber(); i++) {
-                Data2DColumn dataColumn = data2D.getColumns().get(i);
-                TableColumn tableColumn = tableView.getColumns().get(i + 2);
-                tableColumn.setUserData(dataColumn.getIndex());
-            }
-            tableView.refresh();
-            isSettingValues = false;
-            tableChanged(false);
-            dataController.resetStatus();
-            dataController.checkStatus();
-            dataSizeLoaded = data2D.isMatrix();
-            loadDataSize();
-            dataController.notifySaved();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 
@@ -500,48 +437,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
-
-            if (data2D.isMatrix()) {
-                DataMatrix dataMatrix = (DataMatrix) data2D;
-
-                menu = new MenuItem(message("Normalization"), StyleTools.getIconImage("iconEqual.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    loadData(dataMatrix.normalization(), false);
-                });
-                menu.setDisable(empty);
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("GaussianDistribution"), StyleTools.getIconImage("iconEqual.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    loadData(dataMatrix.gaussianDistribution(), false);
-                });
-                menu.setDisable(empty || !dataMatrix.isSquareMatrix() || dataMatrix.tableColsNumber() < 3);
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("IdentifyMatrix"), StyleTools.getIconImage("iconEqual.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    loadData(dataMatrix.identifyMatrix(), false);
-                });
-                menu.setDisable(empty);
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("UpperTriangle"), StyleTools.getIconImage("iconEqual.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    loadData(dataMatrix.upperTriangleMatrix(), false);
-                });
-                menu.setDisable(empty);
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("LowerTriangle"), StyleTools.getIconImage("iconEqual.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    loadData(dataMatrix.lowerTriangleMatrix(), false);
-                });
-                menu.setDisable(empty);
-                popMenu.getItems().add(menu);
-
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -583,7 +478,13 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
                 menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    exportAction();
+                    export();
+                });
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconExport.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    transpose();
                 });
                 popMenu.getItems().add(menu);
 
@@ -613,6 +514,107 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         }
     }
 
+    @FXML
+    @Override
+    public void copyAction() {
+        Data2DCopyController.open(this);
+    }
+
+    public void copyToSystemClipboard(List<String> names, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            String text = TextTools.dataText(data, ",", names, null);
+            TextClipboardTools.copyToSystemClipboard(this, text);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void copyToMyBoxClipboard(List<String> names, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            SingletonTask copyTask = new SingletonTask<Void>(this) {
+
+                private DataClipboard clip;
+
+                @Override
+                protected boolean handle() {
+                    clip = DataClipboard.create(task, names, data);
+                    return clip != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataClipboardController controller = DataClipboardController.oneOpen();
+                    controller.clipboardController.dataController.loadMatrix(clip);
+                    popDone();
+                }
+
+            };
+            start(copyTask, false);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void setValuesAction() {
+        if (!checkData()) {
+            return;
+        }
+        Data2DSetValuesController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void pasteContentInSystemClipboard() {
+        try {
+            if (data2D == null) {
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            Data2DPasteController.open(this, text, true);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void pasteContentInMyboxClipboard() {
+        try {
+            if (data2D == null) {
+                return;
+            }
+            DataClipboardPopController.open(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void export() {
+        if (!dataController.checkBeforeNextAction()) {
+            return;
+        }
+        Data2DExportController.open(this);
+    }
+
+    @FXML
+    public void transpose() {
+        if (!dataController.checkBeforeNextAction()) {
+            return;
+        }
+        Data2DTransposeController.open(this);
+    }
+
     @Override
     public void cleanPane() {
         try {
@@ -622,4 +624,25 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         }
         super.cleanPane();
     }
+
+
+    /*
+        get/set
+     */
+    public ObservableList<List<String>> getTableData() {
+        return tableData;
+    }
+
+    public void setTableData(ObservableList<List<String>> tableData) {
+        this.tableData = tableData;
+    }
+
+    public TableView<List<String>> getTableView() {
+        return tableView;
+    }
+
+    public void setTableView(TableView<List<String>> tableView) {
+        this.tableView = tableView;
+    }
+
 }

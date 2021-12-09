@@ -1,22 +1,22 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -27,33 +27,41 @@ import mara.mybox.value.UserConfig;
 public class Data2DSetValuesController extends BaseController {
 
     protected ControlData2DEditTable tableController;
+    protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
     protected String value;
 
     @FXML
-    protected ControlListCheckBox rowsListController, colsListController;
+    protected ControlData2DSelect selectController;
     @FXML
     protected ToggleGroup valueGroup;
     @FXML
-    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, setRadio;
+    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, setRadio,
+            normalizationRadio, gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
     protected TextField valueInput;
     @FXML
-    protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
+    protected FlowPane matrixPane;
 
     @Override
     public void setStageStatus() {
-        setAsPopup(baseName);
+        setAsPop(baseName);
     }
 
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            this.baseName = tableController.baseName;
-            rowsListController.setParent(tableController);
-            colsListController.setParent(tableController);
-
+            selectController.setParameters(tableController);
             getMyStage().setTitle(tableController.getBaseTitle());
 
+            initValueRadios();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void initValueRadios() {
+        try {
             value = UserConfig.getString(baseName + "Value", "0");
             switch (value) {
                 case "0":
@@ -68,6 +76,21 @@ public class Data2DSetValuesController extends BaseController {
                 case AppValues.MyBoxRandomFlag:
                     randomRadio.fire();
                     break;
+                case "MyBox##normalization":
+                    normalizationRadio.fire();
+                    break;
+                case "MyBox##gaussianDistribution":
+                    gaussianDistributionRadio.fire();
+                    break;
+                case "MyBox##identify":
+                    identifyRadio.fire();
+                    break;
+                case "MyBox##upperTriangle":
+                    upperTriangleRadio.fire();
+                    break;
+                case "MyBox##lowerTriangle":
+                    lowerTriangleRadio.fire();
+                    break;
                 default:
                     valueInput.setText(value);
                     setRadio.fire();
@@ -75,70 +98,21 @@ public class Data2DSetValuesController extends BaseController {
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    valueInput.setStyle(null);
-                    if (setRadio.isSelected()) {
-                        value = valueInput.getText();
-                    } else if (zeroRadio.isSelected()) {
-                        value = "0";
-                    } else if (oneRadio.isSelected()) {
-                        value = "1";
-                    } else if (blankRadio.isSelected()) {
-                        value = " ";
-                    } else if (randomRadio.isSelected()) {
-                        value = AppValues.MyBoxRandomFlag;
-                    }
-                    UserConfig.setString(baseName + "Value", value);
+                    checkValue();
                 }
             });
 
-            makeControls();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void makeControls() {
+    public void checkValue() {
         try {
-            List<String> rows = new ArrayList<>();
-            for (long i = 0; i < tableController.tableData.size(); i++) {
-                rows.add("" + (i + 1));
+            if (isSettingValues) {
+                return;
             }
-            rowsListController.setValues(rows);
-
-            colsListController.setValues(tableController.data2D.editableColumnNames());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void selectAllRows() {
-        rowsListController.checkAll();
-    }
-
-    @FXML
-    public void selectNoneRows() {
-        rowsListController.checkNone();
-    }
-
-    @FXML
-    public void selectAllCols() {
-        colsListController.checkAll();
-    }
-
-    @FXML
-    public void selectNoneCols() {
-        colsListController.checkNone();
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        try {
+            valueInput.setStyle(null);
             if (setRadio.isSelected()) {
                 value = valueInput.getText();
             } else if (zeroRadio.isSelected()) {
@@ -149,46 +123,18 @@ public class Data2DSetValuesController extends BaseController {
                 value = " ";
             } else if (randomRadio.isSelected()) {
                 value = AppValues.MyBoxRandomFlag;
+            } else if (normalizationRadio.isSelected()) {
+                value = "MyBox##normalization";
+            } else if (gaussianDistributionRadio.isSelected()) {
+                value = "MyBox##gaussianDistribution";
+            } else if (identifyRadio.isSelected()) {
+                value = "MyBox##identify";
+            } else if (upperTriangleRadio.isSelected()) {
+                value = "MyBox##upperTriangle";
+            } else if (lowerTriangleRadio.isSelected()) {
+                value = "MyBox##lowerTriangle";
             }
             UserConfig.setString(baseName + "Value", value);
-
-            Random random = new Random();
-            tableController.isSettingValues = true;
-            boolean rowChanged = false, colChanged;
-            Map<String, Integer> colIndex = new HashMap<>();
-            for (String name : colsListController.getValues()) {
-                colIndex.put(name, tableController.data2D.tableCol(name));
-            }
-            for (int row = 0; row < tableController.tableData.size(); row++) {
-                if (!rowsListController.isChecked(row)) {
-                    continue;
-                }
-                List<String> values = tableController.tableData.get(row);
-                colChanged = false;
-                for (int i = 0; i < colsListController.size(); i++) {
-                    if (!colsListController.isChecked(i)) {
-                        continue;
-                    }
-                    int col = colIndex.get(colsListController.value(i));
-                    if (col < 0) {
-                        continue;
-                    }
-                    String v = value;
-                    if (randomRadio.isSelected()) {
-                        v = tableController.data2D.random(random, col);
-                    }
-                    values.set(col + 1, v);
-                    colChanged = true;
-                }
-                if (colChanged) {
-                    tableController.tableData.set(row, values);
-                    rowChanged = true;
-                }
-            }
-            tableController.isSettingValues = false;
-            if (rowChanged) {
-                tableController.tableChanged(true);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -197,8 +143,234 @@ public class Data2DSetValuesController extends BaseController {
 
     @FXML
     @Override
-    public void cancelAction() {
-        close();
+    public void okAction() {
+        try {
+            checkValue();
+            if (value == null) {
+                popError(message("InvalidParameter"));
+                return;
+            }
+            selectedRowsIndices = selectController.selectedRowsIndices();
+            selectedColumnsIndices = selectController.selectedColumnsIndices();
+            if (selectedColumnsIndices.isEmpty() || selectedRowsIndices.isEmpty()) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+
+            if (normalizationRadio.isSelected()) {
+                normalization();
+            } else if (gaussianDistributionRadio.isSelected()) {
+                gaussianDistribution();
+            } else if (identifyRadio.isSelected()) {
+                identifyMatrix();
+            } else if (upperTriangleRadio.isSelected()) {
+                upperTriangleMatrix();
+            } else if (lowerTriangleRadio.isSelected()) {
+                lowerTriangleMatrix();
+            } else {
+                setValue();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public boolean setValue() {
+        try {
+            Random random = new Random();
+            tableController.isSettingValues = true;
+            for (int row : selectedRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                for (int col : selectedColumnsIndices) {
+                    String v = value;
+                    if (randomRadio.isSelected()) {
+                        v = tableController.data2D.random(random, col);
+                    }
+                    values.set(col + 1, v);
+                }
+                tableController.tableData.set(row, values);
+            }
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
+            popDone();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+            return false;
+        }
+    }
+
+    public boolean normalization() {
+        try {
+            double sum = 0d;
+            for (int row : selectedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(row);
+                for (int col : selectedColumnsIndices) {
+                    try {
+                        sum += Double.valueOf(tableRow.get(col + 1));
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            if (sum == 0) {
+                popError(message("SumIsZero"));
+                return false;
+            }
+            tableController.isSettingValues = true;
+            int scale = tableController.data2D.getScale();
+            for (int row : selectedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(row);
+                for (int col : selectedColumnsIndices) {
+                    try {
+                        tableRow.set(col + 1, DoubleTools.format(Double.valueOf(tableRow.get(col + 1)) / sum, scale));
+                    } catch (Exception e) {
+                    }
+                }
+                tableController.tableData.set(row, tableRow);
+            }
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
+            popDone();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+            return false;
+        }
+    }
+
+    public boolean gaussianDistribution() {
+        try {
+            if (selectedRowsIndices.size() != selectedColumnsIndices.size()) {
+                popError(message("OnlyHanldeSquareMatrix"));
+                return false;
+            }
+            float[][] m = ConvolutionKernel.makeGaussMatrix((int) selectedRowsIndices.size() / 2);
+            tableController.isSettingValues = true;
+            int scale = tableController.data2D.getScale();
+            int rowIndex = 0, colIndex;
+            for (int row : selectedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(row);
+                colIndex = 0;
+                for (int col : selectedColumnsIndices) {
+                    try {
+                        tableRow.set(col + 1, DoubleTools.format(m[rowIndex][colIndex], scale));
+                    } catch (Exception e) {
+                    }
+                    colIndex++;
+                }
+                tableController.tableData.set(row, tableRow);
+                rowIndex++;
+            }
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
+            popDone();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+            return false;
+        }
+    }
+
+    public boolean identifyMatrix() {
+        try {
+            if (selectedRowsIndices.size() != selectedColumnsIndices.size()) {
+                popError(message("OnlyHanldeSquareMatrix"));
+                return false;
+            }
+            tableController.isSettingValues = true;
+            int rowIndex = 0, colIndex;
+            for (int row : selectedRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                colIndex = 0;
+                for (int col : selectedColumnsIndices) {
+                    if (rowIndex == colIndex) {
+                        values.set(col + 1, "1");
+                    } else {
+                        values.set(col + 1, "0");
+                    }
+                    colIndex++;
+                }
+                tableController.tableData.set(row, values);
+                rowIndex++;
+            }
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
+            popDone();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+            return false;
+        }
+    }
+
+    public boolean upperTriangleMatrix() {
+        try {
+            if (selectedRowsIndices.size() != selectedColumnsIndices.size()) {
+                popError(message("OnlyHanldeSquareMatrix"));
+                return false;
+            }
+            tableController.isSettingValues = true;
+            int rowIndex = 0, colIndex;
+            for (int row : selectedRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                colIndex = 0;
+                for (int col : selectedColumnsIndices) {
+                    if (rowIndex <= colIndex) {
+                        values.set(col + 1, "1");
+                    } else {
+                        values.set(col + 1, "0");
+                    }
+                    colIndex++;
+                }
+                tableController.tableData.set(row, values);
+                rowIndex++;
+            }
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
+            popDone();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+            return false;
+        }
+    }
+
+    public boolean lowerTriangleMatrix() {
+        try {
+            if (selectedRowsIndices.size() != selectedColumnsIndices.size()) {
+                popError(message("OnlyHanldeSquareMatrix"));
+                return false;
+            }
+            tableController.isSettingValues = true;
+            int rowIndex = 0, colIndex;
+            for (int row : selectedRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                colIndex = 0;
+                for (int col : selectedColumnsIndices) {
+                    if (rowIndex >= colIndex) {
+                        values.set(col + 1, "1");
+                    } else {
+                        values.set(col + 1, "0");
+                    }
+                    colIndex++;
+                }
+                tableController.tableData.set(row, values);
+                rowIndex++;
+            }
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
+            popDone();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+            return false;
+        }
     }
 
     /*

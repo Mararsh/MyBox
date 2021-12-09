@@ -104,6 +104,8 @@ License:    Apache License Version 2.0
                                         </TableColumn>
                                         <TableColumn fx:id="d2dColumn" editable="false" text="%ID" />
                                         <TableColumn fx:id="nameColumn" editable="false" prefWidth="200.0" text="%Name" />
+                              <TableColumn fx:id="rowsColumn" prefWidth="60.0" text="%RowsNumber" />
+                              <TableColumn fx:id="colsColumn" prefWidth="60.0" text="%ColumnsNumber" />
                                         <TableColumn fx:id="timeColumn" editable="false" prefWidth="140.0" text="%ModifyTime" />
                                         <TableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
                                     </columns>

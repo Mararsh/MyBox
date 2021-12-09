@@ -71,8 +71,18 @@ License:    Apache License Version 2.0
                 </Tab>
             </tabs>
         </TabPane>
-      <FlowPane fx:id="paginationPane" hgap="2.0" vgap="2.0">
+      <FlowPane fx:id="paginationPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
          <children>
+            <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true">
+               <FlowPane.margin>
+                  <Insets right="20.0" />
+               </FlowPane.margin></Label>
+            <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true">
+               <FlowPane.margin>
+                  <Insets right="20.0" />
+               </FlowPane.margin></Label>
+            <Label text="%PageSize" />
+            <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
             <Label text="%Page" />
             <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
             <Label fx:id="pageLabel" />
@@ -81,24 +91,6 @@ License:    Apache License Version 2.0
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../buttons/Red/iconGo.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconPrevious.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconNext.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -121,10 +113,24 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Label text="%PageSize" />
-            <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
-            <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true" />
-            <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true" />
+            <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPrevious.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconNext.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
       </FlowPane>
     </children>

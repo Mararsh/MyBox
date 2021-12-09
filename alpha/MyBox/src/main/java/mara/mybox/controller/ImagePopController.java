@@ -53,7 +53,7 @@ public class ImagePopController extends BaseImageController {
                 }
             });
 
-            setAsPopup(baseName);
+            setAsPop(baseName);
             paneSize();
 
         } catch (Exception e) {

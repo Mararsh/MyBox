@@ -151,6 +151,11 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             }
             myStage.setTitle(title);
         }
+        if (!dataMatrix.isTmpData()) {
+            matrixLabel.setText(dataMatrix.getDataName());
+        } else {
+            matrixLabel.setText("");
+        }
     }
 
     @Override

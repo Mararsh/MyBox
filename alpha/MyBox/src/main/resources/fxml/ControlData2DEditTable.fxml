@@ -20,22 +20,18 @@ License:    Apache License Version 2.0
     <children>
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
-              <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
+            <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconTips.png" />
+               </image>
+            </ImageView>
+              <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                   <children>
-                      <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                      <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteRowsAction">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                   <image>
-                                      <Image url="@../buttons/Red/iconFunction.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="addButton" mnemonicParsing="false" onAction="#addRowsAction">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconAdd.png" />
+                                      <Image url="@../buttons/Red/iconDelete.png" />
                                   </image>
                               </ImageView>
                           </graphic>
@@ -58,22 +54,26 @@ License:    Apache License Version 2.0
                               </ImageView>
                           </graphic>
                       </Button>
-                      <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteRowsAction">
+                      <Button fx:id="addButton" mnemonicParsing="false" onAction="#addRowsAction">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                   <image>
-                                      <Image url="@../buttons/Red/iconDelete.png" />
+                                      <Image url="@../buttons/Red/iconAdd.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                      <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                          <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/Red/iconFunction.png" />
                                   </image>
                               </ImageView>
                           </graphic>
                       </Button>
                   </children>
               </FlowPane>
-            <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../buttons/Red/iconTipsRight.png" />
-               </image>
-            </ImageView>
          </children>
       </HBox>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

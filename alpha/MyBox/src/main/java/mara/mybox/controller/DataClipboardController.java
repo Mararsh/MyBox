@@ -57,7 +57,7 @@ public class DataClipboardController extends BaseController {
     /*
         static
      */
-    public static DataClipboardController open() {
+    public static DataClipboardController oneOpen() {
         DataClipboardController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());

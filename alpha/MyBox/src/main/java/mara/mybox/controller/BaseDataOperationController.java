@@ -42,7 +42,7 @@ public abstract class BaseDataOperationController extends BaseController {
 
     @Override
     public void setStageStatus() {
-        setAsPopup(baseName);
+        setAsPop(baseName);
     }
 
     public void setParameters(ControlSheet sheetController, int row, int col) {

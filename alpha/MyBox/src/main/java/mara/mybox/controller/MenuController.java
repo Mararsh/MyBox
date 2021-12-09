@@ -58,7 +58,7 @@ public class MenuController extends BaseController {
 
     @Override
     public void setStageStatus() {
-        setAsPopup(baseName);
+        setAsPop(baseName);
     }
 
     @Override

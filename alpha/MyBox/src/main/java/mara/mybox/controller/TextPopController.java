@@ -85,7 +85,7 @@ public class TextPopController extends BaseController {
             });
             textArea.setWrapText(wrapCheck.isSelected());
 
-            setAsPopup(baseName);
+            setAsPop(baseName);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -55,7 +55,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
 
     @Override
     public void setStageStatus() {
-        setAsPopup(baseName);
+        setAsPop(baseName);
     }
 
     @Override

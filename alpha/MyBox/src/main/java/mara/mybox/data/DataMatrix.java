@@ -207,13 +207,21 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
+    public void checkAttributes() {
+        if (dataName == null || dataName.isBlank()) {
+            dataName = rowsNumber + "x" + colsNumber;
+        }
+        hasHeader = false;
+    }
+
+    @Override
     public Data2DDefinition queryDefinition(Connection conn) {
         return tableData2DDefinition.queryID(conn, d2did);
     }
 
     @Override
     public void applyOptions() {
-        dataSize = rowsNumber;
+//        dataSize = rowsNumber;
     }
 
     @Override
@@ -231,10 +239,6 @@ public class DataMatrix extends Data2D {
 
     @Override
     public long readTotal() {
-        if (matrix != null) {
-            rowsNumber = matrix != null ? matrix.length : 0;
-        }
-        dataSize = rowsNumber;
         return dataSize;
     }
 
@@ -267,8 +271,9 @@ public class DataMatrix extends Data2D {
         if (matrix != null) {
             rows = toTableData(matrix);
         }
-        dataSize = rows.size();
-        endRowOfCurrentPage = startRowOfCurrentPage + dataSize;
+        rowsNumber = rows.size();
+        dataSize = rowsNumber;
+        endRowOfCurrentPage = startRowOfCurrentPage + rowsNumber;
         return rows;
     }
 
@@ -314,17 +319,6 @@ public class DataMatrix extends Data2D {
     @Override
     public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
         return false;
-    }
-
-    /*
-        get/set
-     */
-    public double[][] getMatrix() {
-        return matrix;
-    }
-
-    public void setMatrix(double[][] matrix) {
-        this.matrix = matrix;
     }
 
 }

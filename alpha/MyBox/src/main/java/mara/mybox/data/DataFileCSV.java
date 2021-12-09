@@ -177,15 +177,16 @@ public class DataFileCSV extends DataFileText {
         if (targetData == null || !(targetData instanceof DataFileCSV)) {
             return false;
         }
+        DataFileCSV targetCSVFile = (DataFileCSV) targetData;
         File tmpFile = TmpFileTools.getTempFile();
-        File tFile = getFile();
+        File tFile = targetCSVFile.getFile();
         if (tFile == null) {
             return false;
         }
-        checkAttributes();
-        Charset tCharset = getCharset();
-        boolean tHasHeader = isHasHeader();
-        CSVFormat tFormat = cvsFormat();
+        Charset tCharset = targetCSVFile.getCharset();
+        boolean tHasHeader = targetCSVFile.isHasHeader();
+        CSVFormat tFormat = targetCSVFile.cvsFormat();
+        targetCSVFile.checkAttributes();
         checkAttributes();
         if (file != null) {
             try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
@@ -194,16 +195,15 @@ public class DataFileCSV extends DataFileText {
                     writeHeader(csvPrinter);
                 }
                 long index = -1;
-                long pageStart = getStartRowOfCurrentPage(), pageEnd = getEndRowOfCurrentPage();
                 Iterator<CSVRecord> iterator = parser.iterator();
                 if (iterator != null) {
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         try {
                             CSVRecord record = iterator.next();
                             if (record != null) {
-                                if (++index < pageStart || index >= pageEnd) {
+                                if (++index < startRowOfCurrentPage || index >= endRowOfCurrentPage) {
                                     writeFileRow(csvPrinter, record);
-                                } else if (index == pageStart) {
+                                } else if (index == startRowOfCurrentPage) {
                                     if (!writePageData(csvPrinter)) {
                                         return false;
                                     }
@@ -247,8 +247,11 @@ public class DataFileCSV extends DataFileText {
 
     public boolean writeHeader(CSVPrinter csvPrinter) {
         try {
-            if (csvPrinter == null || !isColumnsValid()) {
+            if (csvPrinter == null) {
                 return false;
+            }
+            if (!isColumnsValid()) {
+                return true;
             }
             List<String> names = columnNames();
             if (names != null) {
@@ -266,8 +269,11 @@ public class DataFileCSV extends DataFileText {
 
     public boolean writePageData(CSVPrinter csvPrinter) {
         try {
-            if (csvPrinter == null || !isColumnsValid()) {
+            if (csvPrinter == null) {
                 return false;
+            }
+            if (!isColumnsValid()) {
+                return true;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
                 if (task == null || task.isCancelled()) {

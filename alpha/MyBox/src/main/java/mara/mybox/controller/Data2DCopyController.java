@@ -5,19 +5,14 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import mara.mybox.data.DataClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -30,10 +25,11 @@ import mara.mybox.value.UserConfig;
 public class Data2DCopyController extends BaseController {
 
     protected ControlData2DEditTable tableController;
+    protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
     protected String value;
 
     @FXML
-    protected ControlListCheckBox rowsListController, colsListController;
+    protected ControlData2DSelect selectController;
     @FXML
     protected ToggleGroup locationGroup;
     @FXML
@@ -44,23 +40,17 @@ public class Data2DCopyController extends BaseController {
     protected HBox rowBox;
     @FXML
     protected CheckBox nameCheck;
-    @FXML
-    protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
 
     @Override
     public void setStageStatus() {
-        setAsPopup(baseName);
+        setAsPop(baseName);
     }
 
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            this.baseName = tableController.baseName;
-
+            selectController.setParameters(tableController);
             getMyStage().setTitle(tableController.getBaseTitle());
-
-            rowsListController.setParent(tableController);
-            colsListController.setParent(tableController);
 
             String location = UserConfig.getString(baseName + "CopyRowsLocation", message("Front"));
             if (location == null || message("Front").equals(location)) {
@@ -93,64 +83,62 @@ public class Data2DCopyController extends BaseController {
                 }
             });
 
-            makeControls();
+            refreshControls();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void makeControls() {
+    public void refreshControls() {
         try {
+            int thisSelect = rowSelector.getSelectionModel().getSelectedIndex();
             List<String> rows = new ArrayList<>();
             for (long i = 0; i < tableController.tableData.size(); i++) {
                 rows.add("" + (i + 1));
             }
-            rowsListController.setValues(rows);
-
-            colsListController.setValues(tableController.data2D.columnNames());
-
             rowSelector.getItems().setAll(rows);
-            rowSelector.getSelectionModel().select(0);
+            int tableSelect = tableController.tableView.getSelectionModel().getSelectedIndex();
+            rowSelector.getSelectionModel().select(tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @FXML
-    public void selectAllRows() {
-        rowsListController.checkAll();
-    }
-
-    @FXML
-    public void selectNoneRows() {
-        rowsListController.checkNone();
-    }
-
-    @FXML
-    public void selectAllCols() {
-        colsListController.checkAll();
-    }
-
-    @FXML
-    public void selectNoneCols() {
-        colsListController.checkNone();
     }
 
     @FXML
     @Override
     public void okAction() {
         try {
-            if (!tableController.data2D.hasData()) {
-                popError(message("NoData"));
+            selectedRowsIndices = selectController.selectedRowsIndices();
+            selectedColumnsIndices = selectController.selectedColumnsIndices();
+            if (selectedColumnsIndices.isEmpty() || selectedRowsIndices.isEmpty()) {
+                popError(message("SelectToHandle"));
                 return;
             }
+
             if (scRadio.isSelected() || mcRadio.isSelected()) {
-                copyToClipboard();
+                List<List<String>> data = selectController.selectedData();
+                if (data == null || data.isEmpty()) {
+                    popError(message("NoData"));
+                    return;
+                }
+                List<String> names;
+                if (nameCheck.isSelected()) {
+                    names = null;
+                } else {
+                    names = selectController.selectedColumnsNames();
+                }
+                if (scRadio.isSelected()) {
+                    tableController.copyToSystemClipboard(names, data);
+                } else {
+                    tableController.copyToMyBoxClipboard(names, data);
+                }
+
             } else {
                 copyToTable();
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -167,18 +155,11 @@ public class Data2DCopyController extends BaseController {
                 index++;
             }
             List<List<String>> newRows = new ArrayList<>();
-            int colsNumber = tableController.data2D.columnsNumber();
-            for (int row = 0; row < tableController.tableData.size(); row++) {
-                if (!rowsListController.isChecked(row)) {
-                    continue;
-                }
-                List<String> dataRow = tableController.tableData.get(row);
-                List<String> newRow = tableController.newData();
-                for (int col = 0; col < colsNumber; col++) {
-                    if (!colsListController.isChecked(col)) {
-                        continue;
-                    }
-                    newRow.set(col + 1, dataRow.get(col + 1));
+            for (int row : selectedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(row);
+                List<String> newRow = tableController.data2D.newRow();
+                for (int col : selectedColumnsIndices) {
+                    newRow.set(col + 1, tableRow.get(col + 1));
                 }
                 newRows.add(newRow);
             }
@@ -188,87 +169,12 @@ public class Data2DCopyController extends BaseController {
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
 
-            makeControls();
-
+            popDone();
+            refreshControls();
+            selectController.refreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void copyToClipboard() {
-        try {
-            synchronized (this) {
-                if (task != null) {
-                    task.cancel();
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    private String text;
-
-                    @Override
-                    protected boolean handle() {
-                        List<List<String>> data = new ArrayList<>();
-                        int colsNumber = tableController.data2D.columnsNumber();
-                        List<String> names = new ArrayList<>();
-                        List<Integer> selectedIndices = new ArrayList<>();
-                        for (int col = 0; col < colsNumber; col++) {
-                            if (colsListController.isChecked(col)) {
-                                if (nameCheck.isSelected()) {
-                                    names.add(colsListController.value(col));
-                                }
-                                selectedIndices.add(col);
-                            }
-                        }
-                        if (nameCheck.isSelected()) {
-                            names = null;
-                        }
-                        for (int row = 0; row < tableController.tableData.size(); row++) {
-                            if (!rowsListController.isChecked(row)) {
-                                continue;
-                            }
-                            List<String> dataRow = tableController.tableData.get(row);
-                            List<String> newRow = new ArrayList<>();
-                            for (Integer col : selectedIndices) {
-                                newRow.add(dataRow.get(col + 1));
-                            }
-                            data.add(newRow);
-                        }
-                        if (data.isEmpty()) {
-                            error = message("NoData");
-                            return false;
-                        }
-                        if (scRadio.isSelected()) {
-                            text = TextTools.dataText(data, ",", names, null);
-                            ok = text != null;
-                        } else if (mcRadio.isSelected()) {
-                            ok = DataClipboard.create(task, names, data) != null;
-                        }
-                        return ok;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (scRadio.isSelected()) {
-                            TextClipboardTools.copyToSystemClipboard(tableController, text);
-
-                        } else if (mcRadio.isSelected()) {
-                            popInformation(message("Saved"));
-                        }
-                    }
-
-                };
-                start(task);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
     }
 
     /*

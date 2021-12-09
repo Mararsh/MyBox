@@ -45,6 +45,8 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @FXML
     protected TableColumn<Data2DDefinition, String> nameColumn;
     @FXML
+    protected TableColumn<Data2DDefinition, Integer> rowsColumn, colsColumn;
+    @FXML
     protected TableColumn<Data2DDefinition, File> fileColumn;
     @FXML
     protected TableColumn<Data2DDefinition, Date> timeColumn;
@@ -120,6 +122,8 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             super.initColumns();
             d2dColumn.setCellValueFactory(new PropertyValueFactory<>("d2did"));
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("dataName"));
+            colsColumn.setCellValueFactory(new PropertyValueFactory<>("colsNumber"));
+            rowsColumn.setCellValueFactory(new PropertyValueFactory<>("rowsNumber"));
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("file"));
             fileColumn.setCellFactory(new TableFileNameCell());
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
@@ -162,14 +166,6 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
-        }
-    }
-
-    @Override
-    public void postLoadedTableData() {
-        super.postLoadedTableData();
-        if (dataClipboard.getFile() == null && !tableData.isEmpty()) {
-            loadClipboard(tableData.get(0));
         }
     }
 

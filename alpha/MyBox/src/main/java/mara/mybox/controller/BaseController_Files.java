@@ -20,8 +20,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -165,29 +165,32 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         recordFileWritten(file, TargetPathType, TargetFileType);
     }
 
-    public void recordFileWritten(final File file, int fileType) {
+    public void recordFileWritten(File file, int fileType) {
         recordFileWritten(file, fileType, fileType);
     }
 
-    public void recordFileWritten(final File file, int TargetPathType, int TargetFileType) {
+    public void recordFileWritten(File file, int TargetPathType, int TargetFileType) {
         if (file == null) {
             return;
         }
+        String fname = file.getAbsolutePath();
+        if (AppPaths.reservedPath(fname)) {
+            return;
+        }
         try ( Connection conn = DerbyBase.getConnection()) {
+            String path = null;
             if (file.isDirectory()) {
-                String path = file.getPath();
+                path = file.getPath();
+            } else {
+                path = file.getParent();
+                UserConfig.setString(conn, baseName + "TargetFile", fname);
+                VisitHistoryTools.writeFile(conn, TargetFileType, fname);
+            }
+            if (path != null) {
                 UserConfig.setString(conn, baseName + "LastPath", path);
                 UserConfig.setString(conn, baseName + "TargetPath", path);
                 UserConfig.setString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
                 VisitHistoryTools.writePath(conn, TargetPathType, path);
-            } else {
-                String path = file.getParent();
-                String fname = file.getAbsolutePath();
-                UserConfig.setString(conn, baseName + "LastPath", path);
-                UserConfig.setString(conn, baseName + "TargetFile", fname);
-                UserConfig.setString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
-                VisitHistoryTools.writePath(conn, TargetPathType, path);
-                VisitHistoryTools.writeFile(conn, TargetFileType, fname);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -603,7 +606,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (defaultPathName != null) {
             return new File(defaultPathName);
         } else {
-            return MyBoxTempPath;
+            return AppPaths.defaultPath();
         }
     }
 
@@ -638,7 +641,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 fileChooser.setTitle(title);
             }
             if (defaultPath == null || !defaultPath.exists()) {
-                defaultPath = MyBoxTempPath;
+                defaultPath = AppPaths.defaultPath();
             }
             fileChooser.setInitialDirectory(defaultPath);
             String suffix = null, prefix = null;

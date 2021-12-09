@@ -350,4 +350,11 @@ public class DataFileExcelController extends BaseData2DFileController {
         return controller;
     }
 
+    public static DataFileExcelController open(List<String> cols, List<List<String>> data) {
+        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+        controller.dataController.loadTmpData(cols, data);
+        controller.toFront();
+        return controller;
+    }
+
 }

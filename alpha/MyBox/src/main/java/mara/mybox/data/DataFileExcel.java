@@ -283,6 +283,8 @@ public class DataFileExcel extends DataFile {
         }
         boolean withName = targetExcelFile.isHasHeader();
         String targetSheetName = targetExcelFile.getCurrentSheetName();
+        targetExcelFile.checkAttributes();
+        checkAttributes();
         String sheetNameSaved;
         if (file != null) {
             try ( Workbook sourceBook = WorkbookFactory.create(file)) {
@@ -301,7 +303,7 @@ public class DataFileExcel extends DataFile {
                 File tmpDataFile = null;
                 int sheetsNumber = sourceBook.getNumberOfSheets();
                 if (sheetsNumber == 1
-                        || (!file.equals(tFile) && currentSheetOnly)) {
+                        || (!file.equals(tFile) && targetExcelFile.isCurrentSheetOnly())) {
                     targetBook = new XSSFWorkbook();
                     targetSheet = targetBook.createSheet(targetSheetName);
                 } else {

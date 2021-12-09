@@ -549,6 +549,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         tableView.refresh();
     }

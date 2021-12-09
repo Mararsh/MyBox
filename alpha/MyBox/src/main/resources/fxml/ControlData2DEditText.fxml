@@ -17,31 +17,31 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DEditText">
     <children>
-      <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+      <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
          <children>
+            <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/red/iconWrap.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Button fx:id="delimiterButton" mnemonicParsing="false" onAction="#delimiterActon">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconDelimiter.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../buttons/Red/iconMenu.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconOK.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconCancel.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -55,24 +55,24 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="delimiterButton" mnemonicParsing="false" onAction="#delimiterActon">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconDelimiter.png" />
+                        <Image url="@../buttons/Red/iconCancel.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/red/iconWrap.png" />
+                        <Image url="@../buttons/Red/iconOK.png" />
                      </image>
                   </ImageView>
                </graphic>
-            </CheckBox>
+            </Button>
          </children>
       </FlowPane>
       <Label fx:id="columnsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="Label" wrapText="true" />

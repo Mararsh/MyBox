@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import javafx.scene.control.TableView;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ControlData2DEditTable;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -38,7 +38,7 @@ public abstract class Data2D extends Data2DDefinition {
     protected int pageSize, newColumnIndex;
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
-    protected TableView<List<String>> tableView;
+    protected ControlData2DEditTable tableController;
     protected boolean tableChanged;
     protected double[][] matrix;
     protected SingletonTask task, backgroundTask;
@@ -114,7 +114,7 @@ public abstract class Data2D extends Data2DDefinition {
             currentPage = d.currentPage;
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
-            tableView = d.tableView;
+            tableController = d.tableController;
             tableChanged = d.tableChanged;
             task = d.task;
             backgroundTask = d.backgroundTask;
@@ -282,6 +282,7 @@ public abstract class Data2D extends Data2DDefinition {
             return -1;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
+            applyOptions();
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
                 cloneAll(definition);
@@ -322,9 +323,11 @@ public abstract class Data2D extends Data2DDefinition {
     public void saveDefinition(Connection conn) {
         try {
             checkAttributes();
-            dataSize = tableView.getItems().size();
-            colsNumber = getColsNumber();
-            rowsNumber = dataSize;
+            rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
+            colsNumber = tableColsNumber();
+            if (colsNumber <= 0) {
+                hasHeader = false;
+            }
             Data2DDefinition def;
             if (d2did < 0) {
                 def = queryDefinition(conn);
@@ -339,6 +342,11 @@ public abstract class Data2D extends Data2DDefinition {
             }
             conn.commit();
             cloneAll(def);
+            for (int i = 0; i < columns.size(); i++) {
+                Data2DColumn column = columns.get(i);
+                column.setIndex(i);
+            }
+            tableData2DColumn.save(conn, d2did, columns);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -368,12 +376,16 @@ public abstract class Data2D extends Data2DDefinition {
     /*
         table data
      */
+    public List<List<String>> tableData() {
+        return tableController == null ? null : tableController.getTableData();
+    }
+
     public void setTableChanged(boolean tableChanged) {
         this.tableChanged = tableChanged;
     }
 
     public int tableRowsNumber() {
-        return tableView == null ? 0 : tableView.getItems().size();
+        return tableController == null ? 0 : tableData().size();
     }
 
     public int tableColsNumber() {
@@ -407,7 +419,7 @@ public abstract class Data2D extends Data2DDefinition {
 
     public List<String> tableRow(int row) {
         try {
-            List<String> values = tableView.getItems().get(row);
+            List<String> values = tableData().get(row);
             return values.subList(1, values.size());
         } catch (Exception e) {
             return null;
@@ -438,7 +450,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public boolean hasData() {
-        return isValid() && tableView.getItems() != null && !tableView.getItems().isEmpty();
+        return isValid() && tableData() != null && !tableData().isEmpty();
     }
 
     public List<String> tmpColumns(int cols) {
@@ -470,11 +482,11 @@ public abstract class Data2D extends Data2DDefinition {
         table view
      */
     public List<String> tableViewRow(int row) {
-        if (tableView == null || row < 0 || row > tableView.getItems().size() - 1) {
+        if (tableController == null || row < 0 || row > tableData().size() - 1) {
             return null;
         }
         try {
-            return tableView.getItems().get(row);
+            return tableData().get(row);
         } catch (Exception e) {
             return null;
         }
@@ -517,6 +529,9 @@ public abstract class Data2D extends Data2DDefinition {
 
     public List<String> columnNames() {
         try {
+            if (!isColumnsValid()) {
+                return null;
+            }
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : columns) {
                 names.add(column.getName());
@@ -565,7 +580,7 @@ public abstract class Data2D extends Data2DDefinition {
 
     public List<String> rowNames() {
         try {
-            return rowNames(tableView.getItems().size());
+            return rowNames(tableData().size());
         } catch (Exception e) {
             return null;
         }
@@ -688,12 +703,20 @@ public abstract class Data2D extends Data2DDefinition {
         return tableChanged;
     }
 
-    public TableView<List<String>> getTableView() {
-        return tableView;
+    public ControlData2DEditTable getTableController() {
+        return tableController;
     }
 
-    public void setTableView(TableView<List<String>> tableView) {
-        this.tableView = tableView;
+    public void setTableController(ControlData2DEditTable tableController) {
+        this.tableController = tableController;
+    }
+
+    public double[][] getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(double[][] matrix) {
+        this.matrix = matrix;
     }
 
     public Map<String, Object> getOptions() {

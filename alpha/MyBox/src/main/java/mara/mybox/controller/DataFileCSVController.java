@@ -162,4 +162,10 @@ public class DataFileCSVController extends BaseData2DFileController {
         return controller;
     }
 
+    public static DataFileCSVController open(List<String> cols, List<List<String>> data) {
+        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        controller.dataController.loadTmpData(cols, data);
+        return controller;
+    }
+
 }

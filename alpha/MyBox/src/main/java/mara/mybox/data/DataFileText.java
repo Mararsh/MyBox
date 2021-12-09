@@ -55,7 +55,7 @@ public class DataFileText extends DataFile {
 
     @Override
     public void checkAttributes() {
-        if (charset == null) {
+        if (charset == null && file != null) {
             charset = TextFileTools.charset(file);
         }
         if (charset == null) {
@@ -270,9 +270,9 @@ public class DataFileText extends DataFile {
         if (tFile == null) {
             return false;
         }
-        targetTextFile.checkAttributes();
         Charset tCharset = targetTextFile.getCharset();
         String tDelimiter = targetTextFile.getDelimiter();
+        targetTextFile.checkAttributes();
         checkAttributes();
         boolean tHasHeader = targetTextFile.isHasHeader();
         if (file != null) {
@@ -329,8 +329,11 @@ public class DataFileText extends DataFile {
 
     public boolean writePageData(BufferedWriter writer, String delimiter) {
         try {
-            if (writer == null || delimiter == null || !isColumnsValid()) {
+            if (writer == null || delimiter == null) {
                 return false;
+            }
+            if (!isColumnsValid()) {
+                return true;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
                 if (task == null || task.isCancelled()) {

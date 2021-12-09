@@ -14,6 +14,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
@@ -65,7 +66,7 @@ public class ControlData2D extends BaseController {
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
-    protected Label pageLabel, dataSizeLabel;
+    protected Label pageLabel, dataSizeLabel, selectedLabel;
 
     public ControlData2D() {
         statusNotify = new SimpleBooleanProperty(false);
@@ -95,7 +96,7 @@ public class ControlData2D extends BaseController {
             setFileType(parent.getSourceFileType(), parent.getTargetFileType());
 
             data2D = Data2D.create(type);
-            data2D.setTableView(tableController.tableView);
+            data2D.setTableController(tableController);
 
             tableData2DDefinition = data2D.getTableData2DDefinition();
             tableData2DColumn = data2D.getTableData2DColumn();
@@ -174,6 +175,10 @@ public class ControlData2D extends BaseController {
                         error = e.toString();
                         return false;
                     }
+                }
+
+                @Override
+                protected void whenSucceeded() {
                 }
 
                 @Override
@@ -293,10 +298,6 @@ public class ControlData2D extends BaseController {
                 || columnsController.isChanged();
     }
 
-    public boolean isTotalLoaded() {
-        return tableController.dataSizeLoaded;
-    }
-
     public synchronized void checkStatus() {
         String title = message("Table");
         if (data2D.isTableChanged()) {
@@ -333,10 +334,6 @@ public class ControlData2D extends BaseController {
             title += "**";
         }
         columnsTab.setText(title);
-
-        if (saveButton != null) {
-            saveButton.setDisable(!isTotalLoaded());
-        }
 
         notifyStatus();
     }
@@ -395,7 +392,7 @@ public class ControlData2D extends BaseController {
     }
 
     public int checkBeforeSave() {
-        if (!isTotalLoaded()) {
+        if (!tableController.dataSizeLoaded) {
             popError(message("CountingTotalNumber"));
             return -1;
         }
@@ -461,15 +458,13 @@ public class ControlData2D extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
                             backupController.addBackup(data2D.getFile());
                         }
                         data2D.setTask(task);
-                        if (!data2D.savePageData(data2D)) {
-                            return false;
-                        }
-                        saveDefinition(data2D, true);
+                        data2D.savePageData(data2D);
+                        data2D.saveDefinition(conn);
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
@@ -483,10 +478,7 @@ public class ControlData2D extends BaseController {
                     if (data2D.getFile() != null) {
                         recordFileWritten(data2D.getFile());
                     }
-                    tableController.afterSaved();
-                    if (parentController instanceof BaseTableViewController) {
-                        ((BaseTableViewController) parentController).refreshAction();
-                    }
+                    afterSaved();
                 }
 
                 @Override
@@ -517,11 +509,14 @@ public class ControlData2D extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    data2D.setTask(task);
-                    if (!data2D.savePageData(targetData)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        targetData.setTask(task);
+                        targetData.savePageData(targetData);
+                        targetData.saveDefinition(conn);
+                    } catch (Exception e) {
+                        error = e.toString();
                         return false;
                     }
-                    saveDefinition(targetData, load);
                     return true;
                 }
 
@@ -534,12 +529,15 @@ public class ControlData2D extends BaseController {
                     }
                     if (load) {
                         data2D.cloneAll(targetData);
-                        tableController.afterSaved();
-                        if (parentController instanceof BaseTableViewController) {
-                            ((BaseTableViewController) parentController).refreshAction();
+                        if (parentController instanceof BaseData2DFileController) {
+                            resetStatus();
+                            parentController.sourceFileChanged(file);
+                        } else {
+                            afterSaved();
                         }
+
                     } else {
-                        if (file != null) {
+                        if (file != null && parentController.saveAsType == SaveAsType.Open) {
                             data2D.open(file);
                         }
                     }
@@ -556,47 +554,41 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void saveDefinition(Data2D d, boolean load) {
-        if (d == null || d.isTmpData()) {
-            return;
-        }
-        long d2did = d.getD2did();
-        if (d2did >= 0
-                && attributesController.status != ControlData2DAttributes.Status.Applied
-                && columnsController.status != ControlData2DColumns.Status.Applied) {
-            return;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            if (d2did < 0 || attributesController.status == ControlData2DAttributes.Status.Applied) {
-                d.saveDefinition(conn);
-                d2did = d.getD2did();
-                if (load) {
-                    data2D.cloneAll(d);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            attributesController.loadData();
-                        }
-                    });
-                }
+    public void afterSaved() {
+        try {
+            data2D.setEndRowOfCurrentPage(data2D.getStartRowOfCurrentPage() + tableController.tableData.size());
+
+            tableController.isSettingValues = true;
+            long offset = tableController.startRowOfCurrentPage + 1;
+            for (int i = 0; i < tableController.tableData.size(); i++) {
+                List<String> row = tableController.tableData.get(i);
+                row.set(0, (offset + i) + "");
             }
-            if (d2did < 0) {
-                return;
+            for (int i = 0; i < data2D.columnsNumber(); i++) {
+                Data2DColumn dataColumn = data2D.getColumns().get(i);
+                TableColumn tableColumn = tableController.tableView.getColumns().get(i + 2);
+                tableColumn.setUserData(dataColumn.getIndex());
             }
-            if (columnsController.status == ControlData2DColumns.Status.Applied) {
-                tableData2DColumn.save(conn, d2did, d.getColumns());
-                if (load) {
-                    data2D.cloneAll(d);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            columnsController.loadData();
-                        }
-                    });
-                }
+            tableController.tableView.refresh();
+            tableController.isSettingValues = false;
+            tableController.tableChanged(false);
+
+            resetStatus();
+            checkStatus();
+
+            tableController.dataSizeLoaded = data2D.isMatrix();
+            tableController.loadDataSize();
+
+            if (parentController instanceof BaseTableViewController) {
+                ((BaseTableViewController) parentController).refreshAction();
             }
+            attributesController.loadData();
+            columnsController.loadData();
+
+            notifySaved();
+
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -714,7 +706,7 @@ public class ControlData2D extends BaseController {
                             rows = new ArrayList<>();
                             for (int i = 0; i < data.size(); i++) {
                                 List<String> row = data.get(i);
-                                row.add(0, ("" + (i + 1)));
+                                row.add(0, "-1");
                                 rows.add(row);
                             }
                         }
@@ -723,6 +715,10 @@ public class ControlData2D extends BaseController {
                         error = e.toString();
                         return false;
                     }
+                }
+
+                @Override
+                protected void whenSucceeded() {
                 }
 
                 @Override

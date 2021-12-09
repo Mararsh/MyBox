@@ -57,7 +57,7 @@ public class BaseTaskController extends BaseController {
             StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
-            cancelAction();
+            cancelTask();
             return;
         }
         if (!checkOptions()) {
@@ -123,12 +123,16 @@ public class BaseTaskController extends BaseController {
     protected void afterSuccess() {
     }
 
-    @Override
-    public void cancelAction() {
+    public void cancelTask() {
         if (task != null) {
             task.cancel();
             task = null;
         }
+    }
+
+    @Override
+    public void cancelAction() {
+        cancelTask();
     }
 
     protected void afterTask() {
@@ -187,7 +191,7 @@ public class BaseTaskController extends BaseController {
     @Override
     public void cleanPane() {
         try {
-            cancelAction();
+            cancelTask();
             cancelled = true;
         } catch (Exception e) {
         }

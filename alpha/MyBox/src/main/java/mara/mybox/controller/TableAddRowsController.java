@@ -41,7 +41,7 @@ public class TableAddRowsController extends BaseController {
 
     @Override
     public void setStageStatus() {
-        setAsPopup(baseName);
+        setAsPop(baseName);
     }
 
     public void setParameters(BaseTableViewController tableViewController) {
@@ -107,12 +107,12 @@ public class TableAddRowsController extends BaseController {
 
     public void setSelector() {
         try {
+            int thisSelect = rowSelector.getSelectionModel().getSelectedIndex();
             List<String> rows = new ArrayList<>();
             for (long i = 0; i < tableViewController.tableData.size(); i++) {
                 rows.add("" + (i + 1));
             }
             rowSelector.getItems().setAll(rows);
-            int thisSelect = rowSelector.getSelectionModel().getSelectedIndex();
             int tableSelect = tableViewController.tableView.getSelectionModel().getSelectedIndex();
             rowSelector.getSelectionModel().select(tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 

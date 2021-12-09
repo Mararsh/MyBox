@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
@@ -32,15 +31,13 @@ public class Data2DExportController extends BaseTaskController {
     protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
 
     @FXML
-    protected ControlListCheckBox rowsListController, colsListController;
+    protected ControlData2DSelect selectController;
     @FXML
     protected ToggleGroup rowGroup;
     @FXML
     protected RadioButton rowAllRadio, rowTableRadio;
     @FXML
-    protected HBox dataBox;
-    @FXML
-    protected VBox formatVBox, pdfOptionsVBox, targetVBox;
+    protected VBox dataVBox, formatVBox, pdfOptionsVBox, targetVBox;
     @FXML
     protected ControlPdfWriteOptions pdfOptionsController;
     @FXML
@@ -50,6 +47,11 @@ public class Data2DExportController extends BaseTaskController {
 
     public Data2DExportController() {
         baseTitle = Languages.message("Export");
+    }
+
+    @Override
+    public void setStageStatus() {
+        setAsPop(baseName);
     }
 
     @Override
@@ -78,53 +80,12 @@ public class Data2DExportController extends BaseTaskController {
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            this.baseName = tableController.baseName;
-
+            selectController.setParameters(tableController);
             getMyStage().setTitle(tableController.getBaseTitle());
 
-            rowsListController.setParent(tableController);
-            colsListController.setParent(tableController);
-
-            makeControls();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void makeControls() {
-        try {
-            List<String> rows = new ArrayList<>();
-            for (long i = 0; i < tableController.tableData.size(); i++) {
-                rows.add("" + (i + 1));
-            }
-            rowsListController.setValues(rows);
-
-            colsListController.setValues(tableController.data2D.columnNames());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void selectAllRows() {
-        rowsListController.checkAll();
-    }
-
-    @FXML
-    public void selectNoneRows() {
-        rowsListController.checkNone();
-    }
-
-    @FXML
-    public void selectAllCols() {
-        colsListController.checkAll();
-    }
-
-    @FXML
-    public void selectNoneCols() {
-        colsListController.checkNone();
     }
 
     @Override
@@ -140,21 +101,15 @@ public class Data2DExportController extends BaseTaskController {
                 return false;
             }
 
-            int colsNumber = tableController.data2D.columnsNumber();
-            selectedColumnsNames = new ArrayList<>();
-            selectedColumnsIndices = new ArrayList<>();
-            for (int col = 0; col < colsNumber; col++) {
-                if (colsListController.isChecked(col)) {
-                    selectedColumnsNames.add(colsListController.value(col));
-                    selectedColumnsIndices.add(col);
-                }
-            }
-            if (selectedColumnsNames.isEmpty()) {
+            selectedColumnsIndices = selectController.selectedColumnsIndices();
+            if (selectedColumnsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
             }
+            selectedColumnsNames = selectController.selectedColumnsNames();
+
             if (rowTableRadio.isSelected()) {
-                selectedRowsIndices = rowsListController.checkedIndices();
+                selectedRowsIndices = selectController.selectedRowsIndices();
                 if (selectedRowsIndices.isEmpty()) {
                     popError(message("SelectToHandle"));
                     return false;
@@ -180,7 +135,7 @@ public class Data2DExportController extends BaseTaskController {
     @Override
     protected void beforeTask() {
         try {
-            dataBox.setDisable(true);
+            dataVBox.setDisable(true);
             formatVBox.setDisable(true);
             targetVBox.setDisable(true);
             pdfOptionsVBox.setDisable(true);
@@ -256,7 +211,7 @@ public class Data2DExportController extends BaseTaskController {
     @Override
     protected void afterTask() {
         try {
-            dataBox.setDisable(false);
+            dataVBox.setDisable(false);
             formatVBox.setDisable(false);
             targetVBox.setDisable(false);
             pdfOptionsVBox.setDisable(false);
@@ -266,13 +221,20 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    public void cancelAction() {
+    public void cancelTask() {
         if (task != null) {
             task.cancel();
             task = null;
         }
         convertController.closeWriters();
     }
+
+    @Override
+    public void cancelAction() {
+        cancelTask();
+        close();
+    }
+
 
     /*
         static

@@ -77,6 +77,9 @@ public class MatricesManageController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
+        if (dataController.checkBeforeSave() < 0) {
+            return;
+        }
         dataController.saveAs(dataController.data2D, true);
     }
 

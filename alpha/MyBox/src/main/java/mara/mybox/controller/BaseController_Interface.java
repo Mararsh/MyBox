@@ -443,7 +443,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void setAsPopup(String baseName) {
+    public void setAsPop(String baseName) {
         try {
             isPop = true;
             needRecordVisit = false;

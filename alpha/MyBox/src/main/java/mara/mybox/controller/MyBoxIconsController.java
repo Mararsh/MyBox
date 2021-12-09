@@ -14,7 +14,6 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.Colors;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -22,6 +21,8 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class MyBoxIconsController extends BaseTaskController {
+
+    protected File srcRoot;
 
     @FXML
     protected ControlPathInput sourceCodesPathController;
@@ -46,6 +47,11 @@ public class MyBoxIconsController extends BaseTaskController {
 
     @Override
     public void startAction() {
+        srcRoot = sourceCodesPathController.file;
+        if (srcRoot == null) {
+            popError(message("MissSourceCodesPath"));
+            return;
+        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -60,27 +66,22 @@ public class MyBoxIconsController extends BaseTaskController {
     @Override
     protected boolean doTask() {
         try {
-            String saved = UserConfig.getString("SourceCodesPath", null);
-            if (saved == null) {
-                popError(message("MissSourceCodesPath"));
-                return false;
-            }
-            String srcPath = saved + "/src/main/resources/";
-            String lightBluePath = srcPath + StyleTools.ButtonsPath + "LightBlue/";
+            String filesPath = srcRoot + "/src/main/resources/";
+            String lightBluePath = filesPath + StyleTools.ButtonsPath + "LightBlue/";
             if (!new File(lightBluePath).exists()) {
                 popError(message("WrongSourceCodesPath"));
                 return false;
             }
-            updateLogs(srcPath + StyleTools.ButtonsPath);
-            String redPath = srcPath + StyleTools.ButtonsPath + "Red/";
+            updateLogs(filesPath + StyleTools.ButtonsPath);
+            String redPath = filesPath + StyleTools.ButtonsPath + "Red/";
             FileDeleteTools.clearDir(new File(redPath));
-            String pinkPath = srcPath + StyleTools.ButtonsPath + "Pink/";
+            String pinkPath = filesPath + StyleTools.ButtonsPath + "Pink/";
             FileDeleteTools.clearDir(new File(pinkPath));
-            String orangePath = srcPath + StyleTools.ButtonsPath + "Orange/";
+            String orangePath = filesPath + StyleTools.ButtonsPath + "Orange/";
             FileDeleteTools.clearDir(new File(orangePath));
-            String bluePath = srcPath + StyleTools.ButtonsPath + "Blue/";
+            String bluePath = filesPath + StyleTools.ButtonsPath + "Blue/";
             FileDeleteTools.clearDir(new File(bluePath));
-            String darkGreenPath = srcPath + StyleTools.ButtonsPath + "DarkGreen/";
+            String darkGreenPath = filesPath + StyleTools.ButtonsPath + "DarkGreen/";
             FileDeleteTools.clearDir(new File(darkGreenPath));
 
             File[] icons = new File(lightBluePath).listFiles();
