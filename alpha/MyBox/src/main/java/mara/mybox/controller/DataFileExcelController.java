@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,7 +10,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.data.VisitHistory;
@@ -37,7 +35,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     @FXML
     protected ComboBox<String> sheetSelector;
     @FXML
-    protected CheckBox sourceWithNamesCheck, targetWithNamesCheck, currentOnlyCheck;
+    protected CheckBox sourceWithNamesCheck;
     @FXML
     protected Button okSheetButton, plusSheetButton, renameSheetButton, deleteSheetButton,
             nextSheetButton, previousSheetButton;
@@ -76,20 +74,6 @@ public class DataFileExcelController extends BaseData2DFileController {
                 }
             });
 
-            targetWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "TargetWithNames", true));
-            targetWithNamesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                if (!isSettingValues) {
-                    UserConfig.setBoolean(baseName + "TargetWithNames", newValue);
-                }
-            });
-
-            currentOnlyCheck.setSelected(UserConfig.getBoolean(baseName + "CurrentOnly", false));
-            currentOnlyCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                if (!isSettingValues) {
-                    UserConfig.setBoolean(baseName + "CurrentOnly", newValue);
-                }
-            });
-
             dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
@@ -123,19 +107,9 @@ public class DataFileExcelController extends BaseData2DFileController {
     @Override
     protected void checkStatus() {
         super.checkStatus();
-        boolean invalid = dataFileExcel.isTmpData() || dataController.isChanged();
+        boolean invalid = dataFileExcel.isTmpFile() || dataController.isChanged();
         sheetsPane.setExpanded(!invalid);
         sheetsPane.setDisable(invalid);
-    }
-
-    @Override
-    public Data2D makeTargetDataFile(File file) {
-        DataFileExcel targetCSVFile = (DataFileExcel) dataFileExcel.cloneAll();
-        targetCSVFile.setFile(file);
-        targetCSVFile.setD2did(-1);
-        targetCSVFile.setHasHeader(targetWithNamesCheck.isSelected());
-        targetCSVFile.setCurrentSheetOnly(currentOnlyCheck.isSelected());
-        return targetCSVFile;
     }
 
     @FXML
@@ -156,8 +130,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             if (!checkBeforeNextAction() || name == null) {
                 return;
             }
-            dataFileExcel.initFile(dataFileExcel.getFile());
-            dataFileExcel.setOptions(name);
+            dataFileExcel.initFile(dataFileExcel.getFile(), name);
             dataController.readDefinition();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -322,27 +295,6 @@ public class DataFileExcelController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileExcelController oneOpen() {
-        DataFileExcelController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof DataFileExcelController) {
-                try {
-                    controller = (DataFileExcelController) object;
-                    controller.toFront();
-                    break;
-                } catch (Exception e) {
-                }
-            }
-        }
-        if (controller == null) {
-            controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
-        }
-        return controller;
-    }
-
     public static DataFileExcelController open(File file, boolean withNames) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.setFile(file, withNames);

@@ -59,7 +59,7 @@ public abstract class Data2D extends Data2DDefinition {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber);
+    public abstract boolean export(ControlDataConvert convertController, List<Integer> colIndices);
 
 
     /*
@@ -227,17 +227,18 @@ public abstract class Data2D extends Data2DDefinition {
         return type == Type.CSV || type == Type.Excel || type == Type.Text;
     }
 
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices,
-            List<String> dataRow, int index) {
+    public boolean isTmpFile() {
+        return file == null
+                || file.getAbsolutePath().startsWith(AppVariables.MyBoxTempPath.getAbsolutePath());
+    }
+
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, List<String> dataRow) {
         try {
             if (convertController == null || colIndices == null || colIndices.isEmpty()
                     || dataRow == null || dataRow.isEmpty()) {
                 return false;
             }
             List<String> exportRow = new ArrayList<>();
-            if (index > 0) {
-                exportRow.add(message("Row") + index);
-            }
             for (Integer col : colIndices) {
                 String value = null;
                 if (col >= 0 && col < dataRow.size()) {
@@ -274,21 +275,27 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     /*
+        clipboard
+     */
+    public boolean isClipboard() {
+        return type == Type.Clipboard;
+    }
+
+    /*
         database
      */
     public long readDataDefinition() {
-        if (isTmpData()) {
-            checkAttributes();
+        if (isNewData()) {
+            checkForLoad();
             return -1;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            applyOptions();
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
                 cloneAll(definition);
             }
             applyOptions();
-            checkAttributes();
+            checkForLoad();
             if (definition == null) {
                 definition = tableData2DDefinition.insertData(conn, this);
                 conn.commit();
@@ -310,9 +317,12 @@ public abstract class Data2D extends Data2DDefinition {
         return d2did;
     }
 
-    public void checkAttributes() {
+    public void checkForLoad() {
+    }
+
+    public void checkForSave() {
         if (dataName == null || dataName.isBlank()) {
-            if (file != null && !isTmpData()) {
+            if (file != null && !isNewData()) {
                 dataName = file.getName();
             } else {
                 dataName = DateTools.nowString();
@@ -322,7 +332,7 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void saveDefinition(Connection conn) {
         try {
-            checkAttributes();
+            checkForLoad();
             rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
             colsNumber = tableColsNumber();
             if (colsNumber <= 0) {
@@ -335,6 +345,7 @@ public abstract class Data2D extends Data2DDefinition {
                     d2did = def.getD2did();
                 }
             }
+            checkForSave();
             if (d2did >= 0) {
                 def = tableData2DDefinition.updateData(conn, this);
             } else {
@@ -355,13 +366,11 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    public boolean isTmpData() {
-        if (isMatrix()) {
-            return d2did < 0;
-
+    public boolean isNewData() {
+        if (isDataFile()) {
+            return isTmpFile();
         } else {
-            return file == null
-                    || file.getAbsolutePath().startsWith(AppVariables.MyBoxTempPath.getAbsolutePath());
+            return d2did < 0;
         }
     }
 
@@ -417,7 +426,7 @@ public abstract class Data2D extends Data2DDefinition {
         return -1;
     }
 
-    public List<String> tableRow(int row) {
+    public List<String> tableRowWithoutNumber(int row) {
         try {
             List<String> values = tableData().get(row);
             return values.subList(1, values.size());

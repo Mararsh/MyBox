@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
+import mara.mybox.data.DataClipboard;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -164,7 +166,7 @@ public class ControlData2D extends BaseController {
                             }
                             data2D.setColumns(columns);
                             validateTable = Data2DColumn.validate(columns);
-                            if (!data2D.isTmpData()) {
+                            if (!data2D.isNewData()) {
                                 if (validateTable == null || validateTable.isEmpty()) {
                                     tableData2DColumn.save(d2did, columns);
                                 }
@@ -344,7 +346,7 @@ public class ControlData2D extends BaseController {
 
     public void notifyLoaded() {
         if (backupController != null) {
-            if (data2D.isTmpData()) {
+            if (data2D.isTmpFile()) {
                 backupController.loadBackups(null);
             } else {
                 backupController.loadBackups(data2D.getFile());
@@ -444,7 +446,7 @@ public class ControlData2D extends BaseController {
     }
 
     public void save() {
-        if (!isChanged() || data2D.isTmpData()) {
+        if (!isChanged() && !data2D.isNewData()) {
             return;
         }
         synchronized (this) {
@@ -454,16 +456,34 @@ public class ControlData2D extends BaseController {
             if (checkBeforeSave() < 0) {
                 return;
             }
+            Data2D targetData = data2D.cloneAll();
+            if (targetData.isTmpFile() && !targetData.isMatrix()) {
+                File file = null;
+                if (targetData.isDataFile()) {
+                    file = chooseSaveFile();
+                } else if (targetData.isClipboard()) {
+                    file = DataClipboard.newFile();
+                }
+                if (file == null) {
+                    return;
+                }
+                targetData.setFile(file);
+                targetData.setD2did(-1);
+                targetData.setCharset(Charset.forName("UTF-8"));
+                targetData.setDelimiter(",");
+                targetData.setHasHeader(true);
+            }
             task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
+                    if (backupController != null && backupController.isBack() && !data2D.isTmpFile()) {
+                        backupController.addBackup(data2D.getFile());
+                    }
                     try ( Connection conn = DerbyBase.getConnection()) {
-                        if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
-                            backupController.addBackup(data2D.getFile());
-                        }
                         data2D.setTask(task);
-                        data2D.savePageData(data2D);
+                        data2D.savePageData(targetData);
+                        data2D.cloneAll(targetData);
                         data2D.saveDefinition(conn);
                         return true;
                     } catch (Exception e) {
@@ -491,69 +511,6 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void saveAs(Data2D targetData) {
-        saveAs(targetData, false);
-    }
-
-    // should have called checkBeforeSave()
-    public void saveAs(Data2D targetData, boolean load) {
-        if (targetData == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                String[][] data;
-
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        targetData.setTask(task);
-                        targetData.savePageData(targetData);
-                        targetData.saveDefinition(conn);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    File file = targetData.getFile();
-                    if (file != null) {
-                        recordFileWritten(file);
-                    }
-                    if (load) {
-                        data2D.cloneAll(targetData);
-                        if (parentController instanceof BaseData2DFileController) {
-                            resetStatus();
-                            parentController.sourceFileChanged(file);
-                        } else {
-                            afterSaved();
-                        }
-
-                    } else {
-                        if (file != null && parentController.saveAsType == SaveAsType.Open) {
-                            data2D.open(file);
-                        }
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    data2D.setTask(null);
-                    task = null;
-                }
-
-            };
-            start(task);
-        }
-    }
-
     public void afterSaved() {
         try {
             data2D.setEndRowOfCurrentPage(data2D.getStartRowOfCurrentPage() + tableController.tableData.size());
@@ -573,19 +530,16 @@ public class ControlData2D extends BaseController {
             tableController.isSettingValues = false;
             tableController.tableChanged(false);
 
-            resetStatus();
-            checkStatus();
-
-            tableController.dataSizeLoaded = data2D.isMatrix();
-            tableController.loadDataSize();
-
-            if (parentController instanceof BaseTableViewController) {
-                ((BaseTableViewController) parentController).refreshAction();
-            }
             attributesController.loadData();
             columnsController.loadData();
 
+            resetStatus();
+            checkStatus();
             notifySaved();
+            notifyLoaded();
+
+            tableController.dataSizeLoaded = data2D.isMatrix();
+            tableController.loadDataSize();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

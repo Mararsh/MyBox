@@ -41,7 +41,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
     public void initOptionsSection() {
         try {
             super.initOptionsSection();
-            convertController.setControls(this, pdfOptionsController);
+            convertController.setControls(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -86,13 +86,13 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                     if (convertController.names.isEmpty()) {
                         if (withNamesCheck.isSelected()) {
                             convertController.names.addAll(rowData);
-                            convertController.openWriters(filePrefix, skip);
+                            convertController.setParameters(filePrefix, skip);
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {
                                 convertController.names.add(Languages.message("Field") + c);
                             }
-                            convertController.openWriters(filePrefix + "_" + sheet.getSheetName(), skip);
+                            convertController.setParameters(filePrefix + "_" + sheet.getSheetName(), skip);
                         }
                     }
                     convertController.writeRow(rowData);

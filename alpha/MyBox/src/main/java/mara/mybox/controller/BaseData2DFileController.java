@@ -38,7 +38,7 @@ public abstract class BaseData2DFileController extends BaseController {
     protected ControlData2DColumns columnsController;
 
     @FXML
-    protected TitledPane filePane, saveAsPane, backupPane, formatPane;
+    protected TitledPane filePane, backupPane, formatPane;
     @FXML
     protected VBox fileBox, formatBox;
     @FXML
@@ -55,8 +55,6 @@ public abstract class BaseData2DFileController extends BaseController {
     /*
         abstract
      */
-    public abstract Data2D makeTargetDataFile(File file);
-
     public abstract void pickOptions();
 
 
@@ -87,9 +85,15 @@ public abstract class BaseData2DFileController extends BaseController {
             super.initControls();
             initFormatTab();
             initBackupsTab();
-            initSaveAsTab();
 
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    checkStatus();
+                }
+            });
+
+            dataController.savedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     checkStatus();
@@ -135,32 +139,6 @@ public abstract class BaseData2DFileController extends BaseController {
         }
     }
 
-    protected void initSaveAsTab() {
-        try {
-            if (saveAsPane == null) {
-                return;
-            }
-            saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", true));
-            saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            createAction();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
     @Override
     public void sourceFileChanged(File file) {
         dataController.loadFile(file);
@@ -169,7 +147,7 @@ public abstract class BaseData2DFileController extends BaseController {
     protected void checkStatus() {
         try {
             boolean changed = dataController.isChanged();
-            if (data2D.isTmpData()) {
+            if (data2D.isTmpFile()) {
                 isSettingValues = true;
                 if (formatPane != null) {
                     formatPane.setExpanded(false);
@@ -195,7 +173,7 @@ public abstract class BaseData2DFileController extends BaseController {
 
             if (myStage != null) {
                 String title = baseTitle;
-                if (!data2D.isTmpData()) {
+                if (!data2D.isTmpFile()) {
                     title += " " + data2D.getFile().getAbsolutePath();
                 }
                 if (changed) {
@@ -211,7 +189,7 @@ public abstract class BaseData2DFileController extends BaseController {
 
     protected void updateInfoLabel() {
         String info = "";
-        if (!data2D.isTmpData()) {
+        if (!data2D.isTmpFile()) {
             info = message("FileSize") + ": " + FileTools.showFileSize(data2D.getFile().length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(data2D.getFile().lastModified()) + "\n";
             if (data2D instanceof DataFileExcel) {
@@ -264,32 +242,7 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (data2D.isTmpData()) {
-            saveAs(true);
-            return;
-        }
         dataController.save();
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        saveAs(false);
-    }
-
-    public void saveAs(boolean load) {
-        if (dataController.checkBeforeSave() < 0) {
-            return;
-        }
-        File file = chooseSaveFile();
-        if (file == null) {
-            return;
-        }
-        Data2D targetData = makeTargetDataFile(file);
-        if (targetData == null) {
-            return;
-        }
-        dataController.saveAs(targetData, load || saveAsType == BaseController_Attributes.SaveAsType.Load);
     }
 
     @FXML

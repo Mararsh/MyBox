@@ -86,10 +86,16 @@ public class DataFileExcel extends DataFile {
         super.initFile(file);
     }
 
+    public void initFile(File file, String sheetName) {
+        super.initFile(file);
+        currentSheetName = sheetName;
+        sheetNames = null;
+    }
+
     @Override
-    public void checkAttributes() {
+    public void checkForSave() {
         if (dataName == null || dataName.isBlank()) {
-            if (!isTmpData()) {
+            if (!isTmpFile()) {
                 dataName = file.getName();
             } else {
                 dataName = DateTools.nowString();
@@ -99,7 +105,6 @@ public class DataFileExcel extends DataFile {
             }
         }
         delimiter = currentSheetName;  // use field "delimiter" as currentSheetName
-        super.checkAttributes();
     }
 
     @Override
@@ -121,6 +126,9 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public List<String> readColumns() {
+        if (file == null) {
+            return null;
+        }
         List<String> names = null;
         try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sheet;
@@ -169,6 +177,9 @@ public class DataFileExcel extends DataFile {
     @Override
     public long readTotal() {
         dataSize = 0;
+        if (file == null) {
+            return 0;
+        }
         try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sheet;
             if (currentSheetName != null) {
@@ -212,6 +223,9 @@ public class DataFileExcel extends DataFile {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
+        if (file == null) {
+            return null;
+        }
         List<List<String>> rows = new ArrayList<>();
         try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sheet;
@@ -281,12 +295,11 @@ public class DataFileExcel extends DataFile {
         if (tFile == null) {
             return false;
         }
+        targetExcelFile.checkForLoad();
         boolean withName = targetExcelFile.isHasHeader();
         String targetSheetName = targetExcelFile.getCurrentSheetName();
-        targetExcelFile.checkAttributes();
-        checkAttributes();
-        String sheetNameSaved;
-        if (file != null) {
+        checkForLoad();
+        if (file != null && file.exists()) {
             try ( Workbook sourceBook = WorkbookFactory.create(file)) {
                 Sheet sourceSheet;
                 if (currentSheetName != null) {
@@ -356,6 +369,7 @@ public class DataFileExcel extends DataFile {
 
         } else {
             try ( Workbook targetBook = new XSSFWorkbook()) {
+                String sheetNameSaved;
                 if (targetSheetName != null) {
                     sheetNameSaved = targetSheetName;
                 } else {
@@ -370,6 +384,7 @@ public class DataFileExcel extends DataFile {
                 try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
+                targetBook.close();
             } catch (Exception e) {
                 MyBoxLog.error(e);
                 if (task != null) {
@@ -404,7 +419,7 @@ public class DataFileExcel extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return index;
                 }
-                List<String> values = tableRow(r);
+                List<String> values = tableRowWithoutNumber(r);
                 Row targetRow = targetSheet.createRow(index++);
                 for (int col = 0; col < values.size(); col++) {
                     Cell targetCell = targetRow.createCell(col, CellType.STRING);
@@ -607,7 +622,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
         if (convertController == null || file == null
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
@@ -626,7 +641,6 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
-                int index = 0;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
@@ -637,7 +651,7 @@ public class DataFileExcel extends DataFile {
                         String v = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
                         dataRow.add(v);
                     }
-                    export(convertController, colIndices, dataRow, ++index);
+                    export(convertController, colIndices, dataRow);
                 }
             }
         } catch (Exception e) {

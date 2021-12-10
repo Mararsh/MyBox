@@ -407,7 +407,7 @@ public abstract class ControlSheetFile_Operations extends ControlSheetFile_File 
                 .withIgnoreEmptyLines().withTrim().withNullString("");
         try ( CSVParser parser = CSVParser.parse(file, Charset.forName("UTF-8"), csvFormat)) {
             List<String> names = parser.getHeaderNames();
-            exportController.convertController.openWriters(exportController.filePrefix, skip);
+            exportController.convertController.setParameters(exportController.filePrefix, skip);
             for (CSVRecord record : parser) {
                 if (exportController.task == null || exportController.task.isCancelled()) {
                     return false;

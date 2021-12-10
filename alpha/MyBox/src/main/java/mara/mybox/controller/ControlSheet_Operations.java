@@ -553,7 +553,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
                 names.add(columns.get(c).getName());
             }
             exportController.convertController.names = names;
-            exportController.convertController.openWriters(exportController.filePrefix, skip);
+//            exportController.convertController.openWriters(exportController.filePrefix, skip);
             for (int r = 0; r < rows.size(); ++r) {
                 if (exportController.task == null || exportController.task.isCancelled()) {
                     return false;

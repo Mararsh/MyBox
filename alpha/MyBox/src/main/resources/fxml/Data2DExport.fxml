@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DExportController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DExportController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -57,13 +57,12 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab fx:id="optionsTab" text="%TargetFormat">
+                <Tab fx:id="optionsTab" text="%TargetFormats">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
                                 <VBox fx:id="formatVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                     <children>
-                                        <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                         <fx:include fx:id="convert" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataConvert.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
@@ -74,27 +73,12 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab fx:id="pdfOptionsTab" text="%PdfOptions">
-                    <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <VBox fx:id="pdfOptionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                    <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                    </padding>
-                                    <children>
-                                        <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
-                                    </children>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
-                    </content>
-                </Tab>
                 <Tab fx:id="targetTab" text="%TargetFiles">
                     <content>
                         <VBox fx:id="targetVBox" spacing="10.0">
                             <children>
                                 <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
+                        <CheckBox fx:id="openCheck" mnemonicParsing="false" text="%OpenAfterExport" />
                             </children>
                             <padding>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

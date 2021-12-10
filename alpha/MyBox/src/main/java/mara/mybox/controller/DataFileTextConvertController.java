@@ -44,7 +44,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
         try {
             super.initOptionsSection();
             readOptionsController.setControls(baseName + "Read", true);
-            convertController.setControls(this, pdfOptionsController);
+            convertController.setControls(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -91,7 +91,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
                         }
                     }
                     convertController.names = names;
-                    convertController.openWriters(filePrefix(srcFile), skip);
+                    convertController.setParameters(filePrefix(srcFile), skip);
                     if (sourceWithName) {
                         continue;
                     }

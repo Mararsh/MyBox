@@ -26,9 +26,9 @@ public class DataClipboardController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public void initControls() {
         try {
-            super.afterSceneLoaded();
+            super.initControls();
 
             clipboardController.loadTableData();
         } catch (Exception e) {
@@ -36,6 +36,13 @@ public class DataClipboardController extends BaseController {
         }
     }
 
+    @FXML
+    @Override
+    public void createAction() {
+        clipboardController.createAction();
+    }
+
+    @FXML
     public void refreshAction() {
         clipboardController.refreshAction();
     }

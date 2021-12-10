@@ -54,7 +54,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public void checkAttributes() {
+    public void checkForLoad() {
         if (charset == null && file != null) {
             charset = TextFileTools.charset(file);
         }
@@ -67,7 +67,7 @@ public class DataFileText extends DataFile {
         if (delimiter == null || delimiter.isEmpty()) {
             delimiter = ",";
         }
-        super.checkAttributes();
+        super.checkForLoad();
     }
 
     public String guessDelimiter() {
@@ -142,7 +142,10 @@ public class DataFileText extends DataFile {
     @Override
     public List<String> readColumns() {
         List<String> names = null;
-        checkAttributes();
+        checkForLoad();
+        if (file == null) {
+            return null;
+        }
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             names = readValidLine(reader);
             if (!hasHeader && names != null) {
@@ -187,6 +190,9 @@ public class DataFileText extends DataFile {
     @Override
     public long readTotal() {
         dataSize = 0;
+        if (file == null) {
+            return 0;
+        }
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -218,6 +224,9 @@ public class DataFileText extends DataFile {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
+        if (file == null) {
+            return null;
+        }
         List<List<String>> rows = new ArrayList<>();
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
@@ -270,10 +279,10 @@ public class DataFileText extends DataFile {
         if (tFile == null) {
             return false;
         }
+        targetTextFile.checkForLoad();
         Charset tCharset = targetTextFile.getCharset();
         String tDelimiter = targetTextFile.getDelimiter();
-        targetTextFile.checkAttributes();
-        checkAttributes();
+        checkForLoad();
         boolean tHasHeader = targetTextFile.isHasHeader();
         if (file != null) {
             try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
@@ -339,7 +348,7 @@ public class DataFileText extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                TextFileTools.writeLine(writer, tableRow(r), delimiter);
+                TextFileTools.writeLine(writer, tableRowWithoutNumber(r), delimiter);
             }
             return true;
         } catch (Exception e) {
@@ -384,7 +393,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
         if (convertController == null || file == null
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
@@ -394,13 +403,12 @@ public class DataFileText extends DataFile {
                 readValidLine(reader);
             }
             String line;
-            int index = 0;
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> dataRow = parseFileLine(line);
                 if (dataRow == null || dataRow.isEmpty()) {
                     continue;
                 }
-                export(convertController, colIndices, dataRow, ++index);
+                export(convertController, colIndices, dataRow);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -349,6 +349,14 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         ControllerTools.openTarget(null, file);
     }
 
+    public void browse(File file) {
+        try {
+            browseURI(file.toURI());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void browse(String url) {
         try {
             browseURI(new URI(url));

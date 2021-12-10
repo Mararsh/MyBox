@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileText;
 import mara.mybox.db.data.VisitHistory;
@@ -23,7 +24,7 @@ public class DataFileTextController extends BaseData2DFileController {
     protected DataFileText dataFileText;
 
     @FXML
-    protected ControlTextOptions readOptionsController, writeOptionsController;
+    protected ControlTextOptions readOptionsController;
 
     public DataFileTextController() {
         baseTitle = message("EditTextDataFile");
@@ -52,7 +53,7 @@ public class DataFileTextController extends BaseData2DFileController {
             super.initControls();
 
             readOptionsController.setControls(baseName + "Read", true);
-            writeOptionsController.setControls(baseName + "Write", false);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -70,16 +71,18 @@ public class DataFileTextController extends BaseData2DFileController {
                 charset, readOptionsController.delimiterName);
     }
 
-    @Override
-    public Data2D makeTargetDataFile(File file) {
-        DataFileText targetTextFile = (DataFileText) dataFileText.cloneAll();
-        targetTextFile.setFile(file);
-        targetTextFile.setD2did(-1);
-        targetTextFile.setCharset(writeOptionsController.charset);
-        targetTextFile.setDelimiter(writeOptionsController.delimiterName);
-        targetTextFile.setHasHeader(writeOptionsController.withNamesCheck.isSelected());
-        return targetTextFile;
+    public void setFile(File file, Charset charset, boolean withName, String delimiter) {
+        if (file == null || !checkBeforeNextAction()) {
+            return;
+        }
+        readOptionsController.withNamesCheck.setSelected(withName);
+        readOptionsController.setDelimiter(delimiter);
+        readOptionsController.setCharset(charset);
+        dataFileText.initFile(file);
+        dataFileText.setOptions(withName, charset, delimiter + "");
+        dataController.readDefinition();
     }
+
 
     /*
         static
@@ -87,6 +90,24 @@ public class DataFileTextController extends BaseData2DFileController {
     public static DataFileTextController open(List<String> cols, List<List<String>> data) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
         controller.dataController.loadTmpData(cols, data);
+        return controller;
+    }
+
+    public static DataFileTextController open(File file, Charset charset, boolean withNames, String delimiter) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.setFile(file, charset, withNames, delimiter);
+        return controller;
+    }
+
+    public static DataFileTextController open() {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.createAction();
+        return controller;
+    }
+
+    public static DataFileTextController load(Window parent) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openScene(parent, Fxmls.DataFileTextFxml);
+        controller.createAction();
         return controller;
     }
 

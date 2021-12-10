@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Date;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
 
@@ -16,27 +15,12 @@ import mara.mybox.value.Languages;
 public abstract class BaseDataConvertController extends BaseBatchFileController {
 
     @FXML
-    protected VBox pdfOptionsVBox, convertVBox;
-    @FXML
-    protected ControlPdfWriteOptions pdfOptionsController;
+    protected VBox convertVBox;
     @FXML
     protected ControlDataConvert convertController;
 
     public BaseDataConvertController() {
         baseTitle = Languages.message("dataConvert");
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            pdfOptionsController.pixSizeRadio.setDisable(true);
-            pdfOptionsController.standardSizeRadio.fire();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @Override
@@ -57,7 +41,6 @@ public abstract class BaseDataConvertController extends BaseBatchFileController 
     @Override
     public void disableControls(boolean disable) {
         super.disableControls(disable);
-        pdfOptionsVBox.setDisable(disable);
         convertVBox.setDisable(disable);
     }
 

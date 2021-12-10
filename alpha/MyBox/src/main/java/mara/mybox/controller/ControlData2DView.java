@@ -198,7 +198,7 @@ public class ControlData2DView extends BaseController {
                     names.add(message("RowNumber"));
                 }
                 for (int i = 0; i < cNumber; i++) {
-                    names.add(data2D .colName(i));
+                    names.add(data2D.colName(i));
                 }
             } else {
                 names = null;
@@ -212,9 +212,9 @@ public class ControlData2DView extends BaseController {
             for (int i = 0; i < rNumber; i++) {
                 List<String> row = new ArrayList<>();
                 if (rowCheck.isSelected()) {
-                    row.add(data2D .rowName(i));
+                    row.add(data2D.rowName(i));
                 }
-                row.addAll(data2D .tableRow(i));
+                row.addAll(data2D.tableRowWithoutNumber(i));
                 table.add(row);
             }
             htmlController.loadContents(table.html());
@@ -227,30 +227,30 @@ public class ControlData2DView extends BaseController {
         try {
             StringBuilder s = new StringBuilder();
             if (titleCheck.isSelected()) {
-                s.append("<H2>").append(data2D .titleName()).append("</H2>\n");
+                s.append("<H2>").append(data2D.titleName()).append("</H2>\n");
             }
             for (int r = 0; r < data2D.tableRowsNumber(); r++) {
                 StringTable table = new StringTable();
                 if (rowCheck.isSelected()) {
                     List<String> row = new ArrayList<>();
-                    row.add(data2D .rowName(r));
+                    row.add(data2D.rowName(r));
                     if (columnCheck.isSelected()) {
                         row.add(null);
                     }
                     table.add(row);
                 }
-                List<String> drow = data2D.tableRow(r);
+                List<String> drow = data2D.tableRowWithoutNumber(r);
                 for (int col = 0; col < data2D.columnsNumber(); col++) {
                     List<String> row = new ArrayList<>();
                     if (columnCheck.isSelected()) {
-                        row.add(data2D .colName(col));
+                        row.add(data2D.colName(col));
                     }
                     row.add(drow.get(col));
                     table.add(row);
                 }
                 s.append(table.div()).append("\n<BR><BR>\n");
             }
-            htmlController.loadContents(HtmlWriteTools.html(data2D .titleName(),
+            htmlController.loadContents(HtmlWriteTools.html(data2D.titleName(),
                     "utf-8", HtmlStyles.DefaultStyle, s.toString()));
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -279,7 +279,8 @@ public class ControlData2DView extends BaseController {
         if (titleCheck.isSelected()) {
             title = data2D.titleName();
         }
-        String text = TextTools.dataPage(data2D , displayDelimiterName, rowCheck.isSelected(), columnCheck.isSelected());
+        String text = TextTools.dataPage(data2D, displayDelimiterName,
+                rowCheck.isSelected(), columnCheck.isSelected());
         if (title != null && !title.isBlank()) {
             textArea.setText(title + "\n\n" + text);
         } else {
@@ -290,16 +291,16 @@ public class ControlData2DView extends BaseController {
     protected void textInForm() {
         StringBuilder s = new StringBuilder();
         if (titleCheck.isSelected()) {
-            s.append(data2D .titleName()).append("\n\n");
+            s.append(data2D.titleName()).append("\n\n");
         }
         for (int r = 0; r < data2D.tableRowsNumber(); r++) {
             if (rowCheck.isSelected()) {
-                s.append(data2D .rowName(r)).append("\n");
+                s.append(data2D.rowName(r)).append("\n");
             }
-            List<String> drow = data2D.tableRow(r);
+            List<String> drow = data2D.tableRowWithoutNumber(r);
             for (int col = 0; col < data2D.columnsNumber(); col++) {
                 if (columnCheck.isSelected()) {
-                    s.append(data2D .colName(col)).append(": ");
+                    s.append(data2D.colName(col)).append(": ");
                 }
                 s.append(drow.get(col)).append("\n");
             }

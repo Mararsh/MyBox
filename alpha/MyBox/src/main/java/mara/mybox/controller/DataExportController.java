@@ -54,8 +54,6 @@ public class DataExportController extends BaseTaskController {
     @FXML
     protected ControlDataConvert convertController;
     @FXML
-    protected ControlPdfWriteOptions pdfOptionsController;
-    @FXML
     protected FlowPane fieldsPane;
     @FXML
     protected TextField targetNameInput;
@@ -94,9 +92,7 @@ public class DataExportController extends BaseTaskController {
             }
             queryController.setControls(dataController, initCondition, tableDefinition, prefixEditable, supportTop);
 
-            convertController.setControls(this, pdfOptionsController);
-            pdfOptionsController.pixSizeRadio.setDisable(true);
-            pdfOptionsController.standardSizeRadio.fire();
+            convertController.setControls(this);
 
             fieldsPane.getChildren().clear();
             List<ColumnDefinition> tableColumns = table.getColumns();
@@ -249,7 +245,7 @@ public class DataExportController extends BaseTaskController {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setReadOnly(true);
                         int count = 0;
-                        if (!convertController.openWriters(filePrefix, skip)) {
+                        if (!convertController.setParameters(filePrefix, skip)) {
                             return false;
                         }
                         try ( ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
@@ -377,7 +373,7 @@ public class DataExportController extends BaseTaskController {
                     try {
                         String filePrefix = targetNameInput.getText().trim();
                         int count = 0;
-                        if (!convertController.openWriters(filePrefix, skip)) {
+                        if (!convertController.setParameters(filePrefix, skip)) {
                             return false;
                         }
                         for (EpidemicReport report : reports) {

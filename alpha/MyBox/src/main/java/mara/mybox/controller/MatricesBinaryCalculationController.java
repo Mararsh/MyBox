@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -11,13 +13,16 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -195,6 +200,13 @@ public class MatricesBinaryCalculationController extends BaseController {
     }
 
     @FXML
+    @Override
+    public void createAction() {
+        dataAController.create();
+        dataBController.create();
+    }
+
+    @FXML
     public void calculateAction() {
         if (!checkMatrices()) {
             return;
@@ -252,6 +264,30 @@ public class MatricesBinaryCalculationController extends BaseController {
             };
             start(task);
         }
+    }
+
+    /*
+        static
+     */
+    public static MatricesBinaryCalculationController oneOpen() {
+        MatricesBinaryCalculationController controller = null;
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof MatricesBinaryCalculationController) {
+                try {
+                    controller = (MatricesBinaryCalculationController) object;
+                    controller.toFront();
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (controller == null) {
+            controller = (MatricesBinaryCalculationController) WindowTools.openStage(Fxmls.MatricesBinaryCalculationFxml);
+        }
+        return controller;
     }
 
 }

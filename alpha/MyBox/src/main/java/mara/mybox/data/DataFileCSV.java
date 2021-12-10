@@ -10,7 +10,6 @@ import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
-import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -53,7 +52,7 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
         List<String> names = null;
-        checkAttributes();
+        checkForLoad();
         if (hasHeader) {
             try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
                 names = parser.getHeaderNames();
@@ -129,6 +128,9 @@ public class DataFileCSV extends DataFileText {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
+        if (file == null) {
+            return null;
+        }
         List<List<String>> rows = new ArrayList<>();
         try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             long rowIndex = -1;
@@ -183,11 +185,11 @@ public class DataFileCSV extends DataFileText {
         if (tFile == null) {
             return false;
         }
+        targetCSVFile.checkForLoad();
         Charset tCharset = targetCSVFile.getCharset();
         boolean tHasHeader = targetCSVFile.isHasHeader();
         CSVFormat tFormat = targetCSVFile.cvsFormat();
-        targetCSVFile.checkAttributes();
-        checkAttributes();
+        checkForLoad();
         if (file != null) {
             try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
                      CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
@@ -279,7 +281,7 @@ public class DataFileCSV extends DataFileText {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                csvPrinter.printRecord(tableRow(r));
+                csvPrinter.printRecord(tableRowWithoutNumber(r));
             }
             return true;
         } catch (Exception e) {
@@ -340,7 +342,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
         if (convertController == null || file == null
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
@@ -348,7 +350,6 @@ public class DataFileCSV extends DataFileText {
         try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
-                int index = 0;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
@@ -356,9 +357,6 @@ public class DataFileCSV extends DataFileText {
                             continue;
                         }
                         List<String> exportRow = new ArrayList<>();
-                        if (rowNumber) {
-                            exportRow.add(message("Row") + ++index);
-                        }
                         for (Integer col : colIndices) {
                             String value = null;
                             if (col >= 0 && col < record.size()) {

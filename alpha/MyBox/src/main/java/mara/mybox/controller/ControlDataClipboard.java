@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -263,21 +262,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @FXML
     @Override
     public void saveAction() {
-        if (dataClipboard.isTmpData()) {
-            File file = dataClipboard.newFile();
-            if (file == null) {
-                return;
-            }
-            DataClipboard targetData = (DataClipboard) dataClipboard.cloneAll();
-            targetData.setFile(file);
-            targetData.setD2did(-1);
-            targetData.setCharset(Charset.forName("UTF-8"));
-            targetData.setDelimiter(",");
-            targetData.setHasHeader(true);
-            dataController.saveAs(targetData, true);
-        } else {
-            dataController.save();
-        }
+        dataController.save();
     }
 
     @FXML
@@ -295,7 +280,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         super.updateStatus();
         if (getMyStage() != null) {
             String title = baseTitle;
-            if (!dataClipboard.isTmpData()) {
+            if (!dataClipboard.isTmpFile()) {
                 title += " " + dataClipboard.getFile().getAbsolutePath();
             }
             if (dataController.isChanged()) {
@@ -303,7 +288,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             }
             myStage.setTitle(title);
         }
-        if (!dataClipboard.isTmpData()) {
+        if (!dataClipboard.isTmpFile()) {
             nameLabel.setText(dataClipboard.getDataName());
         } else {
             nameLabel.setText("");

@@ -30,29 +30,104 @@ public class FileFilters {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> ImagesExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp",
+                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> PngExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("png", "*.png"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> JpgExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> Jpg2000ExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> TiffExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("tif/tiff", "*.tif", "*.tiff"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> GifExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> BmpExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> PcxExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> PnmExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> wbmpExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> icoExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("ico", "*.ico", "*.icon"));
+        }
+    };
+
     public static List<FileChooser.ExtensionFilter> ImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp", //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
-                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon"));
-            add(new FileChooser.ExtensionFilter("png", "*.png"));
-            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-            //            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
-            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
-            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
-            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("ico", "*.ico", "*.icon"));
+            addAll(ImagesExtensionFilter);
+            addAll(PngExtensionFilter);
+            addAll(JpgExtensionFilter);
+            addAll(TiffExtensionFilter);
+            addAll(GifExtensionFilter);
+            addAll(icoExtensionFilter);
+            addAll(BmpExtensionFilter);
+            addAll(PcxExtensionFilter);
+            addAll(PnmExtensionFilter);
+            addAll(wbmpExtensionFilter);
         }
     };
 
     public static List<FileChooser.ExtensionFilter> AlphaImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("images", "*.png", "*.tif", "*.tiff", "*.ico", "*.icon"));
-            add(new FileChooser.ExtensionFilter("png", "*.png"));
-            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            add(new FileChooser.ExtensionFilter("ico", "*.ico", "*.icon"));
+            addAll(PngExtensionFilter);
+            addAll(TiffExtensionFilter);
+            addAll(icoExtensionFilter);
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> NoAlphaImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("images", "*.jpg", "*.jpeg", "*.bmp", "*.gif", "*.pnm", "*.wbmp"));
+            addAll(JpgExtensionFilter);
+            addAll(GifExtensionFilter);
+            addAll(BmpExtensionFilter);
+            addAll(PcxExtensionFilter);
+            addAll(PnmExtensionFilter);
+            addAll(wbmpExtensionFilter);
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> MultipleFramesImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("tif/tiff/gif", "*.tif", "*.tiff", "*.gif"));
+            addAll(TiffExtensionFilter);
+            addAll(GifExtensionFilter);
         }
     };
 
@@ -77,40 +152,6 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> MarkdownExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("markdown", "*.md", "*.MD"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> NoAlphaImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("images", "*.jpg", "*.jpeg", "*.bmp", //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
-                    "*.gif", "*.pnm", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-            //            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
-            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
-            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> GifExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> TiffExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("tif/tiff", "*.tif", "*.tiff"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> MultipleFramesImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("tif/tiff/gif", "*.tif", "*.tiff", "*.gif"));
-            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
         }
     };
 
@@ -286,5 +327,37 @@ public class FileFilters {
             addAll(PPTSExtensionFilter);
         }
     };
+
+    public static List<FileChooser.ExtensionFilter> imageFilter(String suffix) {
+        if (suffix == null || suffix.isBlank()) {
+            return ImageExtensionFilter;
+        }
+        String s = suffix.toLowerCase();
+        switch (s) {
+            case "png":
+                return PngExtensionFilter;
+            case "jpg":
+                return JpgExtensionFilter;
+            case "tif":
+            case "tiff":
+                return TiffExtensionFilter;
+            case "gif":
+                return GifExtensionFilter;
+            case "ico":
+            case "icon":
+                return icoExtensionFilter;
+            case "bmp":
+                return BmpExtensionFilter;
+            case "pcx":
+                return PcxExtensionFilter;
+            case "pnm":
+                return PnmExtensionFilter;
+            case "wbmp":
+                return wbmpExtensionFilter;
+            default:
+                return ImageExtensionFilter;
+        }
+
+    }
 
 }

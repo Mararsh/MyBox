@@ -31,7 +31,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     protected DataFileCSV dataFileCSV;
 
     @FXML
-    protected ControlCsvOptions csvReadController, csvWriteController;
+    protected ControlCsvOptions csvReadController;
     @FXML
     protected VBox mainBox;
 
@@ -62,7 +62,6 @@ public class DataFileCSVController extends BaseData2DFileController {
             super.initControls();
 
             csvReadController.setControls(baseName + "Read");
-            csvWriteController.setControls(baseName + "Write");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -91,17 +90,6 @@ public class DataFileCSVController extends BaseData2DFileController {
         dataFileCSV.initFile(file);
         dataFileCSV.setOptions(withName, charset, delimiter + "");
         dataController.readDefinition();
-    }
-
-    @Override
-    public Data2D makeTargetDataFile(File file) {
-        DataFileCSV targetCSVFile = (DataFileCSV) dataFileCSV.cloneAll();
-        targetCSVFile.setFile(file);
-        targetCSVFile.setD2did(-1);
-        targetCSVFile.setCharset(csvWriteController.charset);
-        targetCSVFile.setDelimiter(csvWriteController.delimiter + "");
-        targetCSVFile.setHasHeader(csvWriteController.withNamesCheck.isSelected());
-        return targetCSVFile;
     }
 
     public void loadData(List<StringTable> tables) {
@@ -165,6 +153,12 @@ public class DataFileCSVController extends BaseData2DFileController {
     public static DataFileCSVController open(List<String> cols, List<List<String>> data) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.dataController.loadTmpData(cols, data);
+        return controller;
+    }
+
+    public static DataFileCSVController open(File file) {
+        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        controller.sourceFileChanged(file);
         return controller;
     }
 

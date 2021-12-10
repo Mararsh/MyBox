@@ -13,17 +13,20 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openMatricesManage(ActionEvent event) {
-        loadScene(Fxmls.MatricesManageFxml);
+        MatricesManageController c = (MatricesManageController) loadScene(Fxmls.MatricesManageFxml);
+        c.createAction();
     }
 
     @FXML
     protected void openMatrixUnaryCalculation(ActionEvent event) {
-        loadScene(Fxmls.MatrixUnaryCalculationFxml);
+        MatrixUnaryCalculationController c = (MatrixUnaryCalculationController) loadScene(Fxmls.MatrixUnaryCalculationFxml);
+        c.createAction();
     }
 
     @FXML
     protected void openMatricesBinaryCalculation(ActionEvent event) {
-        loadScene(Fxmls.MatricesBinaryCalculationFxml);
+        MatricesBinaryCalculationController c = (MatricesBinaryCalculationController) loadScene(Fxmls.MatricesBinaryCalculationFxml);
+        c.createAction();
     }
 
     @FXML
@@ -63,19 +66,20 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openDataClipboard(ActionEvent event) {
-        loadScene(Fxmls.DataClipboardFxml);
+        DataClipboardController c = (DataClipboardController) loadScene(Fxmls.DataClipboardFxml);
+        c.createAction();
     }
 
     @FXML
     protected void openDataCsv(ActionEvent event) {
-        DataFileCSVController controller = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-//        controller.dataController.newSheet(3, 3);
+        DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
+        c.createAction();
     }
 
     @FXML
     protected void openDataExcel(ActionEvent event) {
-        DataFileExcelController controller = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-//        controller.dataController.newSheet(3, 3);
+        DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
+        c.createAction();
     }
 
     @FXML
@@ -100,8 +104,8 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openDataText(ActionEvent event) {
-        DataFileTextController controller = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-//        controller.dataController.newSheet(3, 3);
+        DataFileTextController c = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
+        c.createAction();
     }
 
     @FXML

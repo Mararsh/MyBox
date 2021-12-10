@@ -80,6 +80,9 @@ public class ImageAttributes {
         quality = 100;
     }
 
+    /*
+        get/set
+     */
     public String getImageFormat() {
         return imageFormat;
     }

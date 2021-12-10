@@ -30,6 +30,12 @@ License:    Apache License Version 2.0
             <children>
                 <Label text="%DataSource" />
                 <fx:include fx:id="select" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSelect.fxml" VBox.vgrow="ALWAYS" />
+            <HBox fx:id="namesBox" spacing="2.0">
+               <children>
+                  <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
+                    <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />
+               </children>
+            </HBox>
             </children>
         </VBox>
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
@@ -61,7 +67,6 @@ License:    Apache License Version 2.0
                 </VBox>
             </children>
         </VBox>
-        <CheckBox fx:id="nameCheck" mnemonicParsing="false" text="%ColumnName" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

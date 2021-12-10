@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,13 +16,16 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -375,7 +380,36 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             };
             start(task);
         }
+    }
 
+    /*
+        static
+     */
+    public static MatrixUnaryCalculationController oneOpen() {
+        MatrixUnaryCalculationController controller = null;
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof MatrixUnaryCalculationController) {
+                try {
+                    controller = (MatrixUnaryCalculationController) object;
+                    controller.toFront();
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (controller == null) {
+            controller = (MatrixUnaryCalculationController) WindowTools.openStage(Fxmls.MatrixUnaryCalculationFxml);
+        }
+        return controller;
+    }
+
+    public static MatrixUnaryCalculationController open() {
+        MatrixUnaryCalculationController controller = oneOpen();
+        controller.createAction();
+        return controller;
     }
 
 }

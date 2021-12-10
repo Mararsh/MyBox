@@ -45,17 +45,6 @@ public class MatricesManageController extends BaseController {
         }
     }
 
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            createAction();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
     @FXML
     @Override
     public void createAction() {
@@ -77,10 +66,7 @@ public class MatricesManageController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (dataController.checkBeforeSave() < 0) {
-            return;
-        }
-        dataController.saveAs(dataController.data2D, true);
+        dataController.save();
     }
 
     @Override
@@ -96,6 +82,9 @@ public class MatricesManageController extends BaseController {
         dataController.myBoxClipBoard();
     }
 
+    /*
+        static
+     */
     public static MatricesManageController oneOpen() {
         MatricesManageController controller = null;
         List<Window> windows = new ArrayList<>();

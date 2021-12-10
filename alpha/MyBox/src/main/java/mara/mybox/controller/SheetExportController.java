@@ -23,9 +23,7 @@ public class SheetExportController extends BaseTaskController {
     @FXML
     protected SheetExportDataController dataController;
     @FXML
-    protected VBox dataVBox, formatVBox, pdfOptionsVBox, targetVBox;
-    @FXML
-    protected ControlPdfWriteOptions pdfOptionsController;
+    protected VBox dataVBox, formatVBox, targetVBox;
     @FXML
     protected ControlDataConvert convertController;
 
@@ -38,10 +36,7 @@ public class SheetExportController extends BaseTaskController {
         try {
             super.initControls();
 
-            convertController.setControls(this, pdfOptionsController);
-
-            pdfOptionsController.pixSizeRadio.setDisable(true);
-            pdfOptionsController.standardSizeRadio.fire();
+            convertController.setControls(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -85,8 +80,6 @@ public class SheetExportController extends BaseTaskController {
             dataVBox.setDisable(true);
             formatVBox.setDisable(true);
             targetVBox.setDisable(true);
-            pdfOptionsVBox.setDisable(true);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -137,7 +130,6 @@ public class SheetExportController extends BaseTaskController {
             dataVBox.setDisable(false);
             formatVBox.setDisable(false);
             targetVBox.setDisable(false);
-            pdfOptionsVBox.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

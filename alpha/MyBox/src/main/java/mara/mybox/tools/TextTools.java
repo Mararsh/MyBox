@@ -624,7 +624,8 @@ public class TextTools {
         return dataText(toArray(rows), delimiterName, colsNames, rowsNames);
     }
 
-    public static String dataPage(Data2D data2D, String delimiterName, boolean displayRowNames, boolean displayColNames) {
+    public static String dataPage(Data2D data2D, String delimiterName,
+            boolean displayRowNames, boolean displayColNames) {
         if (data2D == null || !data2D.isColumnsValid() || delimiterName == null) {
             return "";
         }
@@ -656,7 +657,7 @@ public class TextTools {
                     s.append(rowNames.get(i)).append(delimiter);
                 }
                 colEnd = colsNumber - 1;
-                List<String> rowValues = data2D.tableRow(i);
+                List<String> rowValues = data2D.tableRowWithoutNumber(i);
                 for (int c = 0; c <= colEnd; c++) {
                     v = rowValues.get(c);
                     s.append(v == null ? "" : v);
@@ -670,7 +671,7 @@ public class TextTools {
             }
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -760,6 +761,52 @@ public class TextTools {
             return data;
         } catch (Exception e) {
             MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static List<List<String>> toList(String[][] array) {
+        try {
+            int rowsNumber = array.length;
+            int colsNumber = array[0].length;
+            List<List<String>> data = new ArrayList<>();
+            for (int i = 0; i < rowsNumber; i++) {
+                List<String> row = new ArrayList<>();
+                for (int j = 0; j < colsNumber; j++) {
+                    row.add(array[i][j]);
+                }
+                data.add(row);
+            }
+            return data;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String[][] transpose(String[][] matrix) {
+        try {
+            if (matrix == null) {
+                return null;
+            }
+            int rowsNumber = matrix.length, columnsNumber = matrix[0].length;
+            String[][] result = new String[columnsNumber][rowsNumber];
+            for (int row = 0; row < columnsNumber; ++row) {
+                for (int col = 0; col < rowsNumber; ++col) {
+                    result[row][col] = matrix[col][row];
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<List<String>> transpose(List<List<String>> data) {
+        try {
+            String[][] array = toArray(data);
+            array = transpose(array);
+            return toList(array);
+        } catch (Exception e) {
             return null;
         }
     }

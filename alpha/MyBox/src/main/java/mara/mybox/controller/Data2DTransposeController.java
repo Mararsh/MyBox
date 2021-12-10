@@ -10,7 +10,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -33,7 +33,7 @@ public class Data2DTransposeController extends BaseController {
     @FXML
     protected RadioButton csvRadio, excelRadio, textsRadio, matrixRadio, scRadio, mcRadio;
     @FXML
-    protected CheckBox nameCheck;
+    protected CheckBox rowNumberCheck, colNameCheck;
 
     @Override
     public void setStageStatus() {
@@ -46,11 +46,18 @@ public class Data2DTransposeController extends BaseController {
             selectController.setParameters(tableController);
             getMyStage().setTitle(tableController.getBaseTitle());
 
-            nameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyWithNames", true));
-            nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
+            rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "CopyWithNames", nameCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
+                }
+            });
+            colNameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyColNames", true));
+            colNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "CopyColNames", colNameCheck.isSelected());
                 }
             });
 
@@ -134,12 +141,21 @@ public class Data2DTransposeController extends BaseController {
                 return;
             }
             List<List<String>> data = selectController.selectedData();
-            if (nameCheck.isSelected()) {
-                data.add(0, selectController.selectedColumnsNames());
+
+            if (rowNumberCheck.isSelected()) {
+                for (int i = 0; i < data.size(); i++) {
+                    List<String> row = data.get(i);
+                    row.add(0, message("Row") + (i + 1));
+                }
             }
-            double[][] array = MatrixDoubleTools.toArray(data);
-            array = MatrixDoubleTools.transpose(array);
-            data = MatrixDoubleTools.toList(array);
+            if (colNameCheck.isSelected()) {
+                List<String> names = selectController.selectedColumnsNames();
+                if (rowNumberCheck.isSelected()) {
+                    names.add(0, message("RowNumber"));
+                }
+                data.add(0, names);
+            }
+            data = TextTools.transpose(data);
 
             if (csvRadio.isSelected()) {
                 DataFileCSVController.open(null, data);
@@ -158,7 +174,8 @@ public class Data2DTransposeController extends BaseController {
                 tableController.copyToSystemClipboard(null, data);
 
             } else if (mcRadio.isSelected()) {
-                tableController.copyToMyBoxClipboard(null, data);
+                DataClipboardController controller = DataClipboardController.oneOpen();
+                controller.clipboardController.dataController.loadTmpData(null, data);
             }
 
         } catch (Exception e) {

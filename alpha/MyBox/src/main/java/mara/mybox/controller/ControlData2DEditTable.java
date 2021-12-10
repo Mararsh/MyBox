@@ -232,7 +232,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     @Override
     protected void setPagination() {
         try {
-            if (data2D == null || data2D.isMatrix() || data2D.isTmpData() || !dataSizeLoaded) {
+            if (data2D == null || data2D.isMatrix() || data2D.isNewData() || !dataSizeLoaded) {
                 paginationPane.setVisible(false);
                 return;
             }
@@ -334,7 +334,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     }
 
     @Override
-    public void tableChanged(boolean changed) {
+    public synchronized void tableChanged(boolean changed) {
         if (isSettingValues) {
             return;
         }
@@ -461,7 +461,23 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconFileAdd.png"));
+            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                export();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                transpose();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconCreateData.png"));
             menu.setOnAction((ActionEvent event) -> {
                 dataController.parentController.createAction();
             });
@@ -472,30 +488,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                 dataController.loadContentInSystemClipboard();
             });
             popMenu.getItems().add(menu);
-
-            if (!invalidData) {
-                popMenu.getItems().add(new SeparatorMenuItem());
-
-                menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    export();
-                });
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconExport.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    transpose();
-                });
-                popMenu.getItems().add(menu);
-
-                if (data2D.isDataFile()) {
-                    menu = new MenuItem(message("SaveAs"), StyleTools.getIconImage("iconSaveAs.png"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        dataController.parentController.saveAsAction();
-                    });
-                    popMenu.getItems().add(menu);
-                }
-            }
 
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
@@ -517,6 +509,9 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     @FXML
     @Override
     public void copyAction() {
+        if (!checkData()) {
+            return;
+        }
         Data2DCopyController.open(this);
     }
 
@@ -601,7 +596,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     }
 
     public void export() {
-        if (!dataController.checkBeforeNextAction()) {
+        if (!checkData() || !dataController.checkBeforeNextAction()) {
             return;
         }
         Data2DExportController.open(this);
@@ -609,7 +604,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
     @FXML
     public void transpose() {
-        if (!dataController.checkBeforeNextAction()) {
+        if (!checkData()) {
             return;
         }
         Data2DTransposeController.open(this);

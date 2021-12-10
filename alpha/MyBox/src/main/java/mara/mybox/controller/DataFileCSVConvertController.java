@@ -44,7 +44,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             super.initOptionsSection();
 
             csvReadController.setControls(baseName + "Read");
-            convertController.setControls(this, pdfOptionsController);
+            convertController.setControls(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -85,7 +85,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             List<String> names = parser.getHeaderNames();
             convertController.names = names;
             String filePrefix = FileNameTools.getFilePrefix(srcFile.getName()) + "_" + new Date().getTime();
-            convertController.openWriters(filePrefix, skip);
+            convertController.setParameters(filePrefix, skip);
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {
                     return message("Cancelled");
@@ -127,7 +127,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                         names.add(message("col") + i);
                     }
                     convertController.names = names;
-                    convertController.openWriters(filePrefix(srcFile), skip);
+                    convertController.setParameters(filePrefix(srcFile), skip);
                 }
                 List<String> rowData = new ArrayList<>();
                 for (int i = 0; i < record.size(); i++) {

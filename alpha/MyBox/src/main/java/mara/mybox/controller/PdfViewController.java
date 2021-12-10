@@ -27,6 +27,7 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -546,6 +547,16 @@ public class PdfViewController extends PdfViewController_Html {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static PdfViewController open(File file) {
+        PdfViewController controller = (PdfViewController) WindowTools.openStage(Fxmls.PdfViewFxml);
+        controller.sourceFileChanged(file);
+        controller.toFront();
+        return controller;
     }
 
 }

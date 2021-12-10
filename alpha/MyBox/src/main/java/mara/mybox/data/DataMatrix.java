@@ -34,6 +34,18 @@ public class DataMatrix extends Data2D {
         return type(Type.Matrix);
     }
 
+    @Override
+    public void checkForLoad() {
+        hasHeader = false;
+    }
+
+    @Override
+    public void checkForSave() {
+        if (dataName == null || dataName.isBlank()) {
+            dataName = rowsNumber + "x" + colsNumber;
+        }
+    }
+
     public boolean isSquare() {
         return rowsNumber == colsNumber;
     }
@@ -62,7 +74,7 @@ public class DataMatrix extends Data2D {
         }
         double[][] data = new double[(int) rowsNumber][(int) colsNumber];
         for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = tableRow(r);
+            List<String> row = tableRowWithoutNumber(r);
             for (int c = 0; c < row.size(); c++) {
                 data[r][c] = toDouble(row.get(c));
             }
@@ -94,7 +106,7 @@ public class DataMatrix extends Data2D {
         }
         double sum = 0d;
         for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = tableRow(r);
+            List<String> row = tableRowWithoutNumber(r);
             for (int c = 0; c < colsNumber; c++) {
                 sum += toDouble(row.get(c));
             }
@@ -104,7 +116,7 @@ public class DataMatrix extends Data2D {
         }
         List<List<String>> rows = new ArrayList<>();
         for (int r = 0; r < rowsNumber; r++) {
-            List<String> tableRow = tableRow(r);
+            List<String> tableRow = tableRowWithoutNumber(r);
             List<String> row = new ArrayList<>();
             row.add("" + (r + 1));
             for (int c = 0; c < colsNumber; c++) {
@@ -207,14 +219,6 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public void checkAttributes() {
-        if (dataName == null || dataName.isBlank()) {
-            dataName = rowsNumber + "x" + colsNumber;
-        }
-        hasHeader = false;
-    }
-
-    @Override
     public Data2DDefinition queryDefinition(Connection conn) {
         return tableData2DDefinition.queryID(conn, d2did);
     }
@@ -226,7 +230,7 @@ public class DataMatrix extends Data2D {
 
     @Override
     public List<String> readColumns() {
-        checkAttributes();
+        checkForLoad();
         if (matrix != null) {
             colsNumber = matrix != null ? matrix[0].length : 0;
         }
@@ -297,7 +301,7 @@ public class DataMatrix extends Data2D {
             conn.commit();
             conn.setAutoCommit(false);
             for (int r = 0; r < targetData.tableRowsNumber(); r++) {
-                List<String> row = targetData.tableRow(r);
+                List<String> row = targetData.tableRowWithoutNumber(r);
                 for (int c = 0; c < row.size(); c++) {
                     double d = toDouble(row.get(c));
                     if (d == 0 || d == AppValues.InvalidDouble) {
@@ -317,7 +321,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices, boolean rowNumber) {
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
         return false;
     }
 

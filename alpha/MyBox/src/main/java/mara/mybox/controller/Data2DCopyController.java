@@ -37,9 +37,9 @@ public class Data2DCopyController extends BaseController {
     @FXML
     protected ComboBox<String> rowSelector;
     @FXML
-    protected HBox rowBox;
+    protected HBox rowBox, namesBox;
     @FXML
-    protected CheckBox nameCheck;
+    protected CheckBox rowNumberCheck, colNameCheck;
 
     @Override
     public void setStageStatus() {
@@ -65,21 +65,28 @@ public class Data2DCopyController extends BaseController {
                 frontRadio.fire();
             }
             rowBox.setVisible(belowRadio.isSelected() || aboveRadio.isSelected());
-            nameCheck.setVisible(scRadio.isSelected() || mcRadio.isSelected());
+            namesBox.setVisible(scRadio.isSelected() || mcRadio.isSelected());
             locationGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     UserConfig.setString(baseName + "CopyRowsLocation", ((RadioButton) newValue).getText());
                     rowBox.setVisible(belowRadio.isSelected() || aboveRadio.isSelected());
-                    nameCheck.setVisible(scRadio.isSelected() || mcRadio.isSelected());
+                    namesBox.setVisible(scRadio.isSelected() || mcRadio.isSelected());
                 }
             });
 
-            nameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyWithNames", true));
-            nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
+            rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "CopyWithNames", nameCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
+                }
+            });
+            colNameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyColNames", true));
+            colNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "CopyColNames", colNameCheck.isSelected());
                 }
             });
 
@@ -123,11 +130,20 @@ public class Data2DCopyController extends BaseController {
                     popError(message("NoData"));
                     return;
                 }
+                if (rowNumberCheck.isSelected()) {
+                    for (int i = 0; i < data.size(); i++) {
+                        List<String> row = data.get(i);
+                        row.add(0, message("Row") + (i + 1));
+                    }
+                }
                 List<String> names;
-                if (nameCheck.isSelected()) {
-                    names = null;
-                } else {
+                if (colNameCheck.isSelected()) {
                     names = selectController.selectedColumnsNames();
+                    if (rowNumberCheck.isSelected()) {
+                        names.add(0, message("RowNumber"));
+                    }
+                } else {
+                    names = null;
                 }
                 if (scRadio.isSelected()) {
                     tableController.copyToSystemClipboard(names, data);
