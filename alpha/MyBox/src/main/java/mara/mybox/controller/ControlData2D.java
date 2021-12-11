@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
@@ -108,6 +106,8 @@ public class ControlData2D extends BaseController {
             attributesController.setParameters(this);
             columnsController.setParameters(this);
 
+            checkStatus();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -166,7 +166,7 @@ public class ControlData2D extends BaseController {
                             }
                             data2D.setColumns(columns);
                             validateTable = Data2DColumn.validate(columns);
-                            if (!data2D.isNewData()) {
+                            if (!data2D.isTmpData()) {
                                 if (validateTable == null || validateTable.isEmpty()) {
                                     tableData2DColumn.save(d2did, columns);
                                 }
@@ -300,6 +300,25 @@ public class ControlData2D extends BaseController {
                 || columnsController.isChanged();
     }
 
+    public void notifyStatus() {
+        statusNotify.set(!statusNotify.get());
+    }
+
+    public void notifyLoaded() {
+        if (backupController != null) {
+            if (data2D.isTmpFile()) {
+                backupController.loadBackups(null);
+            } else {
+                backupController.loadBackups(data2D.getFile());
+            }
+        }
+        loadedNotify.set(!loadedNotify.get());
+    }
+
+    public void notifySaved() {
+        savedNotify.set(!savedNotify.get());
+    }
+
     public synchronized void checkStatus() {
         String title = message("Table");
         if (data2D.isTableChanged()) {
@@ -337,26 +356,10 @@ public class ControlData2D extends BaseController {
         }
         columnsTab.setText(title);
 
+        recoverButton.setDisable(data2D.isTmpData());
+        saveButton.setDisable(!data2D.isValid());
+
         notifyStatus();
-    }
-
-    public void notifyStatus() {
-        statusNotify.set(!statusNotify.get());
-    }
-
-    public void notifyLoaded() {
-        if (backupController != null) {
-            if (data2D.isTmpFile()) {
-                backupController.loadBackups(null);
-            } else {
-                backupController.loadBackups(data2D.getFile());
-            }
-        }
-        loadedNotify.set(!loadedNotify.get());
-    }
-
-    public void notifySaved() {
-        savedNotify.set(!savedNotify.get());
     }
 
     public synchronized void resetStatus() {
@@ -445,105 +448,65 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void save() {
-        if (!isChanged() && !data2D.isNewData()) {
+    public synchronized void save() {
+        if (task != null && !task.isQuit()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
+        if (checkBeforeSave() < 0) {
+            return;
+        }
+        Data2D targetData = data2D.cloneAll();
+        if (targetData.isTmpFile() && !targetData.isMatrix()) {
+            File file = null;
+            if (targetData.isDataFile()) {
+                file = chooseSaveFile();
+            } else if (targetData.isClipboard()) {
+                file = DataClipboard.newFile();
+            }
+            if (file == null) {
                 return;
             }
-            if (checkBeforeSave() < 0) {
-                return;
-            }
-            Data2D targetData = data2D.cloneAll();
-            if (targetData.isTmpFile() && !targetData.isMatrix()) {
-                File file = null;
-                if (targetData.isDataFile()) {
-                    file = chooseSaveFile();
-                } else if (targetData.isClipboard()) {
-                    file = DataClipboard.newFile();
-                }
-                if (file == null) {
-                    return;
-                }
-                targetData.setFile(file);
-                targetData.setD2did(-1);
-                targetData.setCharset(Charset.forName("UTF-8"));
-                targetData.setDelimiter(",");
-                targetData.setHasHeader(true);
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    if (backupController != null && backupController.isBack() && !data2D.isTmpFile()) {
-                        backupController.addBackup(data2D.getFile());
-                    }
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        data2D.setTask(task);
-                        data2D.savePageData(targetData);
-                        data2D.cloneAll(targetData);
-                        data2D.saveDefinition(conn);
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    if (data2D.getFile() != null) {
-                        recordFileWritten(data2D.getFile());
-                    }
-                    afterSaved();
-                }
-
-                @Override
-                protected void finalAction() {
-                    data2D.setTask(null);
-                    task = null;
-                }
-            };
-            start(task);
+            targetData.setFile(file);
         }
-    }
+        task = new SingletonTask<Void>(this) {
 
-    public void afterSaved() {
-        try {
-            data2D.setEndRowOfCurrentPage(data2D.getStartRowOfCurrentPage() + tableController.tableData.size());
-
-            tableController.isSettingValues = true;
-            long offset = tableController.startRowOfCurrentPage + 1;
-            for (int i = 0; i < tableController.tableData.size(); i++) {
-                List<String> row = tableController.tableData.get(i);
-                row.set(0, (offset + i) + "");
+            @Override
+            protected boolean handle() {
+                if (backupController != null && backupController.isBack() && !data2D.isTmpFile()) {
+                    backupController.addBackup(data2D.getFile());
+                }
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    data2D.setTask(task);
+                    data2D.savePageData(targetData);
+                    data2D.cloneAll(targetData);
+                    data2D.setTask(task);
+                    data2D.saveDefinition(conn);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
-            for (int i = 0; i < data2D.columnsNumber(); i++) {
-                Data2DColumn dataColumn = data2D.getColumns().get(i);
-                TableColumn tableColumn = tableController.tableView.getColumns().get(i + 2);
-                tableColumn.setUserData(dataColumn.getIndex());
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Saved"));
+                if (data2D.getFile() != null) {
+                    recordFileWritten(data2D.getFile());
+                }
+                resetStatus();
+                notifySaved();
+                readDefinition();
             }
-            tableController.tableView.refresh();
-            tableController.isSettingValues = false;
-            tableController.tableChanged(false);
 
-            attributesController.loadData();
-            columnsController.loadData();
+            @Override
+            protected void finalAction() {
+                data2D.setTask(null);
+                task = null;
 
-            resetStatus();
-            checkStatus();
-            notifySaved();
-            notifyLoaded();
-
-            tableController.dataSizeLoaded = data2D.isMatrix();
-            tableController.loadDataSize();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+            }
+        };
+        start(task);
     }
 
     public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
@@ -664,6 +627,7 @@ public class ControlData2D extends BaseController {
                                 rows.add(row);
                             }
                         }
+                        data2D.checkForLoad();
                         return true;
                     } catch (Exception e) {
                         error = e.toString();

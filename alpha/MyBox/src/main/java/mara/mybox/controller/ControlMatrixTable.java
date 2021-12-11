@@ -143,7 +143,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         super.updateStatus();
         if (getMyStage() != null) {
             String title = baseTitle;
-            if (!dataMatrix.isNewData()) {
+            if (!dataMatrix.isTmpData()) {
                 title += " " + dataMatrix.getDataName();
             }
             if (dataController.isChanged()) {
@@ -151,7 +151,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             }
             myStage.setTitle(title);
         }
-        if (!dataMatrix.isNewData()) {
+        if (!dataMatrix.isTmpData()) {
             matrixLabel.setText(dataMatrix.getDataName());
         } else {
             matrixLabel.setText("");

@@ -8,13 +8,25 @@ License:    Apache License Version 2.0
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSelect">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSelect">
     <children>
+      <HBox fx:id="rowGroupBox" alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" selected="true" text="%AllData">
+               <toggleGroup>
+                  <ToggleGroup fx:id="rowGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rowTableRadio" mnemonicParsing="false" text="%Select" toggleGroup="$rowGroup" />
+         </children>
+      </HBox>
         <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="40.0" VBox.vgrow="ALWAYS">
             <children>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">

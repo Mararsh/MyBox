@@ -1053,7 +1053,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    protected boolean targetFileGenerated(File target) {
+    protected boolean targetFileGenerated(File target, int type) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
@@ -1064,7 +1064,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
-        recordFileWritten(target);
+        recordFileWritten(target, type, type);
         return true;
     }
 
@@ -1083,6 +1083,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
+        recordFileWritten(tFiles.get(0));
     }
 
     public void updateInterface(final String newStatus) {

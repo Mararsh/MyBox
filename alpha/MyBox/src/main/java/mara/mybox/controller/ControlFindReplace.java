@@ -22,7 +22,6 @@ import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.data.LongRange;
-import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
@@ -39,6 +38,10 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlFindReplace extends BaseController {
+
+    // share all interfaces with find/replace strings
+    public static String FindStringKey = "MyBoxFindString";
+    public static String ReplaceStringKey = "MyBoxReplaceString";
 
     protected BaseFileEditorController editerController;
     protected TextInputControl textInput;
@@ -80,7 +83,7 @@ public class ControlFindReplace extends BaseController {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
-        baseName = editerController.baseName;
+//        baseName = editerController.baseName;
         setControls();
     }
 
@@ -88,7 +91,7 @@ public class ControlFindReplace extends BaseController {
         try {
             this.parentController = parent;
             this.textInput = textInput;
-            this.baseName = parent.baseName;
+//            this.baseName = parent.baseName;
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -98,7 +101,7 @@ public class ControlFindReplace extends BaseController {
     public void setParent(BaseController parent) {
         try {
             this.parentController = parent;
-            this.baseName = parent.baseName;
+//            this.baseName = parent.baseName;
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -244,6 +247,9 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateFindText(String string) {
+        if (editerController == null) {
+            return true;
+        }
         if (editerController.sourceInformation != null && editerController.sourceInformation.getFile() != null
                 && string.length() >= editerController.sourceInformation.getFile().length()) {
             popError(message("FindStringLimitation"));
@@ -254,7 +260,7 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateFindBytes(String string) {
-        if (isSettingValues || regexCheck.isSelected()) {
+        if (isSettingValues || regexCheck.isSelected() || editerController == null) {
             findArea.setStyle(null);
             return true;
         }
@@ -296,7 +302,6 @@ public class ControlFindReplace extends BaseController {
         if (editerController == null) {
             return true;
         }
-        editerController.sourceInformation = editerController.sourceInformation;
         if (editerController.editType == Edit_Type.Bytes) {
             return validateReplaceBytes(string);
         } else {
@@ -371,61 +376,66 @@ public class ControlFindReplace extends BaseController {
             textInput.requestFocus();
         }
         if (editerController != null) {
-            editerController.sourceInformation = editerController.sourceInformation;
             editorFindReplace(operation);
         } else {
-            editerController.sourceInformation = new TextEditInformation();
             inputFindReplace(operation);
         }
     }
 
     protected boolean makeParamters(Operation operation) {
-        if (null == operation || textInput == null || editerController.sourceInformation == null) {
+        if (null == operation || textInput == null) {
             popError(message("InvalidParameters"));
             return false;
         }
 
-        boolean multiplePages = editerController.sourceInformation != null && editerController.sourceInformation.getPagesNumber() > 1;
-        if (editerController != null && multiplePages
+        boolean multiplePages = editerController != null
+                && editerController.sourceInformation != null
+                && editerController.sourceInformation.getPagesNumber() > 1;
+
+        if (multiplePages
                 && (operation == Operation.Count || operation == Operation.ReplaceAll)
                 && !editerController.checkBeforeNextAction()) {
             return false;
         }
+
         String findString = findArea.getText();
         if (findString == null || findString.isEmpty()) {
             popError(message("EmptyValue"));
             return false;
         }
-        TableStringValues.add(baseName + "FindString", findString);
+        saveFindString(findString);
         String pageText = textInput.getText();
         if (pageText == null || pageText.isEmpty()) {
             popError(message("EmptyValue"));
             return false;
         }
-        String replaceString = replaceArea == null ? null : replaceArea.getText();
-        if (replaceString != null && replaceString.equals(findString)) {
+        String replaceString = replaceArea == null ? "" : replaceArea.getText();
+        if (replaceString == null) {
+            replaceString = "";
+        }
+        if (replaceString.equals(findString)) {
             if (operation == Operation.ReplaceAll || operation == Operation.ReplaceFirst) {
                 popError(message("Same"));
                 return false;
             }
         }
-        if (replaceString != null && !replaceString.isEmpty()) {
-            TableStringValues.add(baseName + "ReplaceString", replaceString);
-        }
+        saveReplaceString(replaceString);
         if (operation == Operation.ReplaceAll && multiplePages) {
             if (!PopTools.askSure(getMyStage().getTitle(), message("SureReplaceAll"))) {
                 return false;
             }
         }
         String selectedText = textInput.getSelectedText();
-        if (editerController.sourceInformation.getEditType() == Edit_Type.Bytes) {
+        if (editerController != null && editerController.sourceInformation.getEditType() == Edit_Type.Bytes) {
             pageText = pageText.replaceAll("\n", " ");
             findString = findString.replaceAll("\n", " ");
             replaceString = replaceString.replaceAll("\n", " ");
             selectedText = selectedText.replaceAll("\n", " ");
         }
-        int anchor = textInput.getAnchor(), unit = editerController.sourceInformation.getObjectUnit();
-        long pageStart = (int) editerController.sourceInformation.getCurrentPageObjectStart() * unit;
+        int anchor = textInput.getAnchor();
+        int unit = editerController != null ? editerController.sourceInformation.getObjectUnit() : 1;
+        long pageStart = editerController != null
+                ? (int) editerController.sourceInformation.getCurrentPageObjectStart() * unit : 0;
         if (StringTools.match(selectedText, findString, regexCheck.isSelected(), dotallCheck.isSelected(),
                 multilineCheck.isSelected(), caseInsensitiveCheck.isSelected())) {
             IndexRange selectIndex = textInput.getSelection();
@@ -437,8 +447,8 @@ public class ControlFindReplace extends BaseController {
                     anchor = selectIndex.getEnd() - unit;
                     break;
                 case ReplaceFirst:
-                    textInput.replaceText(selectIndex, findReplace.getReplaceString());
-                    textInput.selectRange(selectIndex.getStart() + findReplace.getReplaceString().length(), selectIndex.getStart());
+                    textInput.replaceText(selectIndex, replaceString);
+                    textInput.selectRange(selectIndex.getStart() + replaceString.length(), selectIndex.getStart());
                     String info = message("Replaced") + ": " + (pageStart + selectIndex.getStart() + 1) + "-" + (pageStart + selectIndex.getEnd());
                     findLabel.setText(info);
                     popInformation(info, textInput);
@@ -446,11 +456,7 @@ public class ControlFindReplace extends BaseController {
             }
         }
         findReplace = new FindReplaceFile()
-                .setFileInfo(editerController.sourceInformation)
                 .setPosition(anchor + pageStart);
-        if (editerController != null) {
-            findReplace.setBackupController(editerController.backupController);
-        }
         findReplace.setOperation(operation)
                 .setInputString(pageText)
                 .setFindString(findString)
@@ -462,7 +468,12 @@ public class ControlFindReplace extends BaseController {
                 .setMultiline(multilineCheck.isSelected())
                 .setDotAll(dotallCheck.isSelected())
                 .setWrap(wrapCheck.isSelected());
-        editerController.sourceInformation.setFindReplace(findReplace);
+
+        if (editerController != null) {
+            findReplace.setFileInfo(editerController.sourceInformation)
+                    .setBackupController(editerController.backupController);
+            editerController.sourceInformation.setFindReplace(findReplace);
+        }
         return true;
     }
 
@@ -649,11 +660,7 @@ public class ControlFindReplace extends BaseController {
                 }
 
             };
-            if (editerController != null) {
-                editerController.start(task);
-            } else {
-                start(task, false);
-            }
+            start(task, false);
         }
     }
 
@@ -664,12 +671,29 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     public void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findArea, mouseEvent, baseName + "FindString");
+        PopTools.popStringValues(this, findArea, mouseEvent, FindStringKey);
     }
 
     @FXML
     public void popReplaceHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, replaceArea, mouseEvent, baseName + "ReplaceString");
+        PopTools.popStringValues(this, replaceArea, mouseEvent, ReplaceStringKey);
+    }
+
+    /*
+        get/set
+     */
+    public static void saveFindString(String findString) {
+        if (findString == null || findString.isEmpty()) {
+            return;
+        }
+        TableStringValues.add(FindStringKey, findString);
+    }
+
+    public static void saveReplaceString(String replaceString) {
+        if (replaceString == null || replaceString.isEmpty()) {
+            return;
+        }
+        TableStringValues.add(ReplaceStringKey, replaceString);
     }
 
 }

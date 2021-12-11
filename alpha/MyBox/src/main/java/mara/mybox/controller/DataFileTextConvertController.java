@@ -25,7 +25,6 @@ public class DataFileTextConvertController extends BaseDataConvertController {
     protected String sourceDelimiterName;
     protected Charset sourceCharset;
     protected boolean sourceWithName;
-    protected boolean skip;
 
     @FXML
     protected ControlTextOptions readOptionsController;
@@ -44,7 +43,6 @@ public class DataFileTextConvertController extends BaseDataConvertController {
         try {
             super.initOptionsSection();
             readOptionsController.setControls(baseName + "Read", true);
-            convertController.setControls(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -60,7 +58,6 @@ public class DataFileTextConvertController extends BaseDataConvertController {
         sourceCharset = readOptionsController.charset;
         sourceDelimiterName = readOptionsController.delimiterName;
         sourceWithName = readOptionsController.withNamesCheck.isSelected();
-        skip = targetPathController.isSkip();
         return super.makeMoreParameters();
     }
 
@@ -82,16 +79,15 @@ public class DataFileTextConvertController extends BaseDataConvertController {
                     continue;
                 }
                 if (names == null) {
+                    names = new ArrayList<>();
                     if (sourceWithName) {
-                        names = rowData;
+                        names.addAll(rowData);
                     } else {
-                        names = new ArrayList<>();
                         for (int i = 1; i <= rowData.size(); i++) {
-                            names.add(message("col") + i);
+                            names.add(message("Column") + i);
                         }
                     }
-                    convertController.names = names;
-                    convertController.setParameters(filePrefix(srcFile), skip);
+                    convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
                     if (sourceWithName) {
                         continue;
                     }

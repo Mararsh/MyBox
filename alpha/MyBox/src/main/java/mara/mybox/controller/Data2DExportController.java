@@ -2,10 +2,10 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
@@ -14,6 +14,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -21,59 +22,61 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DExportController extends BaseTaskController {
-    
+
     protected ControlData2DEditTable tableController;
     protected String filePrefix;
     protected List<String> selectedColumnsNames;
     protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
-    
+
     @FXML
     protected ControlData2DSelect selectController;
-    @FXML
-    protected ToggleGroup rowGroup;
-    @FXML
-    protected RadioButton rowAllRadio, rowTableRadio;
     @FXML
     protected VBox dataVBox, formatVBox, targetVBox;
     @FXML
     protected ControlDataConvert convertController;
     @FXML
     protected CheckBox openCheck;
-    
+
     public Data2DExportController() {
         baseTitle = Languages.message("Export");
     }
-    
+
     @Override
     public void setStageStatus() {
         setAsPop(baseName);
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             convertController.setControls(this);
-            
-            selectController.rowsListController.thisPane.disableProperty().bind(rowAllRadio.selectedProperty());
-            
+
+            openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenGenerated", false));
+            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "OpenGenerated", openCheck.isSelected());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            selectController.setParameters(tableController);
+            selectController.setParameters(tableController, true);
             getMyStage().setTitle(tableController.getBaseTitle());
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public boolean checkOptions() {
         try {
@@ -86,15 +89,15 @@ public class Data2DExportController extends BaseTaskController {
                 popError(message("NoData"));
                 return false;
             }
-            
+
             selectedColumnsIndices = selectController.selectedColumnsIndices();
             if (selectedColumnsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
             }
             selectedColumnsNames = selectController.selectedColumnsNames();
-            
-            if (rowTableRadio.isSelected()) {
+
+            if (!selectController.isAllData()) {
                 selectedRowsIndices = selectController.selectedRowsIndices();
                 if (selectedRowsIndices.isEmpty()) {
                     popError(message("SelectToHandle"));
@@ -103,7 +106,7 @@ public class Data2DExportController extends BaseTaskController {
             } else {
                 selectedRowsIndices = null;
             }
-            
+
             filePrefix = tableController.data2D.getDataName();
             if (filePrefix == null || filePrefix.isBlank()) {
                 filePrefix = DateTools.nowFileString();
@@ -114,25 +117,25 @@ public class Data2DExportController extends BaseTaskController {
             return false;
         }
     }
-    
+
     @Override
     protected void beforeTask() {
         try {
             dataVBox.setDisable(true);
             formatVBox.setDisable(true);
             targetVBox.setDisable(true);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     protected boolean doTask() {
         try {
             convertController.setParameters(targetPath, selectedColumnsNames, filePrefix, targetPathController.isSkip());
-            
-            if (rowTableRadio.isSelected()) {
+
+            if (!selectController.isAllData()) {
                 for (Integer row : selectedRowsIndices) {
                     List<String> dataRow = tableController.tableData.get(row);
                     List<String> exportRow = new ArrayList<>();
@@ -141,7 +144,7 @@ public class Data2DExportController extends BaseTaskController {
                     }
                     convertController.writeRow(exportRow);
                 }
-                
+
             } else if (!tableController.data2D.isMutiplePages()) {
                 for (int row = 0; row < tableController.tableData.size(); row++) {
                     List<String> dataRow = tableController.tableData.get(row);
@@ -151,13 +154,13 @@ public class Data2DExportController extends BaseTaskController {
                     }
                     convertController.writeRow(exportRow);
                 }
-                
+
             } else {
                 tableController.data2D.setTask(task);
                 tableController.data2D.export(convertController, selectedColumnsIndices);
                 tableController.data2D.setTask(null);
             }
-            
+
             convertController.closeWriters();
             return true;
         } catch (Exception e) {
@@ -168,7 +171,7 @@ public class Data2DExportController extends BaseTaskController {
             return false;
         }
     }
-    
+
     @Override
     protected void afterSuccess() {
         try {
@@ -186,7 +189,7 @@ public class Data2DExportController extends BaseTaskController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     protected void afterTask() {
         try {
@@ -197,7 +200,7 @@ public class Data2DExportController extends BaseTaskController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void cancelTask() {
         if (task != null) {
@@ -206,7 +209,7 @@ public class Data2DExportController extends BaseTaskController {
         }
         convertController.closeWriters();
     }
-    
+
     @Override
     public void cancelAction() {
         cancelTask();
@@ -228,5 +231,5 @@ public class Data2DExportController extends BaseTaskController {
             return null;
         }
     }
-    
+
 }

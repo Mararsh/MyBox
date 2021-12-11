@@ -13,6 +13,24 @@ public class StyleCheckBox {
         if (id == null || id.isEmpty()) {
             return null;
         }
+        if (id.startsWith("csv")) {
+            return new StyleData(id, "", "CSV", "", "iconCSV.png");
+        }
+        if (id.startsWith("excel")) {
+            return new StyleData(id, "", "Excel", "", "iconExcel.png");
+        }
+        if (id.startsWith("texts")) {
+            return new StyleData(id, "", message("Texts"), "", "iconTxt.png");
+        }
+        if (id.startsWith("matrix")) {
+            return new StyleData(id, "", message("Matrix"), "", "iconSplit.png");
+        }
+        if (id.startsWith("systemClipboard")) {
+            return new StyleData(id, "", message("SystemClipboard"), "", "iconSystemClipboard.png");
+        }
+        if (id.startsWith("myBoxClipboard")) {
+            return new StyleData(id, "", message("MyBoxClipboard"), "", "iconClipboard.png");
+        }
         if (id.startsWith("coordinate")) {
             return new StyleData(id, "", message("Coordinate"), "", "iconLocation.png");
         }

@@ -1,9 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.Date;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
 
@@ -13,6 +13,8 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public abstract class BaseDataConvertController extends BaseBatchFileController {
+
+    protected boolean skip;
 
     @FXML
     protected VBox convertVBox;
@@ -24,10 +26,22 @@ public abstract class BaseDataConvertController extends BaseBatchFileController 
     }
 
     @Override
+    public void initOptionsSection() {
+        try {
+            super.initOptionsSection();
+            convertController.setControls(this);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public boolean makeMoreParameters() {
         if (!convertController.initParameters()) {
             return false;
         }
+        skip = targetPathController.isSkip();
         return super.makeMoreParameters();
     }
 
@@ -35,7 +49,7 @@ public abstract class BaseDataConvertController extends BaseBatchFileController 
         if (srcFile == null) {
             return null;
         }
-        return FileNameTools.getFilePrefix(srcFile.getName()) + "_" + new Date().getTime();
+        return FileNameTools.getFilePrefix(srcFile.getName());
     }
 
     @Override

@@ -300,8 +300,8 @@ public class DataMatrix extends Data2D {
             }
             conn.commit();
             conn.setAutoCommit(false);
-            for (int r = 0; r < targetData.tableRowsNumber(); r++) {
-                List<String> row = targetData.tableRowWithoutNumber(r);
+            for (int r = 0; r < tableRowsNumber(); r++) {
+                List<String> row = tableRowWithoutNumber(r);
                 for (int c = 0; c < row.size(); c++) {
                     double d = toDouble(row.get(c));
                     if (d == 0 || d == AppValues.InvalidDouble) {

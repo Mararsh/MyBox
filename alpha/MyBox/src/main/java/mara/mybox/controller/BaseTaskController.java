@@ -14,7 +14,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -54,7 +54,7 @@ public class BaseTaskController extends BaseController {
     @Override
     public void startAction() {
         if (startButton.getUserData() != null) {
-            StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
+            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
             cancelTask();
@@ -68,7 +68,7 @@ public class BaseTaskController extends BaseController {
                 return;
             }
             initLogs();
-            StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStart.png");
+            StyleTools.setNameIcon(startButton, message("Stop"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData("started");
             if (tabPane != null && logsTab != null) {
@@ -99,16 +99,16 @@ public class BaseTaskController extends BaseController {
 
             @Override
             protected void whenCanceled() {
-                updateLogs(Languages.message("Cancel"));
+                updateLogs(message("Cancel"));
             }
 
             @Override
             protected void finalAction() {
                 task = null;
-                StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
+                StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
                 startButton.applyCss();
                 startButton.setUserData(null);
-                updateLogs(Languages.message("Completed") + " " + Languages.message("Cost")
+                updateLogs(message("Completed") + " " + message("Cost")
                         + " " + DateTools.datetimeMsDuration(new Date(), startTime));
                 afterTask();
             }
@@ -183,7 +183,7 @@ public class BaseTaskController extends BaseController {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
-        updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), target.getAbsolutePath()));
+        updateLogs(MessageFormat.format(message("FilesGenerated"), target.getAbsolutePath()));
         recordFileWritten(target, type, type);
         return true;
     }

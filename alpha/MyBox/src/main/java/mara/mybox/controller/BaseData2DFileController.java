@@ -100,6 +100,8 @@ public abstract class BaseData2DFileController extends BaseController {
                 }
             });
 
+            checkStatus();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

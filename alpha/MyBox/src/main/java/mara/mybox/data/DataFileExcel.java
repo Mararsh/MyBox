@@ -369,13 +369,10 @@ public class DataFileExcel extends DataFile {
 
         } else {
             try ( Workbook targetBook = new XSSFWorkbook()) {
-                String sheetNameSaved;
-                if (targetSheetName != null) {
-                    sheetNameSaved = targetSheetName;
-                } else {
-                    sheetNameSaved = message("Sheet") + "1";
+                if (targetSheetName == null) {
+                    targetSheetName = message("Sheet") + "1";
                 }
-                Sheet targetSheet = targetBook.createSheet(sheetNameSaved);
+                Sheet targetSheet = targetBook.createSheet(targetSheetName);
                 int targetRowIndex = 0;
                 if (withName) {
                     targetRowIndex = writeHeader(targetSheet, targetRowIndex);

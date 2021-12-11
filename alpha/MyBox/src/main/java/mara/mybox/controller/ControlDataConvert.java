@@ -355,6 +355,7 @@ public class ControlDataConvert extends BaseController {
                     csvPrinter = new CSVPrinter(new FileWriter(csvFile, csvWriteController.charset), csvFormat);
                     if (csvWriteController.withNamesCheck.isSelected()) {
                         csvPrinter.printRecord(names);
+                        MyBoxLog.console(names);
                     }
                 } else if (skip) {
                     updateLogs(message("Skipped"));

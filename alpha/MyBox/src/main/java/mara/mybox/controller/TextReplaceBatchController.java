@@ -9,7 +9,6 @@ import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
@@ -63,12 +62,13 @@ public class TextReplaceBatchController extends BaseBatchFileController {
                 popError(message("EmptyValue"));
                 return false;
             }
-            TableStringValues.add(baseName + "FindString", findString);
+            ControlFindReplace.saveFindString(findString);
 
             String replaceString = optionsController.replaceArea.getText();
-            if (replaceString != null && !replaceString.isEmpty()) {
-                TableStringValues.add(baseName + "ReplaceString", replaceString);
+            if (replaceString == null) {
+                replaceString = "";
             }
+            ControlFindReplace.saveReplaceString(replaceString);
 
             replace = new FindReplaceFile().setPosition(0);
             replace.setOperation(FindReplaceString.Operation.ReplaceAll)

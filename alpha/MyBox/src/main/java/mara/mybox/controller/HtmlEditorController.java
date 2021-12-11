@@ -1199,6 +1199,7 @@ public class HtmlEditorController extends WebAddressController {
     public List<MenuItem> makePanesMenu(MouseEvent mouseEvent) {
         List<MenuItem> items = new ArrayList<>();
         try {
+
             CheckMenuItem viewMenu = new CheckMenuItem(message("View"));
             viewMenu.setSelected(tabPane.getTabs().contains(viewTab));
             viewMenu.setOnAction(new EventHandler<ActionEvent>() {

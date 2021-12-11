@@ -232,7 +232,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     @Override
     protected void setPagination() {
         try {
-            if (data2D == null || data2D.isMatrix() || data2D.isNewData() || !dataSizeLoaded) {
+            if (data2D == null || data2D.isMatrix() || data2D.isTmpData() || !dataSizeLoaded) {
                 paginationPane.setVisible(false);
                 return;
             }
@@ -547,7 +547,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                 @Override
                 protected void whenSucceeded() {
                     DataClipboardController controller = DataClipboardController.oneOpen();
-                    controller.clipboardController.dataController.loadMatrix(clip);
+                    controller.load(clip);
                     popDone();
                 }
 

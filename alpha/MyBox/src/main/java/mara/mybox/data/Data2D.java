@@ -285,7 +285,7 @@ public abstract class Data2D extends Data2DDefinition {
         database
      */
     public long readDataDefinition() {
-        if (isNewData()) {
+        if (isTmpData()) {
             checkForLoad();
             return -1;
         }
@@ -322,7 +322,7 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void checkForSave() {
         if (dataName == null || dataName.isBlank()) {
-            if (file != null && !isNewData()) {
+            if (file != null && !isTmpData()) {
                 dataName = file.getName();
             } else {
                 dataName = DateTools.nowString();
@@ -332,12 +332,13 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void saveDefinition(Connection conn) {
         try {
-            checkForLoad();
             rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
             colsNumber = tableColsNumber();
             if (colsNumber <= 0) {
                 hasHeader = false;
             }
+            checkForSave();
+            checkForLoad();
             Data2DDefinition def;
             if (d2did < 0) {
                 def = queryDefinition(conn);
@@ -345,7 +346,6 @@ public abstract class Data2D extends Data2DDefinition {
                     d2did = def.getD2did();
                 }
             }
-            checkForSave();
             if (d2did >= 0) {
                 def = tableData2DDefinition.updateData(conn, this);
             } else {
@@ -366,7 +366,7 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    public boolean isNewData() {
+    public boolean isTmpData() {
         if (isDataFile()) {
             return isTmpFile();
         } else {

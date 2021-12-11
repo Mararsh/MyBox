@@ -10,11 +10,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -37,25 +34,11 @@ License:    Apache License Version 2.0
             </HBox>
             </children>
         </VBox>
-        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-            <children>
-                <Label text="%Target" />
-                <FlowPane alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="2.0">
-                    <children>
-                        <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true" text="CSV">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="targetGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="excelRadio" mnemonicParsing="false" text="Excel" toggleGroup="$targetGroup" />
-                        <RadioButton fx:id="textsRadio" mnemonicParsing="false" text="%Texts" toggleGroup="$targetGroup" />
-                        <RadioButton fx:id="matrixRadio" mnemonicParsing="false" text="%Matrix" toggleGroup="$targetGroup" />
-                        <RadioButton fx:id="scRadio" mnemonicParsing="false" text="%SystemClipboard" toggleGroup="$targetGroup" />
-                        <RadioButton fx:id="mcRadio" mnemonicParsing="false" text="%MyBoxClipboard" toggleGroup="$targetGroup" />
-                    </children>
-                </FlowPane>
-            </children>
-        </VBox>
+      <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+         </children>
+      </VBox>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

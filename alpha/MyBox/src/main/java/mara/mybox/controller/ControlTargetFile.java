@@ -11,10 +11,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -49,56 +47,78 @@ public class ControlTargetFile extends ControlFileSelecter {
         notify = new SimpleBooleanProperty(false);
     }
 
-    @Override
-    public void initControls() {
-        super.initControls();
-        targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-                checkTargetExistType();
+    public void initTargetExistType() {
+        try {
+            try {
+                targetExistType = TargetExistType.valueOf(UserConfig.getString(baseName + "TargetExistType", "Rename"));
+            } catch (Exception e) {
             }
-        });
-        isSettingValues = true;
-        NodeTools.setRadioSelected(targetExistGroup, UserConfig.getString(baseName + "TargetExistType", message("Replace")));
-        if (targetAppendInput != null) {
+            if (targetExistType == null) {
+                targetExistType = TargetExistType.Rename;
+            }
+            switch (targetExistType) {
+                case Replace:
+                    targetReplaceRadio.fire();
+                    break;
+                case Skip:
+                    targetSkipRadio.fire();
+                    break;
+                default:
+                    targetRenameRadio.fire();
+                    break;
+            }
+            targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+                    checkTargetExistType();
+                }
+            });
+
+            targetNameAppend = UserConfig.getString(baseName + "TargetExistAppend", "_m");
+            if (targetNameAppend == null || targetNameAppend.isEmpty()) {
+                targetNameAppend = "_m";
+            }
+            targetAppendInput.setText(targetNameAppend);
             targetAppendInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
                     checkTargetExistType();
                 }
             });
-            targetAppendInput.setText(UserConfig.getString(baseName + "TargetExistAppend", "_m"));
+
+            appendTimestampCheck.setSelected(UserConfig.getBoolean(baseName + "AppendTimestamp", false));
+            appendTimestampCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "AppendTimestamp", appendTimestampCheck.isSelected());
+                }
+            });
+
+            checkTargetExistType();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
-        isSettingValues = false;
-        checkTargetExistType();
     }
 
     public void checkTargetExistType() {
-        if (isSettingValues) {
-            return;
-        }
-        if (targetAppendInput != null) {
-            targetAppendInput.setStyle(null);
-        }
-
-        RadioButton selected = (RadioButton) targetExistGroup.getSelectedToggle();
-        if (selected.equals(targetReplaceRadio)) {
+        targetAppendInput.setStyle(null);
+        if (targetReplaceRadio.isSelected()) {
             targetExistType = TargetExistType.Replace;
 
-        } else if (selected.equals(targetRenameRadio)) {
+        } else if (targetRenameRadio.isSelected()) {
             targetExistType = TargetExistType.Rename;
-            if (targetAppendInput != null) {
-                if (targetAppendInput.getText() == null || targetAppendInput.getText().trim().isEmpty()) {
-                    targetAppendInput.setStyle(UserConfig.badStyle());
-                } else {
-                    UserConfig.setString(baseName + "TargetExistAppend", targetAppendInput.getText().trim());
-                }
+            String a = targetAppendInput.getText();
+            if (a == null || a.isEmpty()) {
+                targetAppendInput.setStyle(UserConfig.badStyle());
+            } else {
+                targetNameAppend = a;
+                UserConfig.setString(baseName + "TargetExistAppend", a);
             }
 
-        } else if (selected.equals(targetSkipRadio)) {
+        } else if (targetSkipRadio.isSelected()) {
             targetExistType = TargetExistType.Skip;
         }
-        UserConfig.setString(baseName + "TargetExistType", selected.getText());
+        UserConfig.setString(baseName + "TargetExistType", targetExistType.name());
     }
 
     @Override
@@ -113,6 +133,7 @@ public class ControlTargetFile extends ControlFileSelecter {
 //            v = FileNameTools.appendName(v, "_m");
         }
         fileInput.setText(v);
+        initTargetExistType();
         return this;
     }
 
@@ -130,9 +151,7 @@ public class ControlTargetFile extends ControlFileSelecter {
                 if (targetExistType == TargetExistType.Skip) {
                     target = null;
                 } else if (targetExistType == TargetExistType.Rename) {
-                    if (targetAppendInput != null) {
-                        targetNameAppend = targetAppendInput.getText().trim();
-                    }
+                    targetNameAppend = targetAppendInput.getText();
                     if (targetNameAppend == null || targetNameAppend.isEmpty()) {
                         targetNameAppend = "_m";
                     }

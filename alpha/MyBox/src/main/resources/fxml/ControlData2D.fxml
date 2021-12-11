@@ -19,11 +19,11 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2D">
     <children>
-        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
                 <Tab fx:id="editTab" text="%Edit">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                             <padding>
                                 <Insets top="2.0" />
                             </padding>
@@ -35,7 +35,7 @@ License:    Apache License Version 2.0
                 </Tab>
                 <Tab fx:id="viewTab" text="%View">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                             <children>
                                 <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DView.fxml" VBox.vgrow="ALWAYS" />
                             </children>
@@ -47,7 +47,7 @@ License:    Apache License Version 2.0
                 </Tab>
                 <Tab fx:id="attributesTab" text="%Attributes">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                             <children>
                                 <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DAttributes.fxml" VBox.vgrow="ALWAYS" />
                             </children>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                 </Tab>
                 <Tab fx:id="columnsTab" text="%Columns">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <children>
                                 <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DColumns.fxml" VBox.vgrow="ALWAYS" />
                             </children>

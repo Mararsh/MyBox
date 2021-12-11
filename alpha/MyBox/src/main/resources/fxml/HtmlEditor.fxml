@@ -108,24 +108,24 @@ License:    Apache License Version 2.0
                 </HBox>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <children>
-                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
+                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
                             <tabs>
                                 <Tab fx:id="viewTab" text="%View">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                                             <children>
                                                 <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                                     <children>
-                                          <Button fx:id="styleViewButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
-                                             <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconStyle.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="styleViewButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconStyle.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                         <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -165,7 +165,7 @@ License:    Apache License Version 2.0
                                 </Tab>
                                 <Tab fx:id="codesTab" text="%HtmlCodes">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                                             <children>
                                                 <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0" VBox.vgrow="NEVER">
                                                     <children>
@@ -236,20 +236,20 @@ License:    Apache License Version 2.0
                                 </Tab>
                                 <Tab fx:id="editorTab" text="%RichText">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                                             <children>
                                                 <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                                     <children>
-                                          <Button fx:id="styleEditorButton" mnemonicParsing="false" onMouseEntered="#popEditorStyle">
-                                             <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconStyle.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="styleEditorButton" mnemonicParsing="false" onMouseEntered="#popEditorStyle">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconStyle.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                         <Button fx:id="popButton2" mnemonicParsing="false" onAction="#popAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -281,15 +281,15 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <fx:include fx:id="editor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlEditor.fxml" VBox.vgrow="ALWAYS" />
                                             </children>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
+                                            <padding> 
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                            </padding>
                                         </VBox>
                                     </content>
                                 </Tab>
                                 <Tab fx:id="markdownTab" text="Markdown">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                             <children>
                                                 <HBox alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
                                                     <children>
@@ -360,7 +360,7 @@ License:    Apache License Version 2.0
                                 </Tab>
                                 <Tab fx:id="textsTab" text="%Texts">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                             <children>
                                                 <HBox alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
                                                     <children>
@@ -435,7 +435,7 @@ License:    Apache License Version 2.0
                                 </Tab>
                                 <Tab fx:id="backupTab" text="%Backup">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" nodeOrientation="RIGHT_TO_LEFT" VBox.vgrow="ALWAYS">
                                             <children>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                     <content>
@@ -451,15 +451,19 @@ License:    Apache License Version 2.0
                                 </Tab>
                                 <Tab closable="false">
                                     <graphic>
-                                        <Button fx:id="panesMenuButton" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconPanes.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
+                                        <HBox  nodeOrientation="LEFT_TO_RIGHT" >
+                                            <children> 
+                                                <Button fx:id="panesMenuButton" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconPanes.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
                                     </graphic>
                                 </Tab>                            
                             </tabs>

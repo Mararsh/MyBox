@@ -50,7 +50,7 @@ public class Data2DSetValuesController extends BaseController {
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            selectController.setParameters(tableController);
+            selectController.setParameters(tableController, false);
             getMyStage().setTitle(tableController.getBaseTitle());
 
             initValueRadios();
@@ -371,6 +371,12 @@ public class Data2DSetValuesController extends BaseController {
             popError(message(e.toString()));
             return false;
         }
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
     }
 
     /*
