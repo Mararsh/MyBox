@@ -30,7 +30,7 @@ public class TableStringValues extends DerbyBase {
         };
         Create_Table_Statement
                 = " CREATE TABLE String_Values ( "
-                + "  key_name  VARCHAR(1024) NOT NULL, "
+                + "  key_name  VARCHAR(32672) NOT NULL, "
                 + "  string_value VARCHAR(32672)  NOT NULL, "
                 + "  create_time TIMESTAMP NOT NULL, "
                 + "  PRIMARY KEY (key_name, string_value)"

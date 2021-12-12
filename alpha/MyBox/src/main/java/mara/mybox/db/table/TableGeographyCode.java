@@ -1,8 +1,6 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -11,16 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.CoordinateSystem;
-import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.stringValue;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -67,8 +63,8 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         addColumn(new ColumnDefinition("latitude", ColumnType.Double, true).setMaxValue((double) 90).setMinValue((double) -90));
         addColumn(new ColumnDefinition("altitude", ColumnType.Double));
         addColumn(new ColumnDefinition("precision", ColumnType.Double));
-        addColumn(new ColumnDefinition("chinese_name", ColumnType.String).setLength(1024));
-        addColumn(new ColumnDefinition("english_name", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("chinese_name", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("english_name", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("continent", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("country", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("province", ColumnType.Long).setMinValue((long) 0));
@@ -77,21 +73,21 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         addColumn(new ColumnDefinition("town", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("village", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("building", ColumnType.Long).setMinValue((long) 0));
-        addColumn(new ColumnDefinition("code1", ColumnType.String).setLength(16));
-        addColumn(new ColumnDefinition("code2", ColumnType.String).setLength(16));
-        addColumn(new ColumnDefinition("code3", ColumnType.String).setLength(16));
-        addColumn(new ColumnDefinition("code4", ColumnType.String).setLength(16));
-        addColumn(new ColumnDefinition("code5", ColumnType.String).setLength(16));
-        addColumn(new ColumnDefinition("alias1", ColumnType.String).setLength(1024));
-        addColumn(new ColumnDefinition("alias2", ColumnType.String).setLength(1024));
-        addColumn(new ColumnDefinition("alias3", ColumnType.String).setLength(1024));
-        addColumn(new ColumnDefinition("alias4", ColumnType.String).setLength(1024));
-        addColumn(new ColumnDefinition("alias5", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("code1", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("code2", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("code3", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("code4", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("code5", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("alias1", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("alias2", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("alias3", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("alias4", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("alias5", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("area", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("population", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("owner", ColumnType.Long).setMinValue((long) 0)
                 .setForeignName("Geography_Code_owner_fk").setForeignTable("Geography_Code").setForeignColumn("gcid"));
-        addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(32672));
+        addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("gcsource", ColumnType.Short).setMinValue((short) 0));
         return this;
     }

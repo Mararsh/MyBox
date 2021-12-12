@@ -64,7 +64,7 @@ public class ControlDataConvert extends BaseController {
     @FXML
     protected ComboBox<String> maxLinesSelector;
     @FXML
-    protected CheckBox csvCheck, textCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, xlsxCheck,
+    protected CheckBox csvCheck, textsCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, excelCheck,
             dataClipboardCheck, rowNumberCheck, excelWithNamesCheck;
     @FXML
     protected TextArea cssArea;
@@ -106,11 +106,11 @@ public class ControlDataConvert extends BaseController {
             }
         });
 
-        textCheck.setSelected(UserConfig.getBoolean(baseName + "Text", true));
-        textCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        textsCheck.setSelected(UserConfig.getBoolean(baseName + "Text", true));
+        textsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "Text", textCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Text", textsCheck.isSelected());
             }
         });
 
@@ -130,11 +130,11 @@ public class ControlDataConvert extends BaseController {
             }
         });
 
-        xlsxCheck.setSelected(UserConfig.getBoolean(baseName + "Xlsx", false));
-        xlsxCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        excelCheck.setSelected(UserConfig.getBoolean(baseName + "Xlsx", false));
+        excelCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "Xlsx", xlsxCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Xlsx", excelCheck.isSelected());
             }
         });
 
@@ -283,7 +283,7 @@ public class ControlDataConvert extends BaseController {
             if (csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
                 return false;
             }
-            if (textCheck.isSelected()
+            if (textsCheck.isSelected()
                     && textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
                 return false;
             }
@@ -361,7 +361,7 @@ public class ControlDataConvert extends BaseController {
                     updateLogs(message("Skipped"));
                 }
             }
-            if (textCheck.isSelected()) {
+            if (textsCheck.isSelected()) {
                 textFile = parent.makeTargetFile(currentPrefix, ".txt", targetPath);
                 if (textFile != null) {
                     updateLogs(message("Writing") + " " + textFile.getAbsolutePath());
@@ -430,7 +430,7 @@ public class ControlDataConvert extends BaseController {
                     updateLogs(message("Skipped"));
                 }
             }
-            if (xlsxCheck.isSelected()) {
+            if (excelCheck.isSelected()) {
                 xlsxFile = parent.makeTargetFile(currentPrefix, ".xlsx", targetPath);
                 if (xlsxFile != null) {
                     updateLogs(message("Writing") + " " + xlsxFile.getAbsolutePath());
@@ -485,7 +485,7 @@ public class ControlDataConvert extends BaseController {
 
             dataRowIndex++;
             if (rowNumberCheck.isSelected()) {
-                row.add(0, message("Row") + dataRowIndex);
+                row.add(0, dataRowIndex + "");
             }
 
             if (csvPrinter != null) {

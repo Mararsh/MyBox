@@ -35,17 +35,17 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public final TableData2DDefinition defineColumns() {
         addColumn(new ColumnDefinition("d2did", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("data_type", ColumnType.Short, true));
-        addColumn(new ColumnDefinition("data_name", ColumnType.String).setLength(32672));
-        addColumn(new ColumnDefinition("file", ColumnType.File).setLength(32672));
+        addColumn(new ColumnDefinition("data_name", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("file", ColumnType.File).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("charset", ColumnType.String).setLength(32));
-        addColumn(new ColumnDefinition("delimiter", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("delimiter", ColumnType.String).setLength(1024));
         addColumn(new ColumnDefinition("has_header", ColumnType.Boolean));
         addColumn(new ColumnDefinition("columns_number", ColumnType.Long));
         addColumn(new ColumnDefinition("rows_number", ColumnType.Long));
         addColumn(new ColumnDefinition("scale", ColumnType.Short));
         addColumn(new ColumnDefinition("max_random", ColumnType.Integer));
         addColumn(new ColumnDefinition("modify_time", ColumnType.Datetime));
-        addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(32672));
+        addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(StringMaxLength));
         orderColumns = "d2did DESC";
         return this;
     }

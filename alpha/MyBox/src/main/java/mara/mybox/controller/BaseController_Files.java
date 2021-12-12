@@ -136,21 +136,24 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (file == null) {
             return;
         }
+        String fname = file.getAbsolutePath();
+        if (AppPaths.reservedPath(fname)) {
+            return;
+        }
         try ( Connection conn = DerbyBase.getConnection()) {
+            String path;
             if (file.isDirectory()) {
-                String path = file.getPath();
-                UserConfig.setString(conn, baseName + "LastPath", path);
+                path = file.getPath();
+            } else {
+                path = file.getParent();
+                UserConfig.setString(conn, baseName + "SourceFile", fname);
+                VisitHistoryTools.readFile(conn, fileType, fname);
+            }
+            if (path != null) {
+                UserConfig.setString(conn, "LastPath", path);
                 UserConfig.setString(conn, baseName + "SourcePath", path);
                 UserConfig.setString(conn, VisitHistoryTools.getPathKey(fileType), path);
                 VisitHistoryTools.readPath(conn, pathType, path);
-            } else {
-                String path = file.getParent();
-                String fname = file.getAbsolutePath();
-                UserConfig.setString(conn, baseName + "LastPath", path);
-                UserConfig.setString(conn, baseName + "SourceFile", fname);
-                UserConfig.setString(conn, VisitHistoryTools.getPathKey(fileType), path);
-                VisitHistoryTools.readPath(conn, pathType, path);
-                VisitHistoryTools.readFile(conn, fileType, fname);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -178,7 +181,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             return;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            String path = null;
+            String path;
             if (file.isDirectory()) {
                 path = file.getPath();
             } else {
@@ -187,7 +190,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 VisitHistoryTools.writeFile(conn, TargetFileType, fname);
             }
             if (path != null) {
-                UserConfig.setString(conn, baseName + "LastPath", path);
+                UserConfig.setString(conn, "LastPath", path);
                 UserConfig.setString(conn, baseName + "TargetPath", path);
                 UserConfig.setString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
                 VisitHistoryTools.writePath(conn, TargetPathType, path);
@@ -205,21 +208,24 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (file == null) {
             return;
         }
+        String fname = file.getAbsolutePath();
+        if (AppPaths.reservedPath(fname)) {
+            return;
+        }
         try ( Connection conn = DerbyBase.getConnection()) {
+            String path;
             if (file.isDirectory()) {
-                String path = file.getPath();
-                UserConfig.setString(conn, baseName + "SourcePath", path);
-                UserConfig.setString(conn, baseName + "LastPath", path);
-                UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
-                VisitHistoryTools.readPath(conn, SourcePathType, path);
+                path = file.getPath();
             } else {
-                String path = file.getParent();
-                String fname = file.getAbsolutePath();
+                path = file.getParent();
                 UserConfig.setString(conn, baseName + "SourceFile", fname);
-                UserConfig.setString(conn, baseName + "LastPath", path);
+                VisitHistoryTools.readFile(conn, AddFileType, fname);
+            }
+            if (path != null) {
+                UserConfig.setString(conn, "LastPath", path);
+                UserConfig.setString(conn, baseName + "SourcePath", path);
                 UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
                 VisitHistoryTools.readPath(conn, SourcePathType, path);
-                VisitHistoryTools.readFile(conn, AddFileType, fname);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -232,20 +238,23 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             for (File file : files) {
+                String fname = file.getAbsolutePath();
+                if (AppPaths.reservedPath(fname)) {
+                    continue;
+                }
+                String path;
                 if (file.isDirectory()) {
-                    String path = file.getPath();
-                    UserConfig.setString(conn, baseName + "SourcePath", path);
-                    UserConfig.setString(conn, baseName + "LastPath", path);
-                    UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
-                    VisitHistoryTools.readPath(conn, SourcePathType, path);
+                    path = file.getPath();
                 } else {
-                    String path = file.getParent();
-                    String fname = file.getAbsolutePath();
+                    path = file.getParent();
                     UserConfig.setString(conn, baseName + "SourceFile", fname);
-                    UserConfig.setString(conn, baseName + "LastPath", path);
+                    VisitHistoryTools.readFile(conn, AddFileType, fname);
+                }
+                if (path != null) {
+                    UserConfig.setString(conn, "LastPath", path);
+                    UserConfig.setString(conn, baseName + "SourcePath", path);
                     UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
                     VisitHistoryTools.readPath(conn, SourcePathType, path);
-                    VisitHistoryTools.readFile(conn, AddFileType, fname);
                 }
             }
         } catch (Exception e) {

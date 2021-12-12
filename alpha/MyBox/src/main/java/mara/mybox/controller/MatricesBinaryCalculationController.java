@@ -61,29 +61,31 @@ public class MatricesBinaryCalculationController extends BaseController {
         try {
             super.initValues();
 
-            dataAController.setDataType(this, Data2D.Type.Matrix);
+            dataAController.setDataType(null, Data2D.Type.Matrix);
             dataAMatrix = (DataMatrix) dataAController.data2D;
             dataAController.createAction();
             dataAController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    matrixAPane.setText(message("MatrixA") + " - " + dataAMatrix.getDataName());
+                    matrixAPane.setText(message("MatrixA")
+                            + (dataAMatrix.getDataName() == null ? "" : (" - " + dataAMatrix.getDataName())));
                 }
             });
 
-            dataBController.setDataType(this, Data2D.Type.Matrix);
+            dataBController.setDataType(null, Data2D.Type.Matrix);
             dataBMatrix = (DataMatrix) dataBController.data2D;
             dataBController.createAction();
             dataBController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    matrixBPane.setText(message("MatrixA") + " - " + dataBMatrix.getDataName());
+                    matrixBPane.setText(message("MatrixB")
+                            + (dataBMatrix.getDataName() == null ? "" : (" - " + dataBMatrix.getDataName())));
                 }
             });
 
             listController.setParameters(dataAController, dataBController);
 
-            resultController.setDataType(this, Data2D.Type.Matrix);
+            resultController.setDataType(null, Data2D.Type.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {

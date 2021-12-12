@@ -10,6 +10,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -39,7 +40,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
                 .setForeignName("Data2D_Column_d2id_fk").setForeignTable("Data2D_Definition").setForeignColumn("d2did")
                 .setOnDelete(Data2DColumn.OnDelete.Cascade));
         addColumn(new Data2DColumn("column_type", ColumnType.Short, true));
-        addColumn(new Data2DColumn("column_name", ColumnType.String, true).setLength(1024));
+        addColumn(new Data2DColumn("column_name", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new Data2DColumn("index", ColumnType.Integer));
         addColumn(new Data2DColumn("length", ColumnType.Integer));
         addColumn(new Data2DColumn("width", ColumnType.Integer));
@@ -49,15 +50,15 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("editable", ColumnType.Boolean));
         addColumn(new Data2DColumn("on_delete", ColumnType.Short));
         addColumn(new Data2DColumn("on_update", ColumnType.Short));
-        addColumn(new Data2DColumn("default_value", ColumnType.String).setLength(4096));
-        addColumn(new Data2DColumn("max_value", ColumnType.String).setLength(128));
-        addColumn(new Data2DColumn("min_value", ColumnType.String).setLength(128));
+        addColumn(new Data2DColumn("default_value", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("max_value", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("min_value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("time_format", ColumnType.Short));
-        addColumn(new Data2DColumn("label", ColumnType.String).setLength(1024));
-        addColumn(new Data2DColumn("foreign_name", ColumnType.String).setLength(1024));
-        addColumn(new Data2DColumn("foreign_table", ColumnType.String).setLength(1024));
-        addColumn(new Data2DColumn("foreign_column", ColumnType.String).setLength(1024));
-        addColumn(new Data2DColumn("values_list", ColumnType.Text).setLength(32672));
+        addColumn(new Data2DColumn("label", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("foreign_name", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("foreign_table", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("foreign_column", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("values_list", ColumnType.Text).setLength(StringMaxLength));
         return this;
     }
 

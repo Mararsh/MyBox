@@ -179,7 +179,7 @@ public abstract class RecentVisitMenu {
         if (defaultPath != null && !paths.contains(defaultPath)) {
             paths.add(defaultPath);
         }
-        File lastPath = UserConfig.getPath(baseName + "LastPath");
+        File lastPath = UserConfig.getPath("LastPath");
         if (lastPath != null) {
             String lastPathString = lastPath.getAbsolutePath();
             if (!paths.contains(lastPathString)) {

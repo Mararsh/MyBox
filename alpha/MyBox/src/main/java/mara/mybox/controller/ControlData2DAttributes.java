@@ -131,7 +131,7 @@ public class ControlData2DAttributes extends BaseController {
         }
     }
 
-    public void loadData() {
+    public synchronized void loadData() {
         status = null;
         loadAttributes();
         status(Status.Loaded);

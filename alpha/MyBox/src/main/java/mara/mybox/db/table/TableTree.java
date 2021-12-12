@@ -1,14 +1,14 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -32,8 +32,8 @@ public class TableTree extends BaseTable<TreeNode> {
 
     public final TableTree defineColumns() {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(256));
-        addColumn(new ColumnDefinition("attribute", ColumnType.String).setLength(4096));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("attribute", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("parent", ColumnType.Long)
                 .setForeignName("Tree_parent_fk").setForeignTable("Tree").setForeignColumn("nodeid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)

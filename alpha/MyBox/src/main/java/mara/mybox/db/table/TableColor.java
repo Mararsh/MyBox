@@ -36,7 +36,7 @@ public class TableColor extends BaseTable<ColorData> {
     public final TableColor defineColumns() {
         addColumn(new ColumnDefinition("color_value", ColumnDefinition.ColumnType.Integer, true, true));
         addColumn(new ColumnDefinition("rgba", ColumnDefinition.ColumnType.String, true).setLength(16));
-        addColumn(new ColumnDefinition("color_name", ColumnDefinition.ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("color_name", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("rgb", ColumnDefinition.ColumnType.String, true).setLength(16));
         addColumn(new ColumnDefinition("srgb", ColumnDefinition.ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("hsb", ColumnDefinition.ColumnType.String).setLength(128));

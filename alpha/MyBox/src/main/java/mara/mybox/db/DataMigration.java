@@ -30,6 +30,7 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.data.WebHistory;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
@@ -133,6 +134,81 @@ public class DataMigration {
     private static void updateIn651(Connection conn) {
         try {
             MyBoxLog.info("Updating tables in 6.5.1...");
+
+            updateIn651ExtendColumns(conn);
+
+            updateIn651ReplaceDataDefinition(conn);
+
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn651ExtendColumns(Connection conn) {
+        try {
+            conn.setAutoCommit(true);
+
+            alterColumnLength(conn, "User_Conf", "key_Name", StringMaxLength);
+            alterColumnLength(conn, "System_Conf", "key_Name", StringMaxLength);
+            alterColumnLength(conn, "String_Values", "key_name", StringMaxLength);
+            alterColumnLength(conn, "String_Value", "key_name", StringMaxLength);
+            alterColumnLength(conn, "Query_Condition", "data_name", StringMaxLength);
+            alterColumnLength(conn, "visit_history", "resource_value", StringMaxLength);
+            alterColumnLength(conn, "visit_history", "data_more", StringMaxLength);
+            alterColumnLength(conn, "Web_History", "address", StringMaxLength);
+            alterColumnLength(conn, "Web_History", "title", StringMaxLength);
+            alterColumnLength(conn, "Web_History", "icon", StringMaxLength);
+            alterColumnLength(conn, "Web_Favorite", "title", StringMaxLength);
+            alterColumnLength(conn, "Web_Favorite", "address", StringMaxLength);
+            alterColumnLength(conn, "Web_Favorite", "icon", StringMaxLength);
+            alterColumnLength(conn, "Tree", "title", StringMaxLength);
+            alterColumnLength(conn, "Tree", "attribute", StringMaxLength);
+            alterColumnLength(conn, "Tag", "tag", StringMaxLength);
+            alterColumnLength(conn, "Notebook", "name", StringMaxLength);
+            alterColumnLength(conn, "Notebook", "description", StringMaxLength);
+            alterColumnLength(conn, "Note", "title", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "log", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "file_name", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "class_name", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "method_name", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "callers", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "comments", StringMaxLength);
+            alterColumnLength(conn, "Location_Data", "label", StringMaxLength);
+            alterColumnLength(conn, "Location_Data", "address", StringMaxLength);
+            alterColumnLength(conn, "image_scope", "outline", StringMaxLength);
+            alterColumnLength(conn, "Image_Edit_History", "scope_name", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "chinese_name", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "english_name", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "code1", 1024);
+            alterColumnLength(conn, "Geography_Code", "code2", 1024);
+            alterColumnLength(conn, "Geography_Code", "code3", 1024);
+            alterColumnLength(conn, "Geography_Code", "code4", 1024);
+            alterColumnLength(conn, "Geography_Code", "code5", 1024);
+            alterColumnLength(conn, "Geography_Code", "alias1", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias2", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias3", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias4", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias5", StringMaxLength);
+            alterColumnLength(conn, "Float_Matrix", "name", StringMaxLength);
+            alterColumnLength(conn, "Epidemic_Report", "data_set", StringMaxLength);
+            alterColumnLength(conn, "Dataset", "data_category", StringMaxLength);
+            alterColumnLength(conn, "Dataset", "data_set", StringMaxLength);
+            alterColumnLength(conn, "Convolution_Kernel", "name", StringMaxLength);
+            alterColumnLength(conn, "Convolution_Kernel", "description", StringMaxLength);
+            alterColumnLength(conn, "Color_Palette_Name", "palette_name", StringMaxLength);
+            alterColumnLength(conn, "Color_Palette", "name_in_palette", StringMaxLength);
+            alterColumnLength(conn, "Color", "color_name", StringMaxLength);
+            alterColumnLength(conn, "Alarm_Clock", "description", StringMaxLength);
+            alterColumnLength(conn, "Alarm_Clock", "sound", StringMaxLength);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn651ReplaceDataDefinition(Connection conn) {
+        try {
             conn.setAutoCommit(false);
             TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
             TableData2DColumn tableData2DColumn = new TableData2DColumn();
@@ -181,6 +257,7 @@ public class DataMigration {
                             .setCharsetName(charset);
                     def = tableData2DDefinition.insertData(conn, def);
                     conn.commit();
+
                     long d2did = def.getD2did();
                     ResultSet cquery = conn.createStatement().executeQuery("SELECT * FROM Data_Column WHERE dataid=" + dfid);
                     while (cquery.next()) {
@@ -197,6 +274,7 @@ public class DataMigration {
             } catch (Exception e) {
                 MyBoxLog.debug(e);
             }
+
             try ( ResultSet mquery = conn.createStatement().executeQuery("SELECT * FROM Matrix")) {
                 conn.setAutoCommit(false);
                 TableData2DCell tableData2DCell = new TableData2DCell();
@@ -231,6 +309,7 @@ public class DataMigration {
                 MyBoxLog.debug(e);
             }
             conn.commit();
+
             try ( Statement statement = conn.createStatement()) {
                 statement.executeUpdate("DROP TABLE Matrix_Cell");
                 statement.executeUpdate("DROP TABLE Matrix");
@@ -876,7 +955,7 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateBefore621(Connection conn) {
+    private static boolean migrateBefore621(Connection conn) {
         MyBoxLog.info("Migrate before 6.2.1...");
         try {
             if (!SystemConfig.getBoolean("UpdatedTables4.2", false)) {
@@ -965,7 +1044,7 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateGeographyCode615() {
+    private static boolean migrateGeographyCode615() {
         MyBoxLog.info("migrate GeographyCode 6.1.5...");
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
@@ -983,7 +1062,7 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateGeographyCode621() {
+    private static boolean migrateGeographyCode621() {
         MyBoxLog.info("migrate GeographyCode 6.2.1...");
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
@@ -998,7 +1077,7 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateEpidemicReport615() {
+    private static boolean migrateEpidemicReport615() {
         MyBoxLog.info("migrate Epidemic_Report 6.1.5...");
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
@@ -1047,7 +1126,7 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateEpidemicReport621() {
+    private static boolean migrateEpidemicReport621() {
         MyBoxLog.info("migrate Epidemic_Report 6.2.1...");
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
@@ -1073,7 +1152,10 @@ public class DataMigration {
         }
     }
 
-    public static void reloadInternalDoc() {
+    /*
+        common
+     */
+    private static void reloadInternalDoc() {
         new Thread() {
             @Override
             public void run() {
@@ -1088,7 +1170,7 @@ public class DataMigration {
         }.start();
     }
 
-    public static void reloadInternalData() {
+    private static void reloadInternalData() {
         new Thread() {
             @Override
             public void run() {
@@ -1118,6 +1200,11 @@ public class DataMigration {
                 }
             }
         }.start();
+    }
+
+    private static void alterColumnLength(Connection conn, String tableName, String colName, int length) {
+        String sql = "ALTER TABLE " + tableName + "  alter  column  " + colName + " set data type VARCHAR(" + length + ")";
+        DerbyBase.update(conn, sql);
     }
 
 }

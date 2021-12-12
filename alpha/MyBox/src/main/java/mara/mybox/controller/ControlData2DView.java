@@ -298,11 +298,18 @@ public class ControlData2DView extends BaseController {
                 s.append(data2D.rowName(r)).append("\n");
             }
             List<String> drow = data2D.tableRowWithoutNumber(r);
+            if (drow == null) {
+                continue;
+            }
             for (int col = 0; col < data2D.columnsNumber(); col++) {
                 if (columnCheck.isSelected()) {
                     s.append(data2D.colName(col)).append(": ");
                 }
-                s.append(drow.get(col)).append("\n");
+                String v = drow.get(col);
+                if (v == null) {
+                    continue;
+                }
+                s.append(v).append("\n");
             }
             s.append("\n");
             textArea.setText(s.toString());

@@ -572,6 +572,19 @@ public abstract class Data2D extends Data2DDefinition {
         return names;
     }
 
+    public List<String> numberColumnNames() {
+        if (columns == null) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        for (Data2DColumn col : columns) {
+            if (col.isNumberType()) {
+                names.add(col.getName());
+            }
+        }
+        return names;
+    }
+
     /*
         attributes
      */

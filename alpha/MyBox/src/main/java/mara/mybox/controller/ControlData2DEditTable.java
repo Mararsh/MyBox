@@ -5,18 +5,11 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.Data2D;
@@ -25,9 +18,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.TextTools;
@@ -103,7 +94,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         }
     }
 
-    public void loadData() {
+    public synchronized void loadData() {
         try {
             makeColumns();
             if (!checkData()) {
@@ -168,11 +159,15 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
     @Override
     public void loadDataSize() {
-        if (data2D == null || dataSizeLoaded) {
+        if (data2D == null) {
             return;
         }
-        if (data2D.isMatrix()) {
+        if (dataSizeLoaded || data2D.isTmpData() || data2D.isMatrix()) {
             dataSizeLoaded = true;
+            paginationPane.setVisible(false);
+            if (saveButton != null) {
+                saveButton.setDisable(false);
+            }
             return;
         }
         synchronized (this) {
@@ -182,7 +177,9 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             data2D.setDataSize(0);
             dataSizeLoaded = false;
             paginationPane.setVisible(false);
-            saveButton.setDisable(true);
+            if (saveButton != null) {
+                saveButton.setDisable(true);
+            }
             backgroundTask = new SingletonTask<Void>(this) {
 
                 @Override
@@ -403,110 +400,6 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            boolean invalidData = data2D == null || !data2D.isColumnsValid();
-            boolean empty = invalidData || tableData.isEmpty();
-            MenuItem menu;
-
-            menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.parentController.saveAction();
-            });
-            menu.setDisable(invalidData || !dataSizeLoaded);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.parentController.recoverAction();
-            });
-            menu.setDisable(invalidData || !dataSizeLoaded);
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                setValuesAction();
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyAction();
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                pasteContentInSystemClipboard();
-            });
-            menu.setDisable(invalidData);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PasteContentInDataClipboard"), StyleTools.getIconImage("iconPaste.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                pasteContentInMyboxClipboard();
-            });
-            menu.setDisable(invalidData);
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                export();
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                transpose();
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconCreateData.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.parentController.createAction();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImage("iconImageSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.loadContentInSystemClipboard();
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
     @Override
     public void copyAction() {
         if (!checkData()) {
@@ -596,10 +489,19 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     }
 
     public void export() {
-        if (!checkData() || !dataController.checkBeforeNextAction()) {
+        if (!checkData()
+                || (data2D.isMutiplePages() && !dataController.checkBeforeNextAction())) {
             return;
         }
         Data2DExportController.open(this);
+    }
+
+    public void statistic() {
+        if (!checkData()
+                || (data2D.isMutiplePages() && !dataController.checkBeforeNextAction())) {
+            return;
+        }
+        Data2DStatisticController.open(this);
     }
 
     @FXML

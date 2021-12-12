@@ -30,7 +30,7 @@ public class TableData2DCell extends BaseTable<Data2DCell> {
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade));
         addColumn(new ColumnDefinition("row", ColumnType.Long, true).setMinValue(0));
         addColumn(new ColumnDefinition("col", ColumnType.Long, true).setMinValue(0));
-        addColumn(new ColumnDefinition("value", ColumnType.String, true).setLength(32672));
+        addColumn(new ColumnDefinition("value", ColumnType.String, true).setLength(StringMaxLength));
         return this;
     }
 

@@ -227,6 +227,9 @@ public class ControlFileBackup extends BaseController {
             return null;
         }
         File backupFile = newBackupFile();
+        if (backupFile == null) {
+            return null;
+        }
         backupFile.getParentFile().mkdirs();
         FileCopyTools.copyFile(sourceFile, backupFile, false, false);
         FileBackup newBackup = tableFileBackup.insertData(new FileBackup(sourceFile, backupFile));
@@ -246,8 +249,11 @@ public class ControlFileBackup extends BaseController {
         if (sourceFile == null) {
             return null;
         }
-        File backupFile = new File(AppPaths.getFileBackupsPath(sourceFile)
-                + FileNameTools.appendName(sourceFile.getName(), "-" + DateTools.nowFileString()));
+        String path = AppPaths.getFileBackupsPath(sourceFile);
+        if (path == null) {
+            return null;
+        }
+        File backupFile = new File(path + FileNameTools.appendName(sourceFile.getName(), "-" + DateTools.nowFileString()));
         return backupFile;
     }
 

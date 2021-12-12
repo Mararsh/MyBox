@@ -71,19 +71,24 @@ public class AppPaths {
         if (file == null) {
             return null;
         }
-        String key = "BackupPath-" + file;
-        String fileBackupsPath = TableStringValue.read(key);
-        if (fileBackupsPath == null) {
-            fileBackupsPath = getBackupsPath() + File.separator
-                    + FileNameTools.getFilePrefix(file.getName()) + FileNameTools.getFileSuffix(file.getName())
-                    + (new Date()).getTime() + File.separator;
-            TableStringValue.write(key, fileBackupsPath);
+        try {
+            String key = "BackupPath-" + file;
+            String fileBackupsPath = TableStringValue.read(key);
+            if (fileBackupsPath == null) {
+                fileBackupsPath = getBackupsPath() + File.separator
+                        + FileNameTools.getFilePrefix(file.getName()) + FileNameTools.getFileSuffix(file.getName())
+                        + (new Date()).getTime() + File.separator;
+                TableStringValue.write(key, fileBackupsPath);
+            }
+            File path = new File(fileBackupsPath);
+            if (!path.exists()) {
+                path.mkdirs();
+            }
+            return fileBackupsPath;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        File path = new File(fileBackupsPath);
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        return fileBackupsPath;
     }
 
     public static String getDownloadsPath() {

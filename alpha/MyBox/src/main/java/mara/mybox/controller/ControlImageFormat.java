@@ -105,7 +105,6 @@ public class ControlImageFormat extends BaseController {
     public void setParameters(BaseController parent, boolean setDPI) {
         try {
             parentController = parent;
-            baseName = parent.baseName;
 
             NodeTools.setRadioSelected(formatGroup, UserConfig.getString(baseName + "Format", "png"));
             formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -116,7 +115,7 @@ public class ControlImageFormat extends BaseController {
                 }
             });
 
-            embedProfileCheck.setSelected(UserConfig.getBoolean(baseName + "ProfileEmbed", true));
+            embedProfileCheck.setSelected(UserConfig.getBoolean(baseName + "ProfileEmbed", false));
             embedProfileCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {

@@ -51,7 +51,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
         addColumn(new ColumnDefinition("hsb_distance", ColumnDefinition.ColumnType.Double, true));
         addColumn(new ColumnDefinition("area_excluded", ColumnDefinition.ColumnType.Integer, true));
         addColumn(new ColumnDefinition("color_excluded", ColumnDefinition.ColumnType.Integer, true));
-        addColumn(new ColumnDefinition("outline", ColumnDefinition.ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("outline", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("create_time", ColumnDefinition.ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("modify_time", ColumnDefinition.ColumnType.Datetime, true));
         orderColumns = "modify_time DESC";

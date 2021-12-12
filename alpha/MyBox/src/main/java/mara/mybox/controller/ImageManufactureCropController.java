@@ -66,8 +66,6 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
 
             clipMarginsCheck.disableProperty().bind(clipboardCheck.selectedProperty().not());
 
-            okButton.disableProperty().bind(imageController.cropButton.disableProperty());
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

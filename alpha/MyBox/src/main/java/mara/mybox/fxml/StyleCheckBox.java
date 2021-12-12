@@ -31,6 +31,18 @@ public class StyleCheckBox {
         if (id.startsWith("myBoxClipboard")) {
             return new StyleData(id, "", message("MyBoxClipboard"), "", "iconClipboard.png");
         }
+        if (id.startsWith("html")) {
+            return new StyleData(id, "", "Html", "", "iconHtml.png");
+        }
+        if (id.startsWith("xml")) {
+            return new StyleData(id, "", "XML", "", "iconXML.png");
+        }
+        if (id.startsWith("pdf")) {
+            return new StyleData(id, "", "PDF", "", "iconPDF.png");
+        }
+        if (id.startsWith("json")) {
+            return new StyleData(id, "", "json", "", "iconJSON.png");
+        }
         if (id.startsWith("coordinate")) {
             return new StyleData(id, "", message("Coordinate"), "", "iconLocation.png");
         }

@@ -1,8 +1,9 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 
 /**
@@ -13,17 +14,34 @@ import mara.mybox.value.Fxmls;
 public class Data2DTransposeController extends Data2DOperationController {
 
     public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController, false);
+        super.setParameters(tableController, false, true);
     }
 
     @Override
     public boolean hanldeData() {
-        if (!isAll && selectedNames != null) {
-            selectedData.add(0, selectedNames);
+        try {
+            if (sourceAll) {
+                return false;
+            }
+            if (selectedNames != null) {
+                selectedData.add(0, selectedNames);
+            }
+            int rowsNumber = selectedData.size(), columnsNumber = selectedData.get(0).size();
+            handledData = new ArrayList<>();
+            for (int r = 0; r < columnsNumber; ++r) {
+                List<String> row = new ArrayList<>();
+                for (int c = 0; c < rowsNumber; ++c) {
+                    row.add(selectedData.get(c).get(r));
+                }
+                handledData.add(row);
+            }
+            handledNames = null;
+            return true;
+        } catch (Exception e) {
+            popError(e.toString());
+            MyBoxLog.error(e.toString());
+            return false;
         }
-        handledData = TextTools.transpose(selectedData);
-        handledNames = null;
-        return true;
     }
 
     /*

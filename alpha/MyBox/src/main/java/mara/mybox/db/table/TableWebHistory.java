@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,8 +7,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.WebHistory;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.WebHistory;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -33,10 +33,10 @@ public class TableWebHistory extends BaseTable<WebHistory> {
 
     public final TableWebHistory defineColumns() {
         addColumn(new ColumnDefinition("whid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("address", ColumnType.String, true).setLength(4096));
+        addColumn(new ColumnDefinition("address", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("visit_time", ColumnType.Datetime, true));
-        addColumn(new ColumnDefinition("title", ColumnType.String).setLength(4096));
-        addColumn(new ColumnDefinition("icon", ColumnType.String).setLength(4096));
+        addColumn(new ColumnDefinition("title", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("icon", ColumnType.String).setLength(StringMaxLength));
         orderColumns = "visit_time DESC";
         return this;
     }

@@ -1,16 +1,15 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Notebook;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Notebook;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -34,8 +33,8 @@ public class TableNotebook extends BaseTable<Notebook> {
 
     public final TableNotebook defineColumns() {
         addColumn(new ColumnDefinition("nbid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("name", ColumnType.String, true).setLength(256));
-        addColumn(new ColumnDefinition("description", ColumnType.String).setLength(4096));
+        addColumn(new ColumnDefinition("name", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("description", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("owner", ColumnType.Long)
                 .setForeignName("Notebook_owner_fk").setForeignTable("Notebook").setForeignColumn("nbid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)

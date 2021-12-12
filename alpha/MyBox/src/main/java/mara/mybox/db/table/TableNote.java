@@ -39,9 +39,9 @@ public class TableNote extends BaseTable<Note> {
                 .setForeignName("Notes_notebook_fk").setForeignTable("Notebook").setForeignColumn("nbid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(256));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime, true));
-        addColumn(new ColumnDefinition("html", ColumnType.String).setLength(32672));
+        addColumn(new ColumnDefinition("html", ColumnType.String).setLength(StringMaxLength));
         orderColumns = "update_time DESC";
         return this;
     }

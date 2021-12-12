@@ -52,7 +52,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         addColumn(new ColumnDefinition("object_type", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("op_type", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("scope_type", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("scope_name", ColumnType.String).setLength(4096));
+        addColumn(new ColumnDefinition("scope_name", ColumnType.String).setLength(StringMaxLength));
         return this;
     }
 

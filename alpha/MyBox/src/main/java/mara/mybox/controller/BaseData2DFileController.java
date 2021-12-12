@@ -143,7 +143,7 @@ public abstract class BaseData2DFileController extends BaseController {
 
     @Override
     public void sourceFileChanged(File file) {
-        dataController.loadFile(file);
+        dataController.sourceFileChanged(file);
     }
 
     protected void checkStatus() {

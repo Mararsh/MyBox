@@ -22,6 +22,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.tools.FileDeleteTools;
@@ -137,21 +138,14 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Edit"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                editAction();
-            });
-            menu.setDisable(renameButton.isDisable());
-            items.add(menu);
-
-            menu = new MenuItem(message("Rename"));
+            MenuItem menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });
             menu.setDisable(renameButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("OpenPath"));
+            menu = new MenuItem(message("OpenPath"), StyleTools.getIconImage("iconOpen.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 openPath();
             });

@@ -65,7 +65,7 @@ public class WebBrowserController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            StyleTools.setIconTooltips(addTabButton, "iconAdd.png", message("Add"));
+            StyleTools.setIconTooltips(addTabButton, "iconAdd.png", "");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -93,9 +93,7 @@ public class WebBrowserController extends BaseController {
                     Fxmls.WebAddressFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
-            ImageView tabImage = new ImageView("img/MyBox.png");
-            tabImage.setFitWidth(20);
-            tabImage.setFitHeight(20);
+            ImageView tabImage = StyleTools.getIconImage("iconMyBox.png");
             tab.setGraphic(tabImage);
             tab.setContent(pane);
             tabPane.getTabs().add(tabPane.getTabs().size() - 1, tab);

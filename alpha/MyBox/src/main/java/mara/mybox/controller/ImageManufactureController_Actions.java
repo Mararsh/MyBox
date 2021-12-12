@@ -94,6 +94,10 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         }
     }
 
+    @Override
+    protected void checkSelect() {
+    }
+
     @FXML
     @Override
     public void createAction() {

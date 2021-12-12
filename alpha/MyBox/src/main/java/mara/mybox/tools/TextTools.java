@@ -658,6 +658,9 @@ public class TextTools {
                 }
                 colEnd = colsNumber - 1;
                 List<String> rowValues = data2D.tableRowWithoutNumber(i);
+                if (rowValues == null) {
+                    continue;
+                }
                 for (int c = 0; c <= colEnd; c++) {
                     v = rowValues.get(c);
                     s.append(v == null ? "" : v);
@@ -778,34 +781,6 @@ public class TextTools {
                 data.add(row);
             }
             return data;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static String[][] transpose(String[][] matrix) {
-        try {
-            if (matrix == null) {
-                return null;
-            }
-            int rowsNumber = matrix.length, columnsNumber = matrix[0].length;
-            String[][] result = new String[columnsNumber][rowsNumber];
-            for (int row = 0; row < columnsNumber; ++row) {
-                for (int col = 0; col < rowsNumber; ++col) {
-                    result[row][col] = matrix[col][row];
-                }
-            }
-            return result;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<List<String>> transpose(List<List<String>> data) {
-        try {
-            String[][] array = toArray(data);
-            array = transpose(array);
-            return toList(array);
         } catch (Exception e) {
             return null;
         }

@@ -23,7 +23,7 @@ public abstract class Data2DOperationController extends BaseController {
     protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
     protected List<List<String>> selectedData, handledData;
     protected List<String> selectedNames, handledNames;
-    protected boolean isAll;
+    protected boolean sourceAll;
     protected String value;
 
     @FXML
@@ -40,36 +40,42 @@ public abstract class Data2DOperationController extends BaseController {
         setAsPop(baseName);
     }
 
-    public void setParameters(ControlData2DEditTable tableController, boolean includeAll) {
+    public void setParameters(ControlData2DEditTable tableController, boolean sourceAll, boolean targetTable) {
         try {
             this.tableController = tableController;
             getMyStage().setTitle(tableController.getBaseTitle());
 
-            selectController.setParameters(tableController, false);
-            targetController.setParameters(this, tableController);
+            selectController.setParameters(tableController, sourceAll);
+            targetController.setParameters(this, targetTable ? tableController : null);
 
-            namesBox.setVisible(!targetController.isTable());
-            targetController.targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    namesBox.setVisible(!targetController.isTable());
-                }
-            });
+            if (namesBox != null) {
+                namesBox.setVisible(!targetController.isTable());
+                targetController.targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        namesBox.setVisible(!targetController.isTable());
+                    }
+                });
+            }
 
-            rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
-            rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
-                }
-            });
-            colNameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyColNames", true));
-            colNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "CopyColNames", colNameCheck.isSelected());
-                }
-            });
+            if (rowNumberCheck != null) {
+                rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
+                rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
+                    }
+                });
+            }
+            if (colNameCheck != null) {
+                colNameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyColNames", true));
+                colNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "CopyColNames", colNameCheck.isSelected());
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -97,33 +103,37 @@ public abstract class Data2DOperationController extends BaseController {
                 return;
             }
             popDone();
-            selectController.refreshControls();
-            targetController.refreshControls();
+            refreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    public void refreshControls() {
+        selectController.refreshControls();
+        targetController.refreshControls();
+    }
+
     public boolean checkData() {
-        isAll = selectController.isAllData();
-        boolean isNotTable = !targetController.isTable();
-        if (!isAll) {
+        sourceAll = selectController.isAllData();
+        boolean isTargetNotTable = !targetController.isTable();
+        if (!sourceAll) {
             selectedData = selectController.selectedData();
             if (selectedData == null || selectedData.isEmpty()) {
                 popError(message("NoData"));
                 return false;
             }
-            if (isNotTable && rowNumberCheck != null && rowNumberCheck.isSelected()) {
+            if (isTargetNotTable && rowNumberCheck != null && rowNumberCheck.isSelected()) {
                 for (int i = 0; i < selectedData.size(); i++) {
                     List<String> row = selectedData.get(i);
-                    row.add(0, message("Row") + (i + 1));
+                    row.add(0, (i + 1) + "");
                 }
             }
         } else {
             selectedData = null;
         }
 
-        if (isNotTable && (colNameCheck == null || colNameCheck.isSelected())) {
+        if (isTargetNotTable && (colNameCheck == null || colNameCheck.isSelected())) {
             selectedNames = selectController.selectedColumnsNames();
             if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
                 selectedNames.add(0, message("RowNumber"));

@@ -38,7 +38,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
 
     public final TableColorPaletteName defineColumns() {
         addColumn(new ColumnDefinition("cpnid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("palette_name", ColumnType.String, true).setLength(4096));
+        addColumn(new ColumnDefinition("palette_name", ColumnType.String, true).setLength(StringMaxLength));
         return this;
     }
 

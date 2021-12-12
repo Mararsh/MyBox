@@ -301,7 +301,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         }
     }
 
-    public void loadData() {
+    public synchronized void loadData() {
         status = null;
         loadColumns();
         status(Status.Loaded);

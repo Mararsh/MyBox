@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DStatisticController">
+    <children>
+        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Statistic" textAlignment="CENTER" VBox.vgrow="NEVER" />
+            </children>
+        </HBox>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS">
+            <children>
+                <FlowPane hgap="10.0">
+                    <children>
+                        <Label text="%DataSource" />
+                        <Label fx:id="noNumberLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%NoNumberColumns" />
+                    </children>
+                </FlowPane>
+                <fx:include fx:id="select" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSelect.fxml" VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" vgap="2.0">
+            <children>
+                <CheckBox fx:id="countCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Count" />
+                <CheckBox fx:id="summationCheck" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Summation" />
+                <CheckBox fx:id="meanCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Mean" />
+                <CheckBox fx:id="varianceCheck" layoutX="136.0" layoutY="10.0" mnemonicParsing="false" text="%Variance" />
+                <CheckBox fx:id="skewnessCheck" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" text="%Skewness" />
+                <CheckBox fx:id="maximumCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" text="%Maximum" />
+                <CheckBox fx:id="minimumCheck" layoutX="89.0" layoutY="29.0" mnemonicParsing="false" text="%Minimum" />
+                <CheckBox fx:id="modeCheck" layoutX="372.0" layoutY="10.0" mnemonicParsing="false" text="%Mode" />
+                <CheckBox fx:id="medianCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Median" />
+                <CheckBox fx:id="percentageCheck" mnemonicParsing="false" text="%Percentage" />
+            </children>
+        </FlowPane>
+        <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+            <children>
+                <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+            </children>
+        </VBox>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>

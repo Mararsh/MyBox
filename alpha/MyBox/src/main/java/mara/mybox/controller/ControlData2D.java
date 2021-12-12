@@ -7,15 +7,22 @@ import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -28,8 +35,10 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -67,6 +76,8 @@ public class ControlData2D extends BaseController {
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
     protected Label pageLabel, dataSizeLabel, selectedLabel;
+    @FXML
+    protected Button functionsButton;
 
     public ControlData2D() {
         statusNotify = new SimpleBooleanProperty(false);
@@ -91,10 +102,11 @@ public class ControlData2D extends BaseController {
     public void setDataType(BaseController parent, Data2D.Type type) {
         try {
             parentController = parent;
-            saveButton = parent.saveButton;
-            recoverButton = parent.recoverButton;
-            setFileType(parent.getSourceFileType(), parent.getTargetFileType());
-
+            if (parent != null) {
+                saveButton = parent.saveButton;
+                recoverButton = parent.recoverButton;
+                setFileType(parent.getSourceFileType(), parent.getTargetFileType());
+            }
             data2D = Data2D.create(type);
             data2D.setTableController(tableController);
 
@@ -113,91 +125,97 @@ public class ControlData2D extends BaseController {
         }
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     /*
         database
      */
-    public void readDefinition() {
+    public synchronized void readDefinition() {
         if (data2D == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            if (!checkValidData()) {
-                return;
-            }
-            isSettingValues = true;
-            tableController.resetView();
-            isSettingValues = false;
-            task = new SingletonTask<Void>(this) {
+        if (!checkValidData()) {
+            return;
+        }
+        resetStatus();
+        isSettingValues = true;
+        tableController.resetView();
+        isSettingValues = false;
+        task = new SingletonTask<Void>(this) {
 
-                private StringTable validateTable;
+            private StringTable validateTable;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        data2D.setTask(task);
-                        long d2did = data2D.readDataDefinition();
-                        List<String> dataCols = data2D.readColumns();
-                        if (isCancelled()) {
-                            return false;
-                        }
-                        if (dataCols == null || dataCols.isEmpty()) {
-                            data2D.setHasHeader(false);
-                            tableData2DColumn.clear(data2D);
-                            data2D.setColumns(null);
-                        } else {
-                            List<Data2DColumn> columns = new ArrayList<>();
-                            List<Data2DColumn> savedColumns = data2D.getSavedColumns();
-                            for (int i = 0; i < dataCols.size(); i++) {
-                                Data2DColumn column;
-                                if (savedColumns != null && i < savedColumns.size()) {
-                                    column = savedColumns.get(i);
-                                    if (data2D.isHasHeader()) {
-                                        column.setName(dataCols.get(i));
-                                    }
-                                } else {
-                                    column = new Data2DColumn(dataCols.get(i), data2D.defaultColumnType());
-                                }
-                                column.setD2id(d2did);
-                                column.setIndex(i);
-                                columns.add(column);
-                            }
-                            data2D.setColumns(columns);
-                            validateTable = Data2DColumn.validate(columns);
-                            if (!data2D.isTmpData()) {
-                                if (validateTable == null || validateTable.isEmpty()) {
-                                    tableData2DColumn.save(d2did, columns);
-                                }
-                            }
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    long d2did = data2D.readDataDefinition();
+                    List<String> dataCols = data2D.readColumns();
+                    if (isCancelled()) {
                         return false;
                     }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                }
-
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    data2D.setTask(null);
-                    task = null;
-                    loadData();   // Load data whatever
-                    notifyLoaded();
-                    if (validateTable != null && !validateTable.isEmpty()) {
-                        validateTable.htmlTable();
+                    if (dataCols == null || dataCols.isEmpty()) {
+                        data2D.setHasHeader(false);
+                        tableData2DColumn.clear(data2D);
+                        data2D.setColumns(null);
+                    } else {
+                        List<Data2DColumn> columns = new ArrayList<>();
+                        List<Data2DColumn> savedColumns = data2D.getSavedColumns();
+                        for (int i = 0; i < dataCols.size(); i++) {
+                            Data2DColumn column;
+                            if (savedColumns != null && i < savedColumns.size()) {
+                                column = savedColumns.get(i);
+                                if (data2D.isHasHeader()) {
+                                    column.setName(dataCols.get(i));
+                                }
+                            } else {
+                                column = new Data2DColumn(dataCols.get(i), data2D.defaultColumnType());
+                            }
+                            column.setD2id(d2did);
+                            column.setIndex(i);
+                            columns.add(column);
+                        }
+                        data2D.setColumns(columns);
+                        validateTable = Data2DColumn.validate(columns);
+                        if (!data2D.isTmpData()) {
+                            if (validateTable == null || validateTable.isEmpty()) {
+                                tableData2DColumn.save(d2did, columns);
+                            }
+                        }
                     }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-            };
-            start(task);
-        }
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                loadData();   // Load data whatever
+                notifyLoaded();
+                if (validateTable != null && !validateTable.isEmpty()) {
+                    validateTable.htmlTable();
+                }
+            }
+
+        };
+        start(task);
     }
 
     public boolean checkValidData() {
@@ -234,7 +252,8 @@ public class ControlData2D extends BaseController {
     /*
         file
      */
-    public void loadFile(File file) {
+    @Override
+    public void sourceFileChanged(File file) {
         try {
             if (!checkBeforeNextAction()) {
                 return;
@@ -251,6 +270,7 @@ public class ControlData2D extends BaseController {
         data2D.initFile(data2D.getFile());
         readDefinition();
     }
+
 
     /*
         matrix
@@ -277,7 +297,7 @@ public class ControlData2D extends BaseController {
     /*
         data
      */
-    public void loadData() {
+    public synchronized void loadData() {
         tableController.loadData();
         attributesController.loadData();
         columnsController.loadData();
@@ -356,13 +376,24 @@ public class ControlData2D extends BaseController {
         }
         columnsTab.setText(title);
 
-        recoverButton.setDisable(data2D.isTmpData());
-        saveButton.setDisable(!data2D.isValid());
+        if (recoverButton != null) {
+            recoverButton.setDisable(data2D.isTmpData());
+        }
+        if (saveButton != null) {
+            saveButton.setDisable(!data2D.isValid() || !tableController.dataSizeLoaded);
+        }
 
         notifyStatus();
     }
 
     public synchronized void resetStatus() {
+        if (task != null) {
+            task.cancel();
+        }
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
+        }
+
         if (tableController.task != null) {
             tableController.task.cancel();
         }
@@ -396,7 +427,7 @@ public class ControlData2D extends BaseController {
         columnsController.status = null;
     }
 
-    public int checkBeforeSave() {
+    public synchronized int checkBeforeSave() {
         if (!tableController.dataSizeLoaded) {
             popError(message("CountingTotalNumber"));
             return -1;
@@ -577,86 +608,81 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void loadTmpData(List<String> cols, List<List<String>> data) {
+    public synchronized void loadTmpData(List<String> cols, List<List<String>> data) {
         if (data2D == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
+        resetStatus();
+        isSettingValues = true;
+        tableController.resetView();
+        isSettingValues = false;
+        task = new SingletonTask<Void>(this) {
+
+            private StringTable validateTable;
+            private List<List<String>> rows;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.resetData();
+                    data2D.setTask(task);
+                    List<Data2DColumn> columns = new ArrayList<>();
+                    if (cols == null || cols.isEmpty()) {
+                        data2D.setHasHeader(false);
+                        if (data == null || data.isEmpty()) {
+                            return true;
+                        }
+                        for (int i = 0; i < data.get(0).size(); i++) {
+                            Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
+                            column.setIndex(i);
+                            columns.add(column);
+                        }
+                    } else {
+                        data2D.setHasHeader(true);
+                        for (int i = 0; i < cols.size(); i++) {
+                            Data2DColumn column = new Data2DColumn(cols.get(i), data2D.defaultColumnType());
+                            column.setIndex(i);
+                            columns.add(column);
+                        }
+                    }
+                    data2D.setColumns(columns);
+                    validateTable = Data2DColumn.validate(columns);
+                    if (data != null) {
+                        rows = new ArrayList<>();
+                        for (int i = 0; i < data.size(); i++) {
+                            List<String> row = data.get(i);
+                            row.add(0, "-1");
+                            rows.add(row);
+                        }
+                    }
+                    data2D.checkForLoad();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
-            isSettingValues = true;
-            tableController.resetView();
-            isSettingValues = false;
-            task = new SingletonTask<Void>(this) {
 
-                private StringTable validateTable;
-                private List<List<String>> rows;
+            @Override
+            protected void whenSucceeded() {
+            }
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        data2D.resetData();
-                        data2D.setTask(task);
-                        List<Data2DColumn> columns = new ArrayList<>();
-                        if (cols == null || cols.isEmpty()) {
-                            data2D.setHasHeader(false);
-                            if (data == null || data.isEmpty()) {
-                                return true;
-                            }
-                            for (int i = 0; i < data.get(0).size(); i++) {
-                                Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
-                                column.setIndex(i);
-                                columns.add(column);
-                            }
-                        } else {
-                            data2D.setHasHeader(true);
-                            for (int i = 0; i < cols.size(); i++) {
-                                Data2DColumn column = new Data2DColumn(cols.get(i), data2D.defaultColumnType());
-                                column.setIndex(i);
-                                columns.add(column);
-                            }
-                        }
-                        data2D.setColumns(columns);
-                        validateTable = Data2DColumn.validate(columns);
-                        if (data != null) {
-                            rows = new ArrayList<>();
-                            for (int i = 0; i < data.size(); i++) {
-                                List<String> row = data.get(i);
-                                row.add(0, "-1");
-                                rows.add(row);
-                            }
-                        }
-                        data2D.checkForLoad();
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                tableController.loadTmpData(data);
+                attributesController.loadData();
+                columnsController.loadData();
+                notifyLoaded();
+                if (validateTable != null && !validateTable.isEmpty()) {
+                    validateTable.htmlTable();
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                }
-
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    data2D.setTask(null);
-                    task = null;
-                    tableController.loadTmpData(data);
-                    attributesController.loadData();
-                    columnsController.loadData();
-                    notifyLoaded();
-                    if (validateTable != null && !validateTable.isEmpty()) {
-                        validateTable.htmlTable();
-                    }
-                }
-
-            };
-            start(task);
-        }
-
+        };
+        start(task);
     }
 
     /*
@@ -695,6 +721,129 @@ public class ControlData2D extends BaseController {
     /*
         interface
      */
+    @FXML
+    public void popFunctionsMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            boolean invalidData = data2D == null || !data2D.isValid();
+            boolean empty = invalidData || tableController.tableData.isEmpty();
+            MenuItem menu;
+
+            menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                save();
+            });
+            menu.setDisable(invalidData || !tableController.dataSizeLoaded);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (data2D.isMatrix()) {
+                    recoverMatrix();
+                } else {
+                    recoverFile();
+                }
+            });
+            menu.setDisable(invalidData || data2D.isTmpData());
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.setValuesAction();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.copyAction();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.pasteContentInSystemClipboard();
+            });
+            menu.setDisable(invalidData);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInDataClipboard"), StyleTools.getIconImage("iconPaste.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.pasteContentInMyboxClipboard();
+            });
+            menu.setDisable(invalidData);
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.statistic();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.export();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.transpose();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            if (data2D.isDataFile()) {
+                menu = new MenuItem(message("Open"), StyleTools.getIconImage("iconOpen.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    selectSourceFile();
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconCreateData.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                create();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImage("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadContentInSystemClipboard();
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
@@ -779,7 +928,7 @@ public class ControlData2D extends BaseController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonSave) {
-                parentController.saveAction();
+                save();
                 goOn = false;
             } else {
                 goOn = result.get() == buttonNotSave;

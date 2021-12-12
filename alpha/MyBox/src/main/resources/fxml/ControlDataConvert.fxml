@@ -15,6 +15,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -34,14 +36,70 @@ License:    Apache License Version 2.0
                            <children>
                                 <FlowPane fx:id="formatsPane" hgap="5.0" vgap="5.0">
                                     <children>
-                                        <CheckBox fx:id="csvCheck" mnemonicParsing="false" selected="true" text="CSV" />
-                                        <CheckBox mnemonicParsing="false" text="xlsx(Excel 2007)" fx:id="xlsxCheck" />
-                                        <CheckBox fx:id="textCheck" layoutX="154.0" layoutY="10.0" mnemonicParsing="false" text="%Texts" />
-                                        <CheckBox fx:id="jsonCheck" layoutX="384.0" layoutY="10.0" mnemonicParsing="false" text="json" />
-                                        <CheckBox layoutX="270.0" layoutY="10.0" mnemonicParsing="false" text="xml" fx:id="xmlCheck" />
-                                        <CheckBox fx:id="htmlCheck" layoutX="164.0" layoutY="10.0" mnemonicParsing="false" text="html" />
-                                        <CheckBox fx:id="pdfCheck" layoutX="69.0" layoutY="10.0" mnemonicParsing="false" text="PDF" />
-                                    <CheckBox fx:id="dataClipboardCheck" layoutX="218.0" layoutY="10.0" mnemonicParsing="false" text="%DataClipboard" />
+                                        <CheckBox fx:id="csvCheck" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconCSV.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
+                                        <CheckBox fx:id="excelCheck" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconExcel.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
+                                        <CheckBox fx:id="textsCheck" layoutX="154.0" layoutY="10.0" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconTxt.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
+                                        <CheckBox fx:id="jsonCheck" layoutX="384.0" layoutY="10.0" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconJSON.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
+                                        <CheckBox layoutX="270.0" layoutY="10.0" mnemonicParsing="false" fx:id="xmlCheck">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconXML.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
+                                        <CheckBox fx:id="htmlCheck" layoutX="164.0" layoutY="10.0" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconHtml.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
+                                        <CheckBox fx:id="pdfCheck" layoutX="69.0" layoutY="10.0" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconPDF.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
+                                    <CheckBox fx:id="dataClipboardCheck" layoutX="218.0" layoutY="10.0" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconClipboard.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></CheckBox>
                                     </children>
                                 </FlowPane>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">

@@ -33,9 +33,9 @@ public class TableWebFavorite extends BaseTable<WebFavorite> {
 
     public final TableWebFavorite defineColumns() {
         addColumn(new ColumnDefinition("faid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(4096));
-        addColumn(new ColumnDefinition("address", ColumnType.String, true).setLength(8192));
-        addColumn(new ColumnDefinition("icon", ColumnType.String).setLength(4096));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("address", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("icon", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("owner", ColumnType.Long)
                 .setForeignName("Web_Favorite_owner_fk").setForeignTable("Tree").setForeignColumn("nodeid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)

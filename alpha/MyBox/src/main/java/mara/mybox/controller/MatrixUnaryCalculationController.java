@@ -74,7 +74,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
 
             dataMatrix = (DataMatrix) dataController.data2D;
 
-            resultController.setDataType(this, Data2D.Type.Matrix);
+            resultController.setDataType(null, Data2D.Type.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
@@ -282,12 +282,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
 
         calculateButton.setDisable(false);
         return true;
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-
     }
 
     @FXML

@@ -46,7 +46,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     protected float opacity;
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
-    protected int rotateAngle, keepRatioType, currentAngle;
+    protected int keepRatioType;
 
     @FXML
     protected ControlImagesClipboard clipsController;
@@ -246,6 +246,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         imageController.showRightPane();
         imageController.resetImagePane();
         imageController.imageTab();
+        scrollPane.setHvalue(0);
     }
 
     public void selectClip() {

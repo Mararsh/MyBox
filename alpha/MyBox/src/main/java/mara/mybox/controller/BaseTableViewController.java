@@ -514,6 +514,40 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
+    public List<List<String>> dataList() {
+        try {
+            if (tableData.isEmpty()) {
+                return null;
+            }
+            int rowsSelectionColumnIndex = -1;
+            if (rowsSelectionColumn != null) {
+                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+            }
+            int colsNumber = tableView.getColumns().size();
+            List<List<String>> data = new ArrayList<>();
+            for (int r = 0; r < tableData.size(); r++) {
+                List<String> row = new ArrayList<>();
+                for (int c = 0; c < colsNumber; c++) {
+                    if (c == rowsSelectionColumnIndex) {
+                        continue;
+                    }
+                    String s = null;
+                    try {
+                        s = tableView.getColumns().get(c).getCellData(r).toString();
+                    } catch (Exception e) {
+                    }
+                    row.add(s);
+                }
+                data.add(row);
+            }
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+
     /*
         buttons
      */
@@ -856,6 +890,46 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = false;
         tableView.refresh();
         tableChanged(true);
+    }
+
+    @FXML
+    public void dataAction() {
+        try {
+            if (tableData.isEmpty()) {
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            int rowsSelectionColumnIndex = -1;
+            if (rowsSelectionColumn != null) {
+                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+            }
+            int colsNumber = tableView.getColumns().size();
+            for (int c = 0; c < colsNumber; c++) {
+                if (c == rowsSelectionColumnIndex) {
+                    continue;
+                }
+                names.add(tableView.getColumns().get(c).getText());
+            }
+            List<List<String>> data = new ArrayList<>();
+            for (int r = 0; r < tableData.size(); r++) {
+                List<String> row = new ArrayList<>();
+                for (int c = 0; c < colsNumber; c++) {
+                    if (c == rowsSelectionColumnIndex) {
+                        continue;
+                    }
+                    String s = null;
+                    try {
+                        s = tableView.getColumns().get(c).getCellData(r).toString();
+                    } catch (Exception e) {
+                    }
+                    row.add(s);
+                }
+                data.add(row);
+            }
+            DataFileCSVController.open(names, data);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*

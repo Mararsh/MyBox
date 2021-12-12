@@ -179,6 +179,7 @@ public class Fxmls {
     public static final String Data2DPasteFxml = "/fxml/Data2DPaste.fxml";
     public static final String Data2DExportFxml = "/fxml/Data2DExport.fxml";
     public static final String Data2DTransposeFxml = "/fxml/Data2DTranspose.fxml";
+    public static final String Data2DStatisticFxml = "/fxml/Data2DStatistic.fxml";
 
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
     public static final String DataClipboardPopFxml = "/fxml/DataClipboardPop.fxml";

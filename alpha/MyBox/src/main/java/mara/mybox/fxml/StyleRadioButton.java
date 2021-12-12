@@ -1,7 +1,7 @@
 package mara.mybox.fxml;
 
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -13,6 +13,36 @@ public class StyleRadioButton {
     public static StyleData radioButtonStyle(String id) {
         if (id == null || id.isEmpty()) {
             return null;
+        }
+        if (id.startsWith("csv")) {
+            return new StyleData(id, "", "CSV", "", "iconCSV.png");
+        }
+        if (id.startsWith("excel")) {
+            return new StyleData(id, "", "Excel", "", "iconExcel.png");
+        }
+        if (id.startsWith("texts")) {
+            return new StyleData(id, "", message("Texts"), "", "iconTxt.png");
+        }
+        if (id.startsWith("matrix")) {
+            return new StyleData(id, "", message("Matrix"), "", "iconSplit.png");
+        }
+        if (id.startsWith("systemClipboard")) {
+            return new StyleData(id, "", message("SystemClipboard"), "", "iconSystemClipboard.png");
+        }
+        if (id.startsWith("myBoxClipboard")) {
+            return new StyleData(id, "", message("MyBoxClipboard"), "", "iconClipboard.png");
+        }
+        if (id.startsWith("html")) {
+            return new StyleData(id, "", "Html", "", "iconHtml.png");
+        }
+        if (id.startsWith("xml")) {
+            return new StyleData(id, "", "XML", "", "iconXML.png");
+        }
+        if (id.startsWith("pdf")) {
+            return new StyleData(id, "", "PDF", "", "iconPDF.png");
+        }
+        if (id.startsWith("json")) {
+            return new StyleData(id, "", "json", "", "iconJSON.png");
         }
         switch (id) {
             case "miaoRadio":

@@ -32,7 +32,7 @@ import mara.mybox.value.Languages;
  */
 public abstract class BaseTable<D> {
 
-    public final static int FilenameMaxLength = 10240;
+    public final static int FilenameMaxLength = 32672;
     public final static int StringMaxLength = 32672;
 
     protected String tableName, idColumn, orderColumns;

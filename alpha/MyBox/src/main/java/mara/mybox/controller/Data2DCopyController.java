@@ -14,7 +14,7 @@ import mara.mybox.value.Fxmls;
 public class Data2DCopyController extends Data2DOperationController {
 
     public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController, false);
+        super.setParameters(tableController, false, true);
     }
 
     @Override
