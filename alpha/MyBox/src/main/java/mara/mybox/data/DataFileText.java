@@ -15,6 +15,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -417,6 +418,133 @@ public class DataFileText extends DataFile {
         }
         task = null;
         return true;
+    }
+
+    @Override
+    public List<List<String>> allRows(List<Integer> cols) {
+        if (file == null || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        List<List<String>> rows = new ArrayList<>();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            String line;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> record = parseFileLine(line);
+                if (record == null || record.isEmpty()) {
+                    continue;
+                }
+                List<String> row = new ArrayList<>();
+                for (int col : cols) {
+                    if (col >= 0 && col < record.size()) {
+                        row.add(record.get(col));
+                    } else {
+                        row.add(null);
+                    }
+                }
+                if (!row.isEmpty()) {
+                    rows.add(row);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return rows;
+    }
+
+    @Override
+    public DoubleStatistic[] statisticData(List<Integer> cols) {
+        if (file == null || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        int colLen = cols.size();
+        DoubleStatistic[] sData = new DoubleStatistic[colLen];
+        for (int c = 0; c < colLen; c++) {
+            sData[c] = new DoubleStatistic();
+        }
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            String line;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> record = parseFileLine(line);
+                if (record == null || record.isEmpty()) {
+                    continue;
+                }
+                for (int c = 0; c < colLen; c++) {
+                    sData[c].count++;
+                    int col = cols.get(c);
+                    if (col < 0 || col >= record.size()) {
+                        continue;
+                    }
+                    double v = doubleValue(record.get(col));
+                    sData[c].sum += v;
+                    if (v > sData[c].maximum) {
+                        sData[c].maximum = v;
+                    }
+                    if (v < sData[c].minimum) {
+                        sData[c].minimum = v;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        boolean allInvalid = true;
+        for (int c = 0; c < colLen; c++) {
+            if (sData[c].count != 0) {
+                sData[c].mean = sData[c].sum / sData[c].count;
+                allInvalid = false;
+            } else {
+                sData[c].mean = AppValues.InvalidDouble;
+                sData[c].variance = AppValues.InvalidDouble;
+                sData[c].skewness = AppValues.InvalidDouble;
+            }
+        }
+        if (allInvalid) {
+            return sData;
+        }
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            String line;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> record = parseFileLine(line);
+                if (record == null || record.isEmpty()) {
+                    continue;
+                }
+                for (int c = 0; c < colLen; c++) {
+                    if (sData[c].count == 0) {
+                        continue;
+                    }
+                    int col = cols.get(c);
+                    if (col < 0 || col >= record.size()) {
+                        continue;
+                    }
+                    double v = doubleValue(record.get(col));
+                    sData[c].variance += Math.pow(v - sData[c].mean, 2);
+                    sData[c].skewness += Math.pow(v - sData[c].mean, 3);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        for (int c = 0; c < colLen; c++) {
+            if (sData[c].count == 0) {
+                continue;
+            }
+            sData[c].variance = Math.sqrt(sData[c].variance / sData[c].count);
+            sData[c].skewness = Math.cbrt(sData[c].skewness / sData[c].count);
+        }
+
+        return sData;
     }
 
 }

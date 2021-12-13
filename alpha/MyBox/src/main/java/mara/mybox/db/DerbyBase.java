@@ -20,7 +20,6 @@ import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
-import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
@@ -527,9 +526,6 @@ public class DerbyBase {
             }
             if (!tables.contains("MyBox_Log".toUpperCase())) {
                 new TableMyBoxLog().createTable(conn);
-            }
-            if (!tables.contains("Data_Definition".toUpperCase())) {
-                new TableDataDefinition().createTable(conn);
             }
             if (!tables.contains("Image_Edit_History".toUpperCase())) {
                 new TableImageEditHistory().createTable(conn);

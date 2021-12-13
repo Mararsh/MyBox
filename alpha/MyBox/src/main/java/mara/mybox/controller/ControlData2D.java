@@ -608,7 +608,7 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public synchronized void loadTmpData(List<String> cols, List<List<String>> data) {
+    public synchronized void loadTmpData(List<Data2DColumn> cols, List<List<String>> data) {
         if (data2D == null) {
             return;
         }
@@ -639,11 +639,7 @@ public class ControlData2D extends BaseController {
                         }
                     } else {
                         data2D.setHasHeader(true);
-                        for (int i = 0; i < cols.size(); i++) {
-                            Data2DColumn column = new Data2DColumn(cols.get(i), data2D.defaultColumnType());
-                            column.setIndex(i);
-                            columns.add(column);
-                        }
+                        columns.addAll(cols);
                     }
                     data2D.setColumns(columns);
                     validateTable = Data2DColumn.validate(columns);
@@ -791,9 +787,9 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu = new MenuItem(message("Percentage"), StyleTools.getIconImage("iconPercentage.png"));
             menu.setOnAction((ActionEvent event) -> {
-                tableController.export();
+                tableController.percentage();
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
@@ -801,6 +797,13 @@ public class ControlData2D extends BaseController {
             menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 tableController.transpose();
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.export();
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);

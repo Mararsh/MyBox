@@ -246,7 +246,7 @@ public class Data2DPasteController extends BaseController {
         if (forPaste) {
             pasteData();
         } else {
-            tableController.dataController.loadTmpData(columnNames, data);
+            tableController.dataController.loadTmpData(data2D.toColumns(columnNames), data);
         }
         popDone();
     }
@@ -283,6 +283,7 @@ public class Data2DPasteController extends BaseController {
                 }
                 tableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
             }
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
 

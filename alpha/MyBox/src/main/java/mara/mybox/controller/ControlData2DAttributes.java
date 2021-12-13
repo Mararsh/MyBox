@@ -8,7 +8,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import mara.mybox.data.Data2D;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -38,9 +37,7 @@ public class ControlData2DAttributes extends BaseController {
     }
 
     @FXML
-    protected Label idLabel;
-    @FXML
-    protected TextField timeInput, dataTypeInput, dataNameInput;
+    protected TextField idInput, timeInput, dataTypeInput, dataNameInput;
     @FXML
     protected ComboBox<String> scaleSelector, randomSelector;
 
@@ -142,7 +139,7 @@ public class ControlData2DAttributes extends BaseController {
             if (data2D == null) {
                 return;
             }
-            idLabel.setText(data2D.getD2did() + "");
+            idInput.setText(data2D.getD2did() >= 0 ? data2D.getD2did() + "" : message("NewData"));
             timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
             dataTypeInput.setText(message(data2D.getType().name()));
             isSettingValues = true;

@@ -36,6 +36,7 @@ public class Data2DTransposeController extends Data2DOperationController {
                 handledData.add(row);
             }
             handledNames = null;
+            handledColumns = null;
             return true;
         } catch (Exception e) {
             popError(e.toString());

@@ -282,7 +282,7 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @Override
-    public BufferedImage imageToSave() {
+    public BufferedImage imageToSaveAs() {
         if (sourceFile != null && imageInformation != null) {
             ImageInformation info = new ImageInformation(sourceFile);
             info.setIndex(imageInformation.getIndex())

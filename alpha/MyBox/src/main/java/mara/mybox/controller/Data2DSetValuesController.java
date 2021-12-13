@@ -190,6 +190,7 @@ public class Data2DSetValuesController extends BaseController {
                 }
                 tableController.tableData.set(row, values);
             }
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
             popDone();
@@ -229,6 +230,7 @@ public class Data2DSetValuesController extends BaseController {
                 }
                 tableController.tableData.set(row, tableRow);
             }
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
             popDone();
@@ -263,6 +265,7 @@ public class Data2DSetValuesController extends BaseController {
                 tableController.tableData.set(row, tableRow);
                 rowIndex++;
             }
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
             popDone();
@@ -296,6 +299,7 @@ public class Data2DSetValuesController extends BaseController {
                 tableController.tableData.set(row, values);
                 rowIndex++;
             }
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
             popDone();
@@ -329,6 +333,7 @@ public class Data2DSetValuesController extends BaseController {
                 tableController.tableData.set(row, values);
                 rowIndex++;
             }
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
             popDone();
@@ -362,6 +367,7 @@ public class Data2DSetValuesController extends BaseController {
                 tableController.tableData.set(row, values);
                 rowIndex++;
             }
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
             popDone();

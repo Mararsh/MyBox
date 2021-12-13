@@ -8,7 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Toggle;
 import javafx.scene.layout.HBox;
+import mara.mybox.data.Data2D;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -20,9 +24,11 @@ import mara.mybox.value.UserConfig;
 public abstract class Data2DOperationController extends BaseController {
 
     protected ControlData2DEditTable tableController;
+    protected Data2D data2D;
     protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
     protected List<List<String>> selectedData, handledData;
     protected List<String> selectedNames, handledNames;
+    protected List<Data2DColumn> selectedColumns, handledColumns;
     protected boolean sourceAll;
     protected String value;
 
@@ -43,12 +49,16 @@ public abstract class Data2DOperationController extends BaseController {
     public void setParameters(ControlData2DEditTable tableController, boolean sourceAll, boolean targetTable) {
         try {
             this.tableController = tableController;
-            getMyStage().setTitle(tableController.getBaseTitle());
+            data2D = tableController.data2D;
 
             selectController.setParameters(tableController, sourceAll);
-            targetController.setParameters(this, targetTable ? tableController : null);
+            if (targetController != null) {
+                targetController.setParameters(this, targetTable ? tableController : null);
+            }
 
-            if (namesBox != null) {
+            getMyStage().setTitle(tableController.getBaseTitle());
+
+            if (namesBox != null && targetController != null) {
                 namesBox.setVisible(!targetController.isTable());
                 targetController.targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
@@ -84,61 +94,95 @@ public abstract class Data2DOperationController extends BaseController {
 
     @FXML
     @Override
-    public void okAction() {
-        try {
-            selectedRowsIndices = selectController.selectedRowsIndices();
-            selectedColumnsIndices = selectController.selectedColumnsIndices();
-            if (selectedColumnsIndices.isEmpty() || selectedRowsIndices.isEmpty()) {
-                popError(message("SelectToHandle"));
-                return;
+    public synchronized void okAction() {
+        selectedRowsIndices = selectController.selectedRowsIndices();
+        selectedColumnsIndices = selectController.selectedColumnsIndices();
+        if (selectedColumnsIndices.isEmpty() || selectedRowsIndices.isEmpty()) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+
+        task = new SingletonTask<Void>(this) {
+
+            boolean forTable;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    forTable = targetController != null ? targetController.isTable() : false;
+                    if (forTable) {
+                        return handleForTable();
+                    } else {
+                        return handleForExternal();
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
-            boolean ok;
-            if (targetController.isTable()) {
-                ok = handleForTable();
-            } else {
-                ok = handleForExternal();
+            @Override
+            protected void whenSucceeded() {
+                if (forTable) {
+                    updateTable();
+                } else {
+                    outputExternal();
+                }
+                popDone();
+                refreshControls();
             }
-            if (!ok) {
-                return;
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
             }
-            popDone();
-            refreshControls();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+
+        };
+        start(task);
     }
 
     public void refreshControls() {
         selectController.refreshControls();
-        targetController.refreshControls();
+        if (targetController != null) {
+            targetController.refreshControls();
+        }
     }
 
     public boolean checkData() {
         sourceAll = selectController.isAllData();
-        boolean isTargetNotTable = !targetController.isTable();
+        boolean isTargetNotTable = targetController == null || !targetController.isTable();
         if (!sourceAll) {
             selectedData = selectController.selectedData();
             if (selectedData == null || selectedData.isEmpty()) {
                 popError(message("NoData"));
                 return false;
             }
-            if (isTargetNotTable && rowNumberCheck != null && rowNumberCheck.isSelected()) {
-                for (int i = 0; i < selectedData.size(); i++) {
-                    List<String> row = selectedData.get(i);
-                    row.add(0, (i + 1) + "");
-                }
-            }
-        } else {
+        } else if (tableController.data2D.isMutiplePages()) {
             selectedData = null;
+        } else {
+            selectedData = selectController.pageData();
+        }
+        if (selectedData != null && isTargetNotTable && rowNumberCheck != null && rowNumberCheck.isSelected()) {
+            for (int i = 0; i < selectedData.size(); i++) {
+                List<String> row = selectedData.get(i);
+                row.add(0, (i + 1) + "");
+            }
+        }
+
+        selectedColumns = new ArrayList<>();
+        for (Integer index : selectedColumnsIndices) {
+            selectedColumns.add(data2D.getColumns().get(index));
         }
 
         if (isTargetNotTable && (colNameCheck == null || colNameCheck.isSelected())) {
             selectedNames = selectController.selectedColumnsNames();
             if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
                 selectedNames.add(0, message("RowNumber"));
+                selectedColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             }
-
         } else {
             selectedNames = null;
         }
@@ -146,25 +190,25 @@ public abstract class Data2DOperationController extends BaseController {
     }
 
     public boolean hanldeData() {
-        return false;
+        handledData = selectedData;
+        handledNames = selectedNames;
+        handledColumns = selectedColumns;
+        return true;
     }
 
     public boolean handleForTable() {
-        if (!checkData() || !hanldeData()) {
-            return false;
-        }
-        return updateTable();
+        return checkData() && hanldeData();
     }
 
     public boolean handleForExternal() {
-        if (!checkData() || !hanldeData()) {
-            return false;
-        }
-        return outputExternal();
+        return checkData() && hanldeData();
     }
 
     public boolean updateTable() {
         try {
+            if (targetController == null) {
+                return false;
+            }
             List<List<String>> newRows = new ArrayList<>();
             int colsNumber = tableController.data2D.tableColsNumber();
             for (List<String> dataRow : handledData) {
@@ -178,6 +222,7 @@ public abstract class Data2DOperationController extends BaseController {
             tableController.isSettingValues = true;
             tableController.tableData.addAll(index, newRows);
             tableController.tableView.scrollTo(index - 5);
+            tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
             return true;
@@ -189,7 +234,8 @@ public abstract class Data2DOperationController extends BaseController {
     }
 
     public boolean outputExternal() {
-        if (targetController.target == null || handledData == null || handledData.isEmpty()) {
+        if (targetController == null || targetController.target == null
+                || handledData == null || handledData.isEmpty()) {
             return false;
         }
         switch (targetController.target) {
@@ -197,20 +243,20 @@ public abstract class Data2DOperationController extends BaseController {
                 tableController.copyToSystemClipboard(handledNames, handledData);
                 break;
             case "myBoxClipboard":
-                tableController.copyToMyBoxClipboard(handledNames, handledData);
+                tableController.copyToMyBoxClipboard2(handledColumns, handledData);
                 break;
             case "csv":
-                DataFileCSVController.open(handledNames, handledData);
+                DataFileCSVController.open(handledColumns, handledData);
                 break;
             case "excel":
-                DataFileExcelController.open(handledNames, handledData);
+                DataFileExcelController.open(handledColumns, handledData);
                 break;
             case "texts":
-                DataFileTextController.open(handledNames, handledData);
+                DataFileTextController.open(handledColumns, handledData);
                 break;
             case "matrix":
                 MatricesManageController controller = MatricesManageController.oneOpen();
-                controller.dataController.loadTmpData(handledNames, handledData);
+                controller.dataController.loadTmpData(handledColumns, handledData);
                 break;
         }
         return true;

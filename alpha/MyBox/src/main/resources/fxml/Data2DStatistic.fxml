@@ -25,7 +25,7 @@ License:    Apache License Version 2.0
         </HBox>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS">
             <children>
-                <FlowPane hgap="10.0">
+                <FlowPane hgap="40.0">
                     <children>
                         <Label text="%DataSource" />
                         <Label fx:id="noNumberLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%NoNumberColumns" />
@@ -34,20 +34,47 @@ License:    Apache License Version 2.0
                 <fx:include fx:id="select" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSelect.fxml" VBox.vgrow="ALWAYS" />
             </children>
         </VBox>
-        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" vgap="2.0">
-            <children>
-                <CheckBox fx:id="countCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Count" />
-                <CheckBox fx:id="summationCheck" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Summation" />
-                <CheckBox fx:id="meanCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Mean" />
-                <CheckBox fx:id="varianceCheck" layoutX="136.0" layoutY="10.0" mnemonicParsing="false" text="%Variance" />
-                <CheckBox fx:id="skewnessCheck" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" text="%Skewness" />
-                <CheckBox fx:id="maximumCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" text="%Maximum" />
-                <CheckBox fx:id="minimumCheck" layoutX="89.0" layoutY="29.0" mnemonicParsing="false" text="%Minimum" />
-                <CheckBox fx:id="modeCheck" layoutX="372.0" layoutY="10.0" mnemonicParsing="false" text="%Mode" />
-                <CheckBox fx:id="medianCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Median" />
-                <CheckBox fx:id="percentageCheck" mnemonicParsing="false" text="%Percentage" />
-            </children>
-        </FlowPane>
+      <VBox fx:id="operationBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <Label minHeight="-Infinity" minWidth="-Infinity" text="%Operations" />
+                  <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectAll.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="selectNoneButton" mnemonicParsing="false" onAction="#selectNoneAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectNone.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+              <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" vgap="2.0">
+                  <children>
+                      <CheckBox fx:id="countCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Count" />
+                      <CheckBox fx:id="summationCheck" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Summation" />
+                      <CheckBox fx:id="meanCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Mean" />
+                      <CheckBox fx:id="varianceCheck" layoutX="136.0" layoutY="10.0" mnemonicParsing="false" text="%Variance" />
+                      <CheckBox fx:id="skewnessCheck" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" text="%Skewness" />
+                      <CheckBox fx:id="maximumCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" text="%Maximum" />
+                      <CheckBox fx:id="minimumCheck" layoutX="89.0" layoutY="29.0" mnemonicParsing="false" text="%Minimum" />
+                      <CheckBox fx:id="modeCheck" layoutX="372.0" layoutY="10.0" mnemonicParsing="false" text="%Mode" />
+                      <CheckBox fx:id="medianCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Median" />
+                  </children>
+              </FlowPane>
+            <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%DataStatisticComments" wrapText="true" />
+         </children>
+      </VBox>
         <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <fx:include fx:id="target" source="ControlData2DTarget.fxml" />

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileText;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -87,7 +88,7 @@ public class DataFileTextController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileTextController open(List<String> cols, List<List<String>> data) {
+    public static DataFileTextController open(List<Data2DColumn> cols, List<List<String>> data) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
         controller.dataController.loadTmpData(cols, data);
         return controller;

@@ -191,6 +191,9 @@ public class ControlData2DTarget extends BaseController {
 
     public void refreshControls() {
         try {
+            if (tableController == null) {
+                return;
+            }
             int thisSelect = rowSelector.getSelectionModel().getSelectedIndex();
             List<String> rows = new ArrayList<>();
             for (long i = 0; i < tableController.tableData.size(); i++) {

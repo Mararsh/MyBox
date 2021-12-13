@@ -7,7 +7,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -58,11 +57,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     protected ColorSet colorSetController;
     @FXML
     protected Button viewImageButton;
-
-    @Override
-    public Image imageToSave() {
-        return imageView.getImage();
-    }
 
     @Override
     public void refinePane() {

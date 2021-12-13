@@ -245,6 +245,39 @@ public class Data2DColumn extends ColumnDefinition {
         }
     }
 
+    public static List<String> toNames(List<Data2DColumn> cols) {
+        try {
+            if (cols == null) {
+                return null;
+            }
+            List<String> names = new ArrayList<>();
+            for (Data2DColumn c : cols) {
+                names.add(c.getName());
+            }
+            return names;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<Data2DColumn> toColumns(List<String> names) {
+        try {
+            if (names == null) {
+                return null;
+            }
+            List<Data2DColumn> cols = new ArrayList<>();
+            for (String c : names) {
+                cols.add(new Data2DColumn(c, ColumnType.String));
+            }
+            return cols;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+
     /*
         get/set
      */

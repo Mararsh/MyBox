@@ -11,11 +11,11 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileCSV;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
@@ -109,7 +109,7 @@ public class DataFileCSVController extends BaseData2DFileController {
                 @Override
                 protected boolean handle() {
                     filePath = new File(AppPaths.getGeneratedPath());
-                    files = CsvTools.save(filePath, "tmp", tables);
+                    files = DataFileCSV.save(filePath, "tmp", tables);
                     count = files != null ? files.size() : 0;
                     return count > 0;
                 }
@@ -150,7 +150,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         return controller;
     }
 
-    public static DataFileCSVController open(List<String> cols, List<List<String>> data) {
+    public static DataFileCSVController open(List<Data2DColumn> cols, List<List<String>> data) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.dataController.loadTmpData(cols, data);
         return controller;

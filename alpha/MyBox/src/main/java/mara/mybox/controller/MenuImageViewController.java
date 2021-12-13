@@ -6,6 +6,7 @@ import javafx.stage.Popup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -21,6 +22,14 @@ public class MenuImageViewController extends MenuImageBaseController {
         try {
             this.imageViewerController = imageViewerController;
             super.setParameters(imageViewerController);
+
+            boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
+            if (cropButton != null) {
+                cropButton.setDisable(!selected);
+            }
+            if (selectAllButton != null) {
+                selectAllButton.setDisable(!selected);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

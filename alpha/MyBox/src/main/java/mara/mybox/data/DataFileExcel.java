@@ -16,6 +16,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -658,6 +659,196 @@ public class DataFileExcel extends DataFile {
         }
         task = null;
         return true;
+    }
+
+    @Override
+    public List<List<String>> allRows(List<Integer> cols) {
+        if (file == null || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        List<List<String>> rows = new ArrayList<>();
+        try ( Workbook wb = WorkbookFactory.create(file)) {
+            Sheet sheet;
+            if (currentSheetName != null) {
+                sheet = wb.getSheet(currentSheetName);
+            } else {
+                sheet = wb.getSheetAt(0);
+                currentSheetName = sheet.getSheetName();
+            }
+            Iterator<Row> iterator = sheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        Row fileRow = iterator.next();
+                        if (fileRow == null) {
+                            continue;
+                        }
+                        List<String> record = new ArrayList<>();
+                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                            record.add(v);
+                        }
+                        if (record.isEmpty()) {
+                            continue;
+                        }
+                        List<String> row = new ArrayList<>();
+                        for (int col : cols) {
+                            if (col >= 0 && col < record.size()) {
+                                row.add(record.get(col));
+                            } else {
+                                row.add(null);
+                            }
+                        }
+                        if (!row.isEmpty()) {
+                            rows.add(row);
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return rows;
+    }
+
+    @Override
+    public DoubleStatistic[] statisticData(List<Integer> cols) {
+        if (file == null || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        int colLen = cols.size();
+        DoubleStatistic[] sData = new DoubleStatistic[colLen];
+        for (int c = 0; c < colLen; c++) {
+            sData[c] = new DoubleStatistic();
+        }
+        try ( Workbook wb = WorkbookFactory.create(file)) {
+            Sheet sheet;
+            if (currentSheetName != null) {
+                sheet = wb.getSheet(currentSheetName);
+            } else {
+                sheet = wb.getSheetAt(0);
+                currentSheetName = sheet.getSheetName();
+            }
+            Iterator<Row> iterator = sheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        Row fileRow = iterator.next();
+                        if (fileRow == null) {
+                            continue;
+                        }
+                        List<String> record = new ArrayList<>();
+                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                            record.add(v);
+                        }
+                        if (record.isEmpty()) {
+                            continue;
+                        }
+                        for (int c = 0; c < colLen; c++) {
+                            sData[c].count++;
+                            int col = cols.get(c);
+                            if (col < 0 || col >= record.size()) {
+                                continue;
+                            }
+                            double v = doubleValue(record.get(col));
+                            sData[c].sum += v;
+                            if (v > sData[c].maximum) {
+                                sData[c].maximum = v;
+                            }
+                            if (v < sData[c].minimum) {
+                                sData[c].minimum = v;
+                            }
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        boolean allInvalid = true;
+        for (int c = 0; c < colLen; c++) {
+            if (sData[c].count != 0) {
+                sData[c].mean = sData[c].sum / sData[c].count;
+                allInvalid = false;
+            } else {
+                sData[c].mean = AppValues.InvalidDouble;
+                sData[c].variance = AppValues.InvalidDouble;
+                sData[c].skewness = AppValues.InvalidDouble;
+            }
+        }
+        if (allInvalid) {
+            return sData;
+        }
+        try ( Workbook wb = WorkbookFactory.create(file)) {
+            Sheet sheet;
+            if (currentSheetName != null) {
+                sheet = wb.getSheet(currentSheetName);
+            } else {
+                sheet = wb.getSheetAt(0);
+                currentSheetName = sheet.getSheetName();
+            }
+            Iterator<Row> iterator = sheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        Row fileRow = iterator.next();
+                        if (fileRow == null) {
+                            continue;
+                        }
+                        List<String> record = new ArrayList<>();
+                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                            record.add(v);
+                        }
+                        if (record.isEmpty()) {
+                            continue;
+                        }
+                        for (int c = 0; c < colLen; c++) {
+                            if (sData[c].count == 0) {
+                                continue;
+                            }
+                            int col = cols.get(c);
+                            if (col < 0 || col >= record.size()) {
+                                continue;
+                            }
+                            double v = doubleValue(record.get(col));
+                            sData[c].variance += Math.pow(v - sData[c].mean, 2);
+                            sData[c].skewness += Math.pow(v - sData[c].mean, 3);
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        for (int c = 0; c < colLen; c++) {
+            if (sData[c].count == 0) {
+                continue;
+            }
+            sData[c].variance = Math.sqrt(sData[c].variance / sData[c].count);
+            sData[c].skewness = Math.cbrt(sData[c].skewness / sData[c].count);
+        }
+
+        return sData;
     }
 
     /*

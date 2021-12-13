@@ -19,6 +19,8 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data.DataClipboard;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
@@ -47,6 +49,7 @@ public class ControlDataConvert extends BaseController {
 
     protected BaseTaskController parent;
     protected List<String> names;
+    protected List<Data2DColumn> columns;
     protected boolean firstRow, skip;
     protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile, dataClipboardFile;
     protected CSVPrinter csvPrinter, dataClipboardPrinter;
@@ -355,7 +358,6 @@ public class ControlDataConvert extends BaseController {
                     csvPrinter = new CSVPrinter(new FileWriter(csvFile, csvWriteController.charset), csvFormat);
                     if (csvWriteController.withNamesCheck.isSelected()) {
                         csvPrinter.printRecord(names);
-                        MyBoxLog.console(names);
                     }
                 } else if (skip) {
                     updateLogs(message("Skipped"));
@@ -640,7 +642,13 @@ public class ControlDataConvert extends BaseController {
                 dataClipboardPrinter.close();
                 parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
                 dataClipboardPrinter = null;
-                DataClipboard.create(task, names, dataClipboardFile, dataRowIndex, names.size());
+                if (columns == null || columns.isEmpty()) {
+                    columns = new ArrayList<>();
+                    for (String c : names) {
+                        columns.add(new Data2DColumn(c, ColumnDefinition.ColumnType.String));
+                    }
+                }
+                DataClipboard.create(task, columns, dataClipboardFile, dataRowIndex, columns.size());
             }
 
         } catch (Exception e) {

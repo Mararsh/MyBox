@@ -18,13 +18,6 @@ public class Data2DCopyController extends Data2DOperationController {
     }
 
     @Override
-    public boolean hanldeData() {
-        handledData = selectedData;
-        handledNames = selectedNames;
-        return true;
-    }
-
-    @Override
     public boolean handleForTable() {
         try {
             handledData = new ArrayList<>();
@@ -41,7 +34,7 @@ public class Data2DCopyController extends Data2DOperationController {
                 }
                 handledData.add(newRow);
             }
-            return updateTable();
+            return true;
         } catch (Exception e) {
             popError(e.toString());
             MyBoxLog.error(e.toString());

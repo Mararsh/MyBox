@@ -115,12 +115,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         return selected;
     }
 
-    public Object imageToSave() {
-        Image selected = scopeImage();
-        if (selected == null) {
-            selected = imageView.getImage();
-        }
-        return selected;
+    public Object imageToSaveAs() {
+        return imageToHandle();
     }
 
     @FXML
@@ -446,7 +442,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             popMenu.getItems().add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("ImagesInMyBoxClipboard"), StyleTools.getIconImage("iconClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageInMyBoxClipboardController.oneOpen();
@@ -454,6 +449,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             popMenu.getItems().add(menu);
 
+            popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("Settings"), StyleTools.getIconImage("iconSetting.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 settings();
@@ -553,7 +549,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (file == null) {
             return;
         }
-        saveImage(imageFile(), file, imageToSave());
+        saveImage(imageFile(), file, imageToSaveAs());
     }
 
     public void saveImage(File srcFile, File newfile, Object imageToSave) {

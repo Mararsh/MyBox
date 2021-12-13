@@ -195,10 +195,6 @@ public abstract class Data2D extends Data2DDefinition {
         return pagesNumber > 1;
     }
 
-    public boolean isMutiplePagesChanged() {
-        return isMutiplePages() && this.isTableChanged();
-    }
-
     // file columns are not necessary in order of columns definition.
     // column's index remembers the order of columns
     // when index is less than 0, it is new column
@@ -257,6 +253,17 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    public List<List<String>> allRows(List<Integer> cols) {
+        return null;
+    }
+
+    public DoubleStatistic[] statisticData(List<Integer> cols) {
+        return null;
+    }
+
+    public File percentage(List<String> names, List<Integer> cols, boolean withValues) {
+        return null;
+    }
 
     /*
         matrix
@@ -374,12 +381,26 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    /*
+        values
+     */
     public String randomDouble(Random random) {
         return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
     }
 
     public String randomString(Random random) {
         return (char) ('a' + random.nextInt(25)) + "";
+    }
+
+    public double doubleValue(String v) {
+        try {
+            if (v == null || v.isBlank()) {
+                return 0;
+            }
+            return Double.valueOf(v.replaceAll(",", ""));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     /*
@@ -462,12 +483,12 @@ public abstract class Data2D extends Data2DDefinition {
         return isValid() && tableData() != null && !tableData().isEmpty();
     }
 
-    public List<String> tmpColumns(int cols) {
+    public List<Data2DColumn> tmpColumns(int cols) {
         List<String> names = new ArrayList<>();
         for (int c = 1; c <= cols; c++) {
             names.add(colPrefix() + c);
         }
-        return names;
+        return toColumns(names);
     }
 
     public List<List<String>> tmpData(int rows, int cols) {
@@ -584,6 +605,23 @@ public abstract class Data2D extends Data2DDefinition {
         }
         return names;
     }
+
+    public List<Data2DColumn> toColumns(List<String> names) {
+        try {
+            if (names == null) {
+                return null;
+            }
+            List<Data2DColumn> cols = new ArrayList<>();
+            for (String c : names) {
+                cols.add(new Data2DColumn(c, defaultColumnType()));
+            }
+            return cols;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
 
     /*
         attributes

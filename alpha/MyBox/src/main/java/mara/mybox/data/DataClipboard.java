@@ -41,13 +41,17 @@ public class DataClipboard extends DataFileCSV {
         return new File(AppPaths.getDataClipboardPath() + File.separator + DateTools.nowFileString() + ".csv");
     }
 
-    public static DataClipboard create(SingletonTask task, List<String> cols, List<List<String>> data) {
+    public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
         if (data == null || data.isEmpty()) {
             return null;
         }
         DataClipboard d = new DataClipboard();
         d.setTask(task);
-        File tmpFile = d.tmpFile(cols, data);
+        List<String> names = new ArrayList<>();
+        for (Data2DColumn c : cols) {
+            names.add(c.getName());
+        }
+        File tmpFile = d.tmpFile(names, data);
         if (tmpFile == null) {
             return null;
         }
@@ -60,7 +64,7 @@ public class DataClipboard extends DataFileCSV {
         }
     }
 
-    public static DataClipboard create(SingletonTask task, List<String> cols, File dFile,
+    public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, File dFile,
             int rowsNumber, int colsNumber) {
         if (dFile == null || rowsNumber <= 0) {
             return null;
@@ -84,12 +88,8 @@ public class DataClipboard extends DataFileCSV {
                     return null;
                 }
                 try {
-                    List<Data2DColumn> dCols = new ArrayList<>();
-                    for (String name : cols) {
-                        dCols.add(new Data2DColumn(name, d.defaultColumnType()));
-                    }
-                    d.setColumns(dCols);
-                    d.getTableData2DColumn().save(conn, did, dCols);
+                    d.setColumns(cols);
+                    d.getTableData2DColumn().save(conn, did, cols);
                 } catch (Exception e) {
                     if (task != null) {
                         task.setError(e.toString());

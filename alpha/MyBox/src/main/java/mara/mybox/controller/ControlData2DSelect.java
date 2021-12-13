@@ -134,4 +134,27 @@ public class ControlData2DSelect extends BaseController {
         }
     }
 
+    public List<List<String>> pageData() {
+        try {
+            selectedColumnsIndices = colsListController.checkedIndices();
+            if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()) {
+                return null;
+            }
+            List<List<String>> data = new ArrayList<>();
+            for (int row = 0; row < tableController.tableData.size(); row++) {
+                List<String> tableRow = tableController.tableData.get(row);
+                List<String> newRow = new ArrayList<>();
+                for (int col : selectedColumnsIndices) {
+                    newRow.add(tableRow.get(col + 1));
+                }
+                data.add(newRow);
+            }
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(e.toString());
+            return null;
+        }
+    }
+
 }

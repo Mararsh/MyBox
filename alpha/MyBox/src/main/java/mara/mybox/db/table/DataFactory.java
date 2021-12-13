@@ -11,10 +11,9 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DCell;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.FileBackup;
@@ -60,9 +59,6 @@ public class DataFactory {
 
         } else if (data instanceof MyBoxLog) {
             return new TableMyBoxLog();
-
-        } else if (data instanceof DataDefinition) {
-            return new TableDataDefinition();
 
         } else if (data instanceof ImageEditHistory) {
             return new TableImageEditHistory();
@@ -140,9 +136,6 @@ public class DataFactory {
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.valid((MyBoxLog) data);
-
-        } else if (data instanceof DataDefinition) {
-            return DataDefinition.valid((DataDefinition) data);
 
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.valid((ColumnDefinition) data);
@@ -225,9 +218,6 @@ public class DataFactory {
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.getValue((MyBoxLog) data, name);
 
-        } else if (data instanceof DataDefinition) {
-            return DataDefinition.getValue((DataDefinition) data, name);
-
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.getValue((ImageEditHistory) data, name);
 
@@ -305,9 +295,6 @@ public class DataFactory {
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.setValue((MyBoxLog) data, name, value);
-
-        } else if (data instanceof DataDefinition) {
-            return DataDefinition.setValue((DataDefinition) data, name, value);
 
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.setValue((ImageEditHistory) data, name, value);
