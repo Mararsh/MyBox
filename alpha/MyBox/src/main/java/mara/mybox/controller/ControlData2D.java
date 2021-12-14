@@ -634,12 +634,14 @@ public class ControlData2D extends BaseController {
                         }
                         for (int i = 0; i < data.get(0).size(); i++) {
                             Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
-                            column.setIndex(i);
                             columns.add(column);
                         }
                     } else {
                         data2D.setHasHeader(true);
                         columns.addAll(cols);
+                    }
+                    for (Data2DColumn column : columns) {
+                        column.setIndex(data2D.newColumnIndex());
                     }
                     data2D.setColumns(columns);
                     validateTable = Data2DColumn.validate(columns);
@@ -818,7 +820,7 @@ public class ControlData2D extends BaseController {
                 popMenu.getItems().add(menu);
             }
 
-            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconCreateData.png"));
+            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconAdd.png"));
             menu.setOnAction((ActionEvent event) -> {
                 create();
             });

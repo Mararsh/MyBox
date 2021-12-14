@@ -14,7 +14,7 @@ import mara.mybox.value.Fxmls;
 public class Data2DCopyController extends Data2DOperationController {
 
     public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController, false, true);
+        super.setParameters(tableController, false, false, true);
     }
 
     @Override
@@ -22,11 +22,11 @@ public class Data2DCopyController extends Data2DOperationController {
         try {
             handledData = new ArrayList<>();
             int colsNumber = tableController.data2D.tableColsNumber();
-            for (int row : selectedRowsIndices) {
+            for (int row : checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(row);
                 List<String> newRow = new ArrayList<>();
                 for (int c = 0; c < colsNumber; c++) {
-                    if (selectedColumnsIndices.contains(c)) {
+                    if (checkedColsIndices.contains(c)) {
                         newRow.add(c, tableRow.get(c + 1));
                     } else {
                         newRow.add(null);
@@ -36,7 +36,7 @@ public class Data2DCopyController extends Data2DOperationController {
             }
             return true;
         } catch (Exception e) {
-            popError(e.toString());
+            outError(e.toString());
             MyBoxLog.error(e.toString());
             return false;
         }

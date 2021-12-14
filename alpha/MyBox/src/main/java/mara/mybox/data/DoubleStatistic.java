@@ -61,7 +61,7 @@ public class DoubleStatistic {
      */
     public static double sum(double[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidDouble;
         }
         double sum = 0;
         for (int i = 0; i < values.length; ++i) {
@@ -104,37 +104,47 @@ public class DoubleStatistic {
     }
 
     public static double mode(double[] values) {
-        if (values == null || values.length == 0) {
+        try {
+            if (values == null || values.length == 0) {
+                return AppValues.InvalidDouble;
+            }
+            double mode = 0;
+            Map<Double, Integer> number = new HashMap<>();
+            for (double value : values) {
+                if (number.containsKey(value)) {
+                    number.put(value, number.get(value) + 1);
+                } else {
+                    number.put(value, 1);
+                }
+            }
+            double num = 0;
+            for (double value : number.keySet()) {
+                if (num < number.get(value)) {
+                    mode = value;
+                }
+            }
+            return mode;
+        } catch (Exception e) {
             return AppValues.InvalidDouble;
         }
-        double mode = 0;
-        Map<Double, Integer> number = new HashMap<>();
-        for (double value : values) {
-            if (number.containsKey(value)) {
-                number.put(value, number.get(value) + 1);
-            } else {
-                number.put(value, 1);
-            }
-        }
-        double num = 0;
-        for (double value : number.keySet()) {
-            if (num < number.get(value)) {
-                mode = value;
-            }
-        }
-        return mode;
     }
 
     public static double median(double[] values) {
-        if (values == null || values.length == 0) {
+        try {
+            if (values == null || values.length == 0) {
+                return AppValues.InvalidDouble;
+            }
+            double[] sorted = DoubleTools.sortArray(values);
+            int len = sorted.length;
+            if (len == 2) {
+                return (sorted[0] + sorted[1]) / 2;
+            } else if (len % 2 == 0) {
+                return (sorted[len / 2] + sorted[len / 2 + 1]) / 2;
+            } else {
+                return sorted[len / 2];
+            }
+        } catch (Exception e) {
             return AppValues.InvalidDouble;
-        }
-        double[] sorted = DoubleTools.sortArray(values);
-        int len = sorted.length;
-        if (len % 2 == 0) {
-            return (sorted[len / 2] + sorted[len / 2 + 1]) / 2;
-        } else {
-            return sorted[len / 2];
         }
     }
 

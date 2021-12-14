@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class Data2DPasteController extends BaseController {
-
+    
     protected ControlData2DEditTable tableController;
     protected Data2D data2D;
     protected DataFileText dataFileText;
@@ -41,7 +41,7 @@ public class Data2DPasteController extends BaseController {
     protected String delimiterName;
     protected SimpleBooleanProperty okNotify;
     protected boolean forPaste;
-
+    
     @FXML
     protected TextArea textArea;
     @FXML
@@ -51,33 +51,34 @@ public class Data2DPasteController extends BaseController {
     @FXML
     protected ControlTextDelimiter delimiterController;
     @FXML
-    protected HBox pasteBox;
+    protected HBox pasteBox, wayBox;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
-
+    
     public Data2DPasteController() {
         okNotify = new SimpleBooleanProperty();
     }
-
+    
     @Override
     public void setStageStatus() {
         setAsPop(baseName);
     }
-
+    
     public void setParameters(ControlData2DEditTable parent, String text, boolean forPaste) {
         try {
             tableController = parent;
             data2D = tableController.data2D;
-
+            
             this.forPaste = forPaste;
             if (!forPaste) {
                 thisPane.getChildren().remove(pasteBox);
+                wayBox.setVisible(false);
             }
-
+            
             htmlController.setParent(parent);
-
+            
             delimiterController.setControls(baseName, true);
             delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -86,7 +87,7 @@ public class Data2DPasteController extends BaseController {
                 }
             });
             delimiterName = delimiterController.delimiterName;
-
+            
             nameCheck.setSelected(UserConfig.getBoolean(baseName + "WithNames", false));
             nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -94,21 +95,21 @@ public class Data2DPasteController extends BaseController {
                     UserConfig.setBoolean(baseName + "WithNames", nameCheck.isSelected());
                 }
             });
-
+            
             dataFileText = new DataFileText();
             textArea.setText(text);
             if (text != null && !text.isBlank()) {
                 delimiterName = null;  // guess at first 
                 goAction();
             }
-
+            
             makeControls(0, 0);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void makeControls(int row, int col) {
         try {
             if (!forPaste) {
@@ -120,14 +121,14 @@ public class Data2DPasteController extends BaseController {
             }
             rowSelector.getItems().setAll(rows);
             rowSelector.getSelectionModel().select(row);
-
+            
             colSelector.getItems().setAll(data2D.columnNames());
             colSelector.getSelectionModel().select(col);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     @Override
     public void goAction() {
@@ -144,9 +145,9 @@ public class Data2DPasteController extends BaseController {
                 task.cancel();
             }
             task = new SingletonTask<Void>(this) {
-
+                
                 private StringTable validateTable;
-
+                
                 @Override
                 protected boolean handle() {
                     File tmpFile = TmpFileTools.getTempFile();
@@ -180,7 +181,7 @@ public class Data2DPasteController extends BaseController {
                     data = dataFileText.readPageData();
                     return data != null && !data.isEmpty();
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     try {
@@ -208,7 +209,7 @@ public class Data2DPasteController extends BaseController {
                         MyBoxLog.console(e);
                     }
                 }
-
+                
                 @Override
                 protected void whenFailed() {
                     if (isCancelled()) {
@@ -220,7 +221,7 @@ public class Data2DPasteController extends BaseController {
                         popFailed();
                     }
                 }
-
+                
                 @Override
                 protected void finalAction() {
                     dataFileText.setTask(null);
@@ -230,12 +231,12 @@ public class Data2DPasteController extends BaseController {
                         validateTable.htmlTable();
                     }
                 }
-
+                
             };
             start(task);
         }
     }
-
+    
     @FXML
     @Override
     public void okAction() {
@@ -250,7 +251,7 @@ public class Data2DPasteController extends BaseController {
         }
         popDone();
     }
-
+    
     public void pasteData() {
         try {
             int row = rowSelector.getSelectionModel().getSelectedIndex();
@@ -286,25 +287,25 @@ public class Data2DPasteController extends BaseController {
             tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
-
+            
             makeControls(row, col);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     @Override
     public void cancelAction() {
         close();
     }
-
+    
     @Override
     public boolean keyESC() {
         close();
         return false;
     }
-
+    
     @Override
     public boolean keyF6() {
         close();
@@ -325,5 +326,5 @@ public class Data2DPasteController extends BaseController {
             return null;
         }
     }
-
+    
 }

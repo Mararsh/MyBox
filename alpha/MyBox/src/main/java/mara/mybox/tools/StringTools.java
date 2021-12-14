@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -241,8 +242,12 @@ public class StringTools {
     }
 
     public static String format(long data) {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(data);
+        try {
+            DecimalFormat df = new DecimalFormat("#,###");
+            return df.format(data);
+        } catch (Exception e) {
+            return message("Invalid");
+        }
     }
 
     public static String format(double data) {

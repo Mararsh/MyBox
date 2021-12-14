@@ -77,13 +77,17 @@ License:    Apache License Version 2.0
         </HBox>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
-            <RadioButton fx:id="replaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
-               <toggleGroup>
-                  <ToggleGroup fx:id="locationGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%Insert" toggleGroup="$locationGroup" />
-            <RadioButton fx:id="appendRadio" layoutX="565.0" layoutY="16.0" mnemonicParsing="false" text="%Append" toggleGroup="$locationGroup" />
+            <HBox fx:id="wayBox" alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <RadioButton fx:id="replaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="locationGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%Insert" toggleGroup="$locationGroup" />
+                  <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="%Append" toggleGroup="$locationGroup" />
+               </children>
+            </HBox>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

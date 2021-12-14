@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.Data2D;
@@ -25,11 +26,10 @@ public abstract class Data2DOperationController extends BaseController {
 
     protected ControlData2DEditTable tableController;
     protected Data2D data2D;
-    protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
-    protected List<List<String>> selectedData, handledData;
+    protected List<Integer> checkedRowsIndices, checkedColsIndices;
     protected List<String> selectedNames, handledNames;
+    protected List<List<String>> handledData;
     protected List<Data2DColumn> selectedColumns, handledColumns;
-    protected boolean sourceAll;
     protected String value;
 
     @FXML
@@ -40,18 +40,21 @@ public abstract class Data2DOperationController extends BaseController {
     protected HBox namesBox;
     @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
+    @FXML
+    protected Label noNumberLabel;
 
     @Override
     public void setStageStatus() {
         setAsPop(baseName);
     }
 
-    public void setParameters(ControlData2DEditTable tableController, boolean sourceAll, boolean targetTable) {
+    public void setParameters(ControlData2DEditTable tableController,
+            boolean sourceAll, boolean numberCols, boolean targetTable) {
         try {
             this.tableController = tableController;
             data2D = tableController.data2D;
 
-            selectController.setParameters(tableController, sourceAll);
+            selectController.setParameters(tableController, sourceAll, numberCols);
             if (targetController != null) {
                 targetController.setParameters(this, targetTable ? tableController : null);
             }
@@ -87,21 +90,39 @@ public abstract class Data2DOperationController extends BaseController {
                 });
             }
 
+            checkNumberCols();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkNumberCols() {
+        if (selectController.numberCols && noNumberLabel != null) {
+            List<String> numberColumnNames = data2D.numberColumnNames();
+            noNumberLabel.setVisible(numberColumnNames == null || numberColumnNames.isEmpty());
+            okButton.setDisable(noNumberLabel.isVisible());
+        }
+    }
+
+    public void refreshControls() {
+        checkNumberCols();
+        selectController.refreshControls();
+        if (targetController != null) {
+            targetController.refreshControls();
         }
     }
 
     @FXML
     @Override
     public synchronized void okAction() {
-        selectedRowsIndices = selectController.selectedRowsIndices();
-        selectedColumnsIndices = selectController.selectedColumnsIndices();
-        if (selectedColumnsIndices.isEmpty() || selectedRowsIndices.isEmpty()) {
+        checkedRowsIndices = selectController.checkedRowsIndices();
+        checkedColsIndices = selectController.checkedColsIndices();
+        if (checkedColsIndices == null || checkedColsIndices.isEmpty()
+                || checkedRowsIndices == null || checkedRowsIndices.isEmpty()) {
             popError(message("SelectToHandle"));
             return;
         }
-
         task = new SingletonTask<Void>(this) {
 
             boolean forTable;
@@ -130,7 +151,6 @@ public abstract class Data2DOperationController extends BaseController {
                     outputExternal();
                 }
                 popDone();
-                refreshControls();
             }
 
             @Override
@@ -138,47 +158,52 @@ public abstract class Data2DOperationController extends BaseController {
                 super.finalAction();
                 data2D.setTask(null);
                 task = null;
+                refreshControls();
             }
 
         };
         start(task);
     }
 
-    public void refreshControls() {
-        selectController.refreshControls();
-        if (targetController != null) {
-            targetController.refreshControls();
-        }
-    }
-
-    public boolean checkData() {
-        sourceAll = selectController.isAllData();
-        boolean isTargetNotTable = targetController == null || !targetController.isTable();
-        if (!sourceAll) {
+    public List<List<String>> selectedData() {
+        List<List<String>> selectedData;
+        if (!selectController.isAllData()) {
             selectedData = selectController.selectedData();
             if (selectedData == null || selectedData.isEmpty()) {
-                popError(message("NoData"));
-                return false;
+                outError(message("SelectToHandle"));
+                return null;
             }
         } else if (tableController.data2D.isMutiplePages()) {
             selectedData = null;
         } else {
             selectedData = selectController.pageData();
         }
-        if (selectedData != null && isTargetNotTable && rowNumberCheck != null && rowNumberCheck.isSelected()) {
+        if (selectedData != null && (targetController == null || !targetController.isTable())
+                && rowNumberCheck != null && rowNumberCheck.isSelected()) {
             for (int i = 0; i < selectedData.size(); i++) {
                 List<String> row = selectedData.get(i);
                 row.add(0, (i + 1) + "");
             }
         }
+        return selectedData;
+    }
 
+    public boolean checkColumns() {
+        if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+            outError(message("SelectToHandle"));
+            return false;
+        }
         selectedColumns = new ArrayList<>();
-        for (Integer index : selectedColumnsIndices) {
-            selectedColumns.add(data2D.getColumns().get(index));
+        for (int col : checkedColsIndices) {
+            selectedColumns.add(data2D.getColumns().get(col));
         }
 
-        if (isTargetNotTable && (colNameCheck == null || colNameCheck.isSelected())) {
-            selectedNames = selectController.selectedColumnsNames();
+        if ((targetController == null || !targetController.isTable())
+                && (colNameCheck == null || colNameCheck.isSelected())) {
+            selectedNames = new ArrayList<>();
+            for (Data2DColumn col : selectedColumns) {
+                selectedNames.add(col.getName());
+            }
             if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
                 selectedNames.add(0, message("RowNumber"));
                 selectedColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
@@ -190,18 +215,18 @@ public abstract class Data2DOperationController extends BaseController {
     }
 
     public boolean hanldeData() {
-        handledData = selectedData;
+        handledData = selectedData();
         handledNames = selectedNames;
         handledColumns = selectedColumns;
         return true;
     }
 
     public boolean handleForTable() {
-        return checkData() && hanldeData();
+        return checkColumns() && hanldeData();
     }
 
     public boolean handleForExternal() {
-        return checkData() && hanldeData();
+        return checkColumns() && hanldeData();
     }
 
     public boolean updateTable() {
@@ -260,6 +285,14 @@ public abstract class Data2DOperationController extends BaseController {
                 break;
         }
         return true;
+    }
+
+    public void outError(String error) {
+        if (task != null) {
+            task.setError(error);
+        } else {
+            popError(error);
+        }
     }
 
     @FXML

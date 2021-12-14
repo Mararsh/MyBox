@@ -80,7 +80,7 @@ public abstract class BaseController_Attributes {
     protected Button selectFileButton, okButton, startButton, goButton, previewButton, playButton, stopButton,
             editButton, deleteButton, saveButton, cropButton, saveAsButton, undoButton, redoButton,
             clearButton, createButton, cancelButton, addButton, recoverButton, viewButton, popButton,
-            copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton,
+            copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton, addRowsButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
             myBoxClipboardButton, systemClipboardButton, selectButton, selectAllButton, selectNoneButton,
             renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton, panesMenuButton,

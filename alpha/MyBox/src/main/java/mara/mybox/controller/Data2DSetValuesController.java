@@ -50,7 +50,7 @@ public class Data2DSetValuesController extends BaseController {
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            selectController.setParameters(tableController, false);
+            selectController.setParameters(tableController, false, false);
             getMyStage().setTitle(tableController.getBaseTitle());
 
             initValueRadios();
@@ -150,8 +150,8 @@ public class Data2DSetValuesController extends BaseController {
                 popError(message("InvalidParameter"));
                 return;
             }
-            selectedRowsIndices = selectController.selectedRowsIndices();
-            selectedColumnsIndices = selectController.selectedColumnsIndices();
+            selectedRowsIndices = selectController.checkedRowsIndices();
+            selectedColumnsIndices = selectController.checkedColsIndices();
             if (selectedColumnsIndices.isEmpty() || selectedRowsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;

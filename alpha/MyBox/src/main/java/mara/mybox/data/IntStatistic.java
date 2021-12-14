@@ -142,7 +142,9 @@ public class IntStatistic {
         }
         int[] sorted = IntTools.sortArray(values);
         int len = sorted.length;
-        if (len % 2 == 0) {
+        if (len == 2) {
+            return (sorted[0] + sorted[1]) / 2;
+        } else if (len % 2 == 0) {
             return (sorted[len / 2] + sorted[len / 2 + 1]) / 2;
         } else {
             return sorted[len / 2];

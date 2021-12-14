@@ -14,15 +14,16 @@ import mara.mybox.value.Fxmls;
 public class Data2DTransposeController extends Data2DOperationController {
 
     public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController, false, true);
+        super.setParameters(tableController, false, false, true);
     }
 
     @Override
     public boolean hanldeData() {
         try {
-            if (sourceAll) {
+            if (selectController.isAllData()) {
                 return false;
             }
+            List<List<String>> selectedData = selectedData();
             if (selectedNames != null) {
                 selectedData.add(0, selectedNames);
             }
@@ -39,7 +40,7 @@ public class Data2DTransposeController extends Data2DOperationController {
             handledColumns = null;
             return true;
         } catch (Exception e) {
-            popError(e.toString());
+            outError(e.toString());
             MyBoxLog.error(e.toString());
             return false;
         }

@@ -17,7 +17,9 @@ import mara.mybox.dev.MyBoxLog;
 public class ControlData2DSelect extends BaseController {
 
     protected ControlData2DEditTable tableController;
-    protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
+    protected List<Integer> checkedRowsIndices, checkedColsIndices;
+    protected List<String> checkedColumnsNames;
+    protected boolean numberCols;
 
     @FXML
     protected HBox rowGroupBox;
@@ -30,29 +32,36 @@ public class ControlData2DSelect extends BaseController {
     @FXML
     protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
 
-    public void setParameters(ControlData2DEditTable tableController, boolean includeAll) {
+    public void setParameters(ControlData2DEditTable tableController, boolean allData, boolean numberCols) {
         try {
             this.tableController = tableController;
             rowsListController.setParent(tableController);
             colsListController.setParent(tableController);
+            this.numberCols = numberCols;
 
             refreshControls();
-            rowsListController.checkAll();
-            colsListController.checkAll();
 
-            if (!includeAll) {
+            if (!allData) {
                 rowTableRadio.fire();
                 thisPane.getChildren().remove(rowGroupBox);
             } else {
                 rowsListController.thisPane.disableProperty().bind(rowAllRadio.selectedProperty());
             }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void refreshControls() {
+    public synchronized void refreshControls() {
+        try {
+            refreshRows();
+            refreshCols();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void refreshRows() {
         try {
             List<String> selectedRows = rowsListController.checkedValues();
             List<String> rows = new ArrayList<>();
@@ -60,12 +69,29 @@ public class ControlData2DSelect extends BaseController {
                 rows.add("" + (i + 1));
             }
             rowsListController.setValues(rows);
-            rowsListController.checkValues(selectedRows);
+            if (selectedRows != null && !selectedRows.isEmpty()) {
+                rowsListController.checkValues(selectedRows);
+            } else {
+                rowsListController.checkAll();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
+    public void refreshCols() {
+        try {
             List<String> selectedCols = colsListController.checkedValues();
-            colsListController.setValues(tableController.data2D.columnNames());
-            colsListController.checkValues(selectedCols);
-
+            if (numberCols) {
+                colsListController.setValues(tableController.data2D.numberColumnNames());
+            } else {
+                colsListController.setValues(tableController.data2D.columnNames());
+            }
+            if (selectedCols != null && !selectedCols.isEmpty()) {
+                colsListController.checkValues(selectedCols);
+            } else {
+                colsListController.checkAll();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -95,56 +121,87 @@ public class ControlData2DSelect extends BaseController {
         return rowAllRadio.isSelected();
     }
 
-    public List<Integer> selectedRowsIndices() {
-        selectedRowsIndices = rowsListController.checkedIndices();
-        return selectedRowsIndices;
+    public List<Integer> checkedRowsIndices() {
+        if (isAllData()) {
+            checkedRowsIndices = new ArrayList<>();
+            for (int i = 0; i < tableController.tableData.size(); i++) {
+                checkedRowsIndices.add(i);
+            }
+        } else {
+            checkedRowsIndices = new ArrayList<>();
+            List<Integer> checked = rowsListController.checkedIndices();
+            int size = tableController.tableData.size();
+            for (int i : checked) {
+                if (i < 0 || i >= size) {
+                    continue;
+                }
+                checkedRowsIndices.add(i);
+            }
+        }
+        return checkedRowsIndices;
     }
 
-    public List<Integer> selectedColumnsIndices() {
-        selectedColumnsIndices = colsListController.checkedIndices();
-        return selectedColumnsIndices;
+    public List<Integer> checkedColsIndices() {
+        checkedColumnsNames = colsListController.checkedValues();
+        if (checkedColumnsNames == null || checkedColumnsNames.isEmpty()) {
+            return null;
+        }
+        checkedColsIndices = new ArrayList<>();
+        for (String name : checkedColumnsNames) {
+            int col = tableController.data2D.colOrder(name);
+            if (col >= 0) {
+                checkedColsIndices.add(col);
+            }
+        }
+        return checkedColsIndices;
     }
 
-    public List<String> selectedColumnsNames() {
+    public List<String> checkedColumnsNames() {
         return colsListController.checkedValues();
     }
 
     public List<List<String>> selectedData() {
         try {
-            selectedRowsIndices = rowsListController.checkedIndices();
-            selectedColumnsIndices = colsListController.checkedIndices();
-            if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()
-                    || selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
+            checkedRowsIndices = checkedRowsIndices();
+            checkedColsIndices = checkedColsIndices();
+            if (checkedColsIndices == null || checkedColsIndices.isEmpty()
+                    || checkedRowsIndices == null || checkedRowsIndices.isEmpty()) {
                 return null;
             }
             List<List<String>> data = new ArrayList<>();
-            for (int row : selectedRowsIndices) {
+            for (int row : checkedRowsIndices) {
+                if (row < 0 || row >= tableController.tableData.size()) {
+                    continue;
+                }
                 List<String> tableRow = tableController.tableData.get(row);
                 List<String> newRow = new ArrayList<>();
-                for (int col : selectedColumnsIndices) {
-                    newRow.add(tableRow.get(col + 1));
+                for (int col : checkedColsIndices) {
+                    int index = col + 1;
+                    if (index < 0 || index >= tableRow.size()) {
+                        continue;
+                    }
+                    newRow.add(tableRow.get(index));
                 }
                 data.add(newRow);
             }
             return data;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            popError(e.toString());
             return null;
         }
     }
 
     public List<List<String>> pageData() {
         try {
-            selectedColumnsIndices = colsListController.checkedIndices();
-            if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()) {
+            checkedColsIndices = checkedColsIndices();
+            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 return null;
             }
             List<List<String>> data = new ArrayList<>();
             for (int row = 0; row < tableController.tableData.size(); row++) {
                 List<String> tableRow = tableController.tableData.get(row);
                 List<String> newRow = new ArrayList<>();
-                for (int col : selectedColumnsIndices) {
+                for (int col : checkedColsIndices) {
                     newRow.add(tableRow.get(col + 1));
                 }
                 data.add(newRow);
@@ -152,7 +209,6 @@ public class ControlData2DSelect extends BaseController {
             return data;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            popError(e.toString());
             return null;
         }
     }

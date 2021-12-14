@@ -321,6 +321,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 addAction();
             }
             return true;
+        } else if (addRowsButton != null) {
+            if (!addRowsButton.isDisabled() && addRowsButton.isVisible()) {
+                addRowsAction();
+            }
+            return true;
         }
         return false;
     }

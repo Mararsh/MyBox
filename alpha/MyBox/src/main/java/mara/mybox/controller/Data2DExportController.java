@@ -69,7 +69,7 @@ public class Data2DExportController extends BaseTaskController {
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            selectController.setParameters(tableController, true);
+            selectController.setParameters(tableController, true, false);
             getMyStage().setTitle(tableController.getBaseTitle());
 
         } catch (Exception e) {
@@ -90,15 +90,15 @@ public class Data2DExportController extends BaseTaskController {
                 return false;
             }
 
-            selectedColumnsIndices = selectController.selectedColumnsIndices();
+            selectedColumnsIndices = selectController.checkedColsIndices();
             if (selectedColumnsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
             }
-            selectedColumnsNames = selectController.selectedColumnsNames();
+            selectedColumnsNames = selectController.checkedColumnsNames();
 
             if (!selectController.isAllData()) {
-                selectedRowsIndices = selectController.selectedRowsIndices();
+                selectedRowsIndices = selectController.checkedRowsIndices();
                 if (selectedRowsIndices.isEmpty()) {
                     popError(message("SelectToHandle"));
                     return false;

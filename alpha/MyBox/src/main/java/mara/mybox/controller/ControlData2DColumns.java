@@ -433,7 +433,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                     List<String> newRow = new ArrayList<>();
                     newRow.add(rowValues.get(0));
                     for (Data2DColumn row : tableData) {
-                        int col = data2D.tableCol(row.getIndex()) + 1;
+                        int col = data2D.colOrder(row.getIndex()) + 1;
                         if (col < 0 || col >= rowValues.size()) {
                             newRow.add(null);
                         } else {

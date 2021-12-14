@@ -73,7 +73,7 @@ public class DataFileText extends DataFile {
 
     public String guessDelimiter() {
         String[] values = {",", " ", "    ", "        ", "\t", "|", "@",
-            "#", ";", ":", "*", ".", "%", "$", "_", "&", "-", "=", "!", "\"",
+            "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
             "'", "<", ">"};
         return guessDelimiter(values);
     }

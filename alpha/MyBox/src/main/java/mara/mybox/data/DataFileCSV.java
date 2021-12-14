@@ -35,7 +35,7 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public String guessDelimiter() {
-        String[] values = {",", " ", "|", "@", "#", ";", ":", "*", ".",
+        String[] values = {",", " ", "|", "@", "#", ";", ":", "*",
             "%", "$", "_", "&", "-", "=", "!", "\"", "'", "<", ">"};
         return guessDelimiter(values);
     }
@@ -556,11 +556,13 @@ public class DataFileCSV extends DataFileText {
             csvPrinter.printRecord(names);
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
+                int rowIndex = 0;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
                         if (record != null) {
                             List<String> row = new ArrayList<>();
+                            row.add(rowIndex++ + "");
                             for (int c = 0; c < colLen; c++) {
                                 int col = cols.get(c);
                                 double v = 0;

@@ -67,7 +67,7 @@ public class StyleButton {
                 case "createButton":
                     return new StyleData(id, message("Create"), "CTRL+n", "iconAdd.png");
                 case "createDataButton":
-                    return new StyleData(id, message("CreateData"), "", "iconCreateData.png");
+                    return new StyleData(id, message("CreateData"), "", "iconAdd.png");
                 default:
                     return new StyleData(id, message("Create"), "", "iconAdd.png");
             }
@@ -76,6 +76,8 @@ public class StyleButton {
             switch (id) {
                 case "addButton":
                     return new StyleData(id, message("Add"), "CTRL+n", "iconAdd.png");
+                case "addRowsButton":
+                    return new StyleData(id, message("AddRows"), "CTRL+n", "iconNewItem.png");
                 case "addFilesButton":
                     return new StyleData(id, message("AddFiles"), "", "iconFileAdd.png");
                 case "addDirectoryButton":

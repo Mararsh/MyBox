@@ -2,13 +2,10 @@ package mara.mybox.data;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.DataClipboardController;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
@@ -69,7 +66,7 @@ public class DataClipboard extends DataFileCSV {
         if (dFile == null || rowsNumber <= 0) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try {
             DataClipboard d = new DataClipboard();
             d.setTask(task);
             d.setFile(dFile);
@@ -79,26 +76,12 @@ public class DataClipboard extends DataFileCSV {
             d.setDataName(rowsNumber + "x" + colsNumber);
             d.setColsNumber(colsNumber);
             d.setRowsNumber(rowsNumber);
-            Data2DDefinition def = d.getTableData2DDefinition().insertData(conn, d);
-            conn.commit();
-            d.cloneAll(def);
-            if (cols != null && !cols.isEmpty()) {
-                long did = d.getD2did();
-                if (did < 0) {
-                    return null;
-                }
-                try {
-                    d.setColumns(cols);
-                    d.getTableData2DColumn().save(conn, did, cols);
-                } catch (Exception e) {
-                    if (task != null) {
-                        task.setError(e.toString());
-                    }
-                    MyBoxLog.error(e);
-                }
+            if (Data2D.save(d, cols)) {
+                DataClipboardController.update();
+                return d;
+            } else {
+                return null;
             }
-            DataClipboardController.update();
-            return d;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -106,7 +89,6 @@ public class DataClipboard extends DataFileCSV {
             MyBoxLog.error(e);
             return null;
         }
-
     }
 
 }

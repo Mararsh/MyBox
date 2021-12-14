@@ -52,17 +52,6 @@ public class Data2DColumn extends ColumnDefinition {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        try {
-            Data2DColumn newColumn = (Data2DColumn) super.clone();
-            return newColumn;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
-    }
-
-    @Override
     public Data2DColumn cloneBase() {
         try {
             return (Data2DColumn) clone();
@@ -71,19 +60,35 @@ public class Data2DColumn extends ColumnDefinition {
         }
     }
 
+    @Override
     public Data2DColumn cloneAll() {
         try {
-            Data2DColumn column = cloneBase();
-            column.setData2DDefinition(data2DDefinition);
-            return column;
+            Data2DColumn newData = (Data2DColumn) super.clone();
+            newData.cloneAll(this);
+            return newData;
         } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
             return null;
+        }
+    }
+
+    public void cloneAll(Data2DColumn c) {
+        try {
+            if (c == null) {
+                return;
+            }
+            super.cloneAll(c);
+            data2DDefinition = c.data2DDefinition;
+            d2cid = c.d2cid;
+            d2id = c.d2id;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
     }
 
     public Data2DColumn copy() {
         try {
-            Data2DColumn column = cloneBase();
+            Data2DColumn column = cloneAll();
             column.setD2cid(-1);
             column.setIndex(-1);
             return column;
@@ -267,8 +272,11 @@ public class Data2DColumn extends ColumnDefinition {
                 return null;
             }
             List<Data2DColumn> cols = new ArrayList<>();
+            int index = -1;
             for (String c : names) {
-                cols.add(new Data2DColumn(c, ColumnType.String));
+                Data2DColumn col = new Data2DColumn(c, ColumnType.String);
+                col.setIndex(index--);
+                cols.add(col);
             }
             return cols;
         } catch (Exception e) {

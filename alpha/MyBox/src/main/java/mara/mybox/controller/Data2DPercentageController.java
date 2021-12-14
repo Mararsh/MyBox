@@ -9,7 +9,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import mara.mybox.data.Data2D;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -32,15 +31,11 @@ public class Data2DPercentageController extends Data2DOperationController {
     protected File handleFile;
 
     @FXML
-    protected Label noNumberLabel;
-    @FXML
     protected CheckBox valuesCheck;
 
     public void setParameters(ControlData2DEditTable tableController) {
         try {
-            super.setParameters(tableController, true, false);
-
-            setColumns();
+            super.setParameters(tableController, true, true, false);
 
             valuesCheck.setSelected(UserConfig.getBoolean(baseName + "WithDataValues", false));
             valuesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -55,36 +50,6 @@ public class Data2DPercentageController extends Data2DOperationController {
         }
     }
 
-    public void setColumns() {
-        try {
-            List<String> numberColumnNames = data2D.numberColumnNames();
-            if (numberColumnNames == null || numberColumnNames.isEmpty()) {
-                noNumberLabel.setVisible(true);
-                okButton.setDisable(true);
-                selectController.colsListController.clear();
-            } else {
-                noNumberLabel.setVisible(false);
-                okButton.setDisable(false);
-                List<String> selectedCols = selectController.colsListController.checkedValues();
-                selectController.colsListController.setValues(numberColumnNames);
-                if (selectedCols != null && !selectedCols.isEmpty()) {
-                    selectController.colsListController.checkValues(selectedCols);
-                } else {
-                    selectController.colsListController.checkAll();
-                }
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void refreshControls() {
-        super.refreshControls();
-        setColumns();
-    }
-
     @Override
     public boolean hanldeData() {
         try {
@@ -92,71 +57,74 @@ public class Data2DPercentageController extends Data2DOperationController {
             if (!prepareRows()) {
                 return false;
             }
-            if (sourceAll && data2D.isMutiplePages()) {
+            if (selectController.isAllData() && data2D.isMutiplePages()) {
                 return handleFile();
             } else {
                 return handleRows();
             }
         } catch (Exception e) {
+            outError(e.toString());
             MyBoxLog.error(e.toString());
             return false;
         }
-
     }
 
     public boolean prepareRows() {
         try {
-            if (selectedNames == null || selectedNames.isEmpty()) {
-                popError(message("SelectToHandle"));
+            if (selectedColumns == null || selectedColumns.isEmpty()) {
+                outError(message("SelectToHandle"));
                 return false;
             }
             handledNames = new ArrayList<>();
-            for (String name : selectedNames) {
-                if (valuesCheck.isSelected()) {
-                    handledNames.add(name);
-                }
-                handledNames.add("m-%" + name + "-m");
-            }
-
             handledColumns = new ArrayList<>();
+            String cName = message("SourceRowNumber");
+            while (handledNames.contains(cName)) {
+                cName += "m";
+            }
+            handledNames.add(cName);
+            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Integer));
             for (Data2DColumn column : selectedColumns) {
                 if (valuesCheck.isSelected()) {
-                    handledColumns.add(column);
+                    handledColumns.add(column.cloneAll());
+                    handledNames.add(column.getName());
                 }
-                handledColumns.add(new Data2DColumn("m-%" + column.getName() + "-m",
-                        ColumnDefinition.ColumnType.Double));
+                cName = column.getName() + "%";
+                while (handledNames.contains(cName)) {
+                    cName += "m";
+                }
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledNames.add(cName);
             }
-
             return true;
         } catch (Exception e) {
+            outError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    // All as double to make things simple. 
-    // To improve performance, this should be counting according to columns' types.
     public boolean handleRows() {
         try {
-            if (selectedData == null || selectedData.isEmpty()) {
-                popError(message("SelectToHandle"));
+            if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()) {
+                outError(message("SelectToHandle"));
                 return false;
             }
-
-            int rowsNumber = selectedData.size();
-            int columnsNumber = selectedNames.size();
-            double[] sum = new double[rowsNumber];
-            for (int c = 0; c < columnsNumber; c++) {
-                for (int r = 0; r < rowsNumber; r++) {
-                    sum[c] += data2D.doubleValue(selectedData.get(r).get(c));
+            int colsLen = checkedColsIndices.size();
+            double[] sum = new double[colsLen];
+            for (int r : checkedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(r);
+                for (int c = 0; c < colsLen; c++) {
+                    sum[c] += data2D.doubleValue(tableRow.get(checkedColsIndices.get(c) + 1));
                 }
             }
             handledData = new ArrayList<>();
             int scale = data2D.getScale();
-            for (int r = 0; r < rowsNumber; r++) {
+            for (int r : checkedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(r);
                 List<String> row = new ArrayList<>();
-                for (int c = 0; c < columnsNumber; c++) {
-                    double d = data2D.doubleValue(selectedData.get(r).get(c));
+                row.add((r + 1) + "");
+                for (int c = 0; c < colsLen; c++) {
+                    double d = data2D.doubleValue(tableRow.get(checkedColsIndices.get(c) + 1));
                     if (valuesCheck.isSelected()) {
                         row.add(DoubleTools.format(d, scale));
                     }
@@ -170,42 +138,39 @@ public class Data2DPercentageController extends Data2DOperationController {
             }
             return true;
         } catch (Exception e) {
+            outError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
     }
 
     public boolean handleFile() {
-        try {
-            handleFile = data2D.percentage(handledNames, selectedRowsIndices, valuesCheck.isSelected());
-            if (handleFile == null || !handleFile.exists()) {
-                return false;
+        handleFile = data2D.percentage(handledNames, checkedRowsIndices, valuesCheck.isSelected());
+        if (handleFile == null || !handleFile.exists()) {
+            return false;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            Data2DDefinition def = Data2D.create(Data2DDefinition.Type.CSV)
+                    .setFile(handleFile).setHasHeader(true)
+                    .setDelimiter(",").setCharset(Charset.forName("UTF-8"));
+            def = tableController.tableData2DDefinition.insertData(conn, def);
+            conn.commit();
+            for (int i = 0; i < handledColumns.size(); i++) {
+                Data2DColumn column = handledColumns.get(i);
+                column.setIndex(i);
             }
-            try ( Connection conn = DerbyBase.getConnection()) {
-                Data2DDefinition def = Data2D.create(Data2DDefinition.Type.CSV)
-                        .setFile(handleFile).setHasHeader(true)
-                        .setDelimiter(",").setCharset(Charset.forName("UTF-8"));
-                def = tableController.tableData2DDefinition.insertData(conn, def);
-                conn.commit();
-                for (int i = 0; i < handledColumns.size(); i++) {
-                    Data2DColumn column = handledColumns.get(i);
-                    column.setIndex(i);
-                }
-                tableController.tableData2DColumn.save(conn, def.getD2did(), handledColumns);
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                return false;
-            }
-            return true;
+            tableController.tableData2DColumn.save(conn, def.getD2did(), handledColumns);
         } catch (Exception e) {
+            outError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
+        return true;
     }
 
     @Override
     public boolean outputExternal() {
-        if (sourceAll && data2D.isMutiplePages()) {
+        if (selectController.isAllData() && data2D.isMutiplePages()) {
             DataFileCSVController.open(handleFile, Charset.forName("UTF-8"), true, ',');
 
         } else {

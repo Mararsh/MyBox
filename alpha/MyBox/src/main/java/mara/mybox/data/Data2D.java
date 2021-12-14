@@ -344,27 +344,7 @@ public abstract class Data2D extends Data2DDefinition {
             if (colsNumber <= 0) {
                 hasHeader = false;
             }
-            checkForSave();
-            checkForLoad();
-            Data2DDefinition def;
-            if (d2did < 0) {
-                def = queryDefinition(conn);
-                if (def != null) {
-                    d2did = def.getD2did();
-                }
-            }
-            if (d2did >= 0) {
-                def = tableData2DDefinition.updateData(conn, this);
-            } else {
-                def = tableData2DDefinition.insertData(conn, this);
-            }
-            conn.commit();
-            cloneAll(def);
-            for (int i = 0; i < columns.size(); i++) {
-                Data2DColumn column = columns.get(i);
-                column.setIndex(i);
-            }
-            tableData2DColumn.save(conn, d2did, columns);
+            save(conn, this, columns);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -380,6 +360,67 @@ public abstract class Data2D extends Data2DDefinition {
             return d2did < 0;
         }
     }
+
+    public static boolean save(Data2D d, List<Data2DColumn> cols) {
+        if (d == null) {
+            return false;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return save(conn, d, cols);
+        } catch (Exception e) {
+            if (d.getTask() != null) {
+                d.getTask().setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean save(Connection conn, Data2D d, List<Data2DColumn> cols) {
+        if (d == null) {
+            return false;
+        }
+        try {
+            d.checkForSave();
+            d.checkForLoad();
+            Data2DDefinition def;
+            long did = d.getD2did();
+            if (did >= 0) {
+                def = d.getTableData2DDefinition().updateData(conn, d);
+            } else {
+                def = d.getTableData2DDefinition().insertData(conn, d);
+            }
+            conn.commit();
+            did = d.getD2did();
+            if (did < 0) {
+                return false;
+            }
+            d.cloneAll(def);
+            if (cols != null && !cols.isEmpty()) {
+                try {
+                    for (int i = 0; i < cols.size(); i++) {
+                        Data2DColumn column = cols.get(i);
+                        column.setIndex(i);
+                    }
+                    d.getTableData2DColumn().save(conn, did, cols);
+                    d.setColumns(cols);
+                } catch (Exception e) {
+                    if (d.getTask() != null) {
+                        d.getTask().setError(e.toString());
+                    }
+                    MyBoxLog.error(e);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            if (d.getTask() != null) {
+                d.getTask().setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
 
     /*
         values
@@ -397,7 +438,7 @@ public abstract class Data2D extends Data2DDefinition {
             if (v == null || v.isBlank()) {
                 return 0;
             }
-            return Double.valueOf(v.replaceAll(",", ""));
+            return Double.parseDouble(v.replaceAll(",", ""));
         } catch (Exception e) {
             return 0;
         }
@@ -423,10 +464,12 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     // Column's index, instead of column name or table index, is the key to determine the column.
-    public int tableCol(int index) {
+    // Columns order of table is synchronized when columns are applied. 
+    // Columns order of file is synchronized when file is saved. 
+    public int colOrder(int colIndex) {
         try {
             for (int i = 0; i < columns.size(); i++) {
-                if (index == columns.get(i).getIndex()) {
+                if (colIndex == columns.get(i).getIndex()) {
                     return i;
                 }
             }
@@ -435,7 +478,7 @@ public abstract class Data2D extends Data2DDefinition {
         return -1;
     }
 
-    public int tableCol(String name) {
+    public int colOrder(String name) {
         try {
             for (int i = 0; i < columns.size(); i++) {
                 if (name.equals(columns.get(i).getName())) {
@@ -613,7 +656,9 @@ public abstract class Data2D extends Data2DDefinition {
             }
             List<Data2DColumn> cols = new ArrayList<>();
             for (String c : names) {
-                cols.add(new Data2DColumn(c, defaultColumnType()));
+                Data2DColumn col = new Data2DColumn(c, defaultColumnType());
+                col.setIndex(newColumnIndex());
+                cols.add(col);
             }
             return cols;
         } catch (Exception e) {
@@ -799,8 +844,9 @@ public abstract class Data2D extends Data2DDefinition {
         return task;
     }
 
-    public void setTask(SingletonTask task) {
+    public Data2D setTask(SingletonTask task) {
         this.task = task;
+        return this;
     }
 
     public SingletonTask getBackgroundTask() {

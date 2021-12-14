@@ -89,6 +89,48 @@ public class ColumnDefinition extends BaseData {
         this.isPrimaryKey = isPrimaryKey;
     }
 
+    public ColumnDefinition cloneAll() {
+        try {
+            ColumnDefinition newData = (ColumnDefinition) super.clone();
+            newData.cloneAll(this);
+            return newData;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public void cloneAll(ColumnDefinition c) {
+        try {
+            if (c == null) {
+                return;
+            }
+            name = c.name;
+            label = c.label;
+            foreignName = c.foreignName;
+            foreignTable = c.foreignTable;
+            foreignColumn = c.foreignColumn;
+            type = c.type;
+            index = c.index;
+            length = c.length;
+            width = c.width;
+            isPrimaryKey = c.isPrimaryKey;
+            notNull = c.notNull;
+            isID = c.isID;
+            editable = c.editable;
+            onDelete = c.onDelete;
+            onUpdate = c.onUpdate;
+            timeFormat = c.timeFormat;
+            defaultValue = c.defaultValue;
+            value = c.value;
+            maxValue = c.maxValue;
+            minValue = c.minValue;
+            values = c.values;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public boolean isForeignKey() {
         return foreignTable != null && foreignColumn != null;
     }
@@ -337,6 +379,7 @@ public class ColumnDefinition extends BaseData {
     public static ColumnType columnType(short type) {
         ColumnType[] types = ColumnType.values();
         if (type < 0 || type > types.length) {
+            MyBoxLog.console(type);
             return ColumnType.String;
         }
         return types[type];

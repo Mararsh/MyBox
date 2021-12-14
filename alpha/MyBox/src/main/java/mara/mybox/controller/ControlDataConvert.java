@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,11 +17,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
@@ -311,6 +314,9 @@ public class ControlDataConvert extends BaseController {
         if (rowNumberCheck.isSelected() && names != null) {
             names.add(0, message("RowNumber"));
         }
+        if (columns == null || columns.isEmpty()) {
+            columns = Data2DColumn.toColumns(names);
+        }
         return openWriters();
     }
 
@@ -575,12 +581,21 @@ public class ControlDataConvert extends BaseController {
     }
 
     public void closeWriters() {
-        try {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (csvPrinter != null && csvFile != null) {
                 csvPrinter.flush();
                 csvPrinter.close();
                 parent.targetFileGenerated(csvFile, VisitHistory.FileType.CSV);
                 csvPrinter = null;
+                Data2D d = Data2D.create(Data2DDefinition.Type.CSV).setTask(task);
+                d.setFile(csvFile)
+                        .setCharset(csvWriteController.charset)
+                        .setDelimiter(csvWriteController.delimiter + "")
+                        .setHasHeader(csvWriteController.withNamesCheck.isSelected())
+                        .setDataName(csvFile.getName())
+                        .setColsNumber(columns.size())
+                        .setRowsNumber(dataRowIndex);
+                Data2D.save(conn, d, columns);
             }
 
             if (textWriter != null && textFile != null) {
@@ -588,6 +603,15 @@ public class ControlDataConvert extends BaseController {
                 textWriter.close();
                 parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
                 textWriter = null;
+                Data2D d = Data2D.create(Data2DDefinition.Type.Text).setTask(task);
+                d.setFile(textFile)
+                        .setCharset(textWriteOptionsController.charset)
+                        .setDelimiter(textDelimiter)
+                        .setHasHeader(textWriteOptionsController.withNamesCheck.isSelected())
+                        .setDataName(textFile.getName())
+                        .setColsNumber(columns.size())
+                        .setRowsNumber(dataRowIndex);
+                Data2D.save(conn, d, columns);
             }
 
             if (htmlWriter != null && htmlFile != null) {
@@ -635,6 +659,13 @@ public class ControlDataConvert extends BaseController {
                 xssfBook.close();
                 parent.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
                 xssfBook = null;
+                Data2D d = Data2D.create(Data2DDefinition.Type.Excel).setTask(task);
+                d.setFile(xlsxFile)
+                        .setHasHeader(excelWithNamesCheck.isSelected())
+                        .setDataName(xlsxFile.getName())
+                        .setColsNumber(columns.size())
+                        .setRowsNumber(dataRowIndex);
+                Data2D.save(conn, d, columns);
             }
 
             if (dataClipboardPrinter != null && csvFile != null) {
@@ -642,13 +673,16 @@ public class ControlDataConvert extends BaseController {
                 dataClipboardPrinter.close();
                 parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
                 dataClipboardPrinter = null;
-                if (columns == null || columns.isEmpty()) {
-                    columns = new ArrayList<>();
-                    for (String c : names) {
-                        columns.add(new Data2DColumn(c, ColumnDefinition.ColumnType.String));
-                    }
-                }
-                DataClipboard.create(task, columns, dataClipboardFile, dataRowIndex, columns.size());
+                Data2D d = Data2D.create(Data2DDefinition.Type.Clipboard).setTask(task);
+                d.setFile(dataClipboardFile)
+                        .setCharset(Charset.forName("UTF-8"))
+                        .setDelimiter(",")
+                        .setHasHeader(true)
+                        .setDataName(dataRowIndex + "x" + columns.size())
+                        .setColsNumber(columns.size())
+                        .setRowsNumber(dataRowIndex);
+                Data2D.save(conn, d, columns);
+                DataClipboardController.update();
             }
 
         } catch (Exception e) {
