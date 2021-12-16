@@ -3,10 +3,6 @@ package mara.mybox.tools;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Random;
 import static mara.mybox.value.Languages.message;
 
@@ -79,69 +75,15 @@ public class DoubleTools {
         return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 
-    public static double[] scale(double[] data, int scale) {
-        try {
-            if (data == null) {
-                return null;
-            }
-            double[] result = new double[data.length];
-            for (int i = 0; i < data.length; ++i) {
-                result[i] = scale(data[i], scale);
-            }
-            return result;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static void sortList(List<Integer> numbers) {
-        Collections.sort(numbers, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer p1, Integer p2) {
-                return p1 - p2;
-            }
-        });
-    }
-
-    public static double[] sortArray(double[] numbers) {
-        List<Double> list = new ArrayList<>();
-        for (double i : numbers) {
-            list.add(i);
-        }
-        Collections.sort(list, new Comparator<Double>() {
-            @Override
-            public int compare(Double p1, Double p2) {
-                if (p1 > p2) {
-                    return 1;
-                } else if (p1 < p2) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        });
-        double[] sorted = new double[numbers.length];
-        for (int i = 0; i < list.size(); ++i) {
-            sorted[i] = list.get(i);
-        }
-        return sorted;
-    }
-
-    public static double[] array(double x, double y, double z) {
-        double[] xyz = new double[3];
-        xyz[0] = x;
-        xyz[1] = y;
-        xyz[2] = z;
-        return xyz;
-    }
-
     public static double random(Random r, int max) {
         if (r == null) {
             r = new Random();
         }
+        int sign = r.nextInt(2);
+        sign = sign == 1 ? 1 : -1;
         double d = r.nextDouble();
         int i = max > 0 ? r.nextInt(max) : 0;
-        return i + d;
+        return sign == 1 ? i + d : -(i + d);
     }
 
 }

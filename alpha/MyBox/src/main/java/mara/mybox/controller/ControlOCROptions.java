@@ -64,7 +64,7 @@ public class ControlOCROptions extends BaseController {
     @FXML
     protected Label resultLabel, originalViewLabel, currentOCRFilesLabel;
     @FXML
-    protected ControlListCheckBox languageListController;
+    protected ControlCheckBoxList languageListController;
     @FXML
     protected ComboBox<String> psmSelector, regionSelector, wordSelector;
     @FXML

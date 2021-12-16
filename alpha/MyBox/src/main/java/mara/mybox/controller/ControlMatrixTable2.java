@@ -107,7 +107,7 @@ public class ControlMatrixTable2 extends BaseSysTableController<Data2DDefinition
             if (selected == null) {
                 return;
             }
-            dataAController.loadMatrix(selected);
+            dataAController.loadDef(selected);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -120,7 +120,7 @@ public class ControlMatrixTable2 extends BaseSysTableController<Data2DDefinition
             if (selected == null) {
                 return;
             }
-            dataBController.loadMatrix(selected);
+            dataBController.loadDef(selected);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
  * @Description
  * @License Apache License Version 2.0
  */
-public class MatrixFloatTools {
+public class FloatMatrixTools {
 
     // columnNumber is 0-based
     public static float[] columnValues(float[][] m, int columnNumber) {

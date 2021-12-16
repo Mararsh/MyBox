@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
@@ -589,6 +590,56 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
         return csvFile;
+    }
+
+    @Override
+    public boolean setValue(List<Integer> cols, String value) {
+        if (file == null || cols == null || cols.isEmpty()) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        CSVFormat format = cvsFormat();
+        try ( CSVParser parser = CSVParser.parse(file, charset, format);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                if (hasHeader) {
+                    try {
+                        csvPrinter.printRecord(parser.getHeaderNames());
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+                boolean isRandom = "MyBox##random".equals(value);
+                Random random = new Random();
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        CSVRecord record = iterator.next();
+                        if (record != null) {
+                            List<String> row = new ArrayList<>();
+                            for (int i = 0; i < columns.size(); i++) {
+                                if (cols.contains(i)) {
+                                    if (isRandom) {
+                                        row.add(random(random, i));
+                                    } else {
+                                        row.add(value);
+                                    }
+                                } else if (i < record.size()) {
+                                    row.add(record.get(i));
+                                } else {
+                                    row.add(null);
+                                }
+                            }
+                            csvPrinter.printRecord(row);
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+        return FileTools.rename(tmpFile, file, false);
     }
 
     /*

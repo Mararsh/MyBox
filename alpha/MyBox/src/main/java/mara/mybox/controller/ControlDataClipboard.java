@@ -67,7 +67,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         try {
             super.initValues();
 
-            dataController.setDataType(this, Data2D.Type.Clipboard);
+            dataController.setDataType(this, Data2D.Type.MyBoxClipboard);
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             dataClipboard = (DataClipboard) dataController.data2D;

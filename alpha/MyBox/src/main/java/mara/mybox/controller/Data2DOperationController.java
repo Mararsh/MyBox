@@ -61,6 +61,13 @@ public abstract class Data2DOperationController extends BaseController {
 
             getMyStage().setTitle(tableController.getBaseTitle());
 
+            selectController.rowGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkAllData();
+                }
+            });
+
             if (namesBox != null && targetController != null) {
                 namesBox.setVisible(!targetController.isTable());
                 targetController.targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -92,9 +99,15 @@ public abstract class Data2DOperationController extends BaseController {
 
             checkNumberCols();
 
+            checkAllData();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void checkAllData() {
+
     }
 
     public void checkNumberCols() {
@@ -107,20 +120,31 @@ public abstract class Data2DOperationController extends BaseController {
 
     public void refreshControls() {
         checkNumberCols();
-        selectController.refreshControls();
+        selectController.refreshAction();
         if (targetController != null) {
             targetController.refreshControls();
         }
     }
 
-    @FXML
-    @Override
-    public synchronized void okAction() {
+    public boolean checkOptions() {
+        if (selectController.isAllData() && data2D.isMutiplePages()
+                && !tableController.dataController.checkBeforeNextAction()) {
+            return false;
+        }
         checkedRowsIndices = selectController.checkedRowsIndices();
         checkedColsIndices = selectController.checkedColsIndices();
         if (checkedColsIndices == null || checkedColsIndices.isEmpty()
                 || checkedRowsIndices == null || checkedRowsIndices.isEmpty()) {
             popError(message("SelectToHandle"));
+            return false;
+        }
+        return true;
+    }
+
+    @FXML
+    @Override
+    public synchronized void okAction() {
+        if (!checkOptions()) {
             return;
         }
         task = new SingletonTask<Void>(this) {
@@ -150,7 +174,6 @@ public abstract class Data2DOperationController extends BaseController {
                 } else {
                     outputExternal();
                 }
-                popDone();
             }
 
             @Override
@@ -197,7 +220,6 @@ public abstract class Data2DOperationController extends BaseController {
         for (int col : checkedColsIndices) {
             selectedColumns.add(data2D.getColumns().get(col));
         }
-
         if ((targetController == null || !targetController.isTable())
                 && (colNameCheck == null || colNameCheck.isSelected())) {
             selectedNames = new ArrayList<>();
@@ -231,7 +253,7 @@ public abstract class Data2DOperationController extends BaseController {
 
     public boolean updateTable() {
         try {
-            if (targetController == null) {
+            if (targetController == null || handledData == null) {
                 return false;
             }
             List<List<String>> newRows = new ArrayList<>();
@@ -250,6 +272,7 @@ public abstract class Data2DOperationController extends BaseController {
             tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
+            popDone();
             return true;
         } catch (Exception e) {
             popError(e.toString());
@@ -261,6 +284,7 @@ public abstract class Data2DOperationController extends BaseController {
     public boolean outputExternal() {
         if (targetController == null || targetController.target == null
                 || handledData == null || handledData.isEmpty()) {
+            popError(message("NoData"));
             return false;
         }
         switch (targetController.target) {
@@ -284,6 +308,7 @@ public abstract class Data2DOperationController extends BaseController {
                 controller.dataController.loadTmpData(handledColumns, handledData);
                 break;
         }
+        popDone();
         return true;
     }
 

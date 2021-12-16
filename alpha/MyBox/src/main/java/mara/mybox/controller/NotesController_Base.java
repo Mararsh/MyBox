@@ -30,7 +30,7 @@ public abstract class NotesController_Base extends BaseSysTableController<Note> 
     @FXML
     protected ControlNotebookSelector notebooksController;
     @FXML
-    protected ControlListCheckBox tagsListController;
+    protected ControlCheckBoxList tagsListController;
     @FXML
     protected VBox timesBox;
     @FXML

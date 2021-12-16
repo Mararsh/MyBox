@@ -13,7 +13,7 @@ import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -125,7 +125,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
         }
         Map<String, Object> run = ChromaticAdaptation.matrixDemo(
                 swp[0], swp[1], swp[2], twp[0], twp[1], twp[2], algorithm, scale);
-        String s = MatrixDoubleTools.print((double[][]) run.get("matrix"), 0, scale)
+        String s = DoubleMatrixTools.print((double[][]) run.get("matrix"), 0, scale)
                 + "\n\n----------------" + Languages.message("CalculationProcedure") + "----------------\n"
                 + Languages.message("ReferTo") + "： \n"
                 + "            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n"

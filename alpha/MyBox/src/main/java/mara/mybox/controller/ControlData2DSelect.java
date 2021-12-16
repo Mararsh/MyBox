@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -28,9 +30,11 @@ public class ControlData2DSelect extends BaseController {
     @FXML
     protected RadioButton rowAllRadio, rowTableRadio;
     @FXML
-    protected ControlListCheckBox rowsListController, colsListController;
+    protected ControlCheckBoxList rowsListController, colsListController;
     @FXML
     protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
+    @FXML
+    protected Label dataNameLabel;
 
     public void setParameters(ControlData2DEditTable tableController, boolean allData, boolean numberCols) {
         try {
@@ -39,7 +43,20 @@ public class ControlData2DSelect extends BaseController {
             colsListController.setParent(tableController);
             this.numberCols = numberCols;
 
-            refreshControls();
+            String name;
+            if (tableController.data2D.getFile() != null) {
+                name = tableController.data2D.getFile().getAbsolutePath();
+            } else {
+                name = tableController.data2D.getDataName();
+            }
+            if (name == null) {
+                name = message("NewData");
+            }
+            dataNameLabel.setText(message(tableController.data2D.getType().name()) + " - "
+                    + (tableController.data2D.getD2did() >= 0 ? tableController.data2D.getD2did() + " - " : "")
+                    + name);
+
+            refreshAction();
 
             if (!allData) {
                 rowTableRadio.fire();
@@ -52,7 +69,8 @@ public class ControlData2DSelect extends BaseController {
         }
     }
 
-    public synchronized void refreshControls() {
+    @FXML
+    public synchronized void refreshAction() {
         try {
             refreshRows();
             refreshCols();
@@ -122,13 +140,12 @@ public class ControlData2DSelect extends BaseController {
     }
 
     public List<Integer> checkedRowsIndices() {
+        checkedRowsIndices = new ArrayList<>();
         if (isAllData()) {
-            checkedRowsIndices = new ArrayList<>();
             for (int i = 0; i < tableController.tableData.size(); i++) {
                 checkedRowsIndices.add(i);
             }
         } else {
-            checkedRowsIndices = new ArrayList<>();
             List<Integer> checked = rowsListController.checkedIndices();
             int size = tableController.tableData.size();
             for (int i : checked) {
@@ -142,12 +159,12 @@ public class ControlData2DSelect extends BaseController {
     }
 
     public List<Integer> checkedColsIndices() {
-        checkedColumnsNames = colsListController.checkedValues();
-        if (checkedColumnsNames == null || checkedColumnsNames.isEmpty()) {
+        checkedColsIndices = new ArrayList<>();
+        List<String> checked = colsListController.checkedValues();
+        if (checked == null || checked.isEmpty()) {
             return null;
         }
-        checkedColsIndices = new ArrayList<>();
-        for (String name : checkedColumnsNames) {
+        for (String name : checked) {
             int col = tableController.data2D.colOrder(name);
             if (col >= 0) {
                 checkedColsIndices.add(col);
@@ -157,7 +174,18 @@ public class ControlData2DSelect extends BaseController {
     }
 
     public List<String> checkedColumnsNames() {
-        return colsListController.checkedValues();
+        checkedColumnsNames = new ArrayList<>();
+        List<String> checked = colsListController.checkedValues();
+        if (checked == null || checked.isEmpty()) {
+            return null;
+        }
+        for (String name : checked) {
+            int col = tableController.data2D.colOrder(name);
+            if (col >= 0) {
+                checkedColumnsNames.add(name);
+            }
+        }
+        return checkedColumnsNames;
     }
 
     public List<List<String>> selectedData() {
@@ -169,8 +197,9 @@ public class ControlData2DSelect extends BaseController {
                 return null;
             }
             List<List<String>> data = new ArrayList<>();
+            int size = tableController.tableData.size();
             for (int row : checkedRowsIndices) {
-                if (row < 0 || row >= tableController.tableData.size()) {
+                if (row < 0 || row >= size) {
                     continue;
                 }
                 List<String> tableRow = tableController.tableData.get(row);

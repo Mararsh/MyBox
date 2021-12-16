@@ -2,7 +2,7 @@ package mara.mybox.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.value.AppValues;
 
 /**
@@ -134,7 +134,7 @@ public class DoubleStatistic {
             if (values == null || values.length == 0) {
                 return AppValues.InvalidDouble;
             }
-            double[] sorted = DoubleTools.sortArray(values);
+            double[] sorted = DoubleArrayTools.sortArray(values);
             int len = sorted.length;
             if (len == 2) {
                 return (sorted[0] + sorted[1]) / 2;

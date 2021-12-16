@@ -71,7 +71,7 @@ public class NoteEditorController extends HtmlEditorController {
     @FXML
     protected Button okNoteTagsButton, addNoteTagButton;
     @FXML
-    protected ControlListCheckBox tagsListController;
+    protected ControlCheckBoxList tagsListController;
 
     public void setParameters(NotesController notesController) {
         try {

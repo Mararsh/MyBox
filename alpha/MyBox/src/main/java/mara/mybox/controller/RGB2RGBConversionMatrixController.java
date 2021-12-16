@@ -17,7 +17,7 @@ import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -174,7 +174,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                 sourcePrimaries[0] = sourceController.red;
                 sourcePrimaries[1] = sourceController.green;
                 sourcePrimaries[2] = sourceController.blue;
-                sourceWhitePoint = MatrixDoubleTools.columnVector(sourceController.white);
+                sourceWhitePoint = DoubleMatrixTools.columnVector(sourceController.white);
             }
             if (sourcePrimaries == null || sourceWhitePoint == null) {
                 return;
@@ -189,7 +189,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                 targetPrimaries[0] = targetController.red;
                 targetPrimaries[1] = targetController.green;
                 targetPrimaries[2] = targetController.blue;
-                targetWhitePoint = MatrixDoubleTools.columnVector(targetController.white);
+                targetWhitePoint = DoubleMatrixTools.columnVector(targetController.white);
             }
             if (targetPrimaries == null || targetWhitePoint == null) {
                 return;
@@ -198,11 +198,11 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                     sourcePrimaries, sourceWhitePoint, targetPrimaries, targetWhitePoint,
                     algorithm, scale, true);
             double[][] conversionMatrix = (double[][]) rgb2rgb.get("conversionMatrix");
-            double[][] conversionMatrixInverse = MatrixDoubleTools.inverse(conversionMatrix);
+            double[][] conversionMatrixInverse = DoubleMatrixTools.inverse(conversionMatrix);
             String s = Languages.message("Source") + " -> " + Languages.message("Target") + " =\n"
-                    + MatrixDoubleTools.print(conversionMatrix, 20, scale)
+                    + DoubleMatrixTools.print(conversionMatrix, 20, scale)
                     + Languages.message("Target") + " -> " + Languages.message("Source") + " =\n"
-                    + MatrixDoubleTools.print(conversionMatrixInverse, 20, scale)
+                    + DoubleMatrixTools.print(conversionMatrixInverse, 20, scale)
                     + "\n----------------" + Languages.message("CalculationProcedure") + "----------------\n"
                     + Languages.message("ReferTo") + "： \n"
                     + "            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n"

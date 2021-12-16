@@ -23,7 +23,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -305,46 +305,46 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         resultValue = AppValues.InvalidDouble;
                         op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                         if (message("Transpose").equals(op)) {
-                            result = MatrixDoubleTools.transpose(dataMatrix.toArray());
+                            result = DoubleMatrixTools.transpose(dataMatrix.toArray());
 
                         } else if (message("RowEchelonForm").equals(op)) {
-                            result = MatrixDoubleTools.rowEchelonForm(dataMatrix.toArray());
+                            result = DoubleMatrixTools.rowEchelonForm(dataMatrix.toArray());
 
                         } else if (message("ReducedRowEchelonForm").equals(op)) {
-                            result = MatrixDoubleTools.reducedRowEchelonForm(dataMatrix.toArray());
+                            result = DoubleMatrixTools.reducedRowEchelonForm(dataMatrix.toArray());
 
                         } else if (message("ComplementMinor").equals(op)) {
-                            result = MatrixDoubleTools.complementMinor(dataMatrix.toArray(), row - 1, column - 1);
+                            result = DoubleMatrixTools.complementMinor(dataMatrix.toArray(), row - 1, column - 1);
 
                         } else if (message("Normalize").equals(op)) {
-                            result = MatrixDoubleTools.normalize(dataMatrix.toArray());
+                            result = DoubleMatrixTools.normalizeSum(dataMatrix.toArray());
 
                         } else if (message("MultiplyNumber").equals(op)) {
-                            result = MatrixDoubleTools.multiply(dataMatrix.toArray(), number);
+                            result = DoubleMatrixTools.multiply(dataMatrix.toArray(), number);
 
                         } else if (message("DivideNumber").equals(op)) {
-                            result = MatrixDoubleTools.divide(dataMatrix.toArray(), number);
+                            result = DoubleMatrixTools.divide(dataMatrix.toArray(), number);
 
                         } else if (message("DeterminantByElimination").equals(op)) {
-                            resultValue = MatrixDoubleTools.determinantByElimination(dataMatrix.toArray());
+                            resultValue = DoubleMatrixTools.determinantByElimination(dataMatrix.toArray());
 
                         } else if (message("DeterminantByComplementMinor").equals(op)) {
-                            resultValue = MatrixDoubleTools.determinantByComplementMinor(dataMatrix.toArray());
+                            resultValue = DoubleMatrixTools.determinantByComplementMinor(dataMatrix.toArray());
 
                         } else if (message("InverseMatrixByElimination").equals(op)) {
-                            result = MatrixDoubleTools.inverseByElimination(dataMatrix.toArray());
+                            result = DoubleMatrixTools.inverseByElimination(dataMatrix.toArray());
 
                         } else if (message("InverseMatrixByAdjoint").equals(op)) {
-                            result = MatrixDoubleTools.inverseByAdjoint(dataMatrix.toArray());
+                            result = DoubleMatrixTools.inverseByAdjoint(dataMatrix.toArray());
 
                         } else if (message("MatrixRank").equals(op)) {
-                            resultValue = MatrixDoubleTools.rank(dataMatrix.toArray());
+                            resultValue = DoubleMatrixTools.rank(dataMatrix.toArray());
 
                         } else if (message("AdjointMatrix").equals(op)) {
-                            result = MatrixDoubleTools.adjoint(dataMatrix.toArray());
+                            result = DoubleMatrixTools.adjoint(dataMatrix.toArray());
 
                         } else if (message("Power").equals(op)) {
-                            result = MatrixDoubleTools.power(dataMatrix.toArray(), power);
+                            result = DoubleMatrixTools.power(dataMatrix.toArray(), power);
 
                         }
                     } catch (Exception e) {

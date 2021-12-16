@@ -603,7 +603,7 @@ public class ControlDataConvert extends BaseController {
                 textWriter.close();
                 parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
                 textWriter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.Text).setTask(task);
+                Data2D d = Data2D.create(Data2DDefinition.Type.Texts).setTask(task);
                 d.setFile(textFile)
                         .setCharset(textWriteOptionsController.charset)
                         .setDelimiter(textDelimiter)
@@ -673,7 +673,7 @@ public class ControlDataConvert extends BaseController {
                 dataClipboardPrinter.close();
                 parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
                 dataClipboardPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.Clipboard).setTask(task);
+                Data2D d = Data2D.create(Data2DDefinition.Type.MyBoxClipboard).setTask(task);
                 d.setFile(dataClipboardFile)
                         .setCharset(Charset.forName("UTF-8"))
                         .setDelimiter(",")

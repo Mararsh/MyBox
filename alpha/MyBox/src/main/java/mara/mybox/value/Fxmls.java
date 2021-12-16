@@ -171,7 +171,8 @@ public class Fxmls {
     /*
         data
      */
-    public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
+    public static final String Data2DManufactureFxml = "/fxml/Data2DManufacture.fxml";
+    public static final String Data2DOperateFxml = "/fxml/Data2DOperate.fxml";
 
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";

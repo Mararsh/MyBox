@@ -1,7 +1,11 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -14,6 +18,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -23,6 +28,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -36,19 +42,18 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
+    protected final SimpleBooleanProperty defSavedNotify;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
 
     public ControlData2DEditTable() {
+        defSavedNotify = new SimpleBooleanProperty(false);
     }
 
     protected void setParameters(ControlData2DEdit editController) {
         try {
             dataController = editController.dataController;
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            tableData2DColumn = dataController.tableData2DColumn;
-            data2D = dataController.data2D;
 
             paginationPane = dataController.paginationPane;
             pageSizeSelector = dataController.pageSizeSelector;
@@ -62,6 +67,19 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             pageLastButton = dataController.pageLastButton;
             saveButton = dataController.saveButton;
 
+            setControls();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setData(Data2D data) {
+        try {
+            data2D = data;
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
+
             if (data2D.isMatrix()) {
                 dataController.thisPane.getChildren().remove(paginationPane);
             } else {
@@ -69,7 +87,15 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             }
 
             data2D.setTableController(this);
+            checkData();
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void setControls() {
+        try {
             dataRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, Integer>, ObservableValue<Integer>>() {
                 @Override
                 public ObservableValue<Integer> call(TableColumn.CellDataFeatures<List<String>, Integer> param) {
@@ -86,14 +112,166 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                 }
             });
             dataRowColumn.setEditable(false);
-
-            checkData();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    /*
+        database
+     */
+    public synchronized void readDefinition() {
+        if (data2D == null) {
+            return;
+        }
+        if (!checkValidData()) {
+            return;
+        }
+        if (dataController != null) {
+            dataController.resetStatus();
+        } else {
+            resetStatus();
+        }
+        isSettingValues = true;
+        resetView();
+        isSettingValues = false;
+        task = new SingletonTask<Void>(this) {
+
+            private StringTable validateTable;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    data2D.setColumns(null);
+                    long d2did = data2D.readDataDefinition();
+                    List<String> dataCols = data2D.readColumns();
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    if (dataCols == null || dataCols.isEmpty()) {
+                        data2D.setHasHeader(false);
+                        tableData2DColumn.clear(data2D);
+
+                    } else {
+                        List<Data2DColumn> columns = new ArrayList<>();
+                        List<Data2DColumn> savedColumns = data2D.getSavedColumns();
+                        for (int i = 0; i < dataCols.size(); i++) {
+                            Data2DColumn column;
+                            if (savedColumns != null && i < savedColumns.size()) {
+                                column = savedColumns.get(i);
+                                if (data2D.isHasHeader()) {
+                                    column.setName(dataCols.get(i));
+                                }
+                            } else {
+                                column = new Data2DColumn(dataCols.get(i), data2D.defaultColumnType());
+                            }
+                            column.setD2id(d2did);
+                            column.setIndex(i);
+                            columns.add(column);
+                        }
+                        data2D.setColumns(columns);
+                        validateTable = Data2DColumn.validate(columns);
+                        if (!data2D.isTmpData()) {
+                            if (validateTable == null || validateTable.isEmpty()) {
+                                tableData2DColumn.save(d2did, columns);
+                            }
+                        }
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (dataController != null) {
+                    dataController.loadData();   // Load data whatever
+                    dataController.notifyLoaded();
+                } else {
+                    loadData();
+                }
+                if (validateTable != null && !validateTable.isEmpty()) {
+                    validateTable.htmlTable();
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    public boolean checkValidData() {
+        if (data2D == null) {
+            return false;
+        }
+        File file = data2D.getFile();
+        if (file == null || file.exists()) {
+            return true;
+        }
+        synchronized (this) {
+            SingletonTask nullTask = new SingletonTask<Void>(this) {
+                @Override
+                protected boolean handle() {
+                    try {
+                        tableData2DDefinition.deleteData(data2D);
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void finalAction() {
+                    loadNull();
+                }
+            };
+            start(nullTask, false);
+        }
+        return false;
+    }
+
+    public void loadNull() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                data2D.resetData();
+                if (dataController != null) {
+                    loadData();
+                    dataController.notifyLoaded();
+                } else {
+                    loadData();
+                }
+            }
+        });
+    }
+
+    public synchronized void resetStatus() {
+        if (task != null) {
+            task.cancel();
+        }
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
+        }
+        data2D.setTableChanged(false);
+    }
+
+    public void notifyDefSaved() {
+        defSavedNotify.set(!defSavedNotify.get());
+    }
+
+    /*
+        table
+     */
     public synchronized void loadData() {
         try {
             makeColumns();
@@ -117,7 +295,11 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        return dataController.checkBeforeNextAction();
+        if (dataController != null) {
+            return dataController.checkBeforeNextAction();
+        } else {
+            return true;
+        }
     }
 
     @Override
@@ -135,6 +317,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
             currentPage = 0;
             startRowOfCurrentPage = 0;
         } else {
+            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
             super.countPagination(page);
         }
         data2D.setPageSize(pageSize);
@@ -157,6 +340,35 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         return data2D.getDataSize();
     }
 
+    public void correctDataSize() {
+        if (data2D.isTmpData() || !data2D.isValid()) {
+            return;
+        }
+        if (data2D.getColsNumber() != data2D.getColumns().size()
+                || data2D.getRowsNumber() != data2D.getDataSize()) {
+            synchronized (this) {
+                SingletonTask updateTask = new SingletonTask<Void>(this) {
+
+                    @Override
+                    protected boolean handle() {
+                        return data2D.saveDefinition();
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        notifyDefSaved();
+                    }
+
+                    @Override
+                    protected void whenFailed() {
+                    }
+
+                };
+                start(updateTask, false);
+            }
+        }
+    }
+
     @Override
     public void loadDataSize() {
         if (data2D == null) {
@@ -164,6 +376,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         }
         if (dataSizeLoaded || data2D.isTmpData() || data2D.isMatrix()) {
             dataSizeLoaded = true;
+            correctDataSize();
             paginationPane.setVisible(false);
             if (saveButton != null) {
                 saveButton.setDisable(false);
@@ -209,15 +422,19 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
                     data2D.setBackgroundTask(null);
                     backgroundTask = null;
                     dataSizeLoaded = true;
-                    dataController.checkStatus();
+                    correctDataSize();
+                    if (dataController != null) {
+                        dataController.checkStatus();
+                    }
                     refreshPagination();
-                    saveButton.setDisable(false);
+                    if (saveButton != null) {
+                        saveButton.setDisable(false);
+                    }
                 }
 
             };
             start(backgroundTask, false);
         }
-
     }
 
     protected void refreshPagination() {
@@ -338,8 +555,10 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         data2D.setTableChanged(changed);
         checkData();
 
-        dataController.textController.loadData();
-        dataController.viewController.loadData();
+        if (dataController != null) {
+            dataController.textController.loadData();
+            dataController.viewController.loadData();
+        }
     }
 
     @Override
@@ -468,7 +687,7 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
         if (!checkData()) {
             return;
         }
-        Data2DSetValuesController.open(this);
+        Data2DOperateController.open(this, "SetValues");
     }
 
     @FXML
@@ -501,24 +720,21 @@ public class ControlData2DEditTable extends BaseTableViewController<List<String>
     }
 
     public void export() {
-        if (!checkData()
-                || (data2D.isMutiplePages() && !dataController.checkBeforeNextAction())) {
+        if (!checkData()) {
             return;
         }
         Data2DExportController.open(this);
     }
 
     public void statistic() {
-        if (!checkData()
-                || (data2D.isMutiplePages() && !dataController.checkBeforeNextAction())) {
+        if (!checkData()) {
             return;
         }
-        Data2DStatisticController.open(this);
+        Data2DOperateController.open(this, "Statistic");
     }
 
     public void percentage() {
-        if (!checkData()
-                || (data2D.isMutiplePages() && !dataController.checkBeforeNextAction())) {
+        if (!checkData()) {
             return;
         }
         Data2DPercentageController.open(this);

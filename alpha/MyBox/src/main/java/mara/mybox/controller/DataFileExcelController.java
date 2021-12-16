@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -307,6 +308,12 @@ public class DataFileExcelController extends BaseData2DFileController {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.dataController.loadTmpData(cols, data);
         controller.toFront();
+        return controller;
+    }
+
+    public static DataFileExcelController open(Data2DDefinition def) {
+        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+        controller.loadDef(def);
         return controller;
     }
 

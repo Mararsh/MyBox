@@ -286,16 +286,23 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         try {
             this.dataController = dataController;
             tableController = dataController.tableController;
+
+            trimColumnsButton.setDisable(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setData(Data2D data) {
+        try {
+            data2D = data;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
-            data2D = dataController.data2D;
 
             if (data2D.isMatrix()) {
                 typeColumn.setEditable(false);
                 typeColumn.getStyleClass().remove("editable-column");
             }
-
-            trimColumnsButton.setDisable(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

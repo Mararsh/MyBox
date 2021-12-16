@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import mara.mybox.data.Data2D;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -69,6 +70,10 @@ public class MatricesManageController extends BaseController {
         dataController.save();
     }
 
+    public void loadDef(Data2DDefinition def) {
+        dataController.loadDef(def);
+    }
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
@@ -103,6 +108,12 @@ public class MatricesManageController extends BaseController {
         if (controller == null) {
             controller = (MatricesManageController) WindowTools.openStage(Fxmls.MatricesManageFxml);
         }
+        return controller;
+    }
+
+    public static MatricesManageController open(Data2DDefinition def) {
+        MatricesManageController controller = oneOpen();
+        controller.loadDef(def);
         return controller;
     }
 

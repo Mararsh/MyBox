@@ -80,6 +80,10 @@ public class Data2DExportController extends BaseTaskController {
     @Override
     public boolean checkOptions() {
         try {
+            if (tableController.data2D.isMutiplePages()
+                    && !tableController.dataController.checkBeforeNextAction()) {
+                return false;
+            }
             targetPath = targetPathController.file;
             if (targetPath == null) {
                 popError(message("InvalidParameters"));

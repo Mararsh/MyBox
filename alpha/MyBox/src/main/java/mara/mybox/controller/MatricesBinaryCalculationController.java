@@ -21,7 +21,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -224,25 +224,25 @@ public class MatricesBinaryCalculationController extends BaseController {
                 protected boolean handle() {
                     try {
                         if (plusRadio.isSelected()) {
-                            result = MatrixDoubleTools.add(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.add(dataAMatrix.toArray(), dataBMatrix.toArray());
 
                         } else if (minusRadio.isSelected()) {
-                            result = MatrixDoubleTools.subtract(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.subtract(dataAMatrix.toArray(), dataBMatrix.toArray());
 
                         } else if (multiplyRadio.isSelected()) {
-                            result = MatrixDoubleTools.multiply(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.multiply(dataAMatrix.toArray(), dataBMatrix.toArray());
 
                         } else if (hadamardProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.hadamardProduct(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.hadamardProduct(dataAMatrix.toArray(), dataBMatrix.toArray());
 
                         } else if (kroneckerProductRadio.isSelected()) {
-                            result = MatrixDoubleTools.kroneckerProduct(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.kroneckerProduct(dataAMatrix.toArray(), dataBMatrix.toArray());
 
                         } else if (verticalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.vertivalMerge(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.vertivalMerge(dataAMatrix.toArray(), dataBMatrix.toArray());
 
                         } else if (horizontalMergeRadio.isSelected()) {
-                            result = MatrixDoubleTools.horizontalMerge(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.horizontalMerge(dataAMatrix.toArray(), dataBMatrix.toArray());
 
                         }
                     } catch (Exception e) {

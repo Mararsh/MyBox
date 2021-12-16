@@ -11,6 +11,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.IntTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -327,11 +328,11 @@ public class ColumnDefinition extends BaseData {
             case Float:
                 return FloatTools.format(FloatTools.random(random, maxRandom), scale);
             case Integer:
-                return StringTools.format(random.nextInt(maxRandom));
+                return StringTools.format(IntTools.random(random, maxRandom));
             case Long:
-                return StringTools.format(FloatTools.random(random, maxRandom));
+                return StringTools.format((long) FloatTools.random(random, maxRandom));
             case Short:
-                return StringTools.format((short) random.nextInt(maxRandom));
+                return StringTools.format((short) IntTools.random(random, maxRandom));
             default:
                 return (char) ('a' + random.nextInt(25)) + "";
         }

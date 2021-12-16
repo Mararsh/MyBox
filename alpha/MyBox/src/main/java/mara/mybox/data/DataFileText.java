@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
@@ -25,7 +26,7 @@ import mara.mybox.value.AppValues;
 public class DataFileText extends DataFile {
 
     public DataFileText() {
-        type = Type.Text;
+        type = Type.Texts;
     }
 
     public void setOptions(boolean hasHeader, Charset charset, String delimiter) {
@@ -545,6 +546,50 @@ public class DataFileText extends DataFile {
         }
 
         return sData;
+    }
+
+    @Override
+    public boolean setValue(List<Integer> cols, String value) {
+        if (file == null || cols == null || cols.isEmpty()) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+            List<String> names = columnNames();
+            if (hasHeader && names != null) {
+                readValidLine(reader);
+                TextFileTools.writeLine(writer, names, delimiter);
+            }
+            String line;
+            boolean isRandom = "MyBox##random".equals(value);
+            Random random = new Random();
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> record = parseFileLine(line);
+                if (record == null || record.isEmpty()) {
+                    continue;
+                }
+                List<String> row = new ArrayList<>();
+                for (int i = 0; i < columns.size(); i++) {
+                    if (cols.contains(i)) {
+                        if (isRandom) {
+                            row.add(random(random, i));
+                        } else {
+                            row.add(value);
+                        }
+                    } else if (i < record.size()) {
+                        row.add(record.get(i));
+                    } else {
+                        row.add(null);
+                    }
+                }
+                TextFileTools.writeLine(writer, row, delimiter);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+        return FileTools.rename(tmpFile, file, false);
     }
 
 }

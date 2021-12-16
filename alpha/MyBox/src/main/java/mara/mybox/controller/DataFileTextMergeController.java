@@ -145,11 +145,11 @@ public class DataFileTextMergeController extends FilesMergeController {
             writer.close();
             try ( Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
-                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.Text, targetFile);
+                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.Texts, targetFile);
                 if (def == null) {
                     def = Data2DDefinition.create();
                 }
-                def.setType(Data2DDefinition.Type.Text)
+                def.setType(Data2DDefinition.Type.Texts)
                         .setFile(targetFile)
                         .setDataName(targetFile.getName())
                         .setCharset(targetCharset)

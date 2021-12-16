@@ -48,8 +48,6 @@ public class ControlData2DAttributes extends BaseController {
     protected void setParameters(ControlData2D dataController) {
         try {
             this.dataController = dataController;
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            data2D = dataController.data2D;
 
             dataNameInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -123,6 +121,15 @@ public class ControlData2DAttributes extends BaseController {
                     .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setData(Data2D data) {
+        try {
+            data2D = data;
+            tableData2DDefinition = dataController.tableData2DDefinition;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -264,6 +264,7 @@ public class Data2DStatisticController extends Data2DOperationController {
                 handledData.add(medianRow);
             }
             if (handledData.isEmpty()) {
+                outError(message("SelectToHandle"));
                 return false;
             }
             return true;

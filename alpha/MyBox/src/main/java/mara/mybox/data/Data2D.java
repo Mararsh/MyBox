@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import mara.mybox.controller.BaseController;
+import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.ControlData2DEditTable;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.DerbyBase;
@@ -17,11 +17,9 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -40,6 +38,7 @@ public abstract class Data2D extends Data2DDefinition {
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected ControlData2DEditTable tableController;
     protected boolean tableChanged;
+    protected SimpleBooleanProperty tableChangedNotify;
     protected double[][] matrix;
     protected SingletonTask task, backgroundTask;
     protected String error;
@@ -66,6 +65,7 @@ public abstract class Data2D extends Data2DDefinition {
         class
      */
     public Data2D() {
+        tableChangedNotify = new SimpleBooleanProperty(false);
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
         pageSize = 50;
@@ -116,6 +116,7 @@ public abstract class Data2D extends Data2DDefinition {
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableController = d.tableController;
             tableChanged = d.tableChanged;
+            tableChangedNotify = d.tableChangedNotify;
             task = d.task;
             backgroundTask = d.backgroundTask;
             error = d.error;
@@ -146,14 +147,17 @@ public abstract class Data2D extends Data2DDefinition {
             case Excel:
                 data = new DataFileExcel();
                 break;
-            case Text:
+            case Texts:
                 data = new DataFileText();
                 break;
             case Matrix:
                 data = new DataMatrix();
                 break;
-            case Clipboard:
+            case MyBoxClipboard:
                 data = new DataClipboard();
+                break;
+            case Table:
+                data = new DataTable();
                 break;
             default:
                 return null;
@@ -169,26 +173,6 @@ public abstract class Data2D extends Data2DDefinition {
     public void initFile(File file) {
         resetData();
         this.file = file;
-    }
-
-    public void open(File file) {
-        if (file == null) {
-            return;
-        }
-        String fxml;
-        switch (type) {
-            case CSV:
-            case Clipboard:
-                fxml = Fxmls.DataFileCSVFxml;
-                break;
-            case Excel:
-                fxml = Fxmls.DataFileExcelFxml;
-                break;
-            default:
-                fxml = Fxmls.DataFileTextFxml;
-        }
-        BaseController controller = WindowTools.openStage(fxml);
-        controller.sourceFileChanged(file);
     }
 
     public boolean isMutiplePages() {
@@ -220,7 +204,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public boolean isDataFile() {
-        return type == Type.CSV || type == Type.Excel || type == Type.Text;
+        return type == Type.CSV || type == Type.Excel || type == Type.Texts;
     }
 
     public boolean isTmpFile() {
@@ -265,6 +249,10 @@ public abstract class Data2D extends Data2DDefinition {
         return null;
     }
 
+    public boolean setValue(List<Integer> cols, String value) {
+        return false;
+    }
+
     /*
         matrix
      */
@@ -285,7 +273,7 @@ public abstract class Data2D extends Data2DDefinition {
         clipboard
      */
     public boolean isClipboard() {
-        return type == Type.Clipboard;
+        return type == Type.MyBoxClipboard;
     }
 
     /*
@@ -337,19 +325,29 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    public void saveDefinition(Connection conn) {
+    public boolean saveDefinition() {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return saveDefinition(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean saveDefinition(Connection conn) {
         try {
             rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
             colsNumber = tableColsNumber();
             if (colsNumber <= 0) {
                 hasHeader = false;
             }
-            save(conn, this, columns);
+            return save(conn, this, columns);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -451,8 +449,9 @@ public abstract class Data2D extends Data2DDefinition {
         return tableController == null ? null : tableController.getTableData();
     }
 
-    public void setTableChanged(boolean tableChanged) {
-        this.tableChanged = tableChanged;
+    public void setTableChanged(boolean changed) {
+        tableChanged = changed;
+        tableChangedNotify.set(!tableChangedNotify.get());
     }
 
     public int tableRowsNumber() {
@@ -855,6 +854,14 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void setBackgroundTask(SingletonTask backgroundTask) {
         this.backgroundTask = backgroundTask;
+    }
+
+    public SimpleBooleanProperty getTableChangedNotify() {
+        return tableChangedNotify;
+    }
+
+    public void setTableChangedNotify(SimpleBooleanProperty tableChangedNotify) {
+        this.tableChangedNotify = tableChangedNotify;
     }
 
 }

@@ -3,7 +3,14 @@ package mara.mybox.db.data;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
+import mara.mybox.controller.Data2DManufactureController;
+import mara.mybox.controller.DataClipboardController;
+import mara.mybox.controller.DataFileCSVController;
+import mara.mybox.controller.DataFileExcelController;
+import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.MatricesManageController;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -24,7 +31,7 @@ public class Data2DDefinition extends BaseData {
     protected Date modifyTime;
 
     public static enum Type {
-        Text, CSV, Excel, Clipboard, Matrix, Table
+        Texts, CSV, Excel, MyBoxClipboard, Matrix, Table
     }
 
     public Data2DDefinition() {
@@ -72,7 +79,7 @@ public class Data2DDefinition extends BaseData {
         hasHeader = true;
         charset = null;
         delimiter = null;
-        colsNumber = rowsNumber = 0;
+        colsNumber = rowsNumber = -1;
         scale = 2;
         maxRandom = 1000;
         modifyTime = new Date();
@@ -89,6 +96,18 @@ public class Data2DDefinition extends BaseData {
         } catch (Exception e) {
         }
         return this;
+    }
+
+    public String getTypeName() {
+        return message(type.name());
+    }
+
+    public String getFileName() {
+        if (file != null) {
+            return file.getAbsolutePath();
+        } else {
+            return null;
+        }
     }
 
     /*
@@ -166,10 +185,10 @@ public class Data2DDefinition extends BaseData {
                     data.setHasHeader((boolean) value);
                     return true;
                 case "columns_number":
-                    data.setColsNumber(value == null ? 3 : (long) value);
+                    data.setColsNumber(value == null ? -1 : (long) value);
                     return true;
                 case "rows_number":
-                    data.setRowsNumber(value == null ? 3 : (long) value);
+                    data.setRowsNumber(value == null ? -1 : (long) value);
                     return true;
                 case "scale":
                     data.setScale(value == null ? 2 : (short) value);
@@ -200,9 +219,35 @@ public class Data2DDefinition extends BaseData {
     public static Type type(short type) {
         Type[] types = Type.values();
         if (type < 0 || type > types.length) {
-            return Type.Text;
+            return Type.Texts;
         }
         return types[type];
+    }
+
+    public static void open(Data2DDefinition def) {
+        if (def == null) {
+            return;
+        }
+        switch (def.getType()) {
+            case CSV:
+                DataFileCSVController.open(def);
+                break;
+            case Excel:
+                DataFileExcelController.open(def);
+                break;
+            case Texts:
+                DataFileTextController.open(def);
+                break;
+            case MyBoxClipboard:
+                DataClipboardController.open(def);
+                break;
+            case Matrix:
+                MatricesManageController.open(def);
+                break;
+            default:
+                Data2DManufactureController.open(def);
+        }
+
     }
 
 

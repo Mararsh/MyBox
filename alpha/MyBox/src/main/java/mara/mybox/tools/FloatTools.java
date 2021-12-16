@@ -83,9 +83,10 @@ public class FloatTools {
         if (r == null) {
             r = new Random();
         }
+        int sign = r.nextInt(2);
         float f = r.nextFloat();
         int i = max > 0 ? r.nextInt(max) : 0;
-        return i + f;
+        return sign == 1 ? i + f : -(i + f);
     }
 
     public static float[] sortArray(float[] numbers) {

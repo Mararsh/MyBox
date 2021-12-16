@@ -23,7 +23,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-09-11
  * @License Apache License Version 2.0
  */
-public class ControlListCheckBox extends BaseController {
+public class ControlCheckBoxList extends BaseController {
 
     protected Map<Integer, CheckBox> checkBoxs;
     protected List<Integer> checkedOrders;  // in order of checked
@@ -33,7 +33,7 @@ public class ControlListCheckBox extends BaseController {
     @FXML
     protected ListView<String> listView;
 
-    public ControlListCheckBox() {
+    public ControlCheckBoxList() {
         checkedNotify = new SimpleBooleanProperty(false);
         rightClickedNotify = new SimpleBooleanProperty(false);
         checkBoxs = new HashMap<>();

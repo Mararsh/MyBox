@@ -12,6 +12,7 @@ import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -159,6 +160,12 @@ public class DataFileCSVController extends BaseData2DFileController {
     public static DataFileCSVController open(File file) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.sourceFileChanged(file);
+        return controller;
+    }
+
+    public static DataFileCSVController open(Data2DDefinition def) {
+        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        controller.loadDef(def);
         return controller;
     }
 

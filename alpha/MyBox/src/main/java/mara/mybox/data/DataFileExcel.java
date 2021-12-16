@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -849,6 +850,85 @@ public class DataFileExcel extends DataFile {
         }
 
         return sData;
+    }
+
+    @Override
+    public boolean setValue(List<Integer> cols, String value) {
+        if (file == null || cols == null || cols.isEmpty()) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
+            Sheet sourceSheet;
+            if (currentSheetName != null) {
+                sourceSheet = sourceBook.getSheet(currentSheetName);
+            } else {
+                sourceSheet = sourceBook.getSheetAt(0);
+                currentSheetName = sourceSheet.getSheetName();
+            }
+            Workbook targetBook;
+            Sheet targetSheet;
+            File tmpDataFile = null;
+            int sheetsNumber = sourceBook.getNumberOfSheets();
+            if (sheetsNumber == 1) {
+                targetBook = new XSSFWorkbook();
+                targetSheet = targetBook.createSheet(currentSheetName);
+            } else {
+                tmpDataFile = TmpFileTools.getTempFile();
+                FileCopyTools.copyFile(file, tmpDataFile);
+                targetBook = WorkbookFactory.create(tmpDataFile);
+                int index = targetBook.getSheetIndex(currentSheetName);
+                targetBook.removeSheetAt(index);
+                targetSheet = targetBook.createSheet(currentSheetName);
+                targetBook.setSheetOrder(currentSheetName, index);
+            }
+            int targetRowIndex = 0;
+            if (hasHeader) {
+                targetRowIndex = writeHeader(targetSheet, targetRowIndex);
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                boolean isRandom = "MyBox##random".equals(value);
+                Random random = new Random();
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    Row sourceRow = iterator.next();
+                    if (sourceRow == null) {
+                        continue;
+                    }
+                    Row targetRow = targetSheet.createRow(targetRowIndex++);
+                    for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
+                        String v;
+                        if (cols.contains(c)) {
+                            if (isRandom) {
+                                v = random(random, c);
+                            } else {
+                                v = value;
+                            }
+                        } else {
+                            v = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));
+                        }
+                        Cell targetCell = targetRow.createCell(c, CellType.STRING);
+                        targetCell.setCellValue(v);
+                    }
+                }
+            }
+            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                targetBook.write(fileOut);
+            }
+            targetBook.close();
+            FileDeleteTools.delete(tmpDataFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+        return tmpFile != null && tmpFile.exists();
     }
 
     /*

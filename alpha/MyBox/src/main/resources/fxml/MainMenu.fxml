@@ -217,6 +217,7 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#openDataClipboard" text="%DataClipboard" />
+                                <MenuItem mnemonicParsing="false" onAction="#manufactureData" text="%ManufactureData" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatricesManage" text="%MatricesManage" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatrixUnaryCalculation" text="%MatrixUnaryCalculation" />

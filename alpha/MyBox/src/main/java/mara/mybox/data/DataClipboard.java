@@ -20,11 +20,11 @@ import mara.mybox.value.AppPaths;
 public class DataClipboard extends DataFileCSV {
 
     public DataClipboard() {
-        type = Type.Clipboard;
+        type = Type.MyBoxClipboard;
     }
 
     public int type() {
-        return type(Type.Clipboard);
+        return type(Type.MyBoxClipboard);
     }
 
     @Override

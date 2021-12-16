@@ -9,7 +9,7 @@ import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
@@ -65,9 +65,9 @@ public class ChromaticAdaptation {
                         ChromaticAdaptation ca = new ChromaticAdaptation();
                         ca.setSource(sourceIlluminant + " - " + sourceObserver);
                         ca.setTarget(targetIlluminant + " - " + targetObserver);
-                        ca.setBradfordMethod(MatrixDoubleTools.print(m1, 0, scale));
-                        ca.setXYZScalingMethod(MatrixDoubleTools.print(m2, 0, scale));
-                        ca.setVonKriesMethod(MatrixDoubleTools.print(m3, 0, scale));
+                        ca.setBradfordMethod(DoubleMatrixTools.print(m1, 0, scale));
+                        ca.setXYZScalingMethod(DoubleMatrixTools.print(m2, 0, scale));
+                        ca.setVonKriesMethod(DoubleMatrixTools.print(m3, 0, scale));
                         data.add(ca);
                     }
                 }
@@ -99,9 +99,9 @@ public class ChromaticAdaptation {
                         List<String> row = new ArrayList<>();
                         row.addAll(Arrays.asList(sourceIlluminant.name() + " - " + sourceObserver.name(),
                                 targetIlluminant.name() + " - " + targetObserver.name(),
-                                MatrixDoubleTools.html(m1, scale),
-                                MatrixDoubleTools.html(m2, scale),
-                                MatrixDoubleTools.html(m3, scale)
+                                DoubleMatrixTools.html(m1, scale),
+                                DoubleMatrixTools.html(m2, scale),
+                                DoubleMatrixTools.html(m3, scale)
                         ));
                         table.add(row);
                     }
@@ -130,7 +130,7 @@ public class ChromaticAdaptation {
                                     append(targetObserver).append("\n");
                             s.append(Languages.message("Algorithm")).append(":  ").append(a).append("\n");
                             s.append(Languages.message("ChromaticAdaptationMatrix")).append(":  ").append("\n");
-                            s.append(MatrixDoubleTools.print(m, 20, scale)).append("\n\n");
+                            s.append(DoubleMatrixTools.print(m, 20, scale)).append("\n\n");
                         }
                     }
                 }
@@ -183,9 +183,9 @@ public class ChromaticAdaptation {
             double targetWhitePointX, double targetWhitePointY, double targetWhitePointZ,
             ChromaticAdaptationAlgorithm algorithm, int scale, boolean isDemo) {
         double[][] sourceWhitePoint
-                = MatrixDoubleTools.columnVector(sourceWhitePointX, sourceWhitePointY, sourceWhitePointZ);
+                = DoubleMatrixTools.columnVector(sourceWhitePointX, sourceWhitePointY, sourceWhitePointZ);
         double[][] targetWhitePoint
-                = MatrixDoubleTools.columnVector(targetWhitePointX, targetWhitePointY, targetWhitePointZ);
+                = DoubleMatrixTools.columnVector(targetWhitePointX, targetWhitePointY, targetWhitePointZ);
         return adapt(x, y, z, sourceWhitePoint, targetWhitePoint, algorithm, scale, isDemo);
     }
 
@@ -211,12 +211,12 @@ public class ChromaticAdaptation {
             double[][] sourceWhitePoint, double[][] targetWhitePoint,
             ChromaticAdaptationAlgorithm algorithm, int scale, boolean isDemo) {
         try {
-            if (MatrixDoubleTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
+            if (DoubleMatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 double[] result = {x, y, z};
                 if (isDemo) {
                     Map<String, Object> ret = new HashMap<>();
                     ret.put("procedure", Languages.message("NeedNotAdaptChromatic"));
-                    ret.put("matrix", MatrixDoubleTools.identityDouble(3));
+                    ret.put("matrix", DoubleMatrixTools.identityDouble(3));
                     ret.put("adaptedColor", result);
                     return ret;
                 } else {
@@ -233,9 +233,9 @@ public class ChromaticAdaptation {
             } else {
                 adaptMatrix = (double[][]) adaptObject;
             }
-            double[][] sourceColor = MatrixDoubleTools.columnVector(x, y, z);
-            double[][] adaptedColor = MatrixDoubleTools.multiply(adaptMatrix, sourceColor);
-            double[] result = MatrixDoubleTools.columnValues(adaptedColor, 0);
+            double[][] sourceColor = DoubleMatrixTools.columnVector(x, y, z);
+            double[][] adaptedColor = DoubleMatrixTools.multiply(adaptMatrix, sourceColor);
+            double[] result = DoubleMatrixTools.columnValues(adaptedColor, 0);
             if (isDemo) {
                 String s = "";
                 s += "\naaaaaaaaaaaaa " + Languages.message("Step") + " - " + Languages.message("ChromaticAdaptationMatrix") + " aaaaaaaaaaaaa\n\n";
@@ -243,10 +243,10 @@ public class ChromaticAdaptation {
 
                 s += "\naaaaaaaaaaaaa " + Languages.message("Step") + " - " + Languages.message("ChromaticAdaptation") + " aaaaaaaaaaaaa\n\n";
                 s += "SourceColor = \n";
-                s += MatrixDoubleTools.print(sourceColor, 20, scale);
+                s += DoubleMatrixTools.print(sourceColor, 20, scale);
 
                 s += "\nAdaptedColor = M * SourceColor = \n";
-                s += MatrixDoubleTools.print(adaptedColor, 20, scale);
+                s += DoubleMatrixTools.print(adaptedColor, 20, scale);
 
                 Map<String, Object> ret = new HashMap<>();
 
@@ -297,8 +297,8 @@ public class ChromaticAdaptation {
             double sourceWhitePointX, double sourceWhitePointY, double sourceWhitePointZ,
             double targetWhitePointX, double targetWhitePointY, double targetWhitePointZ,
             ChromaticAdaptationAlgorithm algorithm, int scale) {
-        double[][] sourceWhitePoint = MatrixDoubleTools.columnVector(sourceWhitePointX, sourceWhitePointY, sourceWhitePointZ);
-        double[][] targetWhitePoint = MatrixDoubleTools.columnVector(targetWhitePointX, targetWhitePointY, targetWhitePointZ);
+        double[][] sourceWhitePoint = DoubleMatrixTools.columnVector(sourceWhitePointX, sourceWhitePointY, sourceWhitePointZ);
+        double[][] targetWhitePoint = DoubleMatrixTools.columnVector(targetWhitePointX, targetWhitePointY, targetWhitePointZ);
         return ChromaticAdaptation.matrixDemo(sourceWhitePoint, targetWhitePoint, algorithm, scale);
     }
 
@@ -312,14 +312,14 @@ public class ChromaticAdaptation {
             double[][] sourceWhitePoint, double[][] targetWhitePoint,
             ChromaticAdaptationAlgorithm algorithm, int scale, boolean isDemo) {
         try {
-            if (targetWhitePoint == null || MatrixDoubleTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
+            if (targetWhitePoint == null || DoubleMatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
                     Map<String, Object> ret = new HashMap<>();
                     ret.put("procedure", Languages.message("NeedNotAdaptChromatic"));
-                    ret.put("adpatMatrix", MatrixDoubleTools.identityDouble(3));
+                    ret.put("adpatMatrix", DoubleMatrixTools.identityDouble(3));
                     return ret;
                 } else {
-                    return MatrixDoubleTools.identityDouble(3);
+                    return DoubleMatrixTools.identityDouble(3);
                 }
             }
             double[][] MA, MAI;
@@ -342,43 +342,43 @@ public class ChromaticAdaptation {
                 default:
                     return null;
             }
-            double[][] sourceCone = MatrixDoubleTools.multiply(MA, sourceWhitePoint);
-            double[][] targetCone = MatrixDoubleTools.multiply(MA, targetWhitePoint);
+            double[][] sourceCone = DoubleMatrixTools.multiply(MA, sourceWhitePoint);
+            double[][] targetCone = DoubleMatrixTools.multiply(MA, targetWhitePoint);
             double[][] ratioMatrix = new double[3][3];
             ratioMatrix[0][0] = targetCone[0][0] / sourceCone[0][0];
             ratioMatrix[1][1] = targetCone[1][0] / sourceCone[1][0];
             ratioMatrix[2][2] = targetCone[2][0] / sourceCone[2][0];
-            double[][] M = MatrixDoubleTools.multiply(MAI, ratioMatrix);
-            M = MatrixDoubleTools.multiply(M, MA);
+            double[][] M = DoubleMatrixTools.multiply(MAI, ratioMatrix);
+            M = DoubleMatrixTools.multiply(M, MA);
             if (scale >= 0) {
-                M = MatrixDoubleTools.scale(M, scale);
+                M = DoubleMatrixTools.scale(M, scale);
             } else {
                 scale = 8;
             }
             if (isDemo) {
                 String s = "";
                 s += "SourceWhitePoint = \n";
-                s += MatrixDoubleTools.print(sourceWhitePoint, 20, scale);
+                s += DoubleMatrixTools.print(sourceWhitePoint, 20, scale);
 
                 s += "TargetWhitePoint = \n";
-                s += MatrixDoubleTools.print(targetWhitePoint, 20, scale);
+                s += DoubleMatrixTools.print(targetWhitePoint, 20, scale);
 
                 s += "\n" + Languages.message("Algorithm") + ": " + algorithm + "\n";
                 s += "MA = \n";
-                s += MatrixDoubleTools.print(MA, 20, scale);
+                s += DoubleMatrixTools.print(MA, 20, scale);
                 s += "MA_Inversed =\n";
-                s += MatrixDoubleTools.print(MAI, 20, scale);
+                s += DoubleMatrixTools.print(MAI, 20, scale);
 
                 s += "\n" + "SourceCone = MA * SourceWhitePoint =\n";
-                s += MatrixDoubleTools.print(sourceCone, 20, scale);
+                s += DoubleMatrixTools.print(sourceCone, 20, scale);
                 s += "\n" + "TargetCone = MA * TargetWhitePoint =\n";
-                s += MatrixDoubleTools.print(targetCone, 20, scale);
+                s += DoubleMatrixTools.print(targetCone, 20, scale);
 
                 s += "\n" + "RatioMatrix = TargetCone / SourceCone =\n";
-                s += MatrixDoubleTools.print(ratioMatrix, 20, scale);
+                s += DoubleMatrixTools.print(ratioMatrix, 20, scale);
 
                 s += "\n" + "Adaptation_Matrix = MA_Inversed * RatioMatrix * MA =\n";
-                s += MatrixDoubleTools.print(M, 20, scale);
+                s += DoubleMatrixTools.print(M, 20, scale);
                 Map<String, Object> ret = new HashMap<>();
 
                 ret.put("procedure", s);
@@ -403,7 +403,7 @@ public class ChromaticAdaptation {
             {-0.1117372, 1.0924325, 0.0851788},
             {0.0502012, -0.0837636, 2.3994031}
         };
-        double[] d50 = MatrixDoubleTools.multiply(matrix, a);
+        double[] d50 = DoubleMatrixTools.multiply(matrix, a);
         return d50;
     }
 
@@ -413,7 +413,7 @@ public class ChromaticAdaptation {
             {-0.0147751, 1.0146711, -0.0000389},
             {-0.0017035, 0.0035957, 0.9660561}
         };
-        double[] d50 = MatrixDoubleTools.multiply(matrix, b);
+        double[] d50 = DoubleMatrixTools.multiply(matrix, b);
         return d50;
     }
 
@@ -423,7 +423,7 @@ public class ChromaticAdaptation {
             {0.0170675, 1.0056038, -0.0188973},
             {-0.0120126, 0.0204361, 0.6906380}
         };
-        double[] d50 = MatrixDoubleTools.multiply(matrix, c);
+        double[] d50 = DoubleMatrixTools.multiply(matrix, c);
         return d50;
     }
 
@@ -433,7 +433,7 @@ public class ChromaticAdaptation {
             {-0.0382467, 1.0288406, 0.0094060},
             {0.0026068, -0.0030332, 1.0892565}
         };
-        double[] d65 = MatrixDoubleTools.multiply(matrix, e);
+        double[] d65 = DoubleMatrixTools.multiply(matrix, e);
         return d65;
     }
 
@@ -443,7 +443,7 @@ public class ChromaticAdaptation {
             {-0.0097677, 1.0183168, -0.0085490},
             {-0.0074169, 0.0134416, 0.8191853}
         };
-        double[] d65 = MatrixDoubleTools.multiply(matrix, e);
+        double[] d65 = DoubleMatrixTools.multiply(matrix, e);
         return d65;
     }
 
@@ -453,7 +453,7 @@ public class ChromaticAdaptation {
             {0.0096914, 0.9819125, 0.0105947},
             {0.0089181, -0.0160789, 1.2208770}
         };
-        double[] e = MatrixDoubleTools.multiply(matrix, d50);
+        double[] e = DoubleMatrixTools.multiply(matrix, d50);
         return e;
     }
 
@@ -463,7 +463,7 @@ public class ChromaticAdaptation {
             {-0.0282895, 1.0099416, 0.0210077},
             {0.0122982, -0.0204830, 1.3299098}
         };
-        double[] d65 = MatrixDoubleTools.multiply(matrix, d50);
+        double[] d65 = DoubleMatrixTools.multiply(matrix, d50);
         return d65;
     }
 
@@ -473,7 +473,7 @@ public class ChromaticAdaptation {
             {0.0120291, 0.9951460, -0.0072228},
             {-0.0039673, 0.0064899, 0.8925936}
         };
-        double[] d50 = MatrixDoubleTools.multiply(matrix, d55);
+        double[] d50 = DoubleMatrixTools.multiply(matrix, d55);
         return d50;
     }
 
@@ -483,7 +483,7 @@ public class ChromaticAdaptation {
             {0.0390650, 0.9729502, -0.0092579},
             {-0.0024047, 0.0026446, 0.9180873}
         };
-        double[] e = MatrixDoubleTools.multiply(matrix, d65);
+        double[] e = DoubleMatrixTools.multiply(matrix, d65);
         return e;
     }
 
@@ -493,7 +493,7 @@ public class ChromaticAdaptation {
             {0.0295424, 0.9904844, -0.0170491},
             {-0.0092345, 0.0150436, 0.7521316}
         };
-        double[] d50 = MatrixDoubleTools.multiply(matrix, d65);
+        double[] d50 = DoubleMatrixTools.multiply(matrix, d65);
         return d50;
     }
 

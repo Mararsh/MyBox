@@ -30,8 +30,16 @@ public class IntTools {
     }
 
     public static int random(int max) {
-        Random r = new Random();
-        return r.nextInt(max);
+        return new Random().nextInt(max);
+    }
+
+    public static int random(Random r, int max) {
+        if (r == null) {
+            r = new Random();
+        }
+        int sign = r.nextInt(2);
+        int i = r.nextInt(max);
+        return sign == 1 ? i : -i;
     }
 
     public static int[] sortArray(int[] numbers) {
@@ -56,6 +64,15 @@ public class IntTools {
             sorted[i] = list.get(i);
         }
         return sorted;
+    }
+
+    public static void sortList(List<Integer> numbers) {
+        Collections.sort(numbers, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer p1, Integer p2) {
+                return p1 - p2;
+            }
+        });
     }
 
 }

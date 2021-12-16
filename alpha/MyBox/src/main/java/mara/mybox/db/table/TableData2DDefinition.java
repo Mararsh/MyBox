@@ -214,7 +214,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(Type.Clipboard));
+            statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
         } catch (Exception e) {
@@ -228,7 +228,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -1;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(Type.Clipboard));
+            statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return statement.executeUpdate();
         } catch (Exception e) {

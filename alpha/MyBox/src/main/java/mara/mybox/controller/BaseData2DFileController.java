@@ -10,6 +10,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileExcel;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -144,6 +145,10 @@ public abstract class BaseData2DFileController extends BaseController {
     @Override
     public void sourceFileChanged(File file) {
         dataController.sourceFileChanged(file);
+    }
+
+    public void loadDef(Data2DDefinition def) {
+        dataController.loadDef(def);
     }
 
     protected void checkStatus() {

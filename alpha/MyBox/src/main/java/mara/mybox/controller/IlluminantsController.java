@@ -11,7 +11,7 @@ import mara.mybox.color.Illuminant;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -120,11 +120,11 @@ public class IlluminantsController extends ChromaticityBaseController {
                     sourceColorController.x, sourceColorController.y, sourceColorController.z,
                     swp[0], swp[1], swp[2], twp[0], twp[1], twp[2], algorithm, scale, true);
             double[] adaptedColor = (double[]) run.get("adaptedColor");
-            double[] mc = DoubleTools.scale(adaptedColor, scale);
+            double[] mc = DoubleArrayTools.scale(adaptedColor, scale);
             String s = Languages.message("CalculatedValues") + ":    X=" + mc[0] + "    Y=" + mc[1] + "    Z=" + mc[2] + "\n";
-            double[] mr = DoubleTools.scale(CIEDataTools.relative(mc), scale);
+            double[] mr = DoubleArrayTools.scale(CIEDataTools.relative(mc), scale);
             s += Languages.message("RelativeValues") + ":    X=" + mr[0] + "    Y=" + mr[1] + "    Z=" + mr[2] + "\n";
-            double[] mn = DoubleTools.scale(CIEDataTools.normalize(mc), scale);
+            double[] mn = DoubleArrayTools.scale(CIEDataTools.normalize(mc), scale);
             s += Languages.message("NormalizedValuesCC") + ":    x=" + mn[0] + "    y=" + mn[1] + "    z=" + mn[2] + "\n"
                     + "\n----------------" + Languages.message("CalculationProcedure") + "----------------\n"
                     + Languages.message("ReferTo") + "： \n"

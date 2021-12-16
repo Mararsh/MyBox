@@ -14,7 +14,7 @@ import mara.mybox.value.Languages;
  * @Description
  * @License Apache License Version 2.0
  */
-public class MatrixDoubleTools {
+public class DoubleMatrixTools {
 
     // columnNumber is 0-based
     public static double[] columnValues(double[][] m, int columnNumber) {
@@ -380,7 +380,7 @@ public class MatrixDoubleTools {
         }
     }
 
-    public static double[][] normalize(double[][] matrix) {
+    public static double[][] normalizeSum(double[][] matrix) {
         try {
             if (matrix == null) {
                 return null;

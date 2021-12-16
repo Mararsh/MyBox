@@ -8,6 +8,7 @@ import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataFileText;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -36,7 +37,7 @@ public class DataFileTextController extends BaseData2DFileController {
         try {
             super.initValues();
 
-            setDataType(Data2D.Type.Text);
+            setDataType(Data2D.Type.Texts);
             dataFileText = (DataFileText) dataController.data2D;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -109,6 +110,12 @@ public class DataFileTextController extends BaseData2DFileController {
     public static DataFileTextController load(Window parent) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openScene(parent, Fxmls.DataFileTextFxml);
         controller.createAction();
+        return controller;
+    }
+
+    public static DataFileTextController open(Data2DDefinition def) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.loadDef(def);
         return controller;
     }
 

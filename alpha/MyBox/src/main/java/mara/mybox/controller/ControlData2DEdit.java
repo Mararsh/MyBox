@@ -49,6 +49,17 @@ public class ControlData2DEdit extends BaseController {
         }
     }
 
+    public void setData(Data2D data) {
+        try {
+            data2D = data;
+            tableController.setData(data);
+            textController.setData(data);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public boolean isChanged() {
         return data2D.isTableChanged() || textController.isChanged();
     }

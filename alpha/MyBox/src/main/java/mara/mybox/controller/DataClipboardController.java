@@ -6,7 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
-import mara.mybox.data.DataClipboard;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -48,8 +48,8 @@ public class DataClipboardController extends BaseController {
         clipboardController.refreshAction();
     }
 
-    public void load(DataClipboard clip) {
-        clipboardController.dataController.loadMatrix(clip);
+    public void load(Data2DDefinition clip) {
+        clipboardController.dataController.loadDef(clip);
     }
 
     @Override
@@ -108,6 +108,12 @@ public class DataClipboardController extends BaseController {
                 }
             }
         });
+    }
+
+    public static DataClipboardController open(Data2DDefinition clip) {
+        DataClipboardController c = oneOpen();
+        c.load(clip);
+        return c;
     }
 
 }

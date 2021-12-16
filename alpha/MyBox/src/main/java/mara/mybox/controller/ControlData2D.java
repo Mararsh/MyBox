@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -107,18 +106,13 @@ public class ControlData2D extends BaseController {
                 recoverButton = parent.recoverButton;
                 setFileType(parent.getSourceFileType(), parent.getTargetFileType());
             }
-            data2D = Data2D.create(type);
-            data2D.setTableController(tableController);
-
-            tableData2DDefinition = data2D.getTableData2DDefinition();
-            tableData2DColumn = data2D.getTableData2DColumn();
 
             editController.setParameters(this);
             viewController.setParameters(this);
             attributesController.setParameters(this);
             columnsController.setParameters(this);
 
-            checkStatus();
+            setData(Data2D.create(type));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -135,118 +129,39 @@ public class ControlData2D extends BaseController {
         }
     }
 
+    public void setData(Data2D data) {
+        try {
+            data2D = data;
+            data2D.setTableController(tableController);
+            tableData2DDefinition = data2D.getTableData2DDefinition();
+            tableData2DColumn = data2D.getTableData2DColumn();
+
+            editController.setData(data2D);
+            viewController.setData(data2D);
+            attributesController.setData(data2D);
+            columnsController.setData(data2D);
+
+            checkStatus();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+
     /*
         database
      */
-    public synchronized void readDefinition() {
-        if (data2D == null) {
-            return;
-        }
-        if (!checkValidData()) {
-            return;
-        }
-        resetStatus();
-        isSettingValues = true;
-        tableController.resetView();
-        isSettingValues = false;
-        task = new SingletonTask<Void>(this) {
-
-            private StringTable validateTable;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.setTask(task);
-                    long d2did = data2D.readDataDefinition();
-                    List<String> dataCols = data2D.readColumns();
-                    if (isCancelled()) {
-                        return false;
-                    }
-                    if (dataCols == null || dataCols.isEmpty()) {
-                        data2D.setHasHeader(false);
-                        tableData2DColumn.clear(data2D);
-                        data2D.setColumns(null);
-                    } else {
-                        List<Data2DColumn> columns = new ArrayList<>();
-                        List<Data2DColumn> savedColumns = data2D.getSavedColumns();
-                        for (int i = 0; i < dataCols.size(); i++) {
-                            Data2DColumn column;
-                            if (savedColumns != null && i < savedColumns.size()) {
-                                column = savedColumns.get(i);
-                                if (data2D.isHasHeader()) {
-                                    column.setName(dataCols.get(i));
-                                }
-                            } else {
-                                column = new Data2DColumn(dataCols.get(i), data2D.defaultColumnType());
-                            }
-                            column.setD2id(d2did);
-                            column.setIndex(i);
-                            columns.add(column);
-                        }
-                        data2D.setColumns(columns);
-                        validateTable = Data2DColumn.validate(columns);
-                        if (!data2D.isTmpData()) {
-                            if (validateTable == null || validateTable.isEmpty()) {
-                                tableData2DColumn.save(d2did, columns);
-                            }
-                        }
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-                loadData();   // Load data whatever
-                notifyLoaded();
-                if (validateTable != null && !validateTable.isEmpty()) {
-                    validateTable.htmlTable();
-                }
-            }
-
-        };
-        start(task);
+    public void readDefinition() {
+        tableController.readDefinition();
     }
 
-    public boolean checkValidData() {
-        if (data2D == null) {
-            return false;
+    public void recover() {
+        if (data2D.isMatrix()) {
+            recoverMatrix();
+        } else {
+            recoverFile();
         }
-        File file = data2D.getFile();
-        if (file == null || file.exists()) {
-            return true;
-        }
-        synchronized (this) {
-            SingletonTask nullTask = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    try {
-                        tableData2DDefinition.deleteData(data2D);
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    loadNull();
-                }
-            };
-            start(nullTask, false);
-        }
-        return false;
     }
 
     /*
@@ -275,15 +190,6 @@ public class ControlData2D extends BaseController {
     /*
         matrix
      */
-    public void loadMatrix(Data2DDefinition data) {
-        if (data == null || !checkBeforeNextAction()) {
-            return;
-        }
-        data2D.resetData();
-        data2D.cloneAll(data);
-        readDefinition();
-    }
-
     public void loadMatrix(double[][] matrix) {
         data2D.initMatrix(matrix);
         readDefinition();
@@ -297,6 +203,15 @@ public class ControlData2D extends BaseController {
     /*
         data
      */
+    public void loadDef(Data2DDefinition data) {
+        if (data == null || !checkBeforeNextAction()) {
+            return;
+        }
+        data2D.resetData();
+        data2D.cloneAll(data);
+        readDefinition();
+    }
+
     public synchronized void loadData() {
         tableController.loadData();
         attributesController.loadData();
@@ -304,14 +219,7 @@ public class ControlData2D extends BaseController {
     }
 
     public void loadNull() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                data2D.resetData();
-                loadData();
-                notifyLoaded();
-            }
-        });
+        tableController.loadNull();
     }
 
     public boolean isChanged() {
@@ -394,13 +302,7 @@ public class ControlData2D extends BaseController {
             backgroundTask.cancel();
         }
 
-        if (tableController.task != null) {
-            tableController.task.cancel();
-        }
-        if (tableController.backgroundTask != null) {
-            tableController.backgroundTask.cancel();
-        }
-        data2D.setTableChanged(false);
+        tableController.resetStatus();
 
         if (textController.task != null) {
             textController.task.cancel();
@@ -715,6 +617,11 @@ public class ControlData2D extends BaseController {
         tableController.pageLastAction();
     }
 
+    @FXML
+    public void refreshAction() {
+        goPage();
+    }
+
 
     /*
         interface
@@ -746,6 +653,13 @@ public class ControlData2D extends BaseController {
                 } else {
                     recoverFile();
                 }
+            });
+            menu.setDisable(invalidData || data2D.isTmpData());
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                refreshAction();
             });
             menu.setDisable(invalidData || data2D.isTmpData());
             popMenu.getItems().add(menu);

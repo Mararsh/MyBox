@@ -75,7 +75,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                <fx:include fx:id="languageList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlListCheckBox.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="languageList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlCheckBoxList.fxml" VBox.vgrow="ALWAYS" />
                                 <Label minHeight="-Infinity" text="%OCRLanguagesComments" wrapText="true" />
                             </children>
                             <padding>

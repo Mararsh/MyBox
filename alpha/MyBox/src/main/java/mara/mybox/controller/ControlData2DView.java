@@ -50,7 +50,6 @@ public class ControlData2DView extends BaseController {
     protected void setParameters(ControlData2D dataController) {
         try {
             this.dataController = dataController;
-            data2D = dataController.data2D;
 
             htmlController.setParent(parentController);
 
@@ -102,6 +101,14 @@ public class ControlData2DView extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
+        }
+    }
+
+    public void setData(Data2D data) {
+        try {
+            data2D = data;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

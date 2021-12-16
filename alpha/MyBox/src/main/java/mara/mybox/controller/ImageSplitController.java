@@ -24,7 +24,7 @@ import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.IntTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -573,8 +573,8 @@ public class ImageSplitController extends BaseImagesListController {
 
             if (displaySizeCheck.isSelected()) {
                 String style = " -fx-font-size: 1.2em; ";
-                DoubleTools.sortList(rows);
-                DoubleTools.sortList(cols);
+                IntTools.sortList(rows);
+                IntTools.sortList(cols);
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     double row = rows.get(i) * ratioy * heightRatio();
                     int hv = rows.get(i + 1) - rows.get(i) + 1;

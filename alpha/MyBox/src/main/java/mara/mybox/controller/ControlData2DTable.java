@@ -3,21 +3,19 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import mara.mybox.data.DataMatrix;
+import mara.mybox.data.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
+import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -26,48 +24,32 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-12-15
  * @License Apache License Version 2.0
  */
-public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition> {
+public class ControlData2DTable extends BaseSysTableController<Data2DDefinition> {
 
-    protected DataMatrix dataMatrix;
-    protected ControlData2D dataController;
-    protected Label matrixLabel;
+    protected Data2DManufactureController manufactureController;
+    protected Data2D data2D;
 
     @FXML
     protected TableColumn<Data2DDefinition, Long> d2didColumn;
     @FXML
     protected TableColumn<Data2DDefinition, Integer> rowsColumn, colsColumn;
     @FXML
-    protected TableColumn<Data2DDefinition, String> nameColumn;
+    protected TableColumn<Data2DDefinition, String> nameColumn, typeColumn, fileColumn;
     @FXML
     protected TableColumn<Data2DDefinition, Date> modifyColumn;
     @FXML
-    protected Button clearMatricesButton, deleteMatricesButton, editMatrixButton, renameMatrixButton;
+    protected Button clearDataButton, deleteDataButton, editDataButton, renameDataButton;
 
-    public ControlMatrixTable() {
-        baseTitle = Languages.message("MatricesManage");
+    public ControlData2DTable() {
+        baseTitle = Languages.message("ManufactureData");
     }
 
-    public void setParameters(ControlData2D dataController) {
+    public void setParameters(Data2DManufactureController manufactureController) {
         try {
-            this.dataController = dataController;
-            dataMatrix = (DataMatrix) dataController.data2D;
+            this.manufactureController = manufactureController;
 
-            tableDefinition = dataController.tableData2DDefinition;
-            queryConditions = "data_type=" + dataMatrix.type();
-
-            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    updateStatus();
-                }
-            });
-
-            dataController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    refreshAction();
-                }
-            });
+            this.data2D = manufactureController.data2D;
+            tableDefinition = data2D.getTableData2DDefinition();
 
             loadTableData();
 
@@ -81,9 +63,13 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         try {
             super.initColumns();
             d2didColumn.setCellValueFactory(new PropertyValueFactory<>("d2did"));
+            typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeName"));
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("dataName"));
             colsColumn.setCellValueFactory(new PropertyValueFactory<>("colsNumber"));
+            colsColumn.setCellFactory(new TableNumberCell());
             rowsColumn.setCellValueFactory(new PropertyValueFactory<>("rowsNumber"));
+            rowsColumn.setCellFactory(new TableNumberCell());
+            fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
             modifyColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
             modifyColumn.setCellFactory(new TableDateCell());
 
@@ -97,25 +83,32 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
+            MenuItem menu = new MenuItem(message("Load"), StyleTools.getIconImage("iconData.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                load();
+            });
+            menu.setDisable(editDataButton.isDisable());
+            items.add(menu);
+
+            menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 editAction();
             });
-            menu.setDisable(editMatrixButton.isDisable());
+            menu.setDisable(editDataButton.isDisable());
             items.add(menu);
 
             menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });
-            menu.setDisable(renameMatrixButton.isDisable());
+            menu.setDisable(renameDataButton.isDisable());
             items.add(menu);
 
             menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteAction();
             });
-            menu.setDisable(deleteMatricesButton.isDisable());
+            menu.setDisable(deleteDataButton.isDisable());
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
@@ -131,7 +124,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
 
     @Override
     public void itemClicked() {
-        editAction();
+        load();
     }
 
     @Override
@@ -143,18 +136,10 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         super.updateStatus();
         if (getMyStage() != null) {
             String title = baseTitle;
-            if (!dataMatrix.isTmpData()) {
-                title += " " + dataMatrix.getDataName();
-            }
-            if (dataController.isChanged()) {
-                title += " *";
+            if (!data2D.isTmpData()) {
+                title += " " + data2D.getDataName();
             }
             myStage.setTitle(title);
-        }
-        if (!dataMatrix.isTmpData()) {
-            matrixLabel.setText(dataMatrix.getDataName());
-        } else {
-            matrixLabel.setText("");
         }
     }
 
@@ -166,37 +151,35 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         super.checkButtons();
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
-        clearMatricesButton.setDisable(isEmpty);
-        deleteMatricesButton.setDisable(none);
-        editMatrixButton.setDisable(none);
-        renameMatrixButton.setDisable(none);
+        clearDataButton.setDisable(isEmpty);
+        deleteDataButton.setDisable(none);
+        editDataButton.setDisable(none);
+        renameDataButton.setDisable(none);
     }
 
-    @FXML
-    @Override
-    public void editAction() {
+    public void load() {
         try {
-            dataController.loadDef(tableView.getSelectionModel().getSelectedItem());
+            manufactureController.load(tableView.getSelectionModel().getSelectedItem());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
+    @Override
+    public void editAction() {
+        Data2DDefinition.open(tableView.getSelectionModel().getSelectedItem());
+    }
+
+    @FXML
     public void renameAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            return;
-        }
-        dataController.renameAction(this, index, selected);
+
     }
 
     @Override
     public void cleanPane() {
         try {
-            dataController = null;
-            dataMatrix = null;
+            data2D = null;
         } catch (Exception e) {
         }
         super.cleanPane();

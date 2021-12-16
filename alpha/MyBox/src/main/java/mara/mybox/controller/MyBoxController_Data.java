@@ -22,6 +22,11 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
     protected void showDataMenu(MouseEvent event) {
         hideMenu(event);
 
+        MenuItem ManufactureData = new MenuItem(message("ManufactureData"));
+        ManufactureData.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.Data2DManufactureFxml);
+        });
+
         MenuItem EditExcel = new MenuItem(message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
             DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
