@@ -13,6 +13,7 @@ import java.util.Random;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
@@ -56,7 +57,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public void checkForLoad() {
+    public boolean checkForLoad() {
         if (charset == null && file != null) {
             charset = TextFileTools.charset(file);
         }
@@ -69,7 +70,7 @@ public class DataFileText extends DataFile {
         if (delimiter == null || delimiter.isEmpty()) {
             delimiter = ",";
         }
-        super.checkForLoad();
+        return super.checkForLoad();
     }
 
     public String guessDelimiter() {
@@ -89,7 +90,7 @@ public class DataFileText extends DataFile {
         if (charset == null) {
             charset = Charset.forName("UTF-8");
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line1 = reader.readLine();
             if (line1 == null) {
                 return null;
@@ -143,13 +144,22 @@ public class DataFileText extends DataFile {
 
     @Override
     public List<String> readColumns() {
-        List<String> names = null;
-        checkForLoad();
-        if (file == null) {
+        if (file == null || !file.exists() || file.length() == 0) {
             return null;
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
-            names = readValidLine(reader);
+        List<String> names = null;
+        checkForLoad();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            List<String> values = readValidLine(reader);
+            if (hasHeader && StringTools.noDuplicated(values, true)) {
+                names = values;
+            } else {
+                hasHeader = false;
+                names = new ArrayList<>();
+                for (int i = 1; i <= values.size(); i++) {
+                    names.add(colPrefix() + i);
+                }
+            }
             if (!hasHeader && names != null) {
                 int len = names.size();
                 names = new ArrayList<>();
@@ -192,10 +202,10 @@ public class DataFileText extends DataFile {
     @Override
     public long readTotal() {
         dataSize = 0;
-        if (file == null) {
+        if (file == null || !file.exists() || file.length() == 0) {
             return 0;
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (backgroundTask == null || backgroundTask.isCancelled()) {
@@ -222,15 +232,16 @@ public class DataFileText extends DataFile {
 
     @Override
     public List<List<String>> readPageData() {
+        if (file == null || !file.exists() || file.length() == 0) {
+            startRowOfCurrentPage = endRowOfCurrentPage = 0;
+            return null;
+        }
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
-        if (file == null) {
-            return null;
-        }
         List<List<String>> rows = new ArrayList<>();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -286,15 +297,17 @@ public class DataFileText extends DataFile {
         String tDelimiter = targetTextFile.getDelimiter();
         checkForLoad();
         boolean tHasHeader = targetTextFile.isHasHeader();
-        if (file != null) {
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
+        if (file != null && file.exists() && file.length() > 0) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (hasHeader) {
                     readValidLine(reader);
                 }
                 if (tHasHeader && colsNames != null) {
                     TextFileTools.writeLine(writer, colsNames, tDelimiter);
+                } else {
+                    targetTextFile.setHasHeader(false);
                 }
                 long rowIndex = -1;
                 String line;
@@ -321,10 +334,12 @@ public class DataFileText extends DataFile {
                 return false;
             }
         } else {
-            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (tHasHeader && colsNames != null) {
                     TextFileTools.writeLine(writer, colsNames, tDelimiter);
+                } else {
+                    targetTextFile.setHasHeader(false);
                 }
                 writePageData(writer, tDelimiter);
             } catch (Exception e) {
@@ -371,7 +386,7 @@ public class DataFileText extends DataFile {
             }
             File tmpFile = TmpFileTools.getTempFile(".txt");
             String fDelimiter = ",";
-            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
                 if (cols != null && !cols.isEmpty()) {
                     TextFileTools.writeLine(writer, cols, fDelimiter);
                 }
@@ -396,11 +411,11 @@ public class DataFileText extends DataFile {
 
     @Override
     public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
-        if (convertController == null || file == null
+        if (convertController == null || file == null || !file.exists() || file.length() == 0
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -423,11 +438,12 @@ public class DataFileText extends DataFile {
 
     @Override
     public List<List<String>> allRows(List<Integer> cols) {
-        if (file == null || cols == null || cols.isEmpty()) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
             return null;
         }
         List<List<String>> rows = new ArrayList<>();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -458,7 +474,8 @@ public class DataFileText extends DataFile {
 
     @Override
     public DoubleStatistic[] statisticData(List<Integer> cols) {
-        if (file == null || cols == null || cols.isEmpty()) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
             return null;
         }
         int colLen = cols.size();
@@ -466,7 +483,7 @@ public class DataFileText extends DataFile {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -510,7 +527,7 @@ public class DataFileText extends DataFile {
         if (allInvalid) {
             return sData;
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -550,12 +567,13 @@ public class DataFileText extends DataFile {
 
     @Override
     public boolean setValue(List<Integer> cols, String value) {
-        if (file == null || cols == null || cols.isEmpty()) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
             return false;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
             List<String> names = columnNames();
             if (hasHeader && names != null) {
                 readValidLine(reader);

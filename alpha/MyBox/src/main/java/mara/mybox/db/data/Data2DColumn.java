@@ -285,6 +285,25 @@ public class Data2DColumn extends ColumnDefinition {
         }
     }
 
+    public static List<Data2DColumn> clone(List<Data2DColumn> columns) {
+        try {
+            if (columns == null) {
+                return null;
+            }
+            List<Data2DColumn> cols = new ArrayList<>();
+            int index = 0;
+            for (Data2DColumn c : columns) {
+                Data2DColumn col = c.cloneAll();
+                col.setIndex(index++);
+                cols.add(col);
+            }
+            return cols;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
 
     /*
         get/set

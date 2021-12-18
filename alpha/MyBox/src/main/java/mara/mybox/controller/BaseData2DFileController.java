@@ -9,18 +9,12 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -39,15 +33,15 @@ public abstract class BaseData2DFileController extends BaseController {
     protected ControlData2DColumns columnsController;
 
     @FXML
-    protected TitledPane filePane, backupPane, formatPane;
+    protected TitledPane saveAsPane, backupPane, formatPane;
     @FXML
-    protected VBox fileBox, formatBox;
+    protected VBox formatBox;
     @FXML
     protected ControlFileBackup backupController;
     @FXML
-    protected Label fileInfoLabel;
-    @FXML
     protected ControlData2D dataController;
+    @FXML
+    protected Label nameLabel;
 
     public BaseData2DFileController() {
         TipsLabelKey = "DataFileTips";
@@ -56,13 +50,14 @@ public abstract class BaseData2DFileController extends BaseController {
     /*
         abstract
      */
-    public abstract void pickOptions();
+    public abstract void pickRefreshOptions();
 
+    public abstract Data2D saveAsTarget();
 
     /*
         init
      */
-    // class should call this before initControls()
+    // subclass should call this
     public void setDataType(Data2D.Type type) {
         try {
             dataController.setDataType(this, type);
@@ -74,6 +69,9 @@ public abstract class BaseData2DFileController extends BaseController {
             textController = dataController.editController.textController;
             attributesController = dataController.attributesController;
             columnsController = dataController.columnsController;
+
+            tableController.dataLabel = nameLabel;
+            tableController.baseTitle = baseTitle;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -142,6 +140,21 @@ public abstract class BaseData2DFileController extends BaseController {
         }
     }
 
+    protected void initSaveAsTab() {
+        try {
+            if (saveAsPane == null) {
+                return;
+            }
+            saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", true));
+            saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public void sourceFileChanged(File file) {
         dataController.sourceFileChanged(file);
@@ -152,80 +165,7 @@ public abstract class BaseData2DFileController extends BaseController {
     }
 
     protected void checkStatus() {
-        try {
-            boolean changed = dataController.isChanged();
-            if (data2D.isTmpFile()) {
-                isSettingValues = true;
-                if (formatPane != null) {
-                    formatPane.setExpanded(false);
-                    formatPane.setDisable(true);
-                }
-                if (backupPane != null) {
-                    backupPane.setExpanded(false);
-                    backupPane.setDisable(true);
-                }
-                isSettingValues = false;
-            } else {
-                isSettingValues = true;
-                if (formatPane != null) {
-                    formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", true));
-                    formatPane.setDisable(false);
-                }
-                if (backupPane != null) {
-                    backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
-                    backupPane.setDisable(false);
-                }
-                isSettingValues = false;
-            }
-
-            if (myStage != null) {
-                String title = baseTitle;
-                if (!data2D.isTmpFile()) {
-                    title += " " + data2D.getFile().getAbsolutePath();
-                }
-                if (changed) {
-                    title += " *";
-                }
-                myStage.setTitle(title);
-            }
-            updateInfoLabel();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    protected void updateInfoLabel() {
-        String info = "";
-        if (!data2D.isTmpFile()) {
-            info = message("FileSize") + ": " + FileTools.showFileSize(data2D.getFile().length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(data2D.getFile().lastModified()) + "\n";
-            if (data2D instanceof DataFileExcel) {
-                DataFileExcel e = (DataFileExcel) data2D;
-                String sheet = e.getCurrentSheetName();
-                info += message("CurrentSheet") + ": " + (sheet == null ? "" : sheet)
-                        + (e.getSheetNames() == null ? "" : " / " + e.getSheetNames().size()) + "\n";
-            } else {
-                info += message("Charset") + ": " + data2D.getCharset() + "\n"
-                        + message("Delimiter") + ": " + TextTools.delimiterMessage(data2D.getDelimiter()) + "\n";
-            }
-            info += message("FirstLineAsNames") + ": " + (data2D.isHasHeader() ? message("Yes") : message("No")) + "\n";
-        }
-        if (!data2D.isMutiplePages()) {
-            info += message("RowsNumber") + ": " + data2D.tableRowsNumber() + "\n";
-        } else {
-            info += message("LinesNumberInFile") + ": " + data2D.getDataSize() + "\n";
-        }
-        info += message("ColumnsNumber") + ": " + data2D.columnsNumber() + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(data2D.getCurrentPage() + 1)
-                + " / " + StringTools.format(data2D.getPagesNumber()) + "\n";
-        if (data2D.isMutiplePages() && data2D.hasData()) {
-            info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(data2D.getStartRowOfCurrentPage() + 1) + " - "
-                    + StringTools.format(data2D.getStartRowOfCurrentPage() + data2D.tableRowsNumber())
-                    + " ( " + StringTools.format(data2D.tableRowsNumber()) + " )\n";
-        }
-        info += message("PageModifyTime") + ": " + DateTools.nowString();
-        fileInfoLabel.setText(info);
+        leftPane.setDisable(data2D == null || data2D.isTmpData());
     }
 
     @FXML
@@ -253,10 +193,20 @@ public abstract class BaseData2DFileController extends BaseController {
     }
 
     @FXML
+    @Override
+    public void saveAsAction() {
+        Data2D targetData = saveAsTarget();
+        if (targetData == null) {
+            return;
+        }
+        dataController.saveAs(targetData, saveAsType);
+    }
+
+    @FXML
     public void refreshFile() {
         dataController.resetStatus();
         data2D.initFile(data2D.getFile());
-        pickOptions();
+        pickRefreshOptions();
         dataController.readDefinition();
     }
 

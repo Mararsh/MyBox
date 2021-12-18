@@ -32,7 +32,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     protected DataFileCSV dataFileCSV;
 
     @FXML
-    protected ControlCsvOptions csvReadController;
+    protected ControlCsvOptions csvReadController, csvWriteController;
     @FXML
     protected VBox mainBox;
 
@@ -63,6 +63,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             super.initControls();
 
             csvReadController.setControls(baseName + "Read");
+            csvWriteController.setControls(baseName + "Write");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -70,7 +71,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     }
 
     @Override
-    public void pickOptions() {
+    public void pickRefreshOptions() {
         Charset charset;
         if (csvReadController.autoDetermine) {
             charset = TextFileTools.charset(dataFileCSV.getFile());
@@ -79,6 +80,20 @@ public class DataFileCSVController extends BaseData2DFileController {
         }
         dataFileCSV.setOptions(csvReadController.withNamesCheck.isSelected(),
                 charset, csvReadController.delimiter + "");
+    }
+
+    @Override
+    public Data2D saveAsTarget() {
+        File file = chooseSaveFile();
+        if (file == null) {
+            return null;
+        }
+        DataFileCSV targetData = new DataFileCSV();
+        targetData.initFile(file)
+                .setCharset(csvWriteController.charset)
+                .setDelimiter(csvWriteController.delimiter + "")
+                .setHasHeader(csvWriteController.withNamesCheck.isSelected());
+        return targetData;
     }
 
     public void setFile(File file, Charset charset, boolean withName, char delimiter) {
@@ -157,7 +172,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         return controller;
     }
 
-    public static DataFileCSVController open(File file) {
+    public static DataFileCSVController openFile(File file) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.sourceFileChanged(file);
         return controller;

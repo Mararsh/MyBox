@@ -39,7 +39,6 @@ public class ControlData2DEdit extends BaseController {
             this.dataController = dataController;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
-            data2D = dataController.data2D;
 
             tableController.setParameters(this);
             textController.setParameters(this);

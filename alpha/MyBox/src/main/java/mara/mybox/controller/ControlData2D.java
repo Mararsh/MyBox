@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -27,15 +26,14 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
@@ -97,14 +95,25 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    // parent should call this before initControls()
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    /*
+        database
+     */
     public void setDataType(BaseController parent, Data2D.Type type) {
         try {
             parentController = parent;
             if (parent != null) {
                 saveButton = parent.saveButton;
                 recoverButton = parent.recoverButton;
-                setFileType(parent.getSourceFileType(), parent.getTargetFileType());
             }
 
             editController.setParameters(this);
@@ -119,20 +128,10 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
     public void setData(Data2D data) {
         try {
             data2D = data;
-            data2D.setTableController(tableController);
+            data2D.setLoadController(tableController);
             tableData2DDefinition = data2D.getTableData2DDefinition();
             tableData2DColumn = data2D.getTableData2DColumn();
 
@@ -143,15 +142,26 @@ public class ControlData2D extends BaseController {
 
             checkStatus();
 
+            switch (data2D.getType()) {
+                case CSV:
+                case MyBoxClipboard:
+                    setFileType(VisitHistory.FileType.CSV);
+                    break;
+                case Excel:
+                    setFileType(VisitHistory.FileType.Excel);
+                    break;
+                case Texts:
+                    setFileType(VisitHistory.FileType.Text);
+                    break;
+                default:
+                    setFileType(VisitHistory.FileType.CSV);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-
-    /*
-        database
-     */
     public void readDefinition() {
         tableController.readDefinition();
     }
@@ -204,10 +214,10 @@ public class ControlData2D extends BaseController {
         data
      */
     public void loadDef(Data2DDefinition data) {
-        if (data == null || !checkBeforeNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
-        data2D.resetData();
+        data2D.initData();
         data2D.cloneAll(data);
         readDefinition();
     }
@@ -234,7 +244,7 @@ public class ControlData2D extends BaseController {
 
     public void notifyLoaded() {
         if (backupController != null) {
-            if (data2D.isTmpFile()) {
+            if (data2D.isTmpData()) {
                 backupController.loadBackups(null);
             } else {
                 backupController.loadBackups(data2D.getFile());
@@ -389,7 +399,7 @@ public class ControlData2D extends BaseController {
             return;
         }
         Data2D targetData = data2D.cloneAll();
-        if (targetData.isTmpFile() && !targetData.isMatrix()) {
+        if (targetData.isTmpData() && !targetData.isMatrix()) {
             File file = null;
             if (targetData.isDataFile()) {
                 file = chooseSaveFile();
@@ -405,10 +415,10 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected boolean handle() {
-                if (backupController != null && backupController.isBack() && !data2D.isTmpFile()) {
+                if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
                     backupController.addBackup(data2D.getFile());
                 }
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.cloneAll(targetData);
@@ -442,44 +452,54 @@ public class ControlData2D extends BaseController {
         start(task);
     }
 
-    public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
-        String newName = PopTools.askValue(getBaseTitle(), message("CurrentName") + ":" + targetData.getDataName(),
-                message("NewName"), targetData.getDataName() + "m");
-        if (newName == null || newName.isBlank()) {
+    public synchronized void saveAs(Data2D targetData, SaveAsType saveAsType) {
+        if (targetData == null || targetData.getFile() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Data2DDefinition def;
-
-                @Override
-                protected boolean handle() {
-                    targetData.setDataName(newName);
-                    def = tableData2DDefinition.updateData(targetData);
-                    return def != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    if (parent != null) {
-                        parent.tableData.set(index, def);
-                    }
-                    if (def.getD2did() == data2D.getD2did()) {
-                        data2D.setDataName(newName);
-                        attributesController.updateDataName();
-                        if (parent != null) {
-                            parent.updateStatus();
-                        }
-                    }
-                }
-
-            };
-            start(task);
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    data2D.setTask(task);
+                    data2D.savePageData(targetData);
+                    Data2D.save(conn, targetData, Data2DColumn.clone(data2D.getColumns()));
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Done"));
+                if (targetData.getFile() != null) {
+                    recordFileWritten(targetData.getFile());
+                }
+                if (saveAsType == SaveAsType.Load) {
+                    data2D.cloneAll(targetData);
+                    readDefinition();
+                } else if (saveAsType == SaveAsType.Open) {
+                    Data2DDefinition.open(targetData);
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                data2D.setTask(null);
+                targetData.setTask(null);
+                task = null;
+            }
+        };
+        start(task);
+    }
+
+    public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
+        tableController.renameAction(parent, index, targetData);
     }
 
     @FXML
@@ -511,78 +531,7 @@ public class ControlData2D extends BaseController {
     }
 
     public synchronized void loadTmpData(List<Data2DColumn> cols, List<List<String>> data) {
-        if (data2D == null) {
-            return;
-        }
-        resetStatus();
-        isSettingValues = true;
-        tableController.resetView();
-        isSettingValues = false;
-        task = new SingletonTask<Void>(this) {
-
-            private StringTable validateTable;
-            private List<List<String>> rows;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.resetData();
-                    data2D.setTask(task);
-                    List<Data2DColumn> columns = new ArrayList<>();
-                    if (cols == null || cols.isEmpty()) {
-                        data2D.setHasHeader(false);
-                        if (data == null || data.isEmpty()) {
-                            return true;
-                        }
-                        for (int i = 0; i < data.get(0).size(); i++) {
-                            Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
-                            columns.add(column);
-                        }
-                    } else {
-                        data2D.setHasHeader(true);
-                        columns.addAll(cols);
-                    }
-                    for (Data2DColumn column : columns) {
-                        column.setIndex(data2D.newColumnIndex());
-                    }
-                    data2D.setColumns(columns);
-                    validateTable = Data2DColumn.validate(columns);
-                    if (data != null) {
-                        rows = new ArrayList<>();
-                        for (int i = 0; i < data.size(); i++) {
-                            List<String> row = data.get(i);
-                            row.add(0, "-1");
-                            rows.add(row);
-                        }
-                    }
-                    data2D.checkForLoad();
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-                tableController.loadTmpData(data);
-                attributesController.loadData();
-                columnsController.loadData();
-                notifyLoaded();
-                if (validateTable != null && !validateTable.isEmpty()) {
-                    validateTable.htmlTable();
-                }
-            }
-
-        };
-        start(task);
+        tableController.loadTmpData(cols, data);
     }
 
     /*

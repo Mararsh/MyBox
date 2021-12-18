@@ -38,8 +38,8 @@ public class MatricesManageController extends BaseController {
             super.initValues();
             dataController.setDataType(this, Data2D.Type.Matrix);
 
-            listController.setParameters(dataController);
             listController.matrixLabel = matrixLabel;
+            listController.setParameters(dataController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

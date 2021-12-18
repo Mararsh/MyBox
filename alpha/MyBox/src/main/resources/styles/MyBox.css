@@ -130,7 +130,9 @@
     -fx-text-fill: darkblue;
 }
 
-
+.uneditable, .uneditable:focused {
+    -fx-background-color: #FDFDFD;
+}
 
 /*
     defined id

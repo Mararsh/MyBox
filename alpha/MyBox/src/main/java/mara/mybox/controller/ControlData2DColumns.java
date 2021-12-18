@@ -60,6 +60,18 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            trimColumnsButton.setDisable(true);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     protected void initColumns() {
         try {
             super.initColumns();
@@ -286,8 +298,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         try {
             this.dataController = dataController;
             tableController = dataController.tableController;
-
-            trimColumnsButton.setDisable(true);
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -296,12 +308,12 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public void setData(Data2D data) {
         try {
             data2D = data;
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            tableData2DColumn = dataController.tableData2DColumn;
-
             if (data2D.isMatrix()) {
                 typeColumn.setEditable(false);
                 typeColumn.getStyleClass().remove("editable-column");
+            } else {
+                typeColumn.setEditable(true);
+                typeColumn.getStyleClass().add("editable-column");
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -435,7 +447,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 return false;
             }
             List<List<String>> newTableData = new ArrayList<>();
-            if (tableData.size() > 0) {
+            if (!tableData.isEmpty()) {
                 for (List<String> rowValues : tableController.tableData) {
                     List<String> newRow = new ArrayList<>();
                     newRow.add(rowValues.get(0));
@@ -455,7 +467,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 columns.add(tableData.get(i).cloneAll());
             }
             data2D.setColumns(columns);
-            return tableController.loadData(newTableData, true);
+            return tableController.updateData(newTableData, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

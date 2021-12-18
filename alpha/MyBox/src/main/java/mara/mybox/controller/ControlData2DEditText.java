@@ -47,11 +47,11 @@ public class ControlData2DEditText extends BaseController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    protected void setParameters(ControlData2DEdit editController) {
+    @Override
+    public void initControls() {
         try {
-            this.editController = editController;
-            dataController = editController.dataController;
-            tableController = editController.tableController;
+            super.initControls();
+
             delimiterName = UserConfig.getString(baseName + "EditDelimiter", ",");
 
             textArea.textProperty().addListener(new ChangeListener<String>() {
@@ -73,6 +73,17 @@ public class ControlData2DEditText extends BaseController {
                 }
             });
             textArea.setWrapText(wrapCheck.isSelected());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void setParameters(ControlData2DEdit editController) {
+        try {
+            this.editController = editController;
+            dataController = editController.dataController;
+            tableController = editController.tableController;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -185,7 +196,7 @@ public class ControlData2DEditText extends BaseController {
                 }
             }
             isSettingValues = true;
-            tableController.loadData(rows, false);
+            tableController.updateData(rows, false);
             isSettingValues = false;
             status(Status.Applied);
         } catch (Exception e) {

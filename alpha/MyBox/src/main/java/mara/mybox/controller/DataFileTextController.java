@@ -26,7 +26,7 @@ public class DataFileTextController extends BaseData2DFileController {
     protected DataFileText dataFileText;
 
     @FXML
-    protected ControlTextOptions readOptionsController;
+    protected ControlTextOptions readOptionsController, writeOptionsController;
 
     public DataFileTextController() {
         baseTitle = message("EditTextDataFile");
@@ -55,6 +55,7 @@ public class DataFileTextController extends BaseData2DFileController {
             super.initControls();
 
             readOptionsController.setControls(baseName + "Read", true);
+            writeOptionsController.setControls(baseName + "Write", false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -62,7 +63,7 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     @Override
-    public void pickOptions() {
+    public void pickRefreshOptions() {
         Charset charset;
         if (readOptionsController.autoDetermine) {
             charset = TextFileTools.charset(dataFileText.getFile());
@@ -71,6 +72,20 @@ public class DataFileTextController extends BaseData2DFileController {
         }
         dataFileText.setOptions(readOptionsController.withNamesCheck.isSelected(),
                 charset, readOptionsController.delimiterName);
+    }
+
+    @Override
+    public Data2D saveAsTarget() {
+        File file = chooseSaveFile();
+        if (file == null) {
+            return null;
+        }
+        DataFileText targetData = new DataFileText();
+        targetData.initFile(file)
+                .setCharset(writeOptionsController.charset)
+                .setDelimiter(writeOptionsController.delimiterName)
+                .setHasHeader(writeOptionsController.withNamesCheck.isSelected());
+        return targetData;
     }
 
     public void setFile(File file, Charset charset, boolean withName, String delimiter) {

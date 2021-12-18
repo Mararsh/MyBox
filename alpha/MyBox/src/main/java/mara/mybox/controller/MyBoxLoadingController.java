@@ -150,7 +150,6 @@ public class MyBoxLoadingController implements Initializable {
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
 
                         MicrosoftDocumentTools.registryFactories();
-
                         List<AlarmClock> alarms = AlarmClock.readAlarmClocks();
                         if (alarms != null) {
                             for (AlarmClock alarm : alarms) {

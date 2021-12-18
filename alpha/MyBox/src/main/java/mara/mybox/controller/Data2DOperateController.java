@@ -23,7 +23,7 @@ import mara.mybox.value.Fxmls;
  */
 public class Data2DOperateController extends BaseController {
 
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad loadController;
     protected Data2D data2D;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
     protected List<String> selectedNames, handledNames;
@@ -70,7 +70,7 @@ public class Data2DOperateController extends BaseController {
     public void checkPaneStatus() {
         try {
             TitledPane currentPane = accordionPane.getExpandedPane();
-            if (tableController == null || currentPane == null) {
+            if (loadController == null || currentPane == null) {
                 return;
             }
 
@@ -84,15 +84,15 @@ public class Data2DOperateController extends BaseController {
 
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad loadController) {
         try {
-            this.tableController = tableController;
-            data2D = tableController.data2D;
+            this.loadController = loadController;
+            data2D = loadController.data2D;
 
             sourceController.setParameters(this);
             resultController.setParameters(this);
 
-            getMyStage().setTitle(tableController.getBaseTitle());
+            getMyStage().setTitle(loadController.getBaseTitle());
 
             handle(null);
         } catch (Exception e) {
@@ -109,10 +109,10 @@ public class Data2DOperateController extends BaseController {
             case "copy":
                 hideResult(true);
                 break;
-            case "SetValues":
+            case "setValues":
                 hideResult(true);
                 break;
-            case "Statistic":
+            case "statistic":
                 hideResult(false);
                 break;
             default:
@@ -143,7 +143,7 @@ public class Data2DOperateController extends BaseController {
     /*
         static
      */
-    public static Data2DOperateController oneOpen(ControlData2DEditTable tableController) {
+    public static Data2DOperateController oneOpen(ControlData2DLoad loadController) {
         Data2DOperateController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
@@ -152,7 +152,7 @@ public class Data2DOperateController extends BaseController {
             if (object != null && object instanceof Data2DOperateController) {
                 try {
                     controller = (Data2DOperateController) object;
-                    if (controller.tableController.data2D.equals(tableController.data2D)) {
+                    if (controller.loadController.data2D.equals(loadController.data2D)) {
                         controller.toFront();
                     } else {
                         controller = null;
@@ -163,15 +163,15 @@ public class Data2DOperateController extends BaseController {
             }
         }
         if (controller == null) {
-            controller = (Data2DOperateController) WindowTools.openChildStage(tableController.getOwner(), Fxmls.Data2DOperateFxml, false);
+            controller = (Data2DOperateController) WindowTools.openChildStage(loadController.getOwner(), Fxmls.Data2DOperateFxml, false);
         }
         return controller;
     }
 
-    public static Data2DOperateController open(ControlData2DEditTable tableController, String operation) {
-        Data2DOperateController controller = oneOpen(tableController);
+    public static Data2DOperateController open(ControlData2DLoad loadController, String operation) {
+        Data2DOperateController controller = oneOpen(loadController);
         if (controller.data2D == null) {
-            controller.setParameters(tableController);
+            controller.setParameters(loadController);
         }
         controller.handle(operation);
         return controller;

@@ -8,11 +8,16 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data.Data2D;
+import mara.mybox.data.DataFileExcel;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -37,6 +42,8 @@ public class ControlData2DAttributes extends BaseController {
     }
 
     @FXML
+    protected TextArea infoArea;
+    @FXML
     protected TextField idInput, timeInput, dataTypeInput, dataNameInput;
     @FXML
     protected ComboBox<String> scaleSelector, randomSelector;
@@ -45,9 +52,10 @@ public class ControlData2DAttributes extends BaseController {
         invalid = new SimpleBooleanProperty(false);
     }
 
-    protected void setParameters(ControlData2D dataController) {
+    @Override
+    public void initControls() {
         try {
-            this.dataController = dataController;
+            super.initControls();
 
             dataNameInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -126,10 +134,20 @@ public class ControlData2DAttributes extends BaseController {
         }
     }
 
+    protected void setParameters(ControlData2D dataController) {
+        try {
+            this.dataController = dataController;
+            tableData2DDefinition = dataController.tableData2DDefinition;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void setData(Data2D data) {
         try {
             data2D = data;
-            tableData2DDefinition = dataController.tableData2DDefinition;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -154,8 +172,50 @@ public class ControlData2DAttributes extends BaseController {
             scaleSelector.setValue(data2D.getScale() + "");
             randomSelector.setValue(data2D.getMaxRandom() + "");
             isSettingValues = false;
+            updateInfo();
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    protected void updateInfo() {
+        if (data2D.isDataFile() && !data2D.isTmpData()) {
+            infoArea.setVisible(true);
+            String info = "";
+            if (!data2D.isTmpData()) {
+                info = message("FileSize") + ": " + FileTools.showFileSize(data2D.getFile().length()) + "\n"
+                        + message("FileModifyTime") + ": " + DateTools.datetimeToString(data2D.getFile().lastModified()) + "\n";
+                if (data2D.isExcel()) {
+                    DataFileExcel e = (DataFileExcel) data2D;
+                    String sheet = e.getSheet();
+                    info += message("CurrentSheet") + ": " + (sheet == null ? "" : sheet)
+                            + (e.getSheetNames() == null ? "" : " / " + e.getSheetNames().size()) + "\n";
+                } else {
+                    info += message("Charset") + ": " + data2D.getCharset() + "\n"
+                            + message("Delimiter") + ": " + TextTools.delimiterMessage(data2D.getDelimiter()) + "\n";
+                }
+                info += message("FirstLineAsNames") + ": " + (data2D.isHasHeader() ? message("Yes") : message("No")) + "\n";
+            }
+            if (!data2D.isMutiplePages()) {
+                info += message("RowsNumber") + ": " + data2D.tableRowsNumber() + "\n";
+            } else {
+                info += message("LinesNumberInFile") + ": " + data2D.getDataSize() + "\n";
+            }
+            info += message("ColumnsNumber") + ": " + data2D.columnsNumber() + "\n"
+                    + message("CurrentPage") + ": " + StringTools.format(data2D.getCurrentPage() + 1)
+                    + " / " + StringTools.format(data2D.getPagesNumber()) + "\n";
+            if (data2D.isMutiplePages() && data2D.hasData()) {
+                info += message("RowsRangeInPage")
+                        + ": " + StringTools.format(data2D.getStartRowOfCurrentPage() + 1) + " - "
+                        + StringTools.format(data2D.getStartRowOfCurrentPage() + data2D.tableRowsNumber())
+                        + " ( " + StringTools.format(data2D.tableRowsNumber()) + " )\n";
+            }
+            info += message("PageModifyTime") + ": " + DateTools.nowString();
+            infoArea.setText(info);
+
+        } else {
+            infoArea.setVisible(false);
+            infoArea.clear();
         }
     }
 

@@ -14,6 +14,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
@@ -56,14 +57,17 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public List<String> readColumns() {
-        if (file == null) {
+        if (file == null || !file.exists() || file.length() == 0) {
             return null;
         }
         List<String> names = null;
         checkForLoad();
         if (hasHeader) {
-            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
-                names = parser.getHeaderNames();
+            try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+                List<String> values = parser.getHeaderNames();
+                if (StringTools.noDuplicated(values, true)) {
+                    names = values;
+                }
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
@@ -73,7 +77,7 @@ public class DataFileCSV extends DataFileText {
         }
         if (names == null) {
             hasHeader = false;
-            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+            try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
                 Iterator<CSVRecord> iterator = parser.iterator();
                 if (iterator != null && iterator.hasNext()) {
                     CSVRecord record = iterator.next();
@@ -97,10 +101,10 @@ public class DataFileCSV extends DataFileText {
     @Override
     public long readTotal() {
         dataSize = 0;
-        if (file == null) {
+        if (file == null || !file.exists() || file.length() == 0) {
             return dataSize;
         }
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext()) {
@@ -128,7 +132,7 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public List<List<String>> readPageData() {
-        if (file == null) {
+        if (file == null || !file.exists() || file.length() == 0) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
@@ -136,11 +140,8 @@ public class DataFileCSV extends DataFileText {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
-        if (file == null) {
-            return null;
-        }
         List<List<String>> rows = new ArrayList<>();
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             long rowIndex = -1;
             int columnsNumber = columnsNumber();
             long end = startRowOfCurrentPage + pageSize;
@@ -198,9 +199,9 @@ public class DataFileCSV extends DataFileText {
         boolean tHasHeader = targetCSVFile.isHasHeader();
         CSVFormat tFormat = targetCSVFile.cvsFormat();
         checkForLoad();
-        if (file != null) {
-            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
-                     CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
+        if (file != null && file.exists() && file.length() > 0) {
+            try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
+                    CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
                     writeHeader(csvPrinter);
                 }
@@ -237,7 +238,7 @@ public class DataFileCSV extends DataFileText {
                 return false;
             }
         } else {
-            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
+            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
                     writeHeader(csvPrinter);
                 }
@@ -327,7 +328,7 @@ public class DataFileCSV extends DataFileText {
             csvFormat = csvFormat.withFirstRecordAsHeader();
         }
         File tmpFile = TmpFileTools.getTempFile(".csv");
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
+        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
             if (cols != null && !cols.isEmpty()) {
                 csvPrinter.printRecord(cols);
             }
@@ -351,11 +352,11 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
-        if (convertController == null || file == null
+        if (convertController == null || file == null || !file.exists() || file.length() == 0
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
         }
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -389,11 +390,11 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public List<List<String>> allRows(List<Integer> cols) {
-        if (file == null || cols == null || cols.isEmpty()) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return null;
         }
         List<List<String>> rows = new ArrayList<>();
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -425,7 +426,7 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public DoubleStatistic[] statisticData(List<Integer> cols) {
-        if (file == null || cols == null || cols.isEmpty()) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return null;
         }
         int colLen = cols.size();
@@ -433,7 +434,7 @@ public class DataFileCSV extends DataFileText {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -478,7 +479,7 @@ public class DataFileCSV extends DataFileText {
         if (allInvalid) {
             return sData;
         }
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -519,12 +520,12 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public File percentage(List<String> names, List<Integer> cols, boolean withValues) {
-        if (file == null || cols == null || cols.isEmpty()) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return null;
         }
         int colLen = cols.size();
         double[] sum = new double[colLen];
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -552,8 +553,8 @@ public class DataFileCSV extends DataFileText {
         CSVFormat csvFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',').withFirstRecordAsHeader();
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
+        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
+                CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
             csvPrinter.printRecord(names);
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
@@ -594,13 +595,13 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public boolean setValue(List<Integer> cols, String value) {
-        if (file == null || cols == null || cols.isEmpty()) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return false;
         }
         File tmpFile = TmpFileTools.getTempFile();
         CSVFormat format = cvsFormat();
-        try ( CSVParser parser = CSVParser.parse(file, charset, format);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
+        try (CSVParser parser = CSVParser.parse(file, charset, format);
+                CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 if (hasHeader) {
@@ -672,7 +673,7 @@ public class DataFileCSV extends DataFileText {
                         + FileNameTools.filter((filePrefix == null || filePrefix.isBlank() ? "" : filePrefix + "_")
                                 + (title == null || title.isBlank() ? "_" + count : title))
                         + ".csv");
-                try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
+                try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
                     if (withName) {
                         csvPrinter.printRecord(names);
                     }

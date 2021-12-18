@@ -51,6 +51,8 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         try {
             this.dataController = dataController;
             dataMatrix = (DataMatrix) dataController.data2D;
+            dataController.tableController.dataLabel = matrixLabel;
+            dataController.tableController.baseTitle = baseTitle;
 
             tableDefinition = dataController.tableData2DDefinition;
             queryConditions = "data_type=" + dataMatrix.type();
@@ -136,26 +138,6 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
 
     @Override
     public void itemDoubleClicked() {
-    }
-
-    @Override
-    public void updateStatus() {
-        super.updateStatus();
-        if (getMyStage() != null) {
-            String title = baseTitle;
-            if (!dataMatrix.isTmpData()) {
-                title += " " + dataMatrix.getDataName();
-            }
-            if (dataController.isChanged()) {
-                title += " *";
-            }
-            myStage.setTitle(title);
-        }
-        if (!dataMatrix.isTmpData()) {
-            matrixLabel.setText(dataMatrix.getDataName());
-        } else {
-            matrixLabel.setText("");
-        }
     }
 
     @Override

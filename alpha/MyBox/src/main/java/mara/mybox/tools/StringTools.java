@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.Collator;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -373,6 +374,29 @@ public class StringTools {
             s.append(line).append("\n");
         }
         return s.toString();
+    }
+
+    public static boolean noDuplicated(List<String> names, boolean notNull) {
+        try {
+            if (names == null || names.isEmpty()) {
+                return false;
+            }
+            List<String> valid = new ArrayList<>();
+            for (int c = 0; c < names.size(); c++) {
+                String name = names.get(c);
+                if (notNull && name == null) {
+                    return false;
+                }
+                if (valid.contains(name)) {
+                    return false;
+                }
+                valid.add(name);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
 }

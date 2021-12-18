@@ -3,7 +3,8 @@ package mara.mybox.db.data;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
-import mara.mybox.controller.Data2DManufactureController;
+import mara.mybox.controller.BaseController;
+import mara.mybox.controller.Data2DManageController;
 import mara.mybox.controller.DataClipboardController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
@@ -21,7 +22,7 @@ public class Data2DDefinition extends BaseData {
 
     protected long d2did;
     protected Type type;
-    protected String dataName, delimiter, comments;
+    protected String dataName, sheet, delimiter, comments;
     protected File file;
     protected Charset charset;
     protected boolean hasHeader;
@@ -59,6 +60,7 @@ public class Data2DDefinition extends BaseData {
             dataName = d.getDataName();
             delimiter = d.getDelimiter();
             file = d.getFile();
+            sheet = d.getSheet();
             charset = d.getCharset();
             hasHeader = d.isHasHeader();
             colsNumber = d.getColsNumber();
@@ -75,6 +77,7 @@ public class Data2DDefinition extends BaseData {
     public final void resetDefinition() {
         d2did = -1;
         file = null;
+        sheet = null;
         dataName = null;
         hasHeader = true;
         charset = null;
@@ -125,7 +128,6 @@ public class Data2DDefinition extends BaseData {
         if (data == null || column == null) {
             return null;
         }
-
         switch (column) {
             case "d2did":
                 return data.getD2did();
@@ -135,6 +137,8 @@ public class Data2DDefinition extends BaseData {
                 return data.getDataName();
             case "file":
                 return data.getFile() == null ? null : data.getFile().getAbsolutePath();
+            case "sheet":
+                return data.getSheet();
             case "charset":
                 return data.getCharset() == null ? Charset.defaultCharset().name() : data.getCharset().name();
             case "delimiter":
@@ -174,6 +178,9 @@ public class Data2DDefinition extends BaseData {
                     return true;
                 case "file":
                     data.setFile(value == null ? null : new File((String) value));
+                    return true;
+                case "sheet":
+                    data.setSheet(value == null ? null : (String) value);
                     return true;
                 case "charset":
                     data.setCharset(value == null ? null : Charset.forName((String) value));
@@ -224,30 +231,36 @@ public class Data2DDefinition extends BaseData {
         return types[type];
     }
 
-    public static void open(Data2DDefinition def) {
+    public static BaseController open(Data2DDefinition def) {
         if (def == null) {
-            return;
+            return Data2DManageController.open(def);
+        } else {
+            return open(def, def.getType());
         }
-        switch (def.getType()) {
-            case CSV:
-                DataFileCSVController.open(def);
-                break;
-            case Excel:
-                DataFileExcelController.open(def);
-                break;
-            case Texts:
-                DataFileTextController.open(def);
-                break;
-            case MyBoxClipboard:
-                DataClipboardController.open(def);
-                break;
-            case Matrix:
-                MatricesManageController.open(def);
-                break;
-            default:
-                Data2DManufactureController.open(def);
-        }
+    }
 
+    public static BaseController openType(Type type) {
+        return open(null, type);
+    }
+
+    public static BaseController open(Data2DDefinition def, Type type) {
+        if (type == null) {
+            return Data2DManageController.open(def);
+        }
+        switch (type) {
+            case CSV:
+                return DataFileCSVController.open(def);
+            case Excel:
+                return DataFileExcelController.open(def);
+            case Texts:
+                return DataFileTextController.open(def);
+            case MyBoxClipboard:
+                return DataClipboardController.open(def);
+            case Matrix:
+                return MatricesManageController.open(def);
+            default:
+                return Data2DManageController.open(def);
+        }
     }
 
 
@@ -367,6 +380,15 @@ public class Data2DDefinition extends BaseData {
 
     public Data2DDefinition setFile(File file) {
         this.file = file;
+        return this;
+    }
+
+    public String getSheet() {
+        return sheet;
+    }
+
+    public Data2DDefinition setSheet(String sheet) {
+        this.sheet = sheet;
         return this;
     }
 

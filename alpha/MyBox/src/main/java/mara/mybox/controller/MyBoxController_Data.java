@@ -22,9 +22,9 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
     protected void showDataMenu(MouseEvent event) {
         hideMenu(event);
 
-        MenuItem ManufactureData = new MenuItem(message("ManufactureData"));
-        ManufactureData.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.Data2DManufactureFxml);
+        MenuItem ManageData = new MenuItem(message("ManageData"));
+        ManageData.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.Data2DManageFxml);
         });
 
         MenuItem EditExcel = new MenuItem(message("EditExcel"));
@@ -80,8 +80,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileTextMergeFxml);
         });
 
-        Menu Data2D = new Menu(message("DataFile"));
-        Data2D.getItems().addAll(
+        Menu DataFile = new Menu(message("DataFile"));
+        DataFile.getItems().addAll(
                 EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
                 EditExcel, ExcelConvert, ExcelMerge, ExtractTextsFromMS, new SeparatorMenuItem(),
                 TextData, TextDataConvert, TextDataMerge
@@ -186,7 +186,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                Data2D, DataClipboard, new SeparatorMenuItem(),
+                ManageData, DataClipboard, new SeparatorMenuItem(),
+                DataFile, new SeparatorMenuItem(),
                 MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationData, ConvertCoordinate, new SeparatorMenuItem(),
                 EpidemicReport, new SeparatorMenuItem(),

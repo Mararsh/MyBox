@@ -9,10 +9,12 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -32,15 +34,6 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <TitledPane fx:id="filePane" text="%File">
-                                            <content>
-                                                <VBox fx:id="fileBox" minHeight="-Infinity" spacing="2.0">
-                                                    <children>
-                                                        <Label fx:id="fileInfoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
                                         <TitledPane fx:id="formatPane" layoutX="10.0" layoutY="380.0" maxWidth="1.7976931348623157E308" text="%Format">
                                             <content>
                                                 <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -83,6 +76,35 @@ License:    Apache License Version 2.0
                                                 </VBox> 
                                             </content>
                                         </TitledPane>
+                              <TitledPane fx:id="saveAsPane" text="%SaveAs">
+                                 <content>
+                                    <VBox minHeight="-Infinity" spacing="2.0">
+                                       <children>
+                                          <fx:include fx:id="writeOptions" source="ControlTextWriteOptions.fxml" />
+                                          <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/styles/MyBox.css">
+                                             <children>
+                                                <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="saveAsGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
+                                                <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
+                                             </children>
+                                          </VBox>
+                                          <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/buttons/iconSaveAs.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                     </children>
                                 </VBox>
                             </content>

@@ -32,8 +32,8 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class Data2DPasteController extends BaseController {
-    
-    protected ControlData2DEditTable tableController;
+
+    protected ControlData2DLoad loadController;
     protected Data2D data2D;
     protected DataFileText dataFileText;
     protected List<List<String>> data;
@@ -41,7 +41,7 @@ public class Data2DPasteController extends BaseController {
     protected String delimiterName;
     protected SimpleBooleanProperty okNotify;
     protected boolean forPaste;
-    
+
     @FXML
     protected TextArea textArea;
     @FXML
@@ -56,29 +56,29 @@ public class Data2DPasteController extends BaseController {
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
-    
+
     public Data2DPasteController() {
         okNotify = new SimpleBooleanProperty();
     }
-    
+
     @Override
     public void setStageStatus() {
         setAsPop(baseName);
     }
-    
-    public void setParameters(ControlData2DEditTable parent, String text, boolean forPaste) {
+
+    public void setParameters(ControlData2DLoad parent, String text, boolean forPaste) {
         try {
-            tableController = parent;
-            data2D = tableController.data2D;
-            
+            loadController = parent;
+            data2D = loadController.data2D;
+
             this.forPaste = forPaste;
             if (!forPaste) {
                 thisPane.getChildren().remove(pasteBox);
                 wayBox.setVisible(false);
             }
-            
+
             htmlController.setParent(parent);
-            
+
             delimiterController.setControls(baseName, true);
             delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -87,7 +87,7 @@ public class Data2DPasteController extends BaseController {
                 }
             });
             delimiterName = delimiterController.delimiterName;
-            
+
             nameCheck.setSelected(UserConfig.getBoolean(baseName + "WithNames", false));
             nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -95,40 +95,40 @@ public class Data2DPasteController extends BaseController {
                     UserConfig.setBoolean(baseName + "WithNames", nameCheck.isSelected());
                 }
             });
-            
+
             dataFileText = new DataFileText();
             textArea.setText(text);
             if (text != null && !text.isBlank()) {
                 delimiterName = null;  // guess at first 
                 goAction();
             }
-            
+
             makeControls(0, 0);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void makeControls(int row, int col) {
         try {
             if (!forPaste) {
                 return;
             }
             List<String> rows = new ArrayList<>();
-            for (long i = 0; i < tableController.tableData.size(); i++) {
+            for (long i = 0; i < loadController.tableData.size(); i++) {
                 rows.add("" + (i + 1));
             }
             rowSelector.getItems().setAll(rows);
             rowSelector.getSelectionModel().select(row);
-            
+
             colSelector.getItems().setAll(data2D.columnNames());
             colSelector.getSelectionModel().select(col);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     @Override
     public void goAction() {
@@ -145,9 +145,9 @@ public class Data2DPasteController extends BaseController {
                 task.cancel();
             }
             task = new SingletonTask<Void>(this) {
-                
+
                 private StringTable validateTable;
-                
+
                 @Override
                 protected boolean handle() {
                     File tmpFile = TmpFileTools.getTempFile();
@@ -181,7 +181,7 @@ public class Data2DPasteController extends BaseController {
                     data = dataFileText.readPageData();
                     return data != null && !data.isEmpty();
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     try {
@@ -209,7 +209,7 @@ public class Data2DPasteController extends BaseController {
                         MyBoxLog.console(e);
                     }
                 }
-                
+
                 @Override
                 protected void whenFailed() {
                     if (isCancelled()) {
@@ -221,7 +221,7 @@ public class Data2DPasteController extends BaseController {
                         popFailed();
                     }
                 }
-                
+
                 @Override
                 protected void finalAction() {
                     dataFileText.setTask(null);
@@ -231,12 +231,12 @@ public class Data2DPasteController extends BaseController {
                         validateTable.htmlTable();
                     }
                 }
-                
+
             };
             start(task);
         }
     }
-    
+
     @FXML
     @Override
     public void okAction() {
@@ -247,11 +247,11 @@ public class Data2DPasteController extends BaseController {
         if (forPaste) {
             pasteData();
         } else {
-            tableController.dataController.loadTmpData(data2D.toColumns(columnNames), data);
+            loadController.dataController.loadTmpData(data2D.toColumns(columnNames), data);
         }
         popDone();
     }
-    
+
     public void pasteData() {
         try {
             int row = rowSelector.getSelectionModel().getSelectedIndex();
@@ -262,50 +262,50 @@ public class Data2DPasteController extends BaseController {
                 popError(message("InvalidParameters"));
                 return;
             }
-            tableController.isSettingValues = true;
+            loadController.isSettingValues = true;
             if (replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
-                    List<String> tableRow = tableController.tableData.get(r);
+                    List<String> tableRow = loadController.tableData.get(r);
                     List<String> dataRow = data.get(r - row);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
-                    tableController.tableData.set(r, tableRow);
+                    loadController.tableData.set(r, tableRow);
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
                 for (int r = 0; r < data.size(); r++) {
-                    List<String> newRow = tableController.data2D.newRow();
+                    List<String> newRow = loadController.data2D.newRow();
                     List<String> dataRow = data.get(r);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));
                     }
                     newRows.add(newRow);
                 }
-                tableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
+                loadController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
             }
-            tableController.tableView.refresh();
-            tableController.isSettingValues = false;
-            tableController.tableChanged(true);
-            
+            loadController.tableView.refresh();
+            loadController.isSettingValues = false;
+            loadController.tableChanged(true);
+
             makeControls(row, col);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-    
+
     @FXML
     @Override
     public void cancelAction() {
         close();
     }
-    
+
     @Override
     public boolean keyESC() {
         close();
         return false;
     }
-    
+
     @Override
     public boolean keyF6() {
         close();
@@ -315,7 +315,7 @@ public class Data2DPasteController extends BaseController {
     /*
         static
      */
-    public static Data2DPasteController open(ControlData2DEditTable parent, String text, boolean forPaste) {
+    public static Data2DPasteController open(ControlData2DLoad parent, String text, boolean forPaste) {
         try {
             Data2DPasteController controller = (Data2DPasteController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.Data2DPasteFxml);
@@ -326,5 +326,5 @@ public class Data2DPasteController extends BaseController {
             return null;
         }
     }
-    
+
 }

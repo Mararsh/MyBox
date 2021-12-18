@@ -71,6 +71,8 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             dataClipboard = (DataClipboard) dataController.data2D;
+            dataController.tableController.dataLabel = nameLabel;
+            dataController.tableController.baseTitle = baseTitle;
 
             tableDefinition = tableData2DDefinition;
             queryConditions = "data_type=" + dataClipboard.type();
@@ -268,27 +270,6 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         }
         dataController.renameAction(this, index, selected);
     }
-
-    @Override
-    public void updateStatus() {
-        super.updateStatus();
-        if (getMyStage() != null) {
-            String title = baseTitle;
-            if (!dataClipboard.isTmpFile()) {
-                title += " " + dataClipboard.getFile().getAbsolutePath();
-            }
-            if (dataController.isChanged()) {
-                title += " *";
-            }
-            myStage.setTitle(title);
-        }
-        if (!dataClipboard.isTmpFile()) {
-            nameLabel.setText(dataClipboard.getDataName());
-        } else {
-            nameLabel.setText("");
-        }
-    }
-
 
     /*
         interface

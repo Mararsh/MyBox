@@ -28,10 +28,11 @@ public class DataClipboard extends DataFileCSV {
     }
 
     @Override
-    public void checkForSave() {
+    public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
             dataName = rowsNumber + "x" + colsNumber;
         }
+        return true;
     }
 
     public static File newFile() {

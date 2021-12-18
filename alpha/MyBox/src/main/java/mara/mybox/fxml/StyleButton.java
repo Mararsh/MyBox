@@ -248,8 +248,16 @@ public class StyleButton {
         if (id.startsWith("color")) {
             return new StyleData(id, message("ColorPalette"), "", "iconColor.png");
         }
-        if (id.startsWith("openFolder")) {
-            return new StyleData(id, message("Open"), "", "iconOpen.png");
+        if (id.startsWith("open")) {
+            if (id.startsWith("openPath")) {
+                return new StyleData(id, message("Directory"), "", "iconOpen2.png");
+            }
+            switch (id) {
+                case "openWindowButton":
+                    return new StyleData(id, message("OpenInNewWindow"), "", "iconWindow.png");
+                default:
+                    return new StyleData(id, message("Open"), "", "iconOpen.png");
+            }
         }
         if (id.startsWith("delete")) {
             switch (id) {
@@ -488,9 +496,7 @@ public class StyleButton {
         if (id.startsWith("menu")) {
             return new StyleData(id, message("Menu"), message("MenuButtonTips"), "iconMenu.png");
         }
-        if (id.startsWith("openPath")) {
-            return new StyleData(id, message("Directory"), "", "iconOpen2.png");
-        }
+
         if (id.startsWith("closePop")) {
             return new StyleData(id, message("Close"), "ESC / F6", "iconCancel.png");
         }
@@ -627,9 +633,6 @@ public class StyleButton {
                 return new StyleData("replaceAllButton", message("ReplaceAll"), "CTRL+w", "iconReplaceAll.png");
             case "withdrawButton":
                 return new StyleData("withdrawButton", message("Withdraw"), "ESC / CTRL+w / ALT+w", "iconWithdraw.png");
-
-            case "openTargetButton":
-                return new StyleData("openTargetButton", message("Open"), "", "iconOpen.png");
             case "browseButton":
                 return new StyleData("browseButton", message("Browse"), "", "iconBrowse.png");
             case "mirrorHButton":
@@ -640,8 +643,7 @@ public class StyleButton {
                 return new StyleData("shearButton", message("Shear"), "", "iconShear.png");
             case "testButton":
                 return new StyleData("testButton", message("Test"), "", "iconGo.png");
-            case "openWindowButton":
-                return new StyleData("newWindowButton", message("OpenInNewWindow"), "", "iconWindow.png");
+
             case "newTabButton":
                 return new StyleData(id, message("NewTab"), "", "iconPlus.png");
             case "strightButton":

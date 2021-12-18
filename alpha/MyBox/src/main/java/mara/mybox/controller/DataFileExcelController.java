@@ -37,7 +37,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     @FXML
     protected ComboBox<String> sheetSelector;
     @FXML
-    protected CheckBox sourceWithNamesCheck;
+    protected CheckBox sourceWithNamesCheck, targetWithNamesCheck, currentOnlyCheck;
     @FXML
     protected Button okSheetButton, plusSheetButton, renameSheetButton, deleteSheetButton,
             nextSheetButton, previousSheetButton;
@@ -76,6 +76,20 @@ public class DataFileExcelController extends BaseData2DFileController {
                 }
             });
 
+            targetWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "TargetWithNames", true));
+            targetWithNamesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "TargetWithNames", newValue);
+                }
+            });
+
+            currentOnlyCheck.setSelected(UserConfig.getBoolean(baseName + "CurrentOnly", false));
+            currentOnlyCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "CurrentOnly", newValue);
+                }
+            });
+
             dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
@@ -89,8 +103,21 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     @Override
-    public void pickOptions() {
+    public void pickRefreshOptions() {
         dataFileExcel.setOptions(sourceWithNamesCheck.isSelected());
+    }
+
+    @Override
+    public Data2D saveAsTarget() {
+        File file = chooseSaveFile();
+        if (file == null) {
+            return null;
+        }
+        DataFileExcel targetData = new DataFileExcel();
+        targetData.setCurrentSheetOnly(currentOnlyCheck.isSelected())
+                .initFile(file).setSheet(dataFileExcel.getSheet())
+                .setHasHeader(targetWithNamesCheck.isSelected());
+        return targetData;
     }
 
     protected void afterFileLoaded() {
@@ -99,7 +126,7 @@ public class DataFileExcelController extends BaseData2DFileController {
         if (sheets != null && !sheets.isEmpty()) {
             sheetSelector.getItems().setAll(sheets);
         }
-        sheetSelector.setValue(dataFileExcel.getCurrentSheetName());
+        sheetSelector.setValue(dataFileExcel.getSheet());
         deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
         int current = sheetSelector.getSelectionModel().getSelectedIndex();
         nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
@@ -109,7 +136,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     @Override
     protected void checkStatus() {
         super.checkStatus();
-        boolean invalid = dataFileExcel.isTmpFile() || dataController.isChanged();
+        boolean invalid = dataFileExcel.isTmpData() || dataController.isChanged();
         sheetsPane.setExpanded(!invalid);
         sheetsPane.setDisable(invalid);
     }
@@ -187,7 +214,7 @@ public class DataFileExcelController extends BaseData2DFileController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        String currentSheetName = dataFileExcel.getCurrentSheetName();
+        String currentSheetName = dataFileExcel.getSheet();
         List<String> sheets = dataFileExcel.getSheetNames();
         String tryName = currentSheetName + "m";
         while (dataFileExcel.getSheetNames() != null && sheets.contains(tryName)) {
@@ -233,7 +260,7 @@ public class DataFileExcelController extends BaseData2DFileController {
         if (sheets == null || sheets.size() <= 1) {
             return;
         }
-        String currentSheetName = dataFileExcel.getCurrentSheetName();
+        String currentSheetName = dataFileExcel.getSheet();
         if (!PopTools.askSure(baseTitle, currentSheetName, message("SureDelete"))) {
             return;
         }

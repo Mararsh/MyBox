@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataClipboardPopController extends DataClipboardController {
 
-    protected ControlData2DEditTable sourceTableController, targetTableController;
+    protected ControlData2DLoad sourceTableController, targetTableController;
     protected Data2D dataSource, dataTarget;
 
     @FXML
@@ -32,7 +32,7 @@ public class DataClipboardPopController extends DataClipboardController {
         TipsLabelKey = "SelectSomeOrNone";
     }
 
-    public void setParameters(ControlData2DEditTable target) {
+    public void setParameters(ControlData2DLoad target) {
         try {
             this.parentController = target;
             targetTableController = target;
@@ -166,7 +166,7 @@ public class DataClipboardPopController extends DataClipboardController {
         }
     }
 
-    public static DataClipboardPopController open(ControlData2DEditTable target) {
+    public static DataClipboardPopController open(ControlData2DLoad target) {
         try {
             if (target == null) {
                 return null;

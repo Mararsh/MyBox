@@ -35,15 +35,124 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public void checkForLoad() {
+    public boolean checkForLoad() {
         hasHeader = false;
+        return true;
     }
 
     @Override
-    public void checkForSave() {
+    public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
             dataName = rowsNumber + "x" + colsNumber;
         }
+        return true;
+    }
+
+    @Override
+    public Data2DDefinition queryDefinition(Connection conn) {
+        return tableData2DDefinition.queryID(conn, d2did);
+    }
+
+    @Override
+    public void applyOptions() {
+//        dataSize = rowsNumber;
+    }
+
+    @Override
+    public List<String> readColumns() {
+        checkForLoad();
+        if (matrix != null) {
+            colsNumber = matrix != null ? matrix[0].length : 0;
+        }
+        List<String> names = new ArrayList<>();
+        for (int i = 1; i <= colsNumber; i++) {
+            names.add(colPrefix() + i);
+        }
+        return names;
+    }
+
+    @Override
+    public long readTotal() {
+        return dataSize;
+    }
+
+    @Override
+    public List<List<String>> readPageData() {
+        if (startRowOfCurrentPage < 0) {
+            startRowOfCurrentPage = 0;
+        }
+        endRowOfCurrentPage = startRowOfCurrentPage;
+        if (d2did >= 0 && rowsNumber > 0 && colsNumber > 0) {
+            matrix = new double[(int) rowsNumber][(int) colsNumber];
+            try (Connection conn = DerbyBase.getConnection();
+                    PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
+                query.setLong(1, d2did);
+                ResultSet results = query.executeQuery();
+                while (results.next()) {
+                    Data2DCell cell = tableData2DCell.readData(results);
+                    if (cell.getCol() < colsNumber && cell.getRow() < rowsNumber) {
+                        matrix[(int) cell.getRow()][(int) cell.getCol()] = toDouble(cell.getValue());
+                    }
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.console(e);
+            }
+        }
+        List<List<String>> rows = new ArrayList<>();
+        if (matrix != null) {
+            rows = toTableData(matrix);
+        }
+        rowsNumber = rows.size();
+        dataSize = rowsNumber;
+        endRowOfCurrentPage = startRowOfCurrentPage + rowsNumber;
+        return rows;
+    }
+
+    @Override
+    public boolean savePageData(Data2D targetData) {
+        if (targetData == null || !targetData.isMatrix()) {
+            return false;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            targetData.saveDefinition(conn);
+            long did = targetData.getD2did();
+            if (did < 0) {
+                return false;
+            }
+            try (PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
+                clear.setLong(1, did);
+                clear.executeUpdate();
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.commit();
+            conn.setAutoCommit(false);
+            for (int r = 0; r < tableRowsNumber(); r++) {
+                List<String> row = tableRowWithoutNumber(r);
+                for (int c = 0; c < row.size(); c++) {
+                    double d = toDouble(row.get(c));
+                    if (d == 0 || d == AppValues.InvalidDouble) {
+                        continue;
+                    }
+                    Data2DCell cell = Data2DCell.create().setD2did(did)
+                            .setRow(r).setCol(c).setValue(d + "");
+                    tableData2DCell.insertData(conn, cell);
+                }
+            }
+            conn.commit();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
+        return false;
     }
 
     public boolean isSquare() {
@@ -216,113 +325,6 @@ public class DataMatrix extends Data2D {
         }
         dataName = rowsNumber + "x" + colsNumber + "_" + message("LowerTriangle");
         return rows;
-    }
-
-    @Override
-    public Data2DDefinition queryDefinition(Connection conn) {
-        return tableData2DDefinition.queryID(conn, d2did);
-    }
-
-    @Override
-    public void applyOptions() {
-//        dataSize = rowsNumber;
-    }
-
-    @Override
-    public List<String> readColumns() {
-        checkForLoad();
-        if (matrix != null) {
-            colsNumber = matrix != null ? matrix[0].length : 0;
-        }
-        List<String> names = new ArrayList<>();
-        for (int i = 1; i <= colsNumber; i++) {
-            names.add(colPrefix() + i);
-        }
-        return names;
-    }
-
-    @Override
-    public long readTotal() {
-        return dataSize;
-    }
-
-    @Override
-    public List<List<String>> readPageData() {
-        if (startRowOfCurrentPage < 0) {
-            startRowOfCurrentPage = 0;
-        }
-        endRowOfCurrentPage = startRowOfCurrentPage;
-        if (d2did >= 0 && rowsNumber > 0 && colsNumber > 0) {
-            matrix = new double[(int) rowsNumber][(int) colsNumber];
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
-                query.setLong(1, d2did);
-                ResultSet results = query.executeQuery();
-                while (results.next()) {
-                    Data2DCell cell = tableData2DCell.readData(results);
-                    if (cell.getCol() < colsNumber && cell.getRow() < rowsNumber) {
-                        matrix[(int) cell.getRow()][(int) cell.getCol()] = toDouble(cell.getValue());
-                    }
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.console(e);
-            }
-        }
-        List<List<String>> rows = new ArrayList<>();
-        if (matrix != null) {
-            rows = toTableData(matrix);
-        }
-        rowsNumber = rows.size();
-        dataSize = rowsNumber;
-        endRowOfCurrentPage = startRowOfCurrentPage + rowsNumber;
-        return rows;
-    }
-
-    @Override
-    public boolean savePageData(Data2D targetData) {
-        if (targetData == null || !targetData.isMatrix()) {
-            return false;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            targetData.saveDefinition(conn);
-            long did = targetData.getD2did();
-            if (did < 0) {
-                return false;
-            }
-            try ( PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
-                clear.setLong(1, did);
-                clear.executeUpdate();
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-            conn.commit();
-            conn.setAutoCommit(false);
-            for (int r = 0; r < tableRowsNumber(); r++) {
-                List<String> row = tableRowWithoutNumber(r);
-                for (int c = 0; c < row.size(); c++) {
-                    double d = toDouble(row.get(c));
-                    if (d == 0 || d == AppValues.InvalidDouble) {
-                        continue;
-                    }
-                    Data2DCell cell = Data2DCell.create().setD2did(did)
-                            .setRow(r).setCol(c).setValue(d + "");
-                    tableData2DCell.insertData(conn, cell);
-                }
-            }
-            conn.commit();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
-        return false;
     }
 
 }
