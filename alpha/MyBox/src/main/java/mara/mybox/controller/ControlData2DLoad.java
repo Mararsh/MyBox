@@ -122,9 +122,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         } else {
             resetStatus();
         }
-        isSettingValues = true;
-        resetView();
-        isSettingValues = false;
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -188,6 +185,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 super.finalAction();
                 data2D.setTask(null);
                 task = null;
+                isSettingValues = true;
+                resetView();
+                isSettingValues = false;
                 if (dataController != null) {
                     dataController.loadData();   // Load data whatever
                     dataController.notifyLoaded();
@@ -274,9 +274,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         } else {
             resetStatus();
         }
-        isSettingValues = true;
-        resetView();
-        isSettingValues = false;
         task = new SingletonTask<Void>(this) {
 
             private StringTable validateTable;
@@ -332,6 +329,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 super.finalAction();
                 data2D.setTask(null);
                 task = null;
+                isSettingValues = true;
+                resetView();
+                isSettingValues = false;
                 displayTmpData(data);
                 if (dataController != null) {
                     dataController.attributesController.loadData();
@@ -566,7 +566,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        return true;
+        return data2D != null && data2D.isValid();
     }
 
     @Override

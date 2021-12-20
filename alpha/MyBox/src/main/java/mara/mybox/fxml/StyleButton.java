@@ -620,7 +620,7 @@ public class StyleButton {
             case "undoButton":
                 return new StyleData("undoButton", message("Undo"), "CTRL+z / ALT+z", "iconUndo.png");
             case "closeButton":
-                return new StyleData("closeButton", message("Close"), "F4", "iconClose.png");
+                return new StyleData("closeButton", message("Close"), "F7", "iconClose.png");
             case "findNextButton":
                 return new StyleData("findNextButton", message("Next"), "CTRL+2", "iconNext.png");
             case "findPreviousButton":

@@ -48,8 +48,8 @@ public class MainMenuController extends MainMenuController_Help {
         monitorCpuCheck.setSelected(UserConfig.getBoolean("MonitorCpu", false));
         controlTextCheck.setSelected(AppVariables.controlDisplayText);
         hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
-        newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
-        restoreStagesSizeCheck.setSelected(AppVariables.restoreStagesSize);
+        closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
+        recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
         controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));

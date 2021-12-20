@@ -130,11 +130,6 @@ License:    Apache License Version 2.0
                                                                 <fx:include fx:id="autoSaveDuration" source="ControlTimeLength.fxml" />
                                                             </children>
                                                         </VBox>
-                                                        <!--                                          <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                           <children>
-                                                              <CheckBox fx:id="autoBackupCheck" layoutX="32.0" layoutY="74.0" mnemonicParsing="false" selected="true" text="%AutoBackup" />
-                                                           </children>
-                                                        </VBox>-->
                                                     </children>
                                                 </VBox>
                                             </content>

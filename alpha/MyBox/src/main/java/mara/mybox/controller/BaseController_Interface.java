@@ -398,7 +398,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setStageStatus() {
         try {
             isPop = false;
-            if (AppVariables.restoreStagesSize) {
+            if (AppVariables.recordWindowsSizeLocation) {
                 String prefix = interfaceKeysPrefix();
                 if (UserConfig.getBoolean(prefix + "FullScreen", false)) {
                     myStage.setFullScreen(true);

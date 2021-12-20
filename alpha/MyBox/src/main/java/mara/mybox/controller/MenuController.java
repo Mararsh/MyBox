@@ -16,7 +16,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -66,9 +65,7 @@ public class MenuController extends BaseController {
         try {
             super.setControlsStyle();
 
-            String style = UserConfig.getString(baseName + "WindowStyle", "");
-            thisPane.setStyle(baseStyle + style);
-            PopTools.setMenuLabelsStyle(thisPane, baseStyle + style);
+            PopTools.setWindowStyle(thisPane, baseName, baseStyle);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -140,7 +137,7 @@ public class MenuController extends BaseController {
 
     @FXML
     public void popStyles(MouseEvent mouseEvent) {
-        PopTools.popMenuStyles(this, baseStyle, mouseEvent);
+        PopTools.popWindowStyles(this, baseStyle, mouseEvent);
     }
 
     @FXML

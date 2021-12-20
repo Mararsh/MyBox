@@ -147,13 +147,15 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     }
 
     @FXML
-    protected void newWindowAction() {
-        UserConfig.setOpenStageInNewWindow(newWindowCheck.isSelected());
+    protected void closeCurrentAction() {
+        UserConfig.setBoolean("CloseCurrentWhenOpenTool", closeCurrentCheck.isSelected());
+        AppVariables.closeCurrentWhenOpenTool = closeCurrentCheck.isSelected();
     }
 
     @FXML
-    protected void restoreStagesSizeAction() {
-        UserConfig.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
+    protected void RecordWindowsSizeLocationAction() {
+        UserConfig.setBoolean("RecordWindowsSizeLocation", recordWindowsSizeLocationCheck.isSelected());
+        AppVariables.recordWindowsSizeLocation = recordWindowsSizeLocationCheck.isSelected();
     }
 
     @FXML

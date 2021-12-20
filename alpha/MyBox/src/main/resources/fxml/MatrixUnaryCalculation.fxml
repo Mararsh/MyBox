@@ -119,28 +119,28 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
                                                                     <children>
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="%Transpose">
+                                                                        <RadioButton fx:id="transposeRadio" mnemonicParsing="false" selected="true" text="%Transpose">
                                                                             <toggleGroup>
                                                                                 <ToggleGroup fx:id="opGroup" />
                                                                             </toggleGroup>
                                                                         </RadioButton>
                                                                         <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%RowEchelonForm" toggleGroup="$opGroup" />
                                                                         <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ReducedRowEchelonForm" toggleGroup="$opGroup" />
-                                                                        <RadioButton layoutX="117.0" layoutY="10.0" mnemonicParsing="false" text="%ComplementMinor" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="ComplementMinorRadio" layoutX="117.0" layoutY="10.0" mnemonicParsing="false" text="%ComplementMinor" toggleGroup="$opGroup" />
                                                                         <RadioButton layoutX="224.0" layoutY="10.0" mnemonicParsing="false" text="%Normalize" toggleGroup="$opGroup" />
-                                                                        <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%MultiplyNumber" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="divideRadio" layoutX="10.0" layoutY="133.0" mnemonicParsing="false" text="%DivideNumber" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="MultiplyNumberRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%MultiplyNumber" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="DivideNumberRadio" layoutX="10.0" layoutY="133.0" mnemonicParsing="false" text="%DivideNumber" toggleGroup="$opGroup" />
                                                                     </children>
                                                                 </FlowPane>
                                                                 <FlowPane fx:id="squarePane" hgap="5.0" layoutX="10.0" layoutY="45.0" minHeight="-Infinity" vgap="5.0">
                                                                     <children>
-                                                                        <RadioButton mnemonicParsing="false" text="%DeterminantByElimination" toggleGroup="$opGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%DeterminantByComplementMinor" toggleGroup="$opGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%InverseMatrixByElimination" toggleGroup="$opGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%InverseMatrixByAdjoint" toggleGroup="$opGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%MatrixRank" toggleGroup="$opGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%AdjointMatrix" toggleGroup="$opGroup" />
-                                                                        <RadioButton layoutX="171.0" layoutY="174.0" mnemonicParsing="false" text="%Power" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="DeterminantByEliminationRadio" mnemonicParsing="false" text="%DeterminantByElimination" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="DeterminantByComplementMinorRadio" mnemonicParsing="false" text="%DeterminantByComplementMinor" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="InverseMatrixByEliminationRadio" mnemonicParsing="false" text="%InverseMatrixByElimination" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="InverseMatrixByAdjointRadio" mnemonicParsing="false" text="%InverseMatrixByAdjoint" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="MatrixRankRadio" mnemonicParsing="false" text="%MatrixRank" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="AdjointMatrixRadio" mnemonicParsing="false" text="%AdjointMatrix" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="PowerRadio" layoutX="171.0" layoutY="174.0" mnemonicParsing="false" text="%Power" toggleGroup="$opGroup" />
                                                                     </children>
                                                                 </FlowPane>
                                                             </children>
@@ -188,7 +188,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Label fx:id="checkLabel" />
+                                                                <Label fx:id="checkLabel" minHeight="-Infinity" wrapText="true" />
                                                             </children>
                                                         </HBox>
                                                     </children>

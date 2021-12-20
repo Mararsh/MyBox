@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -34,6 +35,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -248,7 +250,6 @@ public class PopTools {
             }
             final ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-            String baseName = controller.getBaseName();
 
             MenuItem menu = new MenuItem(message("HtmlStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -256,7 +257,8 @@ public class PopTools {
             popMenu.getItems().add(new SeparatorMenuItem());
 
             ToggleGroup sgroup = new ToggleGroup();
-            String currentStyle = UserConfig.getString(baseName + "HtmlStyle", null);
+            String prefix = UserConfig.getBoolean("ShareAllInterfaceHtmlStyle", true) ? "AllInterface" : controller.getBaseName();
+            String currentStyle = UserConfig.getString(prefix + "HtmlStyle", null);
 
             RadioMenuItem rmenu = new RadioMenuItem(message("None"));
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -293,7 +295,7 @@ public class PopTools {
                 @Override
                 public void handle(ActionEvent event) {
                     TextInputController inputController = (TextInputController) controller.openChildStage(Fxmls.TextInputFxml, true);
-                    inputController.setParameters(controller, message("Style"), UserConfig.getString(baseName + "HtmlStyle", null));
+                    inputController.setParameters(controller, message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
                     inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -312,6 +314,19 @@ public class PopTools {
             popMenu.getItems().add(rmenu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
+
+            CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
+            checkMenu.setSelected(UserConfig.getBoolean("ShareAllInterfaceHtmlStyle", true));
+            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("ShareAllInterfaceHtmlStyle", checkMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(checkMenu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -543,7 +558,7 @@ public class PopTools {
         }
     }
 
-    public static ContextMenu popMenuStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
+    public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
         try {
             ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
@@ -561,15 +576,16 @@ public class PopTools {
             styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
             styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
             ToggleGroup sgroup = new ToggleGroup();
-            String baseName = parent.getBaseName();
-            String currentStyle = UserConfig.getString(baseName + "WindowStyle", "");
+            String prefix = UserConfig.getBoolean("ShareAllInterfaceWindowStyle", true) ? "AllInterface" : parent.getBaseName();
+            String currentStyle = UserConfig.getString(prefix + "WindowStyle", "");
+
             for (String name : styles.keySet()) {
                 RadioMenuItem rmenu = new RadioMenuItem(message(name));
                 String style = styles.get(name);
                 rmenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setString(baseName + "WindowStyle", style);
+                        UserConfig.setString(prefix + "WindowStyle", style);
                         parent.getThisPane().setStyle(baseStyle + style);
                         setMenuLabelsStyle(parent.getThisPane(), baseStyle + style);
                     }
@@ -578,6 +594,17 @@ public class PopTools {
                 rmenu.setToggleGroup(sgroup);
                 popMenu.getItems().add(rmenu);
             }
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
+            checkMenu.setSelected(UserConfig.getBoolean("ShareAllInterfaceWindowStyle", true));
+            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("ShareAllInterfaceWindowStyle", checkMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(checkMenu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
@@ -610,6 +637,13 @@ public class PopTools {
                 setMenuLabelsStyle(child, style);
             }
         }
+    }
+
+    public static void setWindowStyle(Pane pane, String baseName, String baseStyle) {
+        String prefix = UserConfig.getBoolean("ShareAllInterfaceWindowStyle", true) ? "AllInterface" : baseName;
+        String style = UserConfig.getString(prefix + "WindowStyle", "");
+        pane.setStyle(baseStyle + style);
+        setMenuLabelsStyle(pane, baseStyle + style);
     }
 
 }

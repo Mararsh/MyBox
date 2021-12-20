@@ -482,6 +482,7 @@ public class ControlData2D extends BaseController {
                 }
                 if (saveAsType == SaveAsType.Load) {
                     data2D.cloneAll(targetData);
+                    resetStatus();
                     readDefinition();
                 } else if (saveAsType == SaveAsType.Open) {
                     Data2DDefinition.open(targetData);

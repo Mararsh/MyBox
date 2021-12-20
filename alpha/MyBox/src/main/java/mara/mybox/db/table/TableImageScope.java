@@ -225,7 +225,6 @@ public class TableImageScope extends BaseTable<ImageScope> {
                         + DateTools.datetimeToString(new Date()) + "', '"
                         + DateTools.datetimeToString(new Date()) + "')";
             }
-            MyBoxLog.debug(sql);
             count = statement.executeUpdate(sql);
         } catch (Exception e) {
             MyBoxLog.error(e);

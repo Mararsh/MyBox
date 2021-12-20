@@ -98,6 +98,41 @@ public class MatricesBinaryCalculationController extends BaseController {
         try {
             super.initControls();
 
+            dataAController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    checkMatrices();
+                }
+            });
+
+            dataBController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    checkMatrices();
+                }
+            });
+
+            dataAController.savedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    listController.refreshAction();
+                }
+            });
+
+            dataBController.savedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    listController.refreshAction();
+                }
+            });
+
+            resultController.savedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    listController.refreshAction();
+                }
+            });
+
             opGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
                         checkMatrices();
@@ -129,68 +164,34 @@ public class MatricesBinaryCalculationController extends BaseController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
 
-        dataAController.statusNotify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                checkMatrices();
-            }
-        });
-
-        dataBController.statusNotify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                checkMatrices();
-            }
-        });
-
-        dataAController.savedNotify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                listController.refreshAction();
-            }
-        });
-
-        dataBController.savedNotify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                listController.refreshAction();
-            }
-        });
-
-        resultController.savedNotify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                listController.refreshAction();
-            }
-        });
     }
 
     protected boolean checkMatrices() {
         checkLabel.setText("");
         if (plusRadio.isSelected() || minusRadio.isSelected() || hadamardProductRadio.isSelected()) {
-            if (dataAMatrix.getColsNumber() != dataBMatrix.getColsNumber()
-                    || dataAMatrix.getRowsNumber() != dataBMatrix.getRowsNumber()) {
+            if (dataAMatrix.tableColsNumber() != dataBMatrix.tableColsNumber()
+                    || dataAMatrix.tableRowsNumber() != dataBMatrix.tableRowsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateShouldSame"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (multiplyRadio.isSelected()) {
-            if (dataAMatrix.getColsNumber() != dataBMatrix.getRowsNumber()) {
+            if (dataAMatrix.tableColsNumber() != dataBMatrix.tableRowsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateMultiply"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (verticalMergeRadio.isSelected()) {
-            if (dataAMatrix.getColsNumber() != dataBMatrix.getColsNumber()) {
+            if (dataAMatrix.tableColsNumber() != dataBMatrix.tableColsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateShouldSameCols"));
                 calculateButton.setDisable(true);
                 return false;
             }
 
         } else if (horizontalMergeRadio.isSelected()) {
-            if (dataAMatrix.getRowsNumber() != dataBMatrix.getRowsNumber()) {
+            if (dataAMatrix.tableRowsNumber() != dataBMatrix.tableRowsNumber()) {
                 checkLabel.setText(message("MatricesCannotCalculateShouldSameRows"));
                 calculateButton.setDisable(true);
                 return false;

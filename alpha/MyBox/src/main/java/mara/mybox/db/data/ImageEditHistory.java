@@ -1,8 +1,10 @@
 package mara.mybox.db.data;
 
+import java.io.File;
 import java.util.Date;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -38,6 +40,33 @@ public class ImageEditHistory extends BaseData {
             MyBoxLog.debug(e.toString());
             return null;
         }
+    }
+
+    public String getDesc() {
+        String s = message(updateType);
+        if (objectType != null && !objectType.isEmpty()) {
+            s += " " + message(objectType);
+        }
+        if (opType != null && !opType.isEmpty()) {
+            s += " " + message(opType);
+        }
+        if (scopeType != null && !scopeType.isEmpty()) {
+            s += " " + message(scopeType);
+        }
+        if (scopeName != null && !scopeName.isEmpty()) {
+            s += " " + message(scopeName);
+        }
+        return s;
+    }
+
+    public long getSize() {
+        File file = new File(historyLocation);
+        return file.exists() ? file.length() : 0;
+    }
+
+    public String getFileName() {
+        File file = new File(historyLocation);
+        return file.exists() ? file.getName() : null;
     }
 
     /*

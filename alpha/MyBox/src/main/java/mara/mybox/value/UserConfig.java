@@ -200,27 +200,9 @@ public class UserConfig {
         return setPdfMem(UserConfig.getString("PdfMemDefault", "1GB"));
     }
 
-    public static boolean setRestoreStagesSize(boolean value) {
-        if (UserConfig.setBoolean("RestoreStagesSize", value)) {
-            AppVariables.restoreStagesSize = value;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public static boolean setSceneFontSize(int size) {
         AppVariables.sceneFontSize = size;
         if (UserConfig.setInt("SceneFontSize", size)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean setOpenStageInNewWindow(boolean value) {
-        if (UserConfig.setBoolean("OpenStageInNewWindow", value)) {
-            AppVariables.openStageInNewWindow = value;
             return true;
         } else {
             return false;

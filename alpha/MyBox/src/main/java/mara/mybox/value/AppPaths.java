@@ -55,6 +55,35 @@ public class AppPaths {
         return getPath("imageHistories");
     }
 
+    public static String getImageHisPath(File file, int frame) {
+        if (file == null) {
+            return null;
+        }
+        try {
+            String key = "ImageHisPath-" + file.getAbsolutePath();
+            String pathname = TableStringValue.read(key);
+            if (pathname == null) {
+                String fname = file.getName();
+                String subPath = FileNameTools.getFilePrefix(fname);
+                if (frame >= 0) {
+                    subPath += "-frame" + frame;
+                }
+                subPath += FileNameTools.getFileSuffix(fname);
+                pathname = getImageHisPath() + File.separator + subPath
+                        + (new Date()).getTime() + File.separator;
+                TableStringValue.write(key, pathname);
+            }
+            File path = new File(pathname);
+            if (!path.exists()) {
+                path.mkdirs();
+            }
+            return pathname;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static String getImageScopePath() {
         return getPath("imageScopes");
     }
@@ -75,8 +104,9 @@ public class AppPaths {
             String key = "BackupPath-" + file;
             String fileBackupsPath = TableStringValue.read(key);
             if (fileBackupsPath == null) {
+                String fname = file.getName();
                 fileBackupsPath = getBackupsPath() + File.separator
-                        + FileNameTools.getFilePrefix(file.getName()) + FileNameTools.getFileSuffix(file.getName())
+                        + FileNameTools.getFilePrefix(fname) + FileNameTools.getFileSuffix(fname)
                         + (new Date()).getTime() + File.separator;
                 TableStringValue.write(key, fileBackupsPath);
             }

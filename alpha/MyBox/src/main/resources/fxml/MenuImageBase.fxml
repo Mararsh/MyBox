@@ -94,12 +94,12 @@ License:    Apache License Version 2.0
                         </Button>
                     </children>
                 </HBox>
-            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="43.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <Label text="%ZoomStep" />
-                  <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
-               </children>
-            </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="43.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Label text="%ZoomStep" />
+                        <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
+                    </children>
+                </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
@@ -111,15 +111,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </CheckBox>
-                  <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconTarget.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </CheckBox>
+                        <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconTarget.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
                         <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

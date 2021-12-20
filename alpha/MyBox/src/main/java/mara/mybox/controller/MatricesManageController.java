@@ -2,6 +2,8 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -40,6 +42,23 @@ public class MatricesManageController extends BaseController {
 
             listController.matrixLabel = matrixLabel;
             listController.setParameters(dataController);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            dataController.savedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    listController.refreshAction();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

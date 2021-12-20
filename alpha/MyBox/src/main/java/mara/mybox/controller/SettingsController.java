@@ -67,7 +67,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
-    protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
+    protected CheckBox stopAlarmCheck, closeCurrentCheck, recordWindowsSizeLocationCheck,
             anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
             clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck;
@@ -144,7 +144,7 @@ public class SettingsController extends BaseController {
     protected void initSettingValues() {
         try {
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
-            newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
+            closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
 
             thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
 
@@ -284,17 +284,19 @@ public class SettingsController extends BaseController {
             });
             iconSizeBox.getSelectionModel().select(AppVariables.iconSize + "");
 
-            newWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            closeCurrentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    UserConfig.setOpenStageInNewWindow(newWindowCheck.isSelected());
+                    UserConfig.setBoolean("CloseCurrentWhenOpenTool", closeCurrentCheck.isSelected());
+                    AppVariables.closeCurrentWhenOpenTool = closeCurrentCheck.isSelected();
                 }
             });
 
-            restoreStagesSizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            recordWindowsSizeLocationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    UserConfig.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
+                    UserConfig.setBoolean("RecordWindowsSizeLocation", recordWindowsSizeLocationCheck.isSelected());
+                    AppVariables.recordWindowsSizeLocation = recordWindowsSizeLocationCheck.isSelected();
                 }
             });
 

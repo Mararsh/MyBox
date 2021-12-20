@@ -166,45 +166,42 @@ public abstract class BaseTableViewController<P> extends BaseController {
         loadPage(currentPage);
     }
 
-    public void loadPage(long page) {
+    public synchronized void loadPage(long page) {
         if (!checkBeforeLoadingTableData()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            isSettingValues = true;
-            tableData.clear();
-            isSettingValues = false;
-            task = new SingletonTask<Void>(this) {
-                private List<P> data;
-
-                @Override
-                protected boolean handle() {
-                    countPagination(page);
-                    data = readPageData();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (data != null && !data.isEmpty()) {
-                        isSettingValues = true;
-                        tableData.setAll(data);
-                        isSettingValues = false;
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    postLoadedTableData();
-                }
-
-            };
-            start(task, message("LoadingTableData"));
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+            private List<P> data;
+
+            @Override
+            protected boolean handle() {
+                countPagination(page);
+                data = readPageData();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                isSettingValues = true;
+                if (data != null && !data.isEmpty()) {
+                    tableData.setAll(data);
+                } else {
+                    tableData.clear();
+                }
+                isSettingValues = false;
+                postLoadedTableData();
+            }
+
+        };
+        start(task, message("LoadingTableData"));
     }
 
     protected void countPagination(long page) {
@@ -603,6 +600,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     @FXML
+    @Override
     public void addRowsAction() {
         TableAddRowsController.open(this);
     }

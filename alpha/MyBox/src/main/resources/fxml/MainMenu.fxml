@@ -331,8 +331,8 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMousePassing" />
                                 <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMousePassed" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
-                                <CheckMenuItem fx:id="newWindowCheck" mnemonicParsing="false" onAction="#newWindowAction" text="%OpenStageInNewWindow" />
-                                <CheckMenuItem fx:id="restoreStagesSizeCheck" mnemonicParsing="false" onAction="#restoreStagesSizeAction" text="%RestoreStagesSize" />
+                                <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
+                                <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
                                 <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">

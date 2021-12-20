@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -56,20 +54,6 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
 
             tableDefinition = dataController.tableData2DDefinition;
             queryConditions = "data_type=" + dataMatrix.type();
-
-            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    updateStatus();
-                }
-            });
-
-            dataController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    refreshAction();
-                }
-            });
 
             loadTableData();
 

@@ -84,8 +84,8 @@ public class DataMatrix extends Data2D {
         endRowOfCurrentPage = startRowOfCurrentPage;
         if (d2did >= 0 && rowsNumber > 0 && colsNumber > 0) {
             matrix = new double[(int) rowsNumber][(int) colsNumber];
-            try (Connection conn = DerbyBase.getConnection();
-                    PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
+            try ( Connection conn = DerbyBase.getConnection();
+                     PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
                 query.setLong(1, d2did);
                 ResultSet results = query.executeQuery();
                 while (results.next()) {
@@ -116,13 +116,13 @@ public class DataMatrix extends Data2D {
         if (targetData == null || !targetData.isMatrix()) {
             return false;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             targetData.saveDefinition(conn);
             long did = targetData.getD2did();
             if (did < 0) {
                 return false;
             }
-            try (PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
+            try ( PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
                 clear.setLong(1, did);
                 clear.executeUpdate();
             } catch (Exception e) {
@@ -156,7 +156,7 @@ public class DataMatrix extends Data2D {
     }
 
     public boolean isSquare() {
-        return rowsNumber == colsNumber;
+        return isValid() && tableColsNumber() == tableRowsNumber();
     }
 
     public String toString(double d) {

@@ -17,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.FileBackup;
-import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -31,7 +30,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-12
  * @License Apache License Version 2.0
  */
-public abstract class ImageManufactureController_Actions extends ImageManufactureController_Histories {
+public abstract class ImageManufactureController_Actions extends ImageManufactureController_Image {
 
     protected void initEditBar() {
         try {
@@ -121,7 +120,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         if (undoButton.isDisabled()) {
             return;
         }
-        loadImageHistory(historyIndex + 1);
+        hisController.loadImageHistory(hisController.historyIndex + 1);
     }
 
     @FXML
@@ -130,7 +129,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         if (redoButton.isDisabled()) {
             return;
         }
-        loadImageHistory(historyIndex - 1);
+        hisController.loadImageHistory(hisController.historyIndex - 1);
     }
 
     @FXML
@@ -273,31 +272,6 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         return false;
     }
 
-    public void popHistory() {
-        synchronized (this) {
-            ImageEditHistory selected = historiesList.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-                return;
-            }
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
-                private Image hisImage;
-
-                @Override
-                protected boolean handle() {
-                    hisImage = hisImage(selected);
-                    return hisImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    ImagePopController.openImage(myController, hisImage);
-                }
-
-            };
-            start(bgTask, false);
-        }
-    }
-
     @FXML
     @Override
     public boolean popAction() {
@@ -312,7 +286,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 return true;
 
             } else if (tab == hisTab) {
-                popHistory();
+                hisController.popHistory();
                 return true;
 
             } else if (tab == backupTab) {
@@ -347,7 +321,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    backupController.backupsList.getItems().remove(selected);
+                                    backupController.tableData.remove(selected);
                                 }
                             });
                             return false;

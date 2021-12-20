@@ -52,7 +52,10 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected Button calculateButton;
     @FXML
-    protected RadioButton divideRadio;
+    protected RadioButton transposeRadio, DivideNumberRadio,
+            DeterminantByEliminationRadio, DeterminantByComplementMinorRadio,
+            InverseMatrixByEliminationRadio, InverseMatrixByAdjointRadio, MatrixRankRadio, AdjointMatrixRadio, PowerRadio,
+            ComplementMinorRadio, MultiplyNumberRadio;
     @FXML
     protected Label resultLabel, checkLabel;
     @FXML
@@ -87,10 +90,17 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         try {
             super.initControls();
 
-            resultController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     checkMatrix();
+                }
+            });
+
+            resultController.savedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    listController.refreshAction();
                 }
             });
 
@@ -100,14 +110,14 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             rowInput.setText(row + "");
             rowInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkXY();
+                        calculateButton.setDisable(!checkXY());
                     });
 
             column = UserConfig.getInt(baseName + "Column", 1);
             columnInput.setText(column + "");
             columnInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkXY();
+                        calculateButton.setDisable(!checkXY());
                     });
 
             try {
@@ -121,8 +131,10 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     number = Double.parseDouble(newValue);
                     numberInput.setStyle(null);
                     UserConfig.setString(baseName + "Number", number + "");
+                    calculateButton.setDisable(false);
                 } catch (Exception e) {
                     numberInput.setStyle(UserConfig.badStyle());
+                    calculateButton.setDisable(true);
                 }
             });
 
@@ -139,8 +151,10 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         power = v;
                         powerInput.setStyle(null);
                         UserConfig.setInt(baseName + "Power", power);
+                        calculateButton.setDisable(false);
                     } else {
                         powerInput.setStyle(UserConfig.badStyle());
+                        calculateButton.setDisable(true);
                     }
                 } catch (Exception e) {
                     powerInput.setStyle(UserConfig.badStyle());
@@ -203,7 +217,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 return true;
             }
             number = Double.parseDouble(numberInput.getText().trim());
-            if (divideRadio.isSelected() && number == 0) {
+            if (DivideNumberRadio.isSelected() && number == 0) {
                 numberInput.setStyle(UserConfig.badStyle());
                 return false;
             }
@@ -239,47 +253,49 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     }
 
     protected boolean checkMatrix() {
-        String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
+        if (dataMatrix == null || !dataMatrix.isValid()) {
+            return false;
+        }
         setBox.getChildren().clear();
         rowInput.setStyle(null);
         columnInput.setStyle(null);
         numberInput.setStyle(null);
         powerInput.setStyle(null);
         checkLabel.setText("");
-        if (!dataMatrix.isSquare()
-                && (message("DeterminantByElimination").equals(op)
-                || message("DeterminantByComplementMinor").equals(op)
-                || message("InverseMatrixByElimination").equals(op)
-                || message("InverseMatrixByAdjoint").equals(op)
-                || message("MatrixRank").equals(op)
-                || message("AdjointMatrix").equals(op)
-                || message("Power").equals(op))) {
-            checkLabel.setText(message("MatricesCannotCalculateShouldSqure"));
-            calculateButton.setDisable(true);
-            return false;
 
-        } else if (message("ComplementMinor").equals(op)) {
+        if (DeterminantByEliminationRadio.isSelected() || DeterminantByComplementMinorRadio.isSelected()
+                || InverseMatrixByEliminationRadio.isSelected() || InverseMatrixByAdjointRadio.isSelected()
+                || MatrixRankRadio.isSelected() || AdjointMatrixRadio.isSelected() || PowerRadio.isSelected()) {
+            if (!dataMatrix.isSquare()) {
+                checkLabel.setText(message("MatricesCannotCalculateShouldSqure"));
+                calculateButton.setDisable(true);
+                return false;
+            }
+
+        } else if (ComplementMinorRadio.isSelected()) {
             setBox.getChildren().add(xyBox);
             if (!checkXY()) {
                 checkLabel.setText(message("InvalidParameters"));
+                calculateButton.setDisable(true);
                 return false;
             }
 
-        } else if (message("MultiplyNumber").equals(op) || message("DivideNumber").equals(op)) {
+        } else if (MultiplyNumberRadio.isSelected() || DivideNumberRadio.isSelected()) {
             setBox.getChildren().add(numberBox);
             if (!checkNumber()) {
                 checkLabel.setText(message("InvalidParameters"));
+                calculateButton.setDisable(true);
                 return false;
             }
 
-        } else if (message("Power").equals(op)) {
+        } else if (PowerRadio.isSelected()) {
             setBox.getChildren().add(powerBox);
             if (!checkPower()) {
                 checkLabel.setText(message("InvalidParameters"));
+                calculateButton.setDisable(true);
                 return false;
             }
         }
-
         calculateButton.setDisable(false);
         return true;
     }

@@ -1,34 +1,24 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara_
@@ -95,10 +85,20 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
             if (baseStyle == null) {
                 baseStyle = "";
             }
-            String style = UserConfig.getString(baseName + "WindowStyle", "");
-            setLabelsStyle(baseStyle + style);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            PopTools.setWindowStyle(thisPane, baseName, baseStyle);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -128,65 +128,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
 
     @FXML
     public void popStyles(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-            Map<String, String> styles = new LinkedHashMap<>();
-            styles.put("Default", "");
-            styles.put("Transparent", "; -fx-text-fill: black; -fx-background-color: transparent;");
-            styles.put("Console", "; -fx-text-fill: #CCFF99; -fx-background-color: black;");
-            styles.put("Blackboard", "; -fx-text-fill: white; -fx-background-color: #336633;");
-            styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
-            styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
-            for (String name : styles.keySet()) {
-                menu = new MenuItem(Languages.message(name));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        String style = styles.get(name);
-                        UserConfig.setString(baseName + "WindowStyle", style);
-                        setLabelsStyle(baseStyle + style);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateMouse(mouseEvent, popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void setLabelsStyle(String style) {
-        thisPane.setStyle(style);
-        setLabelsStyle(thisPane, style);
-    }
-
-    public void setLabelsStyle(Node node, String style) {
-        if (node instanceof Label) {
-            node.setStyle(style);
-        } else if (node instanceof Parent && !(node instanceof TableView)) {
-            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
-                setLabelsStyle(child, style);
-            }
-        }
+        PopTools.popWindowStyles(this, baseStyle, mouseEvent);
     }
 
     @FXML
