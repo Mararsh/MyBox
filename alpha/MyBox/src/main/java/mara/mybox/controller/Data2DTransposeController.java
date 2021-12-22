@@ -11,21 +11,23 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2021-12-9
  * @License Apache License Version 2.0
  */
-public class Data2DTransposeController extends Data2DOperationController {
+public class Data2DTransposeController extends Data2DHandleController {
 
-    public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController, false, false, true);
+    public Data2DTransposeController() {
+        includeTable = true;
     }
 
     @Override
-    public boolean hanldeData() {
+    public void handleAllRows() {
+    }
+
+    @Override
+    public boolean handleSelectedRowsForTable() {
         try {
-            if (selectController.isAllData()) {
+            List<List<String>> selectedData = tableController.selectedData(all(),
+                    rowNumberCheck.isSelected(), colNameCheck.isSelected());
+            if (selectedData == null) {
                 return false;
-            }
-            List<List<String>> selectedData = selectedData();
-            if (selectedNames != null) {
-                selectedData.add(0, selectedNames);
             }
             int rowsNumber = selectedData.size(), columnsNumber = selectedData.get(0).size();
             handledData = new ArrayList<>();
@@ -40,7 +42,9 @@ public class Data2DTransposeController extends Data2DOperationController {
             handledColumns = null;
             return true;
         } catch (Exception e) {
-            outError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
             MyBoxLog.error(e.toString());
             return false;
         }

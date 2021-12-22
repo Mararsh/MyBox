@@ -21,6 +21,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -28,6 +29,7 @@ import javafx.scene.layout.Region;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
@@ -104,6 +106,19 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            if (deleteButton != null) {
+                NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     /*
         table
      */
@@ -121,10 +136,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tableView.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends P> ov, P t, P t1) -> {
-                        checkSelected();
-                    });
+            tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener() {
+                @Override
+                public void onChanged(ListChangeListener.Change c) {
+                    checkSelected();
+                }
+            });
 
             tableView.setOnMouseClicked((MouseEvent event) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -434,6 +451,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 allRowsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
                         if (newValue) {
                             for (int i = 0; i < tableData.size(); i++) {  // Fail to listen to selectAll() 
                                 tableView.getSelectionModel().select(i);

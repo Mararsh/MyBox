@@ -22,6 +22,7 @@ import mara.mybox.data.DataClipboard;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -300,6 +301,18 @@ public class ControlDataConvert extends BaseController {
         }
     }
 
+    public boolean setExport(File path, List<Data2DColumn> cols, String prefix, boolean skip) {
+        targetPath = path;
+        columns = cols;
+        names = new ArrayList<>();
+        for (Data2DColumn c : columns) {
+            names.add(c.getName());
+            c.setD2cid(-1);
+            c.setD2id(-1);
+        }
+        return setParameters(prefix, skip);
+    }
+
     public boolean setParameters(File path, List<String> cols, String prefix, boolean skip) {
         targetPath = path;
         names = cols;
@@ -311,6 +324,9 @@ public class ControlDataConvert extends BaseController {
         this.skip = skip;
         fileIndex = 1;
         fileRowIndex = dataRowIndex = 0;
+        if (rowNumberCheck.isSelected() && columns != null) {
+            columns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+        }
         if (rowNumberCheck.isSelected() && names != null) {
             names.add(0, message("RowNumber"));
         }
@@ -596,6 +612,7 @@ public class ControlDataConvert extends BaseController {
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.save(conn, d, columns);
+                conn.commit();
             }
 
             if (textWriter != null && textFile != null) {
@@ -612,6 +629,7 @@ public class ControlDataConvert extends BaseController {
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.save(conn, d, columns);
+                conn.commit();
             }
 
             if (htmlWriter != null && htmlFile != null) {
@@ -660,15 +678,16 @@ public class ControlDataConvert extends BaseController {
                 parent.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
                 xssfBook = null;
                 Data2D d = Data2D.create(Data2DDefinition.Type.Excel).setTask(task);
-                d.setFile(xlsxFile)
+                d.setFile(xlsxFile).setSheet("sheet1")
                         .setHasHeader(excelWithNamesCheck.isSelected())
                         .setDataName(xlsxFile.getName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.save(conn, d, columns);
+                conn.commit();
             }
 
-            if (dataClipboardPrinter != null && csvFile != null) {
+            if (dataClipboardPrinter != null && dataClipboardFile != null) {
                 dataClipboardPrinter.flush();
                 dataClipboardPrinter.close();
                 parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
@@ -683,8 +702,9 @@ public class ControlDataConvert extends BaseController {
                         .setRowsNumber(dataRowIndex);
                 Data2D.save(conn, d, columns);
                 DataClipboardController.update();
+                conn.commit();
             }
-
+            conn.close();
         } catch (Exception e) {
             updateLogs(e.toString());
             MyBoxLog.console(e.toString());

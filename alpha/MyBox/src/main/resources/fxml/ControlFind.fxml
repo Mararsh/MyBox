@@ -92,6 +92,7 @@ License:    Apache License Version 2.0
                                 <CheckBox fx:id="dotallCheck" mnemonicParsing="false" text="%RegexDotAll" />
                             </children>
                         </VBox>
+                  <CheckBox fx:id="shareCheck" mnemonicParsing="false" selected="true" text="%ShareAllInterface" />
                         <Label fx:id="findLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="" wrapText="true" />
                     </children>
                     <padding>

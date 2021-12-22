@@ -232,6 +232,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
                     deleteData(conn, ecolumn);
                 }
             }
+            conn.commit();
             existed = null;
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);

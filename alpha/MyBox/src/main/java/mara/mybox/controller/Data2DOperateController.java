@@ -45,6 +45,8 @@ public class Data2DOperateController extends BaseController {
     protected Accordion accordionPane;
     @FXML
     protected TitledPane copyPane, setValuePane, statisticPane, percentagePane, transposePane, sortPane;
+    @FXML
+    protected ControlData2DSetValues setValuesController;
 
     @Override
     public void setStageStatus() {
@@ -84,17 +86,17 @@ public class Data2DOperateController extends BaseController {
 
     }
 
-    public void setParameters(ControlData2DLoad loadController) {
+    public void setParameters(ControlData2DLoad loadController, String operation) {
         try {
             this.loadController = loadController;
-            data2D = loadController.data2D;
-
+            data2D = loadController.data2D.cloneAll();
             sourceController.setParameters(this);
             resultController.setParameters(this);
+            setValuesController.setParameters(this);
 
             getMyStage().setTitle(loadController.getBaseTitle());
 
-            handle(null);
+            handle(operation);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -111,6 +113,7 @@ public class Data2DOperateController extends BaseController {
                 break;
             case "setValues":
                 hideResult(true);
+                setValuePane.setExpanded(true);
                 break;
             case "statistic":
                 hideResult(false);
@@ -171,9 +174,10 @@ public class Data2DOperateController extends BaseController {
     public static Data2DOperateController open(ControlData2DLoad loadController, String operation) {
         Data2DOperateController controller = oneOpen(loadController);
         if (controller.data2D == null) {
-            controller.setParameters(loadController);
+            controller.setParameters(loadController, operation);
+        } else {
+            controller.handle(operation);
         }
-        controller.handle(operation);
         return controller;
     }
 

@@ -10,7 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
@@ -30,30 +30,31 @@ public class ControlData2DTarget extends BaseController {
     protected ToggleGroup targetGroup;
     @FXML
     protected RadioButton csvRadio, excelRadio, textsRadio, matrixRadio, systemClipboardRadio, myBoxClipboardRadio,
-            frontRadio, endRadio, belowRadio, aboveRadio;
+            replaceRadio, insertRadio, appendRadio;
     @FXML
-    protected ComboBox<String> rowSelector;
+    protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected VBox tableBox;
     @FXML
-    protected HBox rowBox;
+    protected FlowPane locationPane;
 
-    public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
+    public void setParameters(BaseController parent, ControlData2DEditTable tableController, boolean includeTable) {
         try {
             this.tableController = tableController;
             this.baseName = parent.baseName;
 
-            this.includeTable = tableController != null;
+            this.includeTable = includeTable;
             if (!includeTable) {
                 thisPane.getChildren().remove(tableBox);
             } else {
                 refreshControls();
             }
 
-            rowBox.setVisible(false);
+            locationPane.setVisible(inTable());
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    locationPane.setVisible(inTable());
                     checkTarget();
                 }
             });
@@ -80,15 +81,9 @@ public class ControlData2DTarget extends BaseController {
                 target = "systemClipboard";
             } else if (myBoxClipboardRadio.isSelected()) {
                 target = "myBoxClipboard";
-            } else if (frontRadio.isSelected()) {
+            } else if (replaceRadio.isSelected()) {
                 if (includeTable) {
-                    target = "front";
-                } else {
-                    target = "csv";
-                }
-            } else if (endRadio.isSelected()) {
-                if (includeTable) {
-                    target = "end";
+                    target = "replace";
                 } else {
                     Platform.runLater(new Runnable() {
                         @Override
@@ -97,9 +92,9 @@ public class ControlData2DTarget extends BaseController {
                         }
                     });
                 }
-            } else if (belowRadio.isSelected()) {
+            } else if (insertRadio.isSelected()) {
                 if (includeTable) {
-                    target = "below";
+                    target = "insert";
                 } else {
                     Platform.runLater(new Runnable() {
                         @Override
@@ -108,9 +103,9 @@ public class ControlData2DTarget extends BaseController {
                         }
                     });
                 }
-            } else if (aboveRadio.isSelected()) {
+            } else if (appendRadio.isSelected()) {
                 if (includeTable) {
-                    target = "above";
+                    target = "append";
                 } else {
                     Platform.runLater(new Runnable() {
                         @Override
@@ -124,7 +119,6 @@ public class ControlData2DTarget extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        rowBox.setVisible(includeTable && (belowRadio.isSelected() || aboveRadio.isSelected()));
         return target;
     }
 
@@ -153,30 +147,23 @@ public class ControlData2DTarget extends BaseController {
                 case "myBoxClipboard":
                     myBoxClipboardRadio.fire();
                     break;
-                case "front":
+                case "append":
                     if (includeTable) {
-                        frontRadio.fire();
+                        appendRadio.fire();
                     } else {
                         csvRadio.fire();
                     }
                     break;
-                case "end":
+                case "insert":
                     if (includeTable) {
-                        endRadio.fire();
+                        insertRadio.fire();
                     } else {
                         csvRadio.fire();
                     }
                     break;
-                case "below":
+                case "relpace":
                     if (includeTable) {
-                        belowRadio.fire();
-                    } else {
-                        csvRadio.fire();
-                    }
-                    break;
-                case "above":
-                    if (includeTable) {
-                        aboveRadio.fire();
+                        replaceRadio.fire();
                     } else {
                         csvRadio.fire();
                     }
@@ -203,30 +190,36 @@ public class ControlData2DTarget extends BaseController {
             int tableSelect = tableController.tableView.getSelectionModel().getSelectedIndex();
             rowSelector.getSelectionModel().select(tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 
+            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+            colSelector.getItems().setAll(tableController.data2D.columnNames());
+            if (selectedCol != null) {
+                colSelector.setValue(selectedCol);
+            } else {
+                colSelector.getSelectionModel().select(0);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public int tableIndex() {
-        if (!includeTable) {
-            return -1;
-        }
-        int index = rowSelector.getSelectionModel().getSelectedIndex();
-        if (frontRadio.isSelected()) {
-            index = 0;
-        } else if (index < 0 || endRadio.isSelected()) {
-            index = tableController.tableData.size();
-        } else if (belowRadio.isSelected()) {
-            index++;
-        }
-        return index;
+    public boolean inTable() {
+        return includeTable
+                && (insertRadio.isSelected() || appendRadio.isSelected() || replaceRadio.isSelected());
     }
 
-    public boolean isTable() {
-        return includeTable
-                && (frontRadio.isSelected() || endRadio.isSelected()
-                || belowRadio.isSelected() || aboveRadio.isSelected());
+    public int row() {
+        if (!inTable()) {
+            return -1;
+        }
+        return rowSelector.getSelectionModel().getSelectedIndex();
+    }
+
+    public int col() {
+        if (!inTable()) {
+            return -1;
+        }
+        return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
     }
 
 }

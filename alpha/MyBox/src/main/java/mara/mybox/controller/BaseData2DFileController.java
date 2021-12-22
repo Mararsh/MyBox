@@ -84,6 +84,7 @@ public abstract class BaseData2DFileController extends BaseController {
             super.initControls();
             initFormatTab();
             initBackupsTab();
+            initSaveAsTab();
 
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -111,6 +112,7 @@ public abstract class BaseData2DFileController extends BaseController {
             if (formatPane == null) {
                 return;
             }
+            formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", true));
             formatPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                 if (!isSettingValues) {
                     UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
@@ -127,6 +129,7 @@ public abstract class BaseData2DFileController extends BaseController {
             if (backupPane == null) {
                 return;
             }
+            backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", true));
             backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                 if (!isSettingValues) {
                     UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
@@ -147,7 +150,9 @@ public abstract class BaseData2DFileController extends BaseController {
             }
             saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", true));
             saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                }
             });
 
         } catch (Exception e) {

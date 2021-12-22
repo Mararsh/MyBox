@@ -181,7 +181,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 return true;
             }
             int v = Integer.parseInt(rowInput.getText().trim());
-            if (v > 0 && v <= dataMatrix.getRowsNumber()) {
+            if (v > 0 && v <= dataMatrix.tableRowsNumber()) {
                 row = v;
                 rowInput.setStyle(null);
                 UserConfig.setInt(baseName + "Row", v);
@@ -195,7 +195,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         }
         try {
             int v = Integer.parseInt(columnInput.getText().trim());
-            if (v > 0 && v <= dataMatrix.getColsNumber()) {
+            if (v > 0 && v <= dataMatrix.tableColsNumber()) {
                 column = v;
                 columnInput.setStyle(null);
                 UserConfig.setInt(baseName + "Column", v);

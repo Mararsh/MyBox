@@ -459,7 +459,7 @@ public class ControlWebView extends BaseController {
 
     private void afterPageLoaded() {
         try {
-            String prefix = UserConfig.getBoolean("ShareAllInterfaceHtmlStyle", true) ? "AllInterface" : baseName;
+            String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
             setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
             pageLoadedNotify.set(!pageLoadedNotify.get());
             setWebViewLabel(message("Loaded"));
@@ -529,7 +529,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void setStyle(String style) {
-        String prefix = UserConfig.getBoolean("ShareAllInterfaceHtmlStyle", true) ? "AllInterface" : baseName;
+        String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
         UserConfig.setString(prefix + "HtmlStyle", style);
 
         WebViewTools.removeNode(webEngine, StyleNodeID);

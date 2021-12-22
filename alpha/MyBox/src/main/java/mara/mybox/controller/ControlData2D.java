@@ -418,7 +418,7 @@ public class ControlData2D extends BaseController {
                 if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
                     backupController.addBackup(data2D.getFile());
                 }
-                try (Connection conn = DerbyBase.getConnection()) {
+                try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.cloneAll(targetData);
@@ -463,7 +463,7 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
+                try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
                     Data2D.save(conn, targetData, Data2DColumn.clone(data2D.getColumns()));
@@ -618,7 +618,7 @@ public class ControlData2D extends BaseController {
 
             menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
             menu.setOnAction((ActionEvent event) -> {
-                tableController.setValuesAction();
+                Data2DSetValuesController.open(tableController);
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
@@ -662,14 +662,14 @@ public class ControlData2D extends BaseController {
 
             menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
-                tableController.transpose();
+                Data2DTransposeController.open(tableController);
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
             menu.setOnAction((ActionEvent event) -> {
-                tableController.export();
+                Data2DExportController.open(tableController);
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);

@@ -98,7 +98,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
                                 setGraphic(null);
                                 return;
                             }
-                            setText(item.getAbsolutePath());
+                            setText(item.getName());
                             if (parentController instanceof ImageManufactureController) {
                                 int width = AppVariables.thumbnailWidth;
                                 BufferedImage bufferedImage = ImageFileReaders.readImage(item, width);

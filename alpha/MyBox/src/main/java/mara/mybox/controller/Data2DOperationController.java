@@ -56,7 +56,7 @@ public abstract class Data2DOperationController extends BaseController {
 
             selectController.setParameters(tableController, sourceAll, numberCols);
             if (targetController != null) {
-                targetController.setParameters(this, targetTable ? tableController : null);
+                targetController.setParameters(this, tableController, targetTable);
             }
 
             getMyStage().setTitle(tableController.getBaseTitle());
@@ -69,11 +69,11 @@ public abstract class Data2DOperationController extends BaseController {
             });
 
             if (namesBox != null && targetController != null) {
-                namesBox.setVisible(!targetController.isTable());
+                namesBox.setVisible(!targetController.inTable());
                 targetController.targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        namesBox.setVisible(!targetController.isTable());
+                        namesBox.setVisible(!targetController.inTable());
                     }
                 });
             }
@@ -155,7 +155,7 @@ public abstract class Data2DOperationController extends BaseController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    forTable = targetController != null ? targetController.isTable() : false;
+                    forTable = targetController != null ? targetController.inTable() : false;
                     if (forTable) {
                         return handleForTable();
                     } else {
@@ -201,7 +201,7 @@ public abstract class Data2DOperationController extends BaseController {
         } else {
             selectedData = selectController.pageData();
         }
-        if (selectedData != null && (targetController == null || !targetController.isTable())
+        if (selectedData != null && (targetController == null || !targetController.inTable())
                 && rowNumberCheck != null && rowNumberCheck.isSelected()) {
             for (int i = 0; i < selectedData.size(); i++) {
                 List<String> row = selectedData.get(i);
@@ -220,7 +220,7 @@ public abstract class Data2DOperationController extends BaseController {
         for (int col : checkedColsIndices) {
             selectedColumns.add(data2D.getColumns().get(col));
         }
-        if ((targetController == null || !targetController.isTable())
+        if ((targetController == null || !targetController.inTable())
                 && (colNameCheck == null || colNameCheck.isSelected())) {
             selectedNames = new ArrayList<>();
             for (Data2DColumn col : selectedColumns) {
@@ -265,13 +265,13 @@ public abstract class Data2DOperationController extends BaseController {
                 }
                 newRows.add(newRow);
             }
-            int index = targetController.tableIndex();
-            tableController.isSettingValues = true;
-            tableController.tableData.addAll(index, newRows);
-            tableController.tableView.scrollTo(index - 5);
-            tableController.tableView.refresh();
-            tableController.isSettingValues = false;
-            tableController.tableChanged(true);
+//            int index = targetController.tableIndex();
+//            tableController.isSettingValues = true;
+//            tableController.tableData.addAll(index, newRows);
+//            tableController.tableView.scrollTo(index - 5);
+//            tableController.tableView.refresh();
+//            tableController.isSettingValues = false;
+//            tableController.tableChanged(true);
             popDone();
             return true;
         } catch (Exception e) {

@@ -32,9 +32,20 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
+            <Label text="%Rows">
+               <FlowPane.margin>
+                  <Insets left="10.0" />
+               </FlowPane.margin>
+            </Label>
+                <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" selected="true" text="%All">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="rowGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rowTableRadio" mnemonicParsing="false" text="%Selected" toggleGroup="$rowGroup" />
             <Label layoutX="10.0" layoutY="10.0" text="%Columns">
                <FlowPane.margin>
-                  <Insets left="5.0" />
+                  <Insets left="20.0" />
                </FlowPane.margin>
             </Label>
             <Button fx:id="selectAllColsButton" mnemonicParsing="false" onAction="#selectAllCols">
@@ -55,17 +66,6 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Label text="%Rows">
-               <FlowPane.margin>
-                  <Insets left="10.0" />
-               </FlowPane.margin>
-            </Label>
-                <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" selected="true" text="%AllData">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="rowGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton fx:id="rowTableRadio" mnemonicParsing="false" text="%Selected" toggleGroup="$rowGroup" />
          </children>
       </FlowPane>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

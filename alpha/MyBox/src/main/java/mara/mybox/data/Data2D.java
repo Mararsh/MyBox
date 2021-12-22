@@ -302,7 +302,7 @@ public abstract class Data2D extends Data2DDefinition {
             checkForLoad();
             return -1;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
                 cloneAll(definition);
@@ -346,7 +346,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public boolean saveDefinition() {
-        try (Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return saveDefinition(conn);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -390,7 +390,7 @@ public abstract class Data2D extends Data2DDefinition {
         if (d == null) {
             return false;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return save(conn, d, cols);
         } catch (Exception e) {
             if (d.getTask() != null) {
@@ -414,28 +414,36 @@ public abstract class Data2D extends Data2DDefinition {
             if (did >= 0) {
                 def = d.getTableData2DDefinition().updateData(conn, d);
             } else {
-                def = d.getTableData2DDefinition().insertData(conn, d);
+                def = d.queryDefinition(conn);
+                if (def == null) {
+                    def = d.getTableData2DDefinition().insertData(conn, d);
+                }
             }
             conn.commit();
-            did = d.getD2did();
+            did = def.getD2did();
             if (did < 0) {
                 return false;
             }
             d.cloneAll(def);
             if (cols != null && !cols.isEmpty()) {
                 try {
+                    List<Data2DColumn> columns = new ArrayList<>();
                     for (int i = 0; i < cols.size(); i++) {
-                        Data2DColumn column = cols.get(i);
+                        Data2DColumn column = cols.get(i).cloneAll();
                         column.setIndex(i);
+                        columns.add(column);
                     }
-                    d.getTableData2DColumn().save(conn, did, cols);
-                    d.setColumns(cols);
+                    d.getTableData2DColumn().save(conn, did, columns);
+                    d.setColumns(columns);
                 } catch (Exception e) {
                     if (d.getTask() != null) {
                         d.getTask().setError(e.toString());
                     }
                     MyBoxLog.error(e);
                 }
+            } else {
+                d.getTableData2DColumn().clear(d);
+                d.setColumns(null);
             }
             return true;
         } catch (Exception e) {
@@ -524,6 +532,9 @@ public abstract class Data2D extends Data2DDefinition {
 
     public int colOrder(String name) {
         try {
+            if (name == null || name.isBlank()) {
+                return -1;
+            }
             for (int i = 0; i < columns.size(); i++) {
                 if (name.equals(columns.get(i).getName())) {
                     return i;
@@ -532,6 +543,21 @@ public abstract class Data2D extends Data2DDefinition {
         } catch (Exception e) {
         }
         return -1;
+    }
+
+    public Data2DColumn col(String name) {
+        try {
+            if (name == null || name.isBlank()) {
+                return null;
+            }
+            for (Data2DColumn c : columns) {
+                if (name.equals(c.getName())) {
+                    return c;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     public List<String> tableRowWithoutNumber(int row) {

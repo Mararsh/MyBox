@@ -251,13 +251,15 @@ public class PopTools {
             final ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
+            String baseName = controller.getBaseName();
+
             MenuItem menu = new MenuItem(message("HtmlStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
             ToggleGroup sgroup = new ToggleGroup();
-            String prefix = UserConfig.getBoolean("ShareAllInterfaceHtmlStyle", true) ? "AllInterface" : controller.getBaseName();
+            String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
             String currentStyle = UserConfig.getString(prefix + "HtmlStyle", null);
 
             RadioMenuItem rmenu = new RadioMenuItem(message("None"));
@@ -316,11 +318,11 @@ public class PopTools {
             popMenu.getItems().add(new SeparatorMenuItem());
 
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
-            checkMenu.setSelected(UserConfig.getBoolean("ShareAllInterfaceHtmlStyle", true));
+            checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareHtmlStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("ShareAllInterfaceHtmlStyle", checkMenu.isSelected());
+                    UserConfig.setBoolean(baseName + "ShareHtmlStyle", checkMenu.isSelected());
                 }
             });
             popMenu.getItems().add(checkMenu);
@@ -563,6 +565,7 @@ public class PopTools {
             ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
+            String baseName = parent.getBaseName();
             MenuItem menu = new MenuItem(message("WindowStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             popMenu.getItems().add(menu);
@@ -576,7 +579,7 @@ public class PopTools {
             styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
             styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
             ToggleGroup sgroup = new ToggleGroup();
-            String prefix = UserConfig.getBoolean("ShareAllInterfaceWindowStyle", true) ? "AllInterface" : parent.getBaseName();
+            String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
             String currentStyle = UserConfig.getString(prefix + "WindowStyle", "");
 
             for (String name : styles.keySet()) {
@@ -597,11 +600,11 @@ public class PopTools {
             popMenu.getItems().add(new SeparatorMenuItem());
 
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
-            checkMenu.setSelected(UserConfig.getBoolean("ShareAllInterfaceWindowStyle", true));
+            checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("ShareAllInterfaceWindowStyle", checkMenu.isSelected());
+                    UserConfig.setBoolean(baseName + "ShareWindowStyle", checkMenu.isSelected());
                 }
             });
             popMenu.getItems().add(checkMenu);
@@ -640,7 +643,7 @@ public class PopTools {
     }
 
     public static void setWindowStyle(Pane pane, String baseName, String baseStyle) {
-        String prefix = UserConfig.getBoolean("ShareAllInterfaceWindowStyle", true) ? "AllInterface" : baseName;
+        String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
         String style = UserConfig.getString(prefix + "WindowStyle", "");
         pane.setStyle(baseStyle + style);
         setMenuLabelsStyle(pane, baseStyle + style);

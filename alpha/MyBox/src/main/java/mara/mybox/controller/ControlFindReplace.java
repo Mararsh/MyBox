@@ -39,17 +39,13 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlFindReplace extends BaseController {
 
-    // share all interfaces with find/replace strings
-    public static String FindStringKey = "MyBoxFindString";
-    public static String ReplaceStringKey = "MyBoxReplaceString";
-
     protected BaseFileEditorController editerController;
     protected TextInputControl textInput;
     protected FindReplaceFile findReplace;
     protected double initX, initY;
 
     @FXML
-    protected CheckBox caseInsensitiveCheck, wrapCheck, regexCheck, multilineCheck, dotallCheck;
+    protected CheckBox caseInsensitiveCheck, wrapCheck, regexCheck, multilineCheck, dotallCheck, shareCheck;
     @FXML
     protected TextArea findArea, replaceArea;
     @FXML
@@ -83,7 +79,9 @@ public class ControlFindReplace extends BaseController {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
-//        baseName = editerController.baseName;
+        if (shareCheck == null || shareCheck.isSelected()) {
+            baseName = editerController.baseName;
+        }
         setControls();
     }
 
@@ -91,7 +89,9 @@ public class ControlFindReplace extends BaseController {
         try {
             this.parentController = parent;
             this.textInput = textInput;
-//            this.baseName = parent.baseName;
+            if (shareCheck == null || shareCheck.isSelected()) {
+                baseName = parent.baseName;
+            }
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -101,7 +101,9 @@ public class ControlFindReplace extends BaseController {
     public void setParent(BaseController parent) {
         try {
             this.parentController = parent;
-//            this.baseName = parent.baseName;
+            if (shareCheck == null || shareCheck.isSelected()) {
+                baseName = parent.baseName;
+            }
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -117,22 +119,22 @@ public class ControlFindReplace extends BaseController {
                 }
             });
 
+            caseInsensitiveCheck.setSelected(UserConfig.getBoolean(baseName + "FindReplaceCaseInsensitive", false));
             caseInsensitiveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "FindCaseInsensitive", caseInsensitiveCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FindReplaceCaseInsensitive", caseInsensitiveCheck.isSelected());
                 }
             });
-            caseInsensitiveCheck.setSelected(UserConfig.getBoolean(baseName + "FindCaseInsensitive", false));
 
             if (wrapCheck != null) {
+                wrapCheck.setSelected(UserConfig.getBoolean(baseName + "FindReplaceWrap", true));
                 wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "Wrap", wrapCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "FindReplaceWrap", wrapCheck.isSelected());
                     }
                 });
-                wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             }
 
             multilineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -143,13 +145,13 @@ public class ControlFindReplace extends BaseController {
             });
             multilineCheck.setSelected(UserConfig.getBoolean(baseName + "FindMultiline", true));
 
+            dotallCheck.setSelected(UserConfig.getBoolean(baseName + "FindDotAll", true));
             dotallCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "DotAll", dotallCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FindDotAll", dotallCheck.isSelected());
                 }
             });
-            dotallCheck.setSelected(UserConfig.getBoolean(baseName + "DotAll", true));
 
             regexCheck.setSelected(UserConfig.getBoolean(baseName + "FindRegex", false));
             regexCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -162,6 +164,16 @@ public class ControlFindReplace extends BaseController {
             multilineCheck.disableProperty().bind(regexCheck.selectedProperty().not());
             dotallCheck.disableProperty().bind(regexCheck.selectedProperty().not());
             exampleFindButton.disableProperty().bind(regexCheck.selectedProperty().not());
+
+            if (shareCheck != null) {
+                shareCheck.setSelected(UserConfig.getBoolean(baseName + "ShareFindReplaceOptions", true));
+                shareCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "ShareFindReplaceOptions", shareCheck.isSelected());
+                    }
+                });
+            }
 
             findArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
@@ -403,7 +415,9 @@ public class ControlFindReplace extends BaseController {
             popError(message("EmptyValue"));
             return false;
         }
-        saveFindString(findString);
+        if (!findString.isBlank()) {
+            TableStringValues.add(baseName + "FindString", findString);
+        }
         String pageText = textInput.getText();
         if (pageText == null || pageText.isEmpty()) {
             popError(message("EmptyValue"));
@@ -419,7 +433,9 @@ public class ControlFindReplace extends BaseController {
                 return false;
             }
         }
-        saveReplaceString(replaceString);
+        if (!replaceString.isBlank()) {
+            TableStringValues.add(baseName + "ReplaceString", findString);
+        }
         if (operation == Operation.ReplaceAll && multiplePages) {
             if (!PopTools.askSure(getMyStage().getTitle(), message("SureReplaceAll"))) {
                 return false;
@@ -671,29 +687,12 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     public void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findArea, mouseEvent, FindStringKey);
+        PopTools.popStringValues(this, findArea, mouseEvent, baseName + "FindHistory");
     }
 
     @FXML
     public void popReplaceHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, replaceArea, mouseEvent, ReplaceStringKey);
-    }
-
-    /*
-        get/set
-     */
-    public static void saveFindString(String findString) {
-        if (findString == null || findString.isEmpty()) {
-            return;
-        }
-        TableStringValues.add(FindStringKey, findString);
-    }
-
-    public static void saveReplaceString(String replaceString) {
-        if (replaceString == null || replaceString.isEmpty()) {
-            return;
-        }
-        TableStringValues.add(ReplaceStringKey, replaceString);
+        PopTools.popStringValues(this, replaceArea, mouseEvent, baseName + "ReplaceHistory");
     }
 
 }

@@ -55,16 +55,16 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             = "SELECT * FROM Data2D_Definition WHERE d2did=?";
 
     public static final String Query_TypeFile
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=?";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? ORDER BY d2did DESC";
 
     public static final String Query_TypeName
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND data_name=?";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND data_name=? ORDER BY d2did DESC";
 
     public static final String Query_TypeFileSheet
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? AND sheet=?";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? AND sheet=? ORDER BY d2did DESC";
 
     public static final String Query_Type
-            = "SELECT * FROM Data2D_Definition WHERE data_type=?";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? ORDER BY d2did DESC";
 
     public static final String DeleteID
             = "DELETE FROM Data2D_Definition WHERE d2did=?";
@@ -88,7 +88,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || d2did < 0) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryID)) {
+        try ( PreparedStatement statement = conn.prepareStatement(QueryID)) {
             statement.setLong(1, d2did);
             return query(conn, statement);
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (file == null) {
             return null;
         }
-        try (Connection conn = DerbyBase.getConnection();) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return queryFile(conn, type, file);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -113,7 +113,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
@@ -127,7 +127,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return -1;
         }
-        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return statement.executeUpdate();
@@ -141,7 +141,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (name == null || name.isBlank()) {
             return null;
         }
-        try (Connection conn = DerbyBase.getConnection();) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return queryName(conn, type, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -153,7 +153,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || name == null || name.isBlank()) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(Query_TypeName)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeName)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(name));
             return query(conn, statement);
@@ -167,7 +167,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || name == null || name.isBlank()) {
             return -1;
         }
-        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeName)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeName)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(name));
             return statement.executeUpdate();
@@ -184,7 +184,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (sheet == null || sheet.isBlank()) {
             return queryFile(conn, type, file);
         }
-        try (PreparedStatement statement = conn.prepareStatement(Query_TypeFileSheet)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFileSheet)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             statement.setString(3, DerbyBase.stringValue(sheet));
@@ -202,7 +202,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (sheet == null || sheet.isBlank()) {
             return deleteFile(conn, type, file);
         }
-        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFileSheet)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFileSheet)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             statement.setString(3, DerbyBase.stringValue(sheet));
@@ -217,7 +217,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
@@ -231,7 +231,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return -1;
         }
-        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
+        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return statement.executeUpdate();
@@ -246,14 +246,14 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return false;
         }
         boolean ret = true;
-        try (PreparedStatement statement = conn.prepareStatement(TableData2DColumn.ClearData)) {
+        try ( PreparedStatement statement = conn.prepareStatement(TableData2DColumn.ClearData)) {
             statement.setLong(1, data.getD2did());
             statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e);
             ret = false;
         }
-        try (PreparedStatement statement = conn.prepareStatement(DeleteID)) {
+        try ( PreparedStatement statement = conn.prepareStatement(DeleteID)) {
             statement.setLong(1, data.getD2did());
             statement.executeUpdate();
         } catch (Exception e) {
@@ -270,8 +270,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             update(conn, Delete_InvalidSheet);
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
             List<Data2DDefinition> invalid = new ArrayList<>();
-            try (PreparedStatement statement = conn.prepareStatement(sql);
-                    ResultSet results = statement.executeQuery()) {
+            try ( PreparedStatement statement = conn.prepareStatement(sql);
+                     ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Data2DDefinition data = readData(results);
                     try {

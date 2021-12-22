@@ -10,7 +10,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -19,22 +18,82 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSetValuesController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSetValuesController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%SetValues" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-        <VBox styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS">
+        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
-                <fx:include fx:id="select" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSelect.fxml" VBox.vgrow="ALWAYS" />
+            <Label text="%DataSource" />
+            <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
+               <children>
+                  <Label text="%Rows">
+                     <FlowPane.margin>
+                        <Insets />
+                     </FlowPane.margin>
+                  </Label>
+                  <RadioButton fx:id="allRowsRadio" mnemonicParsing="false" text="%AllPages">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="rowGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="rowTableRadio" mnemonicParsing="false" selected="true" text="%Selected" toggleGroup="$rowGroup" />
+                  <Button fx:id="selectAllRowsButton" mnemonicParsing="false" onAction="#selectAllRows">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectAll.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="selectNoneRowsButton" mnemonicParsing="false" onAction="#selectNoneRows">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectNone.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </FlowPane>
+            <FlowPane hgap="2.0" layoutX="15.0" layoutY="15.0" prefWrapLength="300.0" vgap="2.0">
+               <children>
+                  <Label text="%Columns">
+                     <FlowPane.margin>
+                        <Insets />
+                     </FlowPane.margin>
+                  </Label>
+                  <Button fx:id="selectAllColsButton" mnemonicParsing="false" onAction="#selectAllCols">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectAll.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="selectNoneColsButton" mnemonicParsing="false" onAction="#selectNoneCols">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectNone.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </FlowPane>
             </children>
         </VBox>
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <Label text="%Value" />
-                <FlowPane hgap="5.0" vgap="5.0">
+                <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0">
                     <children>
                         <RadioButton fx:id="zeroRadio" mnemonicParsing="false" selected="true" text="0">
                             <toggleGroup>
@@ -44,53 +103,22 @@ License:    Apache License Version 2.0
                         <RadioButton fx:id="oneRadio" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
                         <RadioButton fx:id="blankRadio" mnemonicParsing="false" text="%Blank" toggleGroup="$valueGroup" />
                         <RadioButton fx:id="randomRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%Random" toggleGroup="$valueGroup" />
-                        <RadioButton fx:id="setRadio" mnemonicParsing="false" text="%Set" toggleGroup="$valueGroup" />
-                        <TextField fx:id="valueInput" prefWidth="100.0" />
                     </children>
                 </FlowPane>
-                <VBox fx:id="calculationBox" spacing="5.0">
-                    <children>
-                        <FlowPane hgap="5.0" vgap="5.0">
-                            <children>
-                                <RadioButton fx:id="normalizationRadio" mnemonicParsing="false" text="%Normalization" toggleGroup="$valueGroup" />
-                                <RadioButton fx:id="gaussianDistributionRadio" mnemonicParsing="false" text="%GaussianDistribution" toggleGroup="$valueGroup" />
-                                <RadioButton fx:id="identifyRadio" mnemonicParsing="false" text="%IdentifyMatrix" toggleGroup="$valueGroup" />
-                                <RadioButton fx:id="upperTriangleRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%UpperTriangle" toggleGroup="$valueGroup" />
-                                <RadioButton fx:id="lowerTriangleRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%LowerTriangle" toggleGroup="$valueGroup" />
-                            </children>
-                        </FlowPane>
-                        <VBox fx:id="normalizationBox" spacing="5.0">
-                            <children>
-                        <Separator prefWidth="200.0" />
-                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
-                                    <children>
-                                        <Label text="%Object" />
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%Columns">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="nObjectGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%Rows" toggleGroup="$nObjectGroup" />
-                                        <RadioButton mnemonicParsing="false" text="%Matrix" toggleGroup="$nObjectGroup" />
-                                    </children>
-                                </FlowPane>
-                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="10.0" vgap="5.0">
-                                    <children>
-                                        <Label text="%Algorithm" />
-                                        <RadioButton mnemonicParsing="false" selected="true" text="Min/Max">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="nAlgorithmGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="Z-Score" toggleGroup="$nAlgorithmGroup" />
-                                        <RadioButton mnemonicParsing="false" text="L2-Regularization" toggleGroup="$nAlgorithmGroup" />
-                              <RadioButton layoutX="222.0" layoutY="10.0" mnemonicParsing="false" text="L1-Regularization" toggleGroup="$nAlgorithmGroup" />
-                                    </children>
-                                </FlowPane>
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
+            <FlowPane hgap="5.0" layoutX="15.0" layoutY="35.0" prefWrapLength="300.0" vgap="5.0">
+               <children>
+                        <RadioButton fx:id="setRadio" mnemonicParsing="false" text="%Set" toggleGroup="$valueGroup" />
+                        <TextField fx:id="valueInput" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+                  <FlowPane fx:id="matrixPane" hgap="5.0" prefWrapLength="300.0" vgap="5.0">
+                      <children>
+                          <RadioButton fx:id="gaussianDistributionRadio" mnemonicParsing="false" text="%GaussianDistribution" toggleGroup="$valueGroup" />
+                          <RadioButton fx:id="identifyRadio" mnemonicParsing="false" text="%IdentifyMatrix" toggleGroup="$valueGroup" />
+                          <RadioButton fx:id="upperTriangleRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%UpperTriangle" toggleGroup="$valueGroup" />
+                          <RadioButton fx:id="lowerTriangleRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%LowerTriangle" toggleGroup="$valueGroup" />
+                      </children>
+                  </FlowPane>
             </children>
         </VBox>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">

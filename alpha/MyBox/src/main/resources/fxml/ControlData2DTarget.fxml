@@ -14,7 +14,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
@@ -84,24 +83,27 @@ License:    Apache License Version 2.0
           </FlowPane>
       <VBox fx:id="tableBox" spacing="2.0">
          <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
+            <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                <children>
                   <Label text="%InTable" />
-                  <RadioButton fx:id="frontRadio" mnemonicParsing="false" text="%Front" toggleGroup="$targetGroup" />
-                  <RadioButton fx:id="endRadio" mnemonicParsing="false" text="%End" toggleGroup="$targetGroup" />
-                  <RadioButton fx:id="aboveRadio" mnemonicParsing="false" text="%Above" toggleGroup="$targetGroup" />
-                  <RadioButton fx:id="belowRadio" mnemonicParsing="false" text="%Below" toggleGroup="$targetGroup" />
+                  <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$targetGroup" />
+                  <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$targetGroup" />
+                  <RadioButton fx:id="replaceRadio" mnemonicParsing="false" text="%Replace" toggleGroup="$targetGroup" />
                </children>
             </FlowPane>
-            <HBox fx:id="rowBox" alignment="CENTER_LEFT" spacing="2.0">
+            <FlowPane fx:id="locationPane" hgap="2.0" layoutX="10.0" layoutY="10.0" prefWrapLength="300.0" vgap="2.0">
                <children>
-                  <Label text="%TableRow">
-                     <HBox.margin>
-                        <Insets left="20.0" />
-                     </HBox.margin></Label>
-                  <ComboBox fx:id="rowSelector" prefWidth="150.0" />
+                  <Label layoutX="10.0" layoutY="14.0" text="%Location">
+                     <FlowPane.margin>
+                        <Insets right="20.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <Label text="%TableRow" />
+                  <ComboBox fx:id="rowSelector" prefWidth="100.0" />
+                  <Label minWidth="-Infinity" text="%Column" />
+                  <ComboBox fx:id="colSelector" prefWidth="200.0" />
                </children>
-            </HBox>
+            </FlowPane>
          </children>
       </VBox>
     </children>

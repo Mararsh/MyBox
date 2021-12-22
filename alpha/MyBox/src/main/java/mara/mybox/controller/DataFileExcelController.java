@@ -2,6 +2,9 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -121,16 +124,23 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     protected void afterFileLoaded() {
-        sheetSelector.getItems().clear();
-        List<String> sheets = dataFileExcel.getSheetNames();
-        if (sheets != null && !sheets.isEmpty()) {
-            sheetSelector.getItems().setAll(sheets);
-        }
-        sheetSelector.setValue(dataFileExcel.getSheet());
-        deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
-        int current = sheetSelector.getSelectionModel().getSelectedIndex();
-        nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
-        previousSheetButton.setDisable(current <= 0);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public synchronized void run() {
+                Platform.runLater(() -> {
+                    sheetSelector.getItems().clear();
+                    List<String> sheets = dataFileExcel.getSheetNames();
+                    if (sheets != null && !sheets.isEmpty()) {
+                        sheetSelector.getItems().setAll(sheets);
+                    }
+                    sheetSelector.setValue(dataFileExcel.getSheet());
+                    deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
+                    int current = sheetSelector.getSelectionModel().getSelectedIndex();
+                    nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
+                    previousSheetButton.setDisable(current <= 0);
+                });
+            }
+        }, 300);
     }
 
     @Override

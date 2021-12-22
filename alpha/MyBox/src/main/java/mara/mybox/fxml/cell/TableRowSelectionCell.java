@@ -3,6 +3,7 @@ package mara.mybox.fxml.cell;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -21,7 +22,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
     protected SimpleBooleanProperty checked;
     protected boolean selectingRow, checkingBox;
     protected ChangeListener<Boolean> checkedListener;
-    protected ChangeListener<Number> selectedListener;
+    protected ListChangeListener selectedListener;
 
     public TableRowSelectionCell(TableView tableView) {
         this.tableView = tableView;
@@ -35,7 +36,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
             public synchronized ObservableValue<Boolean> call(Integer index) {
                 if (checked != null) {
                     checked.removeListener(checkedListener);
-                    tableView.getSelectionModel().selectedIndexProperty().removeListener(selectedListener);
+                    tableView.getSelectionModel().getSelectedIndices().removeListener(selectedListener);
                     checked = null;
                 }
                 int row = rowIndex();
@@ -45,7 +46,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
                 setText("" + (row + 1));
                 checked = new SimpleBooleanProperty(tableView.getSelectionModel().isSelected(row));
                 checked.addListener(checkedListener);
-                tableView.getSelectionModel().selectedIndexProperty().addListener(selectedListener);
+                tableView.getSelectionModel().getSelectedIndices().addListener(selectedListener);
                 return checked;
             }
         });
@@ -70,9 +71,10 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
             }
         };
 
-        selectedListener = new ChangeListener<Number>() {
+        selectedListener = new ListChangeListener<ListChangeListener.Change>() {
+
             @Override
-            public synchronized void changed(ObservableValue ov, Number oldValue, Number newValue) {
+            public synchronized void onChanged(ListChangeListener.Change c) {
                 int row = rowIndex();
                 if (checked == null || selectingRow || row < 0) {
                     return;
