@@ -7,7 +7,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Toggle;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.data.ColumnDefinition;
@@ -25,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-12
  * @License Apache License Version 2.0
  */
-public class Data2DStatisticController extends Data2DOperationController {
+public class Data2DStatisticController extends Data2DHandleController {
 
     protected List<String> countRow, summationRow, meanRow, varianceRow, skewnessRow,
             maximumRow, minimumRow, modeRow, medianRow;
@@ -38,9 +37,10 @@ public class Data2DStatisticController extends Data2DOperationController {
     @FXML
     protected VBox operationBox;
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    @Override
+    public void initControls() {
         try {
-            super.setParameters(tableController, true, true, false);
+            super.initControls();
 
             countCheck.setSelected(UserConfig.getBoolean(baseName + "Count", true));
             countCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -116,21 +116,19 @@ public class Data2DStatisticController extends Data2DOperationController {
                 }
             });
 
-            selectController.rowGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkMemoryLabel();
-                }
-            });
-            checkMemoryLabel();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    @Override
+    public boolean checkOptions() {
+        checkMemoryLabel();
+        return super.checkOptions();
+    }
+
     public void checkMemoryLabel() {
-        if (selectController.isAllData() && (modeCheck.isSelected() || medianCheck.isSelected())) {
+        if (allPages() && (modeCheck.isSelected() || medianCheck.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
             }
@@ -169,22 +167,26 @@ public class Data2DStatisticController extends Data2DOperationController {
         medianCheck.setSelected(false);
     }
 
+    @FXML
     @Override
-    public boolean hanldeData() {
+    public void okAction() {
         try {
-            if (selectController.isAllData() && data2D.isMutiplePages()) {
-                if (modeCheck.isSelected() || medianCheck.isSelected()) {
-                    return statisticRows(data2D.allRows(checkedColsIndices));
-                } else {
-                    return statisticFile();
+            if (!checkOptions()) {
+                return;
+            }
+            if (allPages()) {
+                if (tableController.checkBeforeLoadingTableData()) {
+                    if (modeCheck.isSelected() || medianCheck.isSelected()) {
+                        statisticRows(data2D.allRows(tableController.checkedColsIndices()));
+                    } else {
+                        statisticFile();
+                    }
                 }
             } else {
-                return statisticRows(selectedData());
+                statisticRows(selectedData());
             }
         } catch (Exception e) {
-            outError(e.toString());
-            MyBoxLog.error(e.toString());
-            return false;
+            MyBoxLog.debug(e);
         }
     }
 
@@ -271,6 +273,28 @@ public class Data2DStatisticController extends Data2DOperationController {
         } catch (Exception e) {
             outError(e.toString());
             MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean handleSelectedRowsForTable() {
+        try {
+            handledData = tableController.selectedData(all(), false, false);
+            if (handledData == null) {
+                return false;
+            }
+            handledNames = null;
+            handledColumns = tableController.checkedCols();
+            if (rowNumberCheck.isSelected()) {
+                handledColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
             return false;
         }
     }

@@ -152,12 +152,7 @@ public class HtmlSnapController extends WebAddressController {
                         try {
                             newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
                             loadingController.setInfo(message("CurrentPageHeight") + ": " + newHeight);
-                            if (newHeight == lastHeight) {
-                                loadingController.setInfo(message("ExpandingPage"));
-                                startSnap();
-                            } else {
-                                webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
-                            }
+                            startSnap();
 
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());
@@ -181,7 +176,8 @@ public class HtmlSnapController extends WebAddressController {
             }
             webEngine.executeScript("window.scrollTo(0,0 );");
             snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
-            snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
+            snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? "
+                    + "document.documentElement.clientHeight : document.body.clientHeight");
             snapHeight = 0;
             setWebViewLabel(message("SnapingImage..."));
 
@@ -268,11 +264,7 @@ public class HtmlSnapController extends WebAddressController {
                 if (isCanceled()) {
                     return;
                 }
-                if (snaps != null && !snaps.isEmpty()) {
-                    ImagesEditorController.open(snaps);
-                }
                 stopSnap();
-
             }
 
         } catch (Exception e) {
@@ -293,22 +285,34 @@ public class HtmlSnapController extends WebAddressController {
     }
 
     protected void stopSnap() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        if (loadingController != null) {
-            loadingController.closeStage();
-            loadingController = null;
-        }
-        snaps = null;
-        webEngine.getLoadWorker().cancel();
-        webEngine.executeScript("window.scrollTo(0,0 );");
-        setWebViewLabel("");
-        myStage.setX(orginalStageX);
-        myStage.setY(orginalStageY);
-        myStage.setWidth(orginalStageWidth);
-        myStage.setHeight(orginalStageHeight);
+        Platform.runLater(() -> {
+            try {
+                if (timer != null) {
+                    timer.cancel();
+                    timer = null;
+                }
+                if (loadingController != null) {
+                    loadingController.closeStage();
+                    loadingController = null;
+                }
+                if (snaps != null && !snaps.isEmpty()) {
+                    ImagesEditorController.open(snaps);
+                }
+                if (webEngine != null) {
+                    webEngine.getLoadWorker().cancel();
+                    webEngine.executeScript("window.scrollTo(0,0 );");
+                    setWebViewLabel("");
+                }
+                if (getMyStage() != null) {
+                    myStage.setX(orginalStageX);
+                    myStage.setY(orginalStageY);
+                    myStage.setWidth(orginalStageWidth);
+                    myStage.setHeight(orginalStageHeight);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
+            }
+        });
     }
 
     @Override

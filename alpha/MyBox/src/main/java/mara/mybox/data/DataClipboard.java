@@ -54,7 +54,7 @@ public class DataClipboard extends DataFileCSV {
             return null;
         }
         File dFile = newFile();
-        if (FileTools.rename(tmpFile, dFile, false)) {
+        if (FileTools.rename(tmpFile, dFile, true)) {
             return create(task, cols, dFile, data.size(), data.get(0).size());
         } else {
             MyBoxLog.error("Failed");
@@ -74,9 +74,13 @@ public class DataClipboard extends DataFileCSV {
             d.setCharset(Charset.forName("UTF-8"));
             d.setDelimiter(",");
             d.setHasHeader(cols != null && !cols.isEmpty());
-            d.setDataName(rowsNumber + "x" + colsNumber);
-            d.setColsNumber(colsNumber);
-            d.setRowsNumber(rowsNumber);
+            if (rowsNumber > 0 && colsNumber > 0) {
+                d.setDataName(rowsNumber + "x" + colsNumber);
+                d.setColsNumber(colsNumber);
+                d.setRowsNumber(rowsNumber);
+            } else {
+                d.setDataName(dFile.getName());
+            }
             if (Data2D.save(d, cols)) {
                 DataClipboardController.update();
                 return d;
@@ -88,6 +92,27 @@ public class DataClipboard extends DataFileCSV {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, Data2D data) {
+        if (data == null || data.getFile() == null) {
+            return null;
+        }
+        File dFile = newFile();
+        if (FileTools.rename(data.getFile(), dFile, true)) {
+            DataClipboard d = new DataClipboard();
+            d.cloneAll(data);
+            d.setFile(dFile).setType(Type.MyBoxClipboard);
+            if (Data2D.save(d, cols)) {
+                DataClipboardController.update();
+                return d;
+            } else {
+                return null;
+            }
+        } else {
+            MyBoxLog.error("Failed");
             return null;
         }
     }

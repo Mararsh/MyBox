@@ -254,6 +254,7 @@ Items in one sentence about javafx
     <li>When listen mouse events, event.getX() and event.getY() return the coordinate of event.getSource() which is the control owns the events. Example, when listen on ImageView, the coordinate is related to the image.</li>
     <li>Iterative calls may happen when listen both onMouseEntered and  onMouseExited and change focus in handling of the events(like pop menu) or change control&rsquo;s size.</li>
     <li>When double click mouse, single-click event is tiggerred at first and then double-click event is triggerred. So need avoid duplicated or conflicted handlings against same event.</li>
+    <li>For table's multiple selections, use getSelectedIndices() to listen changes, Some changes may be missed if use selectedItemProperty().</li>
 </ol>
 
 ##MyBox#

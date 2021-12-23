@@ -259,7 +259,7 @@ public class ControlData2D extends BaseController {
 
     public synchronized void checkStatus() {
         String title = message("Table");
-        if (data2D.isTableChanged()) {
+        if (data2D != null && data2D.isTableChanged()) {
             title += "*";
         }
         editController.tableTab.setText(title);
@@ -295,10 +295,10 @@ public class ControlData2D extends BaseController {
         columnsTab.setText(title);
 
         if (recoverButton != null) {
-            recoverButton.setDisable(data2D.isTmpData());
+            recoverButton.setDisable(data2D == null || data2D.isTmpData());
         }
         if (saveButton != null) {
-            saveButton.setDisable(!data2D.isValid() || !tableController.dataSizeLoaded);
+            saveButton.setDisable(data2D == null || !tableController.dataSizeLoaded);
         }
 
         notifyStatus();
@@ -466,7 +466,7 @@ public class ControlData2D extends BaseController {
                 try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
-                    Data2D.save(conn, targetData, Data2DColumn.clone(data2D.getColumns()));
+                    Data2D.save(conn, targetData, data2D.getColumns());
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

@@ -17,7 +17,11 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -90,7 +94,7 @@ public class DataFileText extends DataFile {
         if (charset == null) {
             charset = Charset.forName("UTF-8");
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line1 = reader.readLine();
             if (line1 == null) {
                 return null;
@@ -149,7 +153,7 @@ public class DataFileText extends DataFile {
         }
         List<String> names = null;
         checkForLoad();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             List<String> values = readValidLine(reader);
             if (hasHeader && StringTools.noDuplicated(values, true)) {
                 names = values;
@@ -205,7 +209,7 @@ public class DataFileText extends DataFile {
         if (file == null || !file.exists() || file.length() == 0) {
             return 0;
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (backgroundTask == null || backgroundTask.isCancelled()) {
@@ -241,7 +245,7 @@ public class DataFileText extends DataFile {
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
         List<List<String>> rows = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -298,8 +302,8 @@ public class DataFileText extends DataFile {
         checkForLoad();
         boolean tHasHeader = targetTextFile.isHasHeader();
         if (file != null && file.exists() && file.length() > 0) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file, charset));
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
+            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                     BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (hasHeader) {
                     readValidLine(reader);
@@ -334,7 +338,7 @@ public class DataFileText extends DataFile {
                 return false;
             }
         } else {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
+            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (tHasHeader && colsNames != null) {
                     TextFileTools.writeLine(writer, colsNames, tDelimiter);
@@ -386,7 +390,7 @@ public class DataFileText extends DataFile {
             }
             File tmpFile = TmpFileTools.getTempFile(".txt");
             String fDelimiter = ",";
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
+            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
                 if (cols != null && !cols.isEmpty()) {
                     TextFileTools.writeLine(writer, cols, fDelimiter);
                 }
@@ -415,7 +419,7 @@ public class DataFileText extends DataFile {
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -443,7 +447,7 @@ public class DataFileText extends DataFile {
             return null;
         }
         List<List<String>> rows = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -483,7 +487,7 @@ public class DataFileText extends DataFile {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -527,7 +531,7 @@ public class DataFileText extends DataFile {
         if (allInvalid) {
             return sData;
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             if (hasHeader) {
                 readValidLine(reader);
             }
@@ -572,8 +576,8 @@ public class DataFileText extends DataFile {
             return false;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
             List<String> names = columnNames();
             if (hasHeader && names != null) {
                 readValidLine(reader);
@@ -608,6 +612,78 @@ public class DataFileText extends DataFile {
             return false;
         }
         return FileTools.rename(tmpFile, file, false);
+    }
+
+    @Override
+    public DataFileCSV copy(List<Integer> cols, boolean rowNumber, boolean colName) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(',');
+        int tcolsNumber = 0, trowsNumber = 0;
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, charset), targetFormat)) {
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            List<String> names = new ArrayList<>();
+            if (rowNumber) {
+                names.add(message("RowNumber"));
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                if (cols.contains(i)) {
+                    names.add(columns.get(i).getName());
+                }
+            }
+            if (colName) {
+                csvPrinter.printRecord(names);
+            }
+            tcolsNumber = names.size();
+            String line;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> dataRow = parseFileLine(line);
+                if (dataRow == null || dataRow.isEmpty()) {
+                    continue;
+                }
+                List<String> row = new ArrayList<>();
+                if (rowNumber) {
+                    row.add((trowsNumber + 1) + "");
+                }
+                for (int i : cols) {
+                    if (i >= 0 && i < dataRow.size()) {
+                        row.add(dataRow.get(i));
+                    } else {
+                        row.add(null);
+                    }
+                }
+                csvPrinter.printRecord(row);
+                trowsNumber++;
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        DataFileCSV targetData = new DataFileCSV();
+        targetData.setFile(csvFile).setCharset(charset)
+                .setDelimiter(",").setHasHeader(colName)
+                .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+        return targetData;
+    }
+
+    public static DataFileText toText(DataFileCSV csvData) {
+        if (csvData == null) {
+            return null;
+        }
+        DataFileText targetData = new DataFileText();
+        targetData.cloneAll(csvData);
+        targetData.setType(Type.Texts);
+        return targetData;
     }
 
 }

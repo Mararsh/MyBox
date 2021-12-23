@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import mara.mybox.data.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -11,35 +10,21 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DCopyController extends Data2DOperationController {
+public class Data2DCopyController extends Data2DHandleController {
 
-    public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController, false, false, true);
+    public Data2DCopyController() {
+        includeTable = true;
     }
 
     @Override
-    public boolean handleForTable() {
-        try {
-            handledData = new ArrayList<>();
-            int colsNumber = tableController.data2D.tableColsNumber();
-            for (int row : checkedRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(row);
-                List<String> newRow = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    if (checkedColsIndices.contains(c)) {
-                        newRow.add(c, tableRow.get(c + 1));
-                    } else {
-                        newRow.add(null);
-                    }
-                }
-                handledData.add(newRow);
-            }
-            return true;
-        } catch (Exception e) {
-            outError(e.toString());
-            MyBoxLog.error(e.toString());
-            return false;
-        }
+    public boolean checkOptions() {
+        targetController.setHandleFile(allPages());
+        return super.checkOptions();
+    }
+
+    @Override
+    public DataFileCSV generatedFile() {
+        return data2D.copy(tableController.checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 
     /*

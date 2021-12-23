@@ -304,7 +304,9 @@ public class ControlData2DEditTable extends ControlData2DLoad {
                 && checkedColsIndices != null && !checkedColsIndices.isEmpty();
     }
 
-    public boolean isSquare() {
+    public boolean isSquare(boolean allRows) {
+        checkedRowsIndices = checkedRowsIndices(allRows);
+        checkedColsIndices = checkedColsIndices();
         return checkedRowsIndices != null && checkedColsIndices != null
                 && !checkedRowsIndices.isEmpty()
                 && checkedRowsIndices.size() == checkedColsIndices.size();
@@ -380,7 +382,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         if (!validateData()) {
             return;
         }
-        Data2DOperateController.open(this, "copy");
+        Data2DCopyController.open(this);
     }
 
     public void copyToSystemClipboard(List<String> names, List<List<String>> data) {

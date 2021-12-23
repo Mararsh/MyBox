@@ -5,6 +5,7 @@ import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -18,7 +19,8 @@ public class Data2DTransposeController extends Data2DHandleController {
     }
 
     @Override
-    public void handleAllRows() {
+    public void handleFile() {
+        popError(message("NotSupport"));
     }
 
     @Override

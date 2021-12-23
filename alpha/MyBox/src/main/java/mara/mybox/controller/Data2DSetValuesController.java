@@ -12,6 +12,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
@@ -121,11 +122,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        if (!super.checkOptions()) {
-            return false;
-        }
-        if (!tableController.isSquare()
-                || (allRowsRadio.isSelected() && data2D.isMutiplePages())) {
+        if (!tableController.isSquare(allRowsRadio.isSelected()) || allPages()) {
             matrixPane.setDisable(true);
             if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
                     || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
@@ -141,13 +138,40 @@ public class Data2DSetValuesController extends Data2DHandleController {
             return false;
         } else {
             okButton.setDisable(false);
-            return true;
+            return super.checkOptions();
         }
     }
 
     @Override
-    public boolean handleAllRowsDo() {
-        return data2D.setValue(tableController.checkedColsIndices, value);
+    public void handleFile() {
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    return data2D.setValue(tableController.checkedColsIndices, value);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popDone();
+                tableController.dataController.goPage();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+            }
+
+        };
+        start(task);
     }
 
     @Override

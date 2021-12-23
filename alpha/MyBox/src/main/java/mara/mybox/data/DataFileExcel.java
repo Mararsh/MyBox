@@ -2,6 +2,8 @@ package mara.mybox.data;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +14,7 @@ import java.util.Random;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -19,8 +22,13 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -93,7 +101,7 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public long readDataDefinition() {
-        try (Workbook wb = WorkbookFactory.create(file)) {
+        try ( Workbook wb = WorkbookFactory.create(file)) {
             int sheetsNumber = wb.getNumberOfSheets();
             sheetNames = new ArrayList<>();
             for (int i = 0; i < sheetsNumber; i++) {
@@ -115,7 +123,7 @@ public class DataFileExcel extends DataFile {
             return null;
         }
         List<String> names = null;
-        try (Workbook wb = WorkbookFactory.create(file)) {
+        try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = wb.getSheet(sheet);
@@ -170,7 +178,7 @@ public class DataFileExcel extends DataFile {
         if (file == null || !file.exists() || file.length() == 0) {
             return 0;
         }
-        try (Workbook wb = WorkbookFactory.create(file)) {
+        try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = wb.getSheet(sheet);
@@ -218,7 +226,7 @@ public class DataFileExcel extends DataFile {
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
         List<List<String>> rows = new ArrayList<>();
-        try (Workbook wb = WorkbookFactory.create(file)) {
+        try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = wb.getSheet(sheet);
@@ -291,7 +299,7 @@ public class DataFileExcel extends DataFile {
         String targetSheetName = targetExcelFile.getSheet();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {
-            try (Workbook sourceBook = WorkbookFactory.create(file)) {
+            try ( Workbook sourceBook = WorkbookFactory.create(file)) {
                 Sheet sourceSheet;
                 if (sheet != null) {
                     sourceSheet = sourceBook.getSheet(sheet);
@@ -345,7 +353,7 @@ public class DataFileExcel extends DataFile {
                 } else {
                     writePageData(targetSheet, targetRowIndex);
                 }
-                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
                 targetBook.close();
@@ -359,7 +367,7 @@ public class DataFileExcel extends DataFile {
             }
 
         } else {
-            try (Workbook targetBook = new XSSFWorkbook()) {
+            try ( Workbook targetBook = new XSSFWorkbook()) {
                 if (targetSheetName == null) {
                     targetSheetName = message("Sheet") + "1";
                 }
@@ -369,7 +377,7 @@ public class DataFileExcel extends DataFile {
                     targetRowIndex = writeHeader(targetSheet, targetRowIndex);
                 }
                 writePageData(targetSheet, targetRowIndex);
-                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
                 targetBook.close();
@@ -471,7 +479,7 @@ public class DataFileExcel extends DataFile {
                     }
                 }
             }
-            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }
             return tmpFile;
@@ -493,7 +501,7 @@ public class DataFileExcel extends DataFile {
         if (file.length() > 0) {
             FileCopyTools.copyFile(file, tmpDataFile);
         }
-        try (Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet targetSheet = targetBook.createSheet(sheetName);
             List<List<String>> data = tmpData(3, 3);
             for (int r = 0; r < data.size(); r++) {
@@ -507,7 +515,7 @@ public class DataFileExcel extends DataFile {
                     targetCell.setCellValue(values.get(col));
                 }
             }
-            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }
         } catch (Exception e) {
@@ -542,9 +550,9 @@ public class DataFileExcel extends DataFile {
         File tmpFile = TmpFileTools.getTempFile();
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(file, tmpDataFile);
-        try (Workbook book = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook book = WorkbookFactory.create(tmpDataFile)) {
             book.setSheetName(book.getSheetIndex(sheet), newName);
-            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 book.write(fileOut);
             }
         } catch (Exception e) {
@@ -578,11 +586,11 @@ public class DataFileExcel extends DataFile {
         File tmpDataFile = TmpFileTools.getTempFile();
         FileCopyTools.copyFile(file, tmpDataFile);
         int index = -1;
-        try (Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             index = targetBook.getSheetIndex(name);
             if (index >= 0) {
                 targetBook.removeSheetAt(index);
-                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
             }
@@ -615,7 +623,7 @@ public class DataFileExcel extends DataFile {
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
         }
-        try (Workbook sourceBook = WorkbookFactory.create(file)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = sourceBook.getSheet(sheet);
@@ -658,7 +666,7 @@ public class DataFileExcel extends DataFile {
             return null;
         }
         List<List<String>> rows = new ArrayList<>();
-        try (Workbook wb = WorkbookFactory.create(file)) {
+        try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = wb.getSheet(sheet);
@@ -719,7 +727,7 @@ public class DataFileExcel extends DataFile {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        try (Workbook wb = WorkbookFactory.create(file)) {
+        try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = wb.getSheet(sheet);
@@ -784,7 +792,7 @@ public class DataFileExcel extends DataFile {
         if (allInvalid) {
             return sData;
         }
-        try (Workbook wb = WorkbookFactory.create(file)) {
+        try ( Workbook wb = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = wb.getSheet(sheet);
@@ -850,7 +858,7 @@ public class DataFileExcel extends DataFile {
             return false;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try (Workbook sourceBook = WorkbookFactory.create(file)) {
+        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
                 sourceSheet = sourceBook.getSheet(sheet);
@@ -908,7 +916,7 @@ public class DataFileExcel extends DataFile {
                     }
                 }
             }
-            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }
             targetBook.close();
@@ -922,6 +930,159 @@ public class DataFileExcel extends DataFile {
         }
         return tmpFile != null && tmpFile.exists();
     }
+
+    @Override
+    public DataFileCSV copy(List<Integer> cols, boolean rowNumber, boolean colName) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(',');
+        int tcolsNumber = 0, trowsNumber = 0;
+        try ( Workbook wb = WorkbookFactory.create(file);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+            List<String> names = new ArrayList<>();
+            if (rowNumber) {
+                names.add(message("RowNumber"));
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                if (cols.contains(i)) {
+                    names.add(columns.get(i).getName());
+                }
+            }
+            if (colName) {
+                csvPrinter.printRecord(names);
+            }
+            tcolsNumber = names.size();
+            Sheet sourceSheet;
+            if (sheet != null) {
+                sourceSheet = wb.getSheet(sheet);
+            } else {
+                sourceSheet = wb.getSheetAt(0);
+                sheet = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        Row fileRow = iterator.next();
+                        if (fileRow == null) {
+                            continue;
+                        }
+                        List<String> dataRow = new ArrayList<>();
+                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                            dataRow.add(v);
+                        }
+                        List<String> row = new ArrayList<>();
+                        if (rowNumber) {
+                            row.add((trowsNumber + 1) + "");
+                        }
+                        for (int i : cols) {
+                            if (i >= 0 && i < dataRow.size()) {
+                                row.add(dataRow.get(i));
+                            } else {
+                                row.add(null);
+                            }
+                        }
+                        csvPrinter.printRecord(row);
+                        trowsNumber++;
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        DataFileCSV targetData = new DataFileCSV();
+        targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                .setDelimiter(",").setHasHeader(colName)
+                .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+        return targetData;
+    }
+
+    public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {
+        if (task == null || csvData == null) {
+            return null;
+        }
+        File csvFile = csvData.getFile();
+        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
+            return null;
+        }
+        File excelFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".xlsx");
+        boolean targetHasHeader = false;
+        int tcolsNumber = 0, trowsNumber = 0;
+        String targetSheetName = message("Sheet") + "1";
+        try ( CSVParser parser = CSVParser.parse(csvFile, csvData.getCharset(), csvData.cvsFormat());
+                 Workbook targetBook = new XSSFWorkbook()) {
+            Sheet targetSheet = targetBook.createSheet(targetSheetName);
+            int targetRowIndex = 0;
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                if (csvData.isHasHeader()) {
+                    try {
+                        List<String> names = parser.getHeaderNames();
+                        if (names != null) {
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                            for (int col = 0; col < names.size(); col++) {
+                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
+                                targetCell.setCellValue(names.get(col));
+                            }
+                            tcolsNumber = names.size();
+                            targetHasHeader = true;
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                        MyBoxLog.error(e);
+                    }
+                }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        CSVRecord record = iterator.next();
+                        if (record != null) {
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                            for (int col = 0; col < record.size(); col++) {
+                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
+                                targetCell.setCellValue(record.get(col));
+                            }
+                            trowsNumber++;
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                        MyBoxLog.error(e);
+                    }
+                }
+                try ( FileOutputStream fileOut = new FileOutputStream(excelFile)) {
+                    targetBook.write(fileOut);
+                }
+                targetBook.close();
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (excelFile != null && excelFile.exists()) {
+            DataFileExcel targetData = new DataFileExcel();
+            targetData.setFile(excelFile).setSheet(targetSheetName)
+                    .setHasHeader(targetHasHeader)
+                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
 
     /*
         get/set

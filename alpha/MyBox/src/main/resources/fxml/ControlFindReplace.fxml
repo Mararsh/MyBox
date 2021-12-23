@@ -89,7 +89,7 @@ License:    Apache License Version 2.0
                 <CheckBox fx:id="dotallCheck" mnemonicParsing="false" text="%RegexDotAll" />
             </children>
         </VBox>
-      <CheckBox fx:id="shareCheck" mnemonicParsing="false" selected="true" text="%ShareAllInterface" />
+        <CheckBox fx:id="shareCheck" mnemonicParsing="false" selected="true" text="%ShareOptionsAllInterface" />
         <VBox fx:id="replaceBox" spacing="5.0">
             <children>
                 <Separator prefWidth="200.0" />

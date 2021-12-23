@@ -57,7 +57,6 @@ public abstract class Data2D extends Data2DDefinition {
 
     public abstract boolean export(ControlDataConvert convertController, List<Integer> colIndices);
 
-
     /*
         class
      */
@@ -271,6 +270,10 @@ public abstract class Data2D extends Data2DDefinition {
         return false;
     }
 
+    public DataFileCSV copy(List<Integer> cols, boolean rowNumber, boolean colName) {
+        return null;
+    }
+
     /*
         matrix
      */
@@ -417,6 +420,9 @@ public abstract class Data2D extends Data2DDefinition {
                 def = d.queryDefinition(conn);
                 if (def == null) {
                     def = d.getTableData2DDefinition().insertData(conn, d);
+                } else {
+                    d.setD2did(def.getD2did());
+                    def = d.getTableData2DDefinition().updateData(conn, d);
                 }
             }
             conn.commit();
@@ -430,6 +436,10 @@ public abstract class Data2D extends Data2DDefinition {
                     List<Data2DColumn> columns = new ArrayList<>();
                     for (int i = 0; i < cols.size(); i++) {
                         Data2DColumn column = cols.get(i).cloneAll();
+                        if (column.getD2id() != did) {
+                            column.setD2cid(-1);
+                        }
+                        column.setD2id(did);
                         column.setIndex(i);
                         columns.add(column);
                     }

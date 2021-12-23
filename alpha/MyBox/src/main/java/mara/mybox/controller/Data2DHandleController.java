@@ -11,9 +11,17 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.Data2D;
+import mara.mybox.data.DataClipboard;
+import mara.mybox.data.DataFile;
+import mara.mybox.data.DataFileCSV;
+import mara.mybox.data.DataFileExcel;
+import mara.mybox.data.DataFileText;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -29,6 +37,8 @@ public abstract class Data2DHandleController extends BaseController {
     protected List<String> handledNames;
     protected List<List<String>> handledData;
     protected List<Data2DColumn> handledColumns;
+    protected DataFileCSV handledCSV;
+    protected DataFile handledFile;
     protected boolean includeTable;
 
     @FXML
@@ -177,7 +187,7 @@ public abstract class Data2DHandleController extends BaseController {
             }
             if (allPages()) {
                 if (tableController.checkBeforeLoadingTableData()) {
-                    handleAllRows();
+                    handleFile();
                 }
             } else {
                 handleSelectedRows();
@@ -187,17 +197,45 @@ public abstract class Data2DHandleController extends BaseController {
         }
     }
 
-    public void handleAllRows() {
+    public void handleFile() {
         task = new SingletonTask<Void>(this) {
-
-            boolean forTable;
 
             @Override
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    return handleAllRowsDo();
+                    handledCSV = generatedFile();
+                    if (handledCSV == null) {
+                        return false;
+                    }
+                    handledColumns = tableController.checkedCols();
+                    if (rowNumberCheck.isSelected()) {
+                        handledColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+                    }
+                    switch (targetController.target) {
+                        case "csv":
+                            handledFile = handledCSV;
+                            break;
+                        case "excel":
+                            handledFile = DataFileExcel.toExcel(task, handledCSV);
+                            break;
+                        case "texts":
+                            handledFile = DataFileText.toText(handledCSV);
+                            break;
+                        case "systemClipboard":
+                            handledFile = handledCSV;
+                            break;
+                        case "myBoxClipboard":
+                            handledFile = DataClipboard.create(task, handledColumns, handledCSV);
+                            break;
+                        default:
+                            return false;
+                    }
+                    handledFile.setD2did(-1);
+                    Data2D.save(handledFile, handledColumns);
+                    return true;
                 } catch (Exception e) {
+                    MyBoxLog.error(e);
                     error = e.toString();
                     return false;
                 }
@@ -206,7 +244,7 @@ public abstract class Data2DHandleController extends BaseController {
             @Override
             protected void whenSucceeded() {
                 popDone();
-                tableController.dataController.goPage();
+                outputFile();
             }
 
             @Override
@@ -220,8 +258,37 @@ public abstract class Data2DHandleController extends BaseController {
         start(task);
     }
 
-    public boolean handleAllRowsDo() {
-        return false;
+    public DataFileCSV generatedFile() {
+        return null;
+    }
+
+    public void outputFile() {
+        try {
+            if (handledFile == null) {
+                return;
+            }
+            switch (targetController.target) {
+                case "csv":
+                    DataFileCSVController.open(handledFile.getFile(), handledFile.getCharset(),
+                            handledFile.isHasHeader(), handledFile.getDelimiter().charAt(0));
+                    break;
+                case "excel":
+                    DataFileExcelController.open(handledFile.getFile(), handledFile.isHasHeader());
+                    break;
+                case "texts":
+                    DataFileTextController.open(handledFile.getFile(), handledFile.getCharset(),
+                            handledFile.isHasHeader(), handledFile.getDelimiter());
+                    break;
+                case "systemClipboard":
+                    TextClipboardTools.copyToSystemClipboard(this, TextFileTools.readTexts(handledFile.getFile()));
+                    break;
+                case "myBoxClipboard":
+                    DataClipboardController.open(handledFile);
+                    break;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public synchronized void handleSelectedRows() {
@@ -269,7 +336,24 @@ public abstract class Data2DHandleController extends BaseController {
     }
 
     public boolean handleSelectedRowsForTable() {
-        return false;
+        try {
+            handledData = tableController.selectedData(all(), rowNumberCheck.isSelected(), colNameCheck.isSelected());
+            if (handledData == null) {
+                return false;
+            }
+            handledNames = null;
+            handledColumns = tableController.checkedCols();
+            if (rowNumberCheck.isSelected()) {
+                handledColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return false;
+        }
     }
 
     public boolean handleSelectedRowsForExternal() {

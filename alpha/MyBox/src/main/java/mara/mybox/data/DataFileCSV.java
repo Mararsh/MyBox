@@ -19,6 +19,7 @@ import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -63,7 +64,7 @@ public class DataFileCSV extends DataFileText {
         List<String> names = null;
         checkForLoad();
         if (hasHeader) {
-            try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
                 List<String> values = parser.getHeaderNames();
                 if (StringTools.noDuplicated(values, true)) {
                     names = values;
@@ -77,7 +78,7 @@ public class DataFileCSV extends DataFileText {
         }
         if (names == null) {
             hasHeader = false;
-            try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
                 Iterator<CSVRecord> iterator = parser.iterator();
                 if (iterator != null && iterator.hasNext()) {
                     CSVRecord record = iterator.next();
@@ -104,7 +105,7 @@ public class DataFileCSV extends DataFileText {
         if (file == null || !file.exists() || file.length() == 0) {
             return dataSize;
         }
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext()) {
@@ -141,7 +142,7 @@ public class DataFileCSV extends DataFileText {
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
         List<List<String>> rows = new ArrayList<>();
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             long rowIndex = -1;
             int columnsNumber = columnsNumber();
             long end = startRowOfCurrentPage + pageSize;
@@ -200,8 +201,8 @@ public class DataFileCSV extends DataFileText {
         CSVFormat tFormat = targetCSVFile.cvsFormat();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {
-            try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
-                    CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
+            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
+                     CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
                     writeHeader(csvPrinter);
                 }
@@ -238,7 +239,7 @@ public class DataFileCSV extends DataFileText {
                 return false;
             }
         } else {
-            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
+            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
                     writeHeader(csvPrinter);
                 }
@@ -328,7 +329,7 @@ public class DataFileCSV extends DataFileText {
             csvFormat = csvFormat.withFirstRecordAsHeader();
         }
         File tmpFile = TmpFileTools.getTempFile(".csv");
-        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
             if (cols != null && !cols.isEmpty()) {
                 csvPrinter.printRecord(cols);
             }
@@ -356,7 +357,7 @@ public class DataFileCSV extends DataFileText {
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
         }
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -394,7 +395,7 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
         List<List<String>> rows = new ArrayList<>();
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -434,7 +435,7 @@ public class DataFileCSV extends DataFileText {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -479,7 +480,7 @@ public class DataFileCSV extends DataFileText {
         if (allInvalid) {
             return sData;
         }
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -525,7 +526,7 @@ public class DataFileCSV extends DataFileText {
         }
         int colLen = cols.size();
         double[] sum = new double[colLen];
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -553,8 +554,8 @@ public class DataFileCSV extends DataFileText {
         CSVFormat csvFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',').withFirstRecordAsHeader();
-        try (CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
-                CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
             csvPrinter.printRecord(names);
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
@@ -600,8 +601,8 @@ public class DataFileCSV extends DataFileText {
         }
         File tmpFile = TmpFileTools.getTempFile();
         CSVFormat format = cvsFormat();
-        try (CSVParser parser = CSVParser.parse(file, charset, format);
-                CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
+        try ( CSVParser parser = CSVParser.parse(file, charset, format);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
                 if (hasHeader) {
@@ -643,6 +644,71 @@ public class DataFileCSV extends DataFileText {
         return FileTools.rename(tmpFile, file, false);
     }
 
+    @Override
+    public DataFileCSV copy(List<Integer> cols, boolean rowNumber, boolean colName) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(delimiter.charAt(0));
+        int tcolsNumber = 0, trowsNumber = 0;
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, charset), targetFormat)) {
+
+            List<String> names = new ArrayList<>();
+            if (rowNumber) {
+                names.add(message("RowNumber"));
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                if (cols.contains(i)) {
+                    names.add(columns.get(i).getName());
+                }
+            }
+            if (colName) {
+                csvPrinter.printRecord(names);
+            }
+            tcolsNumber = names.size();
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        CSVRecord record = iterator.next();
+                        if (record != null) {
+                            List<String> row = new ArrayList<>();
+                            if (rowNumber) {
+                                row.add((trowsNumber + 1) + "");
+                            }
+                            for (int i : cols) {
+                                if (i >= 0 && i < record.size()) {
+                                    row.add(record.get(i));
+                                } else {
+                                    row.add(null);
+                                }
+                            }
+                            csvPrinter.printRecord(row);
+                            trowsNumber++;
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                        MyBoxLog.error(e);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        DataFileCSV targetData = new DataFileCSV();
+        targetData.setFile(csvFile).setCharset(charset)
+                .setDelimiter(delimiter).setHasHeader(colName)
+                .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+        return targetData;
+    }
+
     /*
         static
      */
@@ -673,7 +739,7 @@ public class DataFileCSV extends DataFileText {
                         + FileNameTools.filter((filePrefix == null || filePrefix.isBlank() ? "" : filePrefix + "_")
                                 + (title == null || title.isBlank() ? "_" + count : title))
                         + ".csv");
-                try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
+                try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
                     if (withName) {
                         csvPrinter.printRecord(names);
                     }

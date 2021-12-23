@@ -24,7 +24,7 @@ public class ControlData2DTarget extends BaseController {
 
     protected ControlData2DEditTable tableController;
     protected String target;
-    protected boolean includeTable;
+    protected boolean includeTable, handleFile;
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -43,13 +43,6 @@ public class ControlData2DTarget extends BaseController {
             this.tableController = tableController;
             this.baseName = parent.baseName;
 
-            this.includeTable = includeTable;
-            if (!includeTable) {
-                thisPane.getChildren().remove(tableBox);
-            } else {
-                refreshControls();
-            }
-
             locationPane.setVisible(inTable());
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -61,6 +54,8 @@ public class ControlData2DTarget extends BaseController {
 
             target = UserConfig.getString(baseName + "DataTarget", "csv");
             setTarget(target);
+
+            setIncludeTable(includeTable);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -76,13 +71,22 @@ public class ControlData2DTarget extends BaseController {
             } else if (textsRadio.isSelected()) {
                 target = "texts";
             } else if (matrixRadio.isSelected()) {
-                target = "matrix";
+                if (!handleFile) {
+                    target = "matrix";
+                } else {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.fire();
+                        }
+                    });
+                }
             } else if (systemClipboardRadio.isSelected()) {
                 target = "systemClipboard";
             } else if (myBoxClipboardRadio.isSelected()) {
                 target = "myBoxClipboard";
             } else if (replaceRadio.isSelected()) {
-                if (includeTable) {
+                if (includeTable && !handleFile) {
                     target = "replace";
                 } else {
                     Platform.runLater(new Runnable() {
@@ -93,7 +97,7 @@ public class ControlData2DTarget extends BaseController {
                     });
                 }
             } else if (insertRadio.isSelected()) {
-                if (includeTable) {
+                if (includeTable && !handleFile) {
                     target = "insert";
                 } else {
                     Platform.runLater(new Runnable() {
@@ -104,7 +108,7 @@ public class ControlData2DTarget extends BaseController {
                     });
                 }
             } else if (appendRadio.isSelected()) {
-                if (includeTable) {
+                if (includeTable && !handleFile) {
                     target = "append";
                 } else {
                     Platform.runLater(new Runnable() {
@@ -115,6 +119,17 @@ public class ControlData2DTarget extends BaseController {
                     });
                 }
             }
+            if (includeTable && !handleFile) {
+                if (!thisPane.getChildren().contains(tableBox)) {
+                    thisPane.getChildren().add(tableBox);
+                }
+                refreshControls();
+            } else {
+                if (thisPane.getChildren().contains(tableBox)) {
+                    thisPane.getChildren().remove(tableBox);
+                }
+            }
+            matrixRadio.setDisable(handleFile);
             UserConfig.setString(baseName + "DataTarget", target);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -201,6 +216,16 @@ public class ControlData2DTarget extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void setIncludeTable(boolean includeTable) {
+        this.includeTable = includeTable;
+        checkTarget();
+    }
+
+    public void setHandleFile(boolean handleFile) {
+        this.handleFile = handleFile;
+        checkTarget();
     }
 
     public boolean inTable() {
