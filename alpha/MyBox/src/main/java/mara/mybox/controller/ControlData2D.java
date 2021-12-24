@@ -648,14 +648,14 @@ public class ControlData2D extends BaseController {
 
             menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
-                tableController.statistic();
+                Data2DStatisticController.open(tableController);
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Percentage"), StyleTools.getIconImage("iconPercentage.png"));
             menu.setOnAction((ActionEvent event) -> {
-                tableController.percentage();
+                Data2DPercentageController.open(tableController);
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);

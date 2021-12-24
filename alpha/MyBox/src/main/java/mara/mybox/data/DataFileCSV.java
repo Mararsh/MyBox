@@ -18,7 +18,6 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
-import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -472,9 +471,9 @@ public class DataFileCSV extends DataFileText {
                 sData[c].mean = sData[c].sum / sData[c].count;
                 allInvalid = false;
             } else {
-                sData[c].mean = AppValues.InvalidDouble;
-                sData[c].variance = AppValues.InvalidDouble;
-                sData[c].skewness = AppValues.InvalidDouble;
+                sData[c].mean = 0;
+                sData[c].variance = 0;
+                sData[c].skewness = 0;
             }
         }
         if (allInvalid) {
@@ -517,81 +516,6 @@ public class DataFileCSV extends DataFileText {
         }
 
         return sData;
-    }
-
-    @Override
-    public File percentage(List<String> names, List<Integer> cols, boolean withValues) {
-        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
-            return null;
-        }
-        int colLen = cols.size();
-        double[] sum = new double[colLen];
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record != null) {
-                            for (int c = 0; c < colLen; c++) {
-                                int col = cols.get(c);
-                                if (col < 0 || col >= record.size()) {
-                                    continue;
-                                }
-                                double v = doubleValue(record.get(col));
-                                sum[c] += v;
-                            }
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',').withFirstRecordAsHeader();
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
-            csvPrinter.printRecord(names);
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                int rowIndex = 0;
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record != null) {
-                            List<String> row = new ArrayList<>();
-                            row.add(rowIndex++ + "");
-                            for (int c = 0; c < colLen; c++) {
-                                int col = cols.get(c);
-                                double v = 0;
-                                if (col >= 0 && col < record.size()) {
-                                    v = doubleValue(record.get(col));
-                                }
-                                if (withValues) {
-                                    row.add(DoubleTools.format(v, scale));
-                                }
-                                if (sum[c] == 0) {
-                                    row.add("0");
-                                } else {
-                                    row.add(DoubleTools.percentage(v, sum[c]));
-                                }
-                            }
-                            csvPrinter.printRecord(row);
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        return csvFile;
     }
 
     @Override
@@ -702,11 +626,109 @@ public class DataFileCSV extends DataFileText {
             MyBoxLog.error(e);
             return null;
         }
-        DataFileCSV targetData = new DataFileCSV();
-        targetData.setFile(csvFile).setCharset(charset)
-                .setDelimiter(delimiter).setHasHeader(colName)
-                .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
-        return targetData;
+        if (csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(charset)
+                    .setDelimiter(delimiter).setHasHeader(colName)
+                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        int colLen = cols.size();
+        double[] sum = new double[colLen];
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        CSVRecord record = iterator.next();
+                        if (record != null) {
+                            for (int c = 0; c < colLen; c++) {
+                                int col = cols.get(c);
+                                if (col < 0 || col >= record.size()) {
+                                    continue;
+                                }
+                                double v = doubleValue(record.get(col));
+                                sum[c] += v;
+                            }
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(delimiter.charAt(0));
+        int trowsNumber = 0;
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, charset), targetFormat)) {
+            csvPrinter.printRecord(names);
+            List<String> row = new ArrayList<>();
+            row.add(message("Summation"));
+            for (int c = 0; c < colLen; c++) {
+                row.add(DoubleTools.scale(sum[c], scale) + "");
+                if (withValues) {
+                    row.add("");
+                }
+            }
+            csvPrinter.printRecord(row);
+            trowsNumber++;
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        CSVRecord record = iterator.next();
+                        if (record != null) {
+                            row = new ArrayList<>();
+                            row.add(trowsNumber++ + "");
+                            for (int c = 0; c < colLen; c++) {
+                                int col = cols.get(c);
+                                double v = 0;
+                                if (col >= 0 && col < record.size()) {
+                                    v = doubleValue(record.get(col));
+                                }
+                                if (withValues) {
+                                    row.add(DoubleTools.scale(v, scale) + "");
+                                }
+                                if (sum[c] == 0) {
+                                    row.add("0");
+                                } else {
+                                    row.add(DoubleTools.percentage(v, sum[c]));
+                                }
+                            }
+                            csvPrinter.printRecord(row);
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(charset)
+                    .setDelimiter(delimiter).setHasHeader(true)
+                    .setColsNumber(names.size()).setRowsNumber(trowsNumber);
+            return targetData;
+        } else {
+            return null;
+        }
     }
 
     /*

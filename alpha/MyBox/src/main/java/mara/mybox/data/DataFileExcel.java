@@ -16,6 +16,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
@@ -1004,11 +1005,145 @@ public class DataFileExcel extends DataFile {
             MyBoxLog.error(e);
             return null;
         }
-        DataFileCSV targetData = new DataFileCSV();
-        targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
-                .setDelimiter(",").setHasHeader(colName)
-                .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
-        return targetData;
+        if (csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(colName)
+                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        MyBoxLog.debug(names);
+        int colLen = cols.size();
+        double[] sum = new double[colLen];
+        try ( Workbook wb = WorkbookFactory.create(file)) {
+            Sheet sourceSheet;
+            if (sheet != null) {
+                sourceSheet = wb.getSheet(sheet);
+            } else {
+                sourceSheet = wb.getSheetAt(0);
+                sheet = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        Row fileRow = iterator.next();
+                        if (fileRow == null) {
+                            continue;
+                        }
+                        List<String> dataRow = new ArrayList<>();
+                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                            dataRow.add(v);
+                        }
+                        for (int c = 0; c < colLen; c++) {
+                            int col = cols.get(c);
+                            if (col < 0 || col >= dataRow.size()) {
+                                continue;
+                            }
+                            double v = doubleValue(dataRow.get(col));
+                            sum[c] += v;
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(',');
+        int trowsNumber = 0;
+        try ( Workbook wb = WorkbookFactory.create(file);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+            csvPrinter.printRecord(names);
+            List<String> row = new ArrayList<>();
+            row.add(message("Summation"));
+            for (int c = 0; c < colLen; c++) {
+                row.add(DoubleTools.scale(sum[c], scale) + "");
+                if (withValues) {
+                    row.add("");
+                }
+            }
+            csvPrinter.printRecord(row);
+            trowsNumber++;
+
+            Sheet sourceSheet;
+            if (sheet != null) {
+                sourceSheet = wb.getSheet(sheet);
+            } else {
+                sourceSheet = wb.getSheetAt(0);
+                sheet = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        Row fileRow = iterator.next();
+                        if (fileRow == null) {
+                            continue;
+                        }
+                        List<String> dataRow = new ArrayList<>();
+                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                            dataRow.add(v);
+                        }
+                        row = new ArrayList<>();
+                        row.add(trowsNumber++ + "");
+                        for (int c = 0; c < colLen; c++) {
+                            int col = cols.get(c);
+                            double v = 0;
+                            if (col >= 0 && col < dataRow.size()) {
+                                v = doubleValue(dataRow.get(col));
+                            }
+                            if (withValues) {
+                                row.add(DoubleTools.scale(v, scale) + "");
+                            }
+                            if (sum[c] == 0) {
+                                row.add("0");
+                            } else {
+                                row.add(DoubleTools.percentage(v, sum[c]));
+                            }
+                        }
+                        csvPrinter.printRecord(row);
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(names.size()).setRowsNumber(trowsNumber);
+            return targetData;
+        } else {
+            return null;
+        }
     }
 
     public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {

@@ -246,7 +246,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     public synchronized void addBackup() {
-        if (sourceFile == null) {
+        if (sourceFile == null || !sourceFile.exists()) {
             return;
         }
         File backupFile = newBackupFile();
@@ -263,20 +263,32 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             protected boolean handle() {
                 try {
                     backupFile.getParentFile().mkdirs();
-                    FileCopyTools.copyFile(sourceFile, backupFile, false, false);
+                    if (!FileCopyTools.copyFile(sourceFile, backupFile, false, false) || !backupFile.exists()) {
+                        return false;
+                    }
                     newBackup = new FileBackup(sourceFile, backupFile);
                     newBackup = tableFileBackup.insertData(newBackup);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return newBackup != null && backupFile.exists();
+                return newBackup != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 tableData.add(0, newBackup);
                 tableView.refresh();
+            }
+
+            @Override
+            protected void whenFailed() {
+                if (isCancelled()) {
+                    return;
+                }
+                if (error != null) {
+                    MyBoxLog.error(error);
+                }
             }
 
         };

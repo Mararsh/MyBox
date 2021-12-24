@@ -143,7 +143,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
     }
 
     @Override
-    public void handleFile() {
+    public void handleFileTask() {
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -175,7 +175,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
     }
 
     @Override
-    public void handleSelectedRows() {
+    public void handleRowsTask() {
         try {
             tableController.isSettingValues = true;
             boolean ok;

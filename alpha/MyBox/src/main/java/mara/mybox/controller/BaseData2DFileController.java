@@ -4,6 +4,7 @@ import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyEvent;
@@ -42,6 +43,8 @@ public abstract class BaseData2DFileController extends BaseController {
     protected ControlData2D dataController;
     @FXML
     protected Label nameLabel;
+    @FXML
+    protected CheckBox leftPaneCheck;
 
     public BaseData2DFileController() {
         TipsLabelKey = "DataFileTips";
@@ -86,6 +89,16 @@ public abstract class BaseData2DFileController extends BaseController {
             initBackupsTab();
             initSaveAsTab();
 
+            leftPaneCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayLeftPane", true));
+            checkLeftPane();
+            leftPaneCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "DisplayLeftPane", leftPaneCheck.isSelected());
+                    checkLeftPane();
+                }
+            });
+
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
@@ -104,6 +117,16 @@ public abstract class BaseData2DFileController extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkLeftPane() {
+        if (leftPaneCheck.isSelected()) {
+            leftPaneControl.setVisible(true);
+            showLeftPane();
+        } else {
+            hideLeftPane();
+            leftPaneControl.setVisible(false);
         }
     }
 

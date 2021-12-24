@@ -1,19 +1,15 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.data.Data2D;
-import mara.mybox.db.DerbyBase;
+import mara.mybox.data.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
@@ -26,16 +22,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-13
  * @License Apache License Version 2.0
  */
-public class Data2DPercentageController extends Data2DOperationController {
+public class Data2DPercentageController extends Data2DHandleController {
 
     protected File handleFile;
 
     @FXML
     protected CheckBox valuesCheck;
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    @Override
+    public void initControls() {
         try {
-            super.setParameters(tableController, true, true, false);
+            super.initControls();
 
             valuesCheck.setSelected(UserConfig.getBoolean(baseName + "WithDataValues", false));
             valuesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -51,28 +48,20 @@ public class Data2DPercentageController extends Data2DOperationController {
     }
 
     @Override
-    public boolean hanldeData() {
-        try {
-            handleFile = null;
-            if (!prepareRows()) {
-                return false;
-            }
-            if (selectController.isAllData() && data2D.isMutiplePages()) {
-                return handleFile();
-            } else {
-                return handleRows();
-            }
-        } catch (Exception e) {
-            outError(e.toString());
-            MyBoxLog.error(e.toString());
+    public boolean checkOptions() {
+        targetController.setHandleFile(allPages());
+        if (!super.checkOptions()) {
             return false;
         }
+        boolean ok = prepareRows();
+        okButton.setDisable(!ok);
+        return ok;
     }
 
     public boolean prepareRows() {
         try {
-            if (selectedColumns == null || selectedColumns.isEmpty()) {
-                outError(message("SelectToHandle"));
+            List<Data2DColumn> cols = tableController.checkedCols();
+            if (cols == null || cols.isEmpty()) {
                 return false;
             }
             handledNames = new ArrayList<>();
@@ -83,7 +72,7 @@ public class Data2DPercentageController extends Data2DOperationController {
             }
             handledNames.add(cName);
             handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Integer));
-            for (Data2DColumn column : selectedColumns) {
+            for (Data2DColumn column : cols) {
                 if (valuesCheck.isSelected()) {
                     handledColumns.add(column.cloneAll());
                     handledNames.add(column.getName());
@@ -97,34 +86,46 @@ public class Data2DPercentageController extends Data2DOperationController {
             }
             return true;
         } catch (Exception e) {
-            outError(e.toString());
+            popError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
     }
 
+    @Override
     public boolean handleRows() {
         try {
-            if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()) {
-                outError(message("SelectToHandle"));
+            if (tableController.checkedRowsIndices == null || tableController.checkedRowsIndices.isEmpty()) {
+                if (task != null) {
+                    task.setError(message("SelectToHandle"));
+                }
                 return false;
             }
-            int colsLen = checkedColsIndices.size();
+            int colsLen = tableController.checkedColsIndices.size();
             double[] sum = new double[colsLen];
-            for (int r : checkedRowsIndices) {
+            for (int r : tableController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
-                    sum[c] += data2D.doubleValue(tableRow.get(checkedColsIndices.get(c) + 1));
+                    sum[c] += data2D.doubleValue(tableRow.get(tableController.checkedColsIndices.get(c) + 1));
                 }
             }
             handledData = new ArrayList<>();
             int scale = data2D.getScale();
-            for (int r : checkedRowsIndices) {
+            List<String> row = new ArrayList<>();
+            row.add(message("Count"));
+            for (int c = 0; c < colsLen; c++) {
+                if (valuesCheck.isSelected()) {
+                    row.add("");
+                }
+                row.add(DoubleTools.format(sum[c], scale));
+            }
+            handledData.add(row);
+            for (int r : tableController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
-                List<String> row = new ArrayList<>();
+                row = new ArrayList<>();
                 row.add((r + 1) + "");
                 for (int c = 0; c < colsLen; c++) {
-                    double d = data2D.doubleValue(tableRow.get(checkedColsIndices.get(c) + 1));
+                    double d = data2D.doubleValue(tableRow.get(tableController.checkedColsIndices.get(c) + 1));
                     if (valuesCheck.isSelected()) {
                         row.add(DoubleTools.format(d, scale));
                     }
@@ -138,44 +139,42 @@ public class Data2DPercentageController extends Data2DOperationController {
             }
             return true;
         } catch (Exception e) {
-            outError(e.toString());
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean handleFile() {
-        handleFile = data2D.percentage(handledNames, checkedRowsIndices, valuesCheck.isSelected());
-        if (handleFile == null || !handleFile.exists()) {
-            return false;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            Data2DDefinition def = Data2D.create(Data2DDefinition.Type.CSV)
-                    .setFile(handleFile).setHasHeader(true)
-                    .setDelimiter(",").setCharset(Charset.forName("UTF-8"));
-            def = tableController.tableData2DDefinition.insertData(conn, def);
-            conn.commit();
-            for (int i = 0; i < handledColumns.size(); i++) {
-                Data2DColumn column = handledColumns.get(i);
-                column.setIndex(i);
+            if (task != null) {
+                task.setError(e.toString());
             }
-            tableController.tableData2DColumn.save(conn, def.getD2did(), handledColumns);
-        } catch (Exception e) {
-            outError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
-        return true;
     }
 
     @Override
-    public boolean outputExternal() {
-        if (selectController.isAllData() && data2D.isMutiplePages()) {
-            DataFileCSVController.open(handleFile, Charset.forName("UTF-8"), true, ',');
+    public DataFileCSV generatedFile() {
+        return data2D.percentage(handledNames, tableController.checkedColsIndices, valuesCheck.isSelected());
+    }
 
-        } else {
-            DataFileCSVController.open(handledColumns, handledData);
-        }
+    public boolean handleFile() {
+//        handleFile = data2D.percentage(handledNames, tableController.checkedColsIndices, valuesCheck.isSelected());
+//        if (handleFile == null || !handleFile.exists()) {
+//            return false;
+//        }
+//        try ( Connection conn = DerbyBase.getConnection()) {
+//            Data2DDefinition def = Data2D.create(Data2DDefinition.Type.CSV)
+//                    .setFile(handleFile).setHasHeader(true)
+//                    .setDelimiter(",").setCharset(Charset.forName("UTF-8"));
+//            def = tableController.tableData2DDefinition.insertData(conn, def);
+//            conn.commit();
+//            for (int i = 0; i < handledColumns.size(); i++) {
+//                Data2DColumn column = handledColumns.get(i);
+//                column.setIndex(i);
+//            }
+//            tableController.tableData2DColumn.save(conn, def.getD2did(), handledColumns);
+//        } catch (Exception e) {
+//            if (task != null) {
+//                task.setError(e.toString());
+//            }
+//            MyBoxLog.error(e);
+//            return false;
+//        }
         return true;
     }
 

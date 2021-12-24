@@ -23,8 +23,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="2.0" 
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DExportController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DExportController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -35,11 +34,12 @@ License:    Apache License Version 2.0
             <tabs>
                 <Tab text="%DataSource">
                     <content>
-                        <VBox fx:id="dataVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" >
+                        <VBox fx:id="dataVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                             <padding>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                             </padding>
                             <children>
+                        <Label fx:id="dataLabel" minHeight="-Infinity" wrapText="true" />
                                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                                     <children>
                                         <Label text="%Rows">

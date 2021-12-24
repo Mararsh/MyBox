@@ -11,11 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
-import javax.imageio.ImageIO;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
+import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -124,7 +125,7 @@ public class WebAddressController extends BaseWebViewController {
                             if (iconFile != null && iconFile.exists()) {
                                 his.setIcon(iconFile.getAbsolutePath());
                                 if (addressTab != null) {
-                                    BufferedImage image = ImageIO.read(iconFile);
+                                    BufferedImage image = ImageFileReaders.readImage(iconFile);
                                     if (image != null) {
                                         tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
                                     }
@@ -151,7 +152,7 @@ public class WebAddressController extends BaseWebViewController {
             protected void whenSucceeded() {
                 if (addressTab != null) {
                     if (tabImage == null) {
-                        tabImage = new ImageView("img/MyBox.png");
+                        tabImage = StyleTools.getIconImage("iconMyBox.png");
                     }
                     tabImage.setFitWidth(20);
                     tabImage.setFitHeight(20);

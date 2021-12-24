@@ -262,7 +262,7 @@ public abstract class Data2D extends Data2DDefinition {
         return null;
     }
 
-    public File percentage(List<String> names, List<Integer> cols, boolean withValues) {
+    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues) {
         return null;
     }
 

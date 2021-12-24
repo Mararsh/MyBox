@@ -267,7 +267,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             if (colName) {
                 List<String> names = checkedColsNames();
                 if (rowNumber) {
-                    names.add(0, message("RowNumber"));
+                    names.add(0, message("SourceRowNumber"));
                 }
                 data.add(names);
             }
@@ -467,20 +467,6 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void statistic() {
-        if (!validateData()) {
-            return;
-        }
-        Data2DOperateController.open(this, "statistic");
-    }
-
-    public void percentage() {
-        if (!validateData()) {
-            return;
-        }
-        Data2DOperateController.open(this, "percentage");
     }
 
 }

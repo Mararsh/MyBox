@@ -19,12 +19,12 @@ public class Data2DTransposeController extends Data2DHandleController {
     }
 
     @Override
-    public void handleFile() {
+    public void handleFileTask() {
         popError(message("NotSupport"));
     }
 
     @Override
-    public boolean handleSelectedRowsForTable() {
+    public boolean handleRows() {
         try {
             List<List<String>> selectedData = tableController.selectedData(all(),
                     rowNumberCheck.isSelected(), colNameCheck.isSelected());

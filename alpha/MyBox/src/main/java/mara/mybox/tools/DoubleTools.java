@@ -19,9 +19,7 @@ public class DoubleTools {
             if (total == 0) {
                 return message("Invalid");
             }
-            String format = "#,###.##";
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(scale(data * 100 / total, 2));
+            return scale(data * 100 / total, 2) + "";
         } catch (Exception e) {
             return message("Invalid");
         }

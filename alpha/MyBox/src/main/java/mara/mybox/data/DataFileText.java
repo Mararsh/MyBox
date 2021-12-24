@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
@@ -669,21 +671,124 @@ public class DataFileText extends DataFile {
             MyBoxLog.error(e);
             return null;
         }
-        DataFileCSV targetData = new DataFileCSV();
-        targetData.setFile(csvFile).setCharset(charset)
-                .setDelimiter(",").setHasHeader(colName)
-                .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
-        return targetData;
+        if (csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(charset)
+                    .setDelimiter(",").setHasHeader(colName)
+                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        int colLen = cols.size();
+        double[] sum = new double[colLen];
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            String line;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> dataRow = parseFileLine(line);
+                if (dataRow == null || dataRow.isEmpty()) {
+                    continue;
+                }
+                for (int c = 0; c < colLen; c++) {
+                    int col = cols.get(c);
+                    if (col < 0 || col >= dataRow.size()) {
+                        continue;
+                    }
+                    double v = doubleValue(dataRow.get(col));
+                    sum[c] += v;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(',');
+        int trowsNumber = 0;
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, charset), targetFormat)) {
+            csvPrinter.printRecord(names);
+            List<String> row = new ArrayList<>();
+            row.add(message("Summation"));
+            for (int c = 0; c < colLen; c++) {
+                row.add(DoubleTools.scale(sum[c], scale) + "");
+                if (withValues) {
+                    row.add("");
+                }
+            }
+            csvPrinter.printRecord(row);
+            trowsNumber++;
+
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            String line;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> dataRow = parseFileLine(line);
+                if (dataRow == null || dataRow.isEmpty()) {
+                    continue;
+                }
+                row = new ArrayList<>();
+                row.add(trowsNumber++ + "");
+                for (int c = 0; c < colLen; c++) {
+                    int col = cols.get(c);
+                    double v = 0;
+                    if (col >= 0 && col < dataRow.size()) {
+                        v = doubleValue(dataRow.get(col));
+                    }
+                    if (withValues) {
+                        row.add(DoubleTools.scale(v, scale) + "");
+                    }
+                    if (sum[c] == 0) {
+                        row.add("0");
+                    } else {
+                        row.add(DoubleTools.percentage(v, sum[c]));
+                    }
+                }
+                csvPrinter.printRecord(row);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(charset)
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(names.size()).setRowsNumber(trowsNumber);
+            return targetData;
+        } else {
+            return null;
+        }
     }
 
     public static DataFileText toText(DataFileCSV csvData) {
         if (csvData == null) {
             return null;
         }
-        DataFileText targetData = new DataFileText();
-        targetData.cloneAll(csvData);
-        targetData.setType(Type.Texts);
-        return targetData;
+        File txtFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".txt");
+        if (FileCopyTools.copyFile(csvData.getFile(), txtFile)) {
+            DataFileText targetData = new DataFileText();
+            targetData.cloneAll(csvData);
+            targetData.setType(Type.Texts).setFile(txtFile);
+            return targetData;
+        } else {
+            return null;
+        }
+
     }
 
 }

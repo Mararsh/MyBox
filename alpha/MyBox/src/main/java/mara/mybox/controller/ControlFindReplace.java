@@ -75,11 +75,33 @@ public class ControlFindReplace extends BaseController {
         }
     }
 
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (shareCheck != null) {
+                shareCheck.setSelected(UserConfig.getBoolean("ShareFindReplaceOptions", true));
+                shareCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ShareFindReplaceOptions", shareCheck.isSelected());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void setEditor(BaseFileEditorController parent) {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
-        if (shareCheck == null || shareCheck.isSelected()) {
+        if (shareCheck != null && shareCheck.isSelected()) {
+            baseName = "FindReplace";
+        } else {
             baseName = editerController.baseName;
         }
         setControls();
@@ -89,8 +111,10 @@ public class ControlFindReplace extends BaseController {
         try {
             this.parentController = parent;
             this.textInput = textInput;
-            if (shareCheck == null || shareCheck.isSelected()) {
-                baseName = parent.baseName;
+            if (shareCheck != null && shareCheck.isSelected()) {
+                baseName = "FindReplace";
+            } else {
+                baseName = editerController.baseName;
             }
             setControls();
         } catch (Exception e) {
@@ -101,8 +125,10 @@ public class ControlFindReplace extends BaseController {
     public void setParent(BaseController parent) {
         try {
             this.parentController = parent;
-            if (shareCheck == null || shareCheck.isSelected()) {
-                baseName = parent.baseName;
+            if (shareCheck != null && shareCheck.isSelected()) {
+                baseName = "FindReplace";
+            } else {
+                baseName = editerController.baseName;
             }
             setControls();
         } catch (Exception e) {
@@ -164,16 +190,6 @@ public class ControlFindReplace extends BaseController {
             multilineCheck.disableProperty().bind(regexCheck.selectedProperty().not());
             dotallCheck.disableProperty().bind(regexCheck.selectedProperty().not());
             exampleFindButton.disableProperty().bind(regexCheck.selectedProperty().not());
-
-            if (shareCheck != null) {
-                shareCheck.setSelected(UserConfig.getBoolean(baseName + "ShareFindReplaceOptions", true));
-                shareCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "ShareFindReplaceOptions", shareCheck.isSelected());
-                    }
-                });
-            }
 
             findArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
@@ -399,7 +415,6 @@ public class ControlFindReplace extends BaseController {
             popError(message("InvalidParameters"));
             return false;
         }
-
         boolean multiplePages = editerController != null
                 && editerController.sourceInformation != null
                 && editerController.sourceInformation.getPagesNumber() > 1;
@@ -687,12 +702,12 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     public void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findArea, mouseEvent, baseName + "FindHistory");
+        PopTools.popStringValues(this, findArea, mouseEvent, baseName + "FindString");
     }
 
     @FXML
     public void popReplaceHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, replaceArea, mouseEvent, baseName + "ReplaceHistory");
+        PopTools.popStringValues(this, replaceArea, mouseEvent, baseName + "ReplaceString");
     }
 
 }

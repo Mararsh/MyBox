@@ -6,10 +6,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
 import mara.mybox.data.DataFile;
@@ -48,9 +48,9 @@ public abstract class Data2DHandleController extends BaseController {
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
-    protected HBox namesBox;
-    @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
+    @FXML
+    protected Label dataLabel;
 
     @Override
     public void setStageStatus() {
@@ -62,18 +62,12 @@ public abstract class Data2DHandleController extends BaseController {
             this.tableController = tableController;
             data2D = tableController.data2D;
 
-            if (targetController != null) {
-                targetController.setParameters(this, tableController, includeTable);
+            if (dataLabel != null) {
+                dataLabel.setText(data2D.displayName());
             }
 
-            if (namesBox != null && targetController != null) {
-                namesBox.setVisible(!targetController.inTable());
-                targetController.targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        namesBox.setVisible(!targetController.inTable());
-                    }
-                });
+            if (targetController != null) {
+                targetController.setParameters(this, tableController, includeTable);
             }
 
             if (rowNumberCheck != null) {
@@ -187,17 +181,17 @@ public abstract class Data2DHandleController extends BaseController {
             }
             if (allPages()) {
                 if (tableController.checkBeforeLoadingTableData()) {
-                    handleFile();
+                    handleFileTask();
                 }
             } else {
-                handleSelectedRows();
+                handleRowsTask();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void handleFile() {
+    public void handleFileTask() {
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -209,8 +203,8 @@ public abstract class Data2DHandleController extends BaseController {
                         return false;
                     }
                     handledColumns = tableController.checkedCols();
-                    if (rowNumberCheck.isSelected()) {
-                        handledColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+                    if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
+                        handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
                     }
                     switch (targetController.target) {
                         case "csv":
@@ -291,21 +285,14 @@ public abstract class Data2DHandleController extends BaseController {
         }
     }
 
-    public synchronized void handleSelectedRows() {
+    public synchronized void handleRowsTask() {
         task = new SingletonTask<Void>(this) {
-
-            boolean forTable;
 
             @Override
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    forTable = targetController != null ? targetController.inTable() : false;
-                    if (forTable) {
-                        return handleSelectedRowsForTable();
-                    } else {
-                        return handleSelectedRowsForExternal();
-                    }
+                    return handleRows();
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -314,7 +301,7 @@ public abstract class Data2DHandleController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                if (forTable) {
+                if (targetController.inTable()) {
                     updateTable();
                 } else {
                     outputExternal();
@@ -335,7 +322,7 @@ public abstract class Data2DHandleController extends BaseController {
         start(task);
     }
 
-    public boolean handleSelectedRowsForTable() {
+    public boolean handleRows() {
         try {
             handledData = tableController.selectedData(all(), rowNumberCheck.isSelected(), colNameCheck.isSelected());
             if (handledData == null) {
@@ -344,7 +331,7 @@ public abstract class Data2DHandleController extends BaseController {
             handledNames = null;
             handledColumns = tableController.checkedCols();
             if (rowNumberCheck.isSelected()) {
-                handledColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+                handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             return true;
         } catch (Exception e) {
@@ -354,10 +341,6 @@ public abstract class Data2DHandleController extends BaseController {
             MyBoxLog.error(e.toString());
             return false;
         }
-    }
-
-    public boolean handleSelectedRowsForExternal() {
-        return handleSelectedRowsForTable();
     }
 
     public boolean updateTable() {

@@ -192,7 +192,7 @@ public class Data2DPasteController extends BaseController {
                                 columnNames.add(dataFileText.colName(i));
                             }
                             tcols = new ArrayList<>();
-                            tcols.add(message("RowNumber"));
+                            tcols.add(message("SourceRowNumber"));
                             tcols.addAll(columnNames);
                         }
                         StringTable table = new StringTable(tcols);
@@ -318,7 +318,7 @@ public class Data2DPasteController extends BaseController {
     public static Data2DPasteController open(ControlData2DLoad parent, String text, boolean forPaste) {
         try {
             Data2DPasteController controller = (Data2DPasteController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.Data2DPasteFxml);
+                    parent.getMyWindow(), Fxmls.Data2DPasteFxml, false);
             controller.setParameters(parent, text, forPaste);
             return controller;
         } catch (Exception e) {

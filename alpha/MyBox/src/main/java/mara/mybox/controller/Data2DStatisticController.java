@@ -12,6 +12,7 @@ import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
@@ -167,46 +168,24 @@ public class Data2DStatisticController extends Data2DHandleController {
         medianCheck.setSelected(false);
     }
 
-    @FXML
-    @Override
-    public void okAction() {
-        try {
-            if (!checkOptions()) {
-                return;
-            }
-            if (allPages()) {
-                if (tableController.checkBeforeLoadingTableData()) {
-                    if (modeCheck.isSelected() || medianCheck.isSelected()) {
-                        statisticRows(data2D.allRows(tableController.checkedColsIndices()));
-                    } else {
-                        statisticFile();
-                    }
-                }
-            } else {
-                statisticRows(selectedData());
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
     public boolean prepareRows() {
         try {
-            if (selectedNames == null || selectedNames.isEmpty()) {
-                outError(message("SelectToHandle"));
+            List<String> names = tableController.checkedColsNames();
+            if (names == null || names.isEmpty()) {
+                popError(message("SelectToHandle"));
                 return false;
             }
             String cName = message("Calculation");
-            while (selectedNames.contains(cName)) {
+            while (names.contains(cName)) {
                 cName += "m";
             }
             handledNames = new ArrayList<>();
             handledNames.add(cName);
-            handledNames.addAll(selectedNames);
+            handledNames.addAll(names);
 
             handledColumns = new ArrayList<>();
             handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
-            for (String name : selectedNames) {
+            for (String name : names) {
                 handledColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.Double));
             }
 
@@ -266,37 +245,66 @@ public class Data2DStatisticController extends Data2DHandleController {
                 handledData.add(medianRow);
             }
             if (handledData.isEmpty()) {
-                outError(message("SelectToHandle"));
+                popError(message("SelectToHandle"));
                 return false;
             }
             return true;
         } catch (Exception e) {
-            outError(e.toString());
+            popError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
     }
 
+    @FXML
     @Override
-    public boolean handleSelectedRowsForTable() {
-        try {
-            handledData = tableController.selectedData(all(), false, false);
-            if (handledData == null) {
-                return false;
-            }
-            handledNames = null;
-            handledColumns = tableController.checkedCols();
-            if (rowNumberCheck.isSelected()) {
-                handledColumns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return false;
+    public void okAction() {
+        if ((allPages() && !tableController.checkBeforeLoadingTableData())
+                || !checkOptions() || !prepareRows()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    if (allPages()) {
+                        if (modeCheck.isSelected() || medianCheck.isSelected()) {
+                            return statisticRows(data2D.allRows(tableController.checkedColsIndices()));
+                        } else {
+                            return statisticFile();
+                        }
+                    } else {
+                        return statisticRows(tableController.selectedData(all(), false, false));
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputExternal();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
+            }
+
+        };
+        start(task);
     }
 
     // All as double to make things simple. 
@@ -304,14 +312,13 @@ public class Data2DStatisticController extends Data2DHandleController {
     public boolean statisticRows(List<List<String>> rows) {
         try {
             if (rows == null || rows.isEmpty()) {
-                outError(message("SelectToHandle"));
-                return false;
-            }
-            if (!prepareRows()) {
+                if (task != null) {
+                    task.setError(message("SelectToHandle"));
+                }
                 return false;
             }
             int rowsNumber = rows.size();
-            int colsNumber = checkedColsIndices.size();
+            int colsNumber = rows.get(0).size();
             int scale = data2D.getScale();
             for (int c = 0; c < colsNumber; c++) {
                 double[] colData = new double[rowsNumber];
@@ -349,15 +356,17 @@ public class Data2DStatisticController extends Data2DHandleController {
             }
             return true;
         } catch (Exception e) {
-            outError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
             MyBoxLog.error(e);
             return false;
         }
     }
 
     public boolean statisticFile() {
-        DoubleStatistic[] statisticData = data2D.statisticData(checkedColsIndices);
-        if (statisticData == null || !prepareRows()) {
+        DoubleStatistic[] statisticData = data2D.statisticData(tableController.checkedColsIndices);
+        if (statisticData == null) {
             return false;
         }
         int scale = data2D.getScale();

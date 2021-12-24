@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
         </FlowPane>
         <HBox fx:id="pasteBox" alignment="CENTER_LEFT" spacing="2.0">
             <children>
-                <Label maxWidth="1.7976931348623157E308" text="%SelectSomeOrNone" HBox.hgrow="ALWAYS" />
+                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <RadioButton fx:id="replaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
                     <toggleGroup>
                         <ToggleGroup fx:id="opGroup" />
