@@ -514,7 +514,7 @@ public class ControlData2D extends BaseController {
             if (text == null || text.isBlank()) {
                 popError(message("NoTextInClipboard"));
             }
-            Data2DPasteController.open(tableController, text, false);
+            Data2DLoadContentInSystemClipboardController.open(tableController, text);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -644,7 +644,12 @@ public class ControlData2D extends BaseController {
             menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSortController.open(tableController);
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -759,7 +764,7 @@ public class ControlData2D extends BaseController {
             return false;
         }
         if (editTab.isSelected() && editController.tableTab.isSelected()) {
-            DataClipboardPopController.open(tableController);
+            Data2DPasteContentInMyBoxClipboardController.open(tableController);
             return true;
 
         }
@@ -770,7 +775,7 @@ public class ControlData2D extends BaseController {
     @Override
     public void myBoxClipBoard() {
         if (editTab.isSelected() && editController.tableTab.isSelected()) {
-            DataClipboardPopController.open(tableController);
+            Data2DPasteContentInMyBoxClipboardController.open(tableController);
         } else {
             TextInMyBoxClipboardController.oneOpen();
         }

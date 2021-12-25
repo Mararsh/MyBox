@@ -22,11 +22,34 @@ License:    Apache License Version 2.0
         <Label text="%TextDelimiter" />
         <FlowPane hgap="2.0" vgap="2.0">
             <children>
-                <RadioButton fx:id="commaRadio" mnemonicParsing="false" selected="true" text=",">
-                    <toggleGroup>
+                <RadioButton fx:id="stringRadio" mnemonicParsing="false" text="%String">
+               <toggleGroup>
                         <ToggleGroup fx:id="delimiterGroup" />
-                    </toggleGroup>
-                </RadioButton>
+               </toggleGroup></RadioButton>
+                <TextField fx:id="delimiterInput" prefWidth="100.0" />
+                <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconExamples.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </FlowPane>
+        <FlowPane hgap="2.0" vgap="2.0">
+            <children>
+            <RadioButton fx:id="tabRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="blankRadio" mnemonicParsing="false" text="%Blank" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="blanksRadio" mnemonicParsing="false" text="%BlankCharacters" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="blank4Radio" mnemonicParsing="false" text="%Blank4" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="blank8Radio" mnemonicParsing="false" text="%Blank8" toggleGroup="$delimiterGroup" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="2.0" vgap="2.0">
+            <children>
+                <RadioButton fx:id="commaRadio" mnemonicParsing="false" selected="true" text="," toggleGroup="$delimiterGroup" />
                 <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="|" toggleGroup="$delimiterGroup" />
                 <RadioButton fx:id="sharpRadio" mnemonicParsing="false" text="#" toggleGroup="$delimiterGroup" />
                 <RadioButton fx:id="hyphenRadio" mnemonicParsing="false" text="-" toggleGroup="$delimiterGroup" />
@@ -52,30 +75,6 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="equalRadio" layoutX="43.0" layoutY="28.0" mnemonicParsing="false" text="=" toggleGroup="$delimiterGroup" />
                 <RadioButton fx:id="lessRadio" layoutX="124.0" layoutY="10.0" mnemonicParsing="false" text="&lt;" toggleGroup="$delimiterGroup" />
                 <RadioButton fx:id="greateRadio" layoutX="515.0" layoutY="10.0" mnemonicParsing="false" text="&gt;" toggleGroup="$delimiterGroup" />
-            </children>
-        </FlowPane>
-        <FlowPane hgap="2.0" vgap="2.0">
-            <children>
-            <RadioButton fx:id="tabRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterGroup" />
-                <RadioButton fx:id="blankRadio" mnemonicParsing="false" text="%Blank" toggleGroup="$delimiterGroup" />
-                <RadioButton fx:id="blanksRadio" mnemonicParsing="false" text="%BlankCharacters" toggleGroup="$delimiterGroup" />
-                <RadioButton fx:id="blank4Radio" mnemonicParsing="false" text="%Blank4" toggleGroup="$delimiterGroup" />
-                <RadioButton fx:id="blank8Radio" mnemonicParsing="false" text="%Blank8" toggleGroup="$delimiterGroup" />
-            </children>
-        </FlowPane>
-        <FlowPane hgap="2.0" vgap="2.0">
-            <children>
-                <RadioButton fx:id="stringRadio" mnemonicParsing="false" text="%String" toggleGroup="$delimiterGroup" />
-                <TextField fx:id="delimiterInput" prefWidth="100.0" />
-                <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconExamples.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
             </children>
         </FlowPane>
     </children>

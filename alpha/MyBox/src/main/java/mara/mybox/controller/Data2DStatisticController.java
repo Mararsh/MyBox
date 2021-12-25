@@ -29,6 +29,7 @@ public class Data2DStatisticController extends Data2DHandleController {
 
     protected List<String> countRow, summationRow, meanRow, varianceRow, skewnessRow,
             maximumRow, minimumRow, modeRow, medianRow;
+    protected List<String> handledNames;
 
     @FXML
     protected CheckBox countCheck, summationCheck, meanCheck, varianceCheck, skewnessCheck,
@@ -190,6 +191,7 @@ public class Data2DStatisticController extends Data2DHandleController {
             }
 
             handledData = new ArrayList<>();
+            handledData.add(0, handledNames);
             countRow = null;
             if (countCheck.isSelected()) {
                 countRow = new ArrayList<>();
@@ -244,10 +246,11 @@ public class Data2DStatisticController extends Data2DHandleController {
                 medianRow.add(message("Median"));
                 handledData.add(medianRow);
             }
-            if (handledData.isEmpty()) {
+            if (handledData.size() < 2) {
                 popError(message("SelectToHandle"));
                 return false;
             }
+
             return true;
         } catch (Exception e) {
             popError(e.toString());
@@ -276,7 +279,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                             return statisticFile();
                         }
                     } else {
-                        return statisticRows(tableController.selectedData(all(), false, false));
+                        return statisticRows(tableController.selectedData(all(), false));
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -395,6 +398,7 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
         return true;
     }
+
 
     /*
         static

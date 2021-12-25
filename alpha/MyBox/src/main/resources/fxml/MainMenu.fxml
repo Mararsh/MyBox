@@ -201,7 +201,6 @@ License:    Apache License Version 2.0
                         <Menu mnemonicParsing="false" text="%Data">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
-                                <MenuItem mnemonicParsing="false" onAction="#openDataClipboard" text="%DataClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%DataFile">
                                     <items>
@@ -219,6 +218,8 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataMerge" text="%TextDataMerge" />
                                     </items>
                                 </Menu>
+                                <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
+                                <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatricesManage" text="%MatricesManage" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatrixUnaryCalculation" text="%MatrixUnaryCalculation" />

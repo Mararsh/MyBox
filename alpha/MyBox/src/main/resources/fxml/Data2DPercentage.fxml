@@ -25,9 +25,9 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Percentage" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
+      <Label fx:id="dataLabel" minHeight="-Infinity" wrapText="true" />
       <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
-            <Label fx:id="dataLabel" minHeight="-Infinity" wrapText="true" />
             <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                <children>
                   <Label text="%Rows">
@@ -86,10 +86,10 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Label minHeight="-Infinity" text="%NonnumericCountAsZero" wrapText="true" />
                </children>
             </FlowPane>
             <CheckBox fx:id="valuesCheck" mnemonicParsing="false" text="%DataValues" />
+            <Label minHeight="-Infinity" text="%NonnumericCountAsZero" wrapText="true" />
          </children>
       </VBox>
       <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

@@ -708,4 +708,7 @@ License:    Apache License Version 2.0
     <bottom>
         <Label fx:id="bottomLabel" />
     </bottom>
+   <padding>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </padding>
 </BorderPane>

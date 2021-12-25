@@ -25,6 +25,7 @@ import mara.mybox.value.UserConfig;
 public class Data2DPercentageController extends Data2DHandleController {
 
     protected File handleFile;
+    protected List<String> handledNames;
 
     @FXML
     protected CheckBox valuesCheck;
@@ -49,7 +50,7 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        targetController.setHandleFile(allPages());
+        targetController.setNotInTable(allPages());
         if (!super.checkOptions()) {
             return false;
         }
@@ -110,6 +111,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                 }
             }
             handledData = new ArrayList<>();
+            handledData.add(0, handledNames);
             int scale = data2D.getScale();
             List<String> row = new ArrayList<>();
             row.add(message("Count"));
@@ -150,32 +152,6 @@ public class Data2DPercentageController extends Data2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         return data2D.percentage(handledNames, tableController.checkedColsIndices, valuesCheck.isSelected());
-    }
-
-    public boolean handleFile() {
-//        handleFile = data2D.percentage(handledNames, tableController.checkedColsIndices, valuesCheck.isSelected());
-//        if (handleFile == null || !handleFile.exists()) {
-//            return false;
-//        }
-//        try ( Connection conn = DerbyBase.getConnection()) {
-//            Data2DDefinition def = Data2D.create(Data2DDefinition.Type.CSV)
-//                    .setFile(handleFile).setHasHeader(true)
-//                    .setDelimiter(",").setCharset(Charset.forName("UTF-8"));
-//            def = tableController.tableData2DDefinition.insertData(conn, def);
-//            conn.commit();
-//            for (int i = 0; i < handledColumns.size(); i++) {
-//                Data2DColumn column = handledColumns.get(i);
-//                column.setIndex(i);
-//            }
-//            tableController.tableData2DColumn.save(conn, def.getD2did(), handledColumns);
-//        } catch (Exception e) {
-//            if (task != null) {
-//                task.setError(e.toString());
-//            }
-//            MyBoxLog.error(e);
-//            return false;
-//        }
-        return true;
     }
 
     /*

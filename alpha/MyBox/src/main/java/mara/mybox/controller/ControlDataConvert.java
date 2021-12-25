@@ -699,7 +699,7 @@ public class ControlDataConvert extends BaseController {
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.save(conn, d, columns);
-                DataClipboardController.update();
+                DataInMyBoxClipboardController.update();
                 conn.commit();
             }
             conn.close();
@@ -732,7 +732,7 @@ public class ControlDataConvert extends BaseController {
             WebBrowserController.oneOpen(htmlFile);
         }
         if (dataClipboardFile != null && dataClipboardFile.exists()) {
-            DataClipboardController.oneOpen();
+            DataInMyBoxClipboardController.oneOpen();
         }
         if (xmlFile != null && xmlFile.exists()) {
             browse(xmlFile);

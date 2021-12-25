@@ -4,21 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
-import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -34,8 +28,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-3-11
  * @License Apache License Version 2.0
  */
-public class ControlDataClipboard extends BaseSysTableController<Data2DDefinition> {
+public class ControlDataClipboardTable extends BaseSysTableController<Data2DDefinition> {
 
+    protected ControlData2DLoad loadController;
     protected DataClipboard dataClipboard;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
@@ -51,13 +46,9 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     @FXML
     protected TableColumn<Data2DDefinition, Date> timeColumn;
     @FXML
-    protected Label nameLabel;
-    @FXML
-    protected ControlData2D dataController;
-    @FXML
-    protected Button clearClipsButton, deleteClipsButton, editClipButton, renameClipButton;
+    protected Button clearClipsButton, deleteClipsButton, renameClipButton;
 
-    public ControlDataClipboard() {
+    public ControlDataClipboardTable() {
         baseTitle = message("DataClipboard");
         TipsLabelKey = "Data2DTips";
     }
@@ -67,53 +58,31 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         try {
             super.initValues();
 
-            dataController.setDataType(this, Data2D.Type.MyBoxClipboard);
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            tableData2DColumn = dataController.tableData2DColumn;
-            dataClipboard = (DataClipboard) dataController.data2D;
-            dataController.tableController.dataLabel = nameLabel;
-            dataController.tableController.baseTitle = baseTitle;
+            clearButton = clearClipsButton;
+            deleteButton = deleteClipsButton;
+            renameButton = renameClipButton;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setParameters(ControlData2DLoad loadController) {
+        try {
+            this.loadController = loadController;
+            tableData2DDefinition = loadController.tableData2DDefinition;
+            tableData2DColumn = loadController.tableData2DColumn;
+            dataClipboard = (DataClipboard) loadController.data2D;
 
             tableDefinition = tableData2DDefinition;
             queryConditions = "data_type=" + dataClipboard.type();
 
-            clearButton = clearClipsButton;
-            deleteButton = deleteClipsButton;
-            renameButton = renameClipButton;
-            editButton = editClipButton;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    updateStatus();
-                }
-            });
-
-            dataController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    refreshAction();
-                }
-            });
+            loadTableData();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
+
 
     /*
         table
@@ -179,7 +148,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     protected void afterDeletion() {
         refreshAction();
         if (dataClipboard.getFile() != null && !dataClipboard.getFile().exists()) {
-            dataController.loadNull();
+            loadController.loadNull();
         }
     }
 
@@ -187,21 +156,22 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
     protected void afterClear() {
         FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
         refreshAction();
-        dataController.loadNull();
+        loadController.loadNull();
     }
 
     @Override
     public void itemClicked() {
-        editAction();
+        viewAction();
     }
 
     @Override
     public void itemDoubleClicked() {
+
     }
 
     @FXML
     @Override
-    public void editAction() {
+    public void viewAction() {
         loadClipboard(tableView.getSelectionModel().getSelectedItem());
     }
 
@@ -234,31 +204,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         }
         dataClipboard.initFile(def.getFile());
         dataClipboard.cloneAll(def);
-        dataController.readDefinition();
-    }
-
-    @FXML
-    @Override
-    public void createAction() {
-        dataController.create();
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        dataController.recoverFile();
-    }
-
-    @FXML
-    @Override
-    public void loadContentInSystemClipboard() {
-        dataController.loadContentInSystemClipboard();
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        dataController.save();
+        loadController.readDefinition();
     }
 
     @FXML
@@ -268,29 +214,7 @@ public class ControlDataClipboard extends BaseSysTableController<Data2DDefinitio
         if (selected == null) {
             return;
         }
-        dataController.renameAction(this, index, selected);
-    }
-
-    /*
-        interface
-     */
-    @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            return dataController.keyEventsFilter(event);
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void myBoxClipBoard() {
-        dataController.myBoxClipBoard();
-    }
-
-    @Override
-    public boolean checkBeforeNextAction() {
-        return dataController.checkBeforeNextAction();
+        loadController.renameAction(this, index, selected);
     }
 
     @Override

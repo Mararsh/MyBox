@@ -12,13 +12,9 @@ import mara.mybox.value.Fxmls;
  */
 public class Data2DCopyController extends Data2DHandleController {
 
-    public Data2DCopyController() {
-        includeTable = true;
-    }
-
     @Override
     public boolean checkOptions() {
-        targetController.setHandleFile(allPages());
+        targetController.setNotInTable(allPages());
         return super.checkOptions();
     }
 

@@ -24,7 +24,7 @@ public class ControlData2DTarget extends BaseController {
 
     protected ControlData2DEditTable tableController;
     protected String target;
-    protected boolean includeTable, handleFile;
+    protected boolean notInTable;
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -38,7 +38,7 @@ public class ControlData2DTarget extends BaseController {
     @FXML
     protected FlowPane locationPane;
 
-    public void setParameters(BaseController parent, ControlData2DEditTable tableController, boolean includeTable) {
+    public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
             this.baseName = parent.baseName;
@@ -55,8 +55,6 @@ public class ControlData2DTarget extends BaseController {
             target = UserConfig.getString(baseName + "DataTarget", "csv");
             setTarget(target);
 
-            setIncludeTable(includeTable);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -71,7 +69,7 @@ public class ControlData2DTarget extends BaseController {
             } else if (textsRadio.isSelected()) {
                 target = "texts";
             } else if (matrixRadio.isSelected()) {
-                if (!handleFile) {
+                if (!notInTable) {
                     target = "matrix";
                 } else {
                     Platform.runLater(new Runnable() {
@@ -86,7 +84,7 @@ public class ControlData2DTarget extends BaseController {
             } else if (myBoxClipboardRadio.isSelected()) {
                 target = "myBoxClipboard";
             } else if (replaceRadio.isSelected()) {
-                if (includeTable && !handleFile) {
+                if (!notInTable) {
                     target = "replace";
                 } else {
                     Platform.runLater(new Runnable() {
@@ -97,7 +95,7 @@ public class ControlData2DTarget extends BaseController {
                     });
                 }
             } else if (insertRadio.isSelected()) {
-                if (includeTable && !handleFile) {
+                if (!notInTable) {
                     target = "insert";
                 } else {
                     Platform.runLater(new Runnable() {
@@ -108,7 +106,7 @@ public class ControlData2DTarget extends BaseController {
                     });
                 }
             } else if (appendRadio.isSelected()) {
-                if (includeTable && !handleFile) {
+                if (!notInTable) {
                     target = "append";
                 } else {
                     Platform.runLater(new Runnable() {
@@ -119,17 +117,16 @@ public class ControlData2DTarget extends BaseController {
                     });
                 }
             }
-            if (includeTable && !handleFile) {
+            if (!notInTable) {
                 if (!thisPane.getChildren().contains(tableBox)) {
                     thisPane.getChildren().add(tableBox);
                 }
-                refreshControls();
             } else {
                 if (thisPane.getChildren().contains(tableBox)) {
                     thisPane.getChildren().remove(tableBox);
                 }
             }
-            matrixRadio.setDisable(handleFile);
+            matrixRadio.setDisable(notInTable);
             UserConfig.setString(baseName + "DataTarget", target);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -163,21 +160,21 @@ public class ControlData2DTarget extends BaseController {
                     myBoxClipboardRadio.fire();
                     break;
                 case "append":
-                    if (includeTable) {
+                    if (notInTable) {
                         appendRadio.fire();
                     } else {
                         csvRadio.fire();
                     }
                     break;
                 case "insert":
-                    if (includeTable) {
+                    if (notInTable) {
                         insertRadio.fire();
                     } else {
                         csvRadio.fire();
                     }
                     break;
                 case "relpace":
-                    if (includeTable) {
+                    if (notInTable) {
                         replaceRadio.fire();
                     } else {
                         csvRadio.fire();
@@ -205,12 +202,16 @@ public class ControlData2DTarget extends BaseController {
             int tableSelect = tableController.tableView.getSelectionModel().getSelectedIndex();
             rowSelector.getSelectionModel().select(tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 
-            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            colSelector.getItems().setAll(tableController.data2D.columnNames());
-            if (selectedCol != null) {
-                colSelector.setValue(selectedCol);
+            if (tableController.data2D != null) {
+                String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+                colSelector.getItems().setAll(tableController.data2D.columnNames());
+                if (selectedCol != null) {
+                    colSelector.setValue(selectedCol);
+                } else {
+                    colSelector.getSelectionModel().select(0);
+                }
             } else {
-                colSelector.getSelectionModel().select(0);
+                colSelector.getItems().clear();
             }
 
         } catch (Exception e) {
@@ -218,18 +219,13 @@ public class ControlData2DTarget extends BaseController {
         }
     }
 
-    public void setIncludeTable(boolean includeTable) {
-        this.includeTable = includeTable;
-        checkTarget();
-    }
-
-    public void setHandleFile(boolean handleFile) {
-        this.handleFile = handleFile;
+    public void setNotInTable(boolean notInTable) {
+        this.notInTable = notInTable;
         checkTarget();
     }
 
     public boolean inTable() {
-        return includeTable
+        return !notInTable
                 && (insertRadio.isSelected() || appendRadio.isSelected() || replaceRadio.isSelected());
     }
 

@@ -10,15 +10,14 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" 
-            xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataClipboardController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataInSystemClipboardController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="TOP_LEFT">
             <children>
-                <fx:include fx:id="clipboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataClipboard.fxml" VBox.vgrow="ALWAYS" />
+            <fx:include fx:id="input" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DInput.fxml" VBox.vgrow="ALWAYS" />
             </children>
             <BorderPane.margin>
                 <Insets />

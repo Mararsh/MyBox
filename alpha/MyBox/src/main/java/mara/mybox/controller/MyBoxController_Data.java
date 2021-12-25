@@ -27,6 +27,17 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.Data2DManageFxml);
         });
 
+        MenuItem DataInSystemClipboard = new MenuItem(message("DataInSystemClipboard"));
+        DataInSystemClipboard.setOnAction((ActionEvent event1) -> {
+            DataInMyBoxClipboardController.oneOpen();
+        });
+
+        MenuItem DataInMyBoxClipboard = new MenuItem(message("DataInMyBoxClipboard"));
+        DataInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
+            DataInMyBoxClipboardController c = DataInMyBoxClipboardController.oneOpen();
+            c.createAction();
+        });
+
         MenuItem EditExcel = new MenuItem(message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
             DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
@@ -86,12 +97,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 EditExcel, ExcelConvert, ExcelMerge, ExtractTextsFromMS, new SeparatorMenuItem(),
                 TextData, TextDataConvert, TextDataMerge
         );
-
-        MenuItem DataClipboard = new MenuItem(message("DataClipboard"));
-        DataClipboard.setOnAction((ActionEvent event1) -> {
-            DataClipboardController c = (DataClipboardController) loadScene(Fxmls.DataClipboardFxml);
-            c.createAction();
-        });
 
         MenuItem Dataset = new MenuItem(message("Dataset"));
         Dataset.setOnAction((ActionEvent event1) -> {
@@ -186,8 +191,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                ManageData, DataClipboard, new SeparatorMenuItem(),
-                DataFile, new SeparatorMenuItem(),
+                ManageData, new SeparatorMenuItem(),
+                DataFile, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationData, ConvertCoordinate, new SeparatorMenuItem(),
                 EpidemicReport, new SeparatorMenuItem(),

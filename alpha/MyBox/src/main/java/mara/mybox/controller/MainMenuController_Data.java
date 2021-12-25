@@ -70,8 +70,13 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void openDataClipboard(ActionEvent event) {
-        DataClipboardController c = (DataClipboardController) loadScene(Fxmls.DataClipboardFxml);
+    protected void dataInSystemClipboard(ActionEvent event) {
+        DataInSystemClipboardController.oneOpen();
+    }
+
+    @FXML
+    protected void dataInMyBoxClipboard(ActionEvent event) {
+        DataInMyBoxClipboardController c = DataInMyBoxClipboardController.oneOpen();
         c.createAction();
     }
 

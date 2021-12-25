@@ -30,16 +30,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class Data2DHandleController extends BaseController {
+public abstract class Data2DHandleController extends BaseChildController {
 
     protected ControlData2DEditTable tableController;
     protected Data2D data2D;
-    protected List<String> handledNames;
     protected List<List<String>> handledData;
     protected List<Data2DColumn> handledColumns;
     protected DataFileCSV handledCSV;
     protected DataFile handledFile;
-    protected boolean includeTable;
 
     @FXML
     protected ToggleGroup rowGroup;
@@ -52,9 +50,7 @@ public abstract class Data2DHandleController extends BaseController {
     @FXML
     protected Label dataLabel;
 
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
+    public Data2DHandleController() {
     }
 
     public void setParameters(ControlData2DEditTable tableController) {
@@ -67,7 +63,7 @@ public abstract class Data2DHandleController extends BaseController {
             }
 
             if (targetController != null) {
-                targetController.setParameters(this, tableController, includeTable);
+                targetController.setParameters(this, tableController);
             }
 
             if (rowNumberCheck != null) {
@@ -179,6 +175,10 @@ public abstract class Data2DHandleController extends BaseController {
             if (!checkOptions()) {
                 return;
             }
+            handledColumns = tableController.checkedCols();
+            if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
+                handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            }
             if (allPages()) {
                 if (tableController.checkBeforeLoadingTableData()) {
                     handleFileTask();
@@ -201,10 +201,6 @@ public abstract class Data2DHandleController extends BaseController {
                     handledCSV = generatedFile();
                     if (handledCSV == null) {
                         return false;
-                    }
-                    handledColumns = tableController.checkedCols();
-                    if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
-                        handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
                     }
                     switch (targetController.target) {
                         case "csv":
@@ -277,7 +273,7 @@ public abstract class Data2DHandleController extends BaseController {
                     TextClipboardTools.copyToSystemClipboard(this, TextFileTools.readTexts(handledFile.getFile()));
                     break;
                 case "myBoxClipboard":
-                    DataClipboardController.open(handledFile);
+                    DataInMyBoxClipboardController.open(handledFile);
                     break;
             }
         } catch (Exception e) {
@@ -322,16 +318,22 @@ public abstract class Data2DHandleController extends BaseController {
         start(task);
     }
 
+    public boolean showColNames() {
+        return colNameCheck != null && colNameCheck.isSelected();
+    }
+
     public boolean handleRows() {
         try {
-            handledData = tableController.selectedData(all(), rowNumberCheck.isSelected(), colNameCheck.isSelected());
+            handledData = tableController.selectedData(all(), rowNumberCheck != null && rowNumberCheck.isSelected());
             if (handledData == null) {
                 return false;
             }
-            handledNames = null;
-            handledColumns = tableController.checkedCols();
-            if (rowNumberCheck.isSelected()) {
-                handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            if (showColNames()) {
+                List<String> names = tableController.checkedColsNames();
+                if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
+                    names.add(0, message("SourceRowNumber"));
+                }
+                handledData.add(0, names);
             }
             return true;
         } catch (Exception e) {
@@ -398,7 +400,7 @@ public abstract class Data2DHandleController extends BaseController {
         }
         switch (targetController.target) {
             case "systemClipboard":
-                tableController.copyToSystemClipboard(handledNames, handledData);
+                tableController.copyToSystemClipboard(null, handledData);
                 break;
             case "myBoxClipboard":
                 tableController.copyToMyBoxClipboard2(handledColumns, handledData);
@@ -419,12 +421,6 @@ public abstract class Data2DHandleController extends BaseController {
         }
         popDone();
         return true;
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
     }
 
 }

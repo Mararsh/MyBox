@@ -41,10 +41,8 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
         try {
             super.initValues();
             setTableDefinition();
-            if (tableDefinition != null) {
-                tableName = tableDefinition.getTableName();
-                idColumn = tableDefinition.getIdColumn();
-            }
+            setTableDefinition(tableDefinition);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -52,6 +50,14 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
 
     // define tableDefinition here
     public void setTableDefinition() {
+    }
+
+    public void setTableDefinition(BaseTable t) {
+        tableDefinition = t;
+        if (tableDefinition != null) {
+            tableName = tableDefinition.getTableName();
+            idColumn = tableDefinition.getIdColumn();
+        }
     }
 
     @Override

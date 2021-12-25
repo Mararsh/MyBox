@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.controller.DataClipboardController;
+import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -82,7 +82,7 @@ public class DataClipboard extends DataFileCSV {
                 d.setDataName(dFile.getName());
             }
             if (Data2D.save(d, cols)) {
-                DataClipboardController.update();
+                DataInMyBoxClipboardController.update();
                 return d;
             } else {
                 return null;
@@ -106,7 +106,7 @@ public class DataClipboard extends DataFileCSV {
             d.cloneAll(data);
             d.setFile(dFile).setType(Type.MyBoxClipboard);
             if (Data2D.save(d, cols)) {
-                DataClipboardController.update();
+                DataInMyBoxClipboardController.update();
                 return d;
             } else {
                 return null;

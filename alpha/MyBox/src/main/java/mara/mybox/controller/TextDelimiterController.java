@@ -63,7 +63,7 @@ public class TextDelimiterController extends BaseController {
     public static TextDelimiterController open(BaseController parent, String initName, boolean hasBlanks) {
         try {
             TextDelimiterController controller = (TextDelimiterController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.TextDelimiterFxml);
+                    parent.getMyWindow(), Fxmls.TextDelimiterFxml, false);
             controller.setParameters(parent, initName, hasBlanks);
             return controller;
         } catch (Exception e) {

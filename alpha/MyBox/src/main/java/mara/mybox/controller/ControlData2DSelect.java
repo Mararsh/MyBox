@@ -2,208 +2,228 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2021-12-9
+ * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DSelect extends BaseController {
+public class ControlData2DSelect extends ControlData2DLoad {
 
-    protected ControlData2DEditTable tableController;
+    protected final SimpleBooleanProperty selectNotify;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
-    protected List<String> checkedColumnsNames;
-    protected boolean numberCols;
 
     @FXML
-    protected HBox rowGroupBox;
-    @FXML
-    protected ToggleGroup rowGroup;
-    @FXML
-    protected RadioButton rowAllRadio, rowTableRadio;
-    @FXML
-    protected ControlCheckBoxList rowsListController, colsListController;
-    @FXML
-    protected Button selectAllRowsButton, selectNoneRowsButton, selectAllColsButton, selectNoneColsButton;
-    @FXML
-    protected Label dataNameLabel;
+    protected CheckBox columnsCheck;
 
-    public void setParameters(ControlData2DEditTable tableController, boolean allData, boolean numberCols) {
+    public ControlData2DSelect() {
+        selectNotify = new SimpleBooleanProperty(false);
+    }
+
+    @Override
+    public void initControls() {
         try {
-            this.tableController = tableController;
-            rowsListController.setParent(tableController);
-            colsListController.setParent(tableController);
-            this.numberCols = numberCols;
+            super.initControls();
 
-            String name;
-            if (tableController.data2D.getFile() != null) {
-                name = tableController.data2D.getFile().getAbsolutePath();
-            } else {
-                name = tableController.data2D.getDataName();
-            }
-            if (name == null) {
-                name = message("NewData");
-            }
-            dataNameLabel.setText(message(tableController.data2D.getType().name()) + " - "
-                    + (tableController.data2D.getD2did() >= 0 ? tableController.data2D.getD2did() + " - " : "")
-                    + name);
+            tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener() {
+                @Override
+                public void onChanged(ListChangeListener.Change c) {
+                    notifySelect();
+                }
+            });
 
-            refreshAction();
-
-            if (!allData) {
-                rowTableRadio.fire();
-                thisPane.getChildren().remove(rowGroupBox);
-            } else {
-                rowsListController.thisPane.disableProperty().bind(rowAllRadio.selectedProperty());
+            if (columnsCheck != null) {
+                columnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        if (columnsCheck.isSelected()) {
+                            selectAllCols();
+                        } else {
+                            selectNoneCols();
+                        }
+                    }
+                });
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @FXML
-    public synchronized void refreshAction() {
+    @Override
+    public void makeColumns() {
         try {
-            refreshRows();
-            refreshCols();
+            if (!validateData()) {
+                return;
+            }
+            super.makeColumns();
+            for (int i = 2; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                CheckBox cb = new CheckBox(tableColumn.getText());
+                cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        notifySelect();
+                    }
+                });
+                tableColumn.setGraphic(cb);
+                tableColumn.setText(null);
+            }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
-    public void refreshRows() {
-        try {
-            List<String> selectedRows = rowsListController.checkedValues();
-            List<String> rows = new ArrayList<>();
-            for (long i = 0; i < tableController.tableData.size(); i++) {
-                rows.add("" + (i + 1));
-            }
-            rowsListController.setValues(rows);
-            if (selectedRows != null && !selectedRows.isEmpty()) {
-                rowsListController.checkValues(selectedRows);
-            } else {
-                rowsListController.checkAll();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    @Override
+    public void postLoadedTableData() {
+        super.postLoadedTableData();
+        restoreSelections();
+    }
+
+    public void notifySelect() {
+        if (isSettingValues) {
+            return;
         }
-    }
-
-    public void refreshCols() {
-        try {
-            List<String> selectedCols = colsListController.checkedValues();
-            if (numberCols) {
-                colsListController.setValues(tableController.data2D.numberColumnNames());
-            } else {
-                colsListController.setValues(tableController.data2D.columnNames());
-            }
-            if (selectedCols != null && !selectedCols.isEmpty()) {
-                colsListController.checkValues(selectedCols);
-            } else {
-                colsListController.checkAll();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void selectAllRows() {
-        rowsListController.checkAll();
-    }
-
-    @FXML
-    public void selectNoneRows() {
-        rowsListController.checkNone();
+        selectNotify.set(!selectNotify.get());
     }
 
     @FXML
     public void selectAllCols() {
-        colsListController.checkAll();
+        try {
+            isSettingValues = true;
+            for (int i = 2; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                cb.setSelected(true);
+            }
+            isSettingValues = false;
+            notifySelect();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     @FXML
     public void selectNoneCols() {
-        colsListController.checkNone();
-    }
-
-    public boolean isAllData() {
-        return rowAllRadio.isSelected();
-    }
-
-    public List<Integer> checkedRowsIndices() {
-        checkedRowsIndices = new ArrayList<>();
-        if (isAllData()) {
-            for (int i = 0; i < tableController.tableData.size(); i++) {
-                checkedRowsIndices.add(i);
+        try {
+            isSettingValues = true;
+            for (int i = 2; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                cb.setSelected(false);
             }
-        } else {
-            List<Integer> checked = rowsListController.checkedIndices();
-            int size = tableController.tableData.size();
-            for (int i : checked) {
-                if (i < 0 || i >= size) {
-                    continue;
-                }
-                checkedRowsIndices.add(i);
-            }
+            isSettingValues = false;
+            notifySelect();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
-        return checkedRowsIndices;
+    }
+
+    public List<Integer> checkedRowsIndices(boolean allRows) {
+        try {
+            checkedRowsIndices = new ArrayList<>();
+            if (allRows) {
+                for (int i = 0; i < tableData.size(); i++) {
+                    checkedRowsIndices.add(i);
+                }
+            } else {
+                List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+                for (int i : selected) {
+                    checkedRowsIndices.add(i);
+                }
+            }
+            return checkedRowsIndices;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
     }
 
     public List<Integer> checkedColsIndices() {
-        checkedColsIndices = new ArrayList<>();
-        List<String> checked = colsListController.checkedValues();
-        if (checked == null || checked.isEmpty()) {
-            return null;
-        }
-        for (String name : checked) {
-            int col = tableController.data2D.colOrder(name);
-            if (col >= 0) {
-                checkedColsIndices.add(col);
-            }
-        }
-        return checkedColsIndices;
-    }
-
-    public List<String> checkedColumnsNames() {
-        checkedColumnsNames = new ArrayList<>();
-        List<String> checked = colsListController.checkedValues();
-        if (checked == null || checked.isEmpty()) {
-            return null;
-        }
-        for (String name : checked) {
-            int col = tableController.data2D.colOrder(name);
-            if (col >= 0) {
-                checkedColumnsNames.add(name);
-            }
-        }
-        return checkedColumnsNames;
-    }
-
-    public List<List<String>> selectedData() {
         try {
-            checkedRowsIndices = checkedRowsIndices();
-            checkedColsIndices = checkedColsIndices();
-            if (checkedColsIndices == null || checkedColsIndices.isEmpty()
-                    || checkedRowsIndices == null || checkedRowsIndices.isEmpty()) {
+            checkedColsIndices = new ArrayList<>();
+            for (int i = 2; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                if (cb.isSelected()) {
+                    int col = data2D.colOrder(cb.getText());
+                    if (col >= 0) {
+                        checkedColsIndices.add(col);
+                    }
+                }
+            }
+            return checkedColsIndices;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public List<String> checkedColsNames() {
+        try {
+            List<String> names = new ArrayList<>();
+            for (int i = 2; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                if (cb.isSelected()) {
+                    names.add(cb.getText());
+                }
+            }
+            return names;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public List<Data2DColumn> checkedCols() {
+        try {
+            List<Data2DColumn> cols = new ArrayList<>();
+            for (int i = 2; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                if (cb.isSelected()) {
+                    Data2DColumn col = data2D.col(cb.getText());
+                    if (col != null) {
+                        cols.add(col.cloneAll());
+                    }
+                }
+            }
+            return cols;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public List<List<String>> selectedData(boolean all, boolean rowNumber) {
+        try {
+            if (!checkSelections(all)) {
                 return null;
             }
             List<List<String>> data = new ArrayList<>();
-            int size = tableController.tableData.size();
+            int size = tableData.size();
             for (int row : checkedRowsIndices) {
                 if (row < 0 || row >= size) {
                     continue;
                 }
-                List<String> tableRow = tableController.tableData.get(row);
+                List<String> tableRow = tableData.get(row);
                 List<String> newRow = new ArrayList<>();
+                if (rowNumber) {
+                    newRow.add((row + 1) + "");
+                }
                 for (int col : checkedColsIndices) {
                     int index = col + 1;
                     if (index < 0 || index >= tableRow.size()) {
@@ -220,26 +240,65 @@ public class ControlData2DSelect extends BaseController {
         }
     }
 
-    public List<List<String>> pageData() {
+    public boolean checkSelections(boolean allRows) {
+        checkedRowsIndices = checkedRowsIndices(allRows);
+        checkedColsIndices = checkedColsIndices();
+        return checkedRowsIndices != null && !checkedRowsIndices.isEmpty()
+                && checkedColsIndices != null && !checkedColsIndices.isEmpty();
+    }
+
+    public boolean isSquare(boolean allRows) {
+        checkedRowsIndices = checkedRowsIndices(allRows);
+        checkedColsIndices = checkedColsIndices();
+        return checkedRowsIndices != null && checkedColsIndices != null
+                && !checkedRowsIndices.isEmpty()
+                && checkedRowsIndices.size() == checkedColsIndices.size();
+    }
+
+    public void selectRows(List<Integer> rows) {
         try {
-            checkedColsIndices = checkedColsIndices();
-            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                return null;
-            }
-            List<List<String>> data = new ArrayList<>();
-            for (int row = 0; row < tableController.tableData.size(); row++) {
-                List<String> tableRow = tableController.tableData.get(row);
-                List<String> newRow = new ArrayList<>();
-                for (int col : checkedColsIndices) {
-                    newRow.add(tableRow.get(col + 1));
+            isSettingValues = true;
+            if (rows != null && !rows.isEmpty()) {
+                for (int i = 0; i < tableData.size(); i++) {
+                    if (rows.contains(i)) {
+                        tableView.getSelectionModel().select(i);
+                    } else {
+                        tableView.getSelectionModel().clearSelection(i);
+                    }
                 }
-                data.add(newRow);
+            } else {
+                tableView.getSelectionModel().clearSelection();
             }
-            return data;
+            isSettingValues = false;
+            notifySelect();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
+            MyBoxLog.debug(e);
         }
+    }
+
+    public void selectCols(List<Integer> cols) {
+        try {
+            isSettingValues = true;
+            for (int i = 2; i < tableView.getColumns().size(); i++) {
+                TableColumn tableColumn = tableView.getColumns().get(i);
+                CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                if (cols != null && !cols.isEmpty()) {
+                    int col = data2D.colOrder(cb.getText());
+                    cb.setSelected(col >= 0 && cols.contains(col));
+                } else {
+                    cb.setSelected(false);
+                }
+            }
+            isSettingValues = false;
+            notifySelect();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void restoreSelections() {
+        selectRows(checkedRowsIndices);
+        selectCols(checkedColsIndices);
     }
 
 }

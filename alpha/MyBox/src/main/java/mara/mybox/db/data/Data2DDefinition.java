@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManageController;
-import mara.mybox.controller.DataClipboardController;
+import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.DataFileTextController;
@@ -255,7 +255,7 @@ public class Data2DDefinition extends BaseData {
             case Texts:
                 return DataFileTextController.open(def);
             case MyBoxClipboard:
-                return DataClipboardController.open(def);
+                return DataInMyBoxClipboardController.open(def);
             case Matrix:
                 return MatricesManageController.open(def);
             default:

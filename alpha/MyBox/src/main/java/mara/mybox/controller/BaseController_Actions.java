@@ -142,7 +142,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             ImageInMyBoxClipboardController.oneOpen();
 
         } else if (this instanceof ControlData2DEditTable) {
-            DataClipboardPopController.open((ControlData2DEditTable) this);
+            Data2DPasteContentInMyBoxClipboardController.open((ControlData2DEditTable) this);
 
         } else {
             TextInMyBoxClipboardController.oneOpen();

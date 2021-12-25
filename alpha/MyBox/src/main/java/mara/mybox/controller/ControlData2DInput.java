@@ -4,25 +4,19 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
-import mara.mybox.data.Data2D;
+import javafx.scene.input.Clipboard;
 import mara.mybox.data.DataFileText;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -31,16 +25,13 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-11-27
  * @License Apache License Version 2.0
  */
-public class Data2DPasteController extends BaseController {
+public class ControlData2DInput extends BaseController {
 
     protected ControlData2DLoad loadController;
-    protected Data2D data2D;
     protected DataFileText dataFileText;
     protected List<List<String>> data;
     protected List<String> columnNames;
     protected String delimiterName;
-    protected SimpleBooleanProperty okNotify;
-    protected boolean forPaste;
 
     @FXML
     protected TextArea textArea;
@@ -48,17 +39,8 @@ public class Data2DPasteController extends BaseController {
     protected CheckBox nameCheck;
     @FXML
     protected ControlWebView htmlController;
-    @FXML
-    protected ControlTextDelimiter delimiterController;
-    @FXML
-    protected HBox pasteBox, wayBox;
-    @FXML
-    protected ComboBox<String> rowSelector, colSelector;
-    @FXML
-    protected RadioButton replaceRadio, insertRadio, appendRadio;
 
-    public Data2DPasteController() {
-        okNotify = new SimpleBooleanProperty();
+    public ControlData2DInput() {
     }
 
     @Override
@@ -66,27 +48,15 @@ public class Data2DPasteController extends BaseController {
         setAsPop(baseName);
     }
 
-    public void setParameters(ControlData2DLoad parent, String text, boolean forPaste) {
+    @Override
+    public void initControls() {
         try {
-            loadController = parent;
-            data2D = loadController.data2D;
+            super.initControls();
+            htmlController.setParent(this);
 
-            this.forPaste = forPaste;
-            if (!forPaste) {
-                thisPane.getChildren().remove(pasteBox);
-                wayBox.setVisible(false);
-            }
+            dataFileText = new DataFileText();
 
-            htmlController.setParent(parent);
-
-            delimiterController.setControls(baseName, true);
-            delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    delimiterName = delimiterController.delimiterName;
-                }
-            });
-            delimiterName = delimiterController.delimiterName;
+            delimiterName = UserConfig.getString(baseName + "InputDelimiter", ",");
 
             nameCheck.setSelected(UserConfig.getBoolean(baseName + "WithNames", false));
             nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -96,34 +66,61 @@ public class Data2DPasteController extends BaseController {
                 }
             });
 
-            dataFileText = new DataFileText();
-            textArea.setText(text);
-            if (text != null && !text.isBlank()) {
-                delimiterName = null;  // guess at first 
-                goAction();
-            }
-
-            makeControls(0, 0);
+            goButton.disableProperty().bind(textArea.textProperty().isNull()
+                    .or(textArea.textProperty().isEmpty()));
+            editButton.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void makeControls(int row, int col) {
+    public void setParameters(ControlData2DLoad parent, String text) {
         try {
-            if (!forPaste) {
+            loadController = parent;
+            load(text);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void load(String text) {
+        try {
+            if (text == null || text.isBlank()) {
+                popError(message("InputOrPasteText"));
                 return;
             }
-            List<String> rows = new ArrayList<>();
-            for (long i = 0; i < loadController.tableData.size(); i++) {
-                rows.add("" + (i + 1));
-            }
-            rowSelector.getItems().setAll(rows);
-            rowSelector.getSelectionModel().select(row);
+            textArea.setText(text);
+            delimiterName = null;  // guess at first 
+            goAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
-            colSelector.getItems().setAll(data2D.columnNames());
-            colSelector.getSelectionModel().select(col);
+    @FXML
+    public void delimiterActon() {
+        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, false);
+        controller.okNotify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                delimiterName = controller.delimiterName;
+                UserConfig.setString(baseName + "InputDelimiter", delimiterName);
+                goAction();
+                popDone();
+            }
+        });
+    }
+
+    @FXML
+    @Override
+    public void loadContentInSystemClipboard() {
+        try {
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            load(text);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -134,10 +131,12 @@ public class Data2DPasteController extends BaseController {
     public void goAction() {
         dataFileText.initFile(null);
         htmlController.loadContents("");
+        editButton.setDisable(true);
         data = null;
         columnNames = null;
         String text = textArea.getText();
         if (text == null || text.isBlank()) {
+            popError(message("InputOrPasteText"));
             return;
         }
         synchronized (this) {
@@ -205,6 +204,7 @@ public class Data2DPasteController extends BaseController {
                             table.add(row);
                         }
                         htmlController.loadContents(table.html());
+                        editButton.setDisable(false);
                     } catch (Exception e) {
                         MyBoxLog.console(e);
                     }
@@ -226,7 +226,6 @@ public class Data2DPasteController extends BaseController {
                 protected void finalAction() {
                     dataFileText.setTask(null);
                     task = null;
-                    delimiterController.setDelimiter(dataFileText.getDelimiter());
                     if (validateTable != null && !validateTable.isEmpty()) {
                         validateTable.htmlTable();
                     }
@@ -238,93 +237,12 @@ public class Data2DPasteController extends BaseController {
     }
 
     @FXML
-    @Override
-    public void okAction() {
-        if (data == null || data.isEmpty()) {
+    public void editAction() {
+        if (dataFileText.getColumns() == null || data == null || data.isEmpty()) {
             popError(message("NoData"));
             return;
         }
-        if (forPaste) {
-            pasteData();
-        } else {
-            loadController.dataController.loadTmpData(data2D.toColumns(columnNames), data);
-        }
-        popDone();
-    }
-
-    public void pasteData() {
-        try {
-            int row = rowSelector.getSelectionModel().getSelectedIndex();
-            int col = colSelector.getSelectionModel().getSelectedIndex();
-            int rowsNumber = data2D.tableRowsNumber();
-            int colsNumber = data2D.tableColsNumber();
-            if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-            loadController.isSettingValues = true;
-            if (replaceRadio.isSelected()) {
-                for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
-                    List<String> tableRow = loadController.tableData.get(r);
-                    List<String> dataRow = data.get(r - row);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
-                        tableRow.set(c + 1, dataRow.get(c - col));
-                    }
-                    loadController.tableData.set(r, tableRow);
-                }
-            } else {
-                List<List<String>> newRows = new ArrayList<>();
-                for (int r = 0; r < data.size(); r++) {
-                    List<String> newRow = loadController.data2D.newRow();
-                    List<String> dataRow = data.get(r);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
-                        newRow.set(c + 1, dataRow.get(c - col));
-                    }
-                    newRows.add(newRow);
-                }
-                loadController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
-            }
-            loadController.tableView.refresh();
-            loadController.isSettingValues = false;
-            loadController.tableChanged(true);
-
-            makeControls(row, col);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
-    }
-
-    @Override
-    public boolean keyESC() {
-        close();
-        return false;
-    }
-
-    @Override
-    public boolean keyF6() {
-        close();
-        return false;
-    }
-
-    /*
-        static
-     */
-    public static Data2DPasteController open(ControlData2DLoad parent, String text, boolean forPaste) {
-        try {
-            Data2DPasteController controller = (Data2DPasteController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.Data2DPasteFxml, false);
-            controller.setParameters(parent, text, forPaste);
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
+        DataFileTextController.open(dataFileText.getColumns(), data);
     }
 
 }

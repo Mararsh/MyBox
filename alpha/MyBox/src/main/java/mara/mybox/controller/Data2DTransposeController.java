@@ -14,10 +14,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DTransposeController extends Data2DHandleController {
 
-    public Data2DTransposeController() {
-        includeTable = true;
-    }
-
     @Override
     public void handleFileTask() {
         popError(message("NotSupport"));
@@ -26,21 +22,20 @@ public class Data2DTransposeController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            List<List<String>> selectedData = tableController.selectedData(all(),
-                    rowNumberCheck.isSelected(), colNameCheck.isSelected());
-            if (selectedData == null) {
+            super.handleRows();
+            if (handledData == null) {
                 return false;
             }
-            int rowsNumber = selectedData.size(), columnsNumber = selectedData.get(0).size();
-            handledData = new ArrayList<>();
+            int rowsNumber = handledData.size(), columnsNumber = handledData.get(0).size();
+            List<List<String>> transposed = new ArrayList<>();
             for (int r = 0; r < columnsNumber; ++r) {
                 List<String> row = new ArrayList<>();
                 for (int c = 0; c < rowsNumber; ++c) {
-                    row.add(selectedData.get(c).get(r));
+                    row.add(handledData.get(c).get(r));
                 }
-                handledData.add(row);
+                transposed.add(row);
             }
-            handledNames = null;
+            handledData = transposed;
             handledColumns = null;
             return true;
         } catch (Exception e) {
