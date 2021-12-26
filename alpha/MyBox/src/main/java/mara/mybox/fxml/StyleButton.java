@@ -359,6 +359,9 @@ public class StyleButton {
         if (id.startsWith("html")) {
             return new StyleData(id, message("Html"), "", "iconHtml.png");
         }
+        if (id.startsWith("pdf")) {
+            return new StyleData(id, "PDF", "", "iconPDF.png");
+        }
         if (id.startsWith("link")) {
             return new StyleData(id, message("Link"), "", "iconLink.png");
         }

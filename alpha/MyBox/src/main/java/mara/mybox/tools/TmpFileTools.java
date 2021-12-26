@@ -1,6 +1,7 @@
 package mara.mybox.tools;
 
 import java.io.File;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -53,6 +54,22 @@ public class TmpFileTools {
         }
         file.mkdirs();
         return file;
+    }
+
+    public static File pdfFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".pdf");
+    }
+
+    public static File csvFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+    }
+
+    public static File txtFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".txt");
+    }
+
+    public static File excelFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".xlsx");
     }
 
 }

@@ -139,7 +139,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 @Override
                 protected boolean handle() {
                     if (backupController != null && backupController.isBack()) {
-                        backupController.addBackup(sourceFile);
+                        backupController.addBackup(task, sourceFile);
                     }
                     return sourceInformation.writePage(sourceInformation, mainArea.getText());
                 }

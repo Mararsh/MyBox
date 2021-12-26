@@ -9,7 +9,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
@@ -44,6 +46,8 @@ public class Data2DExportController extends BaseTaskController {
     protected ControlDataConvert convertController;
     @FXML
     protected CheckBox openCheck;
+    @FXML
+    protected Label dataLabel, infoLabel;
 
     public Data2DExportController() {
         baseTitle = Languages.message("Export");
@@ -79,16 +83,23 @@ public class Data2DExportController extends BaseTaskController {
             this.tableController = tableController;
             getMyStage().setTitle(tableController.getBaseTitle());
 
+            rowGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkOptions();
+                }
+            });
+
             tableController.selectNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkSource();
+                    checkOptions();
                 }
             });
             tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkSource();
+                    checkOptions();
                 }
             });
             checkSource();
@@ -100,10 +111,14 @@ public class Data2DExportController extends BaseTaskController {
 
     public boolean checkSource() {
         try {
+            dataLabel.setText(tableController.data2D.displayName());
+            infoLabel.setText("");
+
             selectedColumnsIndices = tableController.checkedColsIndices();
             selectedColumns = tableController.checkedCols();
             if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()
                     || selectedColumns == null || selectedColumns.isEmpty()) {
+                infoLabel.setText(message("SelectToHandle"));
                 startButton.setDisable(true);
                 return false;
             }
@@ -111,6 +126,7 @@ public class Data2DExportController extends BaseTaskController {
             if (!allRowsRadio.isSelected()) {
                 selectedRowsIndices = tableController.checkedRowsIndices(false);
                 if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
+                    infoLabel.setText(message("SelectToHandle"));
                     startButton.setDisable(true);
                     return false;
                 }
@@ -128,24 +144,29 @@ public class Data2DExportController extends BaseTaskController {
     @Override
     public boolean checkOptions() {
         try {
-            if (tableController.data2D.isMutiplePages()
-                    && !tableController.dataController.checkBeforeNextAction()) {
+            infoLabel.setText("");
+            if (!checkSource()) {
                 return false;
             }
-            if (!checkSource()) {
-                popError(message("SelectToHandle"));
+            if (allRowsRadio.isSelected() && tableController.data2D.isMutiplePages()
+                    && tableController.data2D.isTableChanged()) {
+                infoLabel.setText(message("NeedSaveBeforeAction"));
+                startButton.setDisable(true);
                 return false;
             }
             targetPath = targetPathController.file;
             if (targetPath == null) {
-                popError(message("InvalidParameters"));
+                infoLabel.setText(message("InvalidParameters"));
+                startButton.setDisable(true);
                 return false;
             }
             if (!tableController.data2D.hasData()) {
-                popError(message("NoData"));
+                infoLabel.setText(message("NoData"));
+                startButton.setDisable(true);
                 return false;
             }
 
+            startButton.setDisable(false);
             filePrefix = tableController.data2D.getDataName();
             if (filePrefix == null || filePrefix.isBlank()) {
                 filePrefix = DateTools.nowFileString();

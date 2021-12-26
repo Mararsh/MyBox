@@ -1,5 +1,10 @@
 package mara.mybox.tools;
 
+import com.vladsch.flexmark.ext.toc.TocExtension;
+import com.vladsch.flexmark.pdf.converter.PdfConverterExtension;
+import com.vladsch.flexmark.profile.pegdown.Extensions;
+import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
+import com.vladsch.flexmark.util.data.DataHolder;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,9 +25,11 @@ import mara.mybox.controller.ControlPdfWriteOptions;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -554,6 +561,90 @@ public class PdfTools {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static String html2pdf(File target, String html, String css, boolean ignoreHead, DataHolder pdfOptions) {
+        try {
+            if (html == null || html.isBlank()) {
+                return null;
+            }
+            if (ignoreHead) {
+                html = HtmlWriteTools.ignoreHead(html);
+            }
+            if (!css.isBlank()) {
+                try {
+                    html = PdfConverterExtension.embedCss(html, css);
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                }
+            }
+            try {
+                PdfConverterExtension.exportToPdf(target.getAbsolutePath(), html, "", pdfOptions);
+                if (!target.exists()) {
+                    return message("Failed");
+                } else if (target.length() == 0) {
+                    FileDeleteTools.delete(target);
+                    return message("Failed");
+                }
+                return message("Successful");
+            } catch (Exception e) {
+                return e.toString();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return e.toString();
+        }
+    }
+
+    public static File html2pdf(String html) {
+        try {
+            if (html == null || html.isBlank()) {
+                return null;
+            }
+            File pdfFile = TmpFileTools.pdfFile();
+            File wqy_microhei = FxFileTools.getInternalFile("/data/wqy-microhei.ttf", "data", "wqy-microhei.ttf");
+            String css = "@font-face {\n"
+                    + "  font-family: 'myFont';\n"
+                    + "  src: url('file:///" + wqy_microhei.getAbsolutePath().replaceAll("\\\\", "/") + "');\n"
+                    + "  font-weight: normal;\n"
+                    + "  font-style: normal;\n"
+                    + "}\n"
+                    + " body { font-family:  'myFont';}";
+            DataHolder pdfOptions = PegdownOptionsAdapter.flexmarkOptions(Extensions.ALL
+                    & ~(Extensions.ANCHORLINKS | Extensions.EXTANCHORLINKS_WRAP), TocExtension.create())
+                    .toMutable()
+                    .set(TocExtension.LIST_CLASS, PdfConverterExtension.DEFAULT_TOC_LIST_CLASS)
+                    .toImmutable();
+            html2pdf(pdfFile, html, css, true, pdfOptions);
+            return pdfFile;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static File text2pdf(String text) {
+        try {
+            if (text == null || text.isBlank()) {
+                return null;
+            }
+            return html2pdf(HtmlWriteTools.textToHtml(text));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static File md2pdf(String md) {
+        try {
+            if (md == null || md.isBlank()) {
+                return null;
+            }
+            return html2pdf(HtmlWriteTools.md2html(md));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

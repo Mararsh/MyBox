@@ -22,7 +22,7 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ColumnDefinition extends BaseData {
-
+    
     protected String name, label, foreignName, foreignTable, foreignColumn;
     protected ColumnType type;
     protected int index, length, width;
@@ -42,15 +42,15 @@ public class ColumnDefinition extends BaseData {
         Datetime, Date, Era, // Looks Derby does not support date of BC(before Christ)
         Unknown
     }
-
+    
     public static enum OnDelete {
         NoAction, Restrict, Cascade, SetNull
     }
-
+    
     public static enum OnUpdate {
         NoAction, Restrict
     }
-
+    
     public final void initColumnDefinition() {
         type = ColumnType.String;
         index = -1;
@@ -64,24 +64,24 @@ public class ColumnDefinition extends BaseData {
         maxValue = null;
         minValue = null;
     }
-
+    
     public ColumnDefinition() {
         initColumnDefinition();
     }
-
+    
     public ColumnDefinition(String name, ColumnType type) {
         initColumnDefinition();
         this.name = name;
         this.type = type;
     }
-
+    
     public ColumnDefinition(String name, ColumnType type, boolean notNull) {
         initColumnDefinition();
         this.name = name;
         this.type = type;
         this.notNull = notNull;
     }
-
+    
     public ColumnDefinition(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
         initColumnDefinition();
         this.name = name;
@@ -89,7 +89,7 @@ public class ColumnDefinition extends BaseData {
         this.notNull = notNull;
         this.isPrimaryKey = isPrimaryKey;
     }
-
+    
     public ColumnDefinition cloneAll() {
         try {
             ColumnDefinition newData = (ColumnDefinition) super.clone();
@@ -100,7 +100,7 @@ public class ColumnDefinition extends BaseData {
             return null;
         }
     }
-
+    
     public void cloneAll(ColumnDefinition c) {
         try {
             if (c == null) {
@@ -131,11 +131,11 @@ public class ColumnDefinition extends BaseData {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     public boolean isForeignKey() {
         return foreignTable != null && foreignColumn != null;
     }
-
+    
     public String foreignText() {
         if (!isForeignKey()) {
             return null;
@@ -167,11 +167,11 @@ public class ColumnDefinition extends BaseData {
         }
         return sql;
     }
-
+    
     public boolean valid() {
         return valid(this);
     }
-
+    
     public boolean validValue(String value) {
         try {
             if (value == null || value.isBlank()) {
@@ -216,11 +216,11 @@ public class ColumnDefinition extends BaseData {
         }
         return false;
     }
-
+    
     public boolean validNotNull(String value) {
         return !notNull || (value != null && !value.isEmpty());
     }
-
+    
     public int compare(String value1, String value2) {
         try {
             if (value1 == null) {
@@ -291,7 +291,7 @@ public class ColumnDefinition extends BaseData {
         }
         return 1;
     }
-
+    
     public boolean isNumberType() {
         return type == ColumnType.Double || type == ColumnType.Float
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
@@ -333,11 +333,17 @@ public class ColumnDefinition extends BaseData {
                 return StringTools.format((long) FloatTools.random(random, maxRandom));
             case Short:
                 return StringTools.format((short) IntTools.random(random, maxRandom));
+            case Boolean:
+                return random.nextInt(2) + "";
+            case Datetime:
+            case Date:
+            case Era:
+                return DateTools.randomTimeString(random);
             default:
                 return (char) ('a' + random.nextInt(25)) + "";
         }
     }
-
+    
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
@@ -348,7 +354,7 @@ public class ColumnDefinition extends BaseData {
             return null;
         }
     }
-
+    
     public ColumnDefinition cloneBase() {
         try {
             return (ColumnDefinition) clone();
@@ -363,20 +369,20 @@ public class ColumnDefinition extends BaseData {
     public static ColumnDefinition create() {
         return new ColumnDefinition();
     }
-
+    
     public static boolean valid(ColumnDefinition data) {
         return data != null
                 && data.getType() != null
                 && data.getName() != null && !data.getName().isBlank();
     }
-
+    
     public static short columnType(ColumnType type) {
         if (type == null) {
             return 0;
         }
         return (short) (type.ordinal());
     }
-
+    
     public static ColumnType columnType(short type) {
         ColumnType[] types = ColumnType.values();
         if (type < 0 || type > types.length) {
@@ -385,7 +391,7 @@ public class ColumnDefinition extends BaseData {
         }
         return types[type];
     }
-
+    
     public static List<ColumnType> editTypes() {
         List<ColumnType> types = new ArrayList<>();
         types.addAll(Arrays.asList(ColumnType.String, ColumnType.Boolean,
@@ -393,11 +399,11 @@ public class ColumnDefinition extends BaseData {
                 ColumnType.Datetime));
         return types;
     }
-
+    
     public static String number2String(Number n) {
         return n != null ? n + "" : null;
     }
-
+    
     public static Number string2Number(ColumnType type, String s) {
         try {
             if (null == type || s == null) {
@@ -436,190 +442,190 @@ public class ColumnDefinition extends BaseData {
     public String getName() {
         return name;
     }
-
+    
     public ColumnDefinition setName(String name) {
         this.name = name;
         return this;
     }
-
+    
     public ColumnType getType() {
         return type;
     }
-
+    
     public ColumnDefinition setType(ColumnType type) {
         this.type = type;
         return this;
     }
-
+    
     public int getLength() {
         return length;
     }
-
+    
     public ColumnDefinition setLength(int length) {
         this.length = length;
         return this;
     }
-
+    
     public boolean isIsPrimaryKey() {
         return isPrimaryKey;
     }
-
+    
     public ColumnDefinition setIsPrimaryKey(boolean isPrimaryKey) {
         this.isPrimaryKey = isPrimaryKey;
         return this;
     }
-
+    
     public boolean isNotNull() {
         return notNull;
     }
-
+    
     public ColumnDefinition setNotNull(boolean notNull) {
         this.notNull = notNull;
         return this;
     }
-
+    
     public int getIndex() {
         return index;
     }
-
+    
     public ColumnDefinition setIndex(int index) {
         this.index = index;
         return this;
     }
-
+    
     public boolean isIsID() {
         return isID;
     }
-
+    
     public ColumnDefinition setIsID(boolean isID) {
         this.isID = isID;
         return this;
     }
-
+    
     public String getForeignTable() {
         return foreignTable;
     }
-
+    
     public ColumnDefinition setForeignTable(String foreignTable) {
         this.foreignTable = foreignTable;
         return this;
     }
-
+    
     public String getForeignColumn() {
         return foreignColumn;
     }
-
+    
     public ColumnDefinition setForeignColumn(String foreignColumn) {
         this.foreignColumn = foreignColumn;
         return this;
     }
-
+    
     public OnDelete getOnDelete() {
         return onDelete;
     }
-
+    
     public ColumnDefinition setOnDelete(OnDelete onDelete) {
         this.onDelete = onDelete;
         return this;
     }
-
+    
     public OnUpdate getOnUpdate() {
         return onUpdate;
     }
-
+    
     public ColumnDefinition setOnUpdate(OnUpdate onUpdate) {
         this.onUpdate = onUpdate;
         return this;
     }
-
+    
     public Era.Format getTimeFormat() {
         return timeFormat;
     }
-
+    
     public ColumnDefinition setTimeFormat(Era.Format timeFormat) {
         this.timeFormat = timeFormat;
         return this;
     }
-
+    
     public boolean isEditable() {
         return editable;
     }
-
+    
     public ColumnDefinition setEditable(boolean editable) {
         this.editable = editable;
         return this;
     }
-
+    
     public Object getDefaultValue() {
         return defaultValue;
     }
-
+    
     public ColumnDefinition setDefaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
-
+    
     public Object getValue() {
         return value;
     }
-
+    
     public ColumnDefinition setValue(Object value) {
         this.value = value;
         return this;
     }
-
+    
     public Number getMaxValue() {
         return maxValue;
     }
-
+    
     public ColumnDefinition setMaxValue(Number maxValue) {
         this.maxValue = maxValue;
         return this;
     }
-
+    
     public Number getMinValue() {
         return minValue;
     }
-
+    
     public ColumnDefinition setMinValue(Number minValue) {
         this.minValue = minValue;
         return this;
     }
-
+    
     public Map<Object, String> getValues() {
         return values;
     }
-
+    
     public ColumnDefinition setValues(Map<Object, String> values) {
         this.values = values;
         return this;
     }
-
+    
     public ColumnDefinition setLabel(String label) {
         this.label = label;
         return this;
     }
-
+    
     public String getForeignName() {
         return foreignName;
     }
-
+    
     public ColumnDefinition setForeignName(String foreignName) {
         this.foreignName = foreignName;
         return this;
     }
-
+    
     public int getWidth() {
         return width;
     }
-
+    
     public ColumnDefinition setWidth(int width) {
         this.width = width;
         return this;
     }
-
+    
     public String getTypeString() {
         return message(type.name());
     }
-
+    
 }

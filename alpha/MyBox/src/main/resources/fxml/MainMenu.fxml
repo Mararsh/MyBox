@@ -22,6 +22,9 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindow" />
+                                <MenuItem mnemonicParsing="false" onAction="#SnapshotPane" text="%SnapshotPane" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#refreshInterfaceAndFile" text="%RefreshWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#reload" text="%Reload" />
                                 <MenuItem mnemonicParsing="false" onAction="#fullScreen" text="%FullScreen" />

@@ -343,10 +343,8 @@ public class HtmlEditorController extends WebAddressController {
                         if (tmpFile == null || !tmpFile.exists()) {
                             return false;
                         }
-                        if (sourceFile != null) {
-                            if (backupController != null && backupController.isBack()) {
-                                backupController.addBackup(sourceFile);
-                            }
+                        if (sourceFile != null && backupController != null && backupController.isBack()) {
+                            backupController.addBackup(task, sourceFile);
                         }
                         return FileTools.rename(tmpFile, targetFile);
                     } catch (Exception e) {
@@ -1367,6 +1365,20 @@ public class HtmlEditorController extends WebAddressController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static HtmlEditorController load(String html) {
+        try {
+            HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
+            controller.loadContents(html);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

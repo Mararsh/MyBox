@@ -286,7 +286,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         if (node == null) {
             return;
         }
-//       MyBoxLog.console(this.getClass() + "  " + node.getClass() + "  " + node.getId());
+//        MyBoxLog.console(this.getClass() + "  " + node.getClass() + "  " + node.getId());
         Object o = node.getUserData();
         // Controls in embedded fxmls have been initialized by themselves
         if (o != null && o instanceof BaseController && node != thisPane) {

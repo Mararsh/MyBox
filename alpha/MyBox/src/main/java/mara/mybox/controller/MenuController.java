@@ -22,7 +22,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-7-27
  * @License Apache License Version 2.0
  */
-public class MenuController extends BaseController {
+public class MenuController extends BaseChildController {
 
     protected Node node;
     protected String baseStyle;
@@ -53,11 +53,6 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
     }
 
     @Override
@@ -138,24 +133,6 @@ public class MenuController extends BaseController {
     @FXML
     public void popStyles(MouseEvent mouseEvent) {
         PopTools.popWindowStyles(this, baseStyle, mouseEvent);
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        closeStage();
-    }
-
-    @Override
-    public boolean keyESC() {
-        closeStage();
-        return false;
-    }
-
-    @Override
-    public boolean keyF6() {
-        closeStage();
-        return false;
     }
 
     /*

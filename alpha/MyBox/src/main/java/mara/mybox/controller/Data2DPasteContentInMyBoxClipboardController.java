@@ -2,8 +2,10 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -32,6 +34,8 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
     protected ControlData2DSelect selectController;
     @FXML
     protected Label nameLabel;
+    @FXML
+    protected CheckBox columnsCheck;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
@@ -63,6 +67,20 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
             this.parentController = target;
             targetTableController = target;
             dataTarget = target.data2D;
+
+            columnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (columnsCheck.isSelected()) {
+                        selectController.selectAllCols();
+                    } else {
+                        selectController.selectNoneCols();
+                    }
+                }
+            });
 
             targetTableController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -121,42 +139,40 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
             int targetRowsNumber = dataTarget.tableRowsNumber();
             int targetColsNumber = dataTarget.tableColsNumber();
             if (row < 0 || row >= targetRowsNumber || col < 0 || col >= targetColsNumber) {
-                appendRadio.fire();
+                popError(message("InvalidParameters"));
+                return;
             }
-            List<List<String>> data = selectController.tableView.getSelectionModel().getSelectedItems();
+            List<List<String>> data = selectController.selectedData(false, false);
             if (data == null || data.isEmpty()) {
-                data = selectController.tableData;
+                popError(message("SelectToHandle"));
+                return;
             }
             targetTableController.isSettingValues = true;
             if (replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + data.size(), targetRowsNumber); r++) {
                     List<String> tableRow = targetTableController.tableData.get(r);
                     List<String> dataRow = data.get(r - row);
-                    for (int c = col + 1; c < Math.min(col + dataRow.size(), targetColsNumber + 1); c++) {
-                        tableRow.set(c, dataRow.get(c - col));
+                    for (int c = col; c < Math.min(col + dataRow.size(), targetColsNumber); c++) {
+                        tableRow.set(c + 1, dataRow.get(c - col));
                     }
                     targetTableController.tableData.set(r, tableRow);
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
-                String defaultValue = targetTableController.data2D.defaultColValue();
                 for (int r = 0; r < data.size(); r++) {
-                    List<String> newRow = new ArrayList<>();
-                    newRow.add("-1");
-                    for (int c = 0; c < targetColsNumber; c++) {
-                        newRow.add(defaultValue);
-                    }
+                    List<String> newRow = targetTableController.data2D.newRow();
                     List<String> dataRow = data.get(r);
-                    for (int c = col + 1; c < Math.min(col + dataRow.size(), targetColsNumber + 1); c++) {
-                        newRow.set(c, dataRow.get(c - col));
+                    for (int c = col; c < Math.min(col + dataRow.size(), targetColsNumber); c++) {
+                        newRow.set(c + 1, dataRow.get(c - col));
                     }
                     newRows.add(newRow);
                 }
                 targetTableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
             }
+            targetTableController.tableView.refresh();
             targetTableController.isSettingValues = false;
             targetTableController.tableChanged(true);
-
+            popDone();
             makeControls(row, col);
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -48,7 +48,7 @@ public abstract class Data2DHandleController extends BaseChildController {
     @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
-    protected Label dataLabel;
+    protected Label dataLabel, infoLabel;
 
     public Data2DHandleController() {
     }
@@ -57,10 +57,6 @@ public abstract class Data2DHandleController extends BaseChildController {
         try {
             this.tableController = tableController;
             data2D = tableController.data2D;
-
-            if (dataLabel != null) {
-                dataLabel.setText(data2D.displayName());
-            }
 
             if (targetController != null) {
                 targetController.setParameters(this, tableController);
@@ -116,7 +112,18 @@ public abstract class Data2DHandleController extends BaseChildController {
     }
 
     public boolean checkOptions() {
-        if (!tableController.checkSelections(all()) || allChanged()) {
+        if (dataLabel != null) {
+            dataLabel.setText(data2D.displayName());
+        }
+        infoLabel.setText("");
+        if (!tableController.checkSelections(all())
+                || (targetController != null && targetController.checkTarget() == null)) {
+            infoLabel.setText(message("SelectToHandle"));
+            okButton.setDisable(true);
+            return false;
+        }
+        if (allChanged()) {
+            infoLabel.setText(message("NeedSaveBeforeAction"));
             okButton.setDisable(true);
             return false;
         }
@@ -176,13 +183,11 @@ public abstract class Data2DHandleController extends BaseChildController {
                 return;
             }
             handledColumns = tableController.checkedCols();
-            if (rowNumberCheck != null && rowNumberCheck.isSelected()) {
+            if (showRowNumber()) {
                 handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             if (allPages()) {
-                if (tableController.checkBeforeLoadingTableData()) {
-                    handleFileTask();
-                }
+                handleFileTask();
             } else {
                 handleRowsTask();
             }
@@ -192,6 +197,9 @@ public abstract class Data2DHandleController extends BaseChildController {
     }
 
     public void handleFileTask() {
+        if (targetController == null) {
+            return;
+        }
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -254,7 +262,7 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public void outputFile() {
         try {
-            if (handledFile == null) {
+            if (targetController == null || handledFile == null) {
                 return;
             }
             switch (targetController.target) {
@@ -282,6 +290,9 @@ public abstract class Data2DHandleController extends BaseChildController {
     }
 
     public synchronized void handleRowsTask() {
+        if (targetController == null) {
+            return;
+        }
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -320,6 +331,10 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public boolean showColNames() {
         return colNameCheck != null && colNameCheck.isSelected();
+    }
+
+    public boolean showRowNumber() {
+        return rowNumberCheck != null && rowNumberCheck.isSelected();
     }
 
     public boolean handleRows() {

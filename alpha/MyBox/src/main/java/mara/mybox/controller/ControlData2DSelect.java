@@ -213,9 +213,22 @@ public class ControlData2DSelect extends ControlData2DLoad {
             if (!checkSelections(all)) {
                 return null;
             }
+            return selectedData(checkedRowsIndices, checkedColsIndices, rowNumber);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public List<List<String>> selectedData(List<Integer> rows, List<Integer> cols, boolean rowNumber) {
+        try {
+            if (rows == null || rows.isEmpty()
+                    || cols == null || cols.isEmpty()) {
+                return null;
+            }
             List<List<String>> data = new ArrayList<>();
             int size = tableData.size();
-            for (int row : checkedRowsIndices) {
+            for (int row : rows) {
                 if (row < 0 || row >= size) {
                     continue;
                 }
@@ -224,7 +237,7 @@ public class ControlData2DSelect extends ControlData2DLoad {
                 if (rowNumber) {
                     newRow.add((row + 1) + "");
                 }
-                for (int col : checkedColsIndices) {
+                for (int col : cols) {
                     int index = col + 1;
                     if (index < 0 || index >= tableRow.size()) {
                         continue;

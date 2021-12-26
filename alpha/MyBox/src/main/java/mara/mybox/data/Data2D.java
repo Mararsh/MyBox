@@ -274,6 +274,10 @@ public abstract class Data2D extends Data2DDefinition {
         return null;
     }
 
+    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
+        return null;
+    }
+
     /*
         matrix
      */

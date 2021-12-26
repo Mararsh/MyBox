@@ -629,7 +629,7 @@ public class ImageViewerController extends BaseImageController {
                             return false;
                         }
                         if (backupController != null && backupController.isBack() && srcFile != null) {
-                            backupController.addBackup(srcFile);
+                            backupController.addBackup(task, srcFile);
                         }
                         String format = FileNameTools.getFileSuffix(targetFile.getName());
                         if (framesNumber > 1) {

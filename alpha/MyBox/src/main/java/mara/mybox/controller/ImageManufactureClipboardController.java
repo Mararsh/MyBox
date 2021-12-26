@@ -393,11 +393,13 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @FXML
+    @Override
     public void rotateRight() {
         pasteClip(rotateAngle);
     }
 
     @FXML
+    @Override
     public void rotateLeft() {
         pasteClip(360 - rotateAngle);
 

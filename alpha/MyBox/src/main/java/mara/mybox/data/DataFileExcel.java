@@ -456,7 +456,7 @@ public class DataFileExcel extends DataFile {
                     return null;
                 }
             }
-            File tmpFile = TmpFileTools.getTempFile(".xlsx");
+            File tmpFile = TmpFileTools.excelFile();
             Workbook targetBook = new XSSFWorkbook();
             Sheet targetSheet = targetBook.createSheet(message("Sheet") + "1");
             int targetRowIndex = 0;
@@ -1146,6 +1146,65 @@ public class DataFileExcel extends DataFile {
         }
     }
 
+    @Override
+    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        List<List<String>> rows = new ArrayList<>();
+        try ( Workbook wb = WorkbookFactory.create(file)) {
+            Sheet sourceSheet;
+            if (sheet != null) {
+                sourceSheet = wb.getSheet(sheet);
+            } else {
+                sourceSheet = wb.getSheetAt(0);
+                sheet = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                int index = 1;
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        Row fileRow = iterator.next();
+                        if (fileRow == null) {
+                            continue;
+                        }
+                        List<String> record = new ArrayList<>();
+                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                            record.add(v);
+                        }
+                        if (record.isEmpty()) {
+                            continue;
+                        }
+                        List<String> row = new ArrayList<>();
+                        if (rowNumber) {
+                            row.add(index++ + "");
+                        }
+                        for (int col : cols) {
+                            if (col >= 0 && col < record.size()) {
+                                row.add(record.get(col));
+                            } else {
+                                row.add(null);
+                            }
+                        }
+                        rows.add(row);
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return rows;
+    }
+
     public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {
         if (task == null || csvData == null) {
             return null;
@@ -1154,7 +1213,7 @@ public class DataFileExcel extends DataFile {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File excelFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".xlsx");
+        File excelFile = TmpFileTools.excelFile();
         boolean targetHasHeader = false;
         int tcolsNumber = 0, trowsNumber = 0;
         String targetSheetName = message("Sheet") + "1";

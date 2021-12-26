@@ -349,7 +349,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                     error = null;
                     try {
                         if (backupController.isBack()) {
-                            backupController.addBackup(sourceFile);
+                            backupController.addBackup(task, sourceFile);
                         }
                         List<String> aliases = new ArrayList();
                         for (CertificateEntry cert : selected) {

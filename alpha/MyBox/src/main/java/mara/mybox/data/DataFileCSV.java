@@ -17,7 +17,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -327,7 +326,7 @@ public class DataFileCSV extends DataFileText {
         if (cols != null && !cols.isEmpty()) {
             csvFormat = csvFormat.withFirstRecordAsHeader();
         }
-        File tmpFile = TmpFileTools.getTempFile(".csv");
+        File tmpFile = TmpFileTools.csvFile();
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
             if (cols != null && !cols.isEmpty()) {
                 csvPrinter.printRecord(cols);
@@ -418,6 +417,9 @@ public class DataFileCSV extends DataFileText {
                 }
             }
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
             MyBoxLog.error(e);
             return null;
         }
@@ -573,7 +575,7 @@ public class DataFileCSV extends DataFileText {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        File csvFile = TmpFileTools.csvFile();
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(delimiter.charAt(0));
@@ -669,7 +671,7 @@ public class DataFileCSV extends DataFileText {
             MyBoxLog.error(e);
             return null;
         }
-        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+        File csvFile = TmpFileTools.csvFile();
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(delimiter.charAt(0));
@@ -729,6 +731,50 @@ public class DataFileCSV extends DataFileText {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
+        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        List<List<String>> rows = new ArrayList<>();
+        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                int index = 1;
+                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    try {
+                        CSVRecord record = iterator.next();
+                        if (record != null) {
+                            List<String> row = new ArrayList<>();
+                            for (int col : cols) {
+                                if (col >= 0 && col < record.size()) {
+                                    row.add(record.get(col));
+                                } else {
+                                    row.add(null);
+                                }
+                            }
+                            if (row.isEmpty()) {
+                                continue;
+                            }
+                            if (rowNumber) {
+                                row.add(0, index++ + "");
+                            }
+                            rows.add(row);
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        return rows;
     }
 
     /*

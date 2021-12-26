@@ -41,7 +41,6 @@ public class ControlData2DTarget extends BaseController {
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            this.baseName = parent.baseName;
 
             locationPane.setVisible(inTable());
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -62,6 +61,7 @@ public class ControlData2DTarget extends BaseController {
 
     public String checkTarget() {
         try {
+            target = "csv";
             if (csvRadio.isSelected()) {
                 target = "csv";
             } else if (excelRadio.isSelected()) {
@@ -87,6 +87,7 @@ public class ControlData2DTarget extends BaseController {
                 if (!notInTable) {
                     target = "replace";
                 } else {
+                    target = "csv";
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -98,6 +99,7 @@ public class ControlData2DTarget extends BaseController {
                 if (!notInTable) {
                     target = "insert";
                 } else {
+                    target = "csv";
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -109,6 +111,7 @@ public class ControlData2DTarget extends BaseController {
                 if (!notInTable) {
                     target = "append";
                 } else {
+                    target = "csv";
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -121,6 +124,7 @@ public class ControlData2DTarget extends BaseController {
                 if (!thisPane.getChildren().contains(tableBox)) {
                     thisPane.getChildren().add(tableBox);
                 }
+                refreshControls();
             } else {
                 if (thisPane.getChildren().contains(tableBox)) {
                     thisPane.getChildren().remove(tableBox);
@@ -188,9 +192,9 @@ public class ControlData2DTarget extends BaseController {
         }
     }
 
-    public void refreshControls() {
+    public synchronized void refreshControls() {
         try {
-            if (tableController == null) {
+            if (tableController == null || tableController.data2D == null) {
                 return;
             }
             int thisSelect = rowSelector.getSelectionModel().getSelectedIndex();
@@ -202,16 +206,12 @@ public class ControlData2DTarget extends BaseController {
             int tableSelect = tableController.tableView.getSelectionModel().getSelectedIndex();
             rowSelector.getSelectionModel().select(tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 
-            if (tableController.data2D != null) {
-                String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-                colSelector.getItems().setAll(tableController.data2D.columnNames());
-                if (selectedCol != null) {
-                    colSelector.setValue(selectedCol);
-                } else {
-                    colSelector.getSelectionModel().select(0);
-                }
+            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+            colSelector.getItems().setAll(tableController.data2D.columnNames());
+            if (selectedCol != null) {
+                colSelector.setValue(selectedCol);
             } else {
-                colSelector.getItems().clear();
+                colSelector.getSelectionModel().select(0);
             }
 
         } catch (Exception e) {

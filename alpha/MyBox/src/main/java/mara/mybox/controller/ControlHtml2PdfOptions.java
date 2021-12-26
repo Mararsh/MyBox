@@ -12,9 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.HtmlWriteTools;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.tools.PdfTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -95,34 +93,8 @@ public class ControlHtml2PdfOptions extends BaseController {
     }
 
     public String html2pdf(String html, File target) {
-        try {
-            if (ignoreHeadCheck.isVisible() && ignoreHeadCheck.isSelected()) {
-                html = HtmlWriteTools.ignoreHead(html);
-            }
-            String css = cssArea.getText().trim();
-            if (!css.isBlank()) {
-                try {
-                    html = PdfConverterExtension.embedCss(html, css);
-                } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
-                }
-            }
-            try {
-                PdfConverterExtension.exportToPdf(target.getAbsolutePath(), html, "", pdfOptions);
-                if (!target.exists()) {
-                    return message("Failed");
-                } else if (target.length() == 0) {
-                    FileDeleteTools.delete(target);
-                    return message("Failed");
-                }
-                return message("Successful");
-            } catch (Exception e) {
-                return e.toString();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return e.toString();
-        }
+        return PdfTools.html2pdf(target, html, cssArea.getText().trim(),
+                ignoreHeadCheck.isVisible() && ignoreHeadCheck.isSelected(), pdfOptions);
     }
 
 }

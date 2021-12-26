@@ -122,6 +122,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
+        infoLabel.setText("");
         if (!tableController.isSquare(allRowsRadio.isSelected()) || allPages()) {
             matrixPane.setDisable(true);
             if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()

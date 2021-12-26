@@ -151,7 +151,7 @@ public class HtmlSnapController extends WebAddressController {
                     Platform.runLater(() -> {
                         try {
                             newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
-                            loadingController.setInfo(message("CurrentPageHeight") + ": " + newHeight);
+                            loadingController.setInfo(message("Height") + ": " + newHeight);
                             startSnap();
 
                         } catch (Exception e) {

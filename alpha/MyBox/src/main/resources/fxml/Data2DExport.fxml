@@ -40,6 +40,7 @@ License:    Apache License Version 2.0
                             </padding>
                             <children>
                         <Label fx:id="dataLabel" minHeight="-Infinity" wrapText="true" />
+                        <Label minHeight="-Infinity" text="%SelectRowsColumnsInTableHandle" wrapText="true" />
                                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                                     <children>
                                         <Label text="%Rows">
@@ -163,8 +164,9 @@ License:    Apache License Version 2.0
                 </Tab>
             </tabs>
         </TabPane>
-        <HBox alignment="CENTER_RIGHT" spacing="2.0">
+        <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
+            <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

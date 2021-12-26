@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -33,6 +34,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -240,59 +242,40 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         start(task, false, null);
     }
 
-    public void addBackup(File sourceFile) {
+    public FileBackup addBackup(SingletonTask task, File sourceFile) {
         this.sourceFile = sourceFile;
-        addBackup();
+        return addBackup(task);
     }
 
-    public synchronized void addBackup() {
+    public synchronized FileBackup addBackup(SingletonTask task) {
         if (sourceFile == null || !sourceFile.exists()) {
-            return;
+            return null;
         }
         File backupFile = newBackupFile();
         if (backupFile == null) {
-            return;
+            return null;
         }
-        if (task != null) {
-            task.cancel();
+        try {
+            backupFile.getParentFile().mkdirs();
+            if (!FileCopyTools.copyFile(sourceFile, backupFile, false, false) || !backupFile.exists()) {
+                return null;
+            }
+            FileBackup newBackup = new FileBackup(sourceFile, backupFile);
+            FileBackup savedBackup = tableFileBackup.insertData(newBackup);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    tableData.add(0, savedBackup);
+                    tableView.refresh();
+                }
+            });
+            return savedBackup;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return null;
         }
-        task = new SingletonTask<Void>(this) {
-            FileBackup newBackup;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    backupFile.getParentFile().mkdirs();
-                    if (!FileCopyTools.copyFile(sourceFile, backupFile, false, false) || !backupFile.exists()) {
-                        return false;
-                    }
-                    newBackup = new FileBackup(sourceFile, backupFile);
-                    newBackup = tableFileBackup.insertData(newBackup);
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-                return newBackup != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                tableData.add(0, newBackup);
-                tableView.refresh();
-            }
-
-            @Override
-            protected void whenFailed() {
-                if (isCancelled()) {
-                    return;
-                }
-                if (error != null) {
-                    MyBoxLog.error(error);
-                }
-            }
-
-        };
-        start(task, false, null);
     }
 
     public File newBackupFile() {
@@ -387,7 +370,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     @FXML
-    public void useBackup() {
+    public synchronized void useBackup() {
         if (sourceFile == null) {
             return;
         }
@@ -413,8 +396,10 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             @Override
             protected boolean handle() {
                 try {
-                    addBackup();
-                    FileCopyTools.copyFile(backup, sourceFile, true, true);
+                    File tmpFile = TmpFileTools.getTempFile();
+                    FileCopyTools.copyFile(backup, tmpFile, true, true);  // backup may be cleared due to max
+                    addBackup(task, sourceFile);
+                    FileCopyTools.copyFile(tmpFile, sourceFile, true, true);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

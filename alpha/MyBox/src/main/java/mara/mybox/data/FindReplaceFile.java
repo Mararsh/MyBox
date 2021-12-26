@@ -125,7 +125,7 @@ public class FindReplaceFile extends FindReplaceString {
 
     public void backup(File file) {
         if (backupController != null && backupController.isBack()) {
-            backupController.addBackup(file);
+            backupController.addBackup(null, file);
         }
     }
 

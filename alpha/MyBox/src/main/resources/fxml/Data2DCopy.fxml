@@ -28,6 +28,7 @@ License:    Apache License Version 2.0
       <Label fx:id="dataLabel" minHeight="-Infinity" wrapText="true" />
       <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
+            <Label minHeight="-Infinity" text="%SelectRowsColumnsInTableHandle" wrapText="true" />
             <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                <children>
                   <Label text="%Rows">
@@ -101,28 +102,29 @@ License:    Apache License Version 2.0
             <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
          </children>
       </VBox>
-        <HBox alignment="CENTER_RIGHT" spacing="5.0">
-            <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconCancel.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconOK.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            </children>
-        </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
     </children>
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

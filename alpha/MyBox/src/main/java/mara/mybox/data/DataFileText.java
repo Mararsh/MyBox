@@ -390,7 +390,7 @@ public class DataFileText extends DataFile {
                     return null;
                 }
             }
-            File tmpFile = TmpFileTools.getTempFile(".txt");
+            File tmpFile = TmpFileTools.txtFile();
             String fDelimiter = ",";
             try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
                 if (cols != null && !cols.isEmpty()) {
@@ -775,11 +775,49 @@ public class DataFileText extends DataFile {
         }
     }
 
+    @Override
+    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
+        if (file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        List<List<String>> rows = new ArrayList<>();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            if (hasHeader) {
+                readValidLine(reader);
+            }
+            String line;
+            int index = 1;
+            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                List<String> record = parseFileLine(line);
+                if (record == null || record.isEmpty()) {
+                    continue;
+                }
+                List<String> row = new ArrayList<>();
+                if (rowNumber) {
+                    row.add(index++ + "");
+                }
+                for (int col : cols) {
+                    if (col >= 0 && col < record.size()) {
+                        row.add(record.get(col));
+                    } else {
+                        row.add(null);
+                    }
+                }
+                rows.add(row);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return rows;
+    }
+
     public static DataFileText toText(DataFileCSV csvData) {
         if (csvData == null) {
             return null;
         }
-        File txtFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".txt");
+        File txtFile = TmpFileTools.txtFile();
         if (FileCopyTools.copyFile(csvData.getFile(), txtFile)) {
             DataFileText targetData = new DataFileText();
             targetData.cloneAll(csvData);

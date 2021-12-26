@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,8 +15,12 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -44,10 +49,10 @@ public class MenuTextEditController extends MenuTextBaseController {
             if (parent instanceof BaseFileEditorController) {
                 BaseFileEditorController e = (BaseFileEditorController) parent;
                 if (textInput == null || textInput != e.mainArea) {
-                    fileBox.getChildren().remove(0, 2);
+                    fileBox.getChildren().removeAll(saveButton, recoverButton);
                 }
             } else {
-                fileBox.getChildren().remove(0, 2);
+                fileBox.getChildren().removeAll(saveButton, recoverButton);
             }
             if (textInput != null) {
                 textInput.textProperty().addListener(new ChangeListener<String>() {
@@ -260,6 +265,79 @@ public class MenuTextEditController extends MenuTextBaseController {
         }
         TextPopController.openInput(parentController, textInput);
         return true;
+    }
+
+    @FXML
+    public void htmlAction() {
+        if (textInput == null) {
+            return;
+        }
+        String text = textInput.getText();
+        if (text == null || text.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        popInformation(message("WaitAndHandling"));
+        SingletonTask htmltask = new SingletonTask<Void>(this) {
+
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                html = HtmlWriteTools.textToHtml(text);
+                return html != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                HtmlEditorController.load(html);
+            }
+
+        };
+        start(htmltask, false);
+    }
+
+    @FXML
+    public void pdfAction() {
+        if (textInput == null) {
+            return;
+        }
+        String text = textInput.getText();
+        if (text == null || text.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        popInformation(message("WaitAndHandling"));
+        SingletonTask pdftask = new SingletonTask<Void>(this) {
+
+            private File pdf;
+
+            @Override
+            protected boolean handle() {
+                pdf = PdfTools.text2pdf(text);
+                return pdf != null && pdf.exists();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                PdfViewController.open(pdf);
+            }
+
+        };
+        start(pdftask, false);
+    }
+
+    @FXML
+    public void snapAction() {
+        if (textInput == null) {
+            return;
+        }
+        String text = textInput.getText();
+        if (text == null || text.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        ImageViewerController.load(NodeTools.snap(textInput));
     }
 
     /*

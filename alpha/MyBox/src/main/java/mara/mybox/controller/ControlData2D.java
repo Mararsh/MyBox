@@ -416,7 +416,7 @@ public class ControlData2D extends BaseController {
             @Override
             protected boolean handle() {
                 if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
-                    backupController.addBackup(data2D.getFile());
+                    backupController.addBackup(task, data2D.getFile());
                 }
                 try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.setTask(task);

@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.TimeZone;
 import mara.mybox.data.Era;
 import mara.mybox.value.AppValues;
@@ -620,6 +621,22 @@ public class DateTools {
             default:
                 return datetimeDuration(time1, time2);
         }
+    }
+
+    public static long randomTime(Random r) {
+        if (r == null) {
+            r = new Random();
+        }
+        int sign = r.nextInt(2);
+        long i = r.nextLong(new Date().getTime());
+        return sign == 1 ? i : -i;
+    }
+
+    public static String randomTimeString(Random r) {
+        if (r == null) {
+            r = new Random();
+        }
+        return datetimeToString(randomTime(r));
     }
 
 }
