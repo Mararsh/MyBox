@@ -33,11 +33,11 @@ public class IntTools {
         return new Random().nextInt(max);
     }
 
-    public static int random(Random r, int max) {
+    public static int random(Random r, int max, boolean nonNegative) {
         if (r == null) {
             r = new Random();
         }
-        int sign = r.nextInt(2);
+        int sign = nonNegative ? 1 : r.nextInt(2);
         int i = r.nextInt(max);
         return sign == 1 ? i : -i;
     }

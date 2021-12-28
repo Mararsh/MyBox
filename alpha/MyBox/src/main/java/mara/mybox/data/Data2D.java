@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -418,6 +419,7 @@ public abstract class Data2D extends Data2DDefinition {
             }
             Data2DDefinition def;
             long did = d.getD2did();
+            d.setModifyTime(new Date());
             if (did >= 0) {
                 def = d.getTableData2DDefinition().updateData(conn, d);
             } else {
@@ -473,8 +475,8 @@ public abstract class Data2D extends Data2DDefinition {
     /*
         values
      */
-    public String randomDouble(Random random) {
-        return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+    public String randomDouble(Random random, boolean nonNegative) {
+        return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
     }
 
     public String randomString(Random random) {
@@ -625,7 +627,7 @@ public abstract class Data2D extends Data2DDefinition {
             List<String> row = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
                 if (type == Type.Matrix) {
-                    row.add(randomDouble(random));
+                    row.add(randomDouble(random, false));
                 } else {
                     row.add(randomString(random));
                 }
@@ -797,9 +799,9 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    public String random(Random random, int col) {
+    public String random(Random random, int col, boolean nonNegative) {
         try {
-            return column(col).random(random, maxRandom, scale);
+            return column(col).random(random, maxRandom, scale, nonNegative);
         } catch (Exception e) {
             return null;
         }

@@ -13,7 +13,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -21,7 +20,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
@@ -760,10 +758,6 @@ public class LocationDataMapController extends BaseMapController {
             snapPara.setFill(Color.TRANSPARENT);
             snapPara.setTransform(Transform.scale(scale, scale));
 
-            Bounds bounds = snapBox.getLayoutBounds();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-
             List<File> snapshots = new ArrayList<>();
             loading = handling();
             snapEnd = true;
@@ -828,7 +822,7 @@ public class LocationDataMapController extends BaseMapController {
 
                 private void snap() {
                     try {
-                        Image snap = snapBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
+                        Image snap = snapBox.snapshot(snapPara, null);
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
                         File imageFile = new File(filePrefix + "_Frame" + frameIndex + "." + rformat);
                         ImageFileWriters.writeImageFile(bufferedImage, rformat, imageFile.getAbsolutePath());

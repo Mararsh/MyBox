@@ -73,11 +73,11 @@ public class DoubleTools {
         return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 
-    public static double random(Random r, int max) {
+    public static double random(Random r, int max, boolean nonNegative) {
         if (r == null) {
             r = new Random();
         }
-        int sign = r.nextInt(2);
+        int sign = nonNegative ? 1 : r.nextInt(2);
         sign = sign == 1 ? 1 : -1;
         double d = r.nextDouble();
         int i = max > 0 ? r.nextInt(max) : 0;

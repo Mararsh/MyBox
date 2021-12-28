@@ -894,6 +894,7 @@ public class DataFileExcel extends DataFile {
                     }
                 }
                 boolean isRandom = "MyBox##random".equals(value);
+                boolean isRandomNn = "MyBox##randomNn".equals(value);
                 Random random = new Random();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
@@ -905,7 +906,9 @@ public class DataFileExcel extends DataFile {
                         String v;
                         if (cols.contains(c)) {
                             if (isRandom) {
-                                v = random(random, c);
+                                v = random(random, c, false);
+                            } else if (isRandomNn) {
+                                v = random(random, c, true);
                             } else {
                                 v = value;
                             }

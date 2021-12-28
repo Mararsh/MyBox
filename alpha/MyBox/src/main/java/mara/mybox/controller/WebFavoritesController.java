@@ -292,7 +292,7 @@ public class WebFavoritesController extends BaseSysTableController<WebFavorite> 
             return tableWebFavorite.withSub(tableTree, treeController.selectedNode.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
-            return tableWebFavorite.queryConditions(queryConditions, startRowOfCurrentPage, pageSize);
+            return tableWebFavorite.queryConditions(queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
 
         } else {
             return null;

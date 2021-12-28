@@ -18,7 +18,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import mara.mybox.dev.MyBoxLog;
@@ -219,8 +218,7 @@ public class HtmlSnapController extends WebAddressController {
             if (isCanceled()) {
                 return;
             }
-            WritableImage snapshot = new WritableImage(snapImageWidth, snapImageHeight);
-            snapshot = webView.snapshot(snapParameters, snapshot);
+            Image snapshot = webView.snapshot(snapParameters, null);
             Image cropped;
             if (snapTotalHeight < snapHeight + snapStep) { // last snap
                 cropped = CropTools.cropOutsideFx(snapshot, 0,

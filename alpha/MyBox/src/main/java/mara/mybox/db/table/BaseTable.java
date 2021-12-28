@@ -587,8 +587,13 @@ public abstract class BaseTable<D> {
         }
         String sql = null;
         try {
-            sql = sizeStatement()
-                    + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
+            String c = "";
+            if (condition != null && !condition.isBlank()) {
+                if (!condition.trim().startsWith("ORDER BY")) {
+                    c = " WHERE " + condition;
+                }
+            }
+            sql = sizeStatement() + c;
             ResultSet results = conn.createStatement().executeQuery(sql);
             if (results.next()) {
                 return results.getInt(1);
@@ -953,27 +958,40 @@ public abstract class BaseTable<D> {
         return readData(sql);
     }
 
-    public List<D> queryConditions(String condition, long start, long size) {
+    public List<D> queryConditions(String condition, String orderby, long start, long size) {
         List<D> dataList = new ArrayList<>();
         if (start < 0 || size <= 0) {
             return dataList;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            return queryConditions(conn, condition, start, size);
+            return queryConditions(conn, condition, orderby, start, size);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return dataList;
         }
     }
 
-    public List<D> queryConditions(Connection conn, String condition, long start, long size) {
+    public List<D> queryConditions(Connection conn, String condition, String orderby, long start, long size) {
         if (conn == null || start < 0 || size <= 0) {
             return new ArrayList<>();
         }
-        String sql = "SELECT * FROM " + tableName
-                + (condition == null || condition.isBlank() ? "" : " WHERE " + condition)
-                + (orderColumns != null && (condition == null || !condition.contains("ORDER BY")) ? " ORDER BY " + orderColumns : "")
+        String c = "";
+        if (condition != null && !condition.isBlank()) {
+            if (condition.trim().startsWith("ORDER BY")) {
+                c = condition;
+            } else {
+                c = " WHERE " + condition;
+            }
+        }
+        if (orderby != null && !orderby.isBlank()) {
+            c += " ORDER BY " + orderby;
+        }
+        if (orderColumns != null && (c.isBlank() || !c.contains("ORDER BY"))) {
+            c += " ORDER BY " + orderColumns;
+        }
+        String sql = "SELECT * FROM " + tableName + c
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
+//        MyBoxLog.debug(sql);
         return query(conn, sql);
     }
 

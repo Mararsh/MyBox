@@ -72,7 +72,7 @@ public class ControlDataConvert extends BaseController {
     protected ComboBox<String> maxLinesSelector;
     @FXML
     protected CheckBox csvCheck, textsCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, excelCheck,
-            dataClipboardCheck, rowNumberCheck, excelWithNamesCheck;
+            myBoxClipboardCheck, rowNumberCheck, excelWithNamesCheck;
     @FXML
     protected TextArea cssArea;
     @FXML
@@ -161,11 +161,11 @@ public class ControlDataConvert extends BaseController {
             }
         });
 
-        dataClipboardCheck.setSelected(UserConfig.getBoolean(baseName + "DataClipboard", false));
-        dataClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        myBoxClipboardCheck.setSelected(UserConfig.getBoolean(baseName + "DataClipboard", false));
+        myBoxClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "DataClipboard", dataClipboardCheck.isSelected());
+                UserConfig.setBoolean(baseName + "DataClipboard", myBoxClipboardCheck.isSelected());
             }
         });
     }
@@ -473,7 +473,7 @@ public class ControlDataConvert extends BaseController {
                     updateLogs(message("Skipped"));
                 }
             }
-            if (dataClipboardCheck.isSelected()) {
+            if (myBoxClipboardCheck.isSelected()) {
                 dataClipboardFile = DataClipboard.newFile();
                 if (dataClipboardFile != null) {
                     updateLogs(message("Writing") + " " + dataClipboardFile.getAbsolutePath());

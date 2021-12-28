@@ -12,7 +12,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -22,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -586,12 +584,7 @@ public abstract class BaseMapController extends BaseController {
         SnapshotParameters snapPara = new SnapshotParameters();
         snapPara.setFill(Color.TRANSPARENT);
         snapPara.setTransform(Transform.scale(scale, scale));
-
-        Bounds bounds = snapBox.getLayoutBounds();
-        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-        final Image mapSnap = snapBox.snapshot(snapPara, snapshot);
+        final Image mapSnap = snapBox.snapshot(snapPara, null);
 
         synchronized (this) {
             if (task != null && !task.isQuit()) {
@@ -640,12 +633,7 @@ public abstract class BaseMapController extends BaseController {
         SnapshotParameters snapPara = new SnapshotParameters();
         snapPara.setFill(Color.TRANSPARENT);
         snapPara.setTransform(Transform.scale(scale, scale));
-
-        Bounds bounds = snapBox.getLayoutBounds();
-        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-        final Image mapSnap = snapBox.snapshot(snapPara, snapshot);
+        final Image mapSnap = snapBox.snapshot(snapPara, null);
 
         synchronized (this) {
             if (task != null && !task.isQuit()) {

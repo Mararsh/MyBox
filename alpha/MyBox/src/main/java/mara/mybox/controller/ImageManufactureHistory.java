@@ -423,7 +423,6 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
                 @Override
                 protected void whenFailed() {
-                    MyBoxLog.error("here");
                 }
             };
             start(task, false, null);

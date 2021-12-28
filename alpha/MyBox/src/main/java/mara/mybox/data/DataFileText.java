@@ -587,6 +587,7 @@ public class DataFileText extends DataFile {
             }
             String line;
             boolean isRandom = "MyBox##random".equals(value);
+            boolean isRandomNn = "MyBox##randomNn".equals(value);
             Random random = new Random();
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> record = parseFileLine(line);
@@ -597,7 +598,9 @@ public class DataFileText extends DataFile {
                 for (int i = 0; i < columns.size(); i++) {
                     if (cols.contains(i)) {
                         if (isRandom) {
-                            row.add(random(random, i));
+                            row.add(random(random, i, false));
+                        } else if (isRandomNn) {
+                            row.add(random(random, i, true));
                         } else {
                             row.add(value);
                         }

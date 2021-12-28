@@ -26,8 +26,8 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
     protected BaseTable tableDefinition;
 
     @FXML
-    protected Button examplesButton, refreshButton, resetButton,
-            importButton, exportButton, chartsButton, queryButton, moveDataButton;
+    protected Button examplesButton, resetButton,
+            importButton, exportButton, chartsButton, queryButton, moveDataButton, orderby;
     @FXML
     protected Label queryConditionsLabel;
 
@@ -71,7 +71,7 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
     @Override
     public List<P> readPageData() {
         if (tableDefinition != null) {
-            return tableDefinition.queryConditions(queryConditions, startRowOfCurrentPage, pageSize);
+            return tableDefinition.queryConditions(queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } else {
             return null;
         }

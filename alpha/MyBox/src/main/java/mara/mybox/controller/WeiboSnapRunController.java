@@ -34,7 +34,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
@@ -1276,8 +1275,7 @@ public class WeiboSnapRunController extends BaseController {
             showMemInfo();
             showDynamicInfo();
             snapStartTime = new Date().getTime();
-            WritableImage snapshot = new WritableImage(snapImageWidth, snapImageHeight);
-            snapshot = webView.snapshot(snapParameters, snapshot);
+            Image snapshot = webView.snapshot(snapParameters, null);
             loadingController.addLine(Languages.message("CurrentSnapshotNumber") + ": " + imageFiles.size());
             try {
                 // Save as png images temporarily. Quicker than jpg since no compression.

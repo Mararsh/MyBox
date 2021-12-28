@@ -538,6 +538,7 @@ public class DataFileCSV extends DataFileText {
                     }
                 }
                 boolean isRandom = "MyBox##random".equals(value);
+                boolean isRandomNn = "MyBox##randomNn".equals(value);
                 Random random = new Random();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
@@ -547,7 +548,9 @@ public class DataFileCSV extends DataFileText {
                             for (int i = 0; i < columns.size(); i++) {
                                 if (cols.contains(i)) {
                                     if (isRandom) {
-                                        row.add(random(random, i));
+                                        row.add(random(random, i, false));
+                                    } else if (isRandomNn) {
+                                        row.add(random(random, i, true));
                                     } else {
                                         row.add(value);
                                     }

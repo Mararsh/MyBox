@@ -284,14 +284,11 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             return node.snapshot(spa, null);
         }
         double scale = NodeTools.screenDpi() / 96;
-        WritableImage image = new WritableImage(
-                (int) Math.round(node.getWidth() * scale),
-                (int) Math.round(node.getHeight() * scale));
         SnapshotParameters spa = new SnapshotParameters();
         spa.setTransform(Transform.scale(scale, scale));
         spa.setFill(Color.TRANSPARENT);
         spa.setDepthBuffer(true);
-        Image snap = node.snapshot(spa, image);
+        Image snap = node.snapshot(spa, null);
         if (keepScale) {
             snap = ScaleTools.scaleImage(snap,
                     (int) node.getWidth(), (int) node.getHeight());
@@ -318,13 +315,10 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
                 // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
                 double scale = NodeTools.dpiScale();
-                final WritableImage snap = new WritableImage(
-                        (int) Math.round(webView.getWidth() * scale),
-                        (int) Math.round(webView.getHeight() * scale));
                 final SnapshotParameters parameters = new SnapshotParameters();
                 parameters.setTransform(Transform.scale(scale, scale));
                 parameters.setFill(Color.TRANSPARENT);
-                webView.snapshot(parameters, snap);
+                final WritableImage snap = webView.snapshot(parameters, null);
                 task = new SingletonTask<Void>(this) {
                     private Image transparent, blended;
 

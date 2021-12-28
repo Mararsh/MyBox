@@ -31,8 +31,8 @@ public class Data2DSetValuesController extends Data2DHandleController {
     @FXML
     protected ToggleGroup valueGroup;
     @FXML
-    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, setRadio,
-            gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
+    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio,
+            setRadio, gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
     protected TextField valueInput;
     @FXML
@@ -59,6 +59,9 @@ public class Data2DSetValuesController extends Data2DHandleController {
                     break;
                 case "MyBox##random":
                     randomRadio.fire();
+                    break;
+                case "MyBox##randomNn":
+                    randomNnRadio.fire();
                     break;
                 case "MyBox##gaussianDistribution":
                     gaussianDistributionRadio.fire();
@@ -104,6 +107,8 @@ public class Data2DSetValuesController extends Data2DHandleController {
                 value = " ";
             } else if (randomRadio.isSelected()) {
                 value = "MyBox##random";
+            } else if (randomNnRadio.isSelected()) {
+                value = "MyBox##randomNn";
             } else if (gaussianDistributionRadio.isSelected()) {
                 value = "MyBox##gaussianDistribution";
             } else if (identifyRadio.isSelected()) {
@@ -123,7 +128,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
     @Override
     public boolean checkOptions() {
         infoLabel.setText("");
-        if (!tableController.isSquare(allRowsRadio.isSelected()) || allPages()) {
+        if (allPages()) {
             matrixPane.setDisable(true);
             if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
                     || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
@@ -131,6 +136,25 @@ public class Data2DSetValuesController extends Data2DHandleController {
                 return false;
             }
         } else {
+            boolean isSquare = tableController.isSquare(allRowsRadio.isSelected());
+            boolean canGD = isSquare && tableController.checkedColsIndices.size() % 2 != 0;
+            gaussianDistributionRadio.setDisable(!canGD);
+            identifyRadio.setDisable(!isSquare);
+            upperTriangleRadio.setDisable(!isSquare);
+            lowerTriangleRadio.setDisable(!isSquare);
+            if (!isSquare) {
+                if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
+                        || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
+                    zeroRadio.fire();
+                    return false;
+                }
+            }
+            if (!canGD) {
+                if (gaussianDistributionRadio.isSelected()) {
+                    zeroRadio.fire();
+                    return false;
+                }
+            }
             matrixPane.setDisable(false);
         }
         checkValue();
@@ -212,7 +236,9 @@ public class Data2DSetValuesController extends Data2DHandleController {
                 for (int col : tableController.checkedColsIndices) {
                     String v = value;
                     if (randomRadio.isSelected()) {
-                        v = tableController.data2D.random(random, col);
+                        v = tableController.data2D.random(random, col, false);
+                    } else if (randomNnRadio.isSelected()) {
+                        v = tableController.data2D.random(random, col, true);
                     }
                     values.set(col + 1, v);
                 }

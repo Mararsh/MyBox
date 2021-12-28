@@ -25,7 +25,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -53,7 +52,8 @@ public class Data2DManageController extends BaseSysTableController<Data2DDefinit
     protected Label dataNameLabel;
 
     public Data2DManageController() {
-        baseTitle = Languages.message("ManageData");
+        baseTitle = message("ManageData");
+        TipsLabelKey = "DataManageTips";
     }
 
     @Override
@@ -193,6 +193,11 @@ public class Data2DManageController extends BaseSysTableController<Data2DDefinit
             return;
         }
         dataController.renameAction(this, index, selected);
+    }
+
+    @FXML
+    public void queryAction() {
+        Data2DManageQueryController.open(this);
     }
 
     @FXML

@@ -665,6 +665,13 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DNormalizeController.open(tableController);
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
             menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DTransposeController.open(tableController);

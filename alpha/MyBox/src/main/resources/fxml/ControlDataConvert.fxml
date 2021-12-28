@@ -92,7 +92,7 @@ License:    Apache License Version 2.0
                                              </image>
                                           </ImageView>
                                        </graphic></CheckBox>
-                                    <CheckBox fx:id="dataClipboardCheck" layoutX="218.0" layoutY="10.0" mnemonicParsing="false">
+                                    <CheckBox fx:id="myBoxClipboardCheck" layoutX="218.0" layoutY="10.0" mnemonicParsing="false">
                                        <graphic>
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                              <image>

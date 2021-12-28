@@ -68,6 +68,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         }
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
+            List<ImageEditHistory> invalid = new ArrayList<>();
             String sql = " SELECT * FROM Image_Edit_History WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
@@ -80,26 +81,16 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                     his.setScopeType(results.getString("scope_type"));
                     his.setScopeName(results.getString("scope_name"));
                     his.setOperationTime(results.getTimestamp("operation_time"));
-                    records.add(his);
+
+                    if (!new File(his.getHistoryLocation()).exists() || records.size() >= max) {
+                        invalid.add(his);
+                    } else {
+                        records.add(his);
+                    }
                 }
             }
-            List<ImageEditHistory> valid = new ArrayList<>();
-            for (int i = 0; i < records.size(); ++i) {
-                String hisname = records.get(i).getHistoryLocation();
-                File hisFile = new File(hisname);
-                if (!hisFile.exists()) {
-                    deleteRecord(conn, filename, hisname);
-                    continue;
-                }
-                valid.add(records.get(i));
-            }
-            if (valid.size() > max) {
-                for (int i = max; i < valid.size(); ++i) {
-                    deleteRecord(conn, filename, valid.get(i).getHistoryLocation());
-                }
-                records = valid.subList(0, max);
-            } else {
-                records = valid;
+            for (ImageEditHistory h : invalid) {
+                deleteRecord(conn, h.getImage(), h.getHistoryLocation());
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

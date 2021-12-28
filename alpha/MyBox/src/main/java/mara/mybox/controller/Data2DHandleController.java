@@ -339,7 +339,7 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public boolean handleRows() {
         try {
-            handledData = tableController.selectedData(all(), rowNumberCheck != null && rowNumberCheck.isSelected());
+            handledData = tableController.selectedData(all(), showRowNumber());
             if (handledData == null) {
                 return false;
             }

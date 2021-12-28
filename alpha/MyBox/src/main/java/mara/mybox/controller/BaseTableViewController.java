@@ -46,7 +46,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseTableViewController<P> extends BaseController {
 
     protected ObservableList<P> tableData;
-    protected String tableName, idColumn, queryConditions, queryConditionsString;
+    protected String tableName, idColumn, queryConditions, orderColumns, queryConditionsString;
     protected int pageSize, editingIndex, viewingIndex;
     protected long pagesNumber, dataSize;
     protected long currentPage, startRowOfCurrentPage;  // 0-based

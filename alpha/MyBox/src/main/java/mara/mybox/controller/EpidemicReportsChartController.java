@@ -17,7 +17,6 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -35,7 +34,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -1365,10 +1363,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             snapPara.setFill(Color.WHITE);
             snapPara.setTransform(Transform.scale(scale, scale));
 
-            Bounds bounds = snapBox.getLayoutBounds();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-
             List<File> snapshots = new ArrayList<>();
             loading = handling();
             snapEnd = true;
@@ -1432,7 +1426,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
                 private void snap() {
                     try {
-                        Image snap = snapBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
+                        Image snap = snapBox.snapshot(snapPara, null);
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
                         if (format.equals("gif") && bufferedImage.getWidth() > snapWidth) {
                             bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, snapWidth);

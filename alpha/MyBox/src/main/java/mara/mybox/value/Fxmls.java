@@ -172,6 +172,7 @@ public class Fxmls {
         data
      */
     public static final String Data2DManageFxml = "/fxml/Data2DManage.fxml";
+    public static final String Data2DManageQeuryFxml = "/fxml/Data2DManageQuery.fxml";
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
 
@@ -186,6 +187,7 @@ public class Fxmls {
     public static final String Data2DStatisticFxml = "/fxml/Data2DStatistic.fxml";
     public static final String Data2DPercentageFxml = "/fxml/Data2DPercentage.fxml";
     public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";
+    public static final String Data2DNormalizeFxml = "/fxml/Data2DNormalize.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";

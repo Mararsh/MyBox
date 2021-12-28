@@ -47,7 +47,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         addColumn(new ColumnDefinition("max_random", ColumnType.Integer));
         addColumn(new ColumnDefinition("modify_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(StringMaxLength));
-        orderColumns = "d2did DESC";
+        orderColumns = "modify_time DESC";
         return this;
     }
 
@@ -55,16 +55,16 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             = "SELECT * FROM Data2D_Definition WHERE d2did=?";
 
     public static final String Query_TypeFile
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? ORDER BY d2did DESC";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? ORDER BY modify_time DESC";
 
     public static final String Query_TypeName
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND data_name=? ORDER BY d2did DESC";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND data_name=? ORDER BY modify_time DESC";
 
     public static final String Query_TypeFileSheet
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? AND sheet=? ORDER BY d2did DESC";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? AND sheet=? ORDER BY modify_time DESC";
 
     public static final String Query_Type
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? ORDER BY d2did DESC";
+            = "SELECT * FROM Data2D_Definition WHERE data_type=? ORDER BY modify_time DESC";
 
     public static final String DeleteID
             = "DELETE FROM Data2D_Definition WHERE d2did=?";

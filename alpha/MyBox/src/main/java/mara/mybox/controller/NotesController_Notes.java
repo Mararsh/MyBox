@@ -157,7 +157,7 @@ public abstract class NotesController_Notes extends NotesController_Tags {
             return tableNote.withSub(tableNotebook, notebooksController.selectedNode.getNbid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
-            return tableNote.queryConditions(queryConditions, startRowOfCurrentPage, pageSize);
+            return tableNote.queryConditions(queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
 
         } else {
             return null;

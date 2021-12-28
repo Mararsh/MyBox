@@ -207,7 +207,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     public List<ImageClipboard> readPageData() {
         try ( Connection conn = DerbyBase.getConnection()) {
             ((TableImageClipboard) tableDefinition).clearInvalid(conn);
-            return tableDefinition.queryConditions(conn, queryConditions, startRowOfCurrentPage, pageSize);
+            return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return new ArrayList<>();
