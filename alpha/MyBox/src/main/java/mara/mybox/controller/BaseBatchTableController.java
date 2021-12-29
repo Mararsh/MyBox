@@ -816,9 +816,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
             };
             if (parentController != null) {
-                parentController.handling(task);
+                parentController.start(task, true);
+            } else {
+                start(task, false);
             }
-            start(task, false, null);
         }
 
     }

@@ -1,12 +1,13 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ConvolutionKernel;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -29,7 +30,7 @@ public class TableFloatMatrix extends DerbyBase {
         };
         Create_Table_Statement
                 = " CREATE TABLE Float_Matrix ( "
-                + "  name  VARCHAR(StringMaxLength) NOT NULL, "
+                + "  name  VARCHAR(" + StringMaxLength + ") NOT NULL, "
                 + "  row  INT  NOT NULL,  "
                 + "  col INT  NOT NULL,  "
                 + "  value FLOAT  NOT NULL, "

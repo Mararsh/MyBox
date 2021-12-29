@@ -168,7 +168,7 @@ public class Data2DManageQueryController extends BaseChildController {
     public static Data2DManageQueryController open(Data2DManageController manageController) {
         try {
             Data2DManageQueryController controller = (Data2DManageQueryController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.Data2DManageQeuryFxml, false);
+                    manageController.getMyWindow(), Fxmls.Data2DManageQueryFxml, false);
             controller.setParameters(manageController);
             return controller;
         } catch (Exception e) {

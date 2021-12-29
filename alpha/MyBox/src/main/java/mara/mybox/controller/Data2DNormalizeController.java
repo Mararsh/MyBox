@@ -45,7 +45,6 @@ public class Data2DNormalizeController extends Data2DHandleController {
                     matrix[r][c] = data2D.doubleValue(tableRow.get(col + 1));
                     vs.add(tableRow.get(col));
                 }
-                MyBoxLog.debug(row + "   " + vs);
             }
             matrix = normalizeController.calculate(matrix);
             if (matrix == null) {
@@ -67,7 +66,6 @@ public class Data2DNormalizeController extends Data2DHandleController {
                     row.add(DoubleTools.format(matrix[r][c], scale));
                 }
                 handledData.add(row);
-                MyBoxLog.debug(row);
             }
             return true;
         } catch (Exception e) {

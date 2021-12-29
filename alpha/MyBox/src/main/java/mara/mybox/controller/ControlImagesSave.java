@@ -58,6 +58,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -77,7 +78,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
  * @License Apache License Version 2.0
  */
 public class ControlImagesSave extends BaseController {
-    
+
     protected BaseImagesListController listController;
     protected int digit;
     protected String imagesFormat;
@@ -85,7 +86,7 @@ public class ControlImagesSave extends BaseController {
     protected boolean gifKeepSize;
     protected ObservableList<ImageInformation> imageInfos;
     protected LoadingController loading;
-    
+
     @FXML
     protected TitledPane gifPane, pdfPane, pptPane, convertPane;
     @FXML
@@ -111,17 +112,17 @@ public class ControlImagesSave extends BaseController {
     protected ComboBox<String> savedWidthSelector;
     @FXML
     protected HBox savedWidthBox;
-    
+
     public ControlImagesSave() {
         baseTitle = message("ImagesEditor");
         TipsLabelKey = "ImagesEditorTips";
     }
-    
+
     @Override
     public void setFileType() {
         setFileType(FileType.Image);
     }
-    
+
     @Override
     public void setControlsStyle() {
         try {
@@ -131,19 +132,19 @@ public class ControlImagesSave extends BaseController {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     public void setParent(BaseImagesListController parent) {
         try {
             baseName = parent.baseName;
             parentController = parent;
             listController = parent;
-            
+
             initSavePane();
             initGifPane();
             initPptPane();
             formatController.setParameters(this, false);
             pdfOptionsController.set(baseName, true);
-            
+
             imageInfos = listController.imageInfos;
             imageInfos.addListener(new ListChangeListener<ImageInformation>() {
                 @Override
@@ -152,17 +153,17 @@ public class ControlImagesSave extends BaseController {
                 }
             });
             imageInfosChanged();
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void imageInfosChanged() {
         thumbsListButton.setDisable(imageInfos.isEmpty());
         saveAsButton.setDisable(imageInfos.isEmpty());
     }
-    
+
     public void initSavePane() {
         try {
             saveGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -172,7 +173,7 @@ public class ControlImagesSave extends BaseController {
                 }
             });
             checkSaveType();
-            
+
             savedWidth = UserConfig.getInt(baseName + "SavedWidth", -1);
             List<String> values = Arrays.asList(message("OriginalSize"),
                     "512", "1024", "256", "128", "2048", "100", "80", "4096");
@@ -203,7 +204,7 @@ public class ControlImagesSave extends BaseController {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     protected void checkSaveType() {
         gifPane.setExpanded(false);
         pdfPane.setExpanded(false);
@@ -230,14 +231,14 @@ public class ControlImagesSave extends BaseController {
         }
         savedWidthBox.setDisable(spliceRadio.isSelected() || videoRadio.isSelected());
     }
-    
+
     public void initGifPane() {
         try {
             gifSizeGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) -> {
                         checkGifSizeType();
                     });
-            
+
             gifWidth = UserConfig.getInt(baseName + "GifWidth", 600);
             gifWidth = gifWidth <= 0 ? 600 : gifWidth;
             gifWidthInput.setText(gifWidth + "");
@@ -245,14 +246,14 @@ public class ControlImagesSave extends BaseController {
                     (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                         checkGifSize();
                     });
-            
+
             checkGifSizeType();
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     protected void checkGifSizeType() {
         RadioButton button = (RadioButton) gifSizeGroup.getSelectedToggle();
         if (message("KeepImagesSize").equals(button.getText())) {
@@ -263,7 +264,7 @@ public class ControlImagesSave extends BaseController {
             checkGifSize();
         }
     }
-    
+
     protected void checkGifSize() {
         try {
             int v = Integer.valueOf(gifWidthInput.getText());
@@ -278,7 +279,7 @@ public class ControlImagesSave extends BaseController {
             gifWidthInput.setStyle(UserConfig.badStyle());
         }
     }
-    
+
     public void initPptPane() {
         try {
             pptWidth = UserConfig.getInt(baseName + "PptWidth", 1024);
@@ -288,7 +289,7 @@ public class ControlImagesSave extends BaseController {
                     (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                         checkPptWidth();
                     });
-            
+
             pptHeight = UserConfig.getInt(baseName + "PptHeight", 768);
             pptHeight = pptHeight <= 0 ? 768 : pptHeight;
             pptHeightInput.setText(pptHeight + "");
@@ -296,7 +297,7 @@ public class ControlImagesSave extends BaseController {
                     (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                         checkPptHeight();
                     });
-            
+
             pptMargin = UserConfig.getInt(baseName + "PptMargin", 20);
             pptMargin = pptHeight <= 0 ? 20 : pptMargin;
             pptMarginInput.setText(pptMargin + "");
@@ -304,12 +305,12 @@ public class ControlImagesSave extends BaseController {
                     (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                         checkPptMargin();
                     });
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     protected void checkPptWidth() {
         try {
             int v = Integer.valueOf(pptWidthInput.getText());
@@ -324,7 +325,7 @@ public class ControlImagesSave extends BaseController {
             pptWidthInput.setStyle(UserConfig.badStyle());
         }
     }
-    
+
     protected void checkPptHeight() {
         try {
             int v = Integer.valueOf(pptHeightInput.getText());
@@ -339,7 +340,7 @@ public class ControlImagesSave extends BaseController {
             pptHeightInput.setStyle(UserConfig.badStyle());
         }
     }
-    
+
     protected void checkPptMargin() {
         try {
             int v = Integer.valueOf(pptMarginInput.getText());
@@ -354,7 +355,7 @@ public class ControlImagesSave extends BaseController {
             pptMarginInput.setStyle(UserConfig.badStyle());
         }
     }
-    
+
     @FXML
     public void pptMaxSize() {
         if (imageInfos == null || imageInfos.isEmpty()) {
@@ -391,7 +392,7 @@ public class ControlImagesSave extends BaseController {
             pptHeightInput.setText(maxH + "");
         }
     }
-    
+
     @FXML
     @Override
     public void popSaveAs(MouseEvent event) {
@@ -400,7 +401,7 @@ public class ControlImagesSave extends BaseController {
         }
         super.popSaveAs(event);
     }
-    
+
     @FXML
     @Override
     public void saveAsAction() {
@@ -409,52 +410,53 @@ public class ControlImagesSave extends BaseController {
             return;
         }
         digit = (imageInfos.size() + "").length();
-        
+
         if (imagesRadio.isSelected()) {
             imagesFormat = formatController.attributes.getImageFormat();
-            targetFile = chooseSaveFile(TargetFileType, DateTools.nowFileString() + "." + imagesFormat);
+            targetFile = chooseSaveFile(defaultTargetPath(TargetFileType),
+                    DateTools.nowFileString() + "." + imagesFormat, FileFilters.imageFilter(imagesFormat));
             if (targetFile == null) {
                 return;
             }
             saveAsImages();
-            
+
         } else if (spliceRadio.isSelected()) {
             saveAsSplice();
-            
+
         } else if (tifFileRadio.isSelected()) {
             targetFile = chooseSaveFile();
             if (targetFile == null) {
                 return;
             }
             saveAsTiff();
-            
+
         } else if (gifFileRadio.isSelected()) {
             targetFile = chooseSaveFile();
             if (targetFile == null) {
                 return;
             }
             saveAsGif();
-            
+
         } else if (pdfRadio.isSelected()) {
             targetFile = chooseSaveFile();
             if (targetFile == null) {
                 return;
             }
             saveAsPdf();
-            
+
         } else if (pptRadio.isSelected()) {
             targetFile = chooseSaveFile();
             if (targetFile == null) {
                 return;
             }
             saveAsPPT();
-            
+
         } else if (videoRadio.isSelected()) {
             saveAsVideo();
-            
+
         }
     }
-    
+
     protected BufferedImage image(int index) {
         try {
             if (imageInfos == null || index < 0 || index >= imageInfos.size()) {
@@ -474,7 +476,7 @@ public class ControlImagesSave extends BaseController {
             return null;
         }
     }
-    
+
     protected void updateLabel(String msg, int number) {
         if (task == null || task.isQuit() || loading == null) {
             return;
@@ -487,7 +489,7 @@ public class ControlImagesSave extends BaseController {
             }
         });
     }
-    
+
     protected void saveAsImages() {
         synchronized (this) {
             if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
@@ -497,14 +499,14 @@ public class ControlImagesSave extends BaseController {
                 task.cancel();
                 loading = null;
             }
-            
+
             if (imagesFormat == null) {
                 parentController.popError(message("InvalidParameters"));
                 return;
             }
             task = new SingletonTask<Void>(this) {
                 List<String> fileNames;
-                
+
                 @Override
                 protected boolean handle() {
                     fileNames = new ArrayList<>();
@@ -537,18 +539,18 @@ public class ControlImagesSave extends BaseController {
                     }
                     return !fileNames.isEmpty();
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     recordFileWritten(targetFile.getParent());
                     multipleFilesGenerated(fileNames);
                 }
-                
+
             };
             loading = parentController.start(task);
         }
     }
-    
+
     protected void saveAsSplice() {
         if (imageInfos == null || imageInfos.isEmpty()) {
             return;
@@ -561,7 +563,7 @@ public class ControlImagesSave extends BaseController {
         }
         ImagesSpliceController.open(infos);
     }
-    
+
     protected void saveAsVideo() {
         if (imageInfos == null || imageInfos.isEmpty()) {
             return;
@@ -574,7 +576,7 @@ public class ControlImagesSave extends BaseController {
         }
         FFmpegMergeImagesController.open(infos);
     }
-    
+
     protected void saveAsPdf() {
         synchronized (this) {
             if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
@@ -585,7 +587,7 @@ public class ControlImagesSave extends BaseController {
                 loading = null;
             }
             task = new SingletonTask<Void>(this) {
-                
+
                 @Override
                 protected boolean handle() {
                     File tmpFile = TmpFileTools.getTempFile();
@@ -597,7 +599,7 @@ public class ControlImagesSave extends BaseController {
                         info.setAuthor(pdfOptionsController.authorInput.getText());
                         document.setDocumentInformation(info);
                         document.setVersion(1.0f);
-                        
+
                         int count = 0;
                         for (int i = 0; i < imageInfos.size(); ++i) {
                             if (task == null || task.isCancelled()) {
@@ -615,7 +617,7 @@ public class ControlImagesSave extends BaseController {
                             String msg = MessageFormat.format(message("NumberPageWritten"), (i + 1) + "/" + imageInfos.size());
                             updateLabel(msg, i + 1);
                         }
-                        
+
                         PDPage page = document.getPage(0);
                         PDPageXYZDestination dest = new PDPageXYZDestination();
                         dest.setPage(page);
@@ -624,29 +626,29 @@ public class ControlImagesSave extends BaseController {
                         PDActionGoTo action = new PDActionGoTo();
                         action.setDestination(dest);
                         document.getDocumentCatalog().setOpenAction(action);
-                        
+
                         document.save(tmpFile);
                         document.close();
-                        
+
                         return FileTools.rename(tmpFile, targetFile);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
                     }
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     parentController.popSuccessful();
                     recordFileWritten(targetFile);
                     ControllerTools.openPdfViewer(null, targetFile);
                 }
-                
+
             };
             loading = parentController.start(task);
         }
     }
-    
+
     protected void saveAsTiff() {
         synchronized (this) {
             if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
@@ -657,7 +659,7 @@ public class ControlImagesSave extends BaseController {
                 loading = null;
             }
             task = new SingletonTask<Void>(this) {
-                
+
                 @Override
                 protected boolean handle() {
                     System.gc();
@@ -691,9 +693,9 @@ public class ControlImagesSave extends BaseController {
                         return false;
                     }
                     return FileTools.rename(tmpFile, targetFile);
-                    
+
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     parentController.popSuccessful();
@@ -702,12 +704,12 @@ public class ControlImagesSave extends BaseController {
                     controller.selectSourceFile(targetFile);
                     controller.toFront();
                 }
-                
+
             };
             loading = parentController.start(task);
         }
     }
-    
+
     protected void saveAsGif() {
         synchronized (this) {
             if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
@@ -718,7 +720,7 @@ public class ControlImagesSave extends BaseController {
                 loading = null;
             }
             task = new SingletonTask<Void>(this) {
-                
+
                 @Override
                 protected boolean handle() {
                     System.gc();
@@ -757,9 +759,9 @@ public class ControlImagesSave extends BaseController {
                         return false;
                     }
                     return FileTools.rename(tmpFile, targetFile);
-                    
+
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     parentController.popSuccessful();
@@ -768,12 +770,12 @@ public class ControlImagesSave extends BaseController {
                     controller.selectSourceFile(targetFile);
                     controller.toFront();
                 }
-                
+
             };
             loading = parentController.start(task);
         }
     }
-    
+
     protected void saveAsPPT() {
         synchronized (this) {
             if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
@@ -784,7 +786,7 @@ public class ControlImagesSave extends BaseController {
                 loading = null;
             }
             task = new SingletonTask<Void>(this) {
-                
+
                 @Override
                 protected boolean handle() {
                     System.gc();
@@ -816,7 +818,7 @@ public class ControlImagesSave extends BaseController {
                     }
                     return FileTools.rename(tmpFile, targetFile);
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     parentController.popSuccessful();
@@ -825,16 +827,16 @@ public class ControlImagesSave extends BaseController {
                     controller.sourceFileChanged(targetFile);
                     controller.toFront();
                 }
-                
+
             };
             loading = parentController.start(task);
         }
     }
-    
+
     @FXML
     public void editFrames() {
         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
         controller.loadImages(imageInfos);
     }
-    
+
 }

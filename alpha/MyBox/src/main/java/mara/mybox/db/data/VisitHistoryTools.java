@@ -43,6 +43,14 @@ public class VisitHistoryTools {
         return UserConfig.getPath(getPathKey(type));
     }
 
+    public static String defaultExt(int type) {
+        List<FileChooser.ExtensionFilter> filters = getExtensionFilter(type);
+        if (filters == null || filters.isEmpty()) {
+            return null;
+        }
+        return FileNameTools.getFileSuffix(filters.get(0).getExtensions().get(0));
+    }
+
     public static List<FileChooser.ExtensionFilter> getExtensionFilter(int fileType) {
         if (fileType == FileType.Image) {
             return FileFilters.ImageExtensionFilter;

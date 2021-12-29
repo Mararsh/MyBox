@@ -26,9 +26,12 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.color.ColorBase;
+import mara.mybox.controller.LoadingController;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
+import static mara.mybox.value.Languages.message;
 import net.sf.image4j.codec.ico.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -129,6 +132,8 @@ public class ImageFileReaders {
             return null;
         }
         try {
+            SingletonTask task = imageInfo.getTask();
+            LoadingController loading = task != null ? task.getLoading() : null;
             ImageReadParam param = reader.getDefaultReadParam();
             Rectangle region = imageInfo.getRegion();
             if (region != null) {
@@ -179,6 +184,7 @@ public class ImageFileReaders {
             File file = readInfo.getFile();
             int index = readInfo.getIndex();
             int requiredWidth = (int) readInfo.getRequiredWidth();
+
             if (existInfo != null) {
                 ImageFileInformation referFileInfo = existInfo.getImageFileInformation();
                 if (referFileInfo != null && referFileInfo.getFile().equals(file)) {
@@ -200,7 +206,8 @@ public class ImageFileReaders {
                     }
                 }
             }
-
+            SingletonTask task = readInfo.getTask();
+            LoadingController loading = task != null ? task.getLoading() : null;
             String format = readInfo.getImageFormat();
             if ("ico".equals(format) || "icon".equals(format)) {
                 if (fileInfo == null) {
@@ -222,6 +229,9 @@ public class ImageFileReaders {
                         if (fileInfo == null) {
                             reader.setInput(iis, false, false);
                             fileInfo = new ImageFileInformation(file);
+                            if (loading != null) {
+                                loading.setInfo(message("Reading") + ": " + message("MetaData"));
+                            }
                             ImageFileReaders.readImageFileMetaData(reader, fileInfo);
                         } else {
                             reader.setInput(iis, false, true);
@@ -230,6 +240,10 @@ public class ImageFileReaders {
                         if (size > 0 && index < size) {
                             imageInfo = fileInfo.getImagesInformation().get(index);
                             if (!onlyInformation) {
+                                if (loading != null) {
+                                    loading.setInfo(message("Reading") + ": Image " + index + " / " + size);
+                                }
+                                imageInfo.setTask(task);
                                 BufferedImage bufferedImage = readFrame(reader, imageInfo);
                                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
                                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);

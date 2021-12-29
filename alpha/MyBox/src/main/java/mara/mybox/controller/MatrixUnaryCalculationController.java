@@ -44,7 +44,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected ToggleGroup opGroup;
     @FXML
-    protected VBox setBox, xyBox, resultBox;
+    protected VBox setBox, xyBox, resultBox, normalizeBox;
     @FXML
     protected HBox numberBox, powerBox;
     @FXML
@@ -52,10 +52,12 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected Button calculateButton;
     @FXML
-    protected RadioButton transposeRadio, DivideNumberRadio,
+    protected RadioButton transposeRadio, DivideNumberRadio, normalizeRadio,
             DeterminantByEliminationRadio, DeterminantByComplementMinorRadio,
             InverseMatrixByEliminationRadio, InverseMatrixByAdjointRadio, MatrixRankRadio, AdjointMatrixRadio, PowerRadio,
             ComplementMinorRadio, MultiplyNumberRadio;
+    @FXML
+    protected ControlData2DNormalize normalizeController;
     @FXML
     protected Label resultLabel, checkLabel;
     @FXML
@@ -295,6 +297,10 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 calculateButton.setDisable(true);
                 return false;
             }
+
+        } else if (normalizeRadio.isSelected()) {
+            setBox.getChildren().add(normalizeBox);
+
         }
         calculateButton.setDisable(false);
         return true;
@@ -333,7 +339,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                             result = DoubleMatrixTools.complementMinor(dataMatrix.toArray(), row - 1, column - 1);
 
                         } else if (message("Normalize").equals(op)) {
-                            result = DoubleMatrixTools.normalizeSum(dataMatrix.toArray());
+                            result = normalizeController.calculate(dataMatrix.toArray());
 
                         } else if (message("MultiplyNumber").equals(op)) {
                             result = DoubleMatrixTools.multiply(dataMatrix.toArray(), number);

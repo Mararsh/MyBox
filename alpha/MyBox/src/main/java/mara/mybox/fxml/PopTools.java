@@ -49,7 +49,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -296,8 +295,8 @@ public class PopTools {
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    TextInputController inputController = (TextInputController) controller.openChildStage(Fxmls.TextInputFxml, true);
-                    inputController.setParameters(controller, message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
+                    TextInputController inputController = TextInputController.open(controller,
+                            message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
                     inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

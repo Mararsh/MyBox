@@ -30,6 +30,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
@@ -419,6 +420,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 items.add(menu);
             }
+
+            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImage("iconSnapshot.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                ImageViewerController.load(NodeTools.snap(tableView));
+            });
+            items.add(menu);
 
             return items;
 

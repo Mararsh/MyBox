@@ -66,13 +66,14 @@ public class MediaPlayerController extends BaseController {
     protected TableView<MediaInformation> tableView;
     protected MediaPlayer player;
     protected AudioClip audioPlayer;
-    protected boolean atEndOfMedia, isSettingTimer;
+    protected boolean atEndOfMedia, isSettingTimer, isResizing;
     protected Duration duration;
     protected double volumn, speed;
     protected int repeat, currentLoop, currentIndex;
     protected URI uri;
     protected MediaInformation currentMedia;
     protected List<Integer> randomPlayed;
+    protected long lastResizeTime;
 
     @FXML
     protected BorderPane borderPane;
@@ -93,7 +94,7 @@ public class MediaPlayerController extends BaseController {
     @FXML
     protected ControlMediaTable tableController;
     @FXML
-    protected Button dataButton, catButton;
+    protected Button dataButton, catButton, paneSizeButton;
     @FXML
     protected ImageView supportTipsView;
 
@@ -114,6 +115,7 @@ public class MediaPlayerController extends BaseController {
                 tableController.setParentController(this);
                 tableData = tableController.tableData;
                 tableView = tableController.tableView;
+                tableController.loadInfo = false;
             } else {
                 tableData = FXCollections.observableArrayList();
             }
@@ -218,6 +220,9 @@ public class MediaPlayerController extends BaseController {
             });
             msCheck.setSelected(UserConfig.getBoolean("MediaPlayerShowMS", true));
 
+            initPlayer();
+            checkSoundButton();
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -229,6 +234,7 @@ public class MediaPlayerController extends BaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(stopButton, new Tooltip(message("Stop") + "\nq / Q"));
             NodeStyleTools.setTooltip(fullScreenButton, new Tooltip(message("FullScreen") + "\nf / F"));
+            NodeStyleTools.setTooltip(paneSizeButton, new Tooltip(message("PaneSize") + "\np / P"));
             NodeStyleTools.setTooltip(soundButton, new Tooltip(message("Mute") + "\nm / M"));
             NodeStyleTools.setTooltip(dataButton, new Tooltip(message("ManageMediaLists")));
             NodeStyleTools.setTooltip(supportTipsView, new Tooltip(message("MediaPlayerSupports")));
@@ -248,6 +254,7 @@ public class MediaPlayerController extends BaseController {
         myStage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue observable, Boolean oldValue, Boolean newValue) {
+                MyBoxLog.console(myStage.isFullScreen());
                 if (myStage.isFullScreen()) {
                     enterFullScreen();
                 } else {
@@ -256,36 +263,6 @@ public class MediaPlayerController extends BaseController {
             }
         });
 
-        // https://stackoverflow.com/questions/48692409/making-a-video-media-player-in-javafx-take-as-much-space-as-possible-but-no-mo/48693456?r=SearchResults#48693456
-        mediaView.setPreserveRatio(true);
-        playerBox.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (Math.abs(newValue.doubleValue() - oldValue.doubleValue()) < 10) {
-                    return;
-                }
-                if (player != null && playerBox.getChildren().contains(mediaView)) {
-                    mediaView.setFitWidth(newValue.doubleValue() - 5);
-                }
-            }
-        });
-        playerBox.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (Math.abs(newValue.doubleValue() - oldValue.doubleValue()) < 10) {
-                    return;
-                }
-                if (player != null && playerBox.getChildren().contains(mediaView)) {
-                    mediaView.setFitHeight(newValue.doubleValue() - playerControlBox.getHeight() - 5);
-                }
-            }
-        });
-
-        initPlayer();
-
-        checkSoundButton();
-
-        checkFullScreen();
     }
 
     @Override
@@ -305,6 +282,9 @@ public class MediaPlayerController extends BaseController {
                 case F:
                     fullScreenButton.fire();
                     return true;
+                case P:
+                    paneSizeButton.fire();
+                    return true;
             }
         }
         return super.keyFilter(event);
@@ -316,7 +296,7 @@ public class MediaPlayerController extends BaseController {
                 player.dispose();
                 player = null;
             }
-            if (getMyStage().isFullScreen()) {
+            if (getMyStage() != null && !getMyStage().isFullScreen()) {
                 isSettingValues = true;
                 fullScreenButton.setSelected(false);
                 isSettingValues = false;
@@ -361,9 +341,9 @@ public class MediaPlayerController extends BaseController {
     }
 
     protected void checkFullScreen() {
-//        if (player == null) {
-//            return;
-//        }
+        if (getMyStage() == null) {
+            return;
+        }
         if (fullScreenButton.isSelected()) {
             getMyStage().setFullScreen(true);
             enterFullScreen();
@@ -375,7 +355,7 @@ public class MediaPlayerController extends BaseController {
     }
 
     public void enterFullScreen() {
-        if (!getMyStage().isFullScreen()) {
+        if (getMyStage() == null || !getMyStage().isFullScreen()) {
             return;
         }
         isSettingValues = true;
@@ -410,7 +390,7 @@ public class MediaPlayerController extends BaseController {
     }
 
     public void quitFullScreen() {
-        if (getMyStage().isFullScreen()) {
+        if (getMyStage() != null && getMyStage().isFullScreen()) {
             return;
         }
         isSettingValues = true;
@@ -446,8 +426,7 @@ public class MediaPlayerController extends BaseController {
         playerControlBox.requestFocus();
 //        playerControlBox.setOpacity(0.5);
 
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 Platform.runLater(new Runnable() {
@@ -456,11 +435,11 @@ public class MediaPlayerController extends BaseController {
                         if (getMyStage().isFullScreen()) {
                             playerControlBox.setVisible(false);
                         }
-                        timer = null;
                     }
                 });
             }
         }, 6000);
+
     }
 
     public void dataChanged() {
@@ -494,19 +473,7 @@ public class MediaPlayerController extends BaseController {
             tableData.clear();
             tableController.addFile(file);
             isSettingValues = false;
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            dataChanged();
-                        }
-                    });
-                }
-            }, 3000);
-
+            dataChanged();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -622,19 +589,7 @@ public class MediaPlayerController extends BaseController {
                                     index = getIndex(++index);
                                     continue;
                                 }
-                                long wait = 0;
-                                while (!info.isFinish()) {
-                                    if (task == null || task.isQuit()) {
-                                        return false;
-                                    }
-                                    Thread.sleep(500);
-                                    wait += 500;
-                                }
-                                if (info.isFinish()) {
-                                    return true;
-                                } else {
-                                    index = getIndex(++index);
-                                }
+                                return true;
                             }
                         } catch (Exception e) {
                             error = e.toString();
@@ -679,13 +634,9 @@ public class MediaPlayerController extends BaseController {
     }
 
     public void playMedia(int index, MediaInformation info) {
-        if (info == null || !info.isFinish()) {
+        if (info == null) {
             popInformation(message("MediaNotReady"), 6000);
             initPlayer();
-            return;
-        }
-        if (info.getDuration() <= 0) {
-            popInformation(message("MEDIA_CORRUPTED"), 6000);
             return;
         }
         synchronized (this) {
@@ -856,10 +807,12 @@ public class MediaPlayerController extends BaseController {
                 playButton.setUserData("Playing");
                 playButton.applyCss();
 
-                NodeStyleTools.setTooltip(infoButton, currentMedia.getInfo());
-
                 duration = player.getMedia().getDuration();
                 updateStatus();
+
+                currentMedia.readMediaInfo(player.getMedia());
+                NodeStyleTools.setTooltip(infoButton, currentMedia.getInfo());
+                tableController.tableData.set(currentIndex, currentMedia);
             }
         });
     }
@@ -988,6 +941,16 @@ public class MediaPlayerController extends BaseController {
             return;
         }
         checkFullScreen();
+    }
+
+    @FXML
+    public void paneSize() {
+        if (isSettingValues) {
+            return;
+        }
+        mediaView.setPreserveRatio(true);
+        mediaView.setFitWidth(playerBox.getWidth() - 5);
+        mediaView.setFitHeight(playerBox.getHeight() - playerControlBox.getHeight() - 5);
     }
 
     @FXML

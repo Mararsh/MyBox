@@ -127,7 +127,7 @@ License:    Apache License Version 2.0
                                                                         <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%RowEchelonForm" toggleGroup="$opGroup" />
                                                                         <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ReducedRowEchelonForm" toggleGroup="$opGroup" />
                                                                         <RadioButton fx:id="ComplementMinorRadio" layoutX="117.0" layoutY="10.0" mnemonicParsing="false" text="%ComplementMinor" toggleGroup="$opGroup" />
-                                                                        <RadioButton layoutX="224.0" layoutY="10.0" mnemonicParsing="false" text="%Normalize" toggleGroup="$opGroup" />
+                                                                        <RadioButton fx:id="normalizeRadio" layoutX="224.0" layoutY="10.0" mnemonicParsing="false" text="%Normalize" toggleGroup="$opGroup" />
                                                                         <RadioButton fx:id="MultiplyNumberRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%MultiplyNumber" toggleGroup="$opGroup" />
                                                                         <RadioButton fx:id="DivideNumberRadio" layoutX="10.0" layoutY="133.0" mnemonicParsing="false" text="%DivideNumber" toggleGroup="$opGroup" />
                                                                     </children>
@@ -175,6 +175,11 @@ License:    Apache License Version 2.0
                                                                         <TextField fx:id="powerInput" prefWidth="80.0" />
                                                                     </children>
                                                                 </HBox>
+                                                <VBox fx:id="normalizeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                   <children>
+                                                      <fx:include fx:id="normalize" source="ControlData2DNormalize.fxml" />
+                                                   </children>
+                                                </VBox>
                                                             </children>
                                                         </VBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">

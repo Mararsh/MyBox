@@ -688,7 +688,7 @@ public class ImageViewerController extends BaseImageController {
         } else {
             fname = DateTools.nowFileString();
         }
-        String targetFormat = formatController.attributes.getImageFormat();
+        String targetFormat = ".png";
         if (formatController != null) {
             targetFormat = formatController.attributes.getImageFormat();
         } else if (fileTypeGroup != null) {

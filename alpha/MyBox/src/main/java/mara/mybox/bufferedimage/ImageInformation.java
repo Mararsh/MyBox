@@ -10,9 +10,11 @@ import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageTypeSpecifier;
+import mara.mybox.controller.LoadingController;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -49,6 +51,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
     protected Rectangle region;
+    protected SingletonTask task;
 
     public ImageInformation() {
         init();
@@ -175,10 +178,10 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             sampledWidth = (int) maxWidth;
             sampledHeight = (int) (maxWidth * height / width);
         }
-        sampledSize = (int) (sampledWidth * sampledHeight * getColorChannels() / (1014 * 1024));
+        sampledSize = (int) (sampledWidth * sampledHeight * getColorChannels() / (1024 * 1024));
         String msg = MessageFormat.format(Languages.message("ImageTooLarge"),
                 width, height, getColorChannels(),
-                bytesSize / (1014 * 1024), requiredMem / (1014 * 1024), availableMem / (1014 * 1024),
+                bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
                 sampledWidth, sampledHeight, sampledSize);
         return msg;
     }
@@ -391,17 +394,40 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 imageInfo.setBytesSize(bytesSize);
                 imageInfo.setRequiredMem(requiredMem);
 
+                SingletonTask task = imageInfo.getTask();
+                LoadingController loading = task != null ? task.getLoading() : null;
                 if (availableMem < requiredMem) {
-                    int scale = (int) Math.sqrt(1d * requiredMem / availableMem);
+                    int scale = (int) Math.ceil(1d * requiredMem / availableMem);
+//                    int scale = (int) Math.sqrt(1d * requiredMem / availableMem);
                     imageInfo.setNeedSample(true);
                     imageInfo.setSampleScale(scale);
                     imageInfo.setMaxWidth(imageInfo.getWidth() / scale);
+
+                    if (loading != null) {
+                        int sampledWidth = (int) (imageInfo.getWidth() / scale);
+                        int sampledHeight = (int) (imageInfo.getHeight() / scale);
+                        int sampledSize = (int) (sampledWidth * sampledHeight * imageInfo.getColorChannels() / (1024 * 1024));
+                        String msg = MessageFormat.format(Languages.message("ImageTooLarge"),
+                                imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getColorChannels(),
+                                bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
+                                sampledWidth, sampledHeight, sampledSize);
+                        loading.setInfo(msg);
+                        MyBoxLog.debug(msg);
+                    }
+
                 } else {
                     double ratio = Math.sqrt(1d * availableMem / requiredMem);
                     imageInfo.setSampleScale(1);
                     imageInfo.setNeedSample(false);
                     imageInfo.setMaxWidth(imageInfo.getWidth() * ratio);
+
+                    if (loading != null) {
+                        String msg = message("AvaliableMemory") + ": " + availableMem / (1024 * 1024) + "MB" + "\n"
+                                + message("RequireMemory") + ": " + requiredMem / (1024 * 1024) + "MB";
+                        loading.setInfo(msg);
+                    }
                 }
+
             }
 
             return true;
@@ -1378,6 +1404,14 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public void setRegionHeight(int regionHeight) {
         this.regionHeight = regionHeight;
+    }
+
+    public SingletonTask getTask() {
+        return task;
+    }
+
+    public void setTask(SingletonTask task) {
+        this.task = task;
     }
 
 }

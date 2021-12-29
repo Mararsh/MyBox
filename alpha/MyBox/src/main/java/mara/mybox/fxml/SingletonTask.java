@@ -1,6 +1,7 @@
 package mara.mybox.fxml;
 
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.LoadingController;
 
 /**
  * @Author Mara
@@ -10,6 +11,7 @@ import mara.mybox.controller.BaseController;
 public class SingletonTask<Void> extends BaseTask<Void> {
 
     BaseController controller;
+    LoadingController loading;
 
     public SingletonTask(BaseController controller) {
         this.controller = controller;
@@ -46,6 +48,14 @@ public class SingletonTask<Void> extends BaseTask<Void> {
 
     public void setController(BaseController controller) {
         this.controller = controller;
+    }
+
+    public LoadingController getLoading() {
+        return loading;
+    }
+
+    public void setLoading(LoadingController loading) {
+        this.loading = loading;
     }
 
 }

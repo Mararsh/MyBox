@@ -55,6 +55,9 @@ public class StyleCheckBox {
         if (id.startsWith("wrap")) {
             return new StyleData(id, "", message("Wrap"), "", "iconWrap.png");
         }
+        if (id.startsWith("leftPane")) {
+            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
+        }
         switch (id) {
             case "tableSubdirCheck":
                 return new StyleData("tableSubdirCheck", "", message("HandleSubDirectories"), "", "iconFolder.png");

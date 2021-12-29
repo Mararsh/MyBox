@@ -25,6 +25,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -465,6 +466,7 @@ public class ControlWebView extends BaseController {
             setWebViewLabel(message("Loaded"));
 
             webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+            webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
 
             Document doc = webEngine.getDocument();
             charset = HtmlReadTools.charset(doc);
@@ -871,9 +873,7 @@ public class ControlWebView extends BaseController {
                     edit(address, html);
                 });
                 editItems.add(menu);
-            }
 
-            if (html != null && !html.isBlank()) {
                 menu = new MenuItem(message("HtmlSnap"), StyleTools.getIconImage("iconSnapshot.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlSnapController controller = (HtmlSnapController) WindowTools.openStage(Fxmls.HtmlSnapFxml);
@@ -884,51 +884,50 @@ public class ControlWebView extends BaseController {
                     }
                 });
                 editItems.add(menu);
-            }
 
-            if (isFrameset) {
-                NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");
-                if (frameList != null) {
-                    List<MenuItem> frameItems = new ArrayList<>();
-                    for (int i = 0; i < frameList.getLength(); i++) {
-                        org.w3c.dom.Node node = frameList.item(i);
-                        if (node == null) {
-                            continue;
-                        }
-                        int index = i;
-                        Element e = (Element) node;
-                        String src = e.getAttribute("src");
-                        String name = e.getAttribute("name");
-                        String frame = message("Frame") + index;
-                        if (name != null && !name.isBlank()) {
-                            frame += " :   " + name;
-                        } else if (src != null && !src.isBlank()) {
-                            frame += " :   " + src;
-                        }
-                        menu = new MenuItem(frame);
-                        menu.setOnAction((ActionEvent event) -> {
-                            HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-                            if (src != null && !src.isBlank()) {
-                                controller.loadAddress(UrlTools.fullAddress(address, src));
-                            } else {
-                                controller.loadContents(WebViewTools.getFrame(webEngine, index));
+                if (isFrameset) {
+                    NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");
+                    if (frameList != null) {
+                        List<MenuItem> frameItems = new ArrayList<>();
+                        for (int i = 0; i < frameList.getLength(); i++) {
+                            org.w3c.dom.Node node = frameList.item(i);
+                            if (node == null) {
+                                continue;
                             }
+                            int index = i;
+                            Element e = (Element) node;
+                            String src = e.getAttribute("src");
+                            String name = e.getAttribute("name");
+                            String frame = message("Frame") + index;
+                            if (name != null && !name.isBlank()) {
+                                frame += " :   " + name;
+                            } else if (src != null && !src.isBlank()) {
+                                frame += " :   " + src;
+                            }
+                            menu = new MenuItem(frame);
+                            menu.setOnAction((ActionEvent event) -> {
+                                HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
+                                if (src != null && !src.isBlank()) {
+                                    controller.loadAddress(UrlTools.fullAddress(address, src));
+                                } else {
+                                    controller.loadContents(WebViewTools.getFrame(webEngine, index));
+                                }
 
-                        });
-                        menu.setDisable(html == null || html.isBlank());
-                        frameItems.add(menu);
-                    }
-                    if (!frameItems.isEmpty()) {
-                        Menu frameMenu = new Menu(message("Frame"));
-                        frameMenu.getItems().addAll(frameItems);
-                        editItems.add(frameMenu);
+                            });
+                            menu.setDisable(html == null || html.isBlank());
+                            frameItems.add(menu);
+                        }
+                        if (!frameItems.isEmpty()) {
+                            Menu frameMenu = new Menu(message("Frame"));
+                            frameMenu.getItems().addAll(frameItems);
+                            editItems.add(frameMenu);
+                        }
                     }
                 }
-            }
 
-            if (!editItems.isEmpty()) {
                 editItems.add(new SeparatorMenuItem());
                 items.addAll(editItems);
+
             }
 
             if (html != null && !html.isBlank()) {
@@ -1060,6 +1059,39 @@ public class ControlWebView extends BaseController {
                 forwardAction();
             });
             menu.setDisable(hisSize < 2);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+            CheckMenuItem checkMenu = new CheckMenuItem(message("Editable"));
+            checkMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WebViewEditable", checkMenu.isSelected());
+                    webEngine.executeScript("document.body.contentEditable=" + checkMenu.isSelected());
+                }
+            });
+            items.add(checkMenu);
+
+            menu = new MenuItem(message("Script"), StyleTools.getIconImage("iconScript.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                TextInputController inputController = TextInputController.open(parentController, "JavaScript", null);
+                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        String value = inputController.getText();
+                        if (value == null || value.isBlank()) {
+                            return;
+                        }
+                        inputController.closeStage();
+                        try {
+                            webEngine.executeScript(value);
+                        } catch (Exception e) {
+                            popError(e.toString());
+                        }
+                    }
+                });
+            });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());

@@ -214,14 +214,10 @@ public class ControlData2DNormalize extends BaseController {
                 }
             }
             double k = max - min;
-            MyBoxLog.debug(from + " " + to);
-            MyBoxLog.debug(min + " " + max + "   " + k);
             k = (to - from) / (k == 0 ? Double.MIN_VALUE : k);
-            MyBoxLog.debug(min + " " + max + "   " + k);
             double[] result = new double[len];
             for (int i = 0; i < len; i++) {
                 result[i] = from + k * (vector[i] - min);
-                MyBoxLog.debug(from + " " + k + "  " + vector[i] + "  " + min + "   " + result[i]);
             }
             return result;
         } catch (Exception e) {

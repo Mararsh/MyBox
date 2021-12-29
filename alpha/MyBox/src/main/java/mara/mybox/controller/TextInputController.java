@@ -8,6 +8,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -16,7 +18,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-11-15
  * @License Apache License Version 2.0
  */
-public class TextInputController extends BaseController {
+public class TextInputController extends BaseChildController {
 
     protected SimpleBooleanProperty notify;
 
@@ -69,18 +71,24 @@ public class TextInputController extends BaseController {
         notify.set(!notify.get());
     }
 
-    @FXML
-    @Override
-    public void cancelAction() {
-        closeStage();
-    }
-
     public SimpleBooleanProperty getNotify() {
         return notify;
     }
 
     public void setNotify(SimpleBooleanProperty notify) {
         this.notify = notify;
+    }
+
+    public static TextInputController open(BaseController parent, String title, String initValue) {
+        try {
+            TextInputController controller = (TextInputController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.TextInputFxml, true);
+            controller.setParameters(parent, title, initValue);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

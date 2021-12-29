@@ -568,6 +568,9 @@ public class StyleButton {
         if (id.startsWith("validate")) {
             return new StyleData(id, message("Validate"), "", "iconAnalyse.png");
         }
+        if (id.startsWith("script")) {
+            return new StyleData(id, message("Script"), "", "iconScript.png");
+        }
         if (id.startsWith("moveUp")) {
             return new StyleData(id, message("MoveUp"), "", "iconUp.png");
         }

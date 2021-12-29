@@ -450,7 +450,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             }
             ProcessBuilder pb = new ProcessBuilder(parameters)
                     .redirectErrorStream(true);
-            warmUp(pb);
             FileDeleteTools.delete(targetFile);
             recorder = pb.start();
             String cmd = makeCommand(parameters);
@@ -515,21 +514,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             MyBoxLog.error(e.toString());
         }
         return true;
-    }
-
-    // Looks the generated media is always invalid when command runs for the first time.
-    // So let's skip its first time...
-    protected void warmUp(ProcessBuilder pb) {
-        if (pb == null) {
-            return;
-        }
-        try {
-            recorder = pb.start();
-            cancelAction();
-            stopping.set(false);
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
     }
 
     @Override
