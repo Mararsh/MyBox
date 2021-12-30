@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import org.apache.commons.io.FileUtils;
 
@@ -43,7 +44,7 @@ public class FilesDeleteSysTempController extends BaseController {
     // https://stackoverflow.com/questions/2149785/get-size-of-folder-or-file
     public void countSize() {
         synchronized (this) {
-            SingletonTask countTask = new SingletonTask<Void>() {
+            SingletonTask countTask = new SingletonTask<Void>(this) {
 
                 private String size;
 
@@ -81,7 +82,7 @@ public class FilesDeleteSysTempController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private long before = 0, after = 0;
 
                 @Override

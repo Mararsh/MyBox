@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.io.File;
 import java.util.Date;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -12,7 +13,7 @@ import mara.mybox.value.AppVariables;
  */
 public class WeiboSnapParameters {
 
-    private File targetPath = AppVariables.MyBoxDownloadsPath;
+    private File targetPath = new File(AppPaths.getGeneratedPath());
     private int webWidth, retry, startPage, loadInterval, snapInterval, likeStartPage, retried, fontSize = 20;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;

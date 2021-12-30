@@ -20,9 +20,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.BarcodeTools;
@@ -31,7 +32,6 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.FileFilters;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -666,7 +666,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
                     private BufferedImage bufferedImage;
 
                     @Override
@@ -808,7 +808,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {

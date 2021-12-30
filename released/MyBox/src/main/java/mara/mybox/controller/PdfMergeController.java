@@ -9,10 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -47,8 +44,7 @@ public class PdfMergeController extends BaseBatchPdfController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
-                            .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                            .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(targetFileController.valid.not())
             );
 
         } catch (Exception e) {

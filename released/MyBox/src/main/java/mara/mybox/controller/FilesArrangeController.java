@@ -20,7 +20,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -61,6 +61,8 @@ public class FilesArrangeController extends BaseBatchFileController {
     }
 
     @FXML
+    protected ControlPathInput targetPathInputController;
+    @FXML
     protected ToggleGroup filesGroup, byGroup, dirGroup, replaceGroup;
     @FXML
     protected VBox dirsBox, conditionsBox, logsBox;
@@ -82,11 +84,12 @@ public class FilesArrangeController extends BaseBatchFileController {
             initDirTab();
             initConditionTab();
 
+            targetPathInputController.baseName(baseName).init();
+
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(targetPathInputController.valid.not())
             );
 
             operationBarController.openTargetButton.disableProperty().bind(
@@ -239,23 +242,23 @@ public class FilesArrangeController extends BaseBatchFileController {
             if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
 
-                initLogs();
-                logsTextArea.setText(Languages.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
-                logsTextArea.appendText(Languages.message("TargetPath") + ": " + targetPathInput.getText() + "\n");
-
-                strFailedCopy = Languages.message("FailedCopy") + ": ";
-                strCreatedSuccessfully = Languages.message("CreatedSuccessfully") + ": ";
-                strCopySuccessfully = Languages.message("CopySuccessfully") + ": ";
-                strDeleteSuccessfully = Languages.message("DeletedSuccessfully") + ": ";
-                strFailedDelete = Languages.message("FailedDelete") + ": ";
-
-                targetPath = new File(targetPathInput.getText());
+                targetPath = targetPathInputController.file;
                 if (!targetPath.exists()) {
                     targetPath.mkdirs();
                     updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
                 }
                 targetPath.setWritable(true);
                 targetPath.setExecutable(true);
+
+                initLogs();
+                logsTextArea.setText(Languages.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
+                logsTextArea.appendText(Languages.message("TargetPath") + ": " + targetPath.getAbsolutePath() + "\n");
+
+                strFailedCopy = Languages.message("FailedCopy") + ": ";
+                strCreatedSuccessfully = Languages.message("CreatedSuccessfully") + ": ";
+                strCopySuccessfully = Languages.message("CopySuccessfully") + ": ";
+                strDeleteSuccessfully = Languages.message("DeletedSuccessfully") + ": ";
+                strFailedDelete = Languages.message("FailedDelete") + ": ";
 
                 startHandle = true;
                 lastFileName = null;
@@ -289,7 +292,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -469,7 +472,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     @Override
     public void openTarget(ActionEvent event) {
         try {
-            browseURI(new File(targetPathInput.getText()).toURI());
+            browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

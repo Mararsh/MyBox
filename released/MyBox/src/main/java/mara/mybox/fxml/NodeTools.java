@@ -234,21 +234,16 @@ public class NodeTools {
 
     public static Image snap(Node node) {
         try {
-            final Bounds bounds = node.getLayoutBounds();
             double scale = dpiScale();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
             final SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
             snapPara.setTransform(javafx.scene.transform.Transform.scale(scale, scale));
-            WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-            snapshot = node.snapshot(snapPara, snapshot);
+            WritableImage snapshot = node.snapshot(snapPara, null);
             return snapshot;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
-
     }
 
 }

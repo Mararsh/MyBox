@@ -2,20 +2,14 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
+import mara.mybox.data.TTC;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.UserConfig;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
-import thridparty.TTC;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -28,6 +22,8 @@ public class FileTTC2TTFController extends HtmlTableController {
 
     @FXML
     protected ControlFileSelecter ttcController;
+    @FXML
+    protected ControlPathInput targetPathInputController;
 
     public FileTTC2TTFController() {
         baseTitle = Languages.message("TTC2TTF");
@@ -47,16 +43,19 @@ public class FileTTC2TTFController extends HtmlTableController {
                     (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                         loadFile();
                     });
-
-            ttcController.type(VisitHistory.FileType.TTC)
-                    .label(Languages.message("SourceFile"))
+            ttcController.label(message("SourceFile"))
                     .isSource(true).isDirectory(false).mustExist(true).permitNull(false)
-                    .name(baseName + "TTC", true);
+                    .type(VisitHistory.FileType.TTC)
+                    .baseName(baseName).savedName(baseName + "TTC")
+                    .init();
+
+            targetPathInputController.mustExist(true).type(VisitHistory.FileType.TTF)
+                    .baseName(baseName).init();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(ttcController.fileInput.textProperty())
-                            .or(ttcController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    ttcController.valid.not()
+                            .or(targetPathInputController.valid.not())
             );
 
         } catch (Exception e) {
@@ -72,7 +71,7 @@ public class FileTTC2TTFController extends HtmlTableController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -99,28 +98,15 @@ public class FileTTC2TTFController extends HtmlTableController {
     @FXML
     @Override
     public void startAction() {
-        if (ttc == null) {
+        targetPath = targetPathInputController.file;
+        if (ttc == null || targetPath == null) {
             return;
-        }
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = UserConfig.getPath(baseName + "TargetPath");
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            targetPath = chooser.showDialog(getMyStage());
-            if (targetPath == null) {
-                return;
-            }
-            selectTargetPath(targetPath);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<File> files;
 

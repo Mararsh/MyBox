@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
@@ -30,7 +29,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -54,6 +52,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -63,6 +62,7 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -219,7 +219,7 @@ public class ImageAnalyseController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -818,7 +818,7 @@ public class ImageAnalyseController extends ImageViewerController {
             s.append(indent).append(indent).append(indent).append("</TABLE >\n");
             s.append(indent).append(indent).append("</DIV>\n");
 
-            final String html = HtmlWriteTools.html(null, s.toString());
+            final String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
             colorsView.getEngine().loadContent​(html);
 
         } catch (Exception e) {
@@ -1114,130 +1114,86 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final String colorsViewHml = HtmlReadTools.body(html);
 
-            Bounds bounds = colorsBarchart.getLayoutBounds();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-            final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, snapshot);
+            final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(dominantTab);
             html = WebViewTools.getHtml(dominantView1);
             Thread.sleep(50);
             final String dominantView1Hml = HtmlReadTools.body(html);
 
-            bounds = dominantPie1.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image dominantPie1Snap = dominantPie1.snapshot(snapPara, snapshot);
+            final Image dominantPie1Snap = dominantPie1.snapshot(snapPara, null);
 
             html = WebViewTools.getHtml(dominantView2);
             Thread.sleep(50);
             final String dominantView2Hml = HtmlReadTools.body(html);
 
-            bounds = dominantPie2.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image dominantPie2Snap = dominantPie2.snapshot(snapPara, snapshot);
+            final Image dominantPie2Snap = dominantPie2.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(grayTab);
             html = WebViewTools.getHtml(grayView);
             Thread.sleep(50);
             final String greyHtml = HtmlReadTools.body(html);
 
-            bounds = grayBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image greyBarchartSnap = grayBarchart.snapshot(snapPara, snapshot);
+            final Image greyBarchartSnap = grayBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(redTab);
             html = WebViewTools.getHtml(redView);
             Thread.sleep(50);
             final String redHtml = HtmlReadTools.body(html);
 
-            bounds = redBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image redBarchartSnap = redBarchart.snapshot(snapPara, snapshot);
+            final Image redBarchartSnap = redBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(greenTab);
             html = WebViewTools.getHtml(greenView);
             Thread.sleep(50);
             final String greenHtml = HtmlReadTools.body(html);
 
-            bounds = greenBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image greenBarchartSnap = greenBarchart.snapshot(snapPara, snapshot);
+            final Image greenBarchartSnap = greenBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(blueTab);
             html = WebViewTools.getHtml(blueView);
             Thread.sleep(50);
             final String blueHtml = HtmlReadTools.body(html);
 
-            bounds = blueBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image blueBarchartSnap = blueBarchart.snapshot(snapPara, snapshot);
+            final Image blueBarchartSnap = blueBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(hueTab);
             html = WebViewTools.getHtml(hueView);
             Thread.sleep(50);
             final String hueHtml = HtmlReadTools.body(html);
 
-            bounds = hueBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image hueBarchartSnap = hueBarchart.snapshot(snapPara, snapshot);
+            final Image hueBarchartSnap = hueBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(brightnessTab);
             html = WebViewTools.getHtml(brightnessView);
             Thread.sleep(50);
             final String brightnessHtml = HtmlReadTools.body(html);
 
-            bounds = brightnessBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image brightnessBarchartSnap = brightnessBarchart.snapshot(snapPara, snapshot);
+            final Image brightnessBarchartSnap = brightnessBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(saturationTab);
             html = WebViewTools.getHtml(saturationView);
             Thread.sleep(50);
             final String saturationHtml = HtmlReadTools.body(html);
 
-            bounds = saturationBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image saturationBarchartSnap = saturationBarchart.snapshot(snapPara, snapshot);
+            final Image saturationBarchartSnap = saturationBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(alphaTab);
             html = WebViewTools.getHtml(alphaView);
             Thread.sleep(50);
             final String alphaHtml = HtmlReadTools.body(html);
 
-            bounds = alphaBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            snapshot = new WritableImage(imageWidth, imageHeight);
             Thread.sleep(50);
-            final Image alphaBarchartSnap = alphaBarchart.snapshot(snapPara, snapshot);
+            final Image alphaBarchartSnap = alphaBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(currentTab);
 
@@ -1245,7 +1201,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -1373,7 +1329,7 @@ public class ImageAnalyseController extends ImageViewerController {
                                 return false;
                             }
 
-                            String html = HtmlWriteTools.html("", s.toString());
+                            String html = HtmlWriteTools.html("", HtmlStyles.styleValue("Default"), s.toString());
                             TextFileTools.writeFile(file, html);
 
                             if (task == null || isCancelled()) {

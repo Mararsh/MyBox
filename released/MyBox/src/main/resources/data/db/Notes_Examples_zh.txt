@@ -211,6 +211,9 @@
 <a href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
 <a href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
 <a href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br>
+<a href="https://openjfx.io/">OpenJFX Community Site</a><br><br>
+<a href="https://fxdocs.github.io/docs/html5/">JavaFX Documentation Project</a><br><br>
+<a href="http://tutorials.jenkov.com/javafx/index.html">JavaFX Tutorial</a><br><br>
 <a href="https://icons8.com/">icons8</a><br>
 <a href="https://mvnrepository.com/">mvnrepository</a><br>
 
@@ -252,6 +255,7 @@ sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
     <li>鼠标事件监听时，event.getX()和event.getY()返回的是相对于event.getSource()（监听控件）的坐标。如：在ImageView上监听鼠标点击，则取到的是相对于图像的坐标。</li>
     <li>以下场景可能触发多次迭代调用：同时监听onMouseEntered和 onMouseExited，然后在事件处理中改变鼠标的焦点（如弹出上下文菜单）或改变控件本身尺寸。</li>
     <li>当双击鼠标时，总是先触发单击事件、然后继续触发双击事件，因此需要注意事件处理中可能重复或冲突的操作。</li>
+    <li>对于多选表格，用getSelectedIndices()监听变化。若用selectedItemProperty()监听则可能遗漏状态变化。</li>
 </ol>
 
 ##MyBox#
@@ -316,6 +320,7 @@ startButton.disableProperty().bind(
     <li>若处理货币，应当用整型保存各个货币单位。</li>
     <li>BigDecimal比double慢很多。大多数情况下double的精度够用。</li>
     <li>若是判断数字范围，应当用 if (abs(x - 7.3) < TOLERANCE) 而不是 if (x == 7.3)。</li>
+    <li>final static常量必须在编译时刻可以确定。</li>
 </ol>
 
 ##MyBox#

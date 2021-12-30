@@ -11,7 +11,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**

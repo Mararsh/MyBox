@@ -8,13 +8,13 @@ import javafx.fxml.FXML;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -33,6 +33,11 @@ public class TextReplaceBatchController extends BaseBatchFileController {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
@@ -40,8 +45,7 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             optionsController.setParent(this);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(optionsController.findArea.textProperty().isEmpty())
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
@@ -59,11 +63,16 @@ public class TextReplaceBatchController extends BaseBatchFileController {
                 popError(message("EmptyValue"));
                 return false;
             }
-            TableStringValues.add(baseName + "FindString", findString);
+            if (!findString.isBlank()) {
+                TableStringValues.add(baseName + "FindString", findString);
+            }
 
             String replaceString = optionsController.replaceArea.getText();
-            if (replaceString != null && !replaceString.isEmpty()) {
-                TableStringValues.add(baseName + "ReplaceString", replaceString);
+            if (replaceString == null) {
+                replaceString = "";
+            }
+            if (!replaceString.isBlank()) {
+                TableStringValues.add(baseName + "ReplaceString", findString);
             }
 
             replace = new FindReplaceFile().setPosition(0);

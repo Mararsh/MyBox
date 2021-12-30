@@ -2,8 +2,9 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,7 +23,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -329,6 +330,10 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             bottomLabel.setText("");
             pageLabel.setText("");
             setSourceFile(file);
+            if (thumbTask != null) {
+                thumbTask.cancel();
+                thumbTask = null;
+            }
 
             if (file == null) {
                 getMyStage().setTitle(getBaseTitle());
@@ -369,7 +374,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             if (task != null && !task.isQuit()) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image image;
 
@@ -393,70 +398,66 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         return null;
     }
 
-    protected Map<Integer, Image> readThumbs(int pos, int end) {
-        return null;
-    }
-
     protected void loadThumbs() {
         synchronized (this) {
-            if (thumbTask != null) {
-                thumbTask.cancel();
+            if (thumbTask != null && !thumbTask.isQuit()) {
+                return;
             }
             if (thumbBox.getChildren().isEmpty()) {
                 for (int i = 0; i < framesNumber; ++i) {
                     ImageView view = new ImageView();
                     view.setFitHeight(50);
                     view.setPreserveRatio(true);
+                    final int p = i;
+                    view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            loadPage(p);
+                        }
+                    });
                     thumbBox.getChildren().add(view);
-                    thumbBox.getChildren().add(new Label((i + 1) + ""));
+                    Label label = new Label((i + 1) + "");
+                    label.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            loadPage(p);
+                        }
+                    });
+                    thumbBox.getChildren().add(label);
                 }
             }
             int pos = Math.max(0, (int) (framesNumber * thumbScrollPane.getVvalue() / thumbScrollPane.getVmax()) - 1);
-            if (pos >= framesNumber) {
-                return;
-            }
-            ImageView view = (ImageView) thumbBox.getChildren().get(pos * 2);
-            if (view.getImage() != null) {
-                return;
-            }
             int end = Math.min(pos + 20, framesNumber);
-            thumbTask = new SingletonTask<Void>() {
-
-                protected Map<Integer, Image> images;
+            List<Integer> missed = new ArrayList<>();
+            for (int i = pos; i < end; ++i) {
+                ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+                if (view.getImage() == null) {
+                    missed.add(i);
+                }
+            }
+            if (missed.isEmpty()) {
+                return;
+            }
+            thumbTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
-                    images = readThumbs(pos, end);
-                    return images != null;
+                    return loadThumbs(missed);
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    for (int i = pos; i < end; ++i) {
-                        if (i >= images.size()) {
-                            break;
-                        }
-                        ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
-                        if (view.getImage() != null) {
-                            continue;
-                        }
-                        view.setImage(images.get(i));
-                        view.setFitHeight(view.getImage().getHeight());
-                        final int p = i;
-                        view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                loadPage(p);
-                            }
-                        });
-                    }
                     thumbBox.layout();
                     adjustSplitPane();
                 }
 
             };
-            start(thumbTask);
+            start(thumbTask, false);
         }
+    }
+
+    protected boolean loadThumbs(List<Integer> missed) {
+        return true;
     }
 
     @FXML

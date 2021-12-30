@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PptViewController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PptViewController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -144,6 +144,11 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </FlowPane>
+                                          <CheckBox fx:id="notesCheck" mnemonicParsing="false" selected="true" text="%PptNotesTexts">
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -442,7 +447,7 @@ License:    Apache License Version 2.0
                         </VBox>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <VBox fx:id="textsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%PptSlidesTexts" VBox.vgrow="ALWAYS">
                                             <content>
@@ -454,7 +459,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%PptNotesTexts" VBox.vgrow="ALWAYS">
+                                        <TitledPane fx:id="notesPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%PptNotesTexts" VBox.vgrow="ALWAYS">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>

@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import mara.mybox.data.Era;
-import mara.mybox.data.StringTable;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.IntTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -20,10 +21,8 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-7-12
  * @License Apache License Version 2.0
  */
-public class ColumnDefinition extends BaseData implements Cloneable {
+public class ColumnDefinition extends BaseData {
 
-    protected DataDefinition dataDefinition;
-    protected long dcid, dataid;
     protected String name, label, foreignName, foreignTable, foreignColumn;
     protected ColumnType type;
     protected int index, length, width;
@@ -52,12 +51,12 @@ public class ColumnDefinition extends BaseData implements Cloneable {
         NoAction, Restrict
     }
 
-    private void init() {
+    public final void initColumnDefinition() {
         type = ColumnType.String;
         index = -1;
         isPrimaryKey = notNull = isID = false;
         editable = true;
-        length = 4096;
+        length = StringMaxLength;
         width = 100; // px
         onDelete = OnDelete.Restrict;
         onUpdate = OnUpdate.Restrict;
@@ -67,28 +66,70 @@ public class ColumnDefinition extends BaseData implements Cloneable {
     }
 
     public ColumnDefinition() {
-        init();
+        initColumnDefinition();
     }
 
     public ColumnDefinition(String name, ColumnType type) {
-        init();
+        initColumnDefinition();
         this.name = name;
         this.type = type;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull) {
-        init();
+        initColumnDefinition();
         this.name = name;
         this.type = type;
         this.notNull = notNull;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
-        init();
+        initColumnDefinition();
         this.name = name;
         this.type = type;
         this.notNull = notNull;
         this.isPrimaryKey = isPrimaryKey;
+    }
+
+    public ColumnDefinition cloneAll() {
+        try {
+            ColumnDefinition newData = (ColumnDefinition) super.clone();
+            newData.cloneAll(this);
+            return newData;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public void cloneAll(ColumnDefinition c) {
+        try {
+            if (c == null) {
+                return;
+            }
+            name = c.name;
+            label = c.label;
+            foreignName = c.foreignName;
+            foreignTable = c.foreignTable;
+            foreignColumn = c.foreignColumn;
+            type = c.type;
+            index = c.index;
+            length = c.length;
+            width = c.width;
+            isPrimaryKey = c.isPrimaryKey;
+            notNull = c.notNull;
+            isID = c.isID;
+            editable = c.editable;
+            onDelete = c.onDelete;
+            onUpdate = c.onUpdate;
+            timeFormat = c.timeFormat;
+            defaultValue = c.defaultValue;
+            value = c.value;
+            maxValue = c.maxValue;
+            minValue = c.minValue;
+            values = c.values;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     public boolean isForeignKey() {
@@ -277,31 +318,38 @@ public class ColumnDefinition extends BaseData implements Cloneable {
 //        }
 //    }
     // works on java 16
-    public String random(Random random, int maxRandom, short scale) {
+    public String random(Random random, int maxRandom, short scale, boolean nonNegative) {
         if (random == null) {
             random = new Random();
         }
         switch (type) {
             case Double:
-                return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+                return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
             case Float:
-                return FloatTools.format(FloatTools.random(random, maxRandom), scale);
+                return FloatTools.format(FloatTools.random(random, maxRandom, nonNegative), scale);
             case Integer:
-                return StringTools.format(random.nextInt(maxRandom));
+                return StringTools.format(IntTools.random(random, maxRandom, nonNegative));
             case Long:
-                return StringTools.format(FloatTools.random(random, maxRandom));
+                return StringTools.format((long) FloatTools.random(random, maxRandom, nonNegative));
             case Short:
-                return StringTools.format((short) random.nextInt(maxRandom));
+                return StringTools.format((short) IntTools.random(random, maxRandom, nonNegative));
+            case Boolean:
+                return random.nextInt(2) + "";
+            case Datetime:
+            case Date:
+            case Era:
+                return DateTools.randomTimeString(random);
             default:
-                return (char) ('a' + random.nextInt(25)) + "";
+                return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
+//                return (char) ('a' + random.nextInt(25)) + "";
         }
     }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
-            ColumnDefinition newInfo = (ColumnDefinition) super.clone();
-            return newInfo;
+            ColumnDefinition newColumn = (ColumnDefinition) super.clone();
+            return newColumn;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
@@ -329,122 +377,6 @@ public class ColumnDefinition extends BaseData implements Cloneable {
                 && data.getName() != null && !data.getName().isBlank();
     }
 
-    public static Object getValue(ColumnDefinition data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        switch (column) {
-            case "dcid":
-                return data.getDcid();
-            case "dataid":
-                return data.getDataid();
-            case "column_type":
-                return columnType(data.getType());
-            case "column_name":
-                return data.getName();
-            case "index":
-                return data.getIndex();
-            case "length":
-                return data.getLength();
-            case "width":
-                return data.getWidth();
-            case "is_primary":
-                return data.isIsPrimaryKey();
-            case "not_null":
-                return data.isNotNull();
-            case "is_id":
-                return data.isIsID();
-            case "editable":
-                return data.isEditable();
-            case "max_value":
-                return number2String(data.getMaxValue());
-            case "min_value":
-                return number2String(data.getMinValue());
-            case "time_format":
-                return Era.format(data.getTimeFormat());
-            case "label":
-                return data.getLabel();
-            case "foreign_name":
-                return data.getForeignName();
-            case "foreign_table":
-                return data.getForeignTable();
-            case "foreign_column":
-                return data.getForeignColumn();
-            case "values_list":
-                return null;
-        }
-        return null;
-    }
-
-    public static boolean setValue(ColumnDefinition data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        try {
-            switch (column) {
-                case "dcid":
-                    data.setDcid(value == null ? -1 : (long) value);
-                    return true;
-                case "dataid":
-                    data.setDataid(value == null ? -1 : (long) value);
-                    return true;
-                case "column_type":
-                    data.setType(columnType((short) value));
-                    return true;
-                case "column_name":
-                    data.setName(value == null ? null : (String) value);
-                    return true;
-                case "index":
-                    data.setIndex(value == null ? null : (int) value);
-                    return true;
-                case "length":
-                    data.setLength(value == null ? null : (int) value);
-                    return true;
-                case "width":
-                    data.setWidth(value == null ? null : (int) value);
-                    return true;
-                case "is_primary":
-                    data.setIsPrimaryKey(value == null ? false : (boolean) value);
-                    return true;
-                case "not_null":
-                    data.setNotNull(value == null ? false : (boolean) value);
-                    return true;
-                case "is_id":
-                    data.setIsID(value == null ? false : (boolean) value);
-                    return true;
-                case "editable":
-                    data.setEditable(value == null ? false : (boolean) value);
-                    return true;
-                case "max_value":
-                    data.setMaxValue(string2Number(data.getType(), (String) value));
-                    return true;
-                case "min_value":
-                    data.setMinValue(string2Number(data.getType(), (String) value));
-                    return true;
-                case "time_format":
-                    data.setTimeFormat(Era.format((short) value));
-                    return true;
-                case "label":
-                    data.setLabel(value == null ? null : (String) value);
-                    return true;
-                case "foreign_name":
-                    data.setForeignName(value == null ? null : (String) value);
-                    return true;
-                case "foreign_table":
-                    data.setForeignTable(value == null ? null : (String) value);
-                    return true;
-                case "foreign_column":
-                    data.setForeignColumn(value == null ? null : (String) value);
-                    return true;
-                case "values_list":
-                    return true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        return false;
-    }
-
     public static short columnType(ColumnType type) {
         if (type == null) {
             return 0;
@@ -455,6 +387,7 @@ public class ColumnDefinition extends BaseData implements Cloneable {
     public static ColumnType columnType(short type) {
         ColumnType[] types = ColumnType.values();
         if (type < 0 || type > types.length) {
+            MyBoxLog.console(type);
             return ColumnType.String;
         }
         return types[type];
@@ -494,37 +427,6 @@ public class ColumnDefinition extends BaseData implements Cloneable {
         return null;
     }
 
-    public static StringTable validate(List<ColumnDefinition> columns) {
-        try {
-            if (columns == null || columns.isEmpty()) {
-                return null;
-            }
-            List<String> colsNames = new ArrayList<>();
-            List<String> tNames = new ArrayList<>();
-            tNames.addAll(Arrays.asList(message("ID"), message("Name"), message("Reason")));
-            StringTable colsTable = new StringTable(tNames, message("InvalidColumns"));
-            for (int c = 0; c < columns.size(); c++) {
-                ColumnDefinition column = columns.get(c);
-                if (!column.valid()) {
-                    List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Invalid")));
-                    colsTable.add(row);
-                }
-                if (colsNames.contains(column.getName())) {
-                    List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Duplicated")));
-                    colsTable.add(row);
-                }
-                colsNames.add(column.getName());
-            }
-            return colsTable;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-
     /*
         customized get/set
      */
@@ -538,30 +440,6 @@ public class ColumnDefinition extends BaseData implements Cloneable {
     /*
         get/set
      */
-    public DataDefinition getDataDefinition() {
-        return dataDefinition;
-    }
-
-    public void setDataDefinition(DataDefinition dataDefinition) {
-        this.dataDefinition = dataDefinition;
-    }
-
-    public long getDataid() {
-        return dataid;
-    }
-
-    public void setDataid(long dataid) {
-        this.dataid = dataid;
-    }
-
-    public long getDcid() {
-        return dcid;
-    }
-
-    public void setDcid(long dcid) {
-        this.dcid = dcid;
-    }
-
     public String getName() {
         return name;
     }
@@ -745,6 +623,10 @@ public class ColumnDefinition extends BaseData implements Cloneable {
     public ColumnDefinition setWidth(int width) {
         this.width = width;
         return this;
+    }
+
+    public String getTypeString() {
+        return message(type.name());
     }
 
 }

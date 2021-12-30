@@ -22,6 +22,7 @@ import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -215,7 +216,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
 //                    TableColor.addColorsInPalette(colors);
@@ -236,7 +237,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     tableColor.writeColors(colors, false);

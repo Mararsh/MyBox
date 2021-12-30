@@ -37,8 +37,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileNameTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -82,7 +81,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             checkSourceFileInput();
                         });
-                sourceFileInput.setText(UserConfig.getString(baseName + "SourceFile", null));
+//                sourceFileInput.setText(UserConfig.getString(baseName + "SourceFile", null));
             }
 
             if (sourcePathInput != null) {
@@ -93,23 +92,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         checkSourcetPathInput();
                     }
                 });
-                sourcePathInput.setText(UserConfig.getString(baseName + "SourcePath", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
-            }
-
-            if (targetFileInput != null) {
-                targetFileInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        checkTargetFileInput();
-                    }
-                });
-                String tv = UserConfig.getString(baseName + "TargetFile", null);
-                if (tv == null || tv.isBlank()) {
-                    tv = AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString();
-                } else {
-                    tv = FileNameTools.appendName(tv, "_m");
-                }
-                targetFileInput.setText(tv);
+                sourcePathInput.setText(UserConfig.getString(baseName + "SourcePath", AppPaths.getGeneratedPath()));
             }
 
             if (targetPrefixInput != null) {
@@ -124,26 +107,40 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", "mm"));
             }
 
-            if (targetPathInput != null) {
-                targetPathInput.textProperty().addListener(new ChangeListener<String>() {
+            if (targetFileController != null) {
+                targetFileController.notify.addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        checkTargetPathInput();
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        if (targetFileController.valid.get()) {
+                            targetFile = targetFileController.file;
+                        }
                     }
                 });
-                targetPathInput.setText(UserConfig.getString(baseName + "TargetPath", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
+                targetFileController.baseName(baseName).savedName(baseName + "TargetFile").type(TargetFileType).init();
+            }
+
+            if (targetPathController != null) {
+                targetPathController.notify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        if (targetPathController.valid.get()) {
+                            targetPath = targetPathController.file;
+                        }
+                    }
+                });
+                targetPathController.baseName(baseName).savedName(baseName + "TargetPath").type(TargetPathType).init();
             }
 
             if (operationBarController != null) {
                 operationBarController.parentController = myController;
                 if (operationBarController.openTargetButton != null) {
-                    if (targetFileInput != null) {
-                        operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                                .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    if (targetFileController != null) {
+                        operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetFileController.fileInput.textProperty())
+                                .or(targetFileController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                         );
-                    } else if (targetPathInput != null) {
-                        operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                                .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    } else if (targetPathController != null) {
+                        operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathController.fileInput.textProperty())
+                                .or(targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                         );
                     }
                 }
@@ -214,28 +211,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     }
                 });
                 saveCloseCheck.setSelected(UserConfig.getBoolean(baseName + "SaveClose", false));
-            }
-
-            if (targetExistGroup != null) {
-                targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-                        checkTargetExistType();
-                    }
-                });
-                isSettingValues = true;
-                NodeTools.setRadioSelected(targetExistGroup, UserConfig.getString(baseName + "TargetExistType", message("Replace")));
-                if (targetAppendInput != null) {
-                    targetAppendInput.textProperty().addListener(new ChangeListener<String>() {
-                        @Override
-                        public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
-                            checkTargetExistType();
-                        }
-                    });
-                    targetAppendInput.setText(UserConfig.getString(baseName + "TargetExistAppend", "_m"));
-                }
-                isSettingValues = false;
-                checkTargetExistType();
             }
 
             dpi = UserConfig.getInt(baseName + "DPI", 96);
@@ -311,7 +286,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         if (node == null) {
             return;
         }
-//       MyBoxLog.console(this.getClass() + "  " + node.getClass() + "  " + node.getId());
+//        MyBoxLog.console(this.getClass() + "  " + node.getClass() + "  " + node.getId());
         Object o = node.getUserData();
         // Controls in embedded fxmls have been initialized by themselves
         if (o != null && o instanceof BaseController && node != thisPane) {
@@ -423,7 +398,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setStageStatus() {
         try {
             isPop = false;
-            if (AppVariables.restoreStagesSize) {
+            if (AppVariables.recordWindowsSizeLocation) {
                 String prefix = interfaceKeysPrefix();
                 if (UserConfig.getBoolean(prefix + "FullScreen", false)) {
                     myStage.setFullScreen(true);
@@ -468,9 +443,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void setAsPopup(String baseName) {
+    public void setAsPop(String baseName) {
         try {
             isPop = true;
+            needRecordVisit = false;
             this.interfaceName = baseName;
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
@@ -554,7 +530,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         } else {
                             thisPane.requestFocus();
                         }
-                        if (mainMenuController != null) {
+                        if (isPop) {
                             LocateTools.mouseCenter(myStage);
                         }
                         if (leftPane != null) {
@@ -620,6 +596,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 } else if (loadContentInSystemClipboardButton != null) {
                     NodeStyleTools.setTooltip(loadContentInSystemClipboardButton, new Tooltip(message("LoadContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
                 }
+            }
+
+            if (panesMenuButton != null) {
+                StyleTools.setIconTooltips(panesMenuButton, "iconPanes.png", message("Panes"));
             }
 
         } catch (Exception e) {
@@ -917,7 +897,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         });
                 checkRightPaneClose();
             }
-            checkRightPaneHide();
+            if (!checkRightPaneHide()) {
+                setSplitDividerPositions();
+                refreshStyle(splitPane);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -941,21 +924,23 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void checkRightPaneHide() {
+    public boolean checkRightPaneHide() {
         try {
             if (isSettingValues || splitPane == null || rightPane == null
                     || rightPaneControl == null || !rightPaneControl.isVisible()
                     || !splitPane.getItems().contains(rightPane)
                     || splitPane.getItems().size() == 1) {
-                return;
+                return false;
             }
             if (!UserConfig.getBoolean(baseName + "ShowRightControl", true)) {
                 hideRightPane();
             }
             setSplitDividerPositions();
             refreshStyle(splitPane);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return false;
         }
     }
 

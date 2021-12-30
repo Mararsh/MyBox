@@ -10,8 +10,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Toggle;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
@@ -39,7 +39,11 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
     public PdfConvertImagesBatchController() {
         baseTitle = Languages.message("PdfConvertImagesBatch");
         browseTargets = true;
+    }
 
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
     }
 
     @Override
@@ -67,8 +71,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(targetPathController.valid.not())
                     .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))

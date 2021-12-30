@@ -9,6 +9,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -19,21 +20,21 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class MenuTextBaseController extends MenuController {
-    
+
     protected TextInputControl textInput;
-    
+
     @FXML
     protected Button replaceButton;
-    
+
     public MenuTextBaseController() {
         baseTitle = Languages.message("Value");
     }
-    
+
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
     }
-    
+
     @Override
     public void setParameters(BaseController parent, Node node, double x, double y) {
         try {
@@ -56,7 +57,7 @@ public class MenuTextBaseController extends MenuController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     @Override
     public void myBoxClipBoard() {
@@ -66,7 +67,7 @@ public class MenuTextBaseController extends MenuController {
             TextClipboardPopController.open(parentController, node);
         }
     }
-    
+
     @FXML
     @Override
     public boolean menuAction() {
@@ -76,7 +77,7 @@ public class MenuTextBaseController extends MenuController {
         MenuTextEditController.open(parentController, node, initX, initY);
         return true;
     }
-    
+
     @FXML
     @Override
     public void findAction() {
@@ -87,7 +88,7 @@ public class MenuTextBaseController extends MenuController {
         FindPopController.open(parentController, node, window.getX(), window.getY());
         window.hide();
     }
-    
+
     @FXML
     @Override
     public void replaceAction() {
@@ -98,7 +99,7 @@ public class MenuTextBaseController extends MenuController {
         FindReplacePopController.open(parentController, node, window.getX(), window.getY());
         window.hide();
     }
-    
+
     @FXML
     public void editAction() {
         if (textInput == null) {
@@ -107,7 +108,7 @@ public class MenuTextBaseController extends MenuController {
         TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.loadContents(textInput.getText());
     }
-    
+
     @FXML
     @Override
     public void saveAsAction() {
@@ -127,22 +128,22 @@ public class MenuTextBaseController extends MenuController {
             if (file == null) {
                 return;
             }
-            task = new SingletonTask<Void>() {
-                
+            task = new SingletonTask<Void>(this) {
+
                 @Override
                 protected boolean handle() {
                     return TextFileTools.writeFile(file, text) != null;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
                 }
-                
+
             };
             start(task);
         }
     }
-    
+
 }

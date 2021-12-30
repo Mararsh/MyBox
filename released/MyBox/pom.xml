@@ -4,14 +4,14 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.4.9</version>
+    <version>6.5.1</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
     </properties>
 
     <organization>
@@ -196,17 +196,17 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -303,6 +303,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
+                <javaVersion>17</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -312,6 +313,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
+                <javaVersion>17</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -321,6 +323,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
+                <javaVersion>16</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

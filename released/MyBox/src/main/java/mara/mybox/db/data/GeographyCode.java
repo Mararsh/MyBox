@@ -1,12 +1,9 @@
 package mara.mybox.db.data;
 
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.data.CoordinateSystem;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -98,6 +95,7 @@ public class GeographyCode extends BaseData {
             return null;
         }
     }
+
 
     /*
         Static methods

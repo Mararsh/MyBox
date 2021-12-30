@@ -16,7 +16,11 @@ import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.Data2DCell;
+import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
@@ -26,10 +30,14 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.data.WebHistory;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
@@ -39,6 +47,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
@@ -57,7 +66,7 @@ public class DataMigration {
 
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion == currentVersion) {
@@ -109,6 +118,9 @@ public class DataMigration {
                 if (lastVersion < 6004008) {
                     updateIn648(conn);
                 }
+                if (lastVersion < 6005001) {
+                    updateIn651(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -119,10 +131,202 @@ public class DataMigration {
         return true;
     }
 
+    private static void updateIn651(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.5.1...");
+
+            updateIn651ExtendColumns(conn);
+
+            updateIn651ReplaceDataDefinition(conn);
+
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn651ExtendColumns(Connection conn) {
+        try {
+            conn.setAutoCommit(true);
+
+            alterColumnLength(conn, "User_Conf", "key_Name", StringMaxLength);
+            alterColumnLength(conn, "System_Conf", "key_Name", StringMaxLength);
+            alterColumnLength(conn, "String_Values", "key_name", StringMaxLength);
+            alterColumnLength(conn, "String_Value", "key_name", StringMaxLength);
+            alterColumnLength(conn, "Query_Condition", "data_name", StringMaxLength);
+            alterColumnLength(conn, "visit_history", "resource_value", StringMaxLength);
+            alterColumnLength(conn, "visit_history", "data_more", StringMaxLength);
+            alterColumnLength(conn, "Web_History", "address", StringMaxLength);
+            alterColumnLength(conn, "Web_History", "title", StringMaxLength);
+            alterColumnLength(conn, "Web_History", "icon", StringMaxLength);
+            alterColumnLength(conn, "Web_Favorite", "title", StringMaxLength);
+            alterColumnLength(conn, "Web_Favorite", "address", StringMaxLength);
+            alterColumnLength(conn, "Web_Favorite", "icon", StringMaxLength);
+            alterColumnLength(conn, "Tree", "title", StringMaxLength);
+            alterColumnLength(conn, "Tree", "attribute", StringMaxLength);
+            alterColumnLength(conn, "Tag", "tag", StringMaxLength);
+            alterColumnLength(conn, "Notebook", "name", StringMaxLength);
+            alterColumnLength(conn, "Notebook", "description", StringMaxLength);
+            alterColumnLength(conn, "Note", "title", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "log", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "file_name", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "class_name", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "method_name", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "callers", StringMaxLength);
+            alterColumnLength(conn, "MyBox_Log", "comments", StringMaxLength);
+            alterColumnLength(conn, "Location_Data", "label", StringMaxLength);
+            alterColumnLength(conn, "Location_Data", "address", StringMaxLength);
+            alterColumnLength(conn, "image_scope", "outline", StringMaxLength);
+            alterColumnLength(conn, "Image_Edit_History", "scope_name", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "chinese_name", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "english_name", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "code1", 1024);
+            alterColumnLength(conn, "Geography_Code", "code2", 1024);
+            alterColumnLength(conn, "Geography_Code", "code3", 1024);
+            alterColumnLength(conn, "Geography_Code", "code4", 1024);
+            alterColumnLength(conn, "Geography_Code", "code5", 1024);
+            alterColumnLength(conn, "Geography_Code", "alias1", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias2", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias3", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias4", StringMaxLength);
+            alterColumnLength(conn, "Geography_Code", "alias5", StringMaxLength);
+            alterColumnLength(conn, "Float_Matrix", "name", StringMaxLength);
+            alterColumnLength(conn, "Epidemic_Report", "data_set", StringMaxLength);
+            alterColumnLength(conn, "Dataset", "data_category", StringMaxLength);
+            alterColumnLength(conn, "Dataset", "data_set", StringMaxLength);
+            alterColumnLength(conn, "Convolution_Kernel", "name", StringMaxLength);
+            alterColumnLength(conn, "Convolution_Kernel", "description", StringMaxLength);
+            alterColumnLength(conn, "Color_Palette_Name", "palette_name", StringMaxLength);
+            alterColumnLength(conn, "Color_Palette", "name_in_palette", StringMaxLength);
+            alterColumnLength(conn, "Color", "color_name", StringMaxLength);
+            alterColumnLength(conn, "Alarm_Clock", "description", StringMaxLength);
+            alterColumnLength(conn, "Alarm_Clock", "sound", StringMaxLength);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn651ReplaceDataDefinition(Connection conn) {
+        try {
+            conn.setAutoCommit(false);
+            TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
+            TableData2DColumn tableData2DColumn = new TableData2DColumn();
+            try (ResultSet dquery = conn.createStatement().executeQuery("SELECT * FROM Data_Definition");) {
+                while (dquery.next()) {
+                    long dfid = dquery.getLong("dfid");
+                    short type = dquery.getShort("data_type");
+                    String name = dquery.getString("data_name");
+                    if (name == null || name.isBlank()) {
+                        continue;
+                    }
+                    File file = null;
+                    if (type == 2) {               // Matrix
+                        type = 4;
+                    } else if (type == 1) {       // DataFile
+                        file = new File(name);
+                        if (file.exists()) {
+                            if (name.endsWith(".csv")) {
+                                type = 1;
+                            } else {
+                                type = 0;    // texts
+                            }
+                            name = file.getName();
+                        } else {
+                            continue;
+                        }
+                    } else if (type == 4) {          // DataClipboard
+                        file = new File(name);
+                        if (!file.exists()) {
+                            continue;
+                        }
+                        name = file.getName();
+                        type = 3;
+                    } else {
+                        continue;
+                    }
+                    String charset = dquery.getString("charset");
+                    String delimiter = dquery.getString("delimiter");
+                    boolean has_header = dquery.getBoolean("has_header");
+                    Data2DDefinition def = Data2DDefinition.create()
+                            .setType(Data2DDefinition.type(type))
+                            .setFile(file).setDataName(name)
+                            .setHasHeader(has_header).setDelimiter(delimiter)
+                            .setCharsetName(charset);
+                    def = tableData2DDefinition.insertData(conn, def);
+                    conn.commit();
+
+                    long d2did = def.getD2did();
+                    ResultSet cquery = conn.createStatement().executeQuery("SELECT * FROM Data_Column WHERE dataid=" + dfid);
+                    while (cquery.next()) {
+                        Data2DColumn column = Data2DColumn.create().setD2id(d2did);
+                        column.setType(ColumnDefinition.columnType(cquery.getShort("column_type")));
+                        column.setName(cquery.getString("column_name"));
+                        column.setIndex(cquery.getInt("index"));
+                        column.setLength(cquery.getInt("length"));
+                        column.setWidth(cquery.getInt("width"));
+                        tableData2DColumn.insertData(conn, column);
+                    }
+                    conn.commit();
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+
+            try (ResultSet mquery = conn.createStatement().executeQuery("SELECT * FROM Matrix")) {
+                conn.setAutoCommit(false);
+                TableData2DCell tableData2DCell = new TableData2DCell();
+                while (mquery.next()) {
+                    long mxid = mquery.getLong("mxid");
+                    Data2DDefinition def = Data2DDefinition.create()
+                            .setType(Data2DDefinition.Type.Matrix)
+                            .setDataName(mquery.getString("name"))
+                            .setScale(mquery.getShort("scale"))
+                            .setColsNumber(mquery.getInt("columns_number"))
+                            .setRowsNumber(mquery.getInt("rows_number"))
+                            .setModifyTime(mquery.getTimestamp("modify_time"))
+                            .setComments(mquery.getString("comments"));
+                    def = tableData2DDefinition.insertData(conn, def);
+                    conn.commit();
+                    long d2did = def.getD2did();
+                    try (ResultSet cquery = conn.createStatement()
+                            .executeQuery("SELECT * FROM Matrix_Cell WHERE mcxid=" + mxid)) {
+                        while (cquery.next()) {
+                            Data2DCell cell = Data2DCell.create().setD2did(d2did)
+                                    .setCol(cquery.getInt("col"))
+                                    .setRow(cquery.getInt("row"))
+                                    .setValue(cquery.getDouble("value") + "");
+                            tableData2DCell.insertData(conn, cell);
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e);
+                    }
+                    conn.commit();
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.commit();
+
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("DROP TABLE Matrix_Cell");
+                statement.executeUpdate("DROP TABLE Matrix");
+                statement.executeUpdate("DROP VIEW Data_Column_View");
+                statement.executeUpdate("DROP TABLE Data_Column");
+                statement.executeUpdate("DROP TABLE Data_Definition");
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     private static void updateIn648(Connection conn) {
         try {
             MyBoxLog.info("Updating tables in 6.4.8...");
-            try ( Statement statement = conn.createStatement()) {
+            try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("ALTER TABLE Data_Definition  alter  column  delimiter set data type VARCHAR(128)");
                 conn.commit();
                 statement.executeUpdate("ALTER TABLE  Data_Column DROP CONSTRAINT  Data_Column_dataid_fk");
@@ -143,8 +347,8 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.4.5...");
             String sql = "SELECT * FROM String_Values where key_name='ImageClipboard'";
-            try ( Statement statement = conn.createStatement();
-                     ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
                 TableImageClipboard tableImageClipboard = new TableImageClipboard();
                 while (results.next()) {
@@ -158,7 +362,7 @@ public class DataMigration {
                 MyBoxLog.debug(e);
             }
             conn.commit();
-            try ( Statement statement = conn.createStatement()) {
+            try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("DELETE FROM String_Values where key_name='ImageClipboard'");
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -175,8 +379,8 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.4.4...");
             TableWebHistory tableWebHistory = new TableWebHistory();
             String sql = "SELECT * FROM Browser_History";
-            try ( Statement statement = conn.createStatement();
-                     ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
                 while (results.next()) {
                     WebHistory his = new WebHistory();
@@ -190,7 +394,7 @@ public class DataMigration {
                 MyBoxLog.debug(e);
             }
             conn.commit();
-            try ( Statement statement = conn.createStatement()) {
+            try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("DROP TABLE Browser_History");
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -206,8 +410,8 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.4.3...");
             String sql = "SELECT * FROM Color_Data";
-            try ( Statement statement = conn.createStatement();
-                     ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
                 TableColorPaletteName tableColorPaletteName = new TableColorPaletteName();
                 ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
@@ -230,7 +434,7 @@ public class DataMigration {
                 MyBoxLog.debug(e);
             }
             conn.commit();
-            try ( Statement statement = conn.createStatement()) {
+            try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("DROP TABLE Color_Data");
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -247,8 +451,8 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.4.1...");
             String sql = "SELECT * FROM image_history";
 
-            try ( Statement statement = conn.createStatement();
-                     ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 TableImageEditHistory tableImageEditHistory = new TableImageEditHistory();
                 while (results.next()) {
                     ImageEditHistory his = new ImageEditHistory();
@@ -266,7 +470,7 @@ public class DataMigration {
                 MyBoxLog.debug(e);
             }
             conn.commit();
-            try ( Statement statement = conn.createStatement()) {
+            try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("DROP TABLE image_history");
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -357,7 +561,7 @@ public class DataMigration {
     }
 
     private static boolean updateGeographyCodeIn633(Connection conn) {
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "ALTER TABLE Geography_Code ADD COLUMN gcsource SMALLINT";
             statement.executeUpdate(sql);
@@ -365,27 +569,27 @@ public class DataMigration {
 //            MyBoxLog.debug(e.toString());
             return false;
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "UPDATE Geography_Code SET gcsource=1 WHERE predefined=true";
             statement.executeUpdate(sql);
         } catch (Exception e) {
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "UPDATE Geography_Code SET gcsource=1 WHERE predefined=1";
             statement.executeUpdate(sql);
         } catch (Exception e) {
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "UPDATE Geography_Code SET gcsource=2 WHERE predefined=false";
             statement.executeUpdate(sql);
         } catch (Exception e) {
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "UPDATE Geography_Code SET gcsource=2 WHERE predefined=0";
             statement.executeUpdate(sql);
         } catch (Exception e) {
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "ALTER TABLE Geography_Code DROP COLUMN predefined";
             statement.executeUpdate(sql);
         } catch (Exception e) {
@@ -394,7 +598,7 @@ public class DataMigration {
     }
 
     private static boolean updateConvolutionKernelIn633(Connection conn) {
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "ALTER TABLE Convolution_Kernel ADD COLUMN is_gray BOOLEAN";
             statement.executeUpdate(sql);
@@ -404,17 +608,17 @@ public class DataMigration {
 //            MyBoxLog.debug(e.toString());
             return false;
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "UPDATE Convolution_Kernel SET is_gray=true WHERE gray>0";
             statement.executeUpdate(sql);
         } catch (Exception e) {
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "UPDATE Convolution_Kernel SET is_gray=false WHERE gray<1";
             statement.executeUpdate(sql);
         } catch (Exception e) {
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = "ALTER TABLE Convolution_Kernel DROP COLUMN gray";
             statement.executeUpdate(sql);
         } catch (Exception e) {
@@ -436,11 +640,11 @@ public class DataMigration {
     }
 
     private static void updateForeignKeysIn632(Connection conn) {
-        try ( Statement query = conn.createStatement();
-                 Statement update = conn.createStatement()) {
+        try (Statement query = conn.createStatement();
+                Statement update = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "SELECT tablename, constraintName FROM SYS.SYSTABLES t, SYS.SYSCONSTRAINTS c  where t.TABLEID=c.TABLEID AND type='F'";
-            try ( ResultSet results = query.executeQuery(sql)) {
+            try (ResultSet results = query.executeQuery(sql)) {
                 while (results.next()) {
                     String tablename = results.getString("tablename");
                     String constraintName = results.getString("constraintName");
@@ -461,10 +665,10 @@ public class DataMigration {
     }
 
     private static void updateGeographyCodeIn632(Connection conn) {
-        try ( Statement statement = conn.createStatement();
-                 PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
+        try (Statement statement = conn.createStatement();
+                PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
             conn.setAutoCommit(false);
-            try ( ResultSet results = statement.executeQuery("SELECT * FROM Geography_Code WHERE gcid < 5000")) {
+            try (ResultSet results = statement.executeQuery("SELECT * FROM Geography_Code WHERE gcid < 5000")) {
                 while (results.next()) {
                     GeographyCode code = TableGeographyCode.readResults(results);
 //                    MyBoxLog.debug(code.getGcid() + " " + code.getName() + " "
@@ -483,11 +687,11 @@ public class DataMigration {
 
     private static void updateLocationIn632(Connection conn) {
         TableLocationData tableLocationData = new TableLocationData();
-        try ( Statement statement = conn.createStatement();
-                 PreparedStatement locationIinsert = conn.prepareStatement(tableLocationData.insertStatement())) {
+        try (Statement statement = conn.createStatement();
+                PreparedStatement locationIinsert = conn.prepareStatement(tableLocationData.insertStatement())) {
             int insertCount = 0;
             conn.setAutoCommit(false);
-            try ( ResultSet results = statement.executeQuery("SELECT * FROM Location")) {
+            try (ResultSet results = statement.executeQuery("SELECT * FROM Location")) {
                 Map<String, Dataset> datasets = new HashMap<>();
                 while (results.next()) {
                     Location data = new Location();
@@ -538,7 +742,7 @@ public class DataMigration {
 
     private static void migrateFrom63(Connection conn) {
         MyBoxLog.info("Migrate from 6.3...");
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "ALTER TABLE Geography_Code add column altitude DOUBLE ";
             statement.executeUpdate(sql);
@@ -552,7 +756,7 @@ public class DataMigration {
 //            MyBoxLog.debug(e.toString());
             return;
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "UPDATE Geography_Code  SET area=area*1000000";
             statement.executeUpdate(sql);
@@ -565,11 +769,11 @@ public class DataMigration {
 //            MyBoxLog.debug(e.toString());
             return;
         }
-        try ( PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
+        try (PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
             String sql = "SELECT * FROM Geography_Code";
             int count = 0;
             conn.setAutoCommit(false);
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            try (ResultSet results = conn.createStatement().executeQuery(sql)) {
                 while (results.next()) {
                     GeographyCode code = TableGeographyCode.readResults(results);
                     TableGeographyCode.setUpdate(conn, update, code);
@@ -604,8 +808,8 @@ public class DataMigration {
         MyBoxLog.info("Migrate GeographyCode from 6.2.1...");
         String sql = "SELECT * FROM Geography_Code ORDER BY level, country, province, city";
         List<GeographyCode> codes = new ArrayList<>();
-        try ( Statement statement = conn.createStatement();
-                 ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 try {
                     String address = results.getString("address");
@@ -641,14 +845,14 @@ public class DataMigration {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             statement.executeUpdate("DROP TABLE Geography_Code");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
         TableGeographyCode tableGeographyCode = new TableGeographyCode();
         tableGeographyCode.createTable(conn);
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
             statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
             statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
@@ -657,7 +861,7 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         GeographyCodeTools.importPredefined(conn);
-        try ( PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
+        try (PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
             conn.setAutoCommit(false);
             int count = 0;
             for (GeographyCode code : codes) {
@@ -681,9 +885,9 @@ public class DataMigration {
         MyBoxLog.info("Migrate EpidemicReport from 6.2.1...");
         String sql = "SELECT * FROM Epidemic_Report ORDER BY level, country, province, city";
         List<EpidemicReport> reports = new ArrayList<>();
-        try ( Statement statement = conn.createStatement();
-                 PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert);
-                 ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert);
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 try {
                     GeographyCode code = new GeographyCode();
@@ -731,7 +935,7 @@ public class DataMigration {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             statement.executeUpdate("DROP TABLE Epidemic_Report");
 
@@ -749,7 +953,7 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateBefore621(Connection conn) {
+    private static boolean migrateBefore621(Connection conn) {
         MyBoxLog.info("Migrate before 6.2.1...");
         try {
             if (!SystemConfig.getBoolean("UpdatedTables4.2", false)) {
@@ -838,10 +1042,10 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateGeographyCode615() {
+    private static boolean migrateGeographyCode615() {
         MyBoxLog.info("migrate GeographyCode 6.1.5...");
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             int size = DerbyBase.size("select count(level) from Geography_Code");
             if (size <= 0) {
                 return true;
@@ -856,10 +1060,10 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateGeographyCode621() {
+    private static boolean migrateGeographyCode621() {
         MyBoxLog.info("migrate GeographyCode 6.2.1...");
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM Geography_Code "
                     + " WHERE country='" + Languages.message("Macao")
                     + "' OR country='" + Languages.message("Macau") + "'";
@@ -871,10 +1075,10 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateEpidemicReport615() {
+    private static boolean migrateEpidemicReport615() {
         MyBoxLog.info("migrate Epidemic_Report 6.1.5...");
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "ALTER TABLE Epidemic_Report  add  column  level VARCHAR(1024)";
             statement.executeUpdate(sql);
             sql = "ALTER TABLE Epidemic_Report  add  column  district VARCHAR(2048)";
@@ -920,10 +1124,10 @@ public class DataMigration {
         }
     }
 
-    public static boolean migrateEpidemicReport621() {
+    private static boolean migrateEpidemicReport621() {
         MyBoxLog.info("migrate Epidemic_Report 6.2.1...");
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             int size = DerbyBase.size("select count(confirmed) from Epidemic_Report");
             if (size <= 0) {
                 return true;
@@ -946,14 +1150,17 @@ public class DataMigration {
         }
     }
 
-    public static void reloadInternalDoc() {
+    /*
+        common
+     */
+    private static void reloadInternalDoc() {
         new Thread() {
             @Override
             public void run() {
                 try {
                     MyBoxLog.info("Reloading internal doc...");
-                    mara.mybox.fxml.FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
-                    mara.mybox.fxml.FxFileTools.getInternalFile("/doc/zh/README.md", "doc", "README-zh.md", true);
+                    FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
+                    FxFileTools.getInternalFile("/doc/zh/README.md", "doc", "README-zh.md", true);
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
                 }
@@ -961,7 +1168,7 @@ public class DataMigration {
         }.start();
     }
 
-    public static void reloadInternalData() {
+    private static void reloadInternalData() {
         new Thread() {
             @Override
             public void run() {
@@ -984,13 +1191,18 @@ public class DataMigration {
                             "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt"
                     );
                     for (String name : names) {
-                        mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/" + name, "data", name, true);
+                        FxFileTools.getInternalFile("/data/db/" + name, "data", name, true);
                     }
                     MyBoxLog.info("Internal data loaded.");
                 } catch (Exception e) {
                 }
             }
         }.start();
+    }
+
+    private static void alterColumnLength(Connection conn, String tableName, String colName, int length) {
+        String sql = "ALTER TABLE " + tableName + "  alter  column  " + colName + " set data type VARCHAR(" + length + ")";
+        DerbyBase.update(conn, sql);
     }
 
 }

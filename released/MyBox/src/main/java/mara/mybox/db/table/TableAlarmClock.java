@@ -2,7 +2,6 @@ package mara.mybox.db.table;
 
 import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -34,11 +32,11 @@ public class TableAlarmClock extends DerbyBase {
         Create_Table_Statement
                 = " CREATE TABLE Alarm_Clock ( "
                 + "  key_value  BIGINT NOT NULL PRIMARY KEY, "
-                + "  description VARCHAR(1024), "
+                + "  description VARCHAR(32672), "
                 + "  alarm_type INT  NOT NULL, "
                 + "  start_time TIMESTAMP, "
                 + "  is_active SMALLINT, "
-                + "  sound VARCHAR(1024), "
+                + "  sound VARCHAR(32672), "
                 + "  every_value INT, "
                 + "  last_time TIMESTAMP, "
                 + "  next_time TIMESTAMP, "

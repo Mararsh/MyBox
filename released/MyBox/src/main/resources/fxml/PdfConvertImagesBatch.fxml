@@ -44,25 +44,25 @@ License:    Apache License Version 2.0
                                 <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                                      <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" VBox.vgrow="ALWAYS" />
-                                          <CheckBox fx:id="transparentBackgroundCheck" mnemonicParsing="false">
-                                             <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconOpacity.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </CheckBox>
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                       </padding>
-                                    </VBox>
-                                 </content>
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" VBox.vgrow="ALWAYS" />
+                                                        <CheckBox fx:id="transparentBackgroundCheck" mnemonicParsing="false">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconOpacity.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </CheckBox>
+                                                    </children>
+                                                    <padding>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                    </padding>
+                                                </VBox>
+                                            </content>
                                         </ScrollPane>
                                         <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                             <graphic>
@@ -81,25 +81,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="targetVBox" spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%FilesPath" HBox.hgrow="NEVER">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" HBox.hgrow="NEVER">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
+                                        <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
                                         <FlowPane hgap="5.0" vgap="5.0">
                                             <children>
                                                 <Label text="%FileName" />
@@ -107,19 +89,6 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="appendCompressionCheck" mnemonicParsing="false" selected="true" text="%AppendCompressionType" />
                                                 <CheckBox fx:id="appendQualityCheck" mnemonicParsing="false" selected="true" text="%AppendQuality" />
                                                 <CheckBox fx:id="appendDensityCheck" mnemonicParsing="false" selected="true" text="%AppendDensity" />
-                                            </children>
-                                        </FlowPane>
-                                        <FlowPane hgap="5.0" vgap="5.0">
-                                            <children>
-                                                <Label text="%ExistedFiles" />
-                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="targetExistGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
-                                                <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
                                             </children>
                                         </FlowPane>
                                         <CheckBox fx:id="targetSubdirCheck" mnemonicParsing="false" selected="true" text="%CreateSubdirectoryForEachFile" />

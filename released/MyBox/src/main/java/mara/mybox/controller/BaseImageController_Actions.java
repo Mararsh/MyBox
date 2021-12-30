@@ -25,6 +25,8 @@ import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -113,12 +115,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         return selected;
     }
 
-    public Object imageToSave() {
-        Image selected = scopeImage();
-        if (selected == null) {
-            selected = imageView.getImage();
-        }
-        return selected;
+    public Object imageToSaveAs() {
+        return imageToHandle();
     }
 
     @FXML
@@ -220,7 +218,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image areaImage;
 
@@ -249,7 +247,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image areaImage;
 
@@ -306,7 +304,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 controller.loadImage(imageView.getImage());
 
             } else {
-                if (imageInformation.getRegion() != null) {
+                if (imageInformation != null && imageInformation.getRegion() != null) {
                     controller.loadRegion(imageInformation);
                 } else if (controller instanceof ImageSampleController || controller instanceof ImageSplitController) {
                     controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
@@ -322,7 +320,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image areaImage;
 
@@ -352,50 +350,56 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
             MenuItem menu;
 
-            menu = new MenuItem(message("Copy"));
+            menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImage("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
-                copyAction();
+                copyToSystemClipboard();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Pop"));
+            menu = new MenuItem(message("CopyToMyBoxClipboard"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyToMyBoxClipboard();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Pop"), StyleTools.getIconImage("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {
                 popAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("View"));
+            menu = new MenuItem(message("View"), StyleTools.getIconImage("iconView.png"));
             menu.setOnAction((ActionEvent event) -> {
                 viewAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Manufacture"));
+            menu = new MenuItem(message("Manufacture"), StyleTools.getIconImage("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 manufactureAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Statistic"));
+            menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 statisticAction();
 
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("OCR"));
+            menu = new MenuItem(message("OCR"), StyleTools.getIconImage("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ocrAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Split"));
+            menu = new MenuItem(message("Split"), StyleTools.getIconImage("iconSplit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 splitAction();
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Sample"));
+            menu = new MenuItem(message("Sample"), StyleTools.getIconImage("iconSample.png"));
             menu.setOnAction((ActionEvent event) -> {
                 sampleAction();
 
@@ -403,13 +407,13 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             popMenu.getItems().add(menu);
 
             if (imageFile() != null) {
-                menu = new MenuItem(message("Convert"));
+                menu = new MenuItem(message("Convert"), StyleTools.getIconImage("iconDelimiter.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     convertAction();
                 });
                 popMenu.getItems().add(menu);
 
-                menu = new MenuItem(message("Browse"));
+                menu = new MenuItem(message("Browse"), StyleTools.getIconImage("iconBrowse.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     browseAction();
                 });
@@ -419,41 +423,41 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (imageInformation != null) {
                 popMenu.getItems().add(new SeparatorMenuItem());
 
-                menu = new MenuItem(message("Information"));
+                menu = new MenuItem(message("Information"), StyleTools.getIconImage("iconInfo.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     infoAction();
                 });
                 popMenu.getItems().add(menu);
 
-                menu = new MenuItem(message("MetaData"));
+                menu = new MenuItem(message("MetaData"), StyleTools.getIconImage("iconMeta.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     metaAction();
                 });
                 popMenu.getItems().add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("ImagesInMyBoxClipboard"));
+            menu = new MenuItem(message("ImagesInSystemClipboard"), StyleTools.getIconImage("iconSystemClipboard.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageInSystemClipboardController.oneOpen();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImagesInMyBoxClipboard"), StyleTools.getIconImage("iconClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageInMyBoxClipboardController.oneOpen();
 
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("ImagesInSystemClipboard"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageInSystemClipboardController.oneOpen();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Settings"));
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("Settings"), StyleTools.getIconImage("iconSetting.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 settings();
             });
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -501,7 +505,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
 
@@ -545,7 +549,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (file == null) {
             return;
         }
-        saveImage(imageFile(), file, imageToSave());
+        saveImage(imageFile(), file, imageToSaveAs());
     }
 
     public void saveImage(File srcFile, File newfile, Object imageToSave) {
@@ -556,7 +560,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

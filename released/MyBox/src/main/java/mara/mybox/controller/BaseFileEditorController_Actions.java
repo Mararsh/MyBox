@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
@@ -54,6 +55,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     @FXML
     @Override
     public void saveAction() {
+        if (sourceFile != null && !sourceInformation.isTotalNumberRead()) {
+            popError(message("CountingTotalNumber"));
+            return;
+        }
         if (!validateMainArea()) {
             popError(message("InvalidData"));
             return;
@@ -65,7 +70,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         }
     }
 
-    protected void saveNew() {
+    private void saveNew() {
         final File file = chooseSaveFile();
         if (file == null) {
             return;
@@ -75,7 +80,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -103,7 +108,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         }
     }
 
-    protected void saveExisted() {
+    private void saveExisted() {
         if (confirmCheck.isVisible() && confirmCheck.isSelected() && (autoSaveTimer == null)) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
@@ -129,12 +134,12 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
                     if (backupController != null && backupController.isBack()) {
-                        backupController.addBackup(sourceFile);
+                        backupController.addBackup(task, sourceFile);
                     }
                     return sourceInformation.writePage(sourceInformation, mainArea.getText());
                 }
@@ -172,7 +177,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            FileEditInformation targetInformation = FileEditInformation.newEditInformation(editType, file);
+            FileEditInformation targetInformation = FileEditInformation.create(editType, file);
             targetInformation.setFile(file);
             targetInformation.setCharset(Charset.forName(targetCharsetSelector.getSelectionModel().getSelectedItem()));
             targetInformation.setPageSize(sourceInformation.getPageSize());
@@ -184,7 +189,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             }
             targetInformation.setLineBreak(lineBreak);
             targetInformation.setLineBreakValue(TextTools.lineBreakValue(lineBreak));
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -251,7 +256,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -296,7 +301,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -352,7 +357,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -409,7 +414,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonTask<Void>() {
+                    task = new SingletonTask<Void>(this) {
 
                         String text;
 
@@ -448,7 +453,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             return;
         }
         synchronized (this) {
-            SingletonTask filterTask = new SingletonTask<Void>() {
+            SingletonTask filterTask = new SingletonTask<Void>(this) {
 
                 private File filteredFile;
                 private String finalCondition;
@@ -460,7 +465,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                         filterInfo = sourceInformation;
                     } else {
                         File tmpfile = TextFileTools.writeFile(TmpFileTools.getTempFile(".txt"), mainArea.getText(), Charset.forName("utf-8"));
-                        filterInfo = FileEditInformation.newEditInformation(editType, tmpfile);
+                        filterInfo = FileEditInformation.create(editType, tmpfile);
                         filterConditionsString = "";
                         if (editType != Edit_Type.Bytes) {
                             filterInfo.setLineBreak(TextTools.checkLineBreak(tmpfile));

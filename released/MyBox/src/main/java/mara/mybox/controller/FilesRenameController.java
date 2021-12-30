@@ -60,6 +60,8 @@ public class FilesRenameController extends BaseBatchFileController {
             prefixInput, suffixInput, stringInput;
     @FXML
     protected ToggleGroup sortGroup, renameGroup;
+    @FXML
+    protected RadioButton targetReplaceRadio, targetSkipRadio;
 
     public static enum RenameType {
         ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber,
@@ -108,7 +110,7 @@ public class FilesRenameController extends BaseBatchFileController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableData)
-                            .or(tableController.getAddFilesButton().disableProperty())
+                            .or(tableController.addFilesButton.disableProperty())
             );
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -169,10 +171,10 @@ public class FilesRenameController extends BaseBatchFileController {
                     try {
                         digit = Integer.valueOf(digitInput.getText());
                     } catch (Exception e) {
-                        if (tableController.getTotalFilesNumber() <= 0) {
+                        if (tableController.totalFilesNumber <= 0) {
                             tableController.countSize();
                         }
-                        digit = (tableController.getTotalFilesNumber() + "").length();
+                        digit = (tableController.totalFilesNumber + "").length();
                     }
                 }
                 try {
@@ -246,7 +248,7 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        FileInformation d = tableController.data(currentParameters.currentIndex);
+        FileInformation d = tableController.row(currentParameters.currentIndex);
         String newName = renameFile(srcFile);
         if (newName != null) {
             d.setData(new File(newName).getAbsolutePath());
@@ -266,7 +268,7 @@ public class FilesRenameController extends BaseBatchFileController {
             if (newName != null) {
                 File newFile = new File(newName);
                 if (newFile.exists()) {
-                    if (targetExistType != TargetExistType.Replace) {
+                    if (targetSkipRadio.isSelected()) {
                         return null;
                     }
                     FileDeleteTools.delete(newFile);
@@ -418,7 +420,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 if (newFile.exists()) {
                     File oldFile = new File(originalName);
                     if (oldFile.exists()) {
-                        if (targetExistType != TargetExistType.Replace) {
+                        if (targetSkipRadio.isSelected()) {
                             f.setHandled(Languages.message("FailRecovered"));
                             continue;
                         } else {
@@ -474,7 +476,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 if (newFile.exists()) {
                     File oldFile = new File(originalName);
                     if (oldFile.exists()) {
-                        if (targetExistType != TargetExistType.Replace) {
+                        if (targetSkipRadio.isSelected()) {
                             f.setHandled(Languages.message("FailRecovered"));
                             continue;
                         } else {
@@ -503,7 +505,7 @@ public class FilesRenameController extends BaseBatchFileController {
                     }
                     File oldFile = new File(originalFileName);
                     if (oldFile.exists()) {
-                        if (targetExistType != TargetExistType.Replace) {
+                        if (targetSkipRadio.isSelected()) {
                             f.setHandled(Languages.message("FailRecovered"));
                             continue;
                         } else {

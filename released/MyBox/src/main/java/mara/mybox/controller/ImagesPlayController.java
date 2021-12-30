@@ -21,7 +21,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.bufferedimage.ImageFileInformation;
@@ -30,6 +29,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
@@ -202,7 +202,7 @@ public class ImagesPlayController extends BaseImagesListController {
             }
             sourceFile = file;
             fileFormat = format;
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -210,6 +210,8 @@ public class ImagesPlayController extends BaseImagesListController {
                         return loadPDF();
                     } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
                         return loadPPT();
+                    } else if (fileFormat.equalsIgnoreCase("ico") || fileFormat.equalsIgnoreCase("icon")) {
+                        return loadIconFile();
                     } else {
                         return loadImageFile();
                     }
@@ -282,44 +284,43 @@ public class ImagesPlayController extends BaseImagesListController {
                 if (notGif) {
                     imageInfo.setDuration(playController.interval);
                 }
-                int imageWidth = imageInfo.getWidth();
-                int targetWidth = loadWidth <= 0 ? imageInfo.getWidth() : loadWidth;
-                int maxWidth = ImageInformation.countMaxWidth(imageInfo);
-                if (targetWidth > maxWidth) {
-                    System.gc();
-                    maxWidth = ImageInformation.countMaxWidth(imageInfo);
-                }
-                if (targetWidth > maxWidth) {
+                ImageInformation.checkMem(imageInfo);
+                if (imageInfo.isNeedSample()) {
                     if (task != null) {
                         task.setError(Languages.message("OutOfMeomey"));
                     }
                     loading.setInfo(Languages.message("OutOfMeomey"));
                     break;
                 }
-                ImageReadParam param = reader.getDefaultReadParam();
-                int scale = targetWidth / imageWidth;
-                if (scale > 1) {
-                    param.setSourceSubsampling(scale, scale, 0, 0);
-                }
-                BufferedImage frame;
-                try {
-                    frame = reader.read(imageInfo.getIndex(), param);
-                } catch (Exception e) {
-                    frame = ImageFileReaders.readBrokenImage((Exception) e,
-                            sourceFile.getAbsolutePath(), index, null, loadWidth);
-                }
-                if (frame == null) {
-                    break;
-                }
+                BufferedImage bufferedImage = ImageFileReaders.readFrame(reader, imageInfo);
+                imageInfo.loadBufferedImage(bufferedImage);
                 if (task == null || task.isCancelled()) {
                     reader.dispose();
                     return false;
                 }
-                frame = ScaleTools.scaleImageWidthKeep(frame, targetWidth);
-                imageInfo.setImageType(frame.getType());
-                imageInfo.setThumbnail(SwingFXUtils.toFXImage(frame, null));
             }
             reader.dispose();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+        return task != null && !task.isCancelled();
+    }
+
+    protected boolean loadIconFile() {
+        imageInfos.clear();
+        Platform.runLater(() -> {
+            imagesRadio.fire();
+        });
+        if (sourceFile == null) {
+            return false;
+        }
+        try {
+            ImageFileInformation finfo = ImageFileInformation.readIconFile(sourceFile);
+            imageInfos.addAll(finfo.getImagesInformation());
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -481,7 +482,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (infos == null || infos.isEmpty()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -508,24 +509,21 @@ public class ImagesPlayController extends BaseImagesListController {
                             if (loading != null) {
                                 loading.setInfo(Languages.message("Loading") + " " + i + " / " + framesNumber);
                             }
-                            int targetWidth = loadWidth <= 0 ? info.getWidth() : loadWidth;
+
+                            double targetWidth = loadWidth <= 0 ? info.getWidth() : loadWidth;
                             Image thumb = info.getThumbnail();
-                            if (thumb != null && thumb.getWidth() == targetWidth) {
+                            if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
                                 continue;
                             }
-                            int maxWidth = ImageInformation.countMaxWidth(info);
-                            if (targetWidth > maxWidth) {
-                                System.gc();
-                                maxWidth = ImageInformation.countMaxWidth(info);
-                            }
-                            if (targetWidth > maxWidth) {
+                            ImageInformation.checkMem(info);
+                            if (info.isNeedSample()) {
                                 if (task != null) {
                                     task.setError(Languages.message("OutOfMeomey"));
                                 }
                                 loading.setInfo(Languages.message("OutOfMeomey"));
                                 break;
                             }
-                            info.loadThumbnail(targetWidth);
+                            info.loadThumbnail(loadWidth);
                         }
                         return true;
                     } catch (Exception e) {
@@ -638,13 +636,13 @@ public class ImagesPlayController extends BaseImagesListController {
             if (info == null) {
                 return null;
             }
-            int imageWidth = info.getWidth();
-            int targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
+            double imageWidth = info.getWidth();
+            double targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
             Image thumb = info.getThumbnail();
-            if (thumb != null && thumb.getWidth() == targetWidth) {
+            if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
                 return thumb;
             }
-            return info.loadThumbnail(targetWidth);
+            return info.loadThumbnail(loadWidth);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -687,148 +685,6 @@ public class ImagesPlayController extends BaseImagesListController {
     public void editFrames() {
         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
         controller.loadImages(imageInfos);
-    }
-
-    /*
-        Methods to read image in loop to avoid out of memory.
-        Not useful in this version
-     */
-    protected synchronized Image readImageFile2(int index) {
-        try {
-            if (imageInfos == null || index < 0 || index >= framesNumber) {
-                return null;
-            }
-            ImageInformation imageInfo = imageInfos.get(index);
-            int imageWidth = imageInfo.getWidth();
-            int targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
-            File file = imageInfo.getFile();
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(file));
-                if (reader == null) {
-                    return null;
-                }
-                reader.setInput(iis, true, true);
-                int maxWidth = ImageInformation.countMaxWidth(imageInfo);
-                if (targetWidth > maxWidth) {
-                    imageView.setImage(null);
-                    System.gc();
-                    maxWidth = ImageInformation.countMaxWidth(imageInfo);
-                }
-                if (targetWidth > maxWidth) {
-                    for (int i = index; i >= 0; i++) {
-                        ImageInformation infoi = imageInfos.get(i);
-                        infoi.setThumbnail(null);
-                        System.gc();
-                        maxWidth = ImageInformation.countMaxWidth(imageInfo);
-                        if (targetWidth <= maxWidth) {
-                            break;
-                        }
-                    }
-                }
-                if (targetWidth > maxWidth) {
-                    for (int i = imageInfos.size() - 1; i > index; i--) {
-                        ImageInformation infoi = imageInfos.get(i);
-                        infoi.setThumbnail(null);
-                        System.gc();
-                        maxWidth = ImageInformation.countMaxWidth(imageInfo);
-                        if (targetWidth <= maxWidth) {
-                            break;
-                        }
-                    }
-                }
-                if (targetWidth > maxWidth) {
-                    ImageReadParam param = reader.getDefaultReadParam();
-                    int scale = targetWidth / imageWidth;
-                    if (scale > 1) {
-                        param.setSourceSubsampling(scale, scale, 0, 0);
-                    }
-                    BufferedImage frame;
-                    try {
-                        frame = reader.read(imageInfo.getIndex(), param);
-                    } catch (Exception e) {
-                        frame = ImageFileReaders.readBrokenImage((Exception) e, imageInfo.getFileName(), imageInfo.getIndex(), null, loadWidth);
-                    }
-                    if (frame != null) {
-                        frame = ScaleTools.scaleImageWidthKeep(frame, targetWidth);
-                        imageInfo.setImageType(frame.getType());
-                        imageInfo.setThumbnail(SwingFXUtils.toFXImage(frame, null));
-                    }
-                }
-                reader.dispose();
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-            return imageInfo.getThumbnail();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    protected class LoadThread2 extends Thread {
-
-        @Override
-        public void run() {
-            synchronized (imageInfos) {
-
-                imageInfos.notify();
-            }
-        }
-
-        public void checkThumbs() {
-            synchronized (imageInfos) {
-                imageInformation = imageInfos.get(frameIndex);
-                image = thumb(imageInformation);
-            }
-        }
-    }
-
-    protected synchronized Image readImage2(int index, boolean retry) {
-        try {
-            if (imageInfos == null || index < 0 || index >= framesNumber) {
-                return null;
-            }
-            if (loading != null) {
-                loading.setInfo(Languages.message("Loading") + " " + index);
-            }
-            ImageInformation info = imageInfos.get(index);
-            int targetWidth = loadWidth <= 0 ? info.getWidth() : loadWidth;
-            Image thumb = info.getThumbnail();
-            if (thumb != null && thumb.getWidth() == targetWidth) {
-                return thumb;
-            }
-            int maxWidth = ImageInformation.countMaxWidth(info);
-            if (maxWidth >= targetWidth) {
-                return info.loadThumbnail(targetWidth);
-            } else if (retry) {
-                for (int i = 0; i < index; ++i) {
-                    ImageInformation infoi = imageInfos.get(i);
-                    infoi.setThumbnail(null);
-                    infoi.setImage(null);
-                    System.gc();
-                    maxWidth = ImageInformation.countMaxWidth(info);
-                    if (maxWidth >= targetWidth) {
-                        return info.loadThumbnail(targetWidth);
-                    }
-                }
-                for (int i = framesNumber - 1; i > index; --i) {
-                    ImageInformation infoi = imageInfos.get(i);
-                    infoi.setThumbnail(null);
-                    infoi.setImage(null);
-                    System.gc();
-                    maxWidth = ImageInformation.countMaxWidth(info);
-                    if (maxWidth >= targetWidth) {
-                        return info.loadThumbnail(targetWidth);
-                    }
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return null;
-        }
     }
 
     @Override

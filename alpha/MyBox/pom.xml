@@ -10,8 +10,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
     </properties>
 
     <organization>
@@ -303,6 +303,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
+                <javaVersion>17</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -312,6 +313,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
+                <javaVersion>17</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -321,6 +323,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
+                <javaVersion>16</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

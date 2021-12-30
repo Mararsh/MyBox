@@ -7,15 +7,13 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebFavorite;
 import mara.mybox.db.table.TableWebFavorite;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -68,7 +66,7 @@ public class WebFavoritesCopyController extends BaseTreeNodeSelector {
                 alertError(Languages.message("TargetShouldDifferentWithSource"));
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private int count;
 

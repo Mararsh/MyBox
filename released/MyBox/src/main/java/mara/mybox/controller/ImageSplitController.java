@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -25,8 +24,7 @@ import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.IntTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -575,8 +573,8 @@ public class ImageSplitController extends BaseImagesListController {
 
             if (displaySizeCheck.isSelected()) {
                 String style = " -fx-font-size: 1.2em; ";
-                DoubleTools.sortList(rows);
-                DoubleTools.sortList(cols);
+                IntTools.sortList(rows);
+                IntTools.sortList(cols);
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     double row = rows.get(i) * ratioy * heightRatio();
                     int hv = rows.get(i + 1) - rows.get(i) + 1;
@@ -634,7 +632,7 @@ public class ImageSplitController extends BaseImagesListController {
                     } else {
                         info = new ImageInformation(image);
                     }
-                    info.setRegion(new Rectangle(x1, y1, Math.abs(x2 - x1 + 1), Math.abs(y2 - y1 + 1)));
+                    info.setRegion(x1, y1, x2, y2);
                     infos.add(info);
                 }
             }

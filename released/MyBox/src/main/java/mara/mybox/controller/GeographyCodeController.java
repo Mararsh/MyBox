@@ -24,6 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
@@ -70,6 +71,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
 
             levelColumn.setCellValueFactory(new PropertyValueFactory<>("levelName"));
             chinesenameColumn.setCellValueFactory(new PropertyValueFactory<>("chineseName"));
@@ -147,7 +149,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     public boolean mapCurrentPage() {
-        return !paginate || mapController.mapOptionsController.currentPageRadio.isSelected();
+        return mapController.mapOptionsController.currentPageRadio.isSelected();
     }
 
     @FXML
@@ -212,7 +214,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (backgroundTask != null && !backgroundTask.isQuit()) {
                 return;
             }
-            backgroundTask = new SingletonTask<Void>() {
+            backgroundTask = new SingletonTask<Void>(this) {
                 private List<GeographyCode> mapData;
 
                 @Override
@@ -251,7 +253,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         try {
             GeographyCodeEditController controller = (GeographyCodeEditController) openStage(Fxmls.GeographyCodeEditFxml);
             controller.load(this, null);
@@ -263,7 +265,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         GeographyCode selected = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
@@ -391,7 +393,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -413,7 +415,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -480,7 +482,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

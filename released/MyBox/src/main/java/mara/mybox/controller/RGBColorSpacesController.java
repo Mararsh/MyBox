@@ -12,7 +12,8 @@ import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -97,7 +98,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private StringTable table;
 
@@ -134,24 +135,24 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
                 primaries[0] = rgbController.red;
                 primaries[1] = rgbController.green;
                 primaries[2] = rgbController.blue;
-                sourceWhitePoint = MatrixDoubleTools.columnVector(rgbController.white);
+                sourceWhitePoint = DoubleMatrixTools.columnVector(rgbController.white);
             }
-            double[][] targetWhitePoint = MatrixDoubleTools.columnVector(whiteController.relative);
+            double[][] targetWhitePoint = DoubleMatrixTools.columnVector(whiteController.relative);
             if (primaries == null || sourceWhitePoint == null || targetWhitePoint == null) {
                 return;
             }
             Map<String, Object> adapted = (Map<String, Object>) RGBColorSpace.primariesAdapted(primaries,
                     sourceWhitePoint, targetWhitePoint, algorithm, scale, true);
             double[][] adaptedPrimaries = (double[][]) adapted.get("adaptedPrimaries");
-            double[][] normalized = MatrixDoubleTools.scale(CIEDataTools.normalize(adaptedPrimaries), scale);
-            double[][] relative = MatrixDoubleTools.scale(CIEDataTools.relative(adaptedPrimaries), scale);
+            double[][] normalized = DoubleMatrixTools.scale(CIEDataTools.normalize(adaptedPrimaries), scale);
+            double[][] relative = DoubleMatrixTools.scale(CIEDataTools.relative(adaptedPrimaries), scale);
             String s = Languages.message("AdaptedPrimaries") + ": \n"
                     + Languages.message("NormalizedValuesCC") + " = \n"
-                    + MatrixDoubleTools.print(normalized, 20, scale)
+                    + DoubleMatrixTools.print(normalized, 20, scale)
                     + Languages.message("RelativeValues") + " = \n"
-                    + MatrixDoubleTools.print(relative, 20, scale)
+                    + DoubleMatrixTools.print(relative, 20, scale)
                     + Languages.message("Tristimulus") + " = \n"
-                    + MatrixDoubleTools.print(adaptedPrimaries, 20, scale)
+                    + DoubleMatrixTools.print(adaptedPrimaries, 20, scale)
                     + "\n----------------" + Languages.message("CalculationProcedure") + "----------------\n"
                     + Languages.message("ReferTo") + "： \n"
                     + "            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n"

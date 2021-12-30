@@ -13,6 +13,7 @@ import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -65,8 +66,6 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
 
             clipMarginsCheck.disableProperty().bind(clipboardCheck.selectedProperty().not());
 
-            okButton.disableProperty().bind(imageController.cropButton.disableProperty());
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -97,7 +96,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage, cuttedClip;
 

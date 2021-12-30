@@ -6,30 +6,24 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlCsvOptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlCsvOptions">
     <children>
-        <CheckBox fx:id="withNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
       <FlowPane hgap="5.0" vgap="5.0">
          <children>
                 <Label text="%Charset" />
                   <ComboBox fx:id="charsetSelector" prefWidth="150.0" />
          </children>
       </FlowPane>
+        <CheckBox fx:id="withNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
           <FlowPane hgap="5.0" vgap="5.0">
               <children>
                 <Label text="%CsvDelimiter" />

@@ -28,7 +28,7 @@ import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -84,8 +84,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected ProgressBar progressBar, fileProgressBar;
     @FXML
     protected Label progressValue, fileProgressValue;
-    @FXML
-    protected ControlFileSelecter targetFileController;
 
     public BaseBatchController() {
         targetSubdirKey = "targetSubdirKey";
@@ -159,8 +157,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 path = new File(finalTargetName).getParentFile();
             } else if (actualParameters != null && actualParameters.targetPath != null) {
                 path = new File(actualParameters.targetPath);
-            } else if (targetPathInput != null) {
-                String p = targetPathInput.getText();
+            } else if (targetPathController != null) {
+                String p = targetPathController.text();
                 if (targetPrefixInput != null && targetSubdirCheck != null && targetSubdirCheck.isSelected()) {
                     if (p.endsWith("/") || p.endsWith("\\")) {
                         p += targetPrefixInput.getText();
@@ -168,7 +166,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         p += "/" + targetPrefixInput.getText();
                     }
                     if (!new File(p).exists()) {
-                        p = targetPathInput.getText();
+                        p = targetPathController.text();
                     }
                 }
                 path = new File(p);
@@ -224,14 +222,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 tableController.operationType = operationType;
                 tableData = tableController.tableData;
                 tableView = tableController.tableView;
-            }
-
-            if (targetFileController != null) {
-                targetFileController.label(message("TargetFile"))
-                        .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
-                        .defaultValue("_" + new Date().getTime())
-                        .name(baseName + "TargetFile", false).type(TargetFileType);
-                targetFileInput = targetFileController.fileInput;
             }
 
             if (operationBarController != null) {
@@ -299,34 +289,34 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     public void initTargetSection() {
         try {
             if (startButton != null) {
-                if (targetPathInput != null) {
+                if (targetPathController != null) {
                     if (tableView != null) {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(tableView.getItems())
-                                        .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                                        .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                                        .or(Bindings.isEmpty(targetPathController.fileInput.textProperty()))
+                                        .or(targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     } else {
                         startButton.disableProperty().bind(
-                                Bindings.isEmpty(targetPathInput.textProperty())
-                                        .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                                Bindings.isEmpty(targetPathController.fileInput.textProperty())
+                                        .or(targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     }
 
-                } else if (targetFileInput != null) {
+                } else if (targetFileController != null) {
                     if (tableView != null) {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(tableView.getItems())
-                                        .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                                        .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                                        .or(Bindings.isEmpty(targetFileController.fileInput.textProperty()))
+                                        .or(targetFileController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     } else {
                         startButton.disableProperty().bind(
-                                Bindings.isEmpty(targetFileInput.textProperty())
-                                        .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                                Bindings.isEmpty(targetFileController.fileInput.textProperty())
+                                        .or(targetFileController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                                         .or(optionsValid.not())
                         );
                     }
@@ -463,16 +453,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         fileSelectorSize = tableController.fileSelectorSize;
         fileSelectorTime = tableController.fileSelectorTime;
 
-        if (targetFileInput != null) {
-            finalTargetName = targetFileInput.getText();
-            try {
-                targetFile = new File(finalTargetName);
-                targetPath = new File(targetFileInput.getText()).getParentFile();
-            } catch (Exception e) {
+        if (targetFileController != null) {
+            targetFile = targetFileController.file;
+            if (targetFile != null) {
+                finalTargetName = targetFile.getAbsolutePath();
+                targetPath = targetFile.getParentFile();
             }
         }
-        if (targetPathInput != null) {
-            targetPath = new File(targetPathInput.getText());
+        if (targetPathController != null) {
+            targetPath = targetPathController.file;
         }
         if (targetPath != null) {
             actualParameters.targetRootPath = targetPath.getAbsolutePath();
@@ -591,8 +580,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 }
                 processStartTime = new Date();
                 totalFilesHandled = totalItemsHandled = 0;
+                tableController.markFileHandling(-1);
                 updateInterface("Started");
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
@@ -638,6 +628,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         super.taskQuit();
                         quitProcess();
                         task = null;
+                        tableController.markFileHandling(-1);
                     }
 
                 };
@@ -1062,7 +1053,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    protected boolean targetFileGenerated(File target) {
+    protected boolean targetFileGenerated(File target, int type) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
@@ -1073,7 +1064,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
-        recordFileWritten(target);
+        recordFileWritten(target, type, type);
         return true;
     }
 
@@ -1092,6 +1083,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
+        recordFileWritten(tFiles.get(0));
     }
 
     public void updateInterface(final String newStatus) {

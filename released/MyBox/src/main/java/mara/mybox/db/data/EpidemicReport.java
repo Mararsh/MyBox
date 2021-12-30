@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -17,7 +15,7 @@ import mara.mybox.value.Languages;
  */
 public class EpidemicReport extends BaseData {
 
-    protected long epid, locationid = -1;
+    protected long epid, locationid;
     protected String dataSet, locationFullName;
     protected GeographyCode location;
     protected double healedConfirmedPermillage, deadConfirmedPermillage,

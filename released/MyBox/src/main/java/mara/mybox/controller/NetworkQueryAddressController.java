@@ -23,12 +23,16 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.tools.HtmlReadTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -54,6 +58,8 @@ public class NetworkQueryAddressController extends HtmlTableController {
     protected TextArea certArea;
     @FXML
     protected Tab certTab;
+    @FXML
+    protected ControlWebView headerController;
 
     public NetworkQueryAddressController() {
         baseTitle = message("QueryNetworkAddress");
@@ -114,42 +120,49 @@ public class NetworkQueryAddressController extends HtmlTableController {
             if (task != null) {
                 task.cancel();
             }
-            webView.getEngine().loadContent("");
+            loadContents(null);
             certArea.clear();
             host = null;
             chain = null;
             addressController.refreshList();
-            task = new SingletonTask<Void>() {
+            headerController.loadContents(null);
+            task = new SingletonTask<Void>(this) {
 
-                private String certString;
+                private String certString, headerTable;
 
                 @Override
                 protected boolean handle() {
-                    certString = null;
-                    LinkedHashMap<String, String> values = null;
-                    if (hostRadio.isSelected()) {
-                        values = NetworkTools.queryHost(address,
-                                localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
-                    } else if (urlRadio.isSelected()) {
-                        values = NetworkTools.queryURL(address,
-                                localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
-                    } else if (ipRadio.isSelected()) {
-                        values = NetworkTools.queryIP(address,
-                                localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
-                    }
-                    initTable(address);
-                    if (values != null) {
-                        for (String name : values.keySet()) {
-                            addData(name, values.get(name));
+                    try {
+                        certString = null;
+                        LinkedHashMap<String, String> values = null;
+                        if (hostRadio.isSelected()) {
+                            values = NetworkTools.queryHost(address,
+                                    localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
+                        } else if (urlRadio.isSelected()) {
+                            values = NetworkTools.queryURL(address,
+                                    localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
+                        } else if (ipRadio.isSelected()) {
+                            values = NetworkTools.queryIP(address,
+                                    localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
                         }
+                        initTable(address);
+                        if (values != null) {
+                            for (String name : values.keySet()) {
+                                addData(name, values.get(name));
+                            }
+                        }
+
+                        URL url = new URL(UrlTools.checkURL(address, Charset.defaultCharset()));
+                        certString = readCert(url);
+                        headerTable = HtmlReadTools.requestHeadTable(url);
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e);
                     }
-                    certString = readCert();
                     return true;
                 }
 
-                protected String readCert() {
+                protected String readCert(URL url) {
                     try {
-                        URL url = new URL(UrlTools.checkURL(address, Charset.defaultCharset()));
                         host = url.getHost();
 
                         SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
@@ -180,6 +193,9 @@ public class NetworkQueryAddressController extends HtmlTableController {
                 protected void whenSucceeded() {
                     displayHtml();
                     certArea.setText(certString);
+                    if (headerTable != null) {
+                        headerController.loadContents(HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), headerTable));
+                    }
                 }
             };
             start(task);
@@ -210,7 +226,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

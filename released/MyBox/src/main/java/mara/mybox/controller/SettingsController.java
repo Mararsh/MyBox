@@ -35,6 +35,7 @@ import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
@@ -66,7 +67,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
-    protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
+    protected CheckBox stopAlarmCheck, closeCurrentCheck, recordWindowsSizeLocationCheck,
             anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
             clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck;
@@ -143,7 +144,7 @@ public class SettingsController extends BaseController {
     protected void initSettingValues() {
         try {
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
-            newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
+            closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
 
             thumbnailWidthInput.setText(AppVariables.thumbnailWidth + "");
 
@@ -283,17 +284,19 @@ public class SettingsController extends BaseController {
             });
             iconSizeBox.getSelectionModel().select(AppVariables.iconSize + "");
 
-            newWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            closeCurrentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    UserConfig.setOpenStageInNewWindow(newWindowCheck.isSelected());
+                    UserConfig.setBoolean("CloseCurrentWhenOpenTool", closeCurrentCheck.isSelected());
+                    AppVariables.closeCurrentWhenOpenTool = closeCurrentCheck.isSelected();
                 }
             });
 
-            restoreStagesSizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            recordWindowsSizeLocationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    UserConfig.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
+                    UserConfig.setBoolean("RecordWindowsSizeLocation", recordWindowsSizeLocationCheck.isSelected());
+                    AppVariables.recordWindowsSizeLocation = recordWindowsSizeLocationCheck.isSelected();
                 }
             });
 
@@ -796,7 +799,7 @@ public class SettingsController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String ret;
 
                 @Override
@@ -814,6 +817,7 @@ public class SettingsController extends BaseController {
                 @Override
                 protected void finalAction() {
                     derbyBox.setDisable(false);
+                    task = null;
                 }
 
             };

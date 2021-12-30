@@ -2,6 +2,8 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -9,7 +11,9 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -25,95 +29,138 @@ public class BaseWebViewController extends BaseController {
     protected ControlWebView webViewController;
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Html);
-    }
-
-    @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            if (webViewController == null) {
-                return;
+            super.initValues();
+
+            if (webViewController != null) {
+                webViewController.setParent(this);
+                webView = webViewController.webView;
+                webEngine = webViewController.webEngine;
             }
-            webViewController.setParent(this);
-            webView = webViewController.webView;
-            webEngine = webViewController.webEngine;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @Override
-    public void sourceFileChanged(File file) {
-        if (webViewController == null) {
-            return;
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (webViewController != null) {
+
+                webViewController.addressChangedNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                        addressChanged();
+                    }
+                });
+
+                webViewController.addressInvalidNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                        addressInvalid();
+                    }
+                });
+
+                webViewController.pageLoadingNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                        pageLoading();
+                    }
+                });
+
+                webViewController.pageLoadedNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                        pageLoaded();
+                    }
+                });
+
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        webViewController.loadFile(file);
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
+    }
+
+    @Override
+    public void sourceFileChanged(File file) {
+        loadFile(file);
     }
 
     @Override
     public void setSourceFile(File file) {
-        this.sourceFile = file;
-        if (webViewController == null) {
+        if (file == null || !file.exists()) {
+            popError(message("InvalidAddress"));
             return;
         }
-        webViewController.setSourceFile(file);
+        sourceFile = file;
+        if (webViewController != null) {
+            webViewController.setSourceFile(file);
+        }
     }
 
     public boolean loadFile(File file) {
-        if (webViewController == null) {
+        if (!checkBeforeNextAction() || file == null || !file.exists()) {
+            popError(message("InvalidData"));
             return false;
         }
-        return webViewController.loadFile(file);
+        if (webViewController != null) {
+            boolean ret = webViewController.loadFile(file);
+            if (ret) {
+                sourceFile = file;
+            }
+            return ret;
+        } else {
+            return false;
+        }
     }
 
-    public boolean loadAddress(String value) {
-        if (webViewController == null) {
+    public boolean loadAddress(String address) {
+        if (!checkBeforeNextAction() || webViewController == null) {
             return false;
         }
-        return webViewController.loadAddress(value);
+        sourceFile = null;
+        boolean ret = webViewController.loadAddress(address);
+        if (ret) {
+            sourceFile = webViewController.sourceFile;
+        }
+        return ret;
     }
 
     public boolean loadContents(String contents) {
-        if (webViewController == null) {
+        if (!checkBeforeNextAction() || webViewController == null) {
             return false;
         }
+        sourceFile = null;
         return webViewController.loadContents(contents);
     }
 
     public boolean loadContents(String address, String contents) {
-        if (webViewController == null) {
+        if (!checkBeforeNextAction() || webViewController == null) {
             return false;
         }
-        return webViewController.loadContents(address, contents);
-    }
-
-    public void setAddress(String value) {
-        if (webViewController == null) {
-            return;
+        sourceFile = null;
+        boolean ret = webViewController.loadContents(address, contents);
+        if (ret) {
+            sourceFile = webViewController.sourceFile;
         }
-        webViewController.setAddress(value);
+        return ret;
     }
 
-    public String getAddress() {
-        if (webViewController == null) {
-            return null;
-        }
-        return webViewController.address;
-    }
-
-    public void addressChanged() {
-    }
-
-    public boolean validAddress(String value) {
-        return checkBeforeNextAction();
-    }
-
-    protected void pageIsLoading() {
+    public void pageLoading() {
 
     }
 
-    protected void afterPageLoaded() {
+    public void pageLoaded() {
         try {
             updateStageTitle();
         } catch (Exception e) {
@@ -121,21 +168,25 @@ public class BaseWebViewController extends BaseController {
         }
     }
 
+    public void addressChanged() {
+
+    }
+
+    public void addressInvalid() {
+        popError(message("InvalidAddress"));
+    }
+
     protected void updateStageTitle() {
         if (myStage == null) {
             return;
         }
         String title = getBaseTitle();
-        if (getAddress() != null) {
-            title += "  " + getAddress();
-        } else if (sourceFile != null) {
+        if (sourceFile != null) {
             title += "  " + sourceFile.getAbsolutePath();
+        } else if (webViewController != null && webViewController.address != null) {
+            title += "  " + webViewController.address;
         }
         myStage.setTitle(title);
-    }
-
-    protected void afterSaveAs(File file) {
-
     }
 
     protected void setWebViewLabel(String string) {
@@ -143,20 +194,6 @@ public class BaseWebViewController extends BaseController {
             return;
         }
         webViewController.setWebViewLabel(string);
-    }
-
-    protected void setAddressChanged(boolean changed) {
-        if (webViewController == null) {
-            return;
-        }
-        webViewController.addressChanged = changed;
-    }
-
-    protected boolean getAddressChanged() {
-        if (webViewController == null) {
-            return false;
-        }
-        return webViewController.addressChanged;
     }
 
     protected Charset getCharset() {
@@ -179,7 +216,7 @@ public class BaseWebViewController extends BaseController {
         if (webViewController == null) {
             return;
         }
-        webViewController.edit(WebViewTools.getHtml(webEngine));
+        webViewController.editAction();
     }
 
     @FXML
@@ -228,7 +265,7 @@ public class BaseWebViewController extends BaseController {
         if (webViewController == null) {
             return;
         }
-        webViewController.refreshAction();
+        webViewController.refresh();
     }
 
     @FXML
@@ -238,6 +275,11 @@ public class BaseWebViewController extends BaseController {
             return;
         }
         webViewController.cancelAction();
+    }
+
+    @FXML
+    public void popHtmlStyle(MouseEvent mouseEvent) {
+        PopTools.popHtmlStyle(mouseEvent, webViewController);
     }
 
     @FXML

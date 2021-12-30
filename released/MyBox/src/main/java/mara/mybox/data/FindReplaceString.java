@@ -195,6 +195,11 @@ public class FindReplaceString {
                 .setAnchor(0).setIsRegex(isRegex).setCaseInsensitive(isCaseInsensitive).setMultiline(true);
     }
 
+    public static FindReplaceString counter(boolean isRegex, boolean isCaseInsensitive) {
+        return create().setOperation(FindReplaceString.Operation.Count)
+                .setAnchor(0).setIsRegex(isRegex).setCaseInsensitive(isCaseInsensitive).setMultiline(true);
+    }
+
     public static int count(String string, String find) {
         return count(string, find, 0, false, false, true);
     }

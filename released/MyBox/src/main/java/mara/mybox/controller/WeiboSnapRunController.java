@@ -34,7 +34,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
@@ -43,11 +42,11 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import mara.mybox.data.BaseTask;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.BaseTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
@@ -251,6 +250,7 @@ public class WeiboSnapRunController extends BaseController {
             webEngine = webView.getEngine();
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
+            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/610.2 (KHTML, like Gecko) JavaFX/17 Safari/610.2");
 
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override
@@ -1275,8 +1275,7 @@ public class WeiboSnapRunController extends BaseController {
             showMemInfo();
             showDynamicInfo();
             snapStartTime = new Date().getTime();
-            WritableImage snapshot = new WritableImage(snapImageWidth, snapImageHeight);
-            snapshot = webView.snapshot(snapParameters, snapshot);
+            Image snapshot = webView.snapshot(snapParameters, null);
             loadingController.addLine(Languages.message("CurrentSnapshotNumber") + ": " + imageFiles.size());
             try {
                 // Save as png images temporarily. Quicker than jpg since no compression.

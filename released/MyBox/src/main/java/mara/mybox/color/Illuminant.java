@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.StringTable;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
@@ -194,7 +194,7 @@ public class Illuminant extends CIEData {
     }
 
     public double[][] whitePoint() {
-        return MatrixDoubleTools.columnVector(relativeX, relativeY, relativeZ);
+        return DoubleMatrixTools.columnVector(relativeX, relativeY, relativeZ);
     }
 
     /*

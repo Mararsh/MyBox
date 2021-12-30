@@ -8,16 +8,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.NetworkTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.SecurityTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -92,13 +88,13 @@ public class SecurityCertificatesAddController extends BaseController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     @Override
                     protected boolean handle() {
                         error = null;
                         if (certController.backupController.isBack()) {
-                            certController.backupController.addBackup(certController.sourceFile);
+                            certController.backupController.addBackup(task, certController.sourceFile);
                         }
                         if (addressRadio.isSelected()) {
                             try {
@@ -156,7 +152,7 @@ public class SecurityCertificatesAddController extends BaseController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
                     private String result;
 
                     @Override

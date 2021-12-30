@@ -18,6 +18,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
@@ -32,8 +33,9 @@ public class HtmlFindController extends WebAddressController {
 
     protected static final String ItemPrefix = "MyBoxSearchLocation";
     protected int foundCount, foundItem;
-    protected String sourceHtml;
+    protected String sourceAddress, sourceHtml;
     protected LoadingController loading;
+    protected boolean isQuerying;
 
     @FXML
     protected ComboBox<String> findFontSelector, foundItemSelector;
@@ -132,18 +134,32 @@ public class HtmlFindController extends WebAddressController {
     public void goAction() {
         foundCount = 0;
         sourceHtml = null;
+        reset();
         super.goAction();
     }
 
+    protected void reset() {
+        foundCount = 0;
+        foundLabel.setText("");
+        foundItemSelector.getItems().clear();
+        goItemButton.setDisable(true);
+        firstButton.setDisable(true);
+        previousButton.setDisable(true);
+        nextButton.setDisable(true);
+        lastButton.setDisable(true);
+        isQuerying = false;
+    }
+
     @Override
-    public void afterPageLoaded() {
+    public void pageLoaded() {
         try {
-            super.afterPageLoaded();
+            super.pageLoaded();
 
             if (sourceHtml == null) {
                 sourceHtml = WebViewTools.getHtml(webEngine);
+                sourceAddress = webViewController.address;
 
-            } else {
+            } else if (isQuerying) {
                 popInformation(message("Found") + ": " + foundCount);
 
             }
@@ -173,16 +189,9 @@ public class HtmlFindController extends WebAddressController {
                 return;
             }
             findInputController.refreshList();
-
-            foundCount = 0;
-            foundLabel.setText("");
-            foundItemSelector.getItems().clear();
-            goItemButton.setDisable(true);
-            firstButton.setDisable(true);
-            previousButton.setDisable(true);
-            nextButton.setDisable(true);
-            lastButton.setDisable(true);
-            task = new SingletonTask<Void>() {
+            reset();
+            isQuerying = true;
+            task = new SingletonTask<Void>(this) {
 
                 private StringBuilder results;
 
@@ -289,13 +298,13 @@ public class HtmlFindController extends WebAddressController {
                         nextButton.setDisable(false);
                         lastButton.setDisable(false);
                     }
-                    webEngine.getLoadWorker().cancel();
-                    webEngine.loadContent(results.toString());
+                    loadContents(results.toString());
                 }
 
                 @Override
                 protected void finalAction() {
                     loading = null;
+                    task = null;
                 }
 
             };
@@ -386,6 +395,13 @@ public class HtmlFindController extends WebAddressController {
     @FXML
     public void popFindExample(MouseEvent mouseEvent) {
         PopTools.popRegexExample(this, findInputController.selector.getEditor(), mouseEvent);
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        reset();
+        loadContents(sourceAddress, sourceHtml);
     }
 
     @Override

@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
+                <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>

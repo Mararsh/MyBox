@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
+    <children>
+          <Label text="%Target" />
+          <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
+              <children>
+            <Label text="%External" />
+                  <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCSV.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <toggleGroup>
+                          <ToggleGroup fx:id="targetGroup" />
+               </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="excelRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconExcel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </RadioButton>
+                  <RadioButton fx:id="textsRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconTxt.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </RadioButton>
+                  <RadioButton fx:id="matrixRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconSplit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </RadioButton>
+                  <RadioButton fx:id="systemClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconSystemClipboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </RadioButton>
+                  <RadioButton fx:id="myBoxClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconClipboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </RadioButton>
+              </children>
+          </FlowPane>
+      <VBox fx:id="tableBox" spacing="2.0">
+         <children>
+            <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
+               <children>
+                  <Label text="%InTable" />
+                  <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$targetGroup" />
+                  <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$targetGroup" />
+                  <RadioButton fx:id="replaceRadio" mnemonicParsing="false" text="%Replace" toggleGroup="$targetGroup" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="locationPane" hgap="2.0" layoutX="10.0" layoutY="10.0" prefWrapLength="300.0" vgap="2.0">
+               <children>
+                  <Label layoutX="10.0" layoutY="14.0" text="%Location">
+                     <FlowPane.margin>
+                        <Insets right="20.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <Label text="%TableRow" />
+                  <ComboBox fx:id="rowSelector" prefWidth="100.0" />
+                  <Label minWidth="-Infinity" text="%Column" />
+                  <ComboBox fx:id="colSelector" prefWidth="200.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+    </children>
+</VBox>

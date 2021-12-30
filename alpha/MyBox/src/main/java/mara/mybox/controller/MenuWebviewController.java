@@ -86,14 +86,19 @@ public class MenuWebviewController extends MenuController {
                 setTitleid(webView.getId());
             }
 
-            editableCheck.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-            editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    UserConfig.setBoolean("WebViewEditable", editableCheck.isSelected());
-                    webView.getEngine().executeScript("document.body.contentEditable=" + editableCheck.isSelected());
-                }
-            });
+            if (webViewController instanceof ControlHtmlEditor) {
+                editableCheck.setVisible(false);
+            } else {
+                editableCheck.setVisible(true);
+                editableCheck.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+                editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                        UserConfig.setBoolean("WebViewEditable", editableCheck.isSelected());
+                        webView.getEngine().executeScript("document.body.contentEditable=" + editableCheck.isSelected());
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -303,6 +308,7 @@ public class MenuWebviewController extends MenuController {
                 inputController.closeStage();
                 try {
                     webView.getEngine().executeScript(value);
+                    popDone();
                 } catch (Exception e) {
                     popError(e.toString());
                 }

@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -25,11 +24,11 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Notebook;
 import static mara.mybox.db.data.Notebook.NotebookNameSeparater;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
@@ -38,7 +37,7 @@ import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.HtmlStyles;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -69,13 +68,14 @@ public class NotesExportController extends BaseTaskController {
     protected TextArea styleInput;
 
     public NotesExportController() {
-        baseTitle = Languages.message("NotesExport");
+        baseTitle = message("NotesExport");
     }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
+            needRecordVisit = false;
             treeView = notebooksController.treeView;
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
@@ -138,8 +138,7 @@ public class NotesExportController extends BaseTaskController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    targetPathController.valid.not()
                             .or(treeView.getSelectionModel().selectedItemProperty().isNull())
             );
 
@@ -172,20 +171,24 @@ public class NotesExportController extends BaseTaskController {
         level = count = 0;
         if (!textsCheck.isSelected() && !htmlCheck.isSelected()
                 && !framesetCheck.isSelected() && !xmlCheck.isSelected()) {
-            popError(Languages.message("NothingSave"));
+            popError(message("NothingSave"));
             return false;
         }
         selectedNode = notebooksController.treeView.getSelectionModel().getSelectedItem();
         if (selectedNode == null) {
             selectedNode = notebooksController.treeView.getRoot();
             if (selectedNode == null) {
-                popError(Languages.message("NoData"));
+                popError(message("NoData"));
                 return false;
             }
         }
         TreeItem<Notebook> node = selectedNode;
         if (node.getValue() == null) {
-            popError(Languages.message("NoData"));
+            popError(message("NoData"));
+            return false;
+        }
+        if (targetPath == null || !targetPath.exists()) {
+            popError(message("InvalidParameters") + ": " + message("TargetPath"));
             return false;
         }
         return true;
@@ -202,7 +205,7 @@ public class NotesExportController extends BaseTaskController {
 
             MenuItem menu;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
-                menu = new MenuItem(Languages.message(style.name()));
+                menu = new MenuItem(message(style.name()));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -214,7 +217,7 @@ public class NotesExportController extends BaseTaskController {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -261,31 +264,30 @@ public class NotesExportController extends BaseTaskController {
         try {
             String nodeName = notebooksController.chainName(selectedNode);
             String prefix = nodeName.replaceAll(Notebook.NotebookNameSeparater, "-") + "_" + DateTools.nowFileString();
-
             if (textsCheck.isSelected()) {
                 textsFile = makeTargetFile(prefix, ".txt", targetPath);
                 if (textsFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + textsFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + textsFile.getAbsolutePath());
                     textsWriter = new FileWriter(textsFile, charset);
-                } else if (targetExistType == TargetExistType.Skip) {
-                    updateLogs(Languages.message("Skipped"));
+                } else if (targetPathController.isSkip()) {
+                    updateLogs(message("Skipped"));
                 }
             }
             if (htmlCheck.isSelected()) {
                 htmlFile = makeTargetFile(prefix, ".html", targetPath);
                 if (htmlFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + htmlFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
                     htmlWriter = new FileWriter(htmlFile, charset);
                     writeHtmlHead(htmlWriter, nodeName);
                     htmlWriter.write(indent + "<BODY>\n" + indent + indent + "<H2>" + nodeName + "</H2>\n");
-                } else if (targetExistType == TargetExistType.Skip) {
-                    updateLogs(Languages.message("Skipped"));
+                } else if (targetPathController.isSkip()) {
+                    updateLogs(message("Skipped"));
                 }
             }
             if (framesetCheck.isSelected()) {
                 framesetFile = makeTargetFile(prefix, "-frameset.html", targetPath);
                 if (framesetFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + framesetFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + framesetFile.getAbsolutePath());
                     StringBuilder s;
                     String subPath = FileNameTools.filter(prefix) + "-frameset";
                     File path = new File(targetPath + File.separator + subPath + File.separator);
@@ -294,7 +296,7 @@ public class NotesExportController extends BaseTaskController {
                     File coverFile = new File(path.getAbsolutePath() + File.separator + "cover.html");
                     try ( FileWriter coverWriter = new FileWriter(coverFile, charset)) {
                         writeHtmlHead(coverWriter, nodeName);
-                        coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + Languages.message("Notes") + "</H1>\n</BODY></HTML>");
+                        coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + message("Notes") + "</H1>\n</BODY></HTML>");
                         coverWriter.flush();
                     }
                     try ( FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
@@ -313,21 +315,21 @@ public class NotesExportController extends BaseTaskController {
                     s.append(indent).append("<BODY>\n");
                     s.append(indent).append(indent).append("<H2>").append(nodeName).append("</H2>\n");
                     framesetNavWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
-                    updateLogs(Languages.message("Skipped"));
+                } else if (targetPathController.isSkip()) {
+                    updateLogs(message("Skipped"));
                 }
             }
             if (xmlCheck.isSelected()) {
                 xmlFile = makeTargetFile(prefix, ".xml", targetPath);
                 if (xmlFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + xmlFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + xmlFile.getAbsolutePath());
                     xmlWriter = new FileWriter(xmlFile, charset);
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n").append("<notes>\n");
                     xmlWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
-                    updateLogs(Languages.message("Skipped"));
+                } else if (targetPathController.isSkip()) {
+                    updateLogs(message("Skipped"));
                 }
             }
         } catch (Exception e) {
@@ -367,7 +369,7 @@ public class NotesExportController extends BaseTaskController {
             try {
                 textsWriter.flush();
                 textsWriter.close();
-                targetFileGenerated(textsFile);
+                targetFileGenerated(textsFile, VisitHistory.FileType.Text);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
@@ -378,7 +380,7 @@ public class NotesExportController extends BaseTaskController {
                 htmlWriter.write(indent + "</BODY>\n</HTML>\n");
                 htmlWriter.flush();
                 htmlWriter.close();
-                targetFileGenerated(htmlFile);
+                targetFileGenerated(htmlFile, VisitHistory.FileType.Html);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
@@ -389,7 +391,7 @@ public class NotesExportController extends BaseTaskController {
                 framesetNavWriter.write(indent + "</BODY>\n</HTML>\n");
                 framesetNavWriter.flush();
                 framesetNavWriter.close();
-                targetFileGenerated(framesetFile);
+                targetFileGenerated(framesetFile, VisitHistory.FileType.Html);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
@@ -400,7 +402,7 @@ public class NotesExportController extends BaseTaskController {
                 xmlWriter.write("</notes>\n");
                 xmlWriter.flush();
                 xmlWriter.close();
-                targetFileGenerated(xmlFile);
+                targetFileGenerated(xmlFile, VisitHistory.FileType.Xml);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
@@ -558,7 +560,7 @@ public class NotesExportController extends BaseTaskController {
             TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
             controller.sourceFileChanged(textsFile);
         }
-        popInformation(Languages.message("Count") + ": " + count);
+        popInformation(message("Count") + ": " + count);
     }
 
 }

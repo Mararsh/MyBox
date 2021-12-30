@@ -20,13 +20,13 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
         final ImageView imageview = new ImageView();
         imageview.setPreserveRatio(true);
         imageview.setFitWidth(AppVariables.thumbnailWidth);
-        imageview.setFitHeight(AppVariables.thumbnailWidth);
+//        imageview.setFitHeight(AppVariables.thumbnailWidth);
         TableCell<T, ImageInformation> cell = new TableCell<T, ImageInformation>() {
             @Override
             public void updateItem(ImageInformation item, boolean empty) {
                 super.updateItem(item, empty);
+                setText(null);
                 if (empty || item == null) {
-                    setText(null);
                     setGraphic(null);
                     return;
                 }

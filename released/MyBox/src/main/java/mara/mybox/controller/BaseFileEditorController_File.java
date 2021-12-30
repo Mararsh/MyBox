@@ -1,12 +1,11 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import mara.mybox.data.FileEditInformation;
 import static mara.mybox.data.FileEditInformation.defaultCharset;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -44,11 +43,11 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 return;
             }
             bottomLabel.setText(message("CheckingEncoding"));
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
-                    if (sourceInformation == null) {
+                    if (sourceInformation == null || sourceFile == null) {
                         return false;
                     }
                     if (!sourceInformation.isCharsetDetermined()) {
@@ -118,14 +117,14 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             isSettingValues = true;
 
-            fileChanged = new SimpleBooleanProperty(false);
+            fileChanged.set(false);
             sourceFile = file;
             if (backupController != null) {
                 backupController.loadBackups(sourceFile);
             }
 
             FileEditInformation existedInfo = sourceInformation;
-            sourceInformation = FileEditInformation.newEditInformation(editType, file);
+            sourceInformation = FileEditInformation.create(editType, file);
             if (existedInfo != null) {
                 sourceInformation.setCharset(existedInfo.getCharset());
                 sourceInformation.setWithBom(existedInfo.isWithBom());
@@ -166,11 +165,10 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 findReplaceController.findReplace = null;
                 setControlsStyle();
             }
-
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            isSettingValues = false;
+            MyBoxLog.error(e);
         }
+        isSettingValues = false;
     }
 
     protected void loadTotalNumbers() {
@@ -182,7 +180,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 backgroundTask.cancel();
                 backgroundTask = null;
             }
-            backgroundTask = new SingletonTask<Void>() {
+            backgroundTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -196,7 +194,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 }
 
             };
-            start(backgroundTask, false, null);
+            start(backgroundTask, false);
         }
     }
 
@@ -209,7 +207,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 return;
             }
             bottomLabel.setText(message("ReadingFile"));
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private String text;
 

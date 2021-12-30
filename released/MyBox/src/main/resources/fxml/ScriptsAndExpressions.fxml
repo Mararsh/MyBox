@@ -135,7 +135,7 @@ License:    Apache License Version 2.0
                                                                                 </Button>
                                                                             </children>
                                                                         </FlowPane> 
-                                                                        <fx:include fx:id="tagsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlListCheckBox.fxml" VBox.vgrow="ALWAYS" />
+                                                                        <fx:include fx:id="tagsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlCheckBoxList.fxml" VBox.vgrow="ALWAYS" />
                                                                         <Label minHeight="-Infinity" text="%NotesTagsComments" wrapText="true" />
                                                                     </children>
                                                                     <padding>
@@ -170,7 +170,7 @@ License:    Apache License Version 2.0
                                                                                 <RadioButton fx:id="contentsRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Contents" toggleGroup="$searchGroup" />
                                                                             </children>
                                                                         </HBox>
-                                                                          <Label minHeight="-Infinity" text="%Include" wrapText="true" />
+                                                                        <Label minHeight="-Infinity" text="%Include" wrapText="true" />
                                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <fx:include fx:id="search" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
@@ -273,8 +273,13 @@ License:    Apache License Version 2.0
                                                         <Label fx:id="conditionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
-                                                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                     <columns>
+                                                        <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                                            <graphic>
+                                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                                            </graphic>
+                                                        </TableColumn>
                                                         <TableColumn fx:id="ntidColumn" text="%ID" />
                                                         <TableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
                                                         <TableColumn fx:id="timeColumn" prefWidth="200.0" text="%UpdateTime" />

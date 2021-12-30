@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import javafx.application.Platform;
@@ -17,6 +18,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -26,6 +28,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
@@ -41,6 +44,8 @@ import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
@@ -53,6 +58,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -76,7 +82,7 @@ public class ControlImagesSave extends BaseController {
     protected BaseImagesListController listController;
     protected int digit;
     protected String imagesFormat;
-    protected int gifWidth, pptWidth, pptHeight, pptMargin;
+    protected int gifWidth, pptWidth, pptHeight, pptMargin, savedWidth;
     protected boolean gifKeepSize;
     protected ObservableList<ImageInformation> imageInfos;
     protected LoadingController loading;
@@ -86,7 +92,8 @@ public class ControlImagesSave extends BaseController {
     @FXML
     protected ToggleGroup saveGroup;
     @FXML
-    protected RadioButton imagesRadio, spiceRadio, pdfRadio, pptRadio, tifFileRadio, gifFileRadio;
+    protected RadioButton imagesRadio, spliceRadio, pdfRadio, pptRadio,
+            tifFileRadio, gifFileRadio, videoRadio;
     @FXML
     protected Label saveImagesLabel;
     @FXML
@@ -101,6 +108,10 @@ public class ControlImagesSave extends BaseController {
     protected ControlPdfWriteOptions pdfOptionsController;
     @FXML
     protected Button thumbsListButton;
+    @FXML
+    protected ComboBox<String> savedWidthSelector;
+    @FXML
+    protected HBox savedWidthBox;
 
     public ControlImagesSave() {
         baseTitle = message("ImagesEditor");
@@ -150,7 +161,7 @@ public class ControlImagesSave extends BaseController {
 
     public void imageInfosChanged() {
         thumbsListButton.setDisable(imageInfos.isEmpty());
-        saveButton.setDisable(imageInfos.isEmpty());
+        saveAsButton.setDisable(imageInfos.isEmpty());
     }
 
     public void initSavePane() {
@@ -162,6 +173,33 @@ public class ControlImagesSave extends BaseController {
                 }
             });
             checkSaveType();
+
+            savedWidth = UserConfig.getInt(baseName + "SavedWidth", -1);
+            List<String> values = Arrays.asList(message("OriginalSize"),
+                    "512", "1024", "256", "128", "2048", "100", "80", "4096");
+            savedWidthSelector.getItems().addAll(values);
+            if (savedWidth <= 0) {
+                savedWidthSelector.getSelectionModel().select(0);
+            } else {
+                savedWidthSelector.setValue(savedWidth + "");
+            }
+            savedWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (message("OriginalSize").equals(newValue)) {
+                        savedWidth = -1;
+                    } else {
+                        try {
+                            savedWidth = Integer.valueOf(newValue);
+                            ValidationTools.setEditorNormal(savedWidthSelector);
+                        } catch (Exception e) {
+                            ValidationTools.setEditorBadStyle(savedWidthSelector);
+                            return;
+                        }
+                    }
+                    UserConfig.setInt(baseName + "SavedWidth", savedWidth);
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -177,7 +215,7 @@ public class ControlImagesSave extends BaseController {
             setTargetFileType(VisitHistory.FileType.Image);
             saveImagesLabel.setVisible(true);
             convertPane.setExpanded(true);
-        } else if (spiceRadio.isSelected()) {
+        } else if (spliceRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Image);
         } else if (tifFileRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Tif);
@@ -191,6 +229,7 @@ public class ControlImagesSave extends BaseController {
             setTargetFileType(VisitHistory.FileType.PPT);
             pptPane.setExpanded(true);
         }
+        savedWidthBox.setDisable(spliceRadio.isSelected() || videoRadio.isSelected());
     }
 
     public void initGifPane() {
@@ -335,10 +374,10 @@ public class ControlImagesSave extends BaseController {
                 }
             } else {
                 if (info.getWidth() > maxW) {
-                    maxW = info.getWidth();
+                    maxW = (int) info.getWidth();
                 }
                 if (info.getHeight() > maxH) {
-                    maxH = info.getHeight();
+                    maxH = (int) info.getHeight();
                 }
             }
         }
@@ -356,14 +395,8 @@ public class ControlImagesSave extends BaseController {
 
     @FXML
     @Override
-    public void saveAction() {
-        parentController.saveAction();
-    }
-
-    @FXML
-    @Override
     public void popSaveAs(MouseEvent event) {
-        if (spiceRadio.isSelected()) {
+        if (spliceRadio.isSelected() || videoRadio.isSelected()) {
             return;
         }
         super.popSaveAs(event);
@@ -380,13 +413,14 @@ public class ControlImagesSave extends BaseController {
 
         if (imagesRadio.isSelected()) {
             imagesFormat = formatController.attributes.getImageFormat();
-            targetFile = chooseSaveFile(TargetFileType, DateTools.nowFileString() + "." + imagesFormat);
+            targetFile = chooseSaveFile(defaultTargetPath(TargetFileType),
+                    DateTools.nowFileString() + "." + imagesFormat, FileFilters.imageFilter(imagesFormat));
             if (targetFile == null) {
                 return;
             }
             saveAsImages();
 
-        } else if (spiceRadio.isSelected()) {
+        } else if (spliceRadio.isSelected()) {
             saveAsSplice();
 
         } else if (tifFileRadio.isSelected()) {
@@ -417,6 +451,9 @@ public class ControlImagesSave extends BaseController {
             }
             saveAsPPT();
 
+        } else if (videoRadio.isSelected()) {
+            saveAsVideo();
+
         }
     }
 
@@ -429,7 +466,7 @@ public class ControlImagesSave extends BaseController {
             if (info == null) {
                 return null;
             }
-            Image image = info.loadImage();
+            Image image = info.loadThumbnail(savedWidth);
             if (image == null) {
                 return null;
             }
@@ -467,7 +504,7 @@ public class ControlImagesSave extends BaseController {
                 parentController.popError(message("InvalidParameters"));
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 List<String> fileNames;
 
                 @Override
@@ -520,9 +557,24 @@ public class ControlImagesSave extends BaseController {
         }
         List<ImageInformation> infos = new ArrayList<>();
         for (int i = 0; i < imageInfos.size(); ++i) {
-            infos.add(imageInfos.get(i).cloneAttributes());
+            ImageInformation info = imageInfos.get(i).cloneAttributes();
+            info.setRequiredWidth(savedWidth);
+            infos.add(info);
         }
         ImagesSpliceController.open(infos);
+    }
+
+    protected void saveAsVideo() {
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            return;
+        }
+        List<ImageInformation> infos = new ArrayList<>();
+        for (int i = 0; i < imageInfos.size(); ++i) {
+            ImageInformation info = imageInfos.get(i).cloneAttributes();
+            info.setRequiredWidth(savedWidth);
+            infos.add(info);
+        }
+        FFmpegMergeImagesController.open(infos);
     }
 
     protected void saveAsPdf() {
@@ -534,7 +586,7 @@ public class ControlImagesSave extends BaseController {
                 task.cancel();
                 loading = null;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -606,7 +658,7 @@ public class ControlImagesSave extends BaseController {
                 task.cancel();
                 loading = null;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -667,7 +719,7 @@ public class ControlImagesSave extends BaseController {
                 task.cancel();
                 loading = null;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -733,7 +785,7 @@ public class ControlImagesSave extends BaseController {
                 task.cancel();
                 loading = null;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

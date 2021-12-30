@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -28,7 +27,6 @@ import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextTools;
@@ -143,10 +141,8 @@ public class WebFavoritesExportController extends BaseTaskController {
             styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.styleValue("Default")));
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(treeView.getSelectionModel().selectedItemProperty().isNull())
+            startButton.disableProperty().bind(targetPathController.valid.not()
+                    .or(treeView.getSelectionModel().selectedItemProperty().isNull())
             );
 
         } catch (Exception e) {
@@ -252,7 +248,7 @@ public class WebFavoritesExportController extends BaseTaskController {
         }
         count = level = 0;
         firstRow = true;
-        try (Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             exportNode(conn, selectedNode.getValue(), treeController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -273,7 +269,7 @@ public class WebFavoritesExportController extends BaseTaskController {
                 if (textsFile != null) {
                     updateLogs(Languages.message("Writing") + " " + textsFile.getAbsolutePath());
                     textsWriter = new FileWriter(textsFile, charset);
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -284,7 +280,7 @@ public class WebFavoritesExportController extends BaseTaskController {
                     htmlWriter = new FileWriter(htmlFile, charset);
                     writeHtmlHead(htmlWriter, nodeName);
                     htmlWriter.write(indent + "<BODY>\n" + indent + indent + "<H2>" + nodeName + "</H2>\n");
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -298,12 +294,12 @@ public class WebFavoritesExportController extends BaseTaskController {
                     path.mkdirs();
                     framesetNavFile = new File(path.getAbsolutePath() + File.separator + "nav.html");
                     File coverFile = new File(path.getAbsolutePath() + File.separator + "cover.html");
-                    try (FileWriter coverWriter = new FileWriter(coverFile, charset)) {
+                    try ( FileWriter coverWriter = new FileWriter(coverFile, charset)) {
                         writeHtmlHead(coverWriter, nodeName);
                         coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + Languages.message("Notes") + "</H1>\n</BODY></HTML>");
                         coverWriter.flush();
                     }
-                    try (FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
+                    try ( FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
                         writeHtmlHead(framesetWriter, nodeName);
                         s = new StringBuilder();
                         s.append("<FRAMESET border=2 cols=240,240,*>\n")
@@ -319,7 +315,7 @@ public class WebFavoritesExportController extends BaseTaskController {
                     s.append(indent).append("<BODY>\n");
                     s.append(indent).append(indent).append("<H2>").append(nodeName).append("</H2>\n");
                     framesetNavWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -332,7 +328,7 @@ public class WebFavoritesExportController extends BaseTaskController {
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n").append("<favorites>\n");
                     xmlWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }
@@ -344,7 +340,7 @@ public class WebFavoritesExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("{\"Favorites\": [\n");
                     jsonWriter.write(s.toString());
-                } else if (targetExistType == TargetExistType.Skip) {
+                } else if (targetPathController.isSkip()) {
                     updateLogs(Languages.message("Skipped"));
                 }
             }

@@ -26,6 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -241,7 +242,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private boolean expand;
                 private TreeItem<P> rootItem;
 
@@ -442,7 +443,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 popError(Languages.message("NameShouldNotInclude") + " \"" + nodeSeparator + "\"");
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private P newNode;
 
                 @Override
@@ -494,7 +495,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     return;
                 }
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private TreeItem<P> rootItem;
 
@@ -560,7 +561,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 popError(Languages.message("NodeNameNotInclude") + " \"" + nodeSeparator + "\"");
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private P updatedNode;
 
                 @Override
@@ -640,7 +641,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -675,7 +676,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private List<P> nodes;
 
                 @Override

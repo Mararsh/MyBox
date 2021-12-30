@@ -6,36 +6,24 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Window;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
-import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.SecurityTools;
-import mara.mybox.tools.SystemTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -44,14 +32,10 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-11-29
  * @License Apache License Version 2.0
  */
-public class SecurityCertificatesController extends BaseController {
-
-    protected ObservableList<CertificateEntry> tableData;
+public class SecurityCertificatesController extends BaseTableViewController<CertificateEntry> {
 
     @FXML
     protected TextField passwordInput;
-    @FXML
-    protected TableView<CertificateEntry> tableView;
     @FXML
     protected TableColumn<CertificateEntry, String> aliasColumn, timeColumn;
     @FXML
@@ -74,21 +58,6 @@ public class SecurityCertificatesController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            tableData = FXCollections.observableArrayList();
-
-            aliasColumn.setCellValueFactory(new PropertyValueFactory<>("alias"));
-            timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-            timeColumn.setCellFactory(new TableTimeCell());
-
-            tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
-                    checkSelected();
-                }
-            });
-            checkSelected();
-            tableView.setItems(tableData);
 
             passwordInput.setText(SecurityTools.keystorePassword());
             htmlButton.setDisable(true);
@@ -102,6 +71,21 @@ public class SecurityCertificatesController extends BaseController {
         }
     }
 
+    @Override
+    protected void initColumns() {
+        try {
+            super.initColumns();
+
+            aliasColumn.setCellValueFactory(new PropertyValueFactory<>("alias"));
+            timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
+            timeColumn.setCellFactory(new TableTimeCell());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     protected void checkSelected() {
         if (isSettingValues) {
             return;
@@ -115,6 +99,7 @@ public class SecurityCertificatesController extends BaseController {
             certArea.setText(selected.getCertificates());
             deleteButton.setDisable(false);
         }
+        super.checkButtons();
     }
 
     @Override
@@ -159,7 +144,7 @@ public class SecurityCertificatesController extends BaseController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
                     private String texts;
                     private List<CertificateEntry> entires;
                     private CertificateEntry selectCert;
@@ -247,7 +232,7 @@ public class SecurityCertificatesController extends BaseController {
                         htmlButton.setDisable(false);
                         addButton.setDisable(false);
                         recoverButton.setDisable(false);
-                        bottomLabel.setText(Languages.message("Total") + ": " + tableData.size());
+                        bottomLabel.setText(Languages.message("Count") + ": " + tableData.size());
                         backupController.loadBackups(sourceFile);
                     }
                 };
@@ -269,7 +254,7 @@ public class SecurityCertificatesController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String result;
 
                 @Override
@@ -330,7 +315,7 @@ public class SecurityCertificatesController extends BaseController {
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         if (sourceFile == null) {
             return;
         }
@@ -357,14 +342,14 @@ public class SecurityCertificatesController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
                     error = null;
                     try {
                         if (backupController.isBack()) {
-                            backupController.addBackup(sourceFile);
+                            backupController.addBackup(task, sourceFile);
                         }
                         List<String> aliases = new ArrayList();
                         for (CertificateEntry cert : selected) {
@@ -404,7 +389,7 @@ public class SecurityCertificatesController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -423,6 +408,7 @@ public class SecurityCertificatesController extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         loadAll(null);
     }

@@ -9,6 +9,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.Link.FilenameType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -31,7 +32,7 @@ public class DownloadFirstLevelLinksSetController extends BaseController {
     protected Label downloadingsLabel, linksLabel;
 
     public DownloadFirstLevelLinksSetController() {
-        baseTitle = Languages.message("DownloadFirstLevelLinks");
+        baseTitle = Languages.message("DownloadHtmls");
     }
 
     @Override
@@ -72,7 +73,7 @@ public class DownloadFirstLevelLinksSetController extends BaseController {
 
     public void setValues(BaseController parent, String path) {
         parentController = parent;
-        pathInput.setText(path);
+        pathInput.setText(path == null || path.isBlank() ? DateTools.nowFileString() : path);
     }
 
     @FXML

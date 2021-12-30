@@ -1,8 +1,6 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -10,16 +8,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -47,8 +41,8 @@ public class TableLocationData extends BaseTable<Location> {
         addColumn(new ColumnDefinition("ldid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("datasetid", ColumnType.Long, true)
                 .setForeignName("Location_Data_datasetid_fk").setForeignTable("Dataset").setForeignColumn("dsid"));
-        addColumn(new ColumnDefinition("label", ColumnType.String).setLength(2048));
-        addColumn(new ColumnDefinition("address", ColumnType.String).setLength(4096));
+        addColumn(new ColumnDefinition("label", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("address", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("longitude", ColumnType.Double, true).setMaxValue((double) 180).setMinValue((double) -180));
         addColumn(new ColumnDefinition("latitude", ColumnType.Double, true).setMaxValue((double) 90).setMinValue((double) -90));
         addColumn(new ColumnDefinition("altitude", ColumnType.Double));
@@ -61,7 +55,7 @@ public class TableLocationData extends BaseTable<Location> {
         addColumn(new ColumnDefinition("start_time", ColumnType.Era).setMinValue((long) 0));
         addColumn(new ColumnDefinition("end_time", ColumnType.Era).setMinValue((long) 0));
         addColumn(new ColumnDefinition("location_image", ColumnType.Image));
-        addColumn(new ColumnDefinition("location_comments", ColumnType.String).setLength(32672));
+        addColumn(new ColumnDefinition("location_comments", ColumnType.String).setLength(StringMaxLength));
         return this;
     }
 

@@ -11,13 +11,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
-import javafx.stage.Modality;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -41,7 +39,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private int filesSelected = 0, filesTotal = 0, filesRundancy = 0;
                 private long sizeSelected = 0, sizeTotal = 0, sizeRedundant = 0, fileSize = 0;
@@ -104,7 +102,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private TreeItem<FileInformation> rootItem;
 
@@ -254,7 +252,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private int deleted;
 
                 @Override

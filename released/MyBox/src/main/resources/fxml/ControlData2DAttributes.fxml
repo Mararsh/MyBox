@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DAttributes">
+    <children>
+        <HBox alignment="CENTER_RIGHT" spacing="2.0">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="2.0">
+            <children>
+                <Label minHeight="-Infinity" text="%ID" wrapText="true" />
+                <TextField fx:id="idInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+            </children>
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+            <children>
+                <Label minHeight="-Infinity" text="%DataType" wrapText="true" />
+                <TextField fx:id="dataTypeInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="108.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+            <children>
+                <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
+                <TextField fx:id="dataNameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="2.0">
+            <children>
+                <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="40.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+            <children>
+                <Label minHeight="-Infinity" text="%MaxRandom" wrapText="true" />
+                <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="93.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+            <children>
+                <Label minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
+                <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <TextArea fx:id="infoArea" editable="false" minHeight="-Infinity" styleClass="uneditable" stylesheets="@../styles/MyBox.css" wrapText="true" />
+    </children>
+</VBox>

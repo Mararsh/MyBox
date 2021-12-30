@@ -19,7 +19,6 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -49,8 +48,7 @@ public class PptSplitController extends BaseBatchFileController {
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
                             .or(splitWayController.valid)
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                            .or(targetPathController.valid.not())
             );
 
         } catch (Exception e) {

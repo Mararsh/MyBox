@@ -340,7 +340,8 @@ public class ColumnDefinition extends BaseData {
             case Era:
                 return DateTools.randomTimeString(random);
             default:
-                return (char) ('a' + random.nextInt(25)) + "";
+                return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
+//                return (char) ('a' + random.nextInt(25)) + "";
         }
     }
 

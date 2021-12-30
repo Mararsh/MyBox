@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,7 +22,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
@@ -32,7 +30,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -98,8 +96,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetFileInput.textProperty())
-                            .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    targetFileController.valid.not()
                             .or(optionsController.executableInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(optionsController.titleInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(optionsController.xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
@@ -119,11 +116,11 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         if (ext == null || ext.isBlank() || Languages.message("OriginalFormat").equals(ext)) {
             return;
         }
-        String v = targetFileInput.getText();
+        String v = targetFileController.text();
         if (v == null || v.isBlank()) {
-            targetFileInput.setText(AppVariables.MyBoxDownloadsPath.getAbsolutePath() + File.separator + DateTools.nowFileString() + "." + ext);
+            targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
-            targetFileInput.setText(FileNameTools.getFilePrefix(v) + "." + ext);
+            targetFileController.input(FileNameTools.getFilePrefix(v) + "." + ext);
         }
     }
 
@@ -453,7 +450,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             }
             ProcessBuilder pb = new ProcessBuilder(parameters)
                     .redirectErrorStream(true);
-            warmUp(pb);
             FileDeleteTools.delete(targetFile);
             recorder = pb.start();
             String cmd = makeCommand(parameters);
@@ -518,21 +514,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             MyBoxLog.error(e.toString());
         }
         return true;
-    }
-
-    // Looks the generated media is always invalid when command runs for the first time.
-    // So let's skip its first time...
-    protected void warmUp(ProcessBuilder pb) {
-        if (pb == null) {
-            return;
-        }
-        try {
-            recorder = pb.start();
-            cancelAction();
-            stopping.set(false);
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
     }
 
     @Override

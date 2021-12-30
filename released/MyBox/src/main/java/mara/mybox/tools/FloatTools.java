@@ -79,13 +79,14 @@ public class FloatTools {
 //        return r.nextFloat(max);
 //    }
     // works on java 16
-    public static float random(Random r, int max) {
+    public static float random(Random r, int max, boolean nonNegative) {
         if (r == null) {
             r = new Random();
         }
+        int sign = nonNegative ? 1 : r.nextInt(2);
         float f = r.nextFloat();
         int i = max > 0 ? r.nextInt(max) : 0;
-        return i + f;
+        return sign == 1 ? i + f : -(i + f);
     }
 
     public static float[] sortArray(float[] numbers) {

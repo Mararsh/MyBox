@@ -319,7 +319,7 @@ https://docs.oracle.com/en/java/javase/15/docs/api/index.html
 
 示例 > 编程
 JavaFx API
-https://openjfx.io/javadoc/15
+https://openjfx.io/javadoc/17
 
 示例 > 编程
 JavaFX CSS Reference Guide
@@ -328,6 +328,18 @@ https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
 示例 > 编程
 Getting Started with JavaFX
 https://docs.oracle.com/javafx/2/get_started/css.htm
+
+示例 > 编程
+OpenJFX Community Site
+https://openjfx.io/
+
+示例 > 编程
+JavaFX Documentation Project
+https://fxdocs.github.io/docs/html5/
+
+示例 > 编程
+JavaFX Tutorial
+http://tutorials.jenkov.com/javafx/index.html
 
 示例 > 编程
 icons8

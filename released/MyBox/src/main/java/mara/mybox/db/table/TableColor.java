@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,10 +9,10 @@ import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.value.AppValues;
-
 
 /**
  * @Author Mara
@@ -37,7 +36,7 @@ public class TableColor extends BaseTable<ColorData> {
     public final TableColor defineColumns() {
         addColumn(new ColumnDefinition("color_value", ColumnDefinition.ColumnType.Integer, true, true));
         addColumn(new ColumnDefinition("rgba", ColumnDefinition.ColumnType.String, true).setLength(16));
-        addColumn(new ColumnDefinition("color_name", ColumnDefinition.ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("color_name", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("rgb", ColumnDefinition.ColumnType.String, true).setLength(16));
         addColumn(new ColumnDefinition("srgb", ColumnDefinition.ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("hsb", ColumnDefinition.ColumnType.String).setLength(128));
@@ -142,6 +141,8 @@ public class TableColor extends BaseTable<ColorData> {
 
     public ColorData findAndCreate(Connection conn, int value, String name) {
         try {
+            boolean ac = conn.getAutoCommit();
+            conn.setAutoCommit(true);
             ColorData data = read(conn, value);
             if (data == null) {
                 data = new ColorData(value).calculate().setColorName(name);
@@ -150,9 +151,10 @@ public class TableColor extends BaseTable<ColorData> {
                 data.setColorName(name);
                 updateData(conn, data.calculate());
             }
+            conn.setAutoCommit(ac);
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.error(e, value + "");
             return null;
         }
     }
@@ -174,6 +176,7 @@ public class TableColor extends BaseTable<ColorData> {
             }
             return findAndCreate(conn, value, name);
         } catch (Exception e) {
+            MyBoxLog.error(e, web);
             return null;
         }
     }
@@ -183,7 +186,6 @@ public class TableColor extends BaseTable<ColorData> {
             return write(conn, rgba, null, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
-
             return null;
         }
     }
@@ -265,6 +267,7 @@ public class TableColor extends BaseTable<ColorData> {
         }
         List<ColorData> updateList = new ArrayList<>();
         try {
+            boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
             for (Color color : colors) {
                 ColorData data = new ColorData(color);
@@ -274,6 +277,7 @@ public class TableColor extends BaseTable<ColorData> {
                 }
             }
             conn.commit();
+            conn.setAutoCommit(ac);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -298,6 +302,7 @@ public class TableColor extends BaseTable<ColorData> {
         }
         List<ColorData> updateList = new ArrayList<>();
         try {
+            boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
             for (ColorData data : dataList) {
                 ColorData updated = write(conn, data, replace);
@@ -306,6 +311,7 @@ public class TableColor extends BaseTable<ColorData> {
                 }
             }
             conn.commit();
+            conn.setAutoCommit(ac);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -390,6 +396,7 @@ public class TableColor extends BaseTable<ColorData> {
         }
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement delete = conn.prepareStatement(Delete)) {
+            boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
             for (String web : webList) {
                 int value = FxColorTools.web2Value(web);
@@ -403,6 +410,7 @@ public class TableColor extends BaseTable<ColorData> {
                 }
             }
             conn.commit();
+            conn.setAutoCommit(ac);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -21,7 +21,7 @@ public class Dataset extends BaseData {
     protected boolean omitAD;
 
     private void init() {
-        id = -1;
+        dsid = -1;
         textColor = Color.BLACK;
         bgColor = Color.WHITE;
         chartColor = Color.web("#961c1c");

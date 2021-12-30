@@ -3,14 +3,12 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import javafx.stage.Modality;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebFavorite;
 import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.dev.MyBoxLog;
-
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.IconTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -57,7 +55,7 @@ public class WebFavoriteAddController extends BaseTreeNodeSelector {
                 return;
             }
             TreeNode node = selectedItem.getValue();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private WebFavorite data;
 

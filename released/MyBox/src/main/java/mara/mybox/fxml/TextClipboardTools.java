@@ -131,12 +131,13 @@ public class TextClipboardTools {
                 }
                 if (stringToSystemClipboard(text)) {
                     int len = text.length();
-                    String info = message("Length") + ":" + len + "\n"
+                    String info = "\n" + message("Count") + ":" + len
+                            + "\n----------------------\n"
                             + (len > 100 ? text.substring(0, 100) + "\n......" : text);
                     if (TextClipboardTools.isMonitoringCopy()) {
-                        controller.popInformation(message("CopiedInClipBoards") + "\n----------------------\n" + info);
+                        controller.popInformation(message("CopiedInClipBoards") + info);
                     } else {
-                        controller.popInformation(message("CopiedInSystemClipBoard") + "\n----------------------\n" + info);
+                        controller.popInformation(message("CopiedInSystemClipBoard") + info);
                     }
                 } else {
                     controller.popFailed();

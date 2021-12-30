@@ -1,12 +1,19 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.List;
 import javafx.fxml.FXML;
+import javafx.stage.Window;
+import mara.mybox.data.Data2D;
+import mara.mybox.data.DataFileText;
+import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TextTools;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -14,10 +21,10 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-25
  * @License Apache License Version 2.0
  */
-public class DataFileTextController extends BaseDataFileController {
+public class DataFileTextController extends BaseData2DFileController {
 
-    @FXML
-    protected ControlSheetText sheetController;
+    protected DataFileText dataFileText;
+
     @FXML
     protected ControlTextOptions readOptionsController, writeOptionsController;
 
@@ -26,21 +33,20 @@ public class DataFileTextController extends BaseDataFileController {
     }
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
-    }
-
-    @Override
     public void initValues() {
         try {
             super.initValues();
 
-            dataController = sheetController;
-            dataController.setParent(this);
-
+            setDataType(Data2D.Type.Texts);
+            dataFileText = (DataFileText) dataController.data2D;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override
@@ -50,60 +56,82 @@ public class DataFileTextController extends BaseDataFileController {
 
             readOptionsController.setControls(baseName + "Read", true);
             writeOptionsController.setControls(baseName + "Write", false);
-            pickOptions();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @Override
-    public void pickOptions() {
-        try {
-            sheetController.sourceCharset = readOptionsController.charset;
-            sheetController.sourceWithNames = readOptionsController.withNamesCheck.isSelected();
-            sheetController.sourceDelimiterName = readOptionsController.delimiterName;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    protected void updateInfoLabel() {
-        String info = "";
-        if (sourceFile != null) {
-            info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + message("Charset") + ": " + sheetController.sourceCharset + "\n"
-                    + message("Delimiter") + ": " + TextTools.delimiterMessage(sheetController.sourceDelimiterName) + "\n"
-                    + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n";
-        }
-        if (sheetController.pagesNumber <= 1) {
-            info += message("RowsNumber") + ":" + (sheetController.sheetInputs == null ? 0 : sheetController.sheetInputs.length) + "\n";
+    public void pickRefreshOptions() {
+        Charset charset;
+        if (readOptionsController.autoDetermine) {
+            charset = TextFileTools.charset(dataFileText.getFile());
         } else {
-            info += message("LinesNumberInFile") + ":" + sheetController.totalSize + "\n";
+            charset = readOptionsController.charset;
         }
-        info += message("ColumnsNumber") + ": " + (sheetController.columns == null ? "0" : sheetController.columns.size()) + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage + 1)
-                + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
-        if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
-            info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(sheetController.startRowOfCurrentPage + 1) + " - "
-                    + StringTools.format(sheetController.startRowOfCurrentPage + sheetController.sheetInputs.length)
-                    + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
-        }
-        info += message("PageModifyTime") + ": " + DateTools.nowString();
-        fileInfoLabel.setText(info);
+        dataFileText.setOptions(readOptionsController.withNamesCheck.isSelected(),
+                charset, readOptionsController.delimiterName);
     }
 
-    @FXML
     @Override
-    public void saveAsAction() {
-        sheetController.sourceFile = sourceFile;
-        sheetController.saveAsType = saveAsType;
-        sheetController.targetCharset = writeOptionsController.charset;
-        sheetController.targetDelimiterName = writeOptionsController.delimiterName;
-        sheetController.targetWithNames = writeOptionsController.withNamesCheck.isSelected();
-        sheetController.saveAs();
+    public Data2D saveAsTarget() {
+        File file = chooseSaveFile();
+        if (file == null) {
+            return null;
+        }
+        DataFileText targetData = new DataFileText();
+        targetData.initFile(file)
+                .setCharset(writeOptionsController.charset)
+                .setDelimiter(writeOptionsController.delimiterName)
+                .setHasHeader(writeOptionsController.withNamesCheck.isSelected());
+        return targetData;
+    }
+
+    public void setFile(File file, Charset charset, boolean withName, String delimiter) {
+        if (file == null || !checkBeforeNextAction()) {
+            return;
+        }
+        readOptionsController.withNamesCheck.setSelected(withName);
+        readOptionsController.setDelimiter(delimiter);
+        readOptionsController.setCharset(charset);
+        dataFileText.initFile(file);
+        dataFileText.setOptions(withName, charset, delimiter + "");
+        dataController.readDefinition();
+    }
+
+
+    /*
+        static
+     */
+    public static DataFileTextController open(List<Data2DColumn> cols, List<List<String>> data) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.dataController.loadTmpData(cols, data);
+        return controller;
+    }
+
+    public static DataFileTextController open(File file, Charset charset, boolean withNames, String delimiter) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.setFile(file, charset, withNames, delimiter);
+        return controller;
+    }
+
+    public static DataFileTextController open() {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.createAction();
+        return controller;
+    }
+
+    public static DataFileTextController load(Window parent) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openScene(parent, Fxmls.DataFileTextFxml);
+        controller.createAction();
+        return controller;
+    }
+
+    public static DataFileTextController open(Data2DDefinition def) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.loadDef(def);
+        return controller;
     }
 
 }

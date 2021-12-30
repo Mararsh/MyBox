@@ -17,7 +17,12 @@ public class WebHistory extends BaseData {
     private String address, title, icon;
     private Date visitTime;
 
+    private void init() {
+        whid = -1;
+    }
+
     public WebHistory() {
+        init();
     }
 
     /*

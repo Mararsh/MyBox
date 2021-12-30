@@ -13,7 +13,7 @@ import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
@@ -52,15 +52,15 @@ public class RGB2XYZConversionMatrix {
                             for (ChromaticAdaptationAlgorithm algorithm : ChromaticAdaptationAlgorithm.values()) {
                                 double[][] adpatM = matrix(csWhite, Observer.CIE1931,
                                         targetIlluminant, targetObserver, algorithm, -1);
-                                double[][] adpatedC = MatrixDoubleTools.multiply(adpatM, rgb2xyz);
+                                double[][] adpatedC = DoubleMatrixTools.multiply(adpatM, rgb2xyz);
                                 RGB2XYZConversionMatrix c = new RGB2XYZConversionMatrix();
                                 c.setRgb(RGBColorSpace.name(colorSpace));
                                 c.setRgbWhite(csWhite + " - " + Observer.CIE1931);
                                 c.setXyzWhite(targetIlluminant + " - " + targetObserver);
                                 c.setAlgorithm(algorithm + "");
-                                c.setRgb2xyz(MatrixDoubleTools.print(adpatedC, 0, scale));
-                                double[][] xyz2rgb = MatrixDoubleTools.inverse(adpatedC);
-                                c.setXyz2rgb(MatrixDoubleTools.print(xyz2rgb, 0, scale));
+                                c.setRgb2xyz(DoubleMatrixTools.print(adpatedC, 0, scale));
+                                double[][] xyz2rgb = DoubleMatrixTools.inverse(adpatedC);
+                                c.setXyz2rgb(DoubleMatrixTools.print(xyz2rgb, 0, scale));
                                 data.add(c);
                             }
                         } else {
@@ -69,9 +69,9 @@ public class RGB2XYZConversionMatrix {
                             c.setRgbWhite(csWhite + " - " + Observer.CIE1931);
                             c.setXyzWhite(targetIlluminant + " - " + targetObserver);
                             c.setAlgorithm("");
-                            c.setRgb2xyz(MatrixDoubleTools.print(rgb2xyz, 0, scale));
-                            double[][] xyz2rgb = MatrixDoubleTools.inverse(rgb2xyz);
-                            c.setXyz2rgb(MatrixDoubleTools.print(xyz2rgb, 0, scale));
+                            c.setRgb2xyz(DoubleMatrixTools.print(rgb2xyz, 0, scale));
+                            double[][] xyz2rgb = DoubleMatrixTools.inverse(rgb2xyz);
+                            c.setXyz2rgb(DoubleMatrixTools.print(xyz2rgb, 0, scale));
                             data.add(c);
                         }
                     }
@@ -100,29 +100,29 @@ public class RGB2XYZConversionMatrix {
                             for (ChromaticAdaptationAlgorithm algorithm : ChromaticAdaptationAlgorithm.values()) {
                                 double[][] adpatM = matrix(csWhite, Observer.CIE1931,
                                         targetIlluminant, targetObserver, algorithm, -1);
-                                double[][] adpatedC = MatrixDoubleTools.multiply(adpatM, rgb2xyz);
-                                double[][] xyz2rgb = MatrixDoubleTools.inverse(adpatedC);
+                                double[][] adpatedC = DoubleMatrixTools.multiply(adpatM, rgb2xyz);
+                                double[][] xyz2rgb = DoubleMatrixTools.inverse(adpatedC);
                                 List<String> row = new ArrayList<>();
                                 row.addAll(Arrays.asList(
                                         RGBColorSpace.name(colorSpace),
                                         csWhite + " - " + Observer.CIE1931,
                                         targetIlluminant + " - " + targetObserver,
                                         algorithm.name(),
-                                        MatrixDoubleTools.html(adpatedC, scale),
-                                        MatrixDoubleTools.html(xyz2rgb, scale)
+                                        DoubleMatrixTools.html(adpatedC, scale),
+                                        DoubleMatrixTools.html(xyz2rgb, scale)
                                 ));
                                 table.add(row);
                             }
                         } else {
-                            double[][] xyz2rgb = MatrixDoubleTools.inverse(rgb2xyz);
+                            double[][] xyz2rgb = DoubleMatrixTools.inverse(rgb2xyz);
                             List<String> row = new ArrayList<>();
                             row.addAll(Arrays.asList(
                                     RGBColorSpace.name(colorSpace),
                                     csWhite + " - " + Observer.CIE1931,
                                     targetIlluminant + " - " + targetObserver,
                                     "",
-                                    MatrixDoubleTools.html(rgb2xyz, scale),
-                                    MatrixDoubleTools.html(xyz2rgb, scale)
+                                    DoubleMatrixTools.html(rgb2xyz, scale),
+                                    DoubleMatrixTools.html(xyz2rgb, scale)
                             ));
                             table.add(row);
                         }
@@ -146,8 +146,8 @@ public class RGB2XYZConversionMatrix {
                             for (ChromaticAdaptationAlgorithm algorithm : ChromaticAdaptationAlgorithm.values()) {
                                 double[][] adpatM = matrix(csWhite, Observer.CIE1931,
                                         targetIlluminant, targetObserver, algorithm, -1);
-                                double[][] adpatedC = MatrixDoubleTools.multiply(adpatM, rgb2xyz);
-                                double[][] xyz2rgb = MatrixDoubleTools.inverse(adpatedC);
+                                double[][] adpatedC = DoubleMatrixTools.multiply(adpatM, rgb2xyz);
+                                double[][] xyz2rgb = DoubleMatrixTools.inverse(adpatedC);
                                 s.append(Languages.message("RGBColorSpace")).append(": ").
                                         append(RGBColorSpace.name(colorSpace)).append("\n");
                                 s.append(Languages.message("RGBReferenceWhite")).append(": ").
@@ -157,12 +157,12 @@ public class RGB2XYZConversionMatrix {
                                 s.append(Languages.message("AdaptationAlgorithm")).append(": ").
                                         append(algorithm).append("\n");
                                 s.append("Linear RGB -> XYZ: ").append("\n");
-                                s.append(MatrixDoubleTools.print(adpatedC, 20, scale));
+                                s.append(DoubleMatrixTools.print(adpatedC, 20, scale));
                                 s.append("XYZ -> Linear RGB: ").append("\n");
-                                s.append(MatrixDoubleTools.print(xyz2rgb, 20, scale)).append("\n");
+                                s.append(DoubleMatrixTools.print(xyz2rgb, 20, scale)).append("\n");
                             }
                         } else {
-                            double[][] xyz2rgb = MatrixDoubleTools.inverse(rgb2xyz);
+                            double[][] xyz2rgb = DoubleMatrixTools.inverse(rgb2xyz);
                             s.append(Languages.message("RGBColorSpace")).append(": ").
                                     append(RGBColorSpace.name(colorSpace)).append("\n");
                             s.append(Languages.message("RGBReferenceWhite")).append(": ").
@@ -170,9 +170,9 @@ public class RGB2XYZConversionMatrix {
                             s.append(Languages.message("XYZReferenceWhite")).append(": ").
                                     append(targetIlluminant).append(" - ").append(targetObserver).append("\n");
                             s.append("Linear RGB -> XYZ: ").append("\n");
-                            s.append(MatrixDoubleTools.print(rgb2xyz, 20, scale));
+                            s.append(DoubleMatrixTools.print(rgb2xyz, 20, scale));
                             s.append("XYZ -> Linear RGB: ").append("\n");
-                            s.append(MatrixDoubleTools.print(xyz2rgb, 20, scale)).append("\n");
+                            s.append(DoubleMatrixTools.print(xyz2rgb, 20, scale)).append("\n");
                         }
                     }
                 }
@@ -190,20 +190,20 @@ public class RGB2XYZConversionMatrix {
     }
 
     public static double[][] xyz2rgb(ColorSpaceType colorSpace) {
-        return MatrixDoubleTools.inverse(rgb2xyz(colorSpace));
+        return DoubleMatrixTools.inverse(rgb2xyz(colorSpace));
     }
 
     public static double[][] xyz2rgb(double[][] primaries, double[][] sourceWhitePoint) {
-        return MatrixDoubleTools.inverse(rgb2xyz(primaries, sourceWhitePoint));
+        return DoubleMatrixTools.inverse(rgb2xyz(primaries, sourceWhitePoint));
     }
 
     public static Object rgb2xyz(double[][] primaries,
             double[][] sourceWhitePoint, double[][] targetWhitePoint,
             ChromaticAdaptationAlgorithm algorithm, int scale, boolean isDemo) {
         try {
-            double[][] t = MatrixDoubleTools.transpose(primaries);
-            double[][] i = MatrixDoubleTools.inverse(t);
-            double[][] s = MatrixDoubleTools.multiply(i, sourceWhitePoint);
+            double[][] t = DoubleMatrixTools.transpose(primaries);
+            double[][] i = DoubleMatrixTools.inverse(t);
+            double[][] s = DoubleMatrixTools.multiply(i, sourceWhitePoint);
             double[][] conversionMatrix = new double[3][3];
             conversionMatrix[0][0] = s[0][0] * t[0][0];
             conversionMatrix[1][0] = s[0][0] * t[1][0];
@@ -219,20 +219,20 @@ public class RGB2XYZConversionMatrix {
             Map<String, Object> map;
             if (isDemo) {
                 d += "WhitePoint =\n";
-                d += MatrixDoubleTools.print(sourceWhitePoint, 20, scale);
+                d += DoubleMatrixTools.print(sourceWhitePoint, 20, scale);
                 d += "\nRGB Primaires = (Each primary color is one row)\n";
-                d += MatrixDoubleTools.print(primaries, 20, scale);
+                d += DoubleMatrixTools.print(primaries, 20, scale);
                 d += "\nRGB_Transposed_Primaires = (Each primary color is one column)\n";
-                d += MatrixDoubleTools.print(t, 20, scale);
+                d += DoubleMatrixTools.print(t, 20, scale);
                 d += "\nInversed = inverse(RGB_Transposed_Primaires) = \n";
-                d += MatrixDoubleTools.print(i, 20, scale);
+                d += DoubleMatrixTools.print(i, 20, scale);
                 d += "\nSrgb = Inversed * RGB_WhitePoint  = \n";
-                d += MatrixDoubleTools.print(s, 20, scale);
+                d += DoubleMatrixTools.print(s, 20, scale);
                 d += "\nRGB_to_XYZ_Matrix = (Column in Srgb) * (columns in RGB_Transposed_Primaires) =\n";
-                d += MatrixDoubleTools.print(conversionMatrix, 20, scale);
+                d += DoubleMatrixTools.print(conversionMatrix, 20, scale);
                 d += Languages.message("XYZSameWhiteRGB") + "\n";
             }
-            if (targetWhitePoint == null || MatrixDoubleTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
+            if (targetWhitePoint == null || DoubleMatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
                     d = "ccccccccccccc " + Languages.message("Step") + " - Linear RGB -> XYZ ccccccccccccc\n\n" + d;
                     map = new HashMap<>();
@@ -254,9 +254,9 @@ public class RGB2XYZConversionMatrix {
             } else {
                 adaptMatrix = (double[][]) adaptObject;
             }
-            double[][] adaptedConversionMatrix = MatrixDoubleTools.multiply(adaptMatrix, conversionMatrix);
+            double[][] adaptedConversionMatrix = DoubleMatrixTools.multiply(adaptMatrix, conversionMatrix);
             if (scale >= 0) {
-                adaptedConversionMatrix = MatrixDoubleTools.scale(adaptedConversionMatrix, scale);
+                adaptedConversionMatrix = DoubleMatrixTools.scale(adaptedConversionMatrix, scale);
             } else {
                 scale = 8;
             }
@@ -268,13 +268,13 @@ public class RGB2XYZConversionMatrix {
                 d += "\nccccccccccccc " + Languages.message("Step") + " - Linear RGB -> XYZ , "
                         + Languages.message("RGBXYZdifferentWhite") + " ccccccccccccc\n";
                 d += "\nRGB Primaires = (Each primary color is one row)\n";
-                d += MatrixDoubleTools.print(primaries, 20, scale);
+                d += DoubleMatrixTools.print(primaries, 20, scale);
                 d += "\nRGB_WhitePoint =\n";
-                d += MatrixDoubleTools.print(sourceWhitePoint, 20, scale);
+                d += DoubleMatrixTools.print(sourceWhitePoint, 20, scale);
                 d += "\nXYZ_WhitePoint =\n";
-                d += MatrixDoubleTools.print(targetWhitePoint, 20, scale);
+                d += DoubleMatrixTools.print(targetWhitePoint, 20, scale);
                 d += "\nRGB_to_XYZ_Matrix_different_WhitePoint = Adaptation_Matrix * RGB_to_XYZ_Matrix_same_WhitePoint\n";
-                d += MatrixDoubleTools.print(adaptedConversionMatrix, 20, scale);
+                d += DoubleMatrixTools.print(adaptedConversionMatrix, 20, scale);
                 map = new HashMap<>();
                 map.put("procedure", d);
                 map.put("conversionMatrix", adaptedConversionMatrix);
@@ -298,17 +298,17 @@ public class RGB2XYZConversionMatrix {
         if (isDemo) {
             Map<String, Object> map = (Map<String, Object>) rgb2xyzObject;
             conversionMatrix = (double[][]) map.get("conversionMatrix");
-            conversionMatrix = MatrixDoubleTools.inverse(conversionMatrix);
+            conversionMatrix = DoubleMatrixTools.inverse(conversionMatrix);
             map.put("conversionMatrix", conversionMatrix);
             String s = (String) map.get("procedure");
             s += "\nccccccccccccc " + Languages.message("Step") + " - XYZ -> Linear RGB  ccccccccccccc\n\n";
             s += "\nXYZ_to_RGB_Matrix = inverse( RGB_to_XYZ_Matrix ) = \n";
-            s += MatrixDoubleTools.print(conversionMatrix, 20, scale);
+            s += DoubleMatrixTools.print(conversionMatrix, 20, scale);
             map.put("procedure", s);
             return map;
         } else {
             conversionMatrix = (double[][]) rgb2xyzObject;
-            conversionMatrix = MatrixDoubleTools.inverse(conversionMatrix);
+            conversionMatrix = DoubleMatrixTools.inverse(conversionMatrix);
             return conversionMatrix;
         }
     }

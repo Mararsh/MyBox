@@ -4,12 +4,12 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2021-12-26 版本6.5.1         
+2021-12-30 版本6.5.1         
 
 * 编辑表格：单击开始编辑，失焦提交修改；类型检验；行的复选框。       
 * 编辑数据：表格/文本为主/辅编辑模式，废弃表单模式；统一数据管理界面；处理逻辑从界面移至对象。     
 * 图像：改进图像文件的读取方法；在后端加载缩略图；颜色选择窗口可以直接加载示例调色盘。                         
-* 界面：网页和弹出窗口的样式可所有界面共享；查找/替换的选项可所有界面共享；截图当前窗口或编辑的内容。                  
+* 界面：网页和弹出窗口的样式可所有界面共享；查找/替换的选项可所有界面共享；截图当前窗口或节点的内容。                  
 * 解决：笔记无法输入换行；处理图像的“剪切”按钮失效；另存图片时未提供扩展名选项；长文件名导致弹出菜单失效或者备份失败；文本/字节编辑器的面板无法调整宽度。               
 
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.1)           
@@ -89,7 +89,7 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.1 | 2021-12-26 | [html](#devLog) |
+| 开发日志 | 6.5.1 | 2021-12-30 | [html](#devLog) |
 | 快捷键 | 6.4.7 |  2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -221,13 +221,13 @@ MyBox基于以下开放资源：
     - [游戏-挖雷](#gameMine)
     - [其它](#mediaOthers)
 * [网络工具](#netTools)
-    - [下载第一级链接](#downloadFirstLevelLinks)
-    - [微博截图工具](#weiboSnap)
     - [网页浏览器](#webBrowser)
     - [查询网址](#queryAddress)
     - [批量查询DNS](#queryDNS)
     - [解码/编码URL](#encodeDecodeURL)
     - [管理安全证书](#securityCerificates)
+    - [下载网页](#downloadFirstLevelLinks)
+    - [微博截图工具](#weiboSnap)
 * [开发工具](#devTools)
 * [设置](#settings)
 * [窗口](#windows)
@@ -396,8 +396,11 @@ MyBox v5.3以前的版本均基于Java 8。
 		-  文件".docx"(Word 2007, 即OOXML格式)被转换为文本，格式丢失。
 	-  查看Word文件。            
 	-  批量转换Word文件为html/PDF。           
-2. 处理PPT文档：
-	-  不说明则同时支持".ppt"(PPT 97，即OLE 2格式)和".pptx"(PPT 2007, 即OOXML格式）： 
+2. 处理PPT文档
+	-  格式：            
+		-  文件".ppt"(PPT 97，即OLE 2格式)。
+		-  文件".pptx"(PPT 2007, 即OOXML格式）。                    
+	   不说明则同时支持这两种格式。                      
 	-  查看PPT文件-图像模式。逐页显示：
 		-  页面被转换为图片
 		-  幻灯片文本和备注文本
@@ -771,7 +774,9 @@ MyBox v5.3以前的版本均基于Java 8。
 3. 矩阵
 	- 在矩阵管理器中增删改矩阵。
 	- 数据保存在MyBox数据库中。
-	- 删除矩阵的记录将会同时删除矩阵包含的数据。
+	- 删除矩阵的记录将会同时删除矩阵包含的数据。           
+
+![截屏-manageData](https://mararsh.github.io/MyBox/snap-dataManage.jpg)        
 
 ### 编辑数据<a id="editData" />
 1. 以下对象可以以一致的方式来编辑：csv/excel/文本数据文件、数据粘贴板、矩阵。
@@ -801,9 +806,12 @@ MyBox v5.3以前的版本均基于Java 8。
 8. 点击按钮“恢复”以丢弃所有修改并从文件和数据库中加载数据。
 9. 处理数据：
 	- 对象：选择行、或文件中所有行，同时选择列。
-	- 操作：赋值、复制、粘贴、排序、统计、百分比、转置、导出
+	- 操作：赋值、复制、粘贴、排序、统计、百分比、归一化、转置、导出
 	- 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。
 10. 同步显示数据的文本格式和网页格式。
+
+![截屏-dataEdit](https://mararsh.github.io/MyBox/snap-dataEdit.jpg)         
+
 
 ### 数据文件<a id="dataFiles" />
 1. 编辑数据文件：
@@ -819,7 +827,6 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 可按最大行数分割转换后的文件。
 3. 合并csv/excel/文本数据文件。        
 
-![截屏-dataSheet](https://mararsh.github.io/MyBox/snap-dataSheet.jpg)         
   
 
 ### 数据粘贴板<a id="dataClipboard" />
@@ -1372,9 +1379,9 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 ## 网络工具<a id="netTools" />
 
-### 下载第一级链接<a id="downloadFirstLevelLinks" />
+### 下载网页<a id="downloadFirstLevelLinks" />
 1. 列出给定网址中的第一级链接。
-2. 下载用户选择的链接:
+2. 下载用户选择链接的网页:
 	-  选择有用的链接。无意义的链接可能生成无用文件并且干扰最后的目录索引。
 	-  使用功能“设置子目录名”以使子目录名字合理。
 	-  使用功能“以链接名/标题/地址为文件名”以使文件名有意义。
@@ -1383,7 +1390,9 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 3. 选项：重写网页中的链接、生成目录索引、修改网页编码、合并为文本/网页/Markdown/PDF。
 4. 可以设置网页样式和PDF的字体。
 
-### 微博截图工具<a id="weiboSnap" />
+### 微博截图工具<a id="weiboSnap" />            
+此工具目前失效。           
+                 
 1. 自动保存任意微博账户的任意月份的微博内容、或者其点赞的内容。
 2. 设置起止月份。
 3. 确保页面完全加载，可以展开页面包含的评论、可以展开页面包含的所有图片。
@@ -1501,7 +1510,17 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 5. About
 
 
-# 开发日志<a id="devLog" />          
+# 开发日志<a id="devLog" />            
+2021-12-26 版本6.5.1         
+
+* 编辑表格：单击开始编辑，失焦提交修改；类型检验；行的复选框。       
+* 编辑数据：表格/文本为主/辅编辑模式，废弃表单模式；统一数据管理界面；处理逻辑从界面移至对象。       
+* 图像：改进图像文件的读取方法；在后端加载缩略图；颜色选择窗口可以直接加载示例调色盘。                         
+* 界面：网页和弹出窗口的样式可所有界面共享；查找/替换的选项可所有界面共享；截图当前窗口或节点的内容。                  
+* 解决：笔记无法输入换行；处理图像的“剪切”按钮失效；另存图片时未提供扩展名选项；长文件名导致弹出菜单失效或者备份失败；文本/字节编辑器的面板无法调整宽度。               
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.1)            
+
 2021-10-13 版本6.4.9         
 
 * 改进：文本编辑器以行数分页、每个换行符算作一个字符；批处理的目标文件名均自动附加时标。       

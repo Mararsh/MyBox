@@ -194,7 +194,7 @@ public class TextInSystemClipboardController extends BaseController {
         } else {
             textArea.appendText((textArea.getLength() > 0 ? "\n" + separateLine : "") + clip);
         }
-        bottomLabel.setText(message("Length") + ": " + textArea.getLength());
+        bottomLabel.setText(message("Count") + ": " + textArea.getLength());
     }
 
     @FXML

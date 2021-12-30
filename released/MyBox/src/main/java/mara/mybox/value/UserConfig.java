@@ -5,7 +5,6 @@ import java.sql.Connection;
 import javafx.scene.paint.Color;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import static mara.mybox.value.AppVariables.userConfigValues;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
@@ -120,7 +119,7 @@ public class UserConfig {
     }
 
     public static File getPath(String key) {
-        return getPath(key, MyBoxTempPath.getAbsolutePath());
+        return getPath(key, AppPaths.getGeneratedPath());
     }
 
     public static File getPath(String key, String defaultValue) {
@@ -137,7 +136,7 @@ public class UserConfig {
             File path = new File(pathString);
             if (!path.exists() || !path.isDirectory()) {
                 deleteValue(key);
-                path = MyBoxTempPath;
+                path = new File(AppPaths.getGeneratedPath());
                 if (!path.exists()) {
                     path.mkdirs();
                 }
@@ -201,27 +200,9 @@ public class UserConfig {
         return setPdfMem(UserConfig.getString("PdfMemDefault", "1GB"));
     }
 
-    public static boolean setRestoreStagesSize(boolean value) {
-        if (UserConfig.setBoolean("RestoreStagesSize", value)) {
-            AppVariables.restoreStagesSize = value;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public static boolean setSceneFontSize(int size) {
         AppVariables.sceneFontSize = size;
         if (UserConfig.setInt("SceneFontSize", size)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean setOpenStageInNewWindow(boolean value) {
-        if (UserConfig.setBoolean("OpenStageInNewWindow", value)) {
-            AppVariables.openStageInNewWindow = value;
             return true;
         } else {
             return false;

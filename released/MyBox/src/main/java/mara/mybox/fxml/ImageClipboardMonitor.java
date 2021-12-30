@@ -24,6 +24,7 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IntTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -35,7 +36,7 @@ public class ImageClipboardMonitor extends Timer {
     public final static int DefaultInterval = 1000;
     protected ImageAttributes attributes;
     protected Date startTime = null;
-    protected int number;
+    protected int recordNumber, savedNumber, copiedNumber;
     protected final Clipboard clipboard = Clipboard.getSystemClipboard();
     protected TableImageClipboard tableImageClipboard = new TableImageClipboard();
     private String filePrefix;
@@ -48,7 +49,9 @@ public class ImageClipboardMonitor extends Timer {
         this.attributes = attributes;
         this.filePrefix = filePrefix;
         startTime = new Date();
-        number = 0;
+        recordNumber = 0;
+        savedNumber = 0;
+        copiedNumber = 0;
         schedule(new MonitorTask(), 0, interval);
         Platform.runLater(() -> {
             ImageInSystemClipboardController.updateSystemClipboardStatus();
@@ -91,15 +94,21 @@ public class ImageClipboardMonitor extends Timer {
                             return;
                         }
                         lastImage = clip;
-                        number++;
+                        recordNumber++;
                         if (controller != null) {
-                            controller.loadClip(clip, number);
+                            controller.loadClip(clip);
                         }
                         if (ImageClipboardTools.isCopy()) {
                             copyToMyBoxClipboard(clip);
                         }
                         if (ImageClipboardTools.isSave()) {
-                            saveImage(clip);
+                            if (filePrefix == null || attributes == null) {
+                                if (controller != null) {
+                                    controller.filesInfo(message("ImageNotSaveDueInvalidPath"));
+                                }
+                            } else {
+                                saveImage(clip);
+                            }
                         }
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
@@ -116,19 +125,32 @@ public class ImageClipboardMonitor extends Timer {
         new Thread() {
             @Override
             public void run() {
+                File file = new File(filePrefix + DateTools.nowFileString() + "-"
+                        + IntTools.random(1000) + "." + attributes.getImageFormat());
+                while (file.exists()) {
+                    file = new File(filePrefix + DateTools.nowFileString() + "-"
+                            + IntTools.random(1000) + "." + attributes.getImageFormat());
+                }
+                String fname = file.getAbsolutePath();
+                if (controller != null) {
+                    Platform.runLater(() -> {
+                        controller.filesInfo(message("Saving") + " " + fname);
+                    });
+                }
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                 int width = ImageClipboardTools.getWidth();
                 if (width > 0) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
                 }
-                File file = new File(filePrefix + DateTools.nowString3() + "-"
-                        + IntTools.random(1000) + "." + attributes.getImageFormat());
-                while (file.exists()) {
-                    file = new File(filePrefix + DateTools.nowString3() + "-"
-                            + IntTools.random(1000) + "." + attributes.getImageFormat());
-                }
                 BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, attributes);
-                ImageFileWriters.writeImageFile(converted, attributes, file.getAbsolutePath());
+                ImageFileWriters.writeImageFile(converted, attributes, fname);
+                savedNumber++;
+                if (controller != null) {
+                    Platform.runLater(() -> {
+                        controller.updateNumbers();
+                        controller.filesInfo("");
+                    });
+                }
             }
         }.start();
     }
@@ -158,6 +180,12 @@ public class ImageClipboardMonitor extends Timer {
                     tableImageClipboard.insertData(conn, ImageClipboard.create(bufferedImage, ImageSource.SystemClipBoard));
                     conn.commit();
                     ControlImagesClipboard.updateClipboards();
+                    copiedNumber++;
+                    if (controller != null) {
+                        Platform.runLater(() -> {
+                            controller.updateNumbers();
+                        });
+                    }
                 } catch (Exception e) {
                     MyBoxLog.debug(e.toString());
                 }
@@ -177,11 +205,11 @@ public class ImageClipboardMonitor extends Timer {
     }
 
     public int getNumber() {
-        return number;
+        return recordNumber;
     }
 
     public void setNumber(int number) {
-        this.number = number;
+        this.recordNumber = number;
     }
 
     public Connection getConn() {
@@ -230,6 +258,30 @@ public class ImageClipboardMonitor extends Timer {
 
     public void setAttributes(ImageAttributes attributes) {
         this.attributes = attributes;
+    }
+
+    public int getRecordNumber() {
+        return recordNumber;
+    }
+
+    public void setRecordNumber(int recordNumber) {
+        this.recordNumber = recordNumber;
+    }
+
+    public int getSavedNumber() {
+        return savedNumber;
+    }
+
+    public void setSavedNumber(int savedNumber) {
+        this.savedNumber = savedNumber;
+    }
+
+    public int getCopiedNumber() {
+        return copiedNumber;
+    }
+
+    public void setCopiedNumber(int copiedNumber) {
+        this.copiedNumber = copiedNumber;
     }
 
 }

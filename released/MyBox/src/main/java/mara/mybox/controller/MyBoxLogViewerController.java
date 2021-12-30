@@ -14,9 +14,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -50,10 +50,13 @@ public class MyBoxLogViewerController extends HtmlTableController {
         try {
             super.initControls();
 
+            AppVariables.popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
+            popCheck.setSelected(AppVariables.popErrorLogs);
             popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     AppVariables.popErrorLogs = popCheck.isSelected();
+                    UserConfig.setBoolean("PopErrorLogs", popCheck.isSelected());
                 }
             });
 

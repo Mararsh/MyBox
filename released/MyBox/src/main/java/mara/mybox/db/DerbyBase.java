@@ -17,8 +17,9 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
-import mara.mybox.db.table.TableDataColumn;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
@@ -28,8 +29,6 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableLocationData;
-import mara.mybox.db.table.TableMatrix;
-import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -528,18 +527,6 @@ public class DerbyBase {
             if (!tables.contains("MyBox_Log".toUpperCase())) {
                 new TableMyBoxLog().createTable(conn);
             }
-            if (!tables.contains("Matrix".toUpperCase())) {
-                new TableMatrix().createTable(conn);
-            }
-            if (!tables.contains("Matrix_Cell".toUpperCase())) {
-                new TableMatrixCell().createTable(conn);
-            }
-            if (!tables.contains("Data_Definition".toUpperCase())) {
-                new TableDataDefinition().createTable(conn);
-            }
-            if (!tables.contains("Data_Column".toUpperCase())) {
-                new TableDataColumn().createTable(conn);
-            }
             if (!tables.contains("Image_Edit_History".toUpperCase())) {
                 new TableImageEditHistory().createTable(conn);
             }
@@ -578,6 +565,15 @@ public class DerbyBase {
             }
             if (!tables.contains("Text_Clipboard".toUpperCase())) {
                 new TableTextClipboard().createTable(conn);
+            }
+            if (!tables.contains("Data2D_Definition".toUpperCase())) {
+                new TableData2DDefinition().createTable(conn);
+            }
+            if (!tables.contains("Data2D_Column".toUpperCase())) {
+                new TableData2DColumn().createTable(conn);
+            }
+            if (!tables.contains("Data2D_Cell".toUpperCase())) {
+                new TableData2DCell().createTable(conn);
             }
             return true;
         } catch (Exception e) {
@@ -644,20 +640,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Data_Definition_unique_index".toUpperCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableDataDefinition.Create_Index_unique);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Data_Column_unique_index".toUpperCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableDataColumn.Create_Index_unique);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("File_Backup_index".toUpperCase())) {
@@ -769,9 +751,9 @@ public class DerbyBase {
 //                    MyBoxLog.error(e);
                 }
             }
-            if (!views.contains("Data_Column_View".toUpperCase())) {
+            if (!views.contains("Data2D_Column_View".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableDataColumn.CreateView);
+                    statement.executeUpdate(TableData2DColumn.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }

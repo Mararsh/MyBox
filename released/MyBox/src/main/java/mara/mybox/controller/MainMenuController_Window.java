@@ -6,8 +6,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.MyBox;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -20,6 +20,18 @@ public abstract class MainMenuController_Window extends MainMenuController_Base 
     @FXML
     protected void showHome(ActionEvent event) {
         openStage(Fxmls.MyboxFxml);
+    }
+
+    @FXML
+    protected void SnapshotWindow(ActionEvent event) {
+        ImageViewerController.load(NodeTools.snap(parentController.thisPane));
+    }
+
+    @FXML
+    protected void SnapshotPane(ActionEvent event) {
+        thisPane.getChildren().remove(mainMenuPane);
+        ImageViewerController.load(NodeTools.snap(parentController.thisPane));
+        thisPane.getChildren().add(0, mainMenuPane);
     }
 
     @FXML

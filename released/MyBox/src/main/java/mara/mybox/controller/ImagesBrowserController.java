@@ -9,7 +9,7 @@ import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
 public class ImagesBrowserController extends ImagesBrowserController_Pane {
 
     public ImagesBrowserController() {
-        baseTitle = Languages.message("ImagesBrowser");
+        baseTitle = message("ImagesBrowser");
         TipsLabelKey = "ImagesBrowserTips";
     }
 
@@ -50,7 +50,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             super.initControls();
 
             List<String> cvalues = Arrays.asList("3", "4", "6",
-                    Languages.message("ThumbnailsList"), Languages.message("FilesList"),
+                    message("ThumbnailsList"), message("FilesList"),
                     "2", "5", "7", "8", "9", "10", "16", "25", "20", "12", "15");
             colsnumBox.getItems().addAll(cvalues);
             colsnumBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -60,13 +60,13 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                         if (isSettingValues) {
                             return;
                         }
-                        if (Languages.message("ThumbnailsList").equals(newValue)) {
+                        if (message("ThumbnailsList").equals(newValue)) {
                             displayMode = DisplayMode.ThumbnailsList;
                             zoomOutAllButton.setDisable(true);
                             zoomInAllButton.setDisable(true);
                             imageSizeAllButton.setDisable(true);
                             paneSizeAllButton.setDisable(true);
-                        } else if (Languages.message("FilesList").equals(newValue)) {
+                        } else if (message("FilesList").equals(newValue)) {
                             displayMode = DisplayMode.FilesList;
                             zoomOutAllButton.setDisable(true);
                             zoomInAllButton.setDisable(true);
@@ -164,7 +164,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(selectFileButton, new Tooltip(Languages.message("SelectMultipleFilesBrowse")));
+            NodeStyleTools.setTooltip(selectFileButton, new Tooltip(message("SelectMultipleFilesBrowse")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

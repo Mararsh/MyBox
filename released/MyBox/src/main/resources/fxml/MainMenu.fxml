@@ -22,6 +22,9 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindow" />
+                                <MenuItem mnemonicParsing="false" onAction="#SnapshotPane" text="%SnapshotPane" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#refreshInterfaceAndFile" text="%RefreshWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#reload" text="%Reload" />
                                 <MenuItem mnemonicParsing="false" onAction="#fullScreen" text="%FullScreen" />
@@ -200,6 +203,8 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu mnemonicParsing="false" text="%Data">
                             <items>
+                                <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%DataFile">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openDataCsv" text="%EditCSV" />
@@ -216,7 +221,8 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataMerge" text="%TextDataMerge" />
                                     </items>
                                 </Menu>
-                                <MenuItem mnemonicParsing="false" onAction="#openDataClipboard" text="%DataClipboard" />
+                                <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
+                                <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatricesManage" text="%MatricesManage" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatrixUnaryCalculation" text="%MatrixUnaryCalculation" />
@@ -307,9 +313,6 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu mnemonicParsing="false" text="%Network">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#downloadFirstLevelLinks" text="%DownloadFirstLevelLinks" />
-                                <MenuItem mnemonicParsing="false" onAction="#openWeiboSnap" text="%WeiboSnap" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openWebBrowser" text="%WebBrowser" />
                                 <MenuItem mnemonicParsing="false" onAction="#webFavorites" text="%WebFavorites" />
                                 <MenuItem mnemonicParsing="false" onAction="#webHistories" text="%WebHistories" />
@@ -317,6 +320,9 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#queryNetworkAddress" text="%QueryNetworkAddress" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryDNSBatch" text="%QueryDNSBatch" />
                                 <MenuItem mnemonicParsing="false" onAction="#openConvertUrl" text="%ConvertUrl" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#downloadFirstLevelLinks" text="%DownloadHtmls" />
+                                <MenuItem mnemonicParsing="false" onAction="#openWeiboSnap" text="%WeiboSnap" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openSecurityCertificates" text="%SecurityCertificates" />
                             </items>
@@ -329,8 +335,8 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMousePassing" />
                                 <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMousePassed" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
-                                <CheckMenuItem fx:id="newWindowCheck" mnemonicParsing="false" onAction="#newWindowAction" text="%OpenStageInNewWindow" />
-                                <CheckMenuItem fx:id="restoreStagesSizeCheck" mnemonicParsing="false" onAction="#restoreStagesSizeAction" text="%RestoreStagesSize" />
+                                <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
+                                <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
                                 <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">

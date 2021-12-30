@@ -11,6 +11,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
@@ -51,7 +52,7 @@ public class MessageAuthorController extends BaseController {
     @FXML
     public void messageAction() {
         synchronized (this) {
-            SingletonTask mailTask = new SingletonTask<Void>() {
+            SingletonTask mailTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

@@ -11,9 +11,10 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -53,10 +54,10 @@ public class BaseTaskController extends BaseController {
     @Override
     public void startAction() {
         if (startButton.getUserData() != null) {
-            StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
+            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
-            cancelAction();
+            cancelTask();
             return;
         }
         if (!checkOptions()) {
@@ -67,7 +68,7 @@ public class BaseTaskController extends BaseController {
                 return;
             }
             initLogs();
-            StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStart.png");
+            StyleTools.setNameIcon(startButton, message("Stop"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData("started");
             if (tabPane != null && logsTab != null) {
@@ -83,7 +84,7 @@ public class BaseTaskController extends BaseController {
     }
 
     public void startTask() {
-        task = new SingletonTask<Void>() {
+        task = new SingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -98,15 +99,16 @@ public class BaseTaskController extends BaseController {
 
             @Override
             protected void whenCanceled() {
-                updateLogs(Languages.message("Cancel"));
+                updateLogs(message("Cancel"));
             }
 
             @Override
             protected void finalAction() {
-                StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
+                task = null;
+                StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
                 startButton.applyCss();
                 startButton.setUserData(null);
-                updateLogs(Languages.message("Completed") + " " + Languages.message("Cost")
+                updateLogs(message("Completed") + " " + message("Cost")
                         + " " + DateTools.datetimeMsDuration(new Date(), startTime));
                 afterTask();
             }
@@ -121,15 +123,20 @@ public class BaseTaskController extends BaseController {
     protected void afterSuccess() {
     }
 
-    @Override
-    public void cancelAction() {
+    public void cancelTask() {
         if (task != null) {
             task.cancel();
             task = null;
         }
     }
 
+    @Override
+    public void cancelAction() {
+        cancelTask();
+    }
+
     protected void afterTask() {
+
     }
 
     @FXML
@@ -169,18 +176,22 @@ public class BaseTaskController extends BaseController {
     }
 
     protected boolean targetFileGenerated(File target) {
+        return targetFileGenerated(target, TargetFileType);
+    }
+
+    protected boolean targetFileGenerated(File target, int type) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
-        updateLogs(MessageFormat.format(Languages.message("FilesGenerated"), target.getAbsolutePath()));
-        recordFileWritten(target);
+        updateLogs(MessageFormat.format(message("FilesGenerated"), target.getAbsolutePath()));
+        recordFileWritten(target, type, type);
         return true;
     }
 
     @Override
     public void cleanPane() {
         try {
-            cancelAction();
+            cancelTask();
             cancelled = true;
         } catch (Exception e) {
         }

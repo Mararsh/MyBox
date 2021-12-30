@@ -25,22 +25,15 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
-
 import mara.mybox.fxml.SoundTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -206,22 +199,18 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
         if (pos >= 0) {
             name = name.substring(0, pos);
         }
-        targetFileInput.setText(targetFile.getParent() + File.separator + name + "." + extension);
+        targetFileController.input(targetFile.getParent() + File.separator + name + "." + extension);
     }
 
     @Override
     public void initTargetSection() {
         super.initTargetSection();
 
-        targetFileInput.textProperty().addListener(
-                new ChangeListener<String>() {
+        targetFileController.notify.addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 try {
-                    targetFile = new File(newValue);
-                    targetFileInput.setStyle(null);
-                    recordFileWritten(targetFile.getParent());
+                    targetFile = targetFileController.file;
                     if (rootInput.getText().trim().isEmpty()) {
                         String name = targetFile.getName();
                         int pos = name.indexOf('.');
@@ -231,55 +220,18 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                         rootInput.setText(name);
                     }
                 } catch (Exception e) {
-                    targetFile = null;
-                    targetFileInput.setStyle(UserConfig.badStyle());
                 }
             }
         });
 
         openTargetButton.disableProperty().unbind();
-        openTargetButton.disableProperty().bind(Bindings.
-                isEmpty(targetFileInput.textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-        );
+        openTargetButton.disableProperty().bind(targetFileController.valid.not());
 
         startButton.disableProperty().unbind();
-        startButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.
-                textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+        startButton.disableProperty().bind(targetFileController.valid.not()
                 .or(Bindings.isEmpty(tableData))
         );
 
-    }
-
-    @Override
-    public void selectTargetFileFromPath(File path) {
-        try {
-            final File file = chooseSaveFile(path, rootName + "." + extension, null);
-            if (file == null) {
-                return;
-            }
-            selectTargetFile(file);
-        } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void selectTargetFile(File file) {
-        try {
-            if (file == null) {
-                return;
-            }
-            targetFile = file;
-            recordFileWritten(targetFile);
-
-            if (targetFileInput != null) {
-                targetFileInput.setText(targetFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
-        }
     }
 
     @Override

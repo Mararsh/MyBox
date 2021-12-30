@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/Red/iconFileAdd.png" />
+                                                        <Image url="@../buttons/Red/iconAdd.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -64,7 +64,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/Red/iconFileDelete.png" />
+                                                        <Image url="@../buttons/Red/iconDelete.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -89,8 +89,13 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </items>
                                 </ToolBar>
-                                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                     <columns>
+                                        <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                            <graphic>
+                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                            </graphic>
+                                        </TableColumn>
                                         <TableColumn fx:id="nameColumn" prefWidth="170.0" text="%Name" />
                                         <TableColumn fx:id="widthColumn" prefWidth="60.0" text="%Width" />
                                         <TableColumn fx:id="heightColumn" prefWidth="60.0" text="%Height" />

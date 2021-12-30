@@ -16,14 +16,13 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2021-7-27
  * @License Apache License Version 2.0
  */
-public class MenuController extends BaseController {
+public class MenuController extends BaseChildController {
 
     protected Node node;
     protected String baseStyle;
@@ -42,23 +41,30 @@ public class MenuController extends BaseController {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
+            super.initValues();
+
             parentController = this;
             baseStyle = thisPane.getStyle();
             if (baseStyle == null) {
                 baseStyle = "";
             }
-            String style = UserConfig.getString(baseName + "WindowStyle", "");
-            PopTools.setMenuLabelsStyle(thisPane, baseStyle + style);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @Override
-    public void setStageStatus() {
-        setAsPopup(baseName);
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            PopTools.setWindowStyle(thisPane, baseName, baseStyle);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void setParameters(BaseController parent, Node node, double x, double y) {
@@ -126,25 +132,7 @@ public class MenuController extends BaseController {
 
     @FXML
     public void popStyles(MouseEvent mouseEvent) {
-        PopTools.popMenuStyles(this, baseStyle, mouseEvent);
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        closeStage();
-    }
-
-    @Override
-    public boolean keyESC() {
-        closeStage();
-        return false;
-    }
-
-    @Override
-    public boolean keyF6() {
-        closeStage();
-        return false;
+        PopTools.popWindowStyles(this, baseStyle, mouseEvent);
     }
 
     /*

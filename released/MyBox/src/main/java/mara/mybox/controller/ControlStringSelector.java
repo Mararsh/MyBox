@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -80,7 +81,7 @@ public class ControlStringSelector extends BaseController {
             if (task != null) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private List<String> values;
                 private String value;
 

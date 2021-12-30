@@ -23,6 +23,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListImageCell;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
@@ -132,7 +133,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private BufferedImage bufferedImage;
 
@@ -196,7 +197,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
                     private BufferedImage[] outline;
 
                     @Override
@@ -248,7 +249,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image outlineImage;
 
                 @Override

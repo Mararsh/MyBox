@@ -11,10 +11,10 @@ import java.awt.GraphicsEnvironment;
 import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
@@ -76,7 +76,7 @@ public class MyBoxPropertiesController extends HtmlTableController {
                             bounds.getWidth(), bounds.getHeight(),
                             screen.getOutputScaleX(), screen.getOutputScaleY()));
 
-            addData("WebView", new WebView().getEngine().getUserAgent());
+            addData("WebView", WebViewTools.userAgent());
 
             addData(message("FileEncoding"), System.getProperty("file.encoding"));
             addData(message("FileSeparator"), System.getProperty("file.separator"));

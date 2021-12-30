@@ -42,6 +42,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.fxml.cell.TableMessageCell;
@@ -49,6 +50,7 @@ import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -121,7 +123,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                 + new TableEpidemicReport().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + new TableGeographyCode().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + TableEpidemicReport.CreateStatisticView.replaceAll("\n", "</BR>");
-        tableDefinitionString = HtmlWriteTools.html(tableName, html);
+        tableDefinitionString = HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
         viewDefinition = tableDefinition;
     }
 
@@ -155,6 +157,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             datasetColumn.setCellValueFactory(new PropertyValueFactory<>("dataSet"));
             locationColumn.setCellValueFactory(new PropertyValueFactory<>("locationFullName"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
@@ -317,7 +320,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<String> datasets;
                 private List<Date> times;
@@ -473,7 +476,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     }
 
     @Override
-    public boolean preLoadingTableData() {
+    public boolean checkBeforeLoadingTableData() {
         Tab currentTab = tabsPane.getSelectionModel().getSelectedItem();
         tabsPane.getTabs().clear();
         tabsPane.getTabs().add(infoTab);
@@ -497,14 +500,14 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         if (tabsPane.getTabs().contains(currentTab)) {
             tabsPane.getSelectionModel().select(currentTab);
         }
-        return super.preLoadingTableData();
+        return super.checkBeforeLoadingTableData();
     }
 
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         if (topNumber > 0) {
             readTopData();
-            return totalSize;
+            return dataSize;
         } else {
             return DerbyBase.size(sizeQuerySQL);
         }
@@ -526,7 +529,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         dataLocations.clear();
         timesReports.clear();
         locationsReports.clear();
-        totalSize = 0;
+        dataSize = 0;
         maxValue = 0;
         if (topNumber <= 0 || !dataQuerySQL.contains("time DESC")) {
             return false;
@@ -572,7 +575,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                         GeographyCode location = TableGeographyCode.readCode(conn, locationid, true);
                         report.setLocation(location);
                         timeReports.add(report);
-                        totalSize++;
+                        dataSize++;
                         Number n = EpidemicReportTools.getNumber(report, valueName);
                         if (n != null) {
                             double value = n.doubleValue();
@@ -619,7 +622,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
 
             if (loading != null) {
                 loading.setInfo(Languages.message("DateNumber") + ": " + dataTimes.size()
-                        + " " + Languages.message("TotalSize") + ": " + totalSize);
+                        + " " + Languages.message("TotalSize") + ": " + dataSize);
             }
             Platform.runLater(() -> {
                 chartController.loadCharts();
@@ -643,12 +646,12 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         }
         pageQueryString = pageQueryString + "</br>" + Languages.message("NumberTopDataDaily") + ": " + topNumber;
         List<EpidemicReport> data = new ArrayList();
-        int start = 0;
-        int targetStart = currentPageStart - 1;
-        int targetEnd = currentPageStart + currentPageSize;
+        long start = 0;
+        long targetStart = startRowOfCurrentPage;
+        long targetEnd = startRowOfCurrentPage + pageSize;
         for (String date : dataTimes) {
             List<EpidemicReport> reports = timesReports.get(date);
-            int end = start + reports.size();
+            long end = start + reports.size();
             if (end <= targetStart) {
                 start = end;
                 continue;
@@ -656,8 +659,8 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             if (start >= targetEnd) {
                 break;
             }
-            int readStart = Math.max(start, targetStart) - start;
-            int readEnd = Math.min(end, targetEnd) - start;
+            int readStart = (int) (Math.max(start, targetStart) - start);
+            int readEnd = (int) (Math.min(end, targetEnd) - start);
             if (readStart < readEnd) {
                 data.addAll(reports.subList(readStart, readEnd));
             }
@@ -674,7 +677,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             info += "<SPAN class=\"boldText\">" + Languages.message("LocationsNumber") + ": </SPAN>";
             info += "<SPAN class=\"valueText\">" + dataLocations.size() + "</SPAN></br>";
             info += "<SPAN class=\"boldText\">" + Languages.message("DataNumber") + ": </SPAN>";
-            info += "<SPAN class=\"valueText\">" + totalSize + "</SPAN></br></br>";
+            info += "<SPAN class=\"valueText\">" + dataSize + "</SPAN></br></br>";
             return info;
         } else {
             return "";
@@ -690,10 +693,10 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         EpidemicReport selected = (EpidemicReport) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            addAction(event);
+            addAction();
             return;
         }
         try {
@@ -746,7 +749,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -844,7 +847,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         try {
             EpidemicReportEditController controller
                     = (EpidemicReportEditController) openScene(null, Fxmls.EpidemicReportEditFxml);
@@ -940,8 +943,8 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         EpidemicReportsImportExternalCSVController controller
                 = (EpidemicReportsImportExternalCSVController) openStage(Fxmls.EpidemicReportsImportExternalCSVFxml);
         controller.parent = this;
-        File file = FxFileTools.getInternalFile("/data/db/Epidemic_Report_JHU_2020924.csv",
-                "data", "Epidemic_Report_JHU_2020924.csv");
+        File file = FxFileTools.getInternalFile("/data/db/Epidemic_Report_JHU_20200430.csv",
+                "data", "Epidemic_Report_JHU_20200430.csv");
         controller.predefined = false;
         controller.startFile(file, true, true);
     }

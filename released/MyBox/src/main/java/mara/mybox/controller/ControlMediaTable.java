@@ -3,9 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,20 +15,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.Track;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import static mara.mybox.controller.MediaPlayerController.MiaoGuaiGuaiBenBen;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDurationCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -47,6 +42,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     protected String mediaListName;
     protected List<String> examples;
+    protected boolean loadInfo = true;
 
     @FXML
     protected TableColumn<MediaInformation, String> addressColumn,
@@ -103,7 +99,9 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         try {
             MediaInformation info = new MediaInformation(file);
             info.setDuration(-1);
-            readMediaInfo(info, message("ReadingMedia...") + "\n" + info.getURI().toString());
+            if (loadInfo) {
+                loadMediaInfo(info);
+            }
             return info;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -115,7 +113,9 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     protected MediaInformation create(String address) {
         try {
             MediaInformation info = new MediaInformation(address);
-            readMediaInfo(info, message("ReadingStreamMedia...") + "\n" + info.getURI().toString());
+            if (loadInfo) {
+                loadMediaInfo(info);
+            }
             return info;
         } catch (Exception e) {
             popError(e.toString());
@@ -124,9 +124,9 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         }
     }
 
-    protected void readMediaInfo(MediaInformation info, String msg) {
+    protected void loadMediaInfo(MediaInformation info) {
         synchronized (this) {
-            SingletonTask infoTask = new SingletonTask<Void>() {
+            SingletonTask infoTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -164,7 +164,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                             @Override
                             public void run() {
                                 try {
-                                    readMediaInfo(info, media);
+                                    info.readMediaInfo(media);
                                     player.dispose();
                                     Platform.runLater(new Runnable() {
                                         @Override
@@ -198,186 +198,8 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                 }
 
             };
-            Platform.runLater(() -> {
-                parentController.start(infoTask, msg);
-            });
+            start(infoTask, false);
         }
-    }
-
-    public boolean readMediaInfo(final MediaInformation info, Media media) {
-        try {
-            if (info == null || info.getAddress() == null || media == null) {
-                return false;
-            }
-            StringBuilder s = new StringBuilder();
-            s.append(message("Address")).append(info.getURI().toString()).append("\n");
-
-            Duration duration = media.getDuration();
-            if (duration != null) {
-                info.setDuration(Math.round(duration.toMillis()));
-                s.append(message("Duration")).append(": ").append(DateTools.datetimeMsDuration(info.getDuration())).append("\n");
-            }
-
-            if (media.getWidth() > 0 && media.getHeight() > 0) {
-                info.setWidth(media.getWidth());
-                info.setHeight(media.getHeight());
-                s.append(message("Resolution")).append(": ").append(info.getResolution()).append("\n");
-            }
-            if (info.getFileSize() > 0) {
-                s.append(message("Size")).append(": ").append(FileTools.showFileSize(info.getFileSize())).append("\n");
-            }
-
-            Map<String, Object> meta = media.getMetadata();
-            if (meta != null && !meta.isEmpty()) {
-                for (String mk : meta.keySet()) {
-                    s.append(mk).append(": ").append(meta.get(mk).toString()).append("\n");
-                }
-            }
-            Map<String, Duration> markers = media.getMarkers();
-            if (markers != null && !markers.isEmpty()) {
-                for (String mk : markers.keySet()) {
-                    s.append(mk).append(": ").append(markers.get(mk).toString()).append("\n");
-                }
-            }
-            List<Track> tracks = media.getTracks();
-
-            if (tracks != null && !tracks.isEmpty()) {
-                for (Track track : tracks) {
-                    String name = "";
-                    s.append("Track: ").append(track.getTrackID()).append("\n");
-
-                    if (track.getName() != null) {
-                        s.append("Name: ").append(track.getName()).append("\n");
-                        name = track.getName();
-                    }
-                    if (track.getLocale() != null) {
-                        s.append("Locale: ").append(track.getLocale().getDisplayName()).append("\n");
-                    }
-                    Map<String, Object> trackMeta = track.getMetadata();
-                    if (trackMeta != null && !trackMeta.isEmpty()) {
-                        for (String mk : trackMeta.keySet()) {
-                            s.append(mk).append(": ").append(trackMeta.get(mk).toString()).append("\n");
-                            if (mk.toLowerCase().contains("encoding")) {
-                                if (name.toLowerCase().contains("audio")) {
-                                    info.setAudioEncoding(name + " " + trackMeta.get(mk).toString());
-                                } else if (name.toLowerCase().contains("video")) {
-                                    info.setVideoEncoding(name + " " + trackMeta.get(mk).toString());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            info.setInfo(s.toString());
-            info.setFinish(true);
-            makeHtml(info, media);
-            TableMedia.write(info);
-            return true;
-        } catch (Exception e) {
-            popError(message("FailOpenMedia"));
-            MyBoxLog.debug(e.toString());
-            info.setFinish(true);
-            return false;
-        }
-
-    }
-
-    public void makeHtml(MediaInformation info, Media media) {
-        if (info == null) {
-            return;
-        }
-        StringBuilder s = new StringBuilder();
-        s.append("<h1  class=\"center\">").append(info.getAddress()).append("</h1>\n");
-        s.append("<hr>\n");
-        List<String> names = new ArrayList<>();
-        names.addAll(Arrays.asList(message("Name"), message("Value")));
-        StringTable table = new StringTable(names);
-        List<String> row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Duration"), DateTools.datetimeMsDuration(info.getDuration())));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Resolution"), info.getResolution()));
-        table.add(row);
-        if (info.getFileSize() > 0) {
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("Size"), FileTools.showFileSize(info.getFileSize())));
-            table.add(row);
-        }
-        if (info.getVideoEncoding() != null) {
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("VideoEncoding"), info.getVideoEncoding()));
-            table.add(row);
-        }
-        if (info.getAudioEncoding() != null) {
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("AudioEncoding"), info.getAudioEncoding()));
-            table.add(row);
-        }
-        s.append(StringTable.tableDiv(table));
-
-        if (media == null) {
-            info.setHtml(s.toString());
-            return;
-        }
-        Map<String, Object> meta = media.getMetadata();
-        if (meta != null && !meta.isEmpty()) {
-            s.append("<h2  class=\"center\">").append("MetaData").append("</h2>\n");
-            names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("Meta"), message("Value")));
-            table = new StringTable(names);
-            for (String mk : meta.keySet()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(mk, meta.get(mk).toString()));
-                table.add(row);
-            }
-            s.append(StringTable.tableDiv(table));
-        }
-
-        Map<String, Duration> markers = media.getMarkers();
-        if (markers != null && !markers.isEmpty()) {
-            s.append("<h2  class=\"center\">").append("Markers").append("</h2>\n");
-            names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("Marker"), message("Value")));
-            table = new StringTable(names);
-            for (String mk : markers.keySet()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(mk, markers.get(mk).toString()));
-                table.add(row);
-            }
-            s.append(StringTable.tableDiv(table));
-        }
-
-        List<Track> tracks = media.getTracks();
-        if (tracks != null && !tracks.isEmpty()) {
-            s.append("<h2  class=\"center\">").append("Tracks").append("</h2>\n");
-            for (Track track : tracks) {
-                s.append("<h3  class=\"center\">").append("trackID:").append(track.getTrackID()).append("</h3>\n");
-                names = new ArrayList<>();
-                names.addAll(Arrays.asList(message("Name"), message("Value")));
-                table = new StringTable(names);
-                if (track.getName() != null) {
-                    row = new ArrayList<>();
-                    row.addAll(Arrays.asList("Name", track.getName()));
-                    table.add(row);
-                }
-                if (track.getLocale() != null) {
-                    row = new ArrayList<>();
-                    row.addAll(Arrays.asList("Locale", track.getLocale().getDisplayName()));
-                    table.add(row);
-                }
-                Map<String, Object> trackMeta = track.getMetadata();
-                if (trackMeta != null && !trackMeta.isEmpty()) {
-                    for (String mk : trackMeta.keySet()) {
-                        row = new ArrayList<>();
-                        row.addAll(Arrays.asList(mk, trackMeta.get(mk).toString()));
-                        table.add(row);
-                    }
-                }
-                s.append(StringTable.tableDiv(table));
-            }
-        }
-        info.setHtml(s.toString());
-
     }
 
     public void handleMediaError(MediaInformation info, MediaException exception) {
@@ -406,9 +228,9 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @Override
-    public void tableSelected() {
-        super.tableSelected();
-        MediaInformation selected = (MediaInformation) tableView.getSelectionModel().getSelectedItem();
+    public void checkSelected() {
+        super.checkSelected();
+        MediaInformation selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null || selected.getInfo() == null) {
             return;
         }
@@ -548,6 +370,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         tableView.refresh();
     }
@@ -567,7 +390,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             return;
         }
         if (info.getHtml() == null) {
-            makeHtml(info, null);
+            info.makeHtml(null);
         }
         ControllerTools.openHtmlTable(null, info.getHtml());
     }
@@ -634,7 +457,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             }
             tableData.clear();
             try {
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     List<File> miaos;
 

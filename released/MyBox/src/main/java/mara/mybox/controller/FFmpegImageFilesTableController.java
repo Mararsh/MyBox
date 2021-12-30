@@ -4,23 +4,16 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.UserConfig;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
-import thridparty.TableAutoCommitCell;
+import mara.mybox.value.UserConfig;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -40,8 +33,6 @@ public class FFmpegImageFilesTableController extends FilesTableController {
     protected TableColumn<FileInformation, Long> durationColumn;
     @FXML
     protected TextField durationInput;
-    @FXML
-    protected Button exampleRegexButton;
 
     public FFmpegImageFilesTableController() {
     }
@@ -84,34 +75,39 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             super.initColumns();
 
             durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
-            durationColumn.setCellFactory(new Callback<TableColumn<FileInformation, Long>, TableCell<FileInformation, Long>>() {
-                @Override
-                public TableCell<FileInformation, Long> call(TableColumn<FileInformation, Long> param) {
-                    TableAutoCommitCell<FileInformation, Long> cell = new TableAutoCommitCell();
-                    cell.setConverter(new LongStringConverter());
-                    return cell;
-                }
-            });
-            durationColumn.setOnEditCommit(new EventHandler<CellEditEvent<FileInformation, Long>>() {
-                @Override
-                public void handle(CellEditEvent<FileInformation, Long> t) {
-                    try {
-                        long v = (long) (t.getNewValue());
-                        if (v > 0) {
-                            t.getTableView().getItems().get(t.getTablePosition().getRow()).setDuration(v);
-                            if (!isSettingValues) {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateLabel();
-                                    }
-                                });
-                            }
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+            durationColumn.setCellFactory((TableColumn<FileInformation, Long> param) -> {
+                TableAutoCommitCell<FileInformation, Long> cell
+                        = new TableAutoCommitCell<FileInformation, Long>(new LongStringConverter()) {
+
+                    @Override
+                    public boolean valid(Long value) {
+                        return value > 0;
                     }
-                }
+
+                    @Override
+                    public void commitEdit(Long value) {
+                        try {
+                            int rowIndex = rowIndex();
+                            if (rowIndex < 0 || !valid(value)) {
+                                cancelEdit();
+                                return;
+                            }
+                            FileInformation row = tableData.get(rowIndex);
+                            if (value != row.getDuration()) {
+                                super.commitEdit(value);
+                                row.setDuration(value);
+                                if (!isSettingValues) {
+                                    Platform.runLater(() -> {
+                                        updateLabel();
+                                    });
+                                }
+                            }
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e);
+                        }
+                    }
+                };
+                return cell;
             });
             durationColumn.getStyleClass().add("editable-column");
 

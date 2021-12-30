@@ -4,7 +4,6 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
@@ -21,7 +20,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Screen;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
@@ -29,8 +27,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -176,7 +174,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                     angleBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
             );
 
-            editAction(null);
+            editAction();
             editor.htmlEditor.setHtmlText(Languages.message("ImageTextComments"));
 
         } catch (Exception e) {
@@ -235,7 +233,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
     }
 
     @FXML
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         initWebview();
         if (editor == null || !editor.getMyStage().isShowing()) {
             editor = (ImageTextController) openStage(Fxmls.ImageTextFxml);
@@ -286,14 +284,11 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             return node.snapshot(spa, null);
         }
         double scale = NodeTools.screenDpi() / 96;
-        WritableImage image = new WritableImage(
-                (int) Math.round(node.getWidth() * scale),
-                (int) Math.round(node.getHeight() * scale));
         SnapshotParameters spa = new SnapshotParameters();
         spa.setTransform(Transform.scale(scale, scale));
         spa.setFill(Color.TRANSPARENT);
         spa.setDepthBuffer(true);
-        Image snap = node.snapshot(spa, image);
+        Image snap = node.snapshot(spa, null);
         if (keepScale) {
             snap = ScaleTools.scaleImage(snap,
                     (int) node.getWidth(), (int) node.getHeight());
@@ -320,14 +315,11 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
                 // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
                 double scale = NodeTools.dpiScale();
-                final WritableImage snap = new WritableImage(
-                        (int) Math.round(webView.getWidth() * scale),
-                        (int) Math.round(webView.getHeight() * scale));
                 final SnapshotParameters parameters = new SnapshotParameters();
                 parameters.setTransform(Transform.scale(scale, scale));
                 parameters.setFill(Color.TRANSPARENT);
-                webView.snapshot(parameters, snap);
-                task = new SingletonTask<Void>() {
+                final WritableImage snap = webView.snapshot(parameters, null);
+                task = new SingletonTask<Void>(this) {
                     private Image transparent, blended;
 
                     @Override

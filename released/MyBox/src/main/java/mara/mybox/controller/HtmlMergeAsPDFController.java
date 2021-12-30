@@ -58,7 +58,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
             if (targetFile == null) {
                 return false;
             }
-            targetFile = makeTargetFile(targetFile.getName(), targetFile.getParentFile(), false);
+            targetFile = makeTargetFile(targetFile.getName(), targetFile.getParentFile());
             if (targetFile == null) {
                 return false;
             }

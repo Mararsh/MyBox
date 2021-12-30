@@ -15,7 +15,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuTextEditController">
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuTextEditController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -183,6 +183,15 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox fx:id="fileBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
+                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconPop.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -201,11 +210,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                    </children>
+                </HBox>
+            <HBox fx:id="fileBox1" alignment="CENTER_LEFT" layoutX="10.0" layoutY="109.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+               <children>
+                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconPop.png" />
+                                        <Image url="@../buttons/IconSaveAs.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -219,17 +232,35 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/IconSaveAs.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </HBox>
+                  <Button fx:id="htmlButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#htmlAction">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/IconHtml.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="pdfButton" layoutX="92.0" layoutY="10.0" mnemonicParsing="false" onAction="#pdfAction">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/IconPDF.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSnapshot.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
             </children>
         </VBox>
         <Separator />

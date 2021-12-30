@@ -12,7 +12,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -22,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -39,6 +37,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -50,6 +49,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
@@ -234,7 +234,6 @@ public abstract class BaseMapController extends BaseController {
 
             webEngine = mapView.getEngine();
             webEngine.setJavaScriptEnabled(true);
-//            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
 
             webEngine.setOnAlert((WebEvent<String> ev) -> {
                 mapEvents(ev.getData());
@@ -585,18 +584,13 @@ public abstract class BaseMapController extends BaseController {
         SnapshotParameters snapPara = new SnapshotParameters();
         snapPara.setFill(Color.TRANSPARENT);
         snapPara.setTransform(Transform.scale(scale, scale));
-
-        Bounds bounds = snapBox.getLayoutBounds();
-        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-        final Image mapSnap = snapBox.snapshot(snapPara, snapshot);
+        final Image mapSnap = snapBox.snapshot(snapPara, null);
 
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -639,18 +633,13 @@ public abstract class BaseMapController extends BaseController {
         SnapshotParameters snapPara = new SnapshotParameters();
         snapPara.setFill(Color.TRANSPARENT);
         snapPara.setTransform(Transform.scale(scale, scale));
-
-        Bounds bounds = snapBox.getLayoutBounds();
-        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-        final Image mapSnap = snapBox.snapshot(snapPara, snapshot);
+        final Image mapSnap = snapBox.snapshot(snapPara, null);
 
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -681,7 +670,7 @@ public abstract class BaseMapController extends BaseController {
                             return false;
                         }
 
-                        String html = HtmlWriteTools.html(htmlTitle, s.toString());
+                        String html = HtmlWriteTools.html(htmlTitle, HtmlStyles.styleValue("Default"), s.toString());
                         TextFileTools.writeFile(htmlFile, html, Charset.forName("utf-8"));
 
                         if (task == null || isCancelled()) {

@@ -18,11 +18,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.StringTable;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.UserConfig;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageConvolution;
@@ -30,15 +25,16 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITessAPI.TessPageIteratorLevel;
@@ -76,6 +72,11 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     public ImageOCRBatchController() {
         baseTitle = Languages.message("ImageOCRBatch");
         browseTargets = false;
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image, VisitHistory.FileType.Text);
     }
 
     @Override

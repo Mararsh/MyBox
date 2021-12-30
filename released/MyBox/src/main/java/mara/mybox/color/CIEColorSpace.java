@@ -6,7 +6,7 @@ import static mara.mybox.color.AdobeRGB.gammaAdobeRGB;
 import static mara.mybox.color.AppleRGB.gammaAppleRGB;
 import static mara.mybox.color.ColorBase.clipRGB;
 import static mara.mybox.color.SRGB.gammaSRGB;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.tools.DoubleMatrixTools;
 
 /**
  * @Author Mara
@@ -41,7 +41,7 @@ public class CIEColorSpace {
             {-0.5138850, 1.4253036, 0.0885814},
             {0.0052982, -0.0146949, 1.0093968}
         };
-        double[] cieRGB = MatrixDoubleTools.multiply(matrix, xyz);
+        double[] cieRGB = DoubleMatrixTools.multiply(matrix, xyz);
         return cieRGB;
     }
 
@@ -166,7 +166,7 @@ public class CIEColorSpace {
             {-0.9787684, 1.9161415, 0.0334540},
             {0.0719453, -0.2289914, 1.4052427}
         };
-        double[] linearRGB = MatrixDoubleTools.multiply(matrix, xyz);
+        double[] linearRGB = DoubleMatrixTools.multiply(matrix, xyz);
         linearRGB = clipRGB(linearRGB);
 
         double[] srgb = gammaSRGB(linearRGB);
@@ -185,7 +185,7 @@ public class CIEColorSpace {
             {-0.9692436362808797, 1.8759675015077204, 0.0415550574071756},
             {0.05563007969699365, -0.20397695888897652, 1.0569715142428786}
         };
-        double[] linearRGB = MatrixDoubleTools.multiply(matrix, xyzd65);
+        double[] linearRGB = DoubleMatrixTools.multiply(matrix, xyzd65);
         linearRGB = clipRGB(linearRGB);
         return linearRGB;
     }
@@ -223,7 +223,7 @@ public class CIEColorSpace {
             {-0.9692660, 1.8760108, 0.0415560},
             {0.0134474, -0.1183897, 1.0154096}
         };
-        double[] linearRGB = MatrixDoubleTools.multiply(matrix, xyzd65);
+        double[] linearRGB = DoubleMatrixTools.multiply(matrix, xyzd65);
         linearRGB = clipRGB(linearRGB);
         return linearRGB;
     }
@@ -234,7 +234,7 @@ public class CIEColorSpace {
             {-0.9787684, 1.9161415, 0.0334540},
             {0.0286869, -0.1406752, 1.3487655}
         };
-        double[] linearRGB = MatrixDoubleTools.multiply(matrix, xyzD50);
+        double[] linearRGB = DoubleMatrixTools.multiply(matrix, xyzD50);
         linearRGB = clipRGB(linearRGB);
 
         double[] rgb = gammaAdobeRGB(linearRGB);
@@ -274,7 +274,7 @@ public class CIEColorSpace {
             {-1.0851093, 1.9908566, 0.0372026},
             {0.0854934, -0.2694964, 1.09129756}
         };
-        double[] linearRGB = MatrixDoubleTools.multiply(matrix, xyzd65);
+        double[] linearRGB = DoubleMatrixTools.multiply(matrix, xyzd65);
         linearRGB = clipRGB(linearRGB);
         return linearRGB;
     }
@@ -285,7 +285,7 @@ public class CIEColorSpace {
             {-1.0927680, 2.0348871, 0.0227598},
             {0.1027403, -0.2964984, 1.4510659}
         };
-        double[] linearRGB = MatrixDoubleTools.multiply(matrix, xyzD50);
+        double[] linearRGB = DoubleMatrixTools.multiply(matrix, xyzD50);
         linearRGB = clipRGB(linearRGB);
 
         double[] rgb = gammaAppleRGB(linearRGB);

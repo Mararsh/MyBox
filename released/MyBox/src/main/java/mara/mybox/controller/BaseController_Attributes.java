@@ -27,11 +27,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import mara.mybox.data.BaseTask;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -55,18 +55,13 @@ public abstract class BaseController_Attributes {
     protected Timer popupTimer, timer;
     protected Popup popup;
     protected ContextMenu popMenu;
-    protected String targetFileSuffix, targetNameAppend;
-    protected boolean isSettingValues, isPop;
+    protected String targetFileSuffix;
+    protected boolean isSettingValues, isPop, needRecordVisit;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected SaveAsType saveAsType;
-    protected TargetExistType targetExistType;
 
     protected enum SaveAsType {
         Load, Open, None
-    }
-
-    public static enum TargetExistType {
-        Rename, Replace, Skip
     }
 
     @FXML
@@ -74,18 +69,21 @@ public abstract class BaseController_Attributes {
     @FXML
     protected MainMenuController mainMenuController;
     @FXML
-    protected TextField sourceFileInput, sourcePathInput, targetAppendInput,
-            targetPathInput, targetPrefixInput, targetFileInput, statusLabel;
+    protected TextField sourceFileInput, sourcePathInput, targetPrefixInput, statusLabel;
     @FXML
     protected OperationController operationBarController;
+    @FXML
+    protected ControlTargetPath targetPathController;
+    @FXML
+    protected ControlTargetFile targetFileController;
     @FXML
     protected Button selectFileButton, okButton, startButton, goButton, previewButton, playButton, stopButton,
             editButton, deleteButton, saveButton, cropButton, saveAsButton, undoButton, redoButton,
             clearButton, createButton, cancelButton, addButton, recoverButton, viewButton, popButton,
-            copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton,
+            copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton, addRowsButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
             myBoxClipboardButton, systemClipboardButton, selectButton, selectAllButton, selectNoneButton,
-            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
+            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton, panesMenuButton,
             firstButton, lastButton, previousButton, nextButton, pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
             infoButton, metaButton, transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
@@ -97,10 +95,9 @@ public abstract class BaseController_Attributes {
     @FXML
     protected CheckBox topCheck, saveCloseCheck, closeRightPaneCheck;
     @FXML
-    protected ToggleGroup saveAsGroup, targetExistGroup, fileTypeGroup;
+    protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML
-    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio,
-            targetReplaceRadio, targetRenameRadio, targetSkipRadio;
+    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
     @FXML
     protected SplitPane splitPane;
     @FXML
@@ -151,6 +148,12 @@ public abstract class BaseController_Attributes {
             return myStage.getTitle();
         } else {
             return getBaseTitle();
+        }
+    }
+
+    public void setTitle(String title) {
+        if (getMyStage() != null) {
+            myStage.setTitle(title);
         }
     }
 
@@ -306,34 +309,13 @@ public abstract class BaseController_Attributes {
         return isPop;
     }
 
-    public void setIsPop(boolean isPop) {
-        this.isPop = isPop;
+    public boolean isNeedRecordVisit() {
+        return needRecordVisit;
     }
 
     /*
         task
      */
-    public class SingletonTask<Void> extends BaseTask<Void> {
-
-        @Override
-        protected void whenSucceeded() {
-            popSuccessful();
-        }
-
-        @Override
-        protected void whenFailed() {
-            if (isCancelled()) {
-                return;
-            }
-            if (error != null) {
-                popError(error);
-            } else {
-                popFailed();
-            }
-        }
-
-    };
-
     public SingletonTask<Void> getTask() {
         return task;
     }

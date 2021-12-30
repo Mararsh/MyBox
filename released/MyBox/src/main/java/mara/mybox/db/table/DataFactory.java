@@ -11,7 +11,9 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
+import mara.mybox.db.data.Data2DCell;
+import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.FileBackup;
@@ -19,8 +21,6 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
-import mara.mybox.db.data.Matrix;
-import mara.mybox.db.data.MatrixCell;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.NoteTag;
 import mara.mybox.db.data.Notebook;
@@ -57,20 +57,8 @@ public class DataFactory {
         } else if (data instanceof Location) {
             return new TableLocationData();
 
-        } else if (data instanceof Matrix) {
-            return new TableMatrix();
-
-        } else if (data instanceof MatrixCell) {
-            return new TableMatrixCell();
-
         } else if (data instanceof MyBoxLog) {
             return new TableMyBoxLog();
-
-        } else if (data instanceof DataDefinition) {
-            return new TableDataDefinition();
-
-        } else if (data instanceof ColumnDefinition) {
-            return new TableDataColumn();
 
         } else if (data instanceof ImageEditHistory) {
             return new TableImageEditHistory();
@@ -117,6 +105,15 @@ public class DataFactory {
         } else if (data instanceof ImageScope) {
             return new TableImageScope();
 
+        } else if (data instanceof Data2DDefinition) {
+            return new TableData2DDefinition();
+
+        } else if (data instanceof Data2DColumn) {
+            return new TableData2DColumn();
+
+        } else if (data instanceof Data2DCell) {
+            return new TableData2DCell();
+
         }
         return null;
     }
@@ -137,17 +134,8 @@ public class DataFactory {
         } else if (data instanceof Location) {
             return Location.valid((Location) data);
 
-        } else if (data instanceof Matrix) {
-            return Matrix.valid((Matrix) data);
-
-        } else if (data instanceof MatrixCell) {
-            return MatrixCell.valid((MatrixCell) data);
-
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.valid((MyBoxLog) data);
-
-        } else if (data instanceof DataDefinition) {
-            return DataDefinition.valid((DataDefinition) data);
 
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.valid((ColumnDefinition) data);
@@ -197,6 +185,15 @@ public class DataFactory {
         } else if (data instanceof ImageScope) {
             return ImageScope.valid((ImageScope) data);
 
+        } else if (data instanceof Data2DDefinition) {
+            return Data2DDefinition.valid((Data2DDefinition) data);
+
+        } else if (data instanceof Data2DColumn) {
+            return Data2DColumn.valid((Data2DColumn) data);
+
+        } else if (data instanceof Data2DCell) {
+            return Data2DCell.valid((Data2DCell) data);
+
         }
 
         return false;
@@ -218,20 +215,8 @@ public class DataFactory {
         } else if (data instanceof Location) {
             return Location.getValue((Location) data, name);
 
-        } else if (data instanceof Matrix) {
-            return Matrix.getValue((Matrix) data, name);
-
-        } else if (data instanceof MatrixCell) {
-            return MatrixCell.getValue((MatrixCell) data, name);
-
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.getValue((MyBoxLog) data, name);
-
-        } else if (data instanceof DataDefinition) {
-            return DataDefinition.getValue((DataDefinition) data, name);
-
-        } else if (data instanceof ColumnDefinition) {
-            return ColumnDefinition.getValue((ColumnDefinition) data, name);
 
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.getValue((ImageEditHistory) data, name);
@@ -278,6 +263,15 @@ public class DataFactory {
         } else if (data instanceof ImageScope) {
             return ImageScope.getValue((ImageScope) data, name);
 
+        } else if (data instanceof Data2DDefinition) {
+            return Data2DDefinition.getValue((Data2DDefinition) data, name);
+
+        } else if (data instanceof Data2DColumn) {
+            return Data2DColumn.getValue((Data2DColumn) data, name);
+
+        } else if (data instanceof Data2DCell) {
+            return Data2DCell.getValue((Data2DCell) data, name);
+
         }
 
         return null;
@@ -299,20 +293,8 @@ public class DataFactory {
         } else if (data instanceof Location) {
             return Location.setValue((Location) data, name, value);
 
-        } else if (data instanceof Matrix) {
-            return Matrix.setValue((Matrix) data, name, value);
-
-        } else if (data instanceof MatrixCell) {
-            return MatrixCell.setValue((MatrixCell) data, name, value);
-
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.setValue((MyBoxLog) data, name, value);
-
-        } else if (data instanceof DataDefinition) {
-            return DataDefinition.setValue((DataDefinition) data, name, value);
-
-        } else if (data instanceof ColumnDefinition) {
-            return ColumnDefinition.setValue((ColumnDefinition) data, name, value);
 
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.setValue((ImageEditHistory) data, name, value);
@@ -358,6 +340,15 @@ public class DataFactory {
 
         } else if (data instanceof ImageScope) {
             return ImageScope.setValue((ImageScope) data, name, value);
+
+        } else if (data instanceof Data2DDefinition) {
+            return Data2DDefinition.setValue((Data2DDefinition) data, name, value);
+
+        } else if (data instanceof Data2DColumn) {
+            return Data2DColumn.setValue((Data2DColumn) data, name, value);
+
+        } else if (data instanceof Data2DCell) {
+            return Data2DCell.setValue((Data2DCell) data, name, value);
 
         }
         return false;

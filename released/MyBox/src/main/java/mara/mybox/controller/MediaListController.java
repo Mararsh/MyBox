@@ -3,30 +3,18 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -35,13 +23,10 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class MediaListController extends BaseController {
+public class MediaListController extends BaseTableViewController<MediaList> {
 
     protected MediaPlayerController playerController;
-    protected ObservableList<MediaList> tableData;
 
-    @FXML
-    protected TableView<MediaList> tableView;
     @FXML
     protected TableColumn<MediaList, String> nameColumn;
     @FXML
@@ -57,30 +42,9 @@ public class MediaListController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            tableData = FXCollections.observableArrayList();
+
             tableController.setParentController(this);
 
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-            tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
-                    checkSelected();
-                }
-            });
-            checkSelected();
-
-            tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        playAction();
-                    }
-                }
-            });
-
-            tableView.setItems(tableData);
             loadList(null);
 
         } catch (Exception e) {
@@ -98,6 +62,24 @@ public class MediaListController extends BaseController {
         }
     }
 
+    @Override
+    public void initColumns() {
+        try {
+            super.initColumns();
+
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void itemDoubleClicked() {
+        playAction();
+    }
+
+    @Override
     protected void checkSelected() {
         if (isSettingValues) {
             return;
@@ -114,6 +96,7 @@ public class MediaListController extends BaseController {
             deleteButton.setDisable(false);
             tableController.loadMedias(selected);
         }
+        super.checkButtons();
     }
 
     protected void clearSelection() {

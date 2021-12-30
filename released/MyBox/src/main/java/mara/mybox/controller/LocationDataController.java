@@ -31,6 +31,7 @@ import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
@@ -40,6 +41,7 @@ import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**
@@ -98,7 +100,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 + tableDefinition.createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + tableDataset.createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + TableLocationData.CreateView.replaceAll("\n", "</BR>");
-        tableDefinitionString = HtmlWriteTools.html(tableName, html);
+        tableDefinitionString = HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
     }
 
     @Override
@@ -116,6 +118,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             dataidColumn.setCellValueFactory(new PropertyValueFactory<>("ldid"));
             datasetColumn.setCellValueFactory(new PropertyValueFactory<>("datasetName"));
             labelColumn.setCellValueFactory(new PropertyValueFactory<>("label"));
@@ -206,7 +209,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private List<Date> times;
 
                 @Override
@@ -282,8 +285,8 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     @Override
-    public boolean preLoadingTableData() {
-        if (super.preLoadingTableData()) {
+    public boolean checkBeforeLoadingTableData() {
+        if (super.checkBeforeLoadingTableData()) {
             if (mapCurrentPage()) {
                 mapController.clearAction();
             }
@@ -302,7 +305,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     public boolean mapCurrentPage() {
-        return paginate && mapController.mapOptionsController.currentPageRadio.isSelected();
+        return mapController.mapOptionsController.currentPageRadio.isSelected();
     }
 
     @Override
@@ -343,7 +346,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             if (backgroundTask != null && !backgroundTask.isQuit()) {
                 return;
             }
-            backgroundTask = new SingletonTask<Void>() {
+            backgroundTask = new SingletonTask<Void>(this) {
                 private List<Location> mapData;
 
                 @Override
@@ -377,7 +380,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         try {
             LocationDataEditController controller
                     = (LocationDataEditController) openScene(null, Fxmls.LocationDataEditFxml);
@@ -389,7 +392,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         Location selected = (Location) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
@@ -503,7 +506,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 return;
             }
             LocationDataController currentController = this;
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private File file;
                 String datasetName;
 
@@ -579,7 +582,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 return;
             }
             LocationDataController currentController = this;
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private File file;
                 private String datasetName;
 
@@ -651,7 +654,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 return;
             }
             LocationDataController currentController = this;
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private File file;
                 private String datasetName;
 

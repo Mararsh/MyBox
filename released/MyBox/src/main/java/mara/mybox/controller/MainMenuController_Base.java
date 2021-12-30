@@ -46,7 +46,7 @@ public abstract class MainMenuController_Base extends BaseController {
             pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, darkGreenMenuItem;
     @FXML
     protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
-            newWindowCheck, restoreStagesSizeCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
+            closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
             controlTextCheck, hidpiIconsCheck;
     @FXML
     protected Menu settingsMenu, recentMenu, helpMenu;
@@ -66,10 +66,10 @@ public abstract class MainMenuController_Base extends BaseController {
     @Override
     public BaseController loadScene(String newFxml) {
         try {
-            if (AppVariables.openStageInNewWindow) {
-                return parentController.openStage(newFxml);
-            } else {
+            if (AppVariables.closeCurrentWhenOpenTool) {
                 return parentController.loadScene(newFxml);
+            } else {
+                return parentController.openStage(newFxml);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

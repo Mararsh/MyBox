@@ -158,20 +158,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                            <children>
-                                                                <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconStyle.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                        </HBox>
-                                                        <WebView fx:id="infoView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                                        <fx:include fx:id="infoView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -211,8 +198,13 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </HBox>
-                                                        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                        <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                             <columns>
+                                                                <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                                                    <graphic>
+                                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                                                    </graphic>
+                                                                </TableColumn>
                                                                 <TableColumn fx:id="mblidColumn" editable="false" prefWidth="60.0" text="%ID" />
                                                                 <TableColumn fx:id="timeColumn" editable="false" prefWidth="180.0" text="%Time" />
                                                                 <TableColumn fx:id="typeColumn" editable="false" prefWidth="60.0" text="%Type" />

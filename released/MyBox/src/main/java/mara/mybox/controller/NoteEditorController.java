@@ -16,12 +16,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -37,8 +34,9 @@ import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.value.HtmlStyles;
@@ -67,15 +65,13 @@ public class NoteEditorController extends HtmlEditorController {
     @FXML
     protected TextField idInput, titleInput, timeInput;
     @FXML
-    protected Tab styleTab, tagsTab;
-    @FXML
-    protected TextArea styleInput;
+    protected Tab attributesTab, tagsTab;
     @FXML
     protected FlowPane noteTagsPane;
     @FXML
     protected Button okNoteTagsButton, addNoteTagButton;
     @FXML
-    protected ControlListCheckBox tagsListController;
+    protected ControlCheckBoxList tagsListController;
 
     public void setParameters(NotesController notesController) {
         try {
@@ -88,13 +84,13 @@ public class NoteEditorController extends HtmlEditorController {
             tableNoteTag = notesController.tableNoteTag;
             saveButton = notesController.saveButton;
             currentNote = null;
+            webViewController.defaultStyle = HtmlStyles.styleValue("Default");
+            editorController.defaultStyle = HtmlStyles.styleValue("Default");
 
             initTabPane();
-
-            titleInput.setText(message("Note"));
-            styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle));
-
+            initAttributesTab();
             initTagsTab();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -106,7 +102,7 @@ public class NoteEditorController extends HtmlEditorController {
         }
         updateFileStatus(false);
         currentNote = note;
-        setAddressChanged(true);
+        addressChanged = true;
         loadNote();
     }
 
@@ -116,21 +112,12 @@ public class NoteEditorController extends HtmlEditorController {
                 idInput.setText(currentNote.getNtid() + "");
                 titleInput.setText(currentNote.getTitle());
                 timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
-                String html = currentNote.getHtml();
-                String style = UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle);
-                if (style != null && !style.isBlank()) {
-                    style = "<!DOCTYPE html><html><head><style type=\"text/css\">\n" + style + "\n</style></head></html>";
-                } else {
-                    style = "";
-                }
-                webEngine.getLoadWorker().cancel();
-                webEngine.loadContent(style + html);
+                loadContents(currentNote.getHtml());
             } else {
                 idInput.setText("");
                 timeInput.setText("");
                 titleInput.setText(message("Note"));
-                webEngine.getLoadWorker().cancel();
-                webEngine.loadContent("");
+                loadContents("");
             }
             updateBookOfCurrentNote();
             refreshNoteTags();
@@ -139,7 +126,7 @@ public class NoteEditorController extends HtmlEditorController {
 
     protected void updateBookOfCurrentNote() {
         synchronized (this) {
-            SingletonTask noteTask = new SingletonTask<Void>() {
+            SingletonTask noteTask = new SingletonTask<Void>(this) {
                 private String chainName;
 
                 @Override
@@ -196,22 +183,33 @@ public class NoteEditorController extends HtmlEditorController {
     }
 
     /*
+        attributes
+     */
+    public void initAttributesTab() {
+        try {
+            titleInput.setText(message("Note"));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
         html
      */
     @Override
-    public String styleHtml(String html) {
-        String style = UserConfig.getString(baseName + "Style", null);
-        if (style != null && !style.isBlank()) {
-            style = "<style type=\"text/css\">\n" + style + "\n</style>";
-        } else {
-            style = "";
-        }
-        return style + HtmlReadTools.body(html, false);
+    public String htmlCodes(String html) {
+        return HtmlReadTools.body(html, false);
     }
 
     @Override
-    public String htmlCodes(String html) {
-        return HtmlReadTools.body(html, false);
+    public String htmlInWebview() {
+        return HtmlReadTools.body(WebViewTools.getHtml(webEngine), false);
+    }
+
+    @Override
+    public String htmlByEditor() {
+        return HtmlReadTools.body(htmlEditor.getHtmlText(), false);
     }
 
     @FXML
@@ -225,7 +223,7 @@ public class NoteEditorController extends HtmlEditorController {
             }
             String html = currentHtml(true);
             notesController.rightPane.setDisable(true);
-            SingletonTask saveTask = new SingletonTask<Void>() {
+            SingletonTask saveTask = new SingletonTask<Void>(this) {
                 private Note note;
                 private boolean notExist = false;
 
@@ -318,7 +316,7 @@ public class NoteEditorController extends HtmlEditorController {
         synchronized (this) {
             tagsListController.clear();
             noteTagsPane.setDisable(true);
-            SingletonTask noteTagsTask = new SingletonTask<Void>() {
+            SingletonTask noteTagsTask = new SingletonTask<Void>(this) {
                 private List<String> tagsString;
                 private List<Integer> selected;
 
@@ -392,7 +390,7 @@ public class NoteEditorController extends HtmlEditorController {
         }
         synchronized (this) {
             notesController.rightPane.setDisable(true);
-            SingletonTask noteTagsTask = new SingletonTask<Void>() {
+            SingletonTask noteTagsTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -453,58 +451,6 @@ public class NoteEditorController extends HtmlEditorController {
         }
     }
 
-    /*
-        Note style
-     */
-    @FXML
-    public void popDefaultStyle(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-            for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
-                menu = new MenuItem(message(style.name()));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        styleInput.setText(HtmlStyles.styleValue(style));
-                        UserConfig.setString(baseName + "Style", styleInput.getText());
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void setStyle() {
-        UserConfig.setString(baseName + "Style", styleInput.getText());
-    }
-
-    @FXML
-    public void clearStyle() {
-        styleInput.clear();
-    }
-
     @Override
     public boolean checkBeforeNextAction() {
         if (!fileChanged) {
@@ -536,39 +482,30 @@ public class NoteEditorController extends HtmlEditorController {
         panes
      */
     @Override
-    public void tabSelectionChanged(Tab oldTab) {
-        if (oldTab == styleTab) {
-            webEngine.getLoadWorker().cancel();
-            webEngine.loadContent(styleHtml(htmlInWebview()));
-            htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
-        }
-        super.tabSelectionChanged(oldTab);
-    }
-
-    @Override
     public void showTabs() {
         try {
             super.showTabs();
 
+            if (!UserConfig.getBoolean(baseName + "ShowAttributesTab", true)) {
+                tabPane.getTabs().remove(attributesTab);
+            }
+            attributesTab.setOnCloseRequest(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    UserConfig.setBoolean(baseName + "ShowAttributesTab", false);
+                }
+            });
+
             if (!UserConfig.getBoolean(baseName + "ShowTagsTab", true)) {
                 tabPane.getTabs().remove(tagsTab);
             }
-            tagsTab.setOnClosed(new EventHandler<Event>() {
+            tagsTab.setOnCloseRequest(new EventHandler<Event>() {
                 @Override
                 public void handle(Event event) {
                     UserConfig.setBoolean(baseName + "ShowTagsTab", false);
                 }
             });
 
-            if (!UserConfig.getBoolean(baseName + "ShowStyleTab", true)) {
-                tabPane.getTabs().remove(styleTab);
-            }
-            styleTab.setOnClosed(new EventHandler<Event>() {
-                @Override
-                public void handle(Event event) {
-                    UserConfig.setBoolean(baseName + "ShowStyleTab", false);
-                }
-            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -578,6 +515,26 @@ public class NoteEditorController extends HtmlEditorController {
     public List<MenuItem> makePanesMenu(MouseEvent mouseEvent) {
         List<MenuItem> items = super.makePanesMenu(mouseEvent);
         try {
+            CheckMenuItem attributesMenu = new CheckMenuItem(message("Attributes"));
+            attributesMenu.setSelected(tabPane.getTabs().contains(attributesTab));
+            attributesMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShowAttributesTab", attributesMenu.isSelected());
+                    if (attributesMenu.isSelected()) {
+                        if (!tabPane.getTabs().contains(attributesTab)) {
+                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, attributesTab);
+                        }
+                    } else {
+                        if (tabPane.getTabs().contains(attributesTab)) {
+                            tabPane.getTabs().remove(attributesTab);
+                        }
+                    }
+                    NodeStyleTools.refreshStyle(tabPane);
+                }
+            });
+            items.add(0, attributesMenu);
+
             CheckMenuItem tagsMenu = new CheckMenuItem(message("Tags"));
             tagsMenu.setSelected(tabPane.getTabs().contains(tagsTab));
             tagsMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -598,25 +555,6 @@ public class NoteEditorController extends HtmlEditorController {
             });
             items.add(tagsMenu);
 
-            CheckMenuItem styleMenu = new CheckMenuItem(message("Style"));
-            styleMenu.setSelected(tabPane.getTabs().contains(styleTab));
-            styleMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ShowStyleTab", styleMenu.isSelected());
-                    if (styleMenu.isSelected()) {
-                        if (!tabPane.getTabs().contains(styleTab)) {
-                            tabPane.getTabs().add(tabPane.getTabs().size() - 1, styleTab);
-                        }
-                    } else {
-                        if (tabPane.getTabs().contains(styleTab)) {
-                            tabPane.getTabs().remove(styleTab);
-                        }
-                    }
-                    NodeStyleTools.refreshStyle(tabPane);
-                }
-            });
-            items.add(styleMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

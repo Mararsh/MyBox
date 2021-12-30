@@ -10,7 +10,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppValues;
 
-
 /**
  * @Author Mara
  * @CreateDate 2018-10-15 9:31:28
@@ -36,7 +35,7 @@ public class TableUserConf extends DerbyBase {
         };
         Create_Table_Statement
                 = " CREATE TABLE User_Conf ( "
-                + "  key_Name  VARCHAR(1024) NOT NULL PRIMARY KEY, "
+                + "  key_Name  VARCHAR(32672) NOT NULL PRIMARY KEY, "
                 + "  int_Value INTEGER, "
                 + "  default_int_Value INTEGER, "
                 + "  string_Value VARCHAR(32672), "

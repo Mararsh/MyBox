@@ -44,17 +44,17 @@ License:    Apache License Version 2.0
                                 <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <CheckBox fx:id="copyAllCheck" mnemonicParsing="false" selected="true" text="%CopyOtherPages" wrapText="true" VBox.vgrow="NEVER" />
-                                          <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                       </padding>
-                                    </VBox>
-                                 </content>
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <CheckBox fx:id="copyAllCheck" mnemonicParsing="false" selected="true" text="%CopyOtherPages" wrapText="true" VBox.vgrow="NEVER" />
+                                                        <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                    <padding>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                    </padding>
+                                                </VBox>
+                                            </content>
                                         </ScrollPane>
                                         <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                             <graphic>
@@ -73,34 +73,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="targetVBox" spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
-                                            <children>
-                                                <Label text="%FilesPath" />
-                                                <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
-                                        <FlowPane hgap="5.0" vgap="5.0">
-                                            <children>
-                                                <Label text="%ExistedFiles" />
-                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="targetExistGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
-                                                <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
-                                            </children>
-                                        </FlowPane>
+                                        <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
                                         <Separator prefWidth="200.0" />
                                         <Label text="%PdfImagesConvertComments" />
                                     </children>

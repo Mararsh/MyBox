@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 
@@ -35,7 +36,7 @@ public class ImageScopePopController extends ImagePopController {
             return;
         }
         synchronized (this) {
-            SingletonTask popTask = new SingletonTask<Void>() {
+            SingletonTask popTask = new SingletonTask<Void>(this) {
 
                 private Image scopeImage;
 

@@ -27,12 +27,12 @@ import mara.mybox.data.LongRange;
 public abstract class BaseFileEditorController_Base extends BaseController {
 
     protected Edit_Type editType;
-    protected SimpleBooleanProperty fileChanged;
+    protected final SimpleBooleanProperty fileChanged;
     protected FileEditInformation sourceInformation;
     protected String filterConditionsString = "";
     protected Line_Break lineBreak;
     protected int defaultPageSize, lineBreakWidth;
-    protected long locateLine, locateObject;  // 0-based
+    protected long lastPageFrom, lastPageTo, locateLine, locateObject;  // 0-based
     protected String lineBreakValue;
     protected Timer autoSaveTimer;
     protected LongRange linesRange, objectsRange;
@@ -58,7 +58,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     protected Label editLabel, bomLabel, fileLabel, pageLabel, charsetLabel, selectionLabel,
             filterConditionsLabel;
     @FXML
-    protected Button panesMenuButton, charactersButton, linesButton, exampleFilterButton,
+    protected Button charactersButton, linesButton, exampleFilterButton,
             filterButton, goObjectButton, goLineButton, goLinesRangeButton, goObjectsRangeButton;
     @FXML
     protected TextField objectNumberInput, lineInput, lineFromInput, lineToInput, objectFromInput, objectToInput;
@@ -74,6 +74,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     protected ControlFileBackup backupController;
 
     public BaseFileEditorController_Base() {
+        fileChanged = new SimpleBooleanProperty(false);
     }
 
     protected abstract void updateInterface(boolean changed);

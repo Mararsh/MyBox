@@ -70,8 +70,13 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="200.0" prefViewportWidth="873.0" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                        <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                             <columns>
+                                                <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                                    <graphic>
+                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                                    </graphic>
+                                                </TableColumn>
                                                 <TableColumn fx:id="nameColumn" prefWidth="300.0" text="%MediaListName" />
                                             </columns>
                                         </TableView>

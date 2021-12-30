@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -13,7 +12,6 @@ import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.cell.TableTableMessageCell;
 import mara.mybox.fxml.cell.TableTimeFormatCell;
-import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -52,6 +50,7 @@ public class DatasetController extends BaseDataManageController<Dataset> {
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
 
             dataidColumn.setCellValueFactory(new PropertyValueFactory<>("dsid"));
             categoryColumn.setCellValueFactory(new PropertyValueFactory<>("dataCategory"));
@@ -117,7 +116,7 @@ public class DatasetController extends BaseDataManageController<Dataset> {
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
         try {
             DatasetEditController controller = (DatasetEditController) WindowTools.openStage(Fxmls.DatasetEditFxml);
             controller.initEditor(this, null);
@@ -128,7 +127,7 @@ public class DatasetController extends BaseDataManageController<Dataset> {
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         Dataset selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;

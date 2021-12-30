@@ -47,7 +47,7 @@ License:    Apache License Version 2.0
                       <graphic>
                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
-                                  <Image url="@../buttons/Red/iconFileDelete.png" />
+                                  <Image url="@../buttons/Red/iconDelete.png" />
                               </image>
                           </ImageView>
                       </graphic>

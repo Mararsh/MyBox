@@ -1,8 +1,6 @@
 package mara.mybox.db.table;
 
-import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -14,6 +12,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistory.OperationType;
 import mara.mybox.db.data.VisitHistory.ResourceType;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -41,8 +40,8 @@ public class TableVisitHistory extends DerbyBase {
                 + "  resource_type  SMALLINT NOT NULL, "
                 + "  file_type  SMALLINT NOT NULL, "
                 + "  operation_type  SMALLINT NOT NULL, "
-                + "  resource_value  VARCHAR(1024) NOT NULL, "
-                + "  data_more VARCHAR(1024), "
+                + "  resource_value  VARCHAR(32672) NOT NULL, "
+                + "  data_more VARCHAR(32672), "
                 + "  last_visit_time TIMESTAMP NOT NULL, "
                 + "  visit_count  INT , "
                 + "  PRIMARY KEY (resource_type, file_type, operation_type, resource_value)"
@@ -66,17 +65,18 @@ public class TableVisitHistory extends DerbyBase {
         }
     }
 
-    public static List<VisitHistory> checkFilesExisted(Connection conn, List<VisitHistory> records) {
+    public static List<VisitHistory> checkValid(Connection conn, List<VisitHistory> records) {
         if (records == null || records.isEmpty()) {
             return records;
         }
         List<VisitHistory> valid = new ArrayList<>();
         List<String> names = new ArrayList<>();
         for (VisitHistory r : records) {
-            if (r.getResourceType() == ResourceType.File || r.getResourceType() == ResourceType.Path) {
+            int resourceType = r.getResourceType();
+            if (resourceType == ResourceType.File || resourceType == ResourceType.Path) {
                 String fname = r.getResourceValue();
                 try {
-                    if (!new File(fname).exists()) {
+                    if (!VisitHistoryTools.validFile(fname, resourceType, r.getFileType())) {
                         delete(conn, r);
                     } else if (!names.contains(fname)) {
                         names.add(fname);
@@ -103,7 +103,7 @@ public class TableVisitHistory extends DerbyBase {
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
-        return checkFilesExisted(conn, records);
+        return checkValid(conn, records);
     }
 
     public static List<VisitHistory> find(Connection conn, PreparedStatement statement) {
@@ -447,6 +447,9 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
+        if (!VisitHistoryTools.validFile(value, resourceType, fileType)) {
+            return false;
+        }
         int finalType = fileType;
         if (fileType == FileType.MultipleFrames || fileType == FileType.Image) {
             String v = value.toLowerCase();
@@ -458,6 +461,7 @@ public class TableVisitHistory extends DerbyBase {
                 finalType = FileType.Image;
             }
         }
+
         try {
             VisitHistory exist = find(conn, resourceType, finalType, operationType, value);
             Date d = new Date();

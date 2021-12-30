@@ -24,12 +24,10 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.UserConfig;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TreeTableEraCell;
 import mara.mybox.fxml.cell.TreeTableFileSizeCell;
 import mara.mybox.tools.CompressTools;
@@ -37,8 +35,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -176,7 +172,7 @@ public class FileUnarchiveController extends FilesTreeController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private TreeItem<FileInformation> root;
 
@@ -324,7 +320,7 @@ public class FileUnarchiveController extends FilesTreeController {
     @FXML
     @Override
     public void startAction() {
-        if (targetPath == null || UserConfig.badStyle().equals(targetPathInput.getStyle())) {
+        if (targetPath == null || !targetPathController.valid.get()) {
             popError(Languages.message("InvalidTargetPath"));
             return;
         }
@@ -342,7 +338,7 @@ public class FileUnarchiveController extends FilesTreeController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

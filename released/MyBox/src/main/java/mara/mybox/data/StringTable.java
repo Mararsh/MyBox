@@ -110,7 +110,7 @@ public class StringTable {
         if (table == null || table.getData() == null) {
             return "";
         }
-        return HtmlWriteTools.htmlWithStyleValue(table.getTitle(), table.style, body(table));
+        return HtmlWriteTools.html(table.getTitle(), "utf-8", table.style, body(table));
     }
 
     public static String tablePrefix(StringTable table) {

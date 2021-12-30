@@ -19,17 +19,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -80,8 +75,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(Bindings.isEmpty(waterInput.textProperty()))
                     .or(waterXInput.styleProperty().isEqualTo(UserConfig.badStyle()))

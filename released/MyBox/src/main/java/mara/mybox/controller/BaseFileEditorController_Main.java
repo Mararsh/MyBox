@@ -88,6 +88,8 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 }
             });
 
+            lastPageFrom = lastPageTo = -1;
+
             lineArea.scrollTopProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue ov, Number oldValue, Number newValue) {
@@ -154,7 +156,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         isSettingValues = true;
         if (from < 0 || from > to) {
             lineArea.clear();
-        } else {
+        } else if (from != lastPageFrom || to != lastPageTo) {
             StringBuilder lines = new StringBuilder();
             for (long i = from + 1; i < to; i++) {
                 lines.append(i).append("\n");
@@ -162,6 +164,8 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             lines.append(to);
             lineArea.setText(lines.toString());
         }
+        lastPageFrom = from;
+        lastPageTo = to;
         isSettingValues = false;
         adjustLinesArea();
     }
@@ -171,8 +175,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             @Override
             public void run() {
                 Platform.runLater(() -> {
+                    isSettingValues = true;
                     lineArea.setScrollTop(mainArea.getScrollTop());
-                    AnchorPane.setLeftAnchor(mainArea, (sourceInformation.getLinesNumber() + "").length() * AppVariables.sceneFontSize + 20d);
+                    AnchorPane.setLeftAnchor(mainArea, (sourceInformation.getCurrentPageLineEnd() + "").length() * AppVariables.sceneFontSize + 5d);
 
                     // https://stackoverflow.com/questions/51075499/javafx-tableview-how-to-tell-if-scrollbar-is-visible
                     double barHeight = 0;
@@ -185,9 +190,10 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                         }
                     }
                     AnchorPane.setBottomAnchor(lineArea, barHeight);
+                    isSettingValues = false;
                 });
             }
-        }, 500);   // Wait for text loaded
+        }, 300);   // Wait for text loaded
     }
 
     @FXML
@@ -393,8 +399,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    mainArea.requestFocus();
-                    mainArea.deselect();
                     int startIndex;
                     if (from < 0) {
                         startIndex = 0;
@@ -405,6 +409,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                     if (text == null || text.isEmpty()) {
                         return;
                     }
+                    mainArea.requestFocus();
                     mainArea.selectRange(Math.min(text.length(), startIndex + number), startIndex);
                 });
             }
@@ -417,8 +422,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    mainArea.requestFocus();
-                    mainArea.deselect();
                     int startLine;
                     if (from < 0) {
                         startLine = 0;
@@ -438,6 +441,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                         }
                         charIndex += lines[i].length() + 1;
                     }
+                    mainArea.requestFocus();
                     mainArea.selectRange(charIndex, startIndex);
                 });
             }

@@ -11,19 +11,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import mara.mybox.bufferedimage.CropTools;
+import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.CropTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.tools.DoubleTools.scale;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -286,11 +282,14 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @Override
-    public BufferedImage imageToSave() {
+    public BufferedImage imageToSaveAs() {
         if (sourceFile != null && imageInformation != null) {
-            return ImageFileReaders.readFrame(imageInformation.getImageFormat(),
-                    sourceFile.getAbsolutePath(), imageInformation.getIndex(),
-                    (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
+            ImageInformation info = new ImageInformation(sourceFile);
+            info.setIndex(imageInformation.getIndex())
+                    .setRegion(x1, y1, x2, y2)
+                    .setXscale(widthScale).setYscale(heightScale)
+                    .setImageFormat(imageInformation.getImageFormat());
+            return ImageFileReaders.readFrame(info);
         } else if (image != null) {
             return CropTools.sample(SwingFXUtils.fromFXImage(image, null),
                     (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);

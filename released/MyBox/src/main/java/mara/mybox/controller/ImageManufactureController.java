@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -16,8 +15,7 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  *
  * ImageManufactureController < ImageManufactureController_Actions <
- * ImageManufactureController_Histories < ImageManufactureController_Image <
- * ImageViewerController
+ * ImageManufactureController_Image < ImageViewerController
  */
 public class ImageManufactureController extends ImageManufactureController_Actions {
 
@@ -32,8 +30,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             super.initValues();
 
             imageLoaded = new SimpleBooleanProperty(false);
-            historyIndex = -1;
-            imageHistoriesPath = AppPaths.getImageHisPath();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -46,7 +42,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             super.initControls();
 
             initCreatePane();
-            initHistoriesTab();
+            initHisTab();
             initBackupsTab();
             initEditBar();
 
@@ -79,6 +75,14 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         }
     }
 
+    protected void initHisTab() {
+        try {
+            hisController.setParameters(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public boolean afterImageLoaded() {
         try {
@@ -93,8 +97,8 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             scopeSavedController.setParameters(this);
             operationsController.resetOperationPanes();
 
-            recordImageHistory(ImageOperation.Load, image);
-            updateLabel(Languages.message("Loaded"));
+            hisController.recordImageHistory(ImageOperation.Load, image);
+            updateLabelString(Languages.message("Loaded"));
 
 //            autoSize();
             backupController.loadBackups(sourceFile);

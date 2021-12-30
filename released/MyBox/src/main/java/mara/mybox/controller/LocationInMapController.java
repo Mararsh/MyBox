@@ -17,20 +17,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -79,8 +75,8 @@ public class LocationInMapController extends GeographyCodeMapController {
             checkLocateMethod();
 
             multipleCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) -> {
-                        UserConfig.setBoolean(baseName + "MultiplePoints", newv);
-                    });
+                UserConfig.setBoolean(baseName + "MultiplePoints", newv);
+            });
             multipleCheck.setSelected(UserConfig.getBoolean(baseName + "MultiplePoints", true));
 
         } catch (Exception e) {
@@ -174,7 +170,7 @@ public class LocationInMapController extends GeographyCodeMapController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

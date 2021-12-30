@@ -32,7 +32,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -57,16 +56,14 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import mara.mybox.data.DownloadTask;
 import mara.mybox.data.Link;
 import mara.mybox.data.Link.FilenameType;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.DateTools;
@@ -85,9 +82,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-11
  * @License Apache License Version 2.0
  */
-public class DownloadFirstLevelLinksController extends BaseController {
+public class DownloadFirstLevelLinksController extends BaseTableViewController<Link> {
 
-    protected final ObservableList<Link> linksData, downloadingData, failedData;
+    protected final ObservableList<Link> downloadingData, failedData;
     protected int maxThreadsNumber, maxLogs, maxRetries;
     protected final List<DownloadThread> downloadThreads;
     protected final List<PathThread> pathThreads;
@@ -118,7 +115,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     protected TextField maxLogsinput, webConnectTimeoutInput, webReadTimeoutInput;
     @FXML
-    protected TableView<Link> linksTableView, downloadingTableView, failedTableView;
+    protected TableView<Link> downloadingTableView, failedTableView;
     @FXML
     protected TableColumn<Link, String> addressPathColumn, addressFileColumn,
             filenameColumn, nameColumn, titleColumn, pathColumn, fileColumn,
@@ -126,7 +123,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     protected TableColumn<Link, Integer> indexColumn;
     @FXML
-    protected ControlFileSelecter targetPathController;
+    protected ControlPathInput targetPathInputController;
     @FXML
     protected Button downloadButton, equalButton, linkButton, htmlButton,
             clearDownloadingButton, deleteDownloadingButton, copyDownloadingButton,
@@ -152,10 +149,10 @@ public class DownloadFirstLevelLinksController extends BaseController {
     protected TextArea cssArea;
 
     public DownloadFirstLevelLinksController() {
-        baseTitle = Languages.message("DownloadFirstLevelLinks");
+        baseTitle = Languages.message("DownloadHtmls");
         TipsLabelKey = "DownloadFirstLevelLinksComments";
 
-        linksData = FXCollections.observableArrayList();
+        tableData = FXCollections.observableArrayList();
         downloadingData = FXCollections.observableArrayList();
         failedData = FXCollections.observableArrayList();
         downloadThreads = new ArrayList<>();
@@ -190,9 +187,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             textParser = Parser.builder(textOptions).build();
             textCollectingVisitor = new TextCollectingVisitor();
 
-            targetPathController.label(Languages.message("TargetPath"))
-                    .name(baseName + "TargatPath", true)
-                    .isSource(false).isDirectory(true).mustExist(false);
+            targetPathInputController.baseName(baseName).init();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -232,33 +227,33 @@ public class DownloadFirstLevelLinksController extends BaseController {
             indexColumn.setCellValueFactory(new PropertyValueFactory<>("index"));
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("file"));
 
-            linksTableView.setItems(linksData);
-            linksTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-            linksTableView.setOnMouseClicked((MouseEvent event) -> {
-                if (event.getClickCount() > 1) {
-                    openLink();
-                }
-            });
-
             goButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    targetPathInputController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                             .or(urlSelector.getSelectionModel().selectedItemProperty().isNull())
             );
             downloadButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
-                            .or(linksTableView.getSelectionModel().selectedItemProperty().isNull())
+                    targetPathInputController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                            .or(tableView.getSelectionModel().selectedItemProperty().isNull())
             );
-            copyButton.disableProperty().bind(linksTableView.getSelectionModel().selectedItemProperty().isNull());
-            equalButton.disableProperty().bind(copyButton.disableProperty());
-            viewButton.disableProperty().bind(copyButton.disableProperty());
-            infoButton.disableProperty().bind(copyButton.disableProperty());
-            linkButton.disableProperty().bind(copyButton.disableProperty());
-            htmlButton.disableProperty().bind(linksTableView.itemsProperty().isNull());
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
+    }
+
+    @Override
+    protected void checkButtons() {
+        if (isSettingValues) {
+            return;
+        }
+        super.checkButtons();
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        copyButton.setDisable(none);
+        equalButton.setDisable(none);
+        infoButton.setDisable(none);
+        linkButton.setDisable(none);
+        htmlButton.setDisable(none);
     }
 
     public void initDownloadingTab() {
@@ -472,7 +467,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            if (targetPathController.file == null) {
+            if (targetPathInputController.file == null) {
                 tabPane.getSelectionModel().select(optionsTab);
             }
 
@@ -511,7 +506,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             return;
         }
         VisitHistoryTools.downloadURI(address);
-        File downloadPath = targetPathController.file;
+        File downloadPath = targetPathInputController.file;
         if (downloadPath == null) {
             popError(Languages.message("InvalidParameters"));
             tabPane.getSelectionModel().select(optionsTab);
@@ -523,7 +518,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String title;
 
                 @Override
@@ -571,13 +566,13 @@ public class DownloadFirstLevelLinksController extends BaseController {
         }
         this.subPath = subPath;
         filenameType = nameType;
-        linksData.clear();
-        File downloadPath = targetPathController.file;
+        tableData.clear();
+        File downloadPath = targetPathInputController.file;
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<Link> links;
 
@@ -591,18 +586,18 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     if (!links.isEmpty()) {
-                        linksData.addAll(links);
-                        linksTableView.getSortOrder().clear();
-                        linksTableView.getSortOrder().addAll(addressPathColumn, indexColumn);
+                        tableData.addAll(links);
+                        tableView.getSortOrder().clear();
+                        tableView.getSortOrder().addAll(addressPathColumn, indexColumn);
 
                         for (Link link : links) {
                             if (link.getAddressPath().startsWith(addressLink.getAddressPath())) {
-                                linksTableView.getSelectionModel().select(link);
+                                tableView.getSelectionModel().select(link);
                             }
                         }
                     }
 
-                    String txt = Languages.message("Links") + ": " + linksData.size();
+                    String txt = Languages.message("Links") + ": " + tableData.size();
                     linksLabel.setText(txt);
                     updateLogs(txt);
 
@@ -624,7 +619,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     public void downloadAction() {
         try {
             stopped = false;
-            List<Link> selected = linksTableView.getSelectionModel().getSelectedItems();
+            List<Link> selected = tableView.getSelectionModel().getSelectedItems();
             if (selected == null || selected.isEmpty()) {
                 return;
             }
@@ -664,7 +659,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
 //                    tableDownloadHistory.deleteAddressHistory(address);
@@ -740,7 +735,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     }
 
     public void setPath() {
-        List<Link> selected = linksTableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -759,15 +754,15 @@ public class DownloadFirstLevelLinksController extends BaseController {
         }
         String path = result.get().trim();
         for (Link link : selected) {
-            File fullpath = new File(targetPathController.file.getAbsolutePath() + File.separator + path);
+            File fullpath = new File(targetPathInputController.file.getAbsolutePath() + File.separator + path);
             String filename = link.filename(fullpath, filenameType);
             link.setFile(filename);
         }
-        linksTableView.refresh();
+        tableView.refresh();
     }
 
     public void addOrderBeforeFilename() {
-        List<Link> selected = linksTableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -775,25 +770,25 @@ public class DownloadFirstLevelLinksController extends BaseController {
             Link link = selected.get(i);
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
             String newName = file.getParent() + File.separator + (i + 1) + "_" + file.getName();
             link.setFile(newName);
         }
-        linksTableView.refresh();
+        tableView.refresh();
     }
 
     public void setFilename() {
-        List<Link> selected = linksTableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
         for (Link link : selected) {
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -802,7 +797,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             String newName = file.getParent() + File.separator + link.pageName(filenameType) + suffix;
             link.setFile(newName);
         }
-        linksTableView.refresh();
+        tableView.refresh();
     }
 
     public void setLinkNameAsFilename() {
@@ -826,7 +821,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         if (tabPane.getSelectionModel().getSelectedItem() != linksTab) {
             return;
         }
-        Link link = linksTableView.getSelectionModel().getSelectedItem();
+        Link link = tableView.getSelectionModel().getSelectedItem();
         if (link == null) {
             return;
         }
@@ -837,87 +832,11 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     @Override
     public void infoAction() {
-        Link link = linksTableView.getSelectionModel().getSelectedItem();
+        Link link = tableView.getSelectionModel().getSelectedItem();
         if (link == null) {
             return;
         }
-        info(link.getAddress());
-    }
-
-    @FXML
-    public void info(String link) {
-        if (link == null) {
-            return;
-        }
-        Task infoTask = new DownloadTask() {
-
-            @Override
-            protected boolean initValues() {
-                readHead = true;
-                address = link;
-                return super.initValues();
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (head == null) {
-                    popError(Languages.message("InvalidData"));
-                    return;
-                }
-                StringBuilder s = new StringBuilder();
-                s.append("<h1  class=\"center\">").append(address).append("</h1>\n");
-                s.append("<hr>\n");
-                List<String> names = new ArrayList<>();
-                names.addAll(Arrays.asList(Languages.message("Name"), Languages.message("Value")));
-                StringTable table = new StringTable(names);
-                for (Object key : head.keySet()) {
-                    String name = (String) key;
-                    if (name.startsWith("HeaderField_") || name.startsWith("RequestProperty_")) {
-                        continue;
-                    }
-                    List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(name, (String) head.get(key)));
-                    table.add(row);
-                }
-                s.append(StringTable.tableDiv(table));
-                s.append("<h2  class=\"center\">").append("Header Fields").append("</h2>\n");
-                int hlen = "HeaderField_".length();
-                for (Object key : head.keySet()) {
-                    String name = (String) key;
-                    if (!name.startsWith("HeaderField_")) {
-                        continue;
-                    }
-                    List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(name.substring(hlen), (String) head.get(key)));
-                    table.add(row);
-                }
-                s.append(StringTable.tableDiv(table));
-                s.append("<h2  class=\"center\">").append("Request Property").append("</h2>\n");
-                int rlen = "RequestProperty_".length();
-                for (Object key : head.keySet()) {
-                    String name = (String) key;
-                    if (!name.startsWith("RequestProperty_")) {
-                        continue;
-                    }
-                    List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(name.substring(rlen), (String) head.get(key)));
-                    table.add(row);
-                }
-                s.append(StringTable.tableDiv(table));
-                ControllerTools.openHtmlTable(null, s.toString());
-            }
-
-            @Override
-            protected void whenFailed() {
-                if (error != null) {
-                    popError(error);
-                } else {
-                    popFailed();
-                }
-            }
-
-        };
-        start(infoTask);
+        HtmlReadTools.requestHead(this, link.getAddress());
     }
 
     @FXML
@@ -926,7 +845,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         if (link == null) {
             return;
         }
-        info(link.getAddress());
+        HtmlReadTools.requestHead(this, link.getAddress());
     }
 
     @FXML
@@ -935,7 +854,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         if (link == null) {
             return;
         }
-        info(link.getAddress());
+        HtmlReadTools.requestHead(this, link.getAddress());
     }
 
     @FXML
@@ -947,9 +866,14 @@ public class DownloadFirstLevelLinksController extends BaseController {
         }
     }
 
+    @Override
+    public void itemDoubleClicked() {
+        openLink();
+    }
+
     @FXML
     protected void openLink() {
-        Link link = linksTableView.getSelectionModel().getSelectedItem();
+        Link link = tableView.getSelectionModel().getSelectedItem();
         openLink(link);
     }
 
@@ -974,13 +898,13 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
     @FXML
     public void viewAction() {
-        Link link = linksTableView.getSelectionModel().getSelectedItem();
+        Link link = tableView.getSelectionModel().getSelectedItem();
         view(link);
     }
 
     @FXML
     public void view(Link link) {
-        if (link == null || targetPathController.file == null) {
+        if (link == null || targetPathInputController.file == null) {
             return;
         }
         String s = Languages.message("Address") + ": " + link.getAddress() + "<br>"
@@ -1667,7 +1591,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     protected void openFolder() {
         try {
-            browseURI(targetPathController.file.toURI());
+            browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {
         }
     }

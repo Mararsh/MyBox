@@ -466,7 +466,9 @@ public class ControlWebView extends BaseController {
             setWebViewLabel(message("Loaded"));
 
             webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
-            webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+            if (!(this instanceof ControlHtmlEditor)) {
+                webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+            }
 
             Document doc = webEngine.getDocument();
             charset = HtmlReadTools.charset(doc);
@@ -1061,21 +1063,24 @@ public class ControlWebView extends BaseController {
             menu.setDisable(hisSize < 2);
             items.add(menu);
 
-            items.add(new SeparatorMenuItem());
-            CheckMenuItem checkMenu = new CheckMenuItem(message("Editable"));
-            checkMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("WebViewEditable", checkMenu.isSelected());
-                    webEngine.executeScript("document.body.contentEditable=" + checkMenu.isSelected());
-                }
-            });
-            items.add(checkMenu);
+            if (!(this instanceof ControlHtmlEditor)) {
+                items.add(new SeparatorMenuItem());
+                CheckMenuItem checkMenu = new CheckMenuItem(message("Editable"));
+                checkMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+                checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("WebViewEditable", checkMenu.isSelected());
+                        webEngine.executeScript("document.body.contentEditable=" + checkMenu.isSelected());
+                    }
+                });
+                items.add(checkMenu);
+            }
 
             menu = new MenuItem(message("Script"), StyleTools.getIconImage("iconScript.png"));
             menu.setOnAction((ActionEvent event) -> {
-                TextInputController inputController = TextInputController.open(parentController, "JavaScript", null);
+                TextInputController inputController
+                        = TextInputController.open(parentController != null ? parentController : myController, "JavaScript", null);
                 inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -1086,6 +1091,7 @@ public class ControlWebView extends BaseController {
                         inputController.closeStage();
                         try {
                             webEngine.executeScript(value);
+                            popDone();
                         } catch (Exception e) {
                             popError(e.toString());
                         }

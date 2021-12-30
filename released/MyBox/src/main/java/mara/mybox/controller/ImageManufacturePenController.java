@@ -34,6 +34,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fximage.PenTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -441,7 +442,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image newImage;
 
                 @Override
@@ -474,7 +475,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image newImage;
 
                 @Override
@@ -507,7 +508,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image newImage;
 
                 @Override
@@ -543,7 +544,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image newImage;
 
                 @Override
@@ -577,7 +578,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image newImage;
 
                 @Override
@@ -618,7 +619,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             if (task != null) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private Image newImage;
 
                 @Override

@@ -27,7 +27,6 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVFormat;
@@ -1947,14 +1946,16 @@ public class GeographyCodeTools {
         try {
 
             if (sourceCS == null || sourceCS.getValue() == GCJ_02) {
-                double[] coordinate = {DoubleTools.scale(longitude, 6), DoubleTools.scale(latitude, 6)};
+                double[] coordinate = {DoubleTools.scale(longitude, 6),
+                    DoubleTools.scale(latitude, 6)};
                 return coordinate;
             }
             String results = toGCJ02ByWebService(sourceCS, DoubleTools.scale(longitude, 6) + "," + DoubleTools.scale(latitude, 6));
             String[] values = results.split(",");
             double longitudeC = Double.parseDouble(values[0]);
             double latitudeC = Double.parseDouble(values[1]);
-            double[] coordinate = {DoubleTools.scale(longitudeC, 6), DoubleTools.scale(latitudeC, 6)};
+            double[] coordinate = {DoubleTools.scale(longitudeC, 6),
+                DoubleTools.scale(latitudeC, 6)};
             return coordinate;
         } catch (Exception e) {
             return null;

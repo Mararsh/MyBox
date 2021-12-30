@@ -2,8 +2,6 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 
 /**
@@ -23,8 +21,6 @@ public abstract class BaseBatchFFmpegController extends BaseBatchFileController 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Media);
-        sourceExtensionFilter = FileFilters.FFmpegMediaExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
 }

@@ -6,20 +6,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.UserConfig.setString;
-import static mara.mybox.value.UserConfig.setString;
-import static mara.mybox.value.UserConfig.setBoolean;
 
 /**
  * @Author Mara
@@ -52,12 +44,11 @@ public class ImageConverterBatchController extends BaseBatchImageController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(formatController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(formatController.icoWidthSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(targetPathController.valid.not())
+                    .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(formatController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(formatController.icoWidthSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {

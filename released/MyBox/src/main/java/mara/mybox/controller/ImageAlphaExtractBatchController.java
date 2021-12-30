@@ -3,17 +3,12 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.beans.binding.Bindings;
+import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.UserConfig;
-import mara.mybox.bufferedimage.AlphaTools;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 
@@ -41,8 +36,7 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
         try {
             super.initControls();
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
 

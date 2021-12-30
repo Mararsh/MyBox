@@ -210,6 +210,9 @@ Coding Address
 <a href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
 <a href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
 <a href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br>
+<a href="https://openjfx.io/">OpenJFX Community Site</a><br><br>
+<a href="https://fxdocs.github.io/docs/html5/">JavaFX Documentation Project</a><br><br>
+<a href="http://tutorials.jenkov.com/javafx/index.html">JavaFX Tutorial</a><br><br>
 <a href="https://icons8.com/">icons8</a><br>
 <a href="https://mvnrepository.com/">mvnrepository</a><br>
 
@@ -251,6 +254,7 @@ Items in one sentence about javafx
     <li>When listen mouse events, event.getX() and event.getY() return the coordinate of event.getSource() which is the control owns the events. Example, when listen on ImageView, the coordinate is related to the image.</li>
     <li>Iterative calls may happen when listen both onMouseEntered and  onMouseExited and change focus in handling of the events(like pop menu) or change control&rsquo;s size.</li>
     <li>When double click mouse, single-click event is tiggerred at first and then double-click event is triggerred. So need avoid duplicated or conflicted handlings against same event.</li>
+    <li>For table's multiple selections, use getSelectedIndices() to listen changes, Some changes may be missed if use selectedItemProperty().</li>
 </ol>
 
 ##MyBox#
@@ -312,6 +316,7 @@ Items in one sentence about java
     <li>When handle money, store integer number for each unit.</li>
     <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
     <li>To determine value's broken, write if (abs(x - 7.3) < TOLERANCE) instead of if (x == 7.3).</li></ol>
+    <li>Value of final static constant should be determined at compling time.</li></ol>
 
 ##MyBox#
 Notebook > Note Examples > Coding > MyBox

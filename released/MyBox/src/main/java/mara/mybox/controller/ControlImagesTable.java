@@ -22,7 +22,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -31,7 +33,6 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import thridparty.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -40,7 +41,6 @@ import thridparty.TableAutoCommitCell;
  */
 public class ControlImagesTable extends BaseBatchTableController<ImageInformation> {
 
-    protected boolean isOpenning;
     protected SimpleBooleanProperty hasSampled;
     protected Image image;
     protected long duration;
@@ -111,7 +111,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void checkThumb() {
         if (tableThumbCheck.isSelected()) {
             if (!tableView.getColumns().contains(imageColumn)) {
-                tableView.getColumns().add(0, imageColumn);
+                tableView.getColumns().add(2, imageColumn);
             }
         } else {
             if (tableView.getColumns().contains(imageColumn)) {
@@ -147,30 +147,36 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 durationColumn.setCellFactory((TableColumn<ImageInformation, Long> param) -> {
                     TableAutoCommitCell<ImageInformation, Long> cell
                             = new TableAutoCommitCell<ImageInformation, Long>(new LongStringConverter()) {
+
                         @Override
-                        public void commitEdit(Long val) {
-                            if (val <= 0) {
-                                cancelEdit();
-                            } else {
-                                super.commitEdit(val);
+                        public boolean valid(Long value) {
+                            return value > 0;
+                        }
+
+                        @Override
+                        public void commitEdit(Long value) {
+                            try {
+                                int rowIndex = rowIndex();
+                                if (rowIndex < 0 || !valid(value)) {
+                                    cancelEdit();
+                                    return;
+                                }
+                                ImageInformation row = tableData.get(rowIndex);
+                                if (value != row.getDuration()) {
+                                    super.commitEdit(value);
+                                    row.setDuration(value);
+                                    if (!isSettingValues) {
+                                        Platform.runLater(() -> {
+                                            updateLabel();
+                                        });
+                                    }
+                                }
+                            } catch (Exception e) {
+                                MyBoxLog.debug(e);
                             }
                         }
                     };
                     return cell;
-                });
-                durationColumn.setOnEditCommit((TableColumn.CellEditEvent<ImageInformation, Long> t) -> {
-                    if (t == null) {
-                        return;
-                    }
-                    if (t.getNewValue() > 0) {
-                        ImageInformation row = t.getRowValue();
-                        row.setDuration(t.getNewValue());
-                        if (!isSettingValues) {
-                            Platform.runLater(() -> {
-                                updateLabel();
-                            });
-                        }
-                    }
                 });
                 durationColumn.getStyleClass().add("editable-column");
             }
@@ -201,7 +207,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             boolean notImageFile = suffix.equalsIgnoreCase("ppt")
                     || suffix.equalsIgnoreCase("pptx")
                     || suffix.equalsIgnoreCase("pdf");
-            editFileButton.setDisable(notImageFile);
+            editButton.setDisable(notImageFile);
             infoButton.setDisable(notImageFile);
             metaButton.setDisable(notImageFile);
 
@@ -228,7 +234,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         }
         s += MessageFormat.format(Languages.message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
-        if (viewFileButton != null) {
+        if (viewButton != null) {
             s += "  " + Languages.message("DoubleClickToView");
         }
         tableLabel.setText(s);
@@ -258,7 +264,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private List<ImageInformation> infos;
 
@@ -287,7 +293,6 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                         popDone();
                         recordFileAdded(files);
                     }
-                    isOpenning = false;
                 }
 
             };
@@ -297,7 +302,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @FXML
     @Override
-    public void viewFileAction() {
+    public void viewAction() {
         try {
             ImageInformation info = tableView.getSelectionModel().getSelectedItem();
             if (info == null) {
@@ -322,7 +327,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @FXML
     @Override
-    public void editFileAction() {
+    public void editAction() {
         try {
             ImageInformation info = tableView.getSelectionModel().getSelectedItem();
             if (info == null) {

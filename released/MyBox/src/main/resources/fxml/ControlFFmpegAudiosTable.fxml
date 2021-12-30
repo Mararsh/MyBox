@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="upFilesButton" mnemonicParsing="false" onAction="#upFilesAction">
+                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#upFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -43,7 +43,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="downFilesButton" mnemonicParsing="false" onAction="#downFilesAction">
+                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -52,29 +52,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="selectAllFilesButton" mnemonicParsing="false" onAction="#selectAllFilesAction">
+                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="unselectAllFilesButton" mnemonicParsing="false" onAction="#unselectAllFilesAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconSelectNone.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconFileDelete.png" />
+                                <Image url="@../buttons/Red/iconDelete.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -90,9 +72,14 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </FlowPane>
-        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+        <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
+                <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                    <graphic>
+                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                    </graphic>
+                </TableColumn>
+                <TableColumn fx:id="currentIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Current" />
                 <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%File" />
                 <TableColumn fx:id="durationColumn" prefWidth="120.0" text="%DurationMillisecondsWrap" />
                 <TableColumn fx:id="audioColumn" editable="false" prefWidth="160.0" text="%AudioEncoding" />

@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,10 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
-import javax.imageio.ImageIO;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
+import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -54,12 +55,12 @@ public class WebAddressController extends BaseWebViewController {
     public void initControls() {
         try {
             super.initControls();
-            if (urlSelector == null) {
-                return;
-            }
-            List<String> his = tableWebHistory.recent(20);
-            if (!his.isEmpty()) {
-                urlSelector.getItems().addAll(his);
+
+            if (urlSelector != null) {
+                List<String> his = tableWebHistory.recent(20);
+                if (!his.isEmpty()) {
+                    urlSelector.getItems().addAll(his);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -72,109 +73,123 @@ public class WebAddressController extends BaseWebViewController {
     }
 
     @Override
-    public boolean validAddress(String value) {
-        try {
-            URL url = new URL(value);
-            if (urlSelector != null) {
-                urlSelector.getEditor().setStyle(null);
-            }
-        } catch (Exception e) {
-            popError(message("InvalidLink"));
-            if (urlSelector != null) {
-                urlSelector.getEditor().setStyle(UserConfig.badStyle());
-            }
-            return false;
+    public void goAction() {
+        if (!checkBeforeNextAction() || urlSelector == null) {
+            return;
         }
-        return checkBeforeNextAction();
+        boolean ret = webViewController.loadAddress(urlSelector.getEditor().getText());
+        if (ret) {
+            sourceFile = webViewController.sourceFile;
+        }
     }
 
     @Override
     public void addressChanged() {
-        String address = getAddress();
         if (urlSelector != null) {
             Platform.runLater(() -> {
-                tableWebHistory.insertData(makeHis(address));
+                urlSelector.getEditor().setStyle(null);
+                String address;
+                if (webViewController != null) {
+                    address = webViewController.address;
+                } else {
+                    address = urlSelector.getValue();
+                }
                 urlSelector.getItems().clear();
                 List<String> urls = tableWebHistory.recent(20);
                 if (!urls.isEmpty()) {
                     urlSelector.getItems().addAll(urls);
                 }
                 urlSelector.getEditor().setText(address);
+                writeHis(address);
+            });
+        }
+    }
+
+    public void writeHis(String address) {
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
+
+            private ImageView tabImage = null;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    WebHistory his = new WebHistory();
+                    his.setAddress(address);
+                    his.setVisitTime(new Date());
+                    String title = webEngine.getTitle();
+                    his.setTitle(title != null ? title : "");
+                    his.setIcon("");
+                    if (failedAddress == null || !failedAddress.contains(address)) {
+                        try {
+                            File iconFile = IconTools.readIcon(address, true);
+                            if (iconFile != null && iconFile.exists()) {
+                                his.setIcon(iconFile.getAbsolutePath());
+                                if (addressTab != null) {
+                                    BufferedImage image = ImageFileReaders.readImage(iconFile);
+                                    if (image != null) {
+                                        tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+                    if (tabImage == null) {
+                        if (failedAddress == null) {
+                            failedAddress = new ArrayList<>();
+                        }
+                        failedAddress.add(address);
+                    }
+                    tableWebHistory.insertData(his);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (addressTab != null) {
+                    if (tabImage == null) {
+                        tabImage = StyleTools.getIconImage("iconMyBox.png");
+                    }
+                    tabImage.setFitWidth(20);
+                    tabImage.setFitHeight(20);
+                    addressTab.setGraphic(tabImage);
+                }
+            }
+
+        };
+        start(bgTask, false);
+    }
+
+    @Override
+    public void addressInvalid() {
+        super.addressInvalid();
+        if (urlSelector != null) {
+            Platform.runLater(() -> {
+                urlSelector.getEditor().setStyle(UserConfig.badStyle());
             });
         }
     }
 
     @Override
-    public void goAction() {
-        if (urlSelector == null) {
-            return;
-        }
-        webViewController.goAddress(urlSelector.getEditor().getText());
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        webViewController.refreshAction();
-    }
-
-    @Override
-    protected void afterPageLoaded() {
+    public void pageLoaded() {
         try {
-            super.afterPageLoaded();
             if (addressTab != null) {
                 String title = webEngine.getTitle();
                 addressTab.setText(title != null ? title.substring(0, Math.min(10, title.length())) : "");
             }
+            super.pageLoaded();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public WebHistory makeHis(String value) {
-        try {
-            WebHistory his = new WebHistory();
-            his.setAddress(value);
-            his.setVisitTime(new Date());
-            String title = webEngine.getTitle();
-            his.setTitle(title != null ? title : "");
-            his.setIcon("");
-            ImageView tabImage = null;
-            if (failedAddress == null || !failedAddress.contains(value)) {
-                File iconFile = IconTools.readIcon(value, true);
-                if (iconFile != null && iconFile.exists()) {
-                    his.setIcon(iconFile.getAbsolutePath());
-                    if (addressTab != null) {
-                        BufferedImage image = ImageIO.read(iconFile);
-                        if (image != null) {
-                            tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
-                        }
-                    }
-                } else {
-                    if (failedAddress == null) {
-                        failedAddress = new ArrayList<>();
-                    }
-                    failedAddress.add(value);
-                }
-            }
-            if (addressTab != null) {
-                if (tabImage == null) {
-                    tabImage = new ImageView("img/MyBox.png");
-                }
-                tabImage.setFitWidth(20);
-                tabImage.setFitHeight(20);
-                addressTab.setGraphic(tabImage);
-            }
-            return his;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
         }
     }
 
     @Override
     public boolean keyEnter() {
-        if (urlSelector.isFocused()) {
+        if (urlSelector != null && urlSelector.isFocused()) {
             goAction();
             return true;
         }

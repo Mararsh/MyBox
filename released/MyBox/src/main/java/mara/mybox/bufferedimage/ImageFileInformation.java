@@ -9,6 +9,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
+import net.sf.image4j.codec.ico.ICODecoder;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -51,6 +52,8 @@ public class ImageFileInformation extends FileInformation {
                 return readPDF(file);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
                 return readPPT(file);
+            } else if (suffix != null && (suffix.equalsIgnoreCase("ico") || suffix.equalsIgnoreCase("icon"))) {
+                return readIconFile(file);
             } else {
                 return readImageFile(file);
             }
@@ -62,6 +65,45 @@ public class ImageFileInformation extends FileInformation {
 
     public static ImageFileInformation readImageFile(File file) {
         return ImageFileReaders.readImageFileMetaData(file);
+    }
+
+    public static ImageFileInformation readIconFile(File file) {
+        ImageFileInformation fileInfo = new ImageFileInformation(file);
+        String format = "ico";
+        fileInfo.setImageFormat(format);
+        try {
+            List<BufferedImage> frames = ICODecoder.read(file);
+            if (frames != null) {
+                int num = frames.size();
+                fileInfo.setNumberOfImages(num);
+                List<ImageInformation> imagesInfo = new ArrayList<>();
+                ImageInformation imageInfo;
+                for (int i = 0; i < num; i++) {
+                    BufferedImage bufferedImage = frames.get(i);
+                    imageInfo = ImageInformation.create(format, file);
+                    imageInfo.setImageFileInformation(fileInfo);
+                    imageInfo.setImageFormat(format);
+                    imageInfo.setFileName(fileInfo.getFileName());
+                    imageInfo.setCreateTime(fileInfo.getCreateTime());
+                    imageInfo.setModifyTime(fileInfo.getModifyTime());
+                    imageInfo.setFileSize(fileInfo.getFileSize());
+                    imageInfo.setWidth(bufferedImage.getWidth());
+                    imageInfo.setHeight(bufferedImage.getHeight());
+                    imageInfo.setIsMultipleFrames(num > 1);
+                    imageInfo.setIndex(i);
+                    imageInfo.setImageType(BufferedImage.TYPE_INT_ARGB);
+                    imageInfo.loadBufferedImage(bufferedImage);
+                    imagesInfo.add(imageInfo);
+                }
+                fileInfo.setImagesInformation(imagesInfo);
+                if (!imagesInfo.isEmpty()) {
+                    fileInfo.setImageInformation(imagesInfo.get(0));
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return fileInfo;
     }
 
     public static ImageFileInformation readPDF(File file) {
@@ -88,7 +130,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo.setIsMultipleFrames(num > 1);
                 imageInfo.setIndex(i);
                 imageInfo.setImageType(BufferedImage.TYPE_INT_RGB);
-                ImageInformation.countMaxWidth(imageInfo);
+                ImageInformation.checkMem(imageInfo);
                 imagesInfo.add(imageInfo);
             }
             fileInfo.setImagesInformation(imagesInfo);
@@ -113,8 +155,8 @@ public class ImageFileInformation extends FileInformation {
             fileInfo.setNumberOfImages(num);
             List<ImageInformation> imagesInfo = new ArrayList<>();
             ImageInformation imageInfo;
-            int width = (int) Math.round(ppt.getPageSize().getWidth());
-            int height = (int) Math.round(ppt.getPageSize().getHeight());
+            int width = (int) Math.ceil(ppt.getPageSize().getWidth());
+            int height = (int) Math.ceil(ppt.getPageSize().getHeight());
             for (int i = 0; i < num; ++i) {
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
@@ -128,7 +170,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo.setIsMultipleFrames(num > 1);
                 imageInfo.setIndex(i);
                 imageInfo.setImageType(BufferedImage.TYPE_INT_ARGB);
-                ImageInformation.countMaxWidth(imageInfo);
+                ImageInformation.checkMem(imageInfo);
                 imagesInfo.add(imageInfo);
             }
             fileInfo.setImagesInformation(imagesInfo);

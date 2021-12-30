@@ -17,7 +17,6 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -35,7 +34,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -72,8 +70,8 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import thridparty.LabeledBarChart;
-import thridparty.LabeledHorizontalBarChart;
+import mara.mybox.fxml.LabeledBarChart;
+import mara.mybox.fxml.LabeledHorizontalBarChart;
 
 /**
  * @Author Mara
@@ -87,7 +85,8 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     protected QueryCondition queryCondition;
     protected String chartQuerySQL, chartName;
     protected List<String> orderNames, valuesNames;
-    protected int topNumber, snapWidth, mapLoadTime, totalSize;
+    protected int topNumber, snapWidth, mapLoadTime;
+    protected long totalSize;
     protected List<String> datasets, chartTimes;
     protected Map<String, List<EpidemicReport>> timesReports, locationsReports;
     protected List<GeographyCode> chartLocations;
@@ -355,7 +354,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         chartLocations = reportsController.dataLocations;
         multipleDatasets = reportsController.datasets.size() > 1;
         maxValue = reportsController.maxValue;
-        totalSize = reportsController.totalSize;
+        totalSize = reportsController.dataSize;
         chartTimes = new ArrayList<>();
         chartTimes.addAll(reportsController.dataTimes);
         Collections.reverse(chartTimes);
@@ -1364,10 +1363,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             snapPara.setFill(Color.WHITE);
             snapPara.setTransform(Transform.scale(scale, scale));
 
-            Bounds bounds = snapBox.getLayoutBounds();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-
             List<File> snapshots = new ArrayList<>();
             loading = handling();
             snapEnd = true;
@@ -1431,7 +1426,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
                 private void snap() {
                     try {
-                        Image snap = snapBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
+                        Image snap = snapBox.snapshot(snapPara, null);
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
                         if (format.equals("gif") && bufferedImage.getWidth() > snapWidth) {
                             bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, snapWidth);

@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
@@ -29,14 +30,14 @@ import net.sf.image4j.codec.ico.ICODecoder;
  * @License Apache License Version 2.0
  */
 public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController {
-
+    
     protected File lastFile;
     protected StringBuilder imageFileString;
-
+    
     public FFmpegMergeImageFilesController() {
         baseTitle = Languages.message("FFmpegMergeImagesFiles");
     }
-
+    
     @Override
     protected File handleImages() {
         try {
@@ -78,12 +79,12 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return null;
         }
     }
-
+    
     @Override
     public boolean matchType(File file) {
         return FileTools.isSupportedImage(file);
     }
-
+    
     public String handleDirectory(File directory, long duration) {
         try {
             if (directory == null || !directory.isDirectory()) {
@@ -109,7 +110,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return Languages.message("Failed");
         }
     }
-
+    
     public String handleFile(File file, long duration) {
         if (file == null) {
             return Languages.message("Failed");
@@ -139,6 +140,8 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             reader.setInput(iis, false, true);
             ImageReadParam param = reader.getDefaultReadParam();
             int num = reader.getNumImages(true);
+            ImageInformation imageInfo = new ImageInformation(file);
+            imageInfo.setImageFormat(format);
             for (int i = 0; i < num; i++) {
                 if (num > 1) {
                     updateLogs(Languages.message("Reading") + ": " + file + "-" + (i + 1), true);
@@ -152,7 +155,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                     if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                         break;
                     }
-                    frame = ImageFileReaders.readBrokenImage(e, file.getAbsolutePath(), i, null, -1);
+                    frame = ImageFileReaders.readBrokenImage(e, imageInfo.setIndex(i));
                 }
                 if (frame != null) {
                     handleImage(frame, duration);
@@ -168,7 +171,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return Languages.message("Failed");
         }
     }
-
+    
     public boolean handleImage(BufferedImage image, long duration) {
         try {
             BufferedImage fitImage = ScaleTools.fitSize(image,
@@ -184,5 +187,5 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return false;
         }
     }
-
+    
 }

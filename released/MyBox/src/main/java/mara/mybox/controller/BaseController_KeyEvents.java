@@ -17,6 +17,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     private KeyEvent keyEvent;
 
+    // Flter from top level. Always handle at higher level at first.
     public void monitorKeyEvents() {
         try {
             if (thisPane != null) {
@@ -34,18 +35,22 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     // return whether handled
     public boolean keyEventsFilter(KeyEvent event) {
+        try {
 //        MyBoxLog.debug("filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
 //                + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
-        keyEvent = event;
-        if (event.isControlDown()) {
-            return controlAltFilter(event);
+            keyEvent = event;
+            if (event.isControlDown()) {
+                return controlAltFilter(event);
 
-        } else if (event.isAltDown()) {
-            return altFilter(event);
+            } else if (event.isAltDown()) {
+                return altFilter(event);
 
-        } else if (event.getCode() != null) {
-            return keyFilter(event);
+            } else if (event.getCode() != null) {
+                return keyFilter(event);
 
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
         return false;
     }
@@ -313,7 +318,12 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return true;
         } else if (addButton != null) {
             if (!addButton.isDisabled() && addButton.isVisible()) {
-                addAction(null);
+                addAction();
+            }
+            return true;
+        } else if (addRowsButton != null) {
+            if (!addRowsButton.isDisabled() && addRowsButton.isVisible()) {
+                addRowsAction();
             }
             return true;
         }

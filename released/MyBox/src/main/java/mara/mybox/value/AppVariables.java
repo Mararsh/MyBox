@@ -32,7 +32,7 @@ public class AppVariables {
     public static String[] appArgs;
     public static File MyboxConfigFile, MyBoxLogsPath;
     public static String MyboxDataPath, AlarmClocksFile;
-    public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath, MyBoxDownloadsPath;
+    public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath;
     public static List<File> MyBoxReservePaths;
     public static ResourceBundle currentBundle, currentTableBundle;
     public static Map<String, String> userConfigValues = new HashMap<>();
@@ -42,7 +42,7 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
-    public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
+    public static boolean closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
     public static StyleData.StyleColor ControlColor;
     public static TextClipboardMonitor textClipboardMonitor;
@@ -56,8 +56,8 @@ public class AppVariables {
             getBundle();
             getTableBundle();
             getPdfMem();
-            openStageInNewWindow = UserConfig.getBoolean("OpenStageInNewWindow", false);
-            restoreStagesSize = UserConfig.getBoolean("RestoreStagesSize", true);
+            closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", true);
+            recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
             fileRecentNumber = UserConfig.getInt("FileRecentNumber", 16);
             iconSize = UserConfig.getInt("IconSize", 20);
@@ -68,7 +68,7 @@ public class AppVariables {
             saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;
-            popErrorLogs = true;
+            popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
 
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {

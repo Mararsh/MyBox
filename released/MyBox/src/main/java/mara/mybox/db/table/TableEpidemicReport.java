@@ -2,7 +2,6 @@ package mara.mybox.db.table;
 
 import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -11,8 +10,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import static mara.mybox.db.DerbyBase.stringValue;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
@@ -20,7 +17,6 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -47,7 +43,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
 
     public final TableEpidemicReport defineColumns() {
         addColumn(new ColumnDefinition("epid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("data_set", ColumnType.String, true).setLength(1024));
+        addColumn(new ColumnDefinition("data_set", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("locationid", ColumnType.Long, true)
                 .setForeignName("Epidemic_Report_locationid_fk").setForeignTable("Geography_Code").setForeignColumn("gcid"));

@@ -13,7 +13,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -307,15 +306,15 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                          <Button fx:id="viewImageButton" mnemonicParsing="false" onAction="#popImage">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconView.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
+                                                        <Button fx:id="viewImageButton" mnemonicParsing="false" onAction="#popImage">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconView.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                         <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -628,85 +627,7 @@ License:    Apache License Version 2.0
                                             <content> 
                                                 <VBox fx:id="historiesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <CheckBox fx:id="recordHistoriesCheck" mnemonicParsing="false" selected="true" text="%RecordEditHistories" VBox.vgrow="NEVER" />
-                                                        <VBox fx:id="historiesListBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <Button fx:id="refreshHistoriesButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshHistories">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="clearHistoriesButton" mnemonicParsing="false" onAction="#clearHistories">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconClear.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="deleteHistoriesButton" mnemonicParsing="false" onAction="#deleteHistories">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconDelete.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="viewHisButton" layoutX="92.0" layoutY="10.0" mnemonicParsing="false" onAction="#viewHistory">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconView.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="useHistoryButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#okHistory">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconYes.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                                <ListView fx:id="historiesList" maxHeight="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
-                                                                <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                                                                    <children>
-                                                                        <Label text="%MaxEditHistories" />
-                                                                        <TextField fx:id="maxHistoriesInput" prefWidth="100.0" text="10" />
-                                                                        <Button fx:id="okHistoriesSizeButton" mnemonicParsing="false" onAction="#okHistoriesSize">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconOK.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="openFolderHisButton" mnemonicParsing="false" onAction="#hisPath">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconOpen.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </FlowPane>
-                                                            </children>
-                                                        </VBox>
+                                                        <fx:include fx:id="his" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageManufactureHistory.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -718,7 +639,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                     <children>
-                                                        <fx:include fx:id="backup" source="ControlFileBackup.fxml" VBox.vgrow="ALWAYS" />
+                                                        <fx:include fx:id="backup" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBackup.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -739,7 +660,7 @@ License:    Apache License Version 2.0
                                                                         <RadioButton fx:id="saveCurrentFramesRadio" mnemonicParsing="false" onAction="#saveCurrentFramesSelected" text="%CurrentFrame" toggleGroup="$framesSaveGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                  <fx:include fx:id="format" source="ControlImageFormat.fxml" />
+                                                                <fx:include fx:id="format" source="ControlImageFormat.fxml" />
                                                                 <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
@@ -796,4 +717,7 @@ License:    Apache License Version 2.0
             </BorderPane.margin>
         </VBox>
     </center>
+   <padding>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </padding>
 </BorderPane>

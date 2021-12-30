@@ -47,7 +47,15 @@ License:    Apache License Version 2.0
                 <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" fx:id="xyLabel" />
                 <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="5.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <CheckBox fx:id="sychronizedCheck" mnemonicParsing="false" text="%Synchronized" />
+                        <CheckBox fx:id="refreshChangeCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/red/iconRefresh.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>               
                         <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" onMouseEntered="#popSaveAs">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

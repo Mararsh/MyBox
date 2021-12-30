@@ -2,11 +2,10 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Iterator;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -24,6 +23,11 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
     public PdfExtractImagesBatchController() {
         baseTitle = Languages.message("PdfExtractImagesBatch");
         browseTargets = true;
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
     }
 
     @Override

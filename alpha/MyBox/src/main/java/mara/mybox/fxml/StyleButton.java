@@ -207,7 +207,7 @@ public class StyleButton {
                 case "pasteContentInSystemClipboardButton":
                     return new StyleData(id, message("PasteContentInSystemClipboard"), "", "iconPasteSystem.png");
                 case "pasteContentInDataClipboardButton":
-                    return new StyleData(id, message("PasteContentInDataClipboard"), "", "iconPaste.png");
+                    return new StyleData(id, message("PasteContentInMyBoxClipboard"), "", "iconPaste.png");
                 default:
                     return new StyleData(id, message("Paste"), "", "iconPaste.png");
             }

@@ -27,13 +27,13 @@ public class TableMyBoxLog extends BaseTable<MyBoxLog> {
         addColumn(new ColumnDefinition("mblid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("log_type", ColumnType.Short, true));
-        addColumn(new ColumnDefinition("log", ColumnType.String, true).setLength(2048));
-        addColumn(new ColumnDefinition("file_name", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("class_name", ColumnType.String).setLength(512));
-        addColumn(new ColumnDefinition("method_name", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("log", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("file_name", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("class_name", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("method_name", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("line", ColumnType.Integer));
-        addColumn(new ColumnDefinition("callers", ColumnType.String).setLength(10240));
-        addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(4096));
+        addColumn(new ColumnDefinition("callers", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(StringMaxLength));
         return this;
     }
 

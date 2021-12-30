@@ -35,6 +35,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -308,10 +309,6 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
-    protected void checkSaveAs() {
-
-    }
-
     @Override
     public void afterInfoLoaded() {
         super.afterInfoLoaded();
@@ -530,7 +527,7 @@ public class ImageViewerController extends BaseImageController {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
                     private Image areaImage;
 
@@ -579,16 +576,20 @@ public class ImageViewerController extends BaseImageController {
                 || (saveButton != null && saveButton.isDisabled())) {
             return;
         }
-        File imageFile = imageFile();
-        if (imageFile == null) {
-            saveAsAction();
-            return;
+        File srcFile = imageFile();
+        if (srcFile == null) {
+            targetFile = chooseSaveFile();
+            if (targetFile == null) {
+                return;
+            }
+        } else {
+            targetFile = srcFile;
         }
         try {
             String ask = null;
             if (imageInformation != null && imageInformation.isIsScaled()) {
                 ask = message("SureSaveScaled");
-            } else if (saveConfirmCheck != null && saveConfirmCheck.isSelected()) {
+            } else if (srcFile != null && saveConfirmCheck != null && saveConfirmCheck.isSelected()) {
                 ask = message("SureOverrideFile");
             }
             if (ask != null) {
@@ -612,48 +613,35 @@ public class ImageViewerController extends BaseImageController {
                     return;
                 }
             }
-
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
                     return;
                 }
-                task = new SingletonTask<Void>() {
+                task = new SingletonTask<Void>(this) {
 
-                    private Image targetImage;
+                    private Image savedImage;
 
                     @Override
                     protected boolean handle() {
-                        Object imageToSave = imageToSave();
-                        if (imageToSave == null) {
-                            return false;
-                        }
-                        BufferedImage bufferedImage;
-                        if (imageToSave instanceof Image) {
-                            targetImage = (Image) imageToSave;
-                            bufferedImage = SwingFXUtils.fromFXImage(targetImage, null);
-                        } else if (imageToSave instanceof BufferedImage) {
-                            bufferedImage = (BufferedImage) imageToSave;
-                            targetImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        } else {
-                            return false;
-                        }
+                        savedImage = imageView.getImage();
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(savedImage, null);
                         if (bufferedImage == null || task == null || isCancelled()) {
                             return false;
                         }
-                        if (backupController != null && backupController.isBack()) {
-                            backupController.addBackup(imageFile);
+                        if (backupController != null && backupController.isBack() && srcFile != null) {
+                            backupController.addBackup(task, srcFile);
                         }
-                        String format = FileNameTools.getFileSuffix(imageFile.getName());
+                        String format = FileNameTools.getFileSuffix(targetFile.getName());
                         if (framesNumber > 1) {
-                            error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, imageFile, null);
+                            error = ImageFileWriters.writeFrame(targetFile, frameIndex, bufferedImage, targetFile, null);
                             ok = error == null;
                         } else {
-                            ok = ImageFileWriters.writeImageFile(bufferedImage, format, imageFile.getAbsolutePath());
+                            ok = ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
                         }
                         if (!ok || task == null || isCancelled()) {
                             return false;
                         }
-                        ImageFileInformation finfo = ImageFileInformation.create(imageFile);
+                        ImageFileInformation finfo = ImageFileInformation.create(targetFile);
                         if (finfo == null || finfo.getImageInformation() == null) {
                             return false;
                         }
@@ -663,10 +651,16 @@ public class ImageViewerController extends BaseImageController {
 
                     @Override
                     protected void whenSucceeded() {
-                        image = targetImage;
-                        imageView.setImage(image);
-                        popInformation(imageFile + "   " + message("Saved"));
-                        setImageChanged(false);
+                        sourceFile = targetFile;
+                        recordFileWritten(sourceFile);
+                        if (srcFile == null) {
+                            sourceFileChanged(sourceFile);
+                        } else {
+                            image = savedImage;
+                            imageView.setImage(image);
+                            popInformation(sourceFile + "   " + message("Saved"));
+                            setImageChanged(false);
+                        }
                     }
 
                 };
@@ -675,25 +669,6 @@ public class ImageViewerController extends BaseImageController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
-    }
-
-    public String saveAsPrefix() {
-        String name;
-        if (imageFile() != null) {
-            name = FileNameTools.prefixFilter(imageFile())
-                    + (framesNumber > 1 && (saveAllFramesRadio == null || !saveAllFramesRadio.isSelected())
-                    ? "-" + message("Frame") + (frameIndex + 1) : "")
-                    + "_" + DateTools.nowFileString();
-        } else {
-            name = DateTools.nowFileString();
-        }
-        if (formatController != null) {
-            name += "." + formatController.attributes.getImageFormat();
-        } else if (fileTypeGroup != null) {
-            name += "." + ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
-        }
-        return name;
     }
 
     @FXML
@@ -703,21 +678,37 @@ public class ImageViewerController extends BaseImageController {
                 || (saveAsButton != null && saveAsButton.isDisabled())) {
             return;
         }
+        File srcFile = imageFile();
+        String fname;
+        if (srcFile != null) {
+            fname = FileNameTools.prefixFilter(srcFile)
+                    + (framesNumber > 1 && (saveAllFramesRadio == null || !saveAllFramesRadio.isSelected())
+                    ? "-" + message("Frame") + (frameIndex + 1) : "")
+                    + "_" + DateTools.nowFileString();
+        } else {
+            fname = DateTools.nowFileString();
+        }
+        String targetFormat = ".png";
+        if (formatController != null) {
+            targetFormat = formatController.attributes.getImageFormat();
+        } else if (fileTypeGroup != null) {
+            targetFormat = ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
+        }
+        fname += "." + targetFormat;
         targetFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                saveAsPrefix(), formatController == null ? FileFilters.ImageExtensionFilter : null);
+                fname, FileFilters.imageFilter(targetFormat));
         if (targetFile == null) {
             return;
         }
-        File imageFile = imageFile();
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
-                    Object imageToSave = imageToSave();
+                    Object imageToSave = imageToSaveAs();
                     if (imageToSave == null) {
                         return false;
                     }
@@ -732,10 +723,10 @@ public class ImageViewerController extends BaseImageController {
                     if (bufferedImage == null || task == null || isCancelled()) {
                         return false;
                     }
-                    boolean multipleFrames = imageFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
+                    boolean multipleFrames = srcFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
                     if (formatController != null) {
                         if (multipleFrames) {
-                            error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, targetFile, formatController.attributes);
+                            error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, formatController.attributes);
                             return error == null;
                         } else {
                             BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
@@ -743,7 +734,7 @@ public class ImageViewerController extends BaseImageController {
                         }
                     } else {
                         if (multipleFrames) {
-                            error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, targetFile, null);
+                            error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, null);
                             return error == null;
                         } else {
                             return ImageFileWriters.writeImageFile(bufferedImage, targetFile);
@@ -756,7 +747,7 @@ public class ImageViewerController extends BaseImageController {
                     popInformation(message("Saved"));
                     recordFileWritten(targetFile);
 
-                    if (imageFile() == null || saveAsType == SaveAsType.Load) {
+                    if (saveAsType == SaveAsType.Load) {
                         sourceFileChanged(targetFile);
 
                     } else if (saveAsType == SaveAsType.Open) {

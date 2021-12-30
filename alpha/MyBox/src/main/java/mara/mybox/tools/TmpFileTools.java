@@ -19,6 +19,13 @@ public class TmpFileTools {
         return path + File.separator + DateTools.nowFileString() + "_" + IntTools.random(100);
     }
 
+    public static String getTempFileName(String path, String prefix) {
+        if (prefix == null) {
+            return getTempFileName(path);
+        }
+        return path + File.separator + prefix + "_" + DateTools.nowFileString() + "_" + IntTools.random(100);
+    }
+
     public static File getTempFile() {
         return getPathTempFile(AppVariables.MyBoxTempPath.getAbsolutePath());
     }
@@ -39,6 +46,14 @@ public class TmpFileTools {
         File file = new File(getTempFileName(path) + suffix);
         while (file.exists()) {
             file = new File(getTempFileName(path) + suffix);
+        }
+        return file;
+    }
+
+    public static File getPathTempFile(String path, String prefix, String suffix) {
+        File file = new File(getTempFileName(path, prefix) + suffix);
+        while (file.exists()) {
+            file = new File(getTempFileName(path, prefix) + suffix);
         }
         return file;
     }

@@ -171,21 +171,23 @@ public class Fxmls {
     /*
         data
      */
-    public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
-    public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
-    public static final String DataClipboardPopFxml = "/fxml/DataClipboardPop.fxml";
-    public static final String SheetCopyToSystemClipboardFxml = "/fxml/SheetCopyToSystemClipboard.fxml";
-    public static final String SheetCopyToMyBoxClipboardFxml = "/fxml/SheetCopyToMyBoxClipboard.fxml";
-    public static final String SheetPasteFxml = "/fxml/SheetPaste.fxml";
-    public static final String SheetEqualFxml = "/fxml/SheetEqual.fxml";
-    public static final String SheetColumnsAddFxml = "/fxml/SheetColumnsAdd.fxml";
-    public static final String SheetColumnsDeleteFxml = "/fxml/SheetColumnsDelete.fxml";
-    public static final String SheetRowsDeleteFxml = "/fxml/SheetRowsDelete.fxml";
-    public static final String SheetRowsAddFxml = "/fxml/SheetRowsAdd.fxml";
-    public static final String SheetSortFxml = "/fxml/SheetSort.fxml";
-    public static final String SheetWidthFxml = "/fxml/SheetWidth.fxml";
-    public static final String SheetCalculateFxml = "/fxml/SheetCalculate.fxml";
-    public static final String SheetExportFxml = "/fxml/SheetExport.fxml";
+    public static final String Data2DManageFxml = "/fxml/Data2DManage.fxml";
+    public static final String Data2DManageQueryFxml = "/fxml/Data2DManageQuery.fxml";
+    public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
+    public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
+
+    public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
+    public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
+    public static final String Data2DCopyFxml = "/fxml/Data2DCopy.fxml";
+    public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
+    public static final String Data2DPasteContentInSystemClipboardFxml = "/fxml/Data2DPasteContentInSystemClipboard.fxml";
+    public static final String Data2DPasteContentInMyBoxClipboardFxml = "/fxml/Data2DPasteContentInMyBoxClipboard.fxml";
+    public static final String Data2DExportFxml = "/fxml/Data2DExport.fxml";
+    public static final String Data2DTransposeFxml = "/fxml/Data2DTranspose.fxml";
+    public static final String Data2DStatisticFxml = "/fxml/Data2DStatistic.fxml";
+    public static final String Data2DPercentageFxml = "/fxml/Data2DPercentage.fxml";
+    public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";
+    public static final String Data2DNormalizeFxml = "/fxml/Data2DNormalize.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -344,8 +346,9 @@ public class Fxmls {
         common
      */
     public static final String LoadingFxml = "/fxml/Loading.fxml";
-
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
+    public static final String TextInputFxml = "/fxml/TextInput.fxml";
+    public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

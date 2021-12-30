@@ -21,6 +21,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -434,6 +436,38 @@ public class MenuMarkdownEditController extends MenuTextEditController {
         MarkdownPopController.open(parentController, textInput);
         return true;
     }
+
+    @FXML
+    @Override
+    public void pdfAction() {
+        if (textInput == null) {
+            return;
+        }
+        String text = textInput.getText();
+        if (text == null || text.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        popInformation(message("WaitAndHandling"));
+        SingletonTask pdftask = new SingletonTask<Void>(this) {
+
+            private File pdf;
+
+            @Override
+            protected boolean handle() {
+                pdf = PdfTools.md2pdf(text);
+                return pdf != null && pdf.exists();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                PdfViewController.open(pdf);
+            }
+
+        };
+        start(pdftask, false);
+    }
+
 
     /*
         static methods

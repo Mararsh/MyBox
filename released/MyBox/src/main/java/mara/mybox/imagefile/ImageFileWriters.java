@@ -244,6 +244,7 @@ public class ImageFileWriters {
                     writer.setOutput(out);
                     ImageWriteParam param = getWriterParam(targetAttributes, writer);
                     writer.prepareWriteSequence(null);
+                    ImageInformation info = new ImageInformation(sourcefile);
                     while (readIndex < size) {
                         BufferedImage bufferedImage;
                         if (readIndex == frameIndex) {
@@ -255,7 +256,7 @@ public class ImageFileWriters {
                                 if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                                     break;
                                 }
-                                bufferedImage = ImageFileReaders.readBrokenImage(e, sourcefile.getAbsolutePath(), readIndex, null, -1);
+                                bufferedImage = ImageFileReaders.readBrokenImage(e, info.setIndex(readIndex));
                             }
                         }
                         if (bufferedImage == null) {

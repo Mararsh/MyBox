@@ -59,8 +59,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(colorInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );

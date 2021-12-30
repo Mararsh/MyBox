@@ -3,9 +3,12 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
@@ -16,12 +19,14 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 
 /**
@@ -40,6 +45,8 @@ public class MenuWebviewController extends MenuController {
             copyToSystemClipboardTextButton, copyToSystemClipboardHtmlButton;
     @FXML
     protected Label tagLabel, htmlLabel, textLabel;
+    @FXML
+    protected CheckBox editableCheck;
 
     public MenuWebviewController() {
         baseTitle = message("Html");
@@ -79,6 +86,20 @@ public class MenuWebviewController extends MenuController {
                 setTitleid(webView.getId());
             }
 
+            if (webViewController instanceof ControlHtmlEditor) {
+                editableCheck.setVisible(false);
+            } else {
+                editableCheck.setVisible(true);
+                editableCheck.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+                editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                        UserConfig.setBoolean("WebViewEditable", editableCheck.isSelected());
+                        webView.getEngine().executeScript("document.body.contentEditable=" + editableCheck.isSelected());
+                    }
+                });
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -109,7 +130,7 @@ public class MenuWebviewController extends MenuController {
                 selectButton.setDisable(element == null);
 
                 String html = WebViewTools.getHtml(webView);
-                bottomLabel.setText(message("Length") + ": " + (html == null ? "0" : StringTools.format(html.length())));
+                bottomLabel.setText(message("Count") + ": " + (html == null ? "0" : StringTools.format(html.length())));
 
                 String htmlSelection = WebViewTools.selectedHtml(webView.getEngine());
                 htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : StringTools.format(htmlSelection.length())));
@@ -232,6 +253,11 @@ public class MenuWebviewController extends MenuController {
     }
 
     @FXML
+    public void popHtmlStyle(MouseEvent mouseEvent) {
+        PopTools.popHtmlStyle(mouseEvent, webViewController);
+    }
+
+    @FXML
     @Override
     public boolean popAction() {
         webViewController.popAction();
@@ -247,7 +273,7 @@ public class MenuWebviewController extends MenuController {
     }
 
     public void refreshAction() {
-        webViewController.refreshAction();
+        webViewController.refresh();
     }
 
     public void backAction() {
@@ -256,6 +282,38 @@ public class MenuWebviewController extends MenuController {
 
     public void forwardAction() {
         webViewController.forwardAction();
+    }
+
+    @FXML
+    public void snapAction() {
+        if (webView == null) {
+            return;
+        }
+        ImageViewerController.load(NodeTools.snap(webView));
+    }
+
+    @FXML
+    public void scriptAction() {
+        if (webView == null) {
+            return;
+        }
+        TextInputController inputController = TextInputController.open(webViewController, "JavaScript", null);
+        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                String value = inputController.getText();
+                if (value == null || value.isBlank()) {
+                    return;
+                }
+                inputController.closeStage();
+                try {
+                    webView.getEngine().executeScript(value);
+                    popDone();
+                } catch (Exception e) {
+                    popError(e.toString());
+                }
+            }
+        });
     }
 
     /*

@@ -1,20 +1,17 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -22,8 +19,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -31,7 +26,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.value.AppValues;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -58,6 +53,8 @@ public class WeiboSnapController extends BaseController {
     private PdfImageFormat format;
     private List<String> addressList;
 
+    @FXML
+    protected ControlPathInput targetPathInputController;
     @FXML
     protected ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
     @FXML
@@ -864,8 +861,9 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
 
-        startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+        targetPathInputController.baseName(baseName).init();
+
+        startButton.disableProperty().bind(targetPathInputController.valid.not()
                 .or(startMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(endMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(zoomBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
@@ -960,27 +958,28 @@ public class WeiboSnapController extends BaseController {
         try {
             super.afterSceneLoaded();
 
-            // Webview need be initialized for weibo.com.
-            if (SystemConfig.getBoolean("WeiboRunFirstTime" + AppValues.AppVersion, true)) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                alert.setTitle(this.baseTitle);
-                alert.setContentText(Languages.message("WeiboSSL"));
-                ButtonType buttonSSL = new ButtonType("SSL");
-                ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSSL, buttonCancel);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-                stage.sizeToScene();
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonSSL) {
-                    initWebview();
-                    SystemConfig.setBoolean("WeiboRunFirstTime" + AppValues.AppVersion, false);
-                }
-            }
+            alertInformation(message("FunctionNotWork"));
 
+            // Webview need be initialized for weibo.com.
+//            if (SystemConfig.getBoolean("WeiboRunFirstTime" + AppValues.AppVersion, true)) {
+//                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//                alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+//                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+//                alert.setTitle(this.baseTitle);
+//                alert.setContentText(Languages.message("WeiboSSL"));
+//                ButtonType buttonSSL = new ButtonType("SSL");
+//                ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+//                alert.getButtonTypes().setAll(buttonSSL, buttonCancel);
+//                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//                stage.setAlwaysOnTop(true);
+//                stage.toFront();
+//                stage.sizeToScene();
+//                Optional<ButtonType> result = alert.showAndWait();
+//                if (result.get() == buttonSSL) {
+//                    initWebview();
+//                    SystemConfig.setBoolean("WeiboRunFirstTime" + AppValues.AppVersion, false);
+//                }
+//            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -989,6 +988,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     @Override
     public void startAction() {
+        MyBoxLog.debug(webAddress);
         makeParameters(webAddress);
         if (parameters == null) {
             popError(Languages.message("ParametersError"));
@@ -1011,7 +1011,8 @@ public class WeiboSnapController extends BaseController {
         parameters.setWebAddress(exmapleAddress);
         parameters.setStartMonth(DateTools.parseMonth("2014-09"));
         parameters.setEndMonth(DateTools.parseMonth("2014-10"));
-        parameters.setTargetPath(targetPath == null ? AppVariables.MyBoxDownloadsPath : targetPath);
+        targetPath = targetPathInputController.file;
+        parameters.setTargetPath(targetPath == null ? new File(AppPaths.getGeneratedPath()) : targetPath);
         startSnap();
     }
 
@@ -1059,6 +1060,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setPageHeight(pageHeight);
             parameters.setMarginSize(marginSize);
             parameters.setAuthor(authorInput.getText());
+            targetPath = targetPathInputController.file;
             parameters.setTargetPath(targetPath);
             parameters.setCreatePDF(pdfCheck.isSelected());
             parameters.setCreateHtml(htmlCheck.isSelected());
@@ -1092,6 +1094,7 @@ public class WeiboSnapController extends BaseController {
 
     protected void startSnap() {
         try {
+            targetPath = targetPathInputController.file;
             if (webAddress == null || webAddress.isEmpty() || parameters == null || targetPath == null) {
                 popError(Languages.message("ParametersError"));
                 return;

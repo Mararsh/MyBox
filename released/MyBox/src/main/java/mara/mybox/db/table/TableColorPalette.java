@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +9,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
@@ -36,7 +36,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
 
     public final TableColorPalette defineColumns() {
         addColumn(new ColumnDefinition("cpid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("name_in_palette", ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("name_in_palette", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("order_number", ColumnType.Float));
         addColumn(new ColumnDefinition("paletteid", ColumnType.Long, true)
                 .setForeignName("Color_Palette_palette_fk").setForeignTable("Color_Palette_Name").setForeignColumn("cpnid")
@@ -188,7 +188,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         }
     }
 
-    public List<ColorData> colors(long paletteid, int start, int size) {
+    public List<ColorData> colors(long paletteid, long start, long size) {
         if (start < 0 || size <= 0) {
             return new ArrayList<>();
         }

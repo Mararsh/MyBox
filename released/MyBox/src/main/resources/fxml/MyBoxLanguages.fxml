@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLanguagesController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLanguagesController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -93,21 +93,26 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView>
                                         <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="saveButton" disable="true" layoutX="964.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconSave.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                         <Button fx:id="copyEnglishButton" disable="true" mnemonicParsing="false" onAction="#copyEnglish">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconCopy.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="saveButton" disable="true" layoutX="964.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconSave.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -140,7 +145,6 @@ License:    Apache License Version 2.0
                                         </Tab>
                                     </tabs>
                                 </TabPane>
-                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%MyBoxLanguageComments" />
                             </children>
                             <padding>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

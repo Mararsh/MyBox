@@ -11,19 +11,14 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -64,8 +59,7 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
         try {
             super.initControls();
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(opacityBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))

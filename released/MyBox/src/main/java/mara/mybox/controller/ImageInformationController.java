@@ -6,22 +6,18 @@ import java.util.LinkedHashMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
-import mara.mybox.data.StringTable;
+import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageInformationPng;
-import mara.mybox.bufferedimage.ImageColorSpace;
+import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-
-import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -77,9 +73,8 @@ public class ImageInformationController extends HtmlTableController {
                 }
                 s.append(makeImageInformationTable(i, iInfo)).append("</br>\n");
             }
-            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-            html = HtmlWriteTools.html(finfo.getFileName(), htmlStyle, s.toString());
-            webView.getEngine().loadContent​(html);
+            html = HtmlWriteTools.html(finfo.getFileName(), HtmlStyles.styleValue("Default"), s.toString());
+            loadContents​(html);
             if (indexSelector.getItems().isEmpty()) {
                 iccBox.setVisible(false);
             } else {
@@ -136,13 +131,13 @@ public class ImageInformationController extends HtmlTableController {
 
             if (imageInfo.getXDpi() > 0) {
                 table.add(Arrays.asList(Languages.message("xDensity"), imageInfo.getXDpi() + " dpi"));
-                float xinch = imageInfo.getWidth() / imageInfo.getXDpi();
+                double xinch = imageInfo.getWidth() / imageInfo.getXDpi();
                 table.add(Arrays.asList(Languages.message("xSize"), xinch + " " + Languages.message("inches")
                         + " = " + (xinch * 2.54) + " " + Languages.message("centimetres")));
             }
             if (imageInfo.getYDpi() > 0) {
                 table.add(Arrays.asList(Languages.message("yDensity"), imageInfo.getYDpi() + " dpi"));
-                float yinch = imageInfo.getHeight() / imageInfo.getYDpi();
+                double yinch = imageInfo.getHeight() / imageInfo.getYDpi();
                 table.add(Arrays.asList(Languages.message("ySize"), yinch + " " + Languages.message("inches")
                         + " = " + (yinch * 2.54) + " " + Languages.message("centimetres")));
             }

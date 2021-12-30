@@ -628,7 +628,8 @@ public class DateTools {
             r = new Random();
         }
         int sign = r.nextInt(2);
-        long i = r.nextLong(new Date().getTime());
+        long i = new Date().getTime() - r.nextInt();
+//        long i = r.nextLong(new Date().getTime());  // jdk 17
         return sign == 1 ? i : -i;
     }
 

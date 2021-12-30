@@ -16,15 +16,12 @@ import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -32,7 +29,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-4-22
  * @License Apache License Version 2.0
  */
-public class MyBoxDataController extends BaseDataTableController<BaseTable> {
+public class MyBoxDataController extends BaseSysTableController<BaseTable> {
 
     @FXML
     protected ListView<String> tablesList;
@@ -121,7 +118,7 @@ public class MyBoxDataController extends BaseDataTableController<BaseTable> {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private List<String> tables;
 
                 @Override
@@ -161,7 +158,7 @@ public class MyBoxDataController extends BaseDataTableController<BaseTable> {
 
     @FXML
     @Override
-    public void addAction(ActionEvent event) {
+    public void addAction() {
 
     }
 
@@ -203,17 +200,11 @@ public class MyBoxDataController extends BaseDataTableController<BaseTable> {
         return 1;
     }
 
-    @Override
-    public void clearView() {
-        super.clearView();
-
-    }
-
     /*
        Data
      */
     @Override
-    public int readDataSize() {
+    public long readDataSize() {
         return 1;
     }
 

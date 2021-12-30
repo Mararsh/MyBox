@@ -9,9 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Languages;
 
 /**
@@ -34,7 +32,7 @@ public class DocumentController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            label.setText(MessageFormat.format(Languages.message("DocumentComments"), AppVariables.MyBoxDownloadsPath));
+            label.setText(MessageFormat.format(Languages.message("DocumentComments"), AppPaths.getDownloadsPath()));
             checkStatus();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -44,7 +42,7 @@ public class DocumentController extends BaseController {
     protected void checkStatus() {
         String userGuideVersion = "5.0", devGuideVersion = "2.1";
         String lang = Languages.getLanguage();
-        String docPath = AppVariables.MyBoxDownloadsPath + File.separator;
+        String docPath = AppPaths.getDownloadsPath() + File.separator;
         String webPath = "https://mararsh.github.io/MyBox_documents/" + lang + "/";
 
         String fileName = "MyBox-UserGuide-" + userGuideVersion + "-Overview-" + lang + ".pdf";

@@ -34,28 +34,36 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="loadContentInSystemClipboardButton" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconImageSystem.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="loadContentInSystemClipboardButton" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconImageSystem.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" fx:id="xyLabel" />
                 <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="5.0" HBox.hgrow="ALWAYS">
                     <children>
-                  <CheckBox fx:id="sychronizedCheck" mnemonicParsing="false" text="%Synchronized" />
-                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" onMouseEntered="#popSaveAs">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconRefresh.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                        <CheckBox fx:id="refreshChangeCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/red/iconRefresh.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>               
+                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" onMouseEntered="#popSaveAs">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -118,51 +126,51 @@ License:    Apache License Version 2.0
                         </Text>
                         <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
                         </ImageView>
-                  <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="144.0" layoutY="150.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
-                     <cursor>
-                        <Cursor fx:constant="MOVE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="W_RESIZE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="NE_RESIZE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="N_RESIZE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="E_RESIZE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="SE_RESIZE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="N_RESIZE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="SW_RESIZE" />
-                     </cursor>
-                  </Rectangle>
-                  <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                     <cursor>
-                        <Cursor fx:constant="NW_RESIZE" />
-                     </cursor>
-                  </Rectangle>
+                        <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="144.0" layoutY="150.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                            <cursor>
+                                <Cursor fx:constant="MOVE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="W_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="NE_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="N_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="E_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="SE_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="N_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="SW_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="NW_RESIZE" />
+                            </cursor>
+                        </Rectangle>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
                     </children>
                 </AnchorPane>

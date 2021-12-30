@@ -23,7 +23,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.MarginTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Languages;
@@ -255,7 +255,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image newImage;
                 private String value = null;

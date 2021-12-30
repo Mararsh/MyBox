@@ -3,14 +3,11 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,7 +15,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -30,7 +26,8 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -54,11 +51,13 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfViewController extends PdfViewController_Html {
 
     protected SimpleBooleanProperty infoLoaded;
-    protected Task outlineTask;
+    protected SingletonTask outlineTask;
 
     @FXML
-    protected CheckBox transparentBackgroundCheck, bookmarksCheck, wrapTextsCheck, wrapOCRCheck,
-            ocrSynCheck, htmlSynCheck, textSynCheck;
+    protected CheckBox transparentBackgroundCheck, bookmarksCheck,
+            wrapTextsCheck, refreshSwitchTextsCheck, refreshChangeTextsCheck,
+            wrapOCRCheck, refreshChangeOCRCheck, refreshSwitchOCRCheck,
+            refreshChangeHtmlCheck, refreshSwitchHtmlCheck;
     @FXML
     protected ScrollPane outlineScrollPane;
     @FXML
@@ -82,19 +81,6 @@ public class PdfViewController extends PdfViewController_Html {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.setTooltip(ocrSynCheck, new Tooltip(message("AlwaysSynchronize")));
-            NodeStyleTools.setTooltip(htmlSynCheck, new Tooltip(message("AlwaysSynchronize")));
-            NodeStyleTools.setTooltip(textSynCheck, new Tooltip(message("AlwaysSynchronize")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     @Override
@@ -143,15 +129,15 @@ public class PdfViewController extends PdfViewController_Html {
                         return;
                     }
                     if (newValue == ocrTab) {
-                        if (orcPage != frameIndex) {
+                        if (orcPage != frameIndex && refreshSwitchOCRCheck.isSelected()) {
                             startOCR();
                         }
                     } else if (newValue == textsTab) {
-                        if (textsPage != frameIndex) {
+                        if (textsPage != frameIndex && refreshSwitchTextsCheck.isSelected()) {
                             extractTexts();
                         }
                     } else if (newValue == htmlTab) {
-                        if (htmlPage != frameIndex) {
+                        if (htmlPage != frameIndex && refreshSwitchHtmlCheck.isSelected()) {
                             convertHtml();
                         }
                     }
@@ -168,6 +154,22 @@ public class PdfViewController extends PdfViewController_Html {
             });
             textsArea.setWrapText(wrapTextsCheck.isSelected());
 
+            refreshSwitchTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchTexts", true));
+            refreshSwitchTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "RefreshSwitchTexts", newValue);
+                }
+            });
+
+            refreshChangeTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeTexts", false));
+            refreshChangeTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "RefreshChangeTexts", newValue);
+                }
+            });
+
             wrapOCRCheck.setSelected(UserConfig.getBoolean(baseName + "WrapOCR", true));
             wrapOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -178,27 +180,35 @@ public class PdfViewController extends PdfViewController_Html {
             });
             ocrArea.setWrapText(wrapTextsCheck.isSelected());
 
-            ocrSynCheck.setSelected(UserConfig.getBoolean(baseName + "OcrSyn", false));
-            ocrSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshSwitchOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchOCR", true));
+            refreshSwitchOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "OcrSyn", newValue);
+                    UserConfig.setBoolean(baseName + "RefreshSwitchOCR", newValue);
                 }
             });
 
-            htmlSynCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlSyn", false));
-            htmlSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshChangeOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeOCR", false));
+            refreshChangeOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "HtmlSyn", newValue);
+                    UserConfig.setBoolean(baseName + "RefreshChangeOCR", newValue);
                 }
             });
 
-            textSynCheck.setSelected(UserConfig.getBoolean(baseName + "TextSyn", false));
-            textSynCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshSwitchHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchHtml", true));
+            refreshSwitchHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "TextSyn", newValue);
+                    UserConfig.setBoolean(baseName + "RefreshSwitchHtml", newValue);
+                }
+            });
+
+            refreshChangeHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeHtml", false));
+            refreshChangeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "RefreshChangeHtml", newValue);
                 }
             });
 
@@ -237,13 +247,19 @@ public class PdfViewController extends PdfViewController_Html {
     public void loadFile(File file, PdfInformation pdfInfo, int page) {
         try {
             initPage(file, page);
+            if (outlineTask != null) {
+                outlineTask.cancel();
+                outlineTask = null;
+            }
             infoLoaded.set(false);
             outlineTree.setRoot(null);
             ocrArea.clear();
             ocrLabel.setText("");
             textsArea.clear();
             textsLabel.setText("");
-            webEngine.loadContent("");
+            if (webViewController != null) {
+                webViewController.loadContents(null);
+            }
             if (file == null) {
                 return;
             }
@@ -284,7 +300,7 @@ public class PdfViewController extends PdfViewController_Html {
             pageSelector.getItems().clear();
             isSettingValues = false;
             pageLabel.setText("");
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 protected boolean pop;
 
                 @Override
@@ -370,52 +386,42 @@ public class PdfViewController extends PdfViewController_Html {
         }
         super.setImage(image, percent);
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (ocrSynCheck.isSelected() || tab == ocrTab) {
+        if (refreshChangeOCRCheck.isSelected() || tab == ocrTab) {
             startOCR();
-        } else if (textSynCheck.isSelected() || tab == textsTab) {
+        } else if (refreshChangeTextsCheck.isSelected() || tab == textsTab) {
             extractTexts();
-        } else if (htmlSynCheck.isSelected() || tab == htmlTab) {
+        } else if (refreshChangeHtmlCheck.isSelected() || tab == htmlTab) {
             convertHtml();
         }
     }
 
     protected void loadOutline() {
-        if (!infoLoaded.get() || outlineTree.getRoot() != null) {
+        if (!infoLoaded.get()) {
             return;
         }
         synchronized (this) {
-            if (outlineTask != null) {
-                outlineTask.cancel();
+            if (outlineTask != null && !outlineTask.isQuit()) {
+                return;
             }
-            outlineTask = new SingletonTask<Void>() {
-                protected PDDocument doc;
+            TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
+            outlineRoot.setExpanded(true);
+            outlineTree.setRoot(outlineRoot);
+            outlineTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
-                    try {
-                        doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage);
-                        return doc != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(e.toString());
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    try {
+                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                         PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                        TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
-                        outlineRoot.setExpanded(true);
-                        outlineTree.setRoot(outlineRoot);
                         if (outline != null) {
                             loadOutlineItem(outline, outlineRoot);
                         }
                         doc.close();
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        error = e.toString();
+                        MyBoxLog.debug(e);
+                        return false;
                     }
+                    return true;
                 }
 
                 @Override
@@ -428,7 +434,7 @@ public class PdfViewController extends PdfViewController_Html {
                 }
 
             };
-            start(outlineTask);
+            start(outlineTask, false);
         }
     }
 
@@ -436,6 +442,9 @@ public class PdfViewController extends PdfViewController_Html {
         try {
             PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
             while (childOutlineItem != null) {
+                if (outlineTask == null || outlineTask.isCancelled()) {
+                    break;
+                }
                 int pageNumber = 0;
                 if (childOutlineItem.getDestination() instanceof PDPageDestination) {
                     PDPageDestination pd = (PDPageDestination) childOutlineItem.getDestination();
@@ -469,32 +478,32 @@ public class PdfViewController extends PdfViewController_Html {
     }
 
     @Override
-    protected Map<Integer, Image> readThumbs(int pos, int end) {
-        Map<Integer, Image> images = null;
+    protected boolean loadThumbs(List<Integer> missed) {
         try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
-            images = new HashMap<>();
-            for (int i = pos; i < end; ++i) {
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+            for (Integer index : missed) {
+                if (thumbTask == null || thumbTask.isCancelled()) {
+                    break;
+                }
+                ImageView view = (ImageView) thumbBox.getChildren().get(2 * index);
                 if (view.getImage() != null) {
                     continue;
                 }
-                try {
-                    BufferedImage bufferedImage = renderer.renderImageWithDPI(i, 72, ImageType.RGB);  // 0-based
-                    if (bufferedImage.getWidth() > ThumbWidth) {
-                        bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, ThumbWidth);
-                    }
-                    Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
-                    images.put(i, thumb);
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                BufferedImage bufferedImage = renderer.renderImageWithDPI(index, 72, ImageType.RGB);  // 0-based
+                if (bufferedImage.getWidth() > ThumbWidth) {
+                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, ThumbWidth);
                 }
+                Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
+                view.setImage(thumb);
+                view.setFitHeight(view.getImage().getHeight());
             }
             doc.close();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            thumbTask.setError(e.toString());
+            MyBoxLog.debug(e);
+            return false;
         }
-        return images;
+        return true;
     }
 
     @FXML
@@ -538,6 +547,16 @@ public class PdfViewController extends PdfViewController_Html {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static PdfViewController open(File file) {
+        PdfViewController controller = (PdfViewController) WindowTools.openStage(Fxmls.PdfViewFxml);
+        controller.sourceFileChanged(file);
+        controller.toFront();
+        return controller;
     }
 
 }

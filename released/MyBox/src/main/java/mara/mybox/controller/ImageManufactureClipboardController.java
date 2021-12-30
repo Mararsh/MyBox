@@ -30,6 +30,7 @@ import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -45,7 +46,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     protected float opacity;
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
-    protected int rotateAngle, keepRatioType, currentAngle;
+    protected int keepRatioType;
 
     @FXML
     protected ControlImagesClipboard clipsController;
@@ -245,6 +246,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         imageController.showRightPane();
         imageController.resetImagePane();
         imageController.imageTab();
+        scrollPane.setHvalue(0);
     }
 
     public void selectClip() {
@@ -256,7 +258,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private Image clipImage;
 
@@ -309,7 +311,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private boolean enlarged;
 
@@ -391,11 +393,13 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @FXML
+    @Override
     public void rotateRight() {
         pasteClip(rotateAngle);
     }
 
     @FXML
+    @Override
     public void rotateLeft() {
         pasteClip(360 - rotateAngle);
 

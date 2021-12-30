@@ -130,11 +130,6 @@ License:    Apache License Version 2.0
                                                                 <fx:include fx:id="autoSaveDuration" source="ControlTimeLength.fxml" />
                                                             </children>
                                                         </VBox>
-                                                        <!--                                          <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                           <children>
-                                                              <CheckBox fx:id="autoBackupCheck" layoutX="32.0" layoutY="74.0" mnemonicParsing="false" selected="true" text="%AutoBackup" />
-                                                           </children>
-                                                        </VBox>-->
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -335,7 +330,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs">
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -362,7 +357,7 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <AnchorPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                     <children>
-                                        <TextArea fx:id="lineArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <TextArea fx:id="lineArea" editable="false" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="200.0" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                         <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%EditHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     </children>
                                     <VBox.margin>
@@ -445,6 +440,15 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
+                                <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconLast.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -459,15 +463,6 @@ License:    Apache License Version 2.0
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconNext.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconLast.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

@@ -13,8 +13,50 @@ public class StyleCheckBox {
         if (id == null || id.isEmpty()) {
             return null;
         }
+        if (id.startsWith("csv")) {
+            return new StyleData(id, "", "CSV", "", "iconCSV.png");
+        }
+        if (id.startsWith("excel")) {
+            return new StyleData(id, "", "Excel", "", "iconExcel.png");
+        }
+        if (id.startsWith("texts")) {
+            return new StyleData(id, "", message("Texts"), "", "iconTxt.png");
+        }
+        if (id.startsWith("matrix")) {
+            return new StyleData(id, "", message("Matrix"), "", "iconSplit.png");
+        }
+        if (id.startsWith("systemClipboard")) {
+            return new StyleData(id, "", message("SystemClipboard"), "", "iconSystemClipboard.png");
+        }
+        if (id.startsWith("myBoxClipboard")) {
+            return new StyleData(id, "", message("MyBoxClipboard"), "", "iconClipboard.png");
+        }
+        if (id.startsWith("html")) {
+            return new StyleData(id, "", "Html", "", "iconHtml.png");
+        }
+        if (id.startsWith("xml")) {
+            return new StyleData(id, "", "XML", "", "iconXML.png");
+        }
+        if (id.startsWith("pdf")) {
+            return new StyleData(id, "", "PDF", "", "iconPDF.png");
+        }
+        if (id.startsWith("json")) {
+            return new StyleData(id, "", "json", "", "iconJSON.png");
+        }
         if (id.startsWith("coordinate")) {
             return new StyleData(id, "", message("Coordinate"), "", "iconLocation.png");
+        }
+        if (id.startsWith("refreshSwitch")) {
+            return new StyleData(id, "", message("RefreshWhenSwitch"), "", "iconRefreshSwitch.png");
+        }
+        if (id.startsWith("refreshChange")) {
+            return new StyleData(id, "", message("RefreshWhenChange"), "", "iconRefresh.png");
+        }
+        if (id.startsWith("wrap")) {
+            return new StyleData(id, "", message("Wrap"), "", "iconWrap.png");
+        }
+        if (id.startsWith("leftPane")) {
+            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
         }
         switch (id) {
             case "tableSubdirCheck":

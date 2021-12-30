@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -31,7 +32,7 @@ public class TextPopController extends BaseController {
     @FXML
     protected TextArea textArea;
     @FXML
-    protected CheckBox wrapCheck, sychronizedCheck;
+    protected CheckBox wrapCheck, refreshChangeCheck;
     @FXML
     protected Button refreshButton;
 
@@ -65,9 +66,9 @@ public class TextPopController extends BaseController {
             editButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
             saveAsButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
 
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
             checkSychronize();
-            sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            refreshChangeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
                     checkSychronize();
@@ -84,7 +85,7 @@ public class TextPopController extends BaseController {
             });
             textArea.setWrapText(wrapCheck.isSelected());
 
-            setAsPopup(baseName);
+            setAsPop(baseName);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -93,7 +94,7 @@ public class TextPopController extends BaseController {
 
     public void checkSychronize() {
         if (sourceInput == null) {
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
             return;
         }
@@ -101,13 +102,13 @@ public class TextPopController extends BaseController {
             listener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                    if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
                         refreshAction();
                     }
                 }
             };
         }
-        if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+        if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
             sourceInput.textProperty().addListener(listener);
         } else {
             sourceInput.textProperty().removeListener(listener);
@@ -117,7 +118,7 @@ public class TextPopController extends BaseController {
     @FXML
     public void refreshAction() {
         if (sourceInput == null) {
-            sychronizedCheck.setVisible(false);
+            refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
             return;
         }
@@ -142,7 +143,7 @@ public class TextPopController extends BaseController {
             if (file == null) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     try {

@@ -3,14 +3,11 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.PopTools;
-import mara.mybox.tools.HtmlReadTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
@@ -35,50 +32,28 @@ public class HtmlTableController extends BaseWebViewController {
         baseTitle = Languages.message("Html");
     }
 
-    public String styleString() {
-        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-        return HtmlStyles.styleValue(HtmlStyles.styleName(htmlStyle));
-    }
+    protected String html() {
+        if (table != null) {
+            html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
 
-    public String styleTag() {
-        return "\n<style type=\"text/css\">/>\n" + styleString() + "</style>\n";
+        } else if (body != null) {
+            html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), body);
+        }
+        return html;
     }
 
     @FXML
     protected void editHtml() {
-        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-        if (table != null) {
-            html = HtmlWriteTools.html(title, htmlStyle, StringTable.tableDiv(table));
-
-        } else if (body != null) {
-            html = HtmlWriteTools.html(title, htmlStyle, body);
-        }
-        HtmlWriteTools.editHtml(html);
+        HtmlWriteTools.editHtml(html());
     }
 
     public void displayHtml() {
-        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-        if (table != null) {
-            html = HtmlWriteTools.html(title, htmlStyle, StringTable.tableDiv(table));
-
-        } else if (body != null) {
-            html = HtmlWriteTools.html(title, htmlStyle, body);
-
-        } else if (html != null) {
-            this.body = HtmlReadTools.body(html);
-            html = HtmlWriteTools.html(title, htmlStyle, body);
-
-        }
-        displayHtml(html);
+        displayHtml(html());
     }
 
     public void displayHtml(String html) {
         this.html = html;
-        if (html == null) {
-            webView.getEngine().loadContent​("");
-        } else {
-            webView.getEngine().loadContent​(html);
-        }
+        loadContents(html);
         if (myStage != null && title != null) {
             myStage.setTitle(title);
         }
@@ -94,8 +69,7 @@ public class HtmlTableController extends BaseWebViewController {
             if (body == null) {
                 return;
             }
-            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-            html = HtmlWriteTools.html(title, htmlStyle, body);
+            html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), body);
             displayHtml(html);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -109,8 +83,7 @@ public class HtmlTableController extends BaseWebViewController {
         }
         this.title = table.getTitle();
         this.fields = table.getNames();
-        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
-        html = HtmlWriteTools.html(title, htmlStyle, StringTable.tableDiv(table));
+        html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
         displayHtml(html);
     }
 
@@ -141,13 +114,7 @@ public class HtmlTableController extends BaseWebViewController {
     }
 
     public void clear() {
-        html = null;
-        webView.getEngine().loadContent("");
-    }
-
-    @FXML
-    public void popLinksStyle(MouseEvent mouseEvent) {
-        popMenu = PopTools.popHtmlStyle(mouseEvent, this, popMenu, webView.getEngine());
+        displayHtml(null);
     }
 
     @FXML
@@ -177,7 +144,8 @@ public class HtmlTableController extends BaseWebViewController {
     }
 
     @FXML
-    public void editAction(ActionEvent event) {
+    @Override
+    public void editAction() {
         File file = TmpFileTools.getTempFile(".html");
         save(file, html, true);
     }
@@ -190,7 +158,7 @@ public class HtmlTableController extends BaseWebViewController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

@@ -69,7 +69,7 @@
 .dark-blue-label, .dark-blue-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
-    -fx-text-fill: blue;
+    -fx-text-fill: #003472;
     -fx-font-weight: bolder;
 }
 
@@ -77,13 +77,13 @@
 .darkRed-label, .darkRed-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
-    -fx-text-fill: #961c1c;
+    -fx-text-fill: #C32136;
 }
 
 .bold-darkRed-label, .bold-darkRed-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
-    -fx-text-fill: #961c1c;
+    -fx-text-fill: #C32136;
     -fx-font-weight: bolder;
 }
 

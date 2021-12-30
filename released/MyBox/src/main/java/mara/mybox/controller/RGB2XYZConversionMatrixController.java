@@ -16,8 +16,8 @@ import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -157,10 +157,10 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
                 primaries[0] = rgbController.red;
                 primaries[1] = rgbController.green;
                 primaries[2] = rgbController.blue;
-                sourceWhitePoint = MatrixDoubleTools.columnVector(rgbController.white);
+                sourceWhitePoint = DoubleMatrixTools.columnVector(rgbController.white);
             }
             if (xyzController.relative != null) {
-                targetWhitePoint = MatrixDoubleTools.columnVector(xyzController.relative);
+                targetWhitePoint = DoubleMatrixTools.columnVector(xyzController.relative);
             }
             if (primaries == null || sourceWhitePoint == null || targetWhitePoint == null) {
                 return;
@@ -168,17 +168,17 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
             Map<String, Object> rgb2xyz = (Map<String, Object>) RGB2XYZConversionMatrix.rgb2xyz(primaries,
                     sourceWhitePoint, targetWhitePoint, algorithm, scale, true);
             double[][] conversionMatrix = (double[][]) rgb2xyz.get("conversionMatrix");
-            double[][] conversionMatrixInverse = MatrixDoubleTools.inverse(conversionMatrix);
+            double[][] conversionMatrixInverse = DoubleMatrixTools.inverse(conversionMatrix);
             String s;
-            if (MatrixDoubleTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
+            if (DoubleMatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 s = Languages.message("RGBXYZsameWhite");
             } else {
                 s = Languages.message("RGBXYZdifferentWhite");
             }
             s += "\n\nLinear RGB -> XYZ =\n"
-                    + MatrixDoubleTools.print(conversionMatrix, 20, scale)
+                    + DoubleMatrixTools.print(conversionMatrix, 20, scale)
                     + "XYZ -> Linear RGB =\n"
-                    + MatrixDoubleTools.print(conversionMatrixInverse, 20, scale)
+                    + DoubleMatrixTools.print(conversionMatrixInverse, 20, scale)
                     + "\n----------------" + Languages.message("CalculationProcedure") + "----------------\n"
                     + Languages.message("ReferTo") + "： \n"
                     + "            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n"
@@ -197,7 +197,7 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private StringTable table;
                 private String allTexts;

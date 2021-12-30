@@ -17,17 +17,16 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.BytesEditInformation;
-import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.data.LongRange;
-import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -41,13 +40,12 @@ import mara.mybox.value.UserConfig;
 public class ControlFindReplace extends BaseController {
 
     protected BaseFileEditorController editerController;
-    protected FileEditInformation sourceInformation;
     protected TextInputControl textInput;
     protected FindReplaceFile findReplace;
     protected double initX, initY;
 
     @FXML
-    protected CheckBox caseInsensitiveCheck, wrapCheck, regexCheck, multilineCheck, dotallCheck;
+    protected CheckBox caseInsensitiveCheck, wrapCheck, regexCheck, multilineCheck, dotallCheck, shareCheck;
     @FXML
     protected TextArea findArea, replaceArea;
     @FXML
@@ -77,12 +75,35 @@ public class ControlFindReplace extends BaseController {
         }
     }
 
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (shareCheck != null) {
+                shareCheck.setSelected(UserConfig.getBoolean("ShareFindReplaceOptions", true));
+                shareCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ShareFindReplaceOptions", shareCheck.isSelected());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void setEditor(BaseFileEditorController parent) {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
-        sourceInformation = editerController.sourceInformation;
-        baseName = editerController.baseName;
+        if (shareCheck != null && shareCheck.isSelected()) {
+            baseName = "FindReplace";
+        } else {
+            baseName = editerController.baseName;
+        }
         setControls();
     }
 
@@ -90,7 +111,11 @@ public class ControlFindReplace extends BaseController {
         try {
             this.parentController = parent;
             this.textInput = textInput;
-            this.baseName = parent.baseName;
+            if (shareCheck != null && shareCheck.isSelected()) {
+                baseName = "FindReplace";
+            } else {
+                baseName = editerController.baseName;
+            }
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -100,7 +125,11 @@ public class ControlFindReplace extends BaseController {
     public void setParent(BaseController parent) {
         try {
             this.parentController = parent;
-            this.baseName = parent.baseName;
+            if (shareCheck != null && shareCheck.isSelected()) {
+                baseName = "FindReplace";
+            } else {
+                baseName = editerController.baseName;
+            }
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -116,22 +145,22 @@ public class ControlFindReplace extends BaseController {
                 }
             });
 
+            caseInsensitiveCheck.setSelected(UserConfig.getBoolean(baseName + "FindReplaceCaseInsensitive", false));
             caseInsensitiveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "FindCaseInsensitive", caseInsensitiveCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FindReplaceCaseInsensitive", caseInsensitiveCheck.isSelected());
                 }
             });
-            caseInsensitiveCheck.setSelected(UserConfig.getBoolean(baseName + "FindCaseInsensitive", false));
 
             if (wrapCheck != null) {
+                wrapCheck.setSelected(UserConfig.getBoolean(baseName + "FindReplaceWrap", true));
                 wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "Wrap", wrapCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "FindReplaceWrap", wrapCheck.isSelected());
                     }
                 });
-                wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             }
 
             multilineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -142,13 +171,13 @@ public class ControlFindReplace extends BaseController {
             });
             multilineCheck.setSelected(UserConfig.getBoolean(baseName + "FindMultiline", true));
 
+            dotallCheck.setSelected(UserConfig.getBoolean(baseName + "FindDotAll", true));
             dotallCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "DotAll", dotallCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FindDotAll", dotallCheck.isSelected());
                 }
             });
-            dotallCheck.setSelected(UserConfig.getBoolean(baseName + "DotAll", true));
 
             regexCheck.setSelected(UserConfig.getBoolean(baseName + "FindRegex", false));
             regexCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -238,7 +267,6 @@ public class ControlFindReplace extends BaseController {
         if (editerController == null) {
             return true;
         }
-        sourceInformation = editerController.sourceInformation;
         if (editerController.editType == Edit_Type.Bytes) {
             return validateFindBytes(string);
         } else {
@@ -247,8 +275,11 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateFindText(String string) {
-        if (sourceInformation != null && sourceInformation.getFile() != null
-                && string.length() >= sourceInformation.getFile().length()) {
+        if (editerController == null) {
+            return true;
+        }
+        if (editerController.sourceInformation != null && editerController.sourceInformation.getFile() != null
+                && string.length() >= editerController.sourceInformation.getFile().length()) {
             popError(message("FindStringLimitation"));
             return false;
         } else {
@@ -257,7 +288,7 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateFindBytes(String string) {
-        if (isSettingValues || regexCheck.isSelected()) {
+        if (isSettingValues || regexCheck.isSelected() || editerController == null) {
             findArea.setStyle(null);
             return true;
         }
@@ -266,7 +297,7 @@ public class ControlFindReplace extends BaseController {
             findArea.setStyle(UserConfig.badStyle());
             return false;
         } else {
-            if (sourceInformation != null && v.length() >= sourceInformation.getFile().length() * 3) {
+            if (editerController.sourceInformation != null && v.length() >= editerController.sourceInformation.getFile().length() * 3) {
                 popError(message("FindStringLimitation"));
                 findArea.setStyle(UserConfig.badStyle());
                 return false;
@@ -299,7 +330,6 @@ public class ControlFindReplace extends BaseController {
         if (editerController == null) {
             return true;
         }
-        sourceInformation = editerController.sourceInformation;
         if (editerController.editType == Edit_Type.Bytes) {
             return validateReplaceBytes(string);
         } else {
@@ -374,46 +404,52 @@ public class ControlFindReplace extends BaseController {
             textInput.requestFocus();
         }
         if (editerController != null) {
-            sourceInformation = editerController.sourceInformation;
             editorFindReplace(operation);
         } else {
-            sourceInformation = new TextEditInformation();
             inputFindReplace(operation);
         }
     }
 
     protected boolean makeParamters(Operation operation) {
-        if (null == operation || textInput == null || sourceInformation == null) {
+        if (null == operation || textInput == null) {
             popError(message("InvalidParameters"));
             return false;
         }
+        boolean multiplePages = editerController != null
+                && editerController.sourceInformation != null
+                && editerController.sourceInformation.getPagesNumber() > 1;
 
-        boolean multiplePages = sourceInformation != null && sourceInformation.getPagesNumber() > 1;
-        if (editerController != null && multiplePages
+        if (multiplePages
                 && (operation == Operation.Count || operation == Operation.ReplaceAll)
                 && !editerController.checkBeforeNextAction()) {
             return false;
         }
+
         String findString = findArea.getText();
         if (findString == null || findString.isEmpty()) {
             popError(message("EmptyValue"));
             return false;
         }
-        TableStringValues.add(baseName + "FindString", findString);
+        if (!findString.isBlank()) {
+            TableStringValues.add(baseName + "FindString", findString);
+        }
         String pageText = textInput.getText();
         if (pageText == null || pageText.isEmpty()) {
             popError(message("EmptyValue"));
             return false;
         }
-        String replaceString = replaceArea == null ? null : replaceArea.getText();
-        if (replaceString != null && replaceString.equals(findString)) {
+        String replaceString = replaceArea == null ? "" : replaceArea.getText();
+        if (replaceString == null) {
+            replaceString = "";
+        }
+        if (replaceString.equals(findString)) {
             if (operation == Operation.ReplaceAll || operation == Operation.ReplaceFirst) {
                 popError(message("Same"));
                 return false;
             }
         }
-        if (replaceString != null && !replaceString.isEmpty()) {
-            TableStringValues.add(baseName + "ReplaceString", replaceString);
+        if (!replaceString.isBlank()) {
+            TableStringValues.add(baseName + "ReplaceString", findString);
         }
         if (operation == Operation.ReplaceAll && multiplePages) {
             if (!PopTools.askSure(getMyStage().getTitle(), message("SureReplaceAll"))) {
@@ -421,14 +457,16 @@ public class ControlFindReplace extends BaseController {
             }
         }
         String selectedText = textInput.getSelectedText();
-        if (sourceInformation.getEditType() == Edit_Type.Bytes) {
+        if (editerController != null && editerController.sourceInformation.getEditType() == Edit_Type.Bytes) {
             pageText = pageText.replaceAll("\n", " ");
             findString = findString.replaceAll("\n", " ");
             replaceString = replaceString.replaceAll("\n", " ");
             selectedText = selectedText.replaceAll("\n", " ");
         }
-        int anchor = textInput.getAnchor(), unit = sourceInformation.getObjectUnit();
-        long pageStart = (int) sourceInformation.getCurrentPageObjectStart() * unit;
+        int anchor = textInput.getAnchor();
+        int unit = editerController != null ? editerController.sourceInformation.getObjectUnit() : 1;
+        long pageStart = editerController != null
+                ? (int) editerController.sourceInformation.getCurrentPageObjectStart() * unit : 0;
         if (StringTools.match(selectedText, findString, regexCheck.isSelected(), dotallCheck.isSelected(),
                 multilineCheck.isSelected(), caseInsensitiveCheck.isSelected())) {
             IndexRange selectIndex = textInput.getSelection();
@@ -440,8 +478,8 @@ public class ControlFindReplace extends BaseController {
                     anchor = selectIndex.getEnd() - unit;
                     break;
                 case ReplaceFirst:
-                    textInput.replaceText(selectIndex, findReplace.getReplaceString());
-                    textInput.selectRange(selectIndex.getStart() + findReplace.getReplaceString().length(), selectIndex.getStart());
+                    textInput.replaceText(selectIndex, replaceString);
+                    textInput.selectRange(selectIndex.getStart() + replaceString.length(), selectIndex.getStart());
                     String info = message("Replaced") + ": " + (pageStart + selectIndex.getStart() + 1) + "-" + (pageStart + selectIndex.getEnd());
                     findLabel.setText(info);
                     popInformation(info, textInput);
@@ -449,11 +487,7 @@ public class ControlFindReplace extends BaseController {
             }
         }
         findReplace = new FindReplaceFile()
-                .setFileInfo(sourceInformation)
                 .setPosition(anchor + pageStart);
-        if (editerController != null) {
-            findReplace.setBackupController(editerController.backupController);
-        }
         findReplace.setOperation(operation)
                 .setInputString(pageText)
                 .setFindString(findString)
@@ -465,7 +499,12 @@ public class ControlFindReplace extends BaseController {
                 .setMultiline(multilineCheck.isSelected())
                 .setDotAll(dotallCheck.isSelected())
                 .setWrap(wrapCheck.isSelected());
-        sourceInformation.setFindReplace(findReplace);
+
+        if (editerController != null) {
+            findReplace.setFileInfo(editerController.sourceInformation)
+                    .setBackupController(editerController.backupController);
+            editerController.sourceInformation.setFindReplace(findReplace);
+        }
         return true;
     }
 
@@ -478,7 +517,7 @@ public class ControlFindReplace extends BaseController {
                 return;
             }
             textInput.deselect();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 protected IndexRange lastStringRange;
                 private boolean askSave = false;
@@ -583,7 +622,7 @@ public class ControlFindReplace extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 protected IndexRange lastStringRange;
 
@@ -652,11 +691,7 @@ public class ControlFindReplace extends BaseController {
                 }
 
             };
-            if (editerController != null) {
-                editerController.start(task);
-            } else {
-                start(task, false);
-            }
+            start(task, false);
         }
     }
 
@@ -673,17 +708,6 @@ public class ControlFindReplace extends BaseController {
     @FXML
     public void popReplaceHistories(MouseEvent mouseEvent) {
         PopTools.popStringValues(this, replaceArea, mouseEvent, baseName + "ReplaceString");
-    }
-
-    /*
-        get/set
-     */
-    public FileEditInformation getSourceInformation() {
-        return sourceInformation;
-    }
-
-    public void setSourceInformation(FileEditInformation sourceInformation) {
-        this.sourceInformation = sourceInformation;
     }
 
 }

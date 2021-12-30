@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.Collator;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -215,6 +217,7 @@ public class StringTools {
                 return compare.compare(f1, f2);
             }
         });
+
     }
 
     public static void sort(List<String> strings) {
@@ -241,8 +244,12 @@ public class StringTools {
     }
 
     public static String format(long data) {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(data);
+        try {
+            DecimalFormat df = new DecimalFormat("#,###");
+            return df.format(data);
+        } catch (Exception e) {
+            return message("Invalid");
+        }
     }
 
     public static String format(double data) {
@@ -368,6 +375,29 @@ public class StringTools {
             s.append(line).append("\n");
         }
         return s.toString();
+    }
+
+    public static boolean noDuplicated(List<String> names, boolean notNull) {
+        try {
+            if (names == null || names.isEmpty()) {
+                return false;
+            }
+            List<String> valid = new ArrayList<>();
+            for (int c = 0; c < names.size(); c++) {
+                String name = names.get(c);
+                if (notNull && name == null) {
+                    return false;
+                }
+                if (valid.contains(name)) {
+                    return false;
+                }
+                valid.add(name);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
 }

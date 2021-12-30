@@ -20,9 +20,6 @@ import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Colors;
@@ -73,8 +70,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(Bindings.isEmpty(sourceFileInput.textProperty()))
                     .or(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))

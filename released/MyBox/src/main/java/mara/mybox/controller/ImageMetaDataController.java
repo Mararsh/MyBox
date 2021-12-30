@@ -4,20 +4,16 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.tools.FileTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -53,7 +49,7 @@ public class ImageMetaDataController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 StringBuilder s;
 
@@ -124,7 +120,7 @@ public class ImageMetaDataController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -147,7 +143,7 @@ public class ImageMetaDataController extends BaseController {
     }
 
     @FXML
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         File file = TmpFileTools.getTempFile(".txt");
         save(file, true);
     }

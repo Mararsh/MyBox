@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -32,7 +31,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-3
  * @License Apache License Version 2.0
  */
-public class TextInMyBoxClipboardController extends BaseDataTableController<TextClipboard> {
+public class TextInMyBoxClipboardController extends BaseSysTableController<TextClipboard> {
 
     protected Clipboard clipboard;
 
@@ -63,6 +62,7 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
     @Override
     protected void initColumns() {
         try {
+            super.initColumns();
             textColumn.setCellValueFactory(new PropertyValueFactory<>("text"));
             textColumn.setCellFactory(new TableTextCell());
 
@@ -78,16 +78,15 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
     }
 
     @Override
-    protected int checkSelected() {
+    protected void checkSelected() {
         if (isSettingValues) {
-            return -1;
+            return;
         }
-        int selection = super.checkSelected();
         TextClipboard selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             textArea.setText(selected.getText());
         }
-        return selection;
+        super.checkSelected();
     }
 
     @Override
@@ -123,7 +122,7 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
 
     public void textChanged(String nv) {
         int len = nv == null ? 0 : nv.length();
-        textLabel.setText(Languages.message("Length") + ": " + len);
+        textLabel.setText(Languages.message("Count") + ": " + len);
         copyToSystemClipboardButton.setDisable(len == 0);
         copyToMyBoxClipboardButton.setDisable(len == 0);
         editButton.setDisable(len == 0);
@@ -172,7 +171,7 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
 
     @FXML
     @Override
-    public void editAction(ActionEvent event) {
+    public void editAction() {
         String s = textArea.getSelectedText();
         if (s == null || s.isEmpty()) {
             s = textArea.getText();

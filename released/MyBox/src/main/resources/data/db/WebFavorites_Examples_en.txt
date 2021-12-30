@@ -319,7 +319,7 @@ https://docs.oracle.com/en/java/javase/15/docs/api/index.html
 
 Examples > Coding 
 JavaFx API
-https://openjfx.io/javadoc/15
+https://openjfx.io/javadoc/17
 
 Examples > Coding 
 JavaFX CSS Reference Guide
@@ -328,6 +328,18 @@ https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
 Examples > Coding 
 Getting Started with JavaFX
 https://docs.oracle.com/javafx/2/get_started/css.htm
+
+Examples > Coding 
+OpenJFX Community Site
+https://openjfx.io/
+
+Examples > Coding 
+JavaFX Documentation Project
+https://fxdocs.github.io/docs/html5/
+
+Examples > Coding 
+JavaFX Tutorial
+http://tutorials.jenkov.com/javafx/index.html
 
 Examples > Coding 
 icons8

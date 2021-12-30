@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -25,6 +25,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -44,9 +45,12 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
@@ -57,6 +61,7 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -71,21 +76,17 @@ import org.w3c.dom.events.EventTarget;
 public class ControlWebView extends BaseController {
 
     protected WebEngine webEngine;
-    protected final SimpleIntegerProperty stateNotify;
-    protected boolean addressChanged;
-    protected double linkX, linkY;
+    protected double linkX, linkY, scrollTop, scrollLeft;
     protected float zoomScale;
-    protected String address;
+    protected String address, style, defaultStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
-
     protected Element element;
-
-    public static final int TmpState = -9;
-    public static final int NoDoc = -3;
-    public static final int DocLoading = -2;
-    public static final int DocLoaded = -1;
+    protected final String onScrollScript;
+    protected final SimpleBooleanProperty addressChangedNotify, addressInvalidNotify,
+            pageLoadingNotify, pageLoadedNotify;
+    protected final String StyleNodeID = "MyBox__Html_Style20211118";
 
     @FXML
     protected WebView webView;
@@ -97,7 +98,16 @@ public class ControlWebView extends BaseController {
         zoomScale = 1.0f;
         framesDoc = new HashMap<>();
         charset = Charset.defaultCharset();
-        stateNotify = new SimpleIntegerProperty(NoDoc);
+        onScrollScript = "window.onscroll = function(){ "
+                + "    var topValue = document.documentElement.scrollTop || document.body.scrollTop;"
+                + "    alert('scrollTop-' + topValue);"
+                + "    var leftValue = document.documentElement.scrollTop || document.body.scrollLeft;"
+                + "    alert('scrollLeft-' + leftValue);"
+                + "} ";
+        addressChangedNotify = new SimpleBooleanProperty(false);
+        addressInvalidNotify = new SimpleBooleanProperty(false);
+        pageLoadingNotify = new SimpleBooleanProperty(false);
+        pageLoadedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -128,6 +138,7 @@ public class ControlWebView extends BaseController {
 
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
+            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/610.2 (KHTML, like Gecko) JavaFX/17 Safari/610.2");
 
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
@@ -160,7 +171,10 @@ public class ControlWebView extends BaseController {
             webView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
-                    parentController.closePopup();
+                    closePopup();
+                    if (parentController != null) {
+                        parentController.closePopup();
+                    }
                     linkX = mouseEvent.getScreenX();
                     linkY = mouseEvent.getScreenY();
                 }
@@ -247,10 +261,7 @@ public class ControlWebView extends BaseController {
                     if (webViewLabel != null) {
                         webViewLabel.setText(nt.getMessage());
                     }
-                    if (parentController != null) {
-                        parentController.alertError(nt.getMessage());
-                    }
-
+                    alertError(nt.getMessage());
                 }
             });
 
@@ -266,7 +277,7 @@ public class ControlWebView extends BaseController {
             webEngine.locationProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    if (webViewLabel != null) {
+                    if (webViewLabel != null && newv != null) {
                         webViewLabel.setText(URLDecoder.decode(newv, charset));
                     }
                 }
@@ -276,12 +287,10 @@ public class ControlWebView extends BaseController {
                 @Override
                 public String call(PromptData p) {
 //                    MyBoxLog.console("here:" + p.getMessage());
-                    if (parentController != null) {
-                        String value = PopTools.askValue(parentController.getBaseTitle(), null, p.getMessage(), p.getDefaultValue());
-                        return value;
-                    } else {
-                        return null;
-                    }
+                    String value = PopTools.askValue(
+                            parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle(),
+                            null, p.getMessage(), p.getDefaultValue());
+                    return value;
                 }
             });
 
@@ -289,12 +298,9 @@ public class ControlWebView extends BaseController {
                 @Override
                 public Boolean call(String message) {
                     try {
-                        if (parentController == null) {
-                            return false;
-                        }
 //                        MyBoxLog.console("here:" + message);
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle(parentController.getBaseTitle());
+                        alert.setTitle(parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle());
                         alert.setHeaderText(null);
                         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         alert.getDialogPane().setContent(new Label(message));
@@ -316,12 +322,18 @@ public class ControlWebView extends BaseController {
                 @Override
                 public void handle(WebEvent<String> ev) {
                     String msg = ev.getData();
+                    if (msg == null) {
+                        return;
+                    }
                     int value = -1;
                     if (msg.startsWith("FrameReadyIndex-")) {
                         value = Integer.parseInt(msg.substring("FrameReadyIndex-".length()));
-//                        MyBoxLog.console("Frame " + index + " ready");
                     } else if (msg.startsWith("FrameReadyName-")) {
                         value = WebViewTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
+                    } else if (msg.startsWith("scrollTop-")) {
+                        scrollTop = Double.valueOf(msg.substring("scrollTop-".length()));
+                    } else if (msg.startsWith("scrollLeft-")) {
+                        scrollLeft = Double.valueOf(msg.substring("scrollLeft-".length()));
                     }
                     if (value < 0) {
                         return;
@@ -333,7 +345,6 @@ public class ControlWebView extends BaseController {
                         public void run() {
                             Platform.runLater(() -> {
                                 addFrameListener(frameIndex);
-                                changeDocState(frameIndex);
                             });
                         }
                     }, 500);
@@ -357,7 +368,7 @@ public class ControlWebView extends BaseController {
 
     public boolean loadFile(File file) {
         if (file == null || !file.exists()) {
-            popError(message("InvalidData"));
+            addressInvalidNotify.set(!addressInvalidNotify.get());
             return false;
         }
         return loadAddress(UrlTools.decodeURL(file, Charset.defaultCharset()));
@@ -365,7 +376,7 @@ public class ControlWebView extends BaseController {
 
     public boolean loadURI(URI uri) {
         if (uri == null) {
-            popError(message("InvalidData"));
+            addressInvalidNotify.set(!addressInvalidNotify.get());
             return false;
         }
         return loadAddress(uri.toString());
@@ -374,7 +385,7 @@ public class ControlWebView extends BaseController {
     public boolean loadAddress(String value) {
         value = UrlTools.checkURL(value, Charset.forName("UTF-8"));
         if (value == null) {
-            popError(message("InvalidData"));
+            addressInvalidNotify.set(!addressInvalidNotify.get());
             return false;
         }
         goAddress(value);
@@ -386,98 +397,84 @@ public class ControlWebView extends BaseController {
     }
 
     public boolean loadContents(String address, String contents) {
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
         setAddress(address);
-        addressChanged = true;
-        webEngine.getLoadWorker().cancel();
-        webEngine.loadContent(contents);
+        writeContents(contents);
         return true;
     }
 
-    public void setAddress(String value) {
-        setSourceFile(null);
-        address = UrlTools.checkURL(value, Charset.forName("UTF-8"));
-        if (address != null && address.startsWith("file:/")) {
-            File file = new File(address.substring(6));
-            if (file.exists()) {
-                setSourceFile(file);
+    public void writeContents(String contents) {
+        webEngine.getLoadWorker().cancel();
+        webEngine.loadContent(contents);
+    }
+
+    private boolean setAddress(String value) {
+        try {
+            setSourceFile(null);
+            address = UrlTools.checkURL(value, Charset.forName("UTF-8"));
+            if (address != null && address.startsWith("file:/")) {
+                File file = new File(address.substring(6));
+                if (file.exists()) {
+                    setSourceFile(file);
+                }
             }
-        }
-        if (parentController instanceof BaseWebViewController) {
-            ((BaseWebViewController) parentController).addressChanged();
+            addressChangedNotify.set(!addressChangedNotify.get());
+            return true;
+        } catch (Exception e) {
+            addressInvalidNotify.set(!addressInvalidNotify.get());
+            return false;
         }
     }
 
     @Override
     public void setSourceFile(File file) {
         this.sourceFile = file;
-        parentController.sourceFile = sourceFile;
         if (address == null && sourceFile != null) {
-            address = sourceFile.getAbsolutePath();
+            address = sourceFile.toURI().toString();
         }
     }
 
-    public void goAddress(String value) {
-        if (parentController instanceof BaseWebViewController) {
-            if (!((BaseWebViewController) parentController).validAddress(value)) {
+    private void goAddress(String value) {
+        try {
+            if (!setAddress(value)) {
                 return;
             }
-        }
-        try {
-            setAddress(value);
-            addressChanged = true;
-            if (webViewLabel != null) {
-                webViewLabel.setText(message("Loading..."));
-            }
+            setWebViewLabel(message("Loading..."));
             webEngine.getLoadWorker().cancel();
             webEngine.load(address);
         } catch (Exception e) {
             MyBoxLog.error(e);
+            addressInvalidNotify.set(!addressInvalidNotify.get());
         }
-
     }
 
     protected void setWebViewLabel(String string) {
-        webViewLabel.setText(string);
-    }
-
-    // Listener should ignore state change from TmpState
-    // positive is frame index, and negative is status
-    public void changeDocState(int newState) {
-        synchronized (stateNotify) {
-            if (stateNotify.get() == newState) { // make sure state will change
-                stateNotify.set(TmpState);
-            }
-            stateNotify.set(newState);
-        }
-    }
-
-    protected void pageIsLoading() {
         if (webViewLabel != null) {
-            webViewLabel.setText(message("Loading..."));
-        }
-        changeDocState(DocLoading);
-        if (parentController instanceof BaseWebViewController) {
-            ((BaseWebViewController) parentController).pageIsLoading();
+            webViewLabel.setText(string);
         }
     }
 
-    protected void afterPageLoaded() {
+    private void pageIsLoading() {
+        setWebViewLabel(message("Loading..."));
+        pageLoadingNotify.set(!pageLoadingNotify.get());
+    }
+
+    private void afterPageLoaded() {
         try {
-            if (parentController instanceof BaseWebViewController) {
-                ((BaseWebViewController) parentController).afterPageLoaded();
+            String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
+            setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
+            pageLoadedNotify.set(!pageLoadedNotify.get());
+            setWebViewLabel(message("Loaded"));
+
+            webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+            if (!(this instanceof ControlHtmlEditor)) {
+                webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
             }
-            addressChanged = false;
-            if (webViewLabel != null) {
-                webViewLabel.setText(message("Loaded"));
-            }
+
             Document doc = webEngine.getDocument();
             charset = HtmlReadTools.charset(doc);
             framesDoc.clear();
             addDocListener(doc);
-            changeDocState(DocLoaded);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -498,6 +495,8 @@ public class ControlWebView extends BaseController {
             t.addEventListener("mouseover", docListener, false);
             t.addEventListener("mouseout", docListener, false);
             t.addEventListener("contextmenu", docListener, false);
+
+            webEngine.executeScript(onScrollScript);
 
             NodeList frameList = doc.getElementsByTagName("frame");
             for (int i = 0; i < frameList.getLength(); i++) {
@@ -529,8 +528,23 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public String loadedHtml() {
+        return HtmlReadTools.removeNode(WebViewTools.getHtml(webEngine), StyleNodeID);
+    }
+
+    public void setStyle(String style) {
+        String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
+        UserConfig.setString(prefix + "HtmlStyle", style);
+
+        WebViewTools.removeNode(webEngine, StyleNodeID);
+        this.style = style;
+        if (style != null && !style.isBlank()) {
+            WebViewTools.addStyle(webEngine, style, StyleNodeID);
+        }
+    }
+
     public void popLinkMenu(Element element) {
-        if (linkX < 0 || linkY < 0 || element == null || parentController == null) {
+        if (linkX < 0 || linkY < 0 || element == null) {
             return;
         }
         String tag = element.getTagName();
@@ -567,7 +581,7 @@ public class ControlWebView extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("QueryNetworkAddress"));
+        menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconQuery.png"));
         menu.setOnAction((ActionEvent event) -> {
             NetworkQueryAddressController controller
                     = (NetworkQueryAddressController) WindowTools.openStage(Fxmls.NetworkQueryAddressFxml);
@@ -575,7 +589,7 @@ public class ControlWebView extends BaseController {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("AddAsFavorite"));
+        menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImage("iconStar.png"));
         menu.setOnAction((ActionEvent event) -> {
             WebFavoriteAddController controller = (WebFavoriteAddController) WindowTools.openStage(Fxmls.WebFavoriteAddFxml);
             controller.setValues(name == null || name.isBlank() ? finalAddress : name, finalAddress);
@@ -585,31 +599,31 @@ public class ControlWebView extends BaseController {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("OpenLinkInNewTab"));
+        menu = new MenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
         menu.setOnAction((ActionEvent event) -> {
             WebBrowserController.oneOpen(finalAddress, false);
         });
         items.add(menu);
 
-        menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
+        menu = new MenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
         menu.setOnAction((ActionEvent event) -> {
             WebBrowserController.oneOpen(finalAddress, true);
         });
         items.add(menu);
 
-        menu = new MenuItem(message("OpenLinkByCurrent"));
+        menu = new MenuItem(message("OpenLinkByCurrent"), StyleTools.getIconImage("iconWindow.png"));
         menu.setOnAction((ActionEvent event) -> {
             loadAddress(finalAddress);
         });
         items.add(menu);
 
-        menu = new MenuItem(message("OpenLinkBySystem"));
+        menu = new MenuItem(message("OpenLinkBySystem"), StyleTools.getIconImage("iconWindow.png"));
         menu.setOnAction((ActionEvent event) -> {
             browse(finalAddress);
         });
         items.add(menu);
 
-        menu = new MenuItem(message("OpenLinkByEditor"));
+        menu = new MenuItem(message("OpenLinkByEditor"), StyleTools.getIconImage("iconEdit.png"));
         menu.setOnAction((ActionEvent event) -> {
             HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
             controller.loadAddress(finalAddress);
@@ -620,41 +634,41 @@ public class ControlWebView extends BaseController {
 
         if (tag.equalsIgnoreCase("img")) {
             if (ImageClipboardTools.isMonitoringCopy()) {
-                menu = new MenuItem(message("CopyImageToClipboards"));
+                menu = new MenuItem(message("CopyImageToClipboards"), StyleTools.getIconImage("iconCopySystem.png"));
             } else {
-                menu = new MenuItem(message("CopyImageToSystemClipboard"));
+                menu = new MenuItem(message("CopyImageToSystemClipboard"), StyleTools.getIconImage("iconCopySystem.png"));
             }
             menu.setOnAction((ActionEvent event) -> {
                 handleImage(finalAddress, name, "toSystemClipboard");
             });
             items.add(menu);
 
-            menu = new MenuItem(message("CopyImageToMyBoxClipboard"));
+            menu = new MenuItem(message("CopyImageToMyBoxClipboard"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
                 handleImage(finalAddress, name, "toMyBoxClipboard");
             });
             items.add(menu);
 
-            menu = new MenuItem(message("ViewImage"));
+            menu = new MenuItem(message("ViewImage"), StyleTools.getIconImage("iconView.png"));
             menu.setOnAction((ActionEvent event) -> {
                 handleImage(finalAddress, name, "view");
             });
             items.add(menu);
 
-            menu = new MenuItem(message("EditImage"));
+            menu = new MenuItem(message("EditImage"), StyleTools.getIconImage("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 handleImage(finalAddress, name, "edit");
             });
             items.add(menu);
         }
 
-        menu = new MenuItem(message("DownloadBySysBrowser"));
+        menu = new MenuItem(message("DownloadBySysBrowser"), StyleTools.getIconImage("iconDownload.png"));
         menu.setOnAction((ActionEvent event) -> {
             browse(finalAddress);
         });
         items.add(menu);
 
-        menu = new MenuItem(message("DownloadByMyBox"));
+        menu = new MenuItem(message("DownloadByMyBox"), StyleTools.getIconImage("iconDownload.png"));
         menu.setOnAction((ActionEvent event) -> {
             WebBrowserController controller = WebBrowserController.oneOpen();
             controller.download(finalAddress, name);
@@ -663,27 +677,27 @@ public class ControlWebView extends BaseController {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("CopyLink"));
+        menu = new MenuItem(message("CopyLink"), StyleTools.getIconImage("iconCopySystem.png"));
         menu.setOnAction((ActionEvent event) -> {
-            TextClipboardTools.copyToSystemClipboard(parentController, finalAddress);
+            TextClipboardTools.copyToSystemClipboard(myController, finalAddress);
         });
         items.add(menu);
 
         if (showName) {
-            menu = new MenuItem(message("CopyLinkName"));
+            menu = new MenuItem(message("CopyLinkName"), StyleTools.getIconImage("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
-                TextClipboardTools.copyToSystemClipboard(parentController, name);
+                TextClipboardTools.copyToSystemClipboard(myController, name);
             });
             items.add(menu);
 
-            menu = new MenuItem(message("CopyLinkAndName"));
+            menu = new MenuItem(message("CopyLinkAndName"), StyleTools.getIconImage("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
-                TextClipboardTools.copyToSystemClipboard(parentController, name + "\n" + finalAddress);
+                TextClipboardTools.copyToSystemClipboard(myController, name + "\n" + finalAddress);
             });
             items.add(menu);
         }
 
-        menu = new MenuItem(message("CopyLinkCode"));
+        menu = new MenuItem(message("CopyLinkCode"), StyleTools.getIconImage("iconCopySystem.png"));
         menu.setOnAction((ActionEvent event) -> {
             String code;
             if (tag.equalsIgnoreCase("img")) {
@@ -691,12 +705,12 @@ public class ControlWebView extends BaseController {
             } else {
                 code = "<a href=\"" + finalAddress + "\">" + (name == null || name.isBlank() ? finalAddress : name) + "</a>";
             }
-            TextClipboardTools.copyToSystemClipboard(parentController, code);
+            TextClipboardTools.copyToSystemClipboard(myController, code);
         });
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
-        menu = new MenuItem(message("PopupClose"));
+        menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null) {
@@ -707,12 +721,15 @@ public class ControlWebView extends BaseController {
         items.add(menu);
 
         closePopup();
-        parentController.closePopup();
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
+        if (parentController != null) {
+            parentController.closePopup();
+            parentController.setPopMenu(popMenu);
+        }
         popMenu.show(webView, linkX, linkY);
-        parentController.setPopMenu(popMenu);
+
     }
 
     public void popElementMenu(Element element) {
@@ -732,7 +749,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private Image image = null;
 
@@ -792,15 +809,17 @@ public class ControlWebView extends BaseController {
         webEngine.executeScript("window.history.forward();");
     }
 
-    public void refreshAction() {
+    public void refresh() {
         if (address != null) {
             goAddress(address);
+        } else {
+            loadContents(loadedHtml());
         }
     }
 
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
-            String html = WebViewTools.getHtml(webEngine);
+            String html = loadedHtml();
             Document doc = webEngine.getDocument();
             boolean isFrameset = framesDoc != null && framesDoc.size() > 0;
 
@@ -814,50 +833,8 @@ public class ControlWebView extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            int hisSize = (int) webEngine.executeScript("window.history.length;");
-
-            menu = new MenuItem(message("ZoomIn"));
-            menu.setOnAction((ActionEvent event) -> {
-                zoomIn();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("ZoomOut"));
-            menu.setOnAction((ActionEvent event) -> {
-                zoomOut();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Refresh"));
-            menu.setOnAction((ActionEvent event) -> {
-                refreshAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Cancel"));
-            menu.setOnAction((ActionEvent event) -> {
-                cancelAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Backward"));
-            menu.setOnAction((ActionEvent event) -> {
-                backAction();
-            });
-            menu.setDisable(hisSize < 2);
-            items.add(menu);
-
-            menu = new MenuItem(message("Forward"));
-            menu.setOnAction((ActionEvent event) -> {
-                forwardAction();
-            });
-            menu.setDisable(hisSize < 2);
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
             if (address != null && !address.isBlank()) {
-                menu = new MenuItem(message("AddAsFavorite"));
+                menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImage("iconStar.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     WebFavoriteAddController controller = (WebFavoriteAddController) WindowTools.openStage(Fxmls.WebFavoriteAddFxml);
                     controller.setValues(webEngine.getTitle(), address);
@@ -866,20 +843,20 @@ public class ControlWebView extends BaseController {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("WebFavorites"));
+            menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImage("iconStarFilled.png"));
             menu.setOnAction((ActionEvent event) -> {
                 WebFavoritesController.oneOpen();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("WebHistories"));
+            menu = new MenuItem(message("WebHistories"), StyleTools.getIconImage("iconHistory.png"));
             menu.setOnAction((ActionEvent event) -> {
                 WebHistoriesController.oneOpen();
             });
             items.add(menu);
 
             if (address != null && !address.isBlank()) {
-                menu = new MenuItem(message("QueryNetworkAddress"));
+                menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconSSL.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     NetworkQueryAddressController controller
                             = (NetworkQueryAddressController) WindowTools.openStage(Fxmls.NetworkQueryAddressFxml);
@@ -892,16 +869,14 @@ public class ControlWebView extends BaseController {
 
             List<MenuItem> editItems = new ArrayList<>();
 
-            if (!(parentController instanceof HtmlEditorController) && html != null && !html.isBlank()) {
-                menu = new MenuItem(message("HtmlEditor"));
+            if (html != null && !html.isBlank()) {
+                menu = new MenuItem(message("HtmlEditor"), StyleTools.getIconImage("iconEdit.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    edit(html);
+                    edit(address, html);
                 });
                 editItems.add(menu);
-            }
 
-            if (!(parentController instanceof HtmlSnapController) && html != null && !html.isBlank()) {
-                menu = new MenuItem(message("HtmlSnap"));
+                menu = new MenuItem(message("HtmlSnap"), StyleTools.getIconImage("iconSnapshot.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlSnapController controller = (HtmlSnapController) WindowTools.openStage(Fxmls.HtmlSnapFxml);
                     if (address != null && !address.isBlank()) {
@@ -911,67 +886,66 @@ public class ControlWebView extends BaseController {
                     }
                 });
                 editItems.add(menu);
-            }
 
-            if (isFrameset) {
-                NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");
-                if (frameList != null) {
-                    List<MenuItem> frameItems = new ArrayList<>();
-                    for (int i = 0; i < frameList.getLength(); i++) {
-                        org.w3c.dom.Node node = frameList.item(i);
-                        if (node == null) {
-                            continue;
-                        }
-                        int index = i;
-                        Element e = (Element) node;
-                        String src = e.getAttribute("src");
-                        String name = e.getAttribute("name");
-                        String frame = message("Frame") + index;
-                        if (name != null && !name.isBlank()) {
-                            frame += " :   " + name;
-                        } else if (src != null && !src.isBlank()) {
-                            frame += " :   " + src;
-                        }
-                        menu = new MenuItem(frame);
-                        menu.setOnAction((ActionEvent event) -> {
-                            HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-                            if (src != null && !src.isBlank()) {
-                                controller.loadAddress(UrlTools.fullAddress(address, src));
-                            } else {
-                                controller.loadContents(WebViewTools.getFrame(webEngine, index));
+                if (isFrameset) {
+                    NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");
+                    if (frameList != null) {
+                        List<MenuItem> frameItems = new ArrayList<>();
+                        for (int i = 0; i < frameList.getLength(); i++) {
+                            org.w3c.dom.Node node = frameList.item(i);
+                            if (node == null) {
+                                continue;
                             }
+                            int index = i;
+                            Element e = (Element) node;
+                            String src = e.getAttribute("src");
+                            String name = e.getAttribute("name");
+                            String frame = message("Frame") + index;
+                            if (name != null && !name.isBlank()) {
+                                frame += " :   " + name;
+                            } else if (src != null && !src.isBlank()) {
+                                frame += " :   " + src;
+                            }
+                            menu = new MenuItem(frame);
+                            menu.setOnAction((ActionEvent event) -> {
+                                HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
+                                if (src != null && !src.isBlank()) {
+                                    controller.loadAddress(UrlTools.fullAddress(address, src));
+                                } else {
+                                    controller.loadContents(WebViewTools.getFrame(webEngine, index));
+                                }
 
-                        });
-                        menu.setDisable(html == null || html.isBlank());
-                        frameItems.add(menu);
-                    }
-                    if (!frameItems.isEmpty()) {
-                        Menu frameMenu = new Menu(message("Frame"));
-                        frameMenu.getItems().addAll(frameItems);
-                        editItems.add(frameMenu);
+                            });
+                            menu.setDisable(html == null || html.isBlank());
+                            frameItems.add(menu);
+                        }
+                        if (!frameItems.isEmpty()) {
+                            Menu frameMenu = new Menu(message("Frame"));
+                            frameMenu.getItems().addAll(frameItems);
+                            editItems.add(frameMenu);
+                        }
                     }
                 }
-            }
 
-            if (!editItems.isEmpty()) {
                 editItems.add(new SeparatorMenuItem());
                 items.addAll(editItems);
+
             }
 
             if (html != null && !html.isBlank()) {
-                menu = new MenuItem(message("HtmlCodes"));
+                menu = new MenuItem(message("HtmlCodes"), StyleTools.getIconImage("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlCodesPopController.openWebView(myController, webView);
                 });
                 items.add(menu);
 
-                menu = new MenuItem(message("WebFind"));
+                menu = new MenuItem(message("WebFind"), StyleTools.getIconImage("iconQuery.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     find(html);
                 });
                 items.add(menu);
 
-                menu = new MenuItem(message("WebElements"));
+                menu = new MenuItem(message("WebElements"), StyleTools.getIconImage("iconQuery.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlElementsController controller = (HtmlElementsController) WindowTools.openStage(Fxmls.HtmlElementsFxml);
                     if (address != null && !address.isBlank()) {
@@ -986,35 +960,35 @@ public class ControlWebView extends BaseController {
                 Menu elementsMenu = new Menu(message("Extract"));
                 List<MenuItem> elementsItems = new ArrayList<>();
 
-                menu = new MenuItem(message("Table"));
+                menu = new MenuItem(message("Table"), StyleTools.getIconImage("iconData.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    tables(html, sourceFile != null ? sourceFile.getName() : "");
+                    tables(html, sourceFile != null ? sourceFile.getName() : address);
                 });
                 menu.setDisable(isFrameset);
                 elementsItems.add(menu);
 
-                menu = new MenuItem(message("Texts"));
+                menu = new MenuItem(message("Texts"), StyleTools.getIconImage("iconTxt.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     texts(html);
                 });
                 menu.setDisable(isFrameset);
                 elementsItems.add(menu);
 
-                menu = new MenuItem(message("Links"));
+                menu = new MenuItem(message("Links"), StyleTools.getIconImage("iconLink.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     links();
                 });
                 menu.setDisable(isFrameset || doc == null);
                 elementsItems.add(menu);
 
-                menu = new MenuItem(message("Images"));
+                menu = new MenuItem(message("Images"), StyleTools.getIconImage("iconFlower.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     images();
                 });
                 menu.setDisable(isFrameset || doc == null);
                 elementsItems.add(menu);
 
-                menu = new MenuItem(message("Headings"));
+                menu = new MenuItem(message("Headings"), StyleTools.getIconImage("iconHeader.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     toc(html);
                 });
@@ -1028,28 +1002,107 @@ public class ControlWebView extends BaseController {
             }
 
             if (address != null && !address.isBlank()) {
-                menu = new MenuItem(message("OpenLinkBySystem"));
+                menu = new MenuItem(message("OpenLinkBySystem"), StyleTools.getIconImage("iconWindow.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     browse(address);
                 });
                 items.add(menu);
 
-                items.add(new SeparatorMenuItem());
+                menu = new MenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    WebBrowserController.oneOpen(address, true);
+                });
+                items.add(menu);
 
-                menu = new MenuItem(message("OpenLinkInNewTab"));
+                menu = new MenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     WebBrowserController.oneOpen(address, false);
                 });
                 items.add(menu);
 
-                menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
-                menu.setOnAction((ActionEvent event) -> {
-                    WebBrowserController.oneOpen(address, true);
-                });
-                items.add(menu);
+                items.add(new SeparatorMenuItem());
+
             }
 
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("ZoomIn"), StyleTools.getIconImage("iconZoomIn.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                zoomIn();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ZoomOut"), StyleTools.getIconImage("iconZoomOut.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                zoomOut();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                refresh();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Cancel"), StyleTools.getIconImage("iconCancel.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                cancelAction();
+            });
+            items.add(menu);
+
+            int hisSize = (int) webEngine.executeScript("window.history.length;");
+            menu = new MenuItem(message("Backward"), StyleTools.getIconImage("iconPrevious.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                backAction();
+            });
+            menu.setDisable(hisSize < 2);
+            items.add(menu);
+
+            menu = new MenuItem(message("Forward"), StyleTools.getIconImage("iconNext.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                forwardAction();
+            });
+            menu.setDisable(hisSize < 2);
+            items.add(menu);
+
+            if (!(this instanceof ControlHtmlEditor)) {
+                items.add(new SeparatorMenuItem());
+                CheckMenuItem checkMenu = new CheckMenuItem(message("Editable"));
+                checkMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+                checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("WebViewEditable", checkMenu.isSelected());
+                        webEngine.executeScript("document.body.contentEditable=" + checkMenu.isSelected());
+                    }
+                });
+                items.add(checkMenu);
+            }
+
+            menu = new MenuItem(message("Script"), StyleTools.getIconImage("iconScript.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                TextInputController inputController
+                        = TextInputController.open(parentController != null ? parentController : myController, "JavaScript", null);
+                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        String value = inputController.getText();
+                        if (value == null || value.isBlank()) {
+                            return;
+                        }
+                        inputController.closeStage();
+                        try {
+                            webEngine.executeScript(value);
+                            popDone();
+                        } catch (Exception e) {
+                            popError(e.toString());
+                        }
+                    }
+                });
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -1074,16 +1127,12 @@ public class ControlWebView extends BaseController {
 
     @FXML
     public void editAction() {
-        edit(WebViewTools.getHtml(webEngine));
+        edit(address, loadedHtml());
     }
 
-    public HtmlEditorController edit(String html) {
+    public HtmlEditorController edit(String address, String html) {
         HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-        if (address != null && !address.isBlank()) {
-            controller.loadAddress(address);
-        } else if (html != null && !html.isBlank()) {
-            controller.loadContents(html);
-        }
+        controller.loadContents(address, html);
         return controller;
     }
 
@@ -1095,7 +1144,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private StringTable table;
 
@@ -1168,7 +1217,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private StringTable table;
 
@@ -1239,7 +1288,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private String toc;
 
@@ -1272,7 +1321,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private String texts;
 
@@ -1305,7 +1354,7 @@ public class ControlWebView extends BaseController {
         }
         synchronized (this) {
             popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>() {
+            SingletonTask bgTask = new SingletonTask<Void>(this) {
 
                 private List<StringTable> tables;
 
@@ -1334,18 +1383,13 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public void findAction() {
-        find(WebViewTools.getHtml(webEngine));
+        find(loadedHtml());
     }
 
     public void find(String html) {
         HtmlFindController controller = (HtmlFindController) WindowTools.openStage(Fxmls.HtmlFindFxml);
-        controller.loadContents(html);
-        controller.setAddress(address);
+        controller.loadContents(address, html);
         controller.toFront();
-    }
-
-    public String currentHtml() {
-        return WebViewTools.getHtml(webEngine);
     }
 
     @FXML
@@ -1359,12 +1403,12 @@ public class ControlWebView extends BaseController {
             if (file == null) {
                 return;
             }
-            String html = currentHtml();
+            String html = loadedHtml();
             if (html == null || html.isBlank()) {
                 popError(message("NoData"));
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     File tmpFile = HtmlWriteTools.writeHtml(html);
@@ -1375,8 +1419,8 @@ public class ControlWebView extends BaseController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    if (parentController instanceof BaseWebViewController) {
-                        ((BaseWebViewController) parentController).afterSaveAs(file);
+                    if (saveAsType == BaseController_Attributes.SaveAsType.Open) {
+                        ControllerTools.openHtmlEditor(null, file);
                     }
                 }
             };
@@ -1393,7 +1437,7 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public boolean popAction() {
-        HtmlPopController.openWebView(parentController, webView);
+        HtmlPopController.openWebView(parentController != null ? parentController : myController, webView);
         return true;
     }
 
@@ -1466,12 +1510,12 @@ public class ControlWebView extends BaseController {
         if (webView == null) {
             return false;
         }
-        String html = WebViewTools.selectedHtml(webView.getEngine());
-        if (html == null || html.isEmpty()) {
+        String chtml = WebViewTools.selectedHtml(webView.getEngine());
+        if (chtml == null || chtml.isEmpty()) {
             popError(message("SelectedNone"));
             return false;
         }
-        TextClipboardTools.copyToSystemClipboard(myController, html);
+        TextClipboardTools.copyToSystemClipboard(myController, chtml);
         return true;
     }
 
@@ -1480,12 +1524,12 @@ public class ControlWebView extends BaseController {
         if (webView == null) {
             return false;
         }
-        String html = WebViewTools.selectedHtml(webView.getEngine());
-        if (html == null || html.isEmpty()) {
+        String chtml = WebViewTools.selectedHtml(webView.getEngine());
+        if (chtml == null || chtml.isEmpty()) {
             popError(message("SelectedNone"));
             return false;
         }
-        TextClipboardTools.copyToMyBoxClipboard(myController, html);
+        TextClipboardTools.copyToMyBoxClipboard(myController, chtml);
         return true;
     }
 

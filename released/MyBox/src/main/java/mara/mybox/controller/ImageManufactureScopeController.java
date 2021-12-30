@@ -281,7 +281,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
     @Override
     public void paneSizeChanged(double change) {
-        paneSize();
+
     }
 
     @Override

@@ -12,9 +12,9 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.DataDefinition;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
@@ -56,8 +56,7 @@ public class DataFileTextMergeController extends FilesMergeController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                    .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(targetFileController.valid.not())
                     .or(readOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(writeOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
@@ -120,7 +119,7 @@ public class DataFileTextMergeController extends FilesMergeController {
                     } else {
                         headers = new ArrayList<>();
                         for (int i = 1; i <= rowData.size(); i++) {
-                            headers.add(message("col") + i);
+                            headers.add(message("Column") + i);
                         }
                     }
                     if (targetWithName) {
@@ -145,16 +144,22 @@ public class DataFileTextMergeController extends FilesMergeController {
             writer.flush();
             writer.close();
             try ( Connection conn = DerbyBase.getConnection()) {
-                TableDataDefinition tableDataDefinition = new TableDataDefinition();
-                tableDataDefinition.clear(conn, DataDefinition.DataType.DataFile, targetFile.getAbsolutePath());
-                conn.commit();
-                DataDefinition dataDefinition = DataDefinition.create()
-                        .setDataName(targetFile.getAbsolutePath())
-                        .setDataType(DataDefinition.DataType.DataFile)
-                        .setCharset(targetCharset.name())
+                TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
+                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.Texts, targetFile);
+                if (def == null) {
+                    def = Data2DDefinition.create();
+                }
+                def.setType(Data2DDefinition.Type.Texts)
+                        .setFile(targetFile)
+                        .setDataName(targetFile.getName())
+                        .setCharset(targetCharset)
                         .setHasHeader(targetWithName)
                         .setDelimiter(targetDelimiter);
-                tableDataDefinition.insertData(conn, dataDefinition);
+                if (def.getD2did() < 0) {
+                    tableData2DDefinition.insertData(conn, def);
+                } else {
+                    tableData2DDefinition.updateData(conn, def);
+                }
                 conn.commit();
             } catch (Exception e) {
                 updateLogs(e.toString(), true, true);

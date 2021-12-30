@@ -129,8 +129,8 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <CheckBox fx:id="restoreStagesSizeCheck" mnemonicParsing="false" selected="true" text="%RestoreStagesSize" />
-                                                        <CheckBox fx:id="newWindowCheck" mnemonicParsing="false" text="%OpenStageInNewWindow" />
+                                                        <CheckBox fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" selected="true" text="%RecordWindowsSizeLocation" />
+                                                        <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
                                                     </children>
                                                 </HBox>
                                                 <CheckBox fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSet" selected="true" text="%PopColorSetWhenMousePassing" />

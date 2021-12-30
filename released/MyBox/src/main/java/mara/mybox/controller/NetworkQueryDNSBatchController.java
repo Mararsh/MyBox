@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.SystemTools;
@@ -51,7 +52,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private StringBuilder s, f;
 
                 @Override
@@ -103,6 +104,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
                     if (!failed.isBlank()) {
                         alertError(Languages.message("Failed") + ":\n" + failed);
                     }
+                    task = null;
                 }
 
             };

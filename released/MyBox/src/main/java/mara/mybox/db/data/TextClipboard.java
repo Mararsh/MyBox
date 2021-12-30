@@ -18,6 +18,8 @@ public class TextClipboard extends BaseData {
     protected Date createTime;
 
     private void init() {
+        tcid = -1;
+        length = 0;
         createTime = new Date();
     }
 

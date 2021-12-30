@@ -3,14 +3,11 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVFormat;
@@ -28,7 +25,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
     protected ControlCsvOptions csvReadController;
 
     public DataFileCSVConvertController() {
-        baseTitle = Languages.message("CsvConvert");
+        baseTitle = message("CsvConvert");
     }
 
     @Override
@@ -42,8 +39,6 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             super.initOptionsSection();
 
             csvReadController.setControls(baseName + "Read");
-            convertController.setControls(this, pdfOptionsController);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -79,22 +74,21 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             fileCharset = csvReadController.charset;
         }
         try ( CSVParser parser = CSVParser.parse(srcFile, fileCharset, csvFormat)) {
-            List<String> names = parser.getHeaderNames();
-            convertController.names = names;
-            String filePrefix = FileNameTools.getFilePrefix(srcFile.getName()) + "_" + new Date().getTime();
-            convertController.openWriters(filePrefix);
+            List<String> names = new ArrayList<>();
+            names.addAll(parser.getHeaderNames());
+            convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {
                     return message("Cancelled");
                 }
                 List<String> rowData = new ArrayList<>();
-                for (String name : names) {
-                    rowData.add(record.get(name));
+                for (String v : record) {
+                    rowData.add(v);
                 }
                 convertController.writeRow(rowData);
             }
             convertController.closeWriters();
-            result = Languages.message("Handled");
+            result = message("Handled");
         } catch (Exception e) {
             result = e.toString();
         }
@@ -121,19 +115,18 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                 if (names == null) {
                     names = new ArrayList<>();
                     for (int i = 1; i <= record.size(); i++) {
-                        names.add(message("col") + i);
+                        names.add(message("Column") + i);
                     }
-                    convertController.names = names;
-                    convertController.openWriters(filePrefix(srcFile));
+                    convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
                 }
                 List<String> rowData = new ArrayList<>();
-                for (int i = 0; i < record.size(); i++) {
-                    rowData.add(record.get(i));
+                for (String v : record) {
+                    rowData.add(v);
                 }
                 convertController.writeRow(rowData);
             }
             convertController.closeWriters();
-            result = Languages.message("Handled");
+            result = message("Handled");
         } catch (Exception e) {
             result = e.toString();
         }

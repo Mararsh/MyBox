@@ -5,10 +5,8 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FloatMatrixTools;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.tools.MatrixDoubleTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -149,8 +147,7 @@ public class ConvolutionKernel {
     }
 
     public static float[][] makeGaussMatrix(int radius) {
-        return MatrixDoubleTools.array2Matrix(makeGaussArray(radius), radius * 2 + 1);
-
+        return FloatMatrixTools.array2Matrix(makeGaussArray(radius), radius * 2 + 1);
     }
 
     public static ConvolutionKernel makeMotionBlur(int radius) {
@@ -611,51 +608,51 @@ public class ConvolutionKernel {
         float[][] m = null;
         if (direction == BufferedImageTools.Direction.Top) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossTopKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossTopKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossTopKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossTopKernel5, size);
             }
         } else if (direction == BufferedImageTools.Direction.Bottom) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossBottomKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossBottomKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossBottomKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossBottomKernel5, size);
             }
         } else if (direction == BufferedImageTools.Direction.Left) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossLeftKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossLeftKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossLeftKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossLeftKernel5, size);
             }
         } else if (direction == BufferedImageTools.Direction.Right) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossRightKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossRightKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossRightKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossRightKernel5, size);
             }
         } else if (direction == BufferedImageTools.Direction.LeftTop) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossLeftTopKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossLeftTopKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossLeftTopKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossLeftTopKernel5, size);
             }
         } else if (direction == BufferedImageTools.Direction.RightBottom) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossRightBottomKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossRightBottomKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossRightBottomKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossRightBottomKernel5, size);
             }
         } else if (direction == BufferedImageTools.Direction.LeftBottom) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossLeftBottomKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossLeftBottomKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossLeftBottomKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossLeftBottomKernel5, size);
             }
         } else if (direction == BufferedImageTools.Direction.RightTop) {
             if (size == 3) {
-                m = MatrixDoubleTools.array2Matrix(embossRightTopKernel, size);
+                m = FloatMatrixTools.array2Matrix(embossRightTopKernel, size);
             } else if (size == 5) {
-                m = MatrixDoubleTools.array2Matrix(embossRightTopKernel5, size);
+                m = FloatMatrixTools.array2Matrix(embossRightTopKernel5, size);
             }
         }
         return m;

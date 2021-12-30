@@ -20,7 +20,7 @@ import mara.mybox.db.table.TableTag;
  * @CreateDate 2021-9-24
  * @License Apache License Version 2.0
  */
-public abstract class NotesController_Base extends BaseDataTableController<Note> {
+public abstract class NotesController_Base extends BaseSysTableController<Note> {
 
     protected TableNotebook tableNotebook;
     protected TableNote tableNote;
@@ -30,7 +30,7 @@ public abstract class NotesController_Base extends BaseDataTableController<Note>
     @FXML
     protected ControlNotebookSelector notebooksController;
     @FXML
-    protected ControlListCheckBox tagsListController;
+    protected ControlCheckBoxList tagsListController;
     @FXML
     protected VBox timesBox;
     @FXML

@@ -88,7 +88,8 @@ public class VisitHistory {
             return types;
 
         } else if (fileType == FileType.Image) {
-            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames};
             return types;
 
         } else if (fileType == FileType.Media) {

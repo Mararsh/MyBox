@@ -15,11 +15,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlPopController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlPopController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
+                <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -29,16 +29,24 @@ License:    Apache License Version 2.0
                     </graphic>
                 </Button>
                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-            <CheckBox fx:id="sychronizedCheck" layoutX="385.0" layoutY="16.0" mnemonicParsing="false" text="%Synchronized" />
-            <Button fx:id="refreshButton" layoutX="523.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction" onMouseEntered="#popSaveAs">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconRefresh.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <CheckBox fx:id="refreshChangeCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/red/iconRefresh.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>               
+                <Button fx:id="refreshButton" layoutX="523.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconRefresh.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -57,9 +65,18 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconFunction.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
-       <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+        <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

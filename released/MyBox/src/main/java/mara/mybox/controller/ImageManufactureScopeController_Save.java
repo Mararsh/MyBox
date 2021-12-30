@@ -11,6 +11,7 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -44,7 +45,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                 return;
             }
             scope.setName(name);
-            SingletonTask saveTask = new SingletonTask<Void>() {
+            SingletonTask saveTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

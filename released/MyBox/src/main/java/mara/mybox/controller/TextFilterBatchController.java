@@ -4,14 +4,11 @@ import java.io.File;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -29,6 +26,11 @@ public class TextFilterBatchController extends BaseBatchFileController {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
@@ -36,8 +38,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
             filterController.sourceLen = Long.MAX_VALUE;
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(filterController.valid.not())
                     .or(Bindings.isEmpty(tableView.getItems()))
             );

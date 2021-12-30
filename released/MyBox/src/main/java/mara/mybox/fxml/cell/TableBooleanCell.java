@@ -5,7 +5,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.fxml.StyleTools;
-import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -19,10 +18,8 @@ public class TableBooleanCell<T> extends TableCell<T, Boolean>
 
     @Override
     public TableCell<T, Boolean> call(TableColumn<T, Boolean> param) {
-        final ImageView imageview = new ImageView(StyleTools.getIcon("iconYes.png"));
+        final ImageView imageview = StyleTools.getIconImage("iconYes.png");
         imageview.setPreserveRatio(true);
-        imageview.setFitWidth(AppVariables.iconSize);
-        imageview.setFitHeight(AppVariables.iconSize);
         TableCell<T, Boolean> cell = new TableCell<T, Boolean>() {
             @Override
             public void updateItem(Boolean item, boolean empty) {
@@ -32,10 +29,6 @@ public class TableBooleanCell<T> extends TableCell<T, Boolean>
                     setGraphic(null);
                     return;
                 }
-//                setGraphic(AppVariables.getTrueImage());
-//                setText(AppVariables.message("True"));
-//                setGraphic(null);
-
                 setGraphic(imageview);
                 setText(null);
             }

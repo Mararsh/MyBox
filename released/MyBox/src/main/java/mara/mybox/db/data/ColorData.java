@@ -37,7 +37,6 @@ public class ColorData extends BaseData {
         colorValue = AppValues.InvalidInteger;
         orderNumner = Float.MAX_VALUE;
         paletteid = -1;
-        srgb = null;
     }
 
     public ColorData() {
@@ -73,7 +72,7 @@ public class ColorData extends BaseData {
             rgba = FxColorTools.color2rgba(color);  // rgba is saved as upper-case in db
             rgb = FxColorTools.color2rgb(color);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.IndexRange;
+import mara.mybox.data.Data2D;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
@@ -438,6 +439,9 @@ public class TextTools {
     }
 
     public static Line_Break checkLineBreak(File file) {
+        if (file == null) {
+            return Line_Break.LF;
+        }
         try ( InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)))) {
             int c;
             boolean cr = false;
@@ -455,7 +459,7 @@ public class TextTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return Line_Break.LF;
     }
@@ -498,28 +502,28 @@ public class TextTools {
         if (delimiterName == null) {
             return null;
         }
-        String text;
+        String delimiter;
         switch (delimiterName.toLowerCase()) {
             case "tab":
-                text = "\t";
+                delimiter = "\t";
                 break;
             case "blank":
-                text = " ";
+                delimiter = " ";
                 break;
             case "blank4":
-                text = "    ";
+                delimiter = "    ";
                 break;
             case "blank8":
-                text = "        ";
+                delimiter = "        ";
                 break;
             case "blanks":
-                text = " ";
+                delimiter = " ";
                 break;
             default:
-                text = delimiterName;
+                delimiter = delimiterName;
                 break;
         }
-        return text;
+        return delimiter;
     }
 
     public static String delimiterMessage(String delimiterName) {
@@ -572,35 +576,105 @@ public class TextTools {
             String delimiter = delimiterValue(delimiterName);
             int rowsNumber = data.length;
             int colsNumber = data[0].length;
+            int colEnd;
             if (colsNames != null && colsNames.size() >= colsNumber) {
-                if (rowsNames != null) {
+                if (rowsNames != null && !rowsNames.isEmpty()) {
                     s.append(delimiter);
                 }
-                int end = colsNumber - 1;
-                for (int c = 0; c <= end; c++) {
+                colEnd = colsNumber - 1;
+                for (int c = 0; c <= colEnd; c++) {
                     s.append(colsNames.get(c));
-                    if (c < end) {
+                    if (c < colEnd) {
                         s.append(delimiter);
                     }
                 }
                 s.append("\n");
             }
-            for (int i = 0; i < rowsNumber; i++) {
-                if (rowsNames != null) {
+            Object v;
+            int rowEnd = rowsNumber - 1;
+            for (int i = 0; i <= rowEnd; i++) {
+                if (rowsNames != null && !rowsNames.isEmpty()) {
                     s.append(rowsNames.get(i)).append(delimiter);
                 }
-                int end = colsNumber - 1;
-                for (int c = 0; c <= end; c++) {
-                    s.append(data[i][c]);
-                    if (c < end) {
+                colEnd = colsNumber - 1;
+                for (int c = 0; c <= colEnd; c++) {
+                    v = data[i][c];
+                    s.append(v == null ? "" : v);
+                    if (c < colEnd) {
                         s.append(delimiter);
                     }
                 }
-                s.append("\n");
+                if (i < rowEnd) {
+                    s.append("\n");
+                }
             }
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.console(e);
+            return "";
+        }
+    }
+
+    public static String dataText(List<List<String>> rows, String delimiterName) {
+        return dataText(toArray(rows), delimiterName, null, null);
+    }
+
+    public static String dataText(List<List<String>> rows, String delimiterName,
+            List<String> colsNames, List<String> rowsNames) {
+        return dataText(toArray(rows), delimiterName, colsNames, rowsNames);
+    }
+
+    public static String dataPage(Data2D data2D, String delimiterName,
+            boolean displayRowNames, boolean displayColNames) {
+        if (data2D == null || !data2D.isColumnsValid() || delimiterName == null) {
+            return "";
+        }
+        try {
+            StringBuilder s = new StringBuilder();
+            String delimiter = delimiterValue(delimiterName);
+            int rowsNumber = data2D.tableRowsNumber();
+            int colsNumber = data2D.tableColsNumber();
+            int colEnd;
+            if (displayColNames) {
+                if (displayRowNames) {
+                    s.append(message("RowNumber")).append(delimiter);
+                }
+                List<String> colNames = data2D.columnNames();
+                colEnd = colNames.size() - 1;
+                for (int c = 0; c <= colEnd; c++) {
+                    s.append(colNames.get(c));
+                    if (c < colEnd) {
+                        s.append(delimiter);
+                    }
+                }
+                s.append("\n");
+            }
+            Object v;
+            int rowEnd = rowsNumber - 1;
+            List<String> rowNames = data2D.rowNames();
+            for (int i = 0; i <= rowEnd; i++) {
+                if (displayRowNames) {
+                    s.append(rowNames.get(i)).append(delimiter);
+                }
+                colEnd = colsNumber - 1;
+                List<String> rowValues = data2D.tableRowWithoutNumber(i);
+                if (rowValues == null) {
+                    continue;
+                }
+                for (int c = 0; c <= colEnd; c++) {
+                    v = rowValues.get(c);
+                    s.append(v == null ? "" : v);
+                    if (c < colEnd) {
+                        s.append(delimiter);
+                    }
+                }
+                if (i < rowEnd) {
+                    s.append("\n");
+                }
+            }
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -634,6 +708,18 @@ public class TextTools {
                 case "|":
                     values = line.split("\\|", -1);
                     break;
+                case "*":
+                    values = line.split("\\*", -1);
+                    break;
+                case ".":
+                    values = line.split("\\.", -1);
+                    break;
+                case "?":
+                    values = line.split("\\?", -1);
+                    break;
+                case "\\":
+                    values = line.split("\\\\", -1);
+                    break;
                 default:
                     if (delimiterName.isBlank()) {
                         values = line.split("\\s+", -1);
@@ -647,9 +733,7 @@ public class TextTools {
                 return null;
             }
             List<String> row = new ArrayList<>();
-            for (String value : values) {
-                row.add(value);
-            }
+            row.addAll(Arrays.asList(values));
             return row;
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -680,6 +764,24 @@ public class TextTools {
             return data;
         } catch (Exception e) {
             MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static List<List<String>> toList(String[][] array) {
+        try {
+            int rowsNumber = array.length;
+            int colsNumber = array[0].length;
+            List<List<String>> data = new ArrayList<>();
+            for (int i = 0; i < rowsNumber; i++) {
+                List<String> row = new ArrayList<>();
+                for (int j = 0; j < colsNumber; j++) {
+                    row.add(array[i][j]);
+                }
+                data.add(row);
+            }
+            return data;
+        } catch (Exception e) {
             return null;
         }
     }

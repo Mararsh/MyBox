@@ -2,6 +2,8 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -11,12 +13,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import mara.mybox.db.data.FileBackup;
@@ -24,13 +25,16 @@ import mara.mybox.db.table.TableFileBackup;
 import static mara.mybox.db.table.TableFileBackup.Default_Max_Backups;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.cell.TableDateCell;
+import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -41,23 +45,80 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-2-26
  * @License Apache License Version 2.0
  */
-public class ControlFileBackup extends BaseController {
+public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
     protected TableFileBackup tableFileBackup;
     protected int maxBackups;
 
     @FXML
+    protected TableColumn<FileBackup, File> backupColumn;
+    @FXML
+    protected TableColumn<FileBackup, Long> sizeColumn;
+    @FXML
+    protected TableColumn<FileBackup, Date> timeColumn;
+    @FXML
     protected CheckBox backupCheck;
     @FXML
     protected VBox backupsListBox;
-    @FXML
-    protected ListView<FileBackup> backupsList;
     @FXML
     protected TextField maxBackupsInput;
     @FXML
     protected Button okMaxButton, clearBackupsButton, deleteBackupButton, viewBackupButton, useBackupButton;
 
     public ControlFileBackup() {
+    }
+
+    @Override
+    protected void initColumns() {
+        try {
+            super.initColumns();
+
+            sizeColumn.setCellValueFactory(new PropertyValueFactory<>("size"));
+            sizeColumn.setCellFactory(new TableFileSizeCell());
+            timeColumn.setCellValueFactory(new PropertyValueFactory<>("recordTime"));
+            timeColumn.setCellFactory(new TableDateCell());
+
+            backupColumn.setCellValueFactory(new PropertyValueFactory<>("backup"));
+            backupColumn.setCellFactory(new Callback<TableColumn<FileBackup, File>, TableCell<FileBackup, File>>() {
+                @Override
+                public TableCell<FileBackup, File> call(TableColumn<FileBackup, File> param) {
+
+                    TableCell<FileBackup, File> cell = new TableCell<FileBackup, File>() {
+                        private final ImageView view;
+
+                        {
+                            setContentDisplay(ContentDisplay.LEFT);
+                            view = new ImageView();
+                            view.setPreserveRatio(true);
+                        }
+
+                        @Override
+                        public void updateItem(File item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty || item == null) {
+                                setText(null);
+                                setGraphic(null);
+                                return;
+                            }
+                            setText(item.getName());
+                            if (parentController instanceof ImageManufactureController) {
+                                int width = AppVariables.thumbnailWidth;
+                                BufferedImage bufferedImage = ImageFileReaders.readImage(item, width);
+                                if (bufferedImage != null) {
+                                    view.setFitWidth(width);
+                                    view.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
+                                    setGraphic(view);
+                                }
+                            }
+                        }
+                    };
+                    return cell;
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     // call this to init
@@ -67,16 +128,6 @@ public class ControlFileBackup extends BaseController {
             this.baseName = baseName;
 
             tableFileBackup = new TableFileBackup();
-
-            backupCheck.setSelected(UserConfig.getBoolean(baseName + "Backup", true));
-            checkStatus();
-            backupCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    checkStatus();
-                }
-            });
-
             maxBackups = UserConfig.getInt("MaxFileBackups", Default_Max_Backups);
             if (maxBackups <= 0) {
                 maxBackups = Default_Max_Backups;
@@ -104,56 +155,32 @@ public class ControlFileBackup extends BaseController {
                 }
             });
 
-            backupsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-            backupsList.setCellFactory(new Callback<ListView<FileBackup>, ListCell<FileBackup>>() {
-                @Override
-                public ListCell<FileBackup> call(ListView<FileBackup> param) {
-                    ListCell<FileBackup> cell = new ListCell<FileBackup>() {
-                        private final ImageView view;
-
-                        {
-                            setContentDisplay(ContentDisplay.LEFT);
-                            view = new ImageView();
-                            view.setPreserveRatio(true);
-                        }
-
-                        @Override
-                        protected void updateItem(FileBackup item, boolean empty) {
-                            super.updateItem(item, empty);
-                            setGraphic(null);
-                            if (empty || item == null || item.getBackup() == null) {
-                                setText(null);
-                                return;
-                            }
-                            setText(DateTools.datetimeToString(item.getRecordTime()) + "  "
-                                    + FileTools.showFileSize(item.getBackup().length()));
-                            if (parentController instanceof ImageManufactureController) {
-                                int width = AppVariables.thumbnailWidth;
-                                BufferedImage bufferedImage = ImageFileReaders.readImageByWidth(item.getBackup().getAbsolutePath(), width);
-                                if (bufferedImage != null) {
-                                    view.setFitWidth(width);
-                                    view.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
-                                    setGraphic(view);
-                                }
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
-
-            backupsList.setOnMouseClicked((MouseEvent event) -> {
-                if (event.getClickCount() > 1) {
-                    useBackup();
-                }
-            });
-
-            deleteBackupButton.disableProperty().bind(backupsList.getSelectionModel().selectedItemProperty().isNull());
-            viewBackupButton.disableProperty().bind(deleteBackupButton.disableProperty());
-            useBackupButton.disableProperty().bind(deleteBackupButton.disableProperty());
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void itemDoubleClicked() {
+        useBackup();
+    }
+
+    @Override
+    protected void checkButtons() {
+        if (isSettingValues) {
+            return;
+        }
+        super.checkButtons();
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        if (deleteBackupButton != null) {
+            deleteBackupButton.setDisable(none);
+        }
+        if (viewBackupButton != null) {
+            viewBackupButton.setDisable(none);
+        }
+        if (useBackupButton != null) {
+            useBackupButton.setDisable(none);
         }
     }
 
@@ -167,7 +194,7 @@ public class ControlFileBackup extends BaseController {
             if (thisPane.getChildren().contains(backupsListBox)) {
                 thisPane.getChildren().remove(backupsListBox);
             }
-            backupsList.getItems().clear();
+            tableData.clear();
         }
         thisPane.applyCss();
         UserConfig.setBoolean(baseName + "Backup", backupCheck.isSelected());
@@ -178,76 +205,88 @@ public class ControlFileBackup extends BaseController {
         loadBackups();
     }
 
-    public void loadBackups() {
-        backupsList.getItems().clear();
+    public synchronized void loadBackups() {
         if (sourceFile == null || !backupCheck.isSelected()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>() {
-                private List<FileBackup> list;
-                private File currentFile;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        currentFile = sourceFile;
-                        String key = currentFile.getAbsolutePath();
-                        list = tableFileBackup.read(key);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (list != null && currentFile.equals(sourceFile)) {
-                        backupsList.getItems().addAll(list);
-                    }
-                }
-
-            };
-            start(task, false, null);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private List<FileBackup> list;
+            private File currentFile;
 
+            @Override
+            protected boolean handle() {
+                try {
+                    currentFile = sourceFile;
+                    String key = currentFile.getAbsolutePath();
+                    list = tableFileBackup.read(key);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (list != null && currentFile.equals(sourceFile)) {
+                    tableData.setAll(list);
+                } else {
+                    tableData.clear();
+                }
+            }
+
+        };
+        start(task, false, null);
     }
 
-    public FileBackup addBackup(File sourceFile) {
+    public FileBackup addBackup(SingletonTask task, File sourceFile) {
         this.sourceFile = sourceFile;
-        return addBackup();
+        return addBackup(task);
     }
 
-    public FileBackup addBackup() {
-        if (sourceFile == null) {
+    public synchronized FileBackup addBackup(SingletonTask task) {
+        if (sourceFile == null || !sourceFile.exists()) {
             return null;
         }
         File backupFile = newBackupFile();
-        backupFile.getParentFile().mkdirs();
-        FileCopyTools.copyFile(sourceFile, backupFile, false, false);
-        FileBackup newBackup = tableFileBackup.insertData(new FileBackup(sourceFile, backupFile));
-        if (newBackup != null) {
+        if (backupFile == null) {
+            return null;
+        }
+        try {
+            backupFile.getParentFile().mkdirs();
+            if (!FileCopyTools.copyFile(sourceFile, backupFile, false, false) || !backupFile.exists()) {
+                return null;
+            }
+            FileBackup newBackup = new FileBackup(sourceFile, backupFile);
+            FileBackup savedBackup = tableFileBackup.insertData(newBackup);
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    backupsList.getItems().add(0, newBackup);
-                    backupsList.refresh();
+                    tableData.add(0, savedBackup);
+                    tableView.refresh();
                 }
             });
+            return savedBackup;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return null;
         }
-        return newBackup;
     }
 
     public File newBackupFile() {
         if (sourceFile == null) {
             return null;
         }
-        File backupFile = new File(AppPaths.getFileBackupsPath(sourceFile)
-                + FileNameTools.appendName(sourceFile.getName(), "-" + DateTools.nowFileString()));
+        String path = AppPaths.getFileBackupsPath(sourceFile);
+        if (path == null) {
+            return null;
+        }
+        File backupFile = new File(path + FileNameTools.appendName(sourceFile.getName(), "-" + DateTools.nowFileString()));
         return backupFile;
     }
 
@@ -257,30 +296,73 @@ public class ControlFileBackup extends BaseController {
     }
 
     @FXML
-    public void clearBackups() {
-        if (!PopTools.askSure(getBaseTitle(), Languages.message("SureClear"))) {
+    public synchronized void clearBackups() {
+        if (sourceFile == null || !PopTools.askSure(getBaseTitle(), Languages.message("SureClear"))) {
             return;
         }
-        backupsList.getItems().clear();
-        if (sourceFile == null) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
-        tableFileBackup.clearBackups(sourceFile.getAbsolutePath());
+        task = new SingletonTask<Void>(this) {
+            FileBackup newBackup;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    tableFileBackup.clearBackups(sourceFile.getAbsolutePath());
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableData.clear();
+            }
+
+        };
+        start(task, false, null);
     }
 
     @FXML
-    public void deleteBackups() {
-        FileBackup selected = backupsList.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+    public synchronized void deleteBackups() {
+        List<FileBackup> selected = tableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
             return;
         }
-        TableFileBackup.deleteBackup(selected);
-        backupsList.getItems().remove(selected);
+        List<FileBackup> targets = new ArrayList<>();
+        targets.addAll(selected);
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    for (FileBackup b : targets) {
+                        TableFileBackup.deleteBackup(b);
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableData.removeAll(targets);
+            }
+        };
+        start(task, false, null);
     }
 
     @FXML
     public void viewBackup() {
-        FileBackup selected = backupsList.getSelectionModel().getSelectedItem();
+        FileBackup selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
@@ -288,17 +370,17 @@ public class ControlFileBackup extends BaseController {
     }
 
     @FXML
-    public void useBackup() {
+    public synchronized void useBackup() {
         if (sourceFile == null) {
             return;
         }
-        FileBackup selected = backupsList.getSelectionModel().getSelectedItem();
+        FileBackup selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
         File backup = selected.getBackup();
         if (backup == null || !backup.exists()) {
-            backupsList.getItems().remove(selected);
+            tableData.remove(selected);
             return;
         }
         if (!PopTools.askSure(getBaseTitle(), Languages.message("SureOverrideCurrentFile"),
@@ -306,13 +388,35 @@ public class ControlFileBackup extends BaseController {
                 + "\n\n" + Languages.message("OverrideBy") + ":\n   " + backup + "\n" + FileTools.showFileSize(backup.length()))) {
             return;
         }
-        addBackup();
-        FileCopyTools.copyFile(backup, sourceFile, true, true);
-        parentController.sourceFileChanged(sourceFile);
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    File tmpFile = TmpFileTools.getTempFile();
+                    FileCopyTools.copyFile(backup, tmpFile, true, true);  // backup may be cleared due to max
+                    addBackup(task, sourceFile);
+                    FileCopyTools.copyFile(tmpFile, sourceFile, true, true);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                parentController.sourceFileChanged(sourceFile);
+            }
+        };
+        start(task);
     }
 
     public FileBackup selectedBackup() {
-        return backupsList.getSelectionModel().getSelectedItem();
+        return tableView.getSelectionModel().getSelectedItem();
     }
 
     @FXML

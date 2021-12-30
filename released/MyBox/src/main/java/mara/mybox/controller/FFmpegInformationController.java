@@ -21,9 +21,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -72,7 +73,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
     protected ComboBox<String> querySelector;
 
     public FFmpegInformationController() {
-        baseTitle = Languages.message("FFmpegInformation");
+        baseTitle = message("FFmpegInformation");
 
     }
 
@@ -97,12 +98,12 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
 
             initColumns();
 
-            querySelector.getItems().addAll(Arrays.asList(Languages.message("BasicOptions"), Languages.message("MoreOptions"), Languages.message("AllOptions"),
-                    Languages.message("Licence"), Languages.message("Protocols"), Languages.message("Devices"),
-                    Languages.message("Formats"), Languages.message("Muxers"), Languages.message("Demuxers"),
-                    Languages.message("Codecs"), Languages.message("Decoders"), Languages.message("Encoders"),
-                    Languages.message("BitStreamFilters"), Languages.message("ChannelLayouts"), Languages.message("AudioSampleFormats"),
-                    Languages.message("ColorNames"), Languages.message("HardwareAccelerationMethods")
+            querySelector.getItems().addAll(Arrays.asList(message("BasicOptions"), message("MoreOptions"), message("AllOptions"),
+                    message("Licence"), message("Protocols"), message("Devices"),
+                    message("Formats"), message("Muxers"), message("Demuxers"),
+                    message("Codecs"), message("Decoders"), message("Encoders"),
+                    message("BitStreamFilters"), message("ChannelLayouts"), message("AudioSampleFormats"),
+                    message("ColorNames"), message("HardwareAccelerationMethods")
             ));
             querySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -124,39 +125,39 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
 
     protected void checkQuery() {
         String selected = querySelector.getSelectionModel().getSelectedItem();
-        if (Languages.message("BasicOptions").equals(selected)) {
+        if (message("BasicOptions").equals(selected)) {
             queryInput.setText("-h");
-        } else if (Languages.message("MoreOptions").equals(selected)) {
+        } else if (message("MoreOptions").equals(selected)) {
             queryInput.setText("-h long");
-        } else if (Languages.message("AllOptions").equals(selected)) {
+        } else if (message("AllOptions").equals(selected)) {
             queryInput.setText("-h full");
-        } else if (Languages.message("Licence").equals(selected)) {
+        } else if (message("Licence").equals(selected)) {
             queryInput.setText("-L");
-        } else if (Languages.message("Protocols").equals(selected)) {
+        } else if (message("Protocols").equals(selected)) {
             queryInput.setText("-protocols");
-        } else if (Languages.message("Devices").equals(selected)) {
+        } else if (message("Devices").equals(selected)) {
             queryInput.setText("-devices");
-        } else if (Languages.message("Formats").equals(selected)) {
+        } else if (message("Formats").equals(selected)) {
             queryInput.setText("-formats");
-        } else if (Languages.message("Muxers").equals(selected)) {
+        } else if (message("Muxers").equals(selected)) {
             queryInput.setText("-muxers");
-        } else if (Languages.message("Demuxers").equals(selected)) {
+        } else if (message("Demuxers").equals(selected)) {
             queryInput.setText("-demuxers");
-        } else if (Languages.message("Codecs").equals(selected)) {
+        } else if (message("Codecs").equals(selected)) {
             queryInput.setText("-codecs");
-        } else if (Languages.message("Decoders").equals(selected)) {
+        } else if (message("Decoders").equals(selected)) {
             queryInput.setText("-decoders");
-        } else if (Languages.message("Encoders").equals(selected)) {
+        } else if (message("Encoders").equals(selected)) {
             queryInput.setText("-encoders");
-        } else if (Languages.message("BitStreamFilters").equals(selected)) {
+        } else if (message("BitStreamFilters").equals(selected)) {
             queryInput.setText("-bsfs");
-        } else if (Languages.message("ChannelLayouts").equals(selected)) {
+        } else if (message("ChannelLayouts").equals(selected)) {
             queryInput.setText("-layouts");
-        } else if (Languages.message("AudioSampleFormats").equals(selected)) {
+        } else if (message("AudioSampleFormats").equals(selected)) {
             queryInput.setText("-sample_fmts");
-        } else if (Languages.message("ColorNames").equals(selected)) {
+        } else if (message("ColorNames").equals(selected)) {
             queryInput.setText("-colors");
-        } else if (Languages.message("HardwareAccelerationMethods").equals(selected)) {
+        } else if (message("HardwareAccelerationMethods").equals(selected)) {
             queryInput.setText("-hwaccels");
         }
 
@@ -222,7 +223,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             if (formatsTask != null && !formatsTask.isQuit()) {
                 return;
             }
-            formatsTask = new SingletonTask<Void>() {
+            formatsTask = new SingletonTask<Void>(this) {
                 private StringBuilder version;
 
                 @Override
@@ -287,7 +288,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         versionArea.setText(version.toString());
                     }
                     formatsView.setItems(formatsData);
-                    fromatsLabel.setText(Languages.message("Total") + ": " + formatsData.size());
+                    fromatsLabel.setText(message("Total") + ": " + formatsData.size());
                     readCodecs();
 
                 }
@@ -312,7 +313,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             if (codecsTask != null && !codecsTask.isQuit()) {
                 return;
             }
-            codecsTask = new SingletonTask<Void>() {
+            codecsTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -342,11 +343,11 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                                 boolean lossless = flags.contains("S");
                                 String type = "";
                                 if (flags.contains("V")) {
-                                    type = Languages.message("Video");
+                                    type = message("Video");
                                 } else if (flags.contains("A")) {
-                                    type = Languages.message("Audio");
+                                    type = message("Audio");
                                 } else if (flags.contains("S")) {
-                                    type = Languages.message("Subtitle");
+                                    type = message("Subtitle");
                                 }
                                 String[] v = StringTools.separatedBySpace(line.substring(8));
                                 String codec = v[0];
@@ -375,7 +376,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         popError(error);
                     }
                     codecsView.setItems(codecsData);
-                    codecLabel.setText(Languages.message("Total") + ": " + codecsData.size());
+                    codecLabel.setText(message("Total") + ": " + codecsData.size());
 
                 }
 
@@ -399,7 +400,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             if (filtersTask != null && !filtersTask.isQuit()) {
                 return;
             }
-            filtersTask = new SingletonTask<Void>() {
+            filtersTask = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -457,8 +458,8 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         popError(error);
                     }
                     filtersView.setItems(filtersData);
-                    filtersLabel.setText(Languages.message("Total") + ": " + filtersData.size()
-                            + "   " + Languages.message("ffmpegFilterComments"));
+                    filtersLabel.setText(message("Total") + ": " + filtersData.size()
+                            + "   " + message("ffmpegFilterComments"));
                 }
 
                 @Override
@@ -486,7 +487,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             if (queryTask != null && !queryTask.isQuit()) {
                 return;
             }
-            queryTask = new SingletonTask<Void>() {
+            queryTask = new SingletonTask<Void>(this) {
                 private StringBuilder output;
 
                 @Override
@@ -549,7 +550,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 || (codecsTask != null && !codecsTask.isQuit())
                 || (queryTask != null && !queryTask.isQuit())
                 || (filtersTask != null && !filtersTask.isQuit())) {
-            if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("TaskRunning"))) {
+            if (!PopTools.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
                 return false;
             }
             if (formatsTask != null) {

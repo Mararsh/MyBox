@@ -9,9 +9,9 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.DataDefinition;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
@@ -54,8 +54,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                    .or(targetFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(targetFileController.valid.not())
                     .or(csvSourceController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(csvTargetController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
@@ -133,7 +132,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
                 if (headers == null && targetWithName) {
                     headers = new ArrayList<>();
                     for (int i = 0; i < rowData.size(); i++) {
-                        headers.add(Languages.message("Field") + i);
+                        headers.add(Languages.message("Column") + i);
                     }
                     csvPrinter.printRecord(headers);
                 }
@@ -153,16 +152,22 @@ public class DataFileCSVMergeController extends FilesMergeController {
             csvPrinter.flush();
             csvPrinter.close();
             try ( Connection conn = DerbyBase.getConnection()) {
-                TableDataDefinition tableDataDefinition = new TableDataDefinition();
-                tableDataDefinition.clear(conn, DataDefinition.DataType.DataFile, targetFile.getAbsolutePath());
-                conn.commit();
-                DataDefinition dataDefinition = DataDefinition.create()
-                        .setDataName(targetFile.getAbsolutePath())
-                        .setDataType(DataDefinition.DataType.DataFile)
-                        .setCharset(targetCharset.name())
+                TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
+                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.CSV, targetFile);
+                if (def == null) {
+                    def = Data2DDefinition.create();
+                }
+                def.setType(Data2DDefinition.Type.CSV)
+                        .setFile(targetFile)
+                        .setDataName(targetFile.getName())
+                        .setCharset(targetCharset)
                         .setHasHeader(csvTargetController.withNamesCheck.isSelected())
                         .setDelimiter(csvTargetController.delimiter + "");
-                tableDataDefinition.insertData(conn, dataDefinition);
+                if (def.getD2did() < 0) {
+                    tableData2DDefinition.insertData(conn, def);
+                } else {
+                    tableData2DDefinition.updateData(conn, def);
+                }
                 conn.commit();
             } catch (Exception e) {
                 updateLogs(e.toString(), true, true);

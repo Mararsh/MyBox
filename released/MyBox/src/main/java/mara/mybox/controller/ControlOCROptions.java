@@ -26,7 +26,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.SystemTools;
@@ -65,7 +64,7 @@ public class ControlOCROptions extends BaseController {
     @FXML
     protected Label resultLabel, originalViewLabel, currentOCRFilesLabel;
     @FXML
-    protected ControlListCheckBox languageListController;
+    protected ControlCheckBoxList languageListController;
     @FXML
     protected ComboBox<String> psmSelector, regionSelector, wordSelector;
     @FXML
@@ -92,12 +91,12 @@ public class ControlOCROptions extends BaseController {
             String os = SystemTools.os();
             tesseractPathController.type(VisitHistory.FileType.Bytes)
                     .isDirectory(false).mustExist(true).permitNull(true)
-                    .defaultValue("win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tesseract.exe" : "/bin/tesseract")
-                    .name("TesseractPath", true);
+                    .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tesseract.exe") : new File("/bin/tesseract"))
+                    .baseName(baseName).savedName("TesseractPath").init();
 
             dataPathController.isDirectory(true).mustExist(true).permitNull(false)
-                    .defaultValue("win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tessdata" : "/usr/local/share/tessdata/")
-                    .name(OCRTools.TessDataPath, true);
+                    .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tessdata") : new File("/usr/local/share/tessdata/"))
+                    .baseName(baseName).savedName(OCRTools.TessDataPath).init();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -394,7 +393,7 @@ public class ControlOCROptions extends BaseController {
         }
         try {
             selectedLanguages = null;
-            List<String> langsList = languageListController.checkedValues();
+            List<String> langsList = languageListController.checkedOrderedValues();
             if (langsList != null) {
                 Map<String, String> names = OCRTools.nameCode();
                 for (String name : langsList) {

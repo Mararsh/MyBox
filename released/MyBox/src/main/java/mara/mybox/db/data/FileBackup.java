@@ -2,7 +2,6 @@ package mara.mybox.db.data;
 
 import java.io.File;
 import java.util.Date;
-import mara.mybox.db.data.BaseData;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -32,6 +31,14 @@ public class FileBackup extends BaseData {
         this.file = file;
         this.backup = backup;
         recordTime = new Date();
+    }
+
+    public String getName() {
+        return backup != null ? backup.getAbsolutePath() : null;
+    }
+
+    public long getSize() {
+        return backup != null ? backup.length() : 0;
     }
 
     /*

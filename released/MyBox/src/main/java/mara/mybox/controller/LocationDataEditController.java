@@ -14,7 +14,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.Dataset;
@@ -25,16 +24,11 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListDatasetCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-import static mara.mybox.value.Languages.tableMessage;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -126,12 +120,12 @@ public class LocationDataEditController extends BaseController {
                 coordinateSystemSelector.getItems().add(Languages.message(item.name()));
             }
             coordinateSystemSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null || newValue.isEmpty()) {
-                            return;
-                        }
-                        coordinateSystem = new CoordinateSystem(newValue);
-                        UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
-                    });
+                if (newValue == null || newValue.isEmpty()) {
+                    return;
+                }
+                coordinateSystem = new CoordinateSystem(newValue);
+                UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
+            });
             coordinateSystemSelector.getSelectionModel().select(UserConfig.getString("GeographyCodeCoordinateSystem", Languages.message(CoordinateSystem.defaultValue().name())));
 
             speedInput.textProperty().addListener(
@@ -422,7 +416,7 @@ public class LocationDataEditController extends BaseController {
                 return;
             }
             datasetSelector.getItems().clear();
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 protected List<Dataset> datasets;
 
                 @Override

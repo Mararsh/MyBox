@@ -22,6 +22,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -31,9 +32,9 @@ import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -197,7 +198,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
             if (ocrTask != null) {
                 ocrTask.cancel();
             }
-            ocrTask = new SingletonTask<Void>() {
+            ocrTask = new SingletonTask<Void>(this) {
 
                 private String texts;
 

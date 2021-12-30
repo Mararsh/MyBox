@@ -1,6 +1,7 @@
 package mara.mybox.tools;
 
 import java.io.File;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -16,6 +17,13 @@ public class TmpFileTools {
 
     public static String getTempFileName(String path) {
         return path + File.separator + DateTools.nowFileString() + "_" + IntTools.random(100);
+    }
+
+    public static String getTempFileName(String path, String prefix) {
+        if (prefix == null) {
+            return getTempFileName(path);
+        }
+        return path + File.separator + prefix + "_" + DateTools.nowFileString() + "_" + IntTools.random(100);
     }
 
     public static File getTempFile() {
@@ -42,6 +50,14 @@ public class TmpFileTools {
         return file;
     }
 
+    public static File getPathTempFile(String path, String prefix, String suffix) {
+        File file = new File(getTempFileName(path, prefix) + suffix);
+        while (file.exists()) {
+            file = new File(getTempFileName(path, prefix) + suffix);
+        }
+        return file;
+    }
+
     public static File getTempDirectory() {
         return getPathTempDirectory(AppVariables.MyBoxTempPath.getAbsolutePath());
     }
@@ -53,6 +69,22 @@ public class TmpFileTools {
         }
         file.mkdirs();
         return file;
+    }
+
+    public static File pdfFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".pdf");
+    }
+
+    public static File csvFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+    }
+
+    public static File txtFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".txt");
+    }
+
+    public static File excelFile() {
+        return getPathTempFile(AppPaths.getGeneratedPath(), ".xlsx");
     }
 
 }

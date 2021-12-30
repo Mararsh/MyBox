@@ -5,15 +5,17 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 
 ## What's New            
-2021-10-13 v6.4.9         
+2021-12-30 v6.5.1         
 
-* Improve. Text editor implements pagination as lines number and counts each line break as one character. 
-Timestamp is appended in target filename for batch operations.        
-* Add. Extract table data from html. Tabs can be closed in html/notes editor. Convert word/ppt/text as PDF.                
-* Platform. Upgrade to java17 and javafx17. MyBox can start from path with non-ascii name. Media can be played normally on Linux.          
-* Solved. Text/Bytes Editors read/write wrongly. Image scope is not displayed and fail to save. Inputting text may trigger shortcuts. Many functions fail to work.                           
-      
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.9)            
+* Edit Table. Start editing when single click. Submit changes when lose focus. Validate types. CheckBoxs of rows.          
+* Edit Data. Table/Texts are major/assist edit modes, and sheet mode is expired.  Consistent interface to manage types of data. 
+Some logic are moved from controllers to objects.                           
+* Image. Improve methods of reading image files. Loading thumbnails in background. Import example palettes in color picking window.                       
+* Interface. Html/window style can be shared in all interfaces. Options of Find/Replace can be shared in all interfaces.  Snapshot of current window/node.                                 
+* Solved. Can not input new lines in Notes.  "Crop" is always disabled in Image Manufacture. No extension filter is provided when save image as new file.
+Long file names can cause histories menu or file's backing fail.  Panes of Texts Editor and Bytes Editor can not be resized.                                       
+ 
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.1)            
    
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -21,7 +23,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.4.9-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-src.zip)   39M(approximation)        
+[MyBox-6.5.1-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-src.zip)   39M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -32,9 +34,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.4.9-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-win10-x64.zip)  | 231MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.4.9-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac | [MyBox-6.4.9-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-mac.dmg)  | 245MB  |  MyBox-6.4.9.app   |        
+| win10 x64 | [MyBox-6.5.1-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win10-x64.zip)  | 231MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.5.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac.dmg)  | 245MB  |  MyBox-6.5.1.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -45,16 +47,16 @@ In my Mac env(OS X 10.11.6/Darwin 15.6.0), openJDK 17 fails to start, so MyBox o
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.4.9-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-win-jar.zip)  | 168MB | Java 17 or higher |
-| linux | [MyBox-6.4.9-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-linux-jar.zip)  | 176MB  | Java 17 or higher |
-| mac | [MyBox-6.4.9-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.9/MyBox-6.4.9-mac-jar.zip)  |  173MB  | Java 16 |        
+| win | [MyBox-6.5.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win-jar.zip)  | 168MB | Java 17 or higher |
+| linux | [MyBox-6.5.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-linux-jar.zip)  | 176MB  | Java 17 or higher |
+| mac | [MyBox-6.5.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac-jar.zip)  |  173MB  | Java 16 |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.4.9.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.1.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.4.9.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.1.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -71,9 +73,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.4.9.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.4.9.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.4.9.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.5.1.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.5.1.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.5.1.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -93,7 +95,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.4.9 | 2021-10-13 | [html](#devLog) |
+| Development Logs | 6.5.1 | 2021-12-30 | [html](#devLog) |
 | Shortcuts | 6.4.7 | 2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -163,7 +165,7 @@ MyBox is based on following open sources:
 | jsoup | DOM | https://jsoup.org/ |        
 
 # Current Version        
-Current version is 6.4.9. Its features are mentioned below in summary:          
+Current version is 6.5.1. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
@@ -198,7 +200,8 @@ Current version is 6.4.9. Its features are mentioned below in summary:
     -  [Others](#imageOthers)         
     -  [Big Image](#bigImage)         
 *  [Data Tools](#dataTools)         
-    -  [Common sheet management](#sheetDataBase)         
+    -  [Manage Data](#manageData)
+    -  [Edit Data](#editData)     
     -  [Data File](#dataFiles)         
     -  [Data Clipboard](#dataClipboard)         
     -  [Matrix](#matrix)         
@@ -223,13 +226,13 @@ Current version is 6.4.9. Its features are mentioned below in summary:
     -  [Game-Mine](#gameMine)         
     -  [Others](#mediaOthers)         
 *  [Network Tools](#netTools)         
-    -  [Download First Level Links](#downloadFirstLevelLinks)         
-    -  [Snap WeiBo](#weiboSnap)         
     -  [Web Browser](#webBrowser)         
     -  [Query Address](#queryAddress)         
     -  [Query DNS](#queryDNS)         
     -  [Encode/Decode URL](#encodeDecodeURL)         
     -  [Security Certificates](#securityCerificates)                  
+    -  [Download Web Pages](#downloadFirstLevelLinks)         
+    -  [Snap WeiBo](#weiboSnap)         
 *  [Development Tools](#devTools)         
 *  [Settings](#settings)         
 *  [Window](#windows)         
@@ -383,7 +386,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 		-  Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
 		-  Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
 		-  Click button "Pop"(CTRL/ALT+p) to display contents in current edit mode in a new window.
-		-  Click button "Menu" or right click edit area to pop buttons menu.
+		-  Click button "Menu"(F12) or right click edit area to pop buttons menu.
 		-  Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.
 	-  Select frame in frameset to edit.    
 2. Find strings in html.
@@ -405,7 +408,10 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 	-  View Word file.            
 	-  Convert Word  files as html/PDF in batch.          
 2. Handle PPT file:
-	-  If no comment, both ".ppt"(PPT 97, OLE 2) and ".pptx"(PPT 2007, OOXML) are suportted. 
+	-  Formats:            
+		-  File ".ppt"(PPT 97, OLE 2) .
+		-  File ".pptx"(PPT 2007, OOXML).                       
+             If no comment, both formats are suportted.                    
 	-  View PPT file. Shown page by page:
 		-  Page is converted as an image
 		-  Slide text and Note text are displayed
@@ -771,46 +777,63 @@ Load/Refresh/Delete image in System Clipboard:
 
 ## Data Tools <a id="dataTools"></a>
 
+### Manage Data<a id="manageData" />          
 
-### Common sheet management<a id="sheetDataBase" />
-1. Following objects are handled by sheet data: Data File, Data Clipboard, Matrix.
+This tool manages following objects:
+1. Data Files
+	- Record is created/updated when csv/excel/texts data file is opened by its editor.
+	- Data are saved in data file.
+	- Deleting record of data file will not delete data file itself.
+2. Data Clipboards
+	- Record is created when data is copied into MyBox Clipboad.
+	- Data are saved in file under MyBox internal path.
+	- Deleting record of data clipboards will delete its internal file.
+3. Matrices
+      - Records are maintained by Matrices Manager.
+      - Data are saved in MyBox database.
+      - Deleting record of matrix will delete data of this matrix.           
+    
+![Snap-manageData](https://mararsh.github.io/MyBox/snap-dataManage-en.jpg)        
+
+
+### Edit Data<a id="editData" />
+1. Following objects can be edited in consistent way: ssv/excel/texts data files, data clipboard, and matrices.     
 2. Data should be in same width. That is all rows have equal number of columns.   
-3. Edit sheet data:
-	- Two edit modes: Sheet Mode, and Text Mode. Each can modify data separately.      
-	- Mode in current tab is called "Current edit mode".
-	- In Sheet Mode:
- 		- Each data is in a input field.
- 		- Each modification is synchronized automatically to other panes.
-	- In Text Mode:
- 		- All data are changed in one text area.
- 		- Click button "Synchronize" to apply changes to other panes.
-4. Operation sheet:
-	- Operation types: Assign values, set column width, add/delete rows, add/delete columns,  copy, paste, sort, export.
-	- Operation objects: Selected rows/columns, all rows in current page, or all rows in file.
-5. Pagination. When pages number is larger than 1 and select all rows in file as operation object: 
-	- Changes of current page should be saved at first.
-	- Changes are written in file directly and can not be undone. (Can recover if backup)
-6. Data Definition is to describe and constrain data:
-	- Column name should not be null nor duplicate.
-	- Data type and "Not Null" are to validate data value.
-7. Text format and html are displayed synchronously:
-8. Calculate data:
-	- Calculation types: Transpose, Statistic.
-	- Calculation objects: Selected rows/columns, all rows in current page, or all rows in file.
-	- Following calculations can only work for columns of number types:
- 		- Statistic
-	- Following calculations read all selected rows and need make sure there is enough memory:
- 		- Transpose
- 		- Statistic of "Mode" or "Median"
-	- Calculation result is displayed in new data sheet.
-9. Options:
-	- Decimal scale
-	- Maximum value of random.
-	- Whether pop functions menu of column/row when click or move mouse upon column/row header.
-	- Data warning threshold       
+3. Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
+4. Data can be edited in 2 modes: 
+      - "Table" is the master edit mode:
+ 		- Its modifications are applied to other panes automatically.
+ 		- It is the final data to save.
+      - "Text" is the assist edit mode. 
+ 		- Click button "OK" to apply its modifications to "Table".
+ 		- Click button "Cancel" to discard its modifications and pick data from "Table".
+ 		- Click button "Delimiter" to pick data from "Table" and apply new delimiter while its modifications are discarded. 
+5. Edit attributes/columns: 
+      - Column names should not be null nor duplicated.
+      - Data types are used to validate data values:
+ 		- Invalid value is rejected when edit data.
+ 		- Type is ignored when read data.
+ 		- Invalid number is counted as zero when calculate data.
+      - Click button "OK" to apply it modifications to "Table".
+      - Click button "Cancel" to discard its modifications and pick data from "Table".
+6. When changed, * is displayed in tab header. And ** is displayed when modifications have not applied. 
+7. Click button "Save" to write modifications to file and database:
+      - Changes of rows in "Table", including modify/add/delete/sort, affect rows of current page in file. 
+      - Changes in "Columns" tab, including modify/add/delete/sort, affect all rows in file. 
+      - Changes of attributes and columns are saved in database. 
+8. Click button "Recover" to discard all modifications and load data from file and database.
+9. Handle data:    
+	- Object: Selected rows or all rows in file, and selected columns.           
+	- Operation: Set values, Copy, Paste, Sort, Statistic, Percentage, Normalize, Transpose, Export.              
+	- Target: New csv/excel/texts data file, matrix, System Clipboard, MyBox Clipboard, or insert/append/replace in defined location in the table.                  
+10. Text format and html are displayed synchronously:
+
+![Snap-dataEdit](https://mararsh.github.io/MyBox/snap-dataEdit-en.jpg)         
+
 
 ### Data File<a id="dataFiles" />
 1. Edit data file:
+	- When file is loaded abnormally, change options and click Refresh button.
 	- Options of CSV file and text data file include charset, whether has first line as field names, and delimiter of data.
 	- To Excel file:
  		- Options include sheet number and whether has first line as field names.
@@ -820,7 +843,7 @@ Load/Refresh/Delete image in System Clipboard:
 	- Source files' formats can be csv, excel, and text. Options of source files can be set.
 	- Target files' formats include csv, text, excel, xml, json, html, pdf. Options of target files can be set.
 	- Split files as maximum lines.
-3. Merge csv/excel/text data files.
+3. Merge csv/excel/text data files.             
 
 ### Data Clipboard<a id="dataClipboard" />
 1. Copy, edit, and save data in database.   
@@ -1362,9 +1385,9 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 
 ## Network Tools <a id="netTools"></a>
 
-### Download First Level Links<a id="downloadFirstLevelLinks" />
+### Download Web Pages<a id="downloadFirstLevelLinks" />
 1. List first level links for given web address.
-2. Download selected links:
+2. Download web pages of selected links:
 	-  Select useful links. Nonsense links can create unwanted files and disturb final path index.
 	-  Use function "Set subdirectory name" to make subdirectory's name reasonbale.
 	-  Use functions "Set link name/title/address as file name" to make filenames meaningful.
@@ -1373,7 +1396,9 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 3. Options: Rewrite links in pages, Generate path index, Change pages' encoding, Merge as texts/html/Markdown/PDF.
 4. Page style and PDF font files can be set.
 
-### Weibo Snaping Tool <a id="weiboSnap"></a>
+### Weibo Snaping Tool <a id="weiboSnap"></a>                     
+This tool fails to work now.                     
+
 1. Save Weibo pages of any months of any Weibo accounts automatically. Pages which the account liked can be snapped and saved too.
 2. Set the months range.
 3. Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
@@ -1492,6 +1517,18 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
+2021-12-30 v6.5.1         
+
+* Edit Table. Start editing when single click. Submit changes when lose focus. Validate types. CheckBoxs of rows.          
+* Edit Data. Table/Texts are major/assist edit modes, and sheet mode is expired.  Consistent interface to manage types of data. 
+Some logic are moved from controllers to objects.                           
+* Image. Improve methods of reading image files. Loading thumbnails in background. Import example palettes in color picking window.                       
+* Interface. Html/window style can be shared in all interfaces. Options of Find/Replace can be shared in all interfaces.  Snapshot of current window/node.                                 
+* Solved. Can not input new lines in Notes.  "Crop" is always disabled in Image Manufacture. No extension filter is provided when save image as new file.
+Long file names can cause histories menu or file's backing fail.  Panes of Texts Editor and Bytes Editor can not be resized.                                       
+ 
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.1)            
+
 2021-10-13 v6.4.9         
 
 * Improve. Text editor implements pagination as lines number and counts each line break as one character. 

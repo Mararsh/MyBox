@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesEditorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesEditorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -32,21 +32,12 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                                             <children>
-                                                <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconPlay.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
                                                 <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconTips.png" />
                                                     </image>
                                                 </ImageView>
-                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectSomeOrNone" wrapText="true" HBox.hgrow="ALWAYS" />
                                                 <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconDoubleRIght.png" />
@@ -54,15 +45,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </children>
                                         </HBox>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                 <content>
-                                              <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesDurationTable.fxml" />
-                                 </content>
-                              </ScrollPane>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                            <content>
+                                                <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesDurationTable.fxml" />
+                                            </content>
+                                        </ScrollPane>
                                     </children>
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -77,7 +68,15 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                                     </image>
                                                 </ImageView>
-                                    <Label minHeight="-Infinity" text="%SelectImagesSave" wrapText="true" />
+                                                <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconPlay.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
@@ -86,9 +85,9 @@ License:    Apache License Version 2.0
                                             </content>
                                         </ScrollPane>
                                     </children>
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>

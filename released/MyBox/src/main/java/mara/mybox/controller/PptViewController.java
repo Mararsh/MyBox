@@ -4,19 +4,24 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
@@ -33,6 +38,12 @@ public class PptViewController extends BaseFileImagesViewController {
     protected TextArea notesArea, slideArea;
     @FXML
     protected Label notesLabel, slideLabel;
+    @FXML
+    protected CheckBox notesCheck;
+    @FXML
+    protected VBox textsBox;
+    @FXML
+    protected TitledPane notesPane;
 
     public PptViewController() {
         baseTitle = message("PptView");
@@ -41,6 +52,38 @@ public class PptViewController extends BaseFileImagesViewController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PPTS, VisitHistory.FileType.Image);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            notesCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayNotes", true));
+            notesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkNotes();
+                    UserConfig.setBoolean(baseName + "DisplayNotes", notesCheck.isSelected());
+                }
+            });
+            checkNotes();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkNotes() {
+        if (notesCheck.isSelected()) {
+            if (!textsBox.getChildren().contains(notesPane)) {
+                textsBox.getChildren().add(notesPane);
+            }
+        } else {
+            if (textsBox.getChildren().contains(notesPane)) {
+                textsBox.getChildren().remove(notesPane);
+            }
+        }
     }
 
     @Override
@@ -71,7 +114,7 @@ public class PptViewController extends BaseFileImagesViewController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     setTotalPages(0);
@@ -120,7 +163,7 @@ public class PptViewController extends BaseFileImagesViewController {
             if (task != null && !task.isQuit()) {
                 task.cancel();
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
                 private String slideTexts, notes;
 
                 @Override
@@ -169,35 +212,36 @@ public class PptViewController extends BaseFileImagesViewController {
     }
 
     @Override
-    protected Map<Integer, Image> readThumbs(int pos, int end) {
-        Map<Integer, Image> images = null;
+    protected boolean loadThumbs(List<Integer> missed) {
         try ( SlideShow ppt = SlideShowFactory.create(sourceFile)) {
-            images = new HashMap<>();
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;
-            for (int i = pos; i < end; ++i) {
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+            for (Integer index : missed) {
+                if (thumbTask == null || thumbTask.isCancelled()) {
+                    break;
+                }
+                ImageView view = (ImageView) thumbBox.getChildren().get(2 * index);
                 if (view.getImage() != null) {
                     continue;
                 }
-                try {
-                    Slide slide = slides.get(i);
-                    BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                    slide.draw(slideImage.createGraphics());
-                    if (slideImage.getWidth() > ThumbWidth) {
-                        slideImage = ScaleTools.scaleImageWidthKeep(slideImage, ThumbWidth);
-                    }
-                    Image thumb = SwingFXUtils.toFXImage(slideImage, null);
-                    images.put(i, thumb);
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                Slide slide = slides.get(index);
+                BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                slide.draw(slideImage.createGraphics());
+                if (slideImage.getWidth() > ThumbWidth) {
+                    slideImage = ScaleTools.scaleImageWidthKeep(slideImage, ThumbWidth);
                 }
+                Image thumb = SwingFXUtils.toFXImage(slideImage, null);
+                view.setImage(thumb);
+                view.setFitHeight(view.getImage().getHeight());
             }
+            ppt.close();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            thumbTask.setError(e.toString());
+            MyBoxLog.debug(e);
+            return false;
         }
-        return images;
+        return true;
     }
 
 }

@@ -11,15 +11,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
 import mara.mybox.color.ChromaticAdaptation.ChromaticAdaptationAlgorithm;
 import mara.mybox.color.Illuminant;
 import mara.mybox.color.RGBColorSpace;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -532,7 +530,7 @@ public class RGBColorSpaceController extends BaseController {
                 return null;
             }
         }
-        return DoubleTools.array(x, y, z);
+        return DoubleArrayTools.array(x, y, z);
     }
 
 }

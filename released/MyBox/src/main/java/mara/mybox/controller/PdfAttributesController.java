@@ -20,6 +20,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
@@ -264,7 +265,7 @@ public class PdfAttributesController extends BaseController {
                 return;
             }
             pdfInfo = new PdfInformation(sourceFile);
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 private boolean pop;
 
@@ -444,7 +445,7 @@ public class PdfAttributesController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            task = new SingletonTask<Void>() {
+            task = new SingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
