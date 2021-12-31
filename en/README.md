@@ -778,8 +778,8 @@ Load/Refresh/Delete image in System Clipboard:
 ## Data Tools <a id="dataTools"></a>
 
 ### Manage Data<a id="manageData" />          
+This tool manages following objects:            
 
-This tool manages following objects:
 1. Data Files
 	- Record is created/updated when csv/excel/texts data file is opened by its editor.
 	- Data are saved in data file.
