@@ -48,6 +48,7 @@ import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -216,6 +217,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             ValidationTools.setEditorNormal(valueSelector);
             okButton.disableProperty().unbind();
             commentsLabel.setText("");
+            colorLabel.setText(message("Value"));
             colorUnit.setText("0-255");
 
             if (colorGroup.getSelectedToggle() == null) {
@@ -236,9 +238,12 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
                 if (colorColorRadio.isSelected()) {
                     colorOperationType = OperationType.Color;
-                    setBox.getChildren().addAll(valueBox, alphaBox, opBox);
-                    valueBox.getChildren().addAll(valueColorBox);
-                    opBox.getChildren().addAll(setButton);
+                    makeValuesBox(0, 100);
+                    colorUnit.setText("0-100");
+                    colorLabel.setText(message("Opacity"));
+                    setBox.getChildren().addAll(valueColorBox, valueBox, opBox);
+                    valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
+                    opBox.getChildren().addAll(colorFilterButton);
 
                 } else if (colorRGBRadio.isSelected()) {
                     colorOperationType = OperationType.RGB;
@@ -467,6 +472,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         switch (colorOperationType) {
                             case Color:
                                 pixelsOperation.setColorPara1(ColorConvertTools.converColor((Color) valueColorSetController.rect.getFill()));
+                                pixelsOperation.setFloatPara1(colorValue / 100.0f);
                                 break;
                             case RGB:
                                 pixelsOperation.setIntPara1(colorValue);

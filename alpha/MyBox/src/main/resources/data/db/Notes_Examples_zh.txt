@@ -65,6 +65,7 @@
 <a href="https://www.cnki.net">中国知网</a><br>
 <a href="http://www.wanfangdata.com.cn/index.html">万方数据</a><br>
 <a href="https://zm-digicol.dpm.org.cn">故宫博物院藏品</a><br>
+<a href="http://www.biftmuseum.com">北京服装学院民族服饰博物馆</a><br>
 
 ##MyBox#
 笔记本 > 笔记示例 > 网址

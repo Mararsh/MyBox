@@ -273,6 +273,15 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 rightPane.setHvalue(0);
             }
 
+            if (tabPane != null) {
+                tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                        MenuController.closeAll();
+                    }
+                });
+            }
+
             initNodes(thisPane);
             initSplitPanes();
             setControlsStyle();
@@ -443,11 +452,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void setAsPop(String baseName) {
+    public void setAsPop(String name) {
         try {
             isPop = true;
             needRecordVisit = false;
-            this.interfaceName = baseName;
+            this.interfaceName = name;
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
             int mh = UserConfig.getInt(prefix + "StageHeight", Math.min(500, (int) myStage.getHeight()));
@@ -530,7 +539,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         } else {
                             thisPane.requestFocus();
                         }
-                        if (isPop) {
+                        if (getMyWindow() instanceof Popup) {
                             LocateTools.mouseCenter(myStage);
                         }
                         if (leftPane != null) {
@@ -885,17 +894,28 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (splitPane == null || splitPane.getDividers().isEmpty()) {
                 return;
             }
-            if (closeRightPaneCheck != null) {
-                closeRightPaneCheck.setSelected(UserConfig.getBoolean(baseName + "CloseRightPane", false));
-                closeRightPaneCheck.selectedProperty().addListener(
+            if (rightPaneCheck != null) {
+                rightPaneCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayRightPane", true));
+                rightPaneCheck.selectedProperty().addListener(
                         (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                             if (isSettingValues) {
                                 return;
                             }
-                            UserConfig.setBoolean(baseName + "CloseRightPane", closeRightPaneCheck.isSelected());
-                            checkRightPaneClose();
+                            UserConfig.setBoolean(baseName + "DisplayRightPane", rightPaneCheck.isSelected());
+                            checkRightPane();
                         });
-                checkRightPaneClose();
+                checkRightPane();
+            }
+            if (leftPaneCheck != null) {
+                leftPaneCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayLeftPane", true));
+                checkLeftPane();
+                leftPaneCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(baseName + "DisplayLeftPane", leftPaneCheck.isSelected());
+                        checkLeftPane();
+                    }
+                });
             }
             if (!checkRightPaneHide()) {
                 setSplitDividerPositions();
@@ -906,18 +926,36 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void checkRightPaneClose() {
+    public void checkLeftPane() {
         try {
-            if (isSettingValues || splitPane == null || rightPane == null
-                    || closeRightPaneCheck == null || rightPaneControl == null) {
+            if (isSettingValues || splitPane == null || leftPane == null
+                    || leftPaneCheck == null || leftPaneControl == null) {
                 return;
             }
-            if (closeRightPaneCheck.isSelected()) {
-                hideRightPane();
-                rightPaneControl.setVisible(false);
+            if (leftPaneCheck.isSelected()) {
+                leftPaneControl.setVisible(true);
+                showLeftPane();
             } else {
+                hideLeftPane();
+                leftPaneControl.setVisible(false);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkRightPane() {
+        try {
+            if (isSettingValues || splitPane == null || rightPane == null
+                    || rightPaneCheck == null || rightPaneControl == null) {
+                return;
+            }
+            if (rightPaneCheck.isSelected()) {
                 rightPaneControl.setVisible(true);
                 showRightPane();
+            } else {
+                hideRightPane();
+                rightPaneControl.setVisible(false);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

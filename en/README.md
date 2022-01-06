@@ -797,7 +797,7 @@ This tool manages following objects:
 
 
 ### Edit Data<a id="editData" />
-1. Following objects can be edited in consistent way: ssv/excel/texts data files, data clipboard, and matrices.     
+1. Following objects can be edited in consistent way: csv/excel/texts data files, data clipboard, and matrices.     
 2. Data should be in same width. That is all rows have equal number of columns.   
 3. Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
 4. Data can be edited in 2 modes: 

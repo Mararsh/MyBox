@@ -17,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -55,8 +54,6 @@ public class ControlData2D extends BaseController {
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
     @FXML

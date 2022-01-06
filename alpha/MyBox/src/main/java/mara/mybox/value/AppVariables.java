@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
@@ -48,6 +49,7 @@ public class AppVariables {
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
     public static Timer exitTimer;
+    public static SimpleBooleanProperty errorNotify;
 
     public static void initAppVaribles() {
         try {
@@ -69,6 +71,7 @@ public class AppVariables {
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;
             popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
+            errorNotify = new SimpleBooleanProperty(false);
 
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {

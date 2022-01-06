@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.dev.MyBoxLog;
@@ -26,8 +25,6 @@ public class BaseTaskController extends BaseController {
     protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
     protected boolean cancelled;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab optionsTab, logsTab;
     @FXML
@@ -68,7 +65,7 @@ public class BaseTaskController extends BaseController {
                 return;
             }
             initLogs();
-            StyleTools.setNameIcon(startButton, message("Stop"), "iconStart.png");
+            StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
             startButton.applyCss();
             startButton.setUserData("started");
             if (tabPane != null && logsTab != null) {

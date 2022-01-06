@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
@@ -93,7 +94,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox topCheck, saveCloseCheck, closeRightPaneCheck;
+    protected CheckBox topCheck, saveCloseCheck, rightPaneCheck, leftPaneCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML
@@ -104,6 +105,8 @@ public abstract class BaseController_Attributes {
     protected ScrollPane leftPane, rightPane;
     @FXML
     protected ComboBox<String> dpiSelector;
+    @FXML
+    protected TabPane tabPane;
 
     public void setFileType() {
         setFileType(FileType.All);

@@ -23,7 +23,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -53,8 +52,6 @@ import mara.mybox.value.UserConfig;
  */
 public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions {
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab formatTab, videoTab, audioTab, streamsTab, subtitlesTab,
             framesTab, packetsTab, pixelFormatsTab;

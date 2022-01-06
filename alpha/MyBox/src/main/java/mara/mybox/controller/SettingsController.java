@@ -17,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -60,8 +59,6 @@ public class SettingsController extends BaseController {
 
     protected int recentFileNumber, newJVM;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, mapTab;
     @FXML

@@ -33,7 +33,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
@@ -79,8 +78,6 @@ public class HtmlEditorController extends WebAddressController {
 
     @FXML
     protected HBox addressBox;
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab viewTab, codesTab, editorTab, markdownTab, textsTab, backupTab;
     @FXML

@@ -26,6 +26,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -184,12 +185,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
         loadPage(currentPage);
     }
 
-    public synchronized void loadPage(long page) {
+    public void loadPage(long page) {
         if (!checkBeforeLoadingTableData()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonTask<Void>(this) {
             private List<P> data;
@@ -953,6 +954,46 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 data.add(row);
             }
             DataFileCSVController.open(Data2DColumn.toColumns(names), data);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void htmlAction() {
+        try {
+            if (tableData.isEmpty()) {
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            int rowsSelectionColumnIndex = -1;
+            if (rowsSelectionColumn != null) {
+                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+            }
+            int colsNumber = tableView.getColumns().size();
+            for (int c = 0; c < colsNumber; c++) {
+                if (c == rowsSelectionColumnIndex) {
+                    continue;
+                }
+                names.add(tableView.getColumns().get(c).getText());
+            }
+            StringTable table = new StringTable(names, baseTitle);
+            for (int r = 0; r < tableData.size(); r++) {
+                List<String> row = new ArrayList<>();
+                for (int c = 0; c < colsNumber; c++) {
+                    if (c == rowsSelectionColumnIndex) {
+                        continue;
+                    }
+                    String s = null;
+                    try {
+                        s = tableView.getColumns().get(c).getCellData(r).toString();
+                    } catch (Exception e) {
+                    }
+                    row.add(s);
+                }
+                table.add(row);
+            }
+            table.editHtml();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

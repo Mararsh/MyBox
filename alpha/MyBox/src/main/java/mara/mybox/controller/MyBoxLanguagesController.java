@@ -34,12 +34,12 @@ import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -51,8 +51,6 @@ public class MyBoxLanguagesController extends BaseController {
     protected ObservableList<LanguageItem> interfaceData, tableData;
     protected String langName;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab interfaceTab, tableTab;
     @FXML

@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -39,7 +39,13 @@ public class PixelsOperationFactory {
             case ReplaceColor:
                 return new ReplaceColor(image, scope);
             case Color:
-                return new SetColor(image, scope);
+                switch (colorActionType) {
+                    case Filter:
+                        return new FilterColor(image, scope);
+                    case Set:
+                    default:
+                        return new SetColor(image, scope);
+                }
             case Opacity:
                 switch (colorActionType) {
                     case Increase:
@@ -298,6 +304,21 @@ public class PixelsOperationFactory {
         @Override
         protected Color operateColor(Color color) {
             return colorPara1;
+        }
+    }
+
+    public static class FilterColor extends PixelsOperation {
+
+        public FilterColor(BufferedImage image, ImageScope scope) {
+            this.operationType = PixelsOperation.OperationType.Color;
+            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return PixelsBlend.blendColors(colorPara1, color, floatPara1, skipTransparent);
         }
     }
 

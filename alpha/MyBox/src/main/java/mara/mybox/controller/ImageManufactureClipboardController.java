@@ -12,7 +12,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -50,8 +49,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     @FXML
     protected ControlImagesClipboard clipsController;
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab imagesPane, setPane;
     @FXML

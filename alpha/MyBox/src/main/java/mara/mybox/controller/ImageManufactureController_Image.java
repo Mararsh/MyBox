@@ -4,7 +4,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
@@ -40,8 +39,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     protected TitledPane createPane;
     @FXML
     protected VBox mainBox;
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab imageTab, scopeTab, hisTab, backupTab;
     @FXML

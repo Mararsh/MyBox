@@ -14,7 +14,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
-import javafx.stage.Popup;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -23,6 +22,7 @@ import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -57,7 +57,7 @@ public class MenuWebviewController extends MenuController {
         setFileType(VisitHistory.FileType.Html);
     }
 
-    public void setParameters(ControlWebView webViewController, Element element) {
+    public void setParameters(ControlWebView webViewController, Element element, double x, double y) {
         try {
             if (webViewController == null) {
                 return;
@@ -77,7 +77,6 @@ public class MenuWebviewController extends MenuController {
                 }
             });
 
-            setControlsStyle();
             checkWebviewPane();
 
             if (webViewController instanceof ControlHtmlEditor) {
@@ -99,6 +98,8 @@ public class MenuWebviewController extends MenuController {
                     }
                 });
             }
+
+            super.setParameters(webViewController, webView, x, y);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -324,16 +325,23 @@ public class MenuWebviewController extends MenuController {
             if (parent == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.MenuWebviewFxml, parent.webView, x, y);
-            if (popup == null) {
-                return null;
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof MenuWebviewController) {
+                    try {
+                        MenuWebviewController controller = (MenuWebviewController) object;
+                        if (controller.webView != null && controller.webView.equals(parent.webView)) {
+                            controller.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
-            Object object = popup.getUserData();
-            if (object == null && !(object instanceof MenuWebviewController)) {
-                return null;
-            }
-            MenuWebviewController controller = (MenuWebviewController) object;
-            controller.setParameters(parent, element);
+            MenuWebviewController controller = (MenuWebviewController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.MenuWebviewFxml, false);
+            controller.setParameters(parent, element, x, y);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

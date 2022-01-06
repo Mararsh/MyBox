@@ -12,12 +12,12 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Separator;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Popup;
+import javafx.stage.Window;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -199,15 +199,22 @@ public class MenuBytesEditController extends MenuTextEditController {
             if (parent == null || node == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.MenuBytesEditFxml, node, x, y);
-            if (popup == null) {
-                return null;
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof MenuBytesEditController) {
+                    try {
+                        MenuBytesEditController controller = (MenuBytesEditController) object;
+                        if (controller.textInput != null && controller.textInput.equals(node)) {
+                            controller.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
-            Object object = popup.getUserData();
-            if (object == null && !(object instanceof MenuBytesEditController)) {
-                return null;
-            }
-            MenuBytesEditController controller = (MenuBytesEditController) object;
+            MenuBytesEditController controller = (MenuBytesEditController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.MenuBytesEditFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

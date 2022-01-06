@@ -106,8 +106,6 @@ public class GameEliminationController extends BaseController {
     protected File soundFile;
 
     @FXML
-    protected TabPane tabPane;
-    @FXML
     protected Tab playTab, chessesTab, rulersTab, settingsTab;
     @FXML
     protected VBox chessboardPane;

@@ -29,9 +29,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win10-x64.zip)  | 231MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac.dmg)  | 245MB  |  MyBox-6.5.1.app   |
+| win10 x64 | [MyBox-6.5.1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win10-x64.zip)  | 219MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac.dmg)  | 232MB  |  MyBox-6.5.1.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -43,9 +43,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win-jar.zip)  | 168MB | Java 17或更高版本 |
-| linux | [MyBox-6.5.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-linux-jar.zip)  | 176MB  | Java 17或更高版本 |
-| mac | [MyBox-6.5.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac-jar.zip)  |  173MB  | Java 16 |
+| win | [MyBox-6.5.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win-jar.zip)  | 154MB | Java 17或更高版本 |
+| linux | [MyBox-6.5.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
+| mac | [MyBox-6.5.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac-jar.zip)  |  159MB  | Java 16 |
 
 执行以下命令来启动程序：       
 <PRE><CODE>     java   -jar   MyBox-6.5.1.jar</CODE></PRE>       

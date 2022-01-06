@@ -232,7 +232,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     protected void MyBoxData(ActionEvent event) {
-        openStage(Fxmls.MyBoxDataFxml);
+        loadScene(Fxmls.MyBoxDataFxml);
     }
 
     @FXML
@@ -248,7 +248,12 @@ public abstract class MainMenuController_Development extends MainMenuController_
     // This is for developement to generate Icons automatically in different color style
     @FXML
     public void makeIcons() {
-        openStage(Fxmls.MyBoxIconsFxml);
+        loadScene(Fxmls.MyBoxIconsFxml);
+    }
+
+    @FXML
+    public void autoTesting() {
+        loadScene(Fxmls.AutoTestingCasesFxml);
     }
 
     @FXML

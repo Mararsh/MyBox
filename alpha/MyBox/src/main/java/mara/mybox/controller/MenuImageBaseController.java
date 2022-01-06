@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -9,10 +11,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Popup;
+import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -48,7 +50,7 @@ public class MenuImageBaseController extends MenuController {
         }
     }
 
-    public void setParameters(BaseImageController imageController) {
+    public void setParameters(BaseImageController imageController, double x, double y) {
         try {
             if (imageController == null || imageController.imageView == null
                     || imageController.imageView.getImage() == null) {
@@ -61,8 +63,12 @@ public class MenuImageBaseController extends MenuController {
             sourceFile = imageController.sourceFile;
 
             if (imageController.imageInformation == null) {
-                infoButton.setDisable(true);
-                metaButton.setDisable(true);
+                if (infoButton != null) {
+                    infoButton.setDisable(true);
+                }
+                if (metaButton != null) {
+                    metaButton.setDisable(true);
+                }
             }
 
             if (imageController.pickColorCheck != null) {
@@ -196,7 +202,7 @@ public class MenuImageBaseController extends MenuController {
                 }
             });
 
-            setControlsStyle();
+            super.setParameters(imageController, imageController.imageView, x, y);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -294,16 +300,23 @@ public class MenuImageBaseController extends MenuController {
             if (imageController == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(imageController, Fxmls.MenuImageBaseFxml, imageController.imageView, x, y);
-            if (popup == null) {
-                return null;
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof MenuImageBaseController) {
+                    try {
+                        MenuImageBaseController controller = (MenuImageBaseController) object;
+                        if (controller.imageController.equals(imageController)) {
+                            controller.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
-            Object object = popup.getUserData();
-            if (object == null && !(object instanceof MenuController)) {
-                return null;
-            }
-            MenuImageBaseController controller = (MenuImageBaseController) object;
-            controller.setParameters(imageController);
+            MenuImageBaseController controller = (MenuImageBaseController) WindowTools.openChildStage(
+                    imageController.getMyWindow(), Fxmls.MenuImageBaseFxml, false);
+            controller.setParameters(imageController, x, y);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

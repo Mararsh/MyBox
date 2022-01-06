@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -30,16 +29,6 @@ public abstract class MainMenuController_Network extends MainMenuController_File
     @FXML
     protected void webHistories(ActionEvent event) {
         WebHistoriesController.oneOpen();
-    }
-
-    @FXML
-    protected void webFind(ActionEvent event) {
-        loadScene(Fxmls.HtmlFindFxml);
-    }
-
-    @FXML
-    protected void webElements(ActionEvent event) {
-        loadScene(Fxmls.HtmlElementsFxml);
     }
 
     @FXML

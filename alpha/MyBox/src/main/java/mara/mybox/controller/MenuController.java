@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -35,7 +36,7 @@ public class MenuController extends BaseChildController {
     @FXML
     protected Label titleLabel;
     @FXML
-    protected Button functionsButton;
+    protected Button functionsButton, closePopButton, closePop2Button;
 
     public MenuController() {
     }
@@ -53,6 +54,10 @@ public class MenuController extends BaseChildController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setStageStatus() {
     }
 
     @Override
@@ -78,12 +83,22 @@ public class MenuController extends BaseChildController {
             if (window instanceof Popup) {
                 window.setX(x);
                 window.setY(y);
+            } else {
+                String name = baseName;
+                if (parent != null) {
+                    name += parent.baseName;
+                }
+                if (node != null && node.getId() != null) {
+                    name += node.getId();
+                }
+                setAsPop(name);
             }
-            setControlsStyle();
 
-            if (node != null) {
+            if (node != null && node.getId() != null) {
                 setTitleid(node.getId());
             }
+
+            setControlsStyle();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -97,7 +112,7 @@ public class MenuController extends BaseChildController {
     }
 
     public void setTitleid(String id) {
-        if (id == null || id.isBlank()) {
+        if (titleLabel == null || id == null || id.isBlank()) {
             return;
         }
         titleLabel.setText(message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
@@ -138,6 +153,21 @@ public class MenuController extends BaseChildController {
     /*
         static methods
      */
+    public static void closeAll() {
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof MenuController) {
+                try {
+                    MenuController controller = (MenuController) object;
+                    controller.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
     public static MenuController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null) {

@@ -5,6 +5,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Popup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 
@@ -36,8 +37,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     // return whether handled
     public boolean keyEventsFilter(KeyEvent event) {
         try {
-//        MyBoxLog.debug("filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
-//                + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
+//            MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused()
+//                    + "  " + "filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
+//                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
             keyEvent = event;
             if (event.isControlDown()) {
                 return controlAltFilter(event);
@@ -598,7 +600,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (!targetIsTextInput()) {
+
+        if (getMyWindow() != null && !(getMyWindow() instanceof Popup) && !targetIsTextInput()) {
             return controlAltFilter(event);
         }
         return false;
@@ -724,9 +727,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             withdrawAction();
         }
         closePopup();
-//                else if (stopButton != null && !stopButton.isDisabled()) {
-//                    stopAction();
-//                }
+        MenuController.closeAll();
         return false;  // continue to close
     }
 

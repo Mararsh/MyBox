@@ -178,6 +178,9 @@ http://www.wanfangdata.com.cn/index.html
 故宫博物院藏品
 https://zm-digicol.dpm.org.cn
 
+示例 > 论文和数据 > 中文
+北京服装学院民族服饰博物馆
+http://www.biftmuseum.com
 
 示例 > 学习 > 英语
 MIT 18.06 Linear Algebra

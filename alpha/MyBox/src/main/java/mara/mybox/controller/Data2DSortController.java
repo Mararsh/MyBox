@@ -151,7 +151,6 @@ public class Data2DSortController extends Data2DHandleController {
             if (!sort(rows)) {
                 return null;
             }
-            MyBoxLog.debug(colsNames);
             DataFileCSV dataFileCSV = new DataFileCSV();
             File file = dataFileCSV.tmpFile(colsNames, rows);
             dataFileCSV.setFile(file).setCharset(Charset.forName("UTF-8"))

@@ -97,7 +97,6 @@ public class MenuTextBaseController extends MenuController {
         }
         Window window = thisPane.getScene().getWindow();
         FindReplacePopController.open(parentController, node, window.getX(), window.getY());
-        window.hide();
     }
 
     @FXML

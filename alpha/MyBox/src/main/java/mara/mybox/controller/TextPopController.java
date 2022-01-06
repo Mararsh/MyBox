@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-7
  * @License Apache License Version 2.0
  */
-public class TextPopController extends BaseController {
+public class TextPopController extends BaseChildController {
 
     protected TextInputControl sourceInput;
     protected ChangeListener listener;
@@ -43,10 +43,6 @@ public class TextPopController extends BaseController {
     @Override
     public void setFileType() {
         setFileType(FileType.Text);
-    }
-
-    @Override
-    public void setStageStatus() {
     }
 
     public void setSourceInput(String baseName, TextInputControl sourceInput) {
@@ -84,8 +80,6 @@ public class TextPopController extends BaseController {
                 }
             });
             textArea.setWrapText(wrapCheck.isSelected());
-
-            setAsPop(baseName);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

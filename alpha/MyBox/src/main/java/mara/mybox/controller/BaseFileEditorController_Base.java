@@ -55,7 +55,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     @FXML
     protected ControlTimeLength autoSaveDurationController;
     @FXML
-    protected Label editLabel, bomLabel, fileLabel, pageLabel, charsetLabel, selectionLabel,
+    protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel,
             filterConditionsLabel;
     @FXML
     protected Button charactersButton, linesButton, exampleFilterButton,
@@ -72,6 +72,8 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     protected ControlTextFilter filterController;
     @FXML
     protected ControlFileBackup backupController;
+    @FXML
+    protected ControlWebView infoController;
 
     public BaseFileEditorController_Base() {
         fileChanged = new SimpleBooleanProperty(false);

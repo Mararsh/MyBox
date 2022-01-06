@@ -23,7 +23,6 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -33,7 +32,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -117,8 +116,6 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         try {
             this.parentController = parent;
             if (use) {
-//                buttonsBox.getChildren().remove(copyToSystemClipboardButton);
-//                copyToSystemClipboardButton.setVisible(false);
                 useClipButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             } else {
                 buttonsBox.getChildren().remove(useClipButton);
@@ -134,12 +131,12 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @Override
     public void loadContentInSystemClipboard() {
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (task != null) {
+                task.cancel();
             }
             Image clip = ImageClipboardTools.fetchImageInClipboard(false);
             if (clip == null) {
-                parentController.popInformation(Languages.message("NoImageInClipboard"));
+                popInformation(message("NoImageInClipboard"));
                 return;
             }
             lastSystemClip = clip;
@@ -149,21 +146,25 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
                 @Override
                 protected boolean handle() {
-                    if (lastSystemClip != null && FxImageTools.sameImage(lastSystemClip, clip)) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                parentController.popInformation(Languages.message("NoImageInClipboard"));
-                            }
-                        });
-                        return true;
-                    }
+//                    if (lastSystemClip != null && FxImageTools.sameImage(lastSystemClip, clip)) {
+//                        Platform.runLater(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                popInformation(message("NoImageInClipboard"));
+//                            }
+//                        });
+//                        return false;
+//                    }
                     clipData = ImageClipboard.add(lastSystemClip, ImageClipboard.ImageSource.SystemClipBoard);
                     return clipData != null;
                 }
 
+                @Override
+                protected void whenFailed() {
+                }
+
             };
-            parentController.start(task);
+            start(task);
         }
     }
 
@@ -175,31 +176,26 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     }
 
     @Override
-    public void selectSourceFile(final File file) {
-        try {
-            if (file == null) {
-                return;
+    public void selectSourceFile(File file) {
+        if (file == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                task.cancel();
             }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+            task = new SingletonTask<Void>(this) {
+
+                private ImageClipboard clip;
+
+                @Override
+                protected boolean handle() {
+                    clip = ImageClipboard.add(file);
+                    return clip != null;
                 }
-                task = new SingletonTask<Void>(this) {
 
-                    private ImageClipboard clip;
-
-                    @Override
-                    protected boolean handle() {
-                        clip = ImageClipboard.add(file);
-                        return clip != null;
-                    }
-
-                };
-                start(task);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            };
+            start(task);
         }
     }
 
@@ -239,11 +235,12 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         updateStatus();
     }
 
+    @Override
     public void updateStatus() {
         if (ImageClipboardTools.isMonitoring()) {
-            bottomLabel.setText(Languages.message("MonitoringImageInSystemClipboard"));
+            bottomLabel.setText(message("MonitoringImageInSystemClipboard"));
         } else {
-            bottomLabel.setText(Languages.message("NotMonitoringImageInSystemClipboard"));
+            bottomLabel.setText(message("NotMonitoringImageInSystemClipboard"));
         }
     }
 

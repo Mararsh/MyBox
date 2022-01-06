@@ -192,6 +192,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
         updateStatus();
     }
 
+    @Override
     public void updateStatus() {
         if (TextClipboardTools.isMonitoring()) {
             bottomLabel.setText(Languages.message("MonitoringTextInSystemClipboard"));

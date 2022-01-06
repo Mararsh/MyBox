@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.data.Data2D;
 import mara.mybox.db.table.TableData2DColumn;
@@ -23,8 +22,6 @@ public class ControlData2DEdit extends BaseController {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab textTab, tableTab;
     @FXML

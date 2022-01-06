@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
-import javafx.stage.Popup;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 
 /**
@@ -14,10 +16,10 @@ public class MenuImageScopeController extends MenuImageViewController {
 
     protected ImageManufactureScopeController scopeController;
 
-    public void setParameters(ImageManufactureScopeController scopeController) {
+    public void setParameters(ImageManufactureScopeController scopeController, double x, double y) {
         try {
             this.scopeController = scopeController;
-            super.setParameters(scopeController);
+            super.setParameters(scopeController, x, y);
 
             pickColorCheck.setDisable(!scopeController.setBox.isVisible()
                     || !scopeController.tabPane.getTabs().contains(scopeController.colorsTab));
@@ -36,16 +38,23 @@ public class MenuImageScopeController extends MenuImageViewController {
                 if (scopeController == null) {
                     return null;
                 }
-                Popup popup = PopTools.popWindow(scopeController, Fxmls.MenuImageScopeFxml, scopeController.scopeView, x, y);
-                if (popup == null) {
-                    return null;
+                List<Window> windows = new ArrayList<>();
+                windows.addAll(Window.getWindows());
+                for (Window window : windows) {
+                    Object object = window.getUserData();
+                    if (object != null && object instanceof MenuImageScopeController) {
+                        try {
+                            MenuImageScopeController controller = (MenuImageScopeController) object;
+                            if (controller.scopeController.equals(scopeController)) {
+                                controller.close();
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
                 }
-                Object object = popup.getUserData();
-                if (object == null && !(object instanceof MenuController)) {
-                    return null;
-                }
-                MenuImageScopeController controller = (MenuImageScopeController) object;
-                controller.setParameters(scopeController);
+                MenuImageScopeController controller = (MenuImageScopeController) WindowTools.openChildStage(
+                        scopeController.getMyWindow(), Fxmls.MenuImageScopeFxml, false);
+                controller.setParameters(scopeController, x, y);
                 return controller;
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());

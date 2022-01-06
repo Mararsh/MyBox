@@ -179,6 +179,9 @@ Examples > Articles/Data > Chinese
 故宫博物院藏品
 https://zm-digicol.dpm.org.cn
 
+Examples > Articles/Data > Chinese
+北京服装学院民族服饰博物馆
+http://www.biftmuseum.com
 
 Examples > Study > English
 MIT 18.06 Linear Algebra

@@ -24,13 +24,13 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseFileEditorController_Pair extends BaseFileEditorController_Base {
 
     @Override
-    public void checkRightPaneClose() {
-        super.checkRightPaneClose();
+    public void checkRightPane() {
+        super.checkRightPane();
         if (isSettingValues || splitPane == null || rightPane == null
-                || closeRightPaneCheck == null || rightPaneControl == null) {
+                || rightPaneCheck == null || rightPaneControl == null) {
             return;
         }
-        if (!closeRightPaneCheck.isSelected()) {
+        if (rightPaneCheck.isSelected()) {
             refreshPairAction();
         }
     }

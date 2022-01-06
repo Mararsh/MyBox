@@ -109,6 +109,32 @@ public abstract class PixelsBlend {
         blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
     }
 
+    /*
+        static
+     */
+    public static Color blendColors(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
+        if (ignoreTransparency && foreColor.getRGB() == 0) {
+            return backColor;
+        }
+        if (ignoreTransparency && backColor.getRGB() == 0) {
+            return foreColor;
+        }
+        return makeRGB(foreColor, backColor, opacity);
+    }
+
+    public static Color makeRGB(Color foreColor, Color backColor, float opacity) {
+        int red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
+        int green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
+        int blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
+        int alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
+        Color newColor = new Color(
+                Math.min(Math.max(red, 0), 255),
+                Math.min(Math.max(green, 0), 255),
+                Math.min(Math.max(blue, 0), 255),
+                Math.min(Math.max(alpha, 0), 255));
+        return newColor;
+    }
+
 
     /*
         get/set

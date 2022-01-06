@@ -16,12 +16,12 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.control.Separator;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Popup;
+import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
@@ -477,15 +477,22 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             if (parent == null || node == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.MenuMarkdownEditFxml, node, x, y);
-            if (popup == null) {
-                return null;
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof MenuMarkdownEditController) {
+                    try {
+                        MenuMarkdownEditController controller = (MenuMarkdownEditController) object;
+                        if (controller.textInput != null && controller.textInput.equals(node)) {
+                            controller.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
-            Object object = popup.getUserData();
-            if (object == null && !(object instanceof MenuMarkdownEditController)) {
-                return null;
-            }
-            MenuMarkdownEditController controller = (MenuMarkdownEditController) object;
+            MenuMarkdownEditController controller = (MenuMarkdownEditController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.MenuMarkdownEditFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

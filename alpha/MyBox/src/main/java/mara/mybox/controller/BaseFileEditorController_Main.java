@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,6 +16,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.AnchorPane;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceString;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -282,7 +284,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         long fileLinesNumber = pageLinesNumber;
         int pageSize = sourceInformation.getPageSize();
         long currentPage = sourceInformation.getCurrentPage();
-        String fileInfo = "";
+        StringTable table = new StringTable();
         if (sourceFile == null) {
             if (pageLabel != null) {
                 pageLabel.setText("");
@@ -306,7 +308,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 if (locatePane != null) {
                     locatePane.setDisable(true);
                 }
-                fileInfo = message("CountingTotalNumber") + "\n\n";
+                infoController.webEngine.loadContent(message("CountingTotalNumber"));
             } else {
                 fileObjectNumber = sourceInformation.getObjectsNumber();
                 fileLinesNumber = sourceInformation.getLinesNumber();
@@ -325,35 +327,32 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
                 sourceInformation.setPagesNumber(pagesNumber);
             }
-            fileInfo += message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + (editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
-                    + ": " + StringTools.format(fileObjectNumber) + "\n"
-                    + message("LinesNumberInFile") + ": " + StringTools.format(fileLinesNumber) + "\n"
-                    + (editType == Edit_Type.Bytes ? message("BytesPerPage") : message("LinesPerPage"))
-                    + ": " + StringTools.format(pageSize) + "\n"
-                    + message("CurrentPage") + ": " + StringTools.format(currentPage + 1)
-                    + " / " + StringTools.format(pagesNumber) + "\n";
+            table.add(Arrays.asList(message("FileSize"), FileTools.showFileSize(sourceFile.length())));
+            table.add(Arrays.asList(message("FileModifyTime"), DateTools.datetimeToString(sourceFile.lastModified())));
+            table.add(Arrays.asList((editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile")),
+                    StringTools.format(fileObjectNumber)));
+            table.add(Arrays.asList(message("LinesNumberInFile"), StringTools.format(fileLinesNumber)));
+            table.add(Arrays.asList((editType == Edit_Type.Bytes ? message("BytesPerPage") : message("LinesPerPage")),
+                    StringTools.format(pageSize)));
+            table.add(Arrays.asList(message("CurrentPage"),
+                    StringTools.format(currentPage + 1) + " / " + StringTools.format(pagesNumber)));
         }
-
-        String objectInfo, lineInfo;
+        table.add(Arrays.asList(message("LineBreak"), sourceInformation.lineBreakName()));
+        table.add(Arrays.asList(message("Charset"), sourceInformation.getCharset().name()));
         if (pagesNumber > 1) {
-            objectInfo = editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage");
-            objectInfo += ": " + StringTools.format(pageObjectStart + 1) + " - " + StringTools.format(pageObjectEnd)
-                    + " ( " + StringTools.format(pageObjectsNumber) + " )\n";
-            lineInfo = message("LinesRangeInPage")
-                    + ": " + StringTools.format(pageLineStart + 1) + " - " + StringTools.format(pageLineEnd)
-                    + " ( " + StringTools.format(pageLinesNumber) + " )\n";
+            table.add(Arrays.asList(editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage"),
+                    StringTools.format(pageObjectStart + 1) + " - " + StringTools.format(pageObjectEnd)
+                    + " ( " + StringTools.format(pageObjectsNumber) + " )"));
+            table.add(Arrays.asList(message("LinesRangeInPage"),
+                    StringTools.format(pageLineStart + 1) + " - " + StringTools.format(pageLineEnd)
+                    + " ( " + StringTools.format(pageLinesNumber) + " )"));
         } else {
-            objectInfo = editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage");
-            objectInfo += ": " + StringTools.format(pageObjectsNumber) + "\n";
-            lineInfo = message("LinesNumberInPage") + ": " + StringTools.format(pageLinesNumber) + "\n";
+            table.add(Arrays.asList(editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage"),
+                    StringTools.format(pageObjectsNumber)));
+            table.add(Arrays.asList(message("LinesNumberInPage"), StringTools.format(pageLinesNumber)));
         }
-        fileInfo += message("LineBreak") + ": " + sourceInformation.lineBreakName() + "\n"
-                + message("Charset") + ": " + sourceInformation.getCharset().name() + "\n"
-                + objectInfo + lineInfo
-                + message("PageModifyTime") + ": " + DateTools.nowString();
-        fileLabel.setText(fileInfo);
+        table.add(Arrays.asList(message("PageModifyTime"), DateTools.nowString()));
+        infoController.webEngine.loadContent(table.html());
 
         pageBox.setDisable(changed);
         pagePreviousButton.setDisable(currentPage <= 0 || pagesNumber < 2);

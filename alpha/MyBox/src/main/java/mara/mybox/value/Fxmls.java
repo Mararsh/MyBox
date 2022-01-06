@@ -341,6 +341,8 @@ public class Fxmls {
     public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
+    public static final String AutoTestingCasesFxml = "/fxml/AutoTestingCases.fxml";
+    public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
 
     /*
         common

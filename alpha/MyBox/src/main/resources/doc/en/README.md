@@ -34,9 +34,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.5.1-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win10-x64.zip)  | 231MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac | [MyBox-6.5.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac.dmg)  | 245MB  |  MyBox-6.5.1.app   |        
+| win10 x64 | [MyBox-6.5.1-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win10-x64.zip)  | 219MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac | [MyBox-6.5.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac.dmg)  | 232MB  |  MyBox-6.5.1.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -47,9 +47,9 @@ In my Mac env(OS X 10.11.6/Darwin 15.6.0), openJDK 17 fails to start, so MyBox o
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.5.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win-jar.zip)  | 168MB | Java 17 or higher |
-| linux | [MyBox-6.5.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-linux-jar.zip)  | 176MB  | Java 17 or higher |
-| mac | [MyBox-6.5.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac-jar.zip)  |  173MB  | Java 16 |        
+| win | [MyBox-6.5.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win-jar.zip)  | 154MB | Java 17 or higher |
+| linux | [MyBox-6.5.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-linux-jar.zip)  | 186MB  | Java 17 or higher |
+| mac | [MyBox-6.5.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac-jar.zip)  |  159MB  | Java 16 |        
 
 
 Run following command to launch this program with Jar package:        
@@ -778,8 +778,8 @@ Load/Refresh/Delete image in System Clipboard:
 ## Data Tools <a id="dataTools"></a>
 
 ### Manage Data<a id="manageData" />          
+This tool manages following objects:            
 
-This tool manages following objects:
 1. Data Files
 	- Record is created/updated when csv/excel/texts data file is opened by its editor.
 	- Data are saved in data file.
@@ -797,7 +797,7 @@ This tool manages following objects:
 
 
 ### Edit Data<a id="editData" />
-1. Following objects can be edited in consistent way: ssv/excel/texts data files, data clipboard, and matrices.     
+1. Following objects can be edited in consistent way: csv/excel/texts data files, data clipboard, and matrices.     
 2. Data should be in same width. That is all rows have equal number of columns.   
 3. Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
 4. Data can be edited in 2 modes: 
