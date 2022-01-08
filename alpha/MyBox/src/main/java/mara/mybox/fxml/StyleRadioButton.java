@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -46,43 +45,87 @@ public class StyleRadioButton {
         }
         switch (id) {
             case "miaoRadio":
-                return new StyleData(id, Languages.message("Meow"), Languages.message("MiaoPrompt"), "", "iconCat.png");
+                return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
             case "polylineRadio":
-                return new StyleData("polylineRadio", "", Languages.message("Polyline"), "", "iconPolyline.png");
+                return new StyleData("polylineRadio", "", message("Polyline"), "", "iconPolyline.png");
             case "linesRadio":
-                return new StyleData("linesRadio", "", Languages.message("DrawLines"), "", "iconDraw.png");
+                return new StyleData("linesRadio", "", message("DrawLines"), "", "iconDraw.png");
             case "rectangleRadio":
-                return new StyleData("rectangleRadio", "", Languages.message("Rectangle"), "", "iconRectangle.png");
+                return new StyleData("rectangleRadio", "", message("Rectangle"), "", "iconRectangle.png");
             case "circleRadio":
-                return new StyleData("circleRadio", "", Languages.message("Circle"), "", "iconCircle.png");
+                return new StyleData("circleRadio", "", message("Circle"), "", "iconCircle.png");
             case "ellipseRadio":
-                return new StyleData("ellipseRadio", "", Languages.message("Ellipse"), "", "iconEllipse.png");
+                return new StyleData("ellipseRadio", "", message("Ellipse"), "", "iconEllipse.png");
             case "polygonRadio":
-                return new StyleData("polygonRadio", "", Languages.message("Polygon"), "", "iconStar.png");
+                return new StyleData("polygonRadio", "", message("Polygon"), "", "iconStar.png");
             case "eraserRadio":
-                return new StyleData("eraserRadio", "", Languages.message("Eraser"), "", "iconEraser.png");
+                return new StyleData("eraserRadio", "", message("Eraser"), "", "iconEraser.png");
             case "mosaicRadio":
-                return new StyleData("mosaicRadio", "", Languages.message("Mosaic"), "", "iconMosaic.png");
+                return new StyleData("mosaicRadio", "", message("Mosaic"), "", "iconMosaic.png");
             case "frostedRadio":
-                return new StyleData("frostedRadio", "", Languages.message("FrostedGlass"), "", "iconFrosted.png");
+                return new StyleData("frostedRadio", "", message("FrostedGlass"), "", "iconFrosted.png");
             case "shapeRectangleRadio":
-                return new StyleData("shapeRectangleRadio", "", Languages.message("Rectangle"), "", "iconRectangle.png");
+                return new StyleData("shapeRectangleRadio", "", message("Rectangle"), "", "iconRectangle.png");
             case "shapeCircleRadio":
-                return new StyleData("shapeCircleRadio", "", Languages.message("Circle"), "", "iconCircle.png");
+                return new StyleData("shapeCircleRadio", "", message("Circle"), "", "iconCircle.png");
             case "horizontalBarsChartRadio":
-                return new StyleData(id, "", Languages.message("HorizontalBarsChart"), "", "iconBarsChartH.png");
+                return new StyleData(id, "", message("HorizontalBarsChart"), "", "iconBarsChartH.png");
             case "verticalBarsChartRadio":
-                return new StyleData(id, "", Languages.message("VerticalBarsChart"), "", "iconBarsChart.png");
+                return new StyleData(id, "", message("VerticalBarsChart"), "", "iconBarsChart.png");
             case "linesChartRadio":
-                return new StyleData(id, "", Languages.message("VerticalLinesChart"), "", "iconLinesChart.png");
+                return new StyleData(id, "", message("VerticalLinesChart"), "", "iconLinesChart.png");
             case "linesChartHRadio":
-                return new StyleData(id, "", Languages.message("HorizontalLinesChart"), "", "iconLinesChartH.png");
+                return new StyleData(id, "", message("HorizontalLinesChart"), "", "iconLinesChartH.png");
             case "pieRadio":
-                return new StyleData(id, "", Languages.message("PieChart"), "", "iconPieChart.png");
+                return new StyleData(id, "", message("PieChart"), "", "iconPieChart.png");
             case "mapRadio":
-                return new StyleData(id, "", Languages.message("Map"), "", "iconMap.png");
+                return new StyleData(id, "", message("Map"), "", "iconMap.png");
             case "pcxSelect":
-                return new StyleData("pcxSelect", "pcx", Languages.message("PcxComments"), "", "");
+                return new StyleData("pcxSelect", "pcx", message("PcxComments"), "", "");
+            case "colorBrightnessRadio":
+                return new StyleData("colorBrightnessRadio", "", message("Brightness"), "", "iconBrightness.png");
+            case "colorHueRadio":
+                return new StyleData("colorHueRadio", "", message("Hue"), "", "iconHue.png");
+            case "colorSaturationRadio":
+                return new StyleData("colorSaturationRadio", "", message("Saturation"), "", "iconSaturation.png");
+            case "colorRedRadio":
+                return new StyleData("colorRedRadio", "", message("Red"), "", "");
+            case "colorGreenRadio":
+                return new StyleData("colorGreenRadio", "", message("Green"), "", "");
+            case "colorBlueRadio":
+                return new StyleData("colorBlueRadio", "", message("Blue"), "", "");
+            case "colorYellowRadio":
+                return new StyleData("colorYellowRadio", "", message("Yellow"), "", "");
+            case "colorCyanRadio":
+                return new StyleData("colorCyanRadio", "", message("Cyan"), "", "");
+            case "colorMagentaRadio":
+                return new StyleData("colorMagentaRadio", "", message("Magenta"), "", "");
+            case "colorOpacityRadio":
+                return new StyleData("colorOpacityRadio", "", message("Opacity"), "", "iconOpacity.png");
+            case "colorColorRadio":
+                return new StyleData("colorColorRadio", "", message("Color"), "", "iconDraw.png");
+            case "colorRGBRadio":
+                return new StyleData("colorRGBRadio", "", message("RGB"), "", "iconRGB.png");
+            case "colorIncreaseButton":
+                return new StyleData("colorIncreaseButton", message("Increase"), "ALT+2", "iconPlus.png");
+            case "colorDecreaseButton":
+                return new StyleData("colorDecreaseButton", message("Decrease"), "ALT+3", "iconMinus.png");
+            case "colorFilterButton":
+                return new StyleData("colorFilterButton", message("Filter"), "ALT+4", "iconFilter.png");
+            case "colorInvertButton":
+                return new StyleData("colorInvertButton", message("Invert"), "ALT+5", "iconInvert.png");
+            case "colorReplaceRadio":
+                return new StyleData("colorReplaceRadio", message("ReplaceColor"), "", "iconReplace.png");
+            case "setRadio":
+                return new StyleData(id, message("Set"), "", "iconEqual.png");
+            case "invertRadio":
+                return new StyleData(id, message("Invert"), "", "iconInvert.png");
+            case "increaseRadio":
+                return new StyleData(id, message("Increase"), "", "iconPlus.png");
+            case "decreaseRadio":
+                return new StyleData(id, message("Decrease"), "", "iconMinus.png");
+            case "filterRadio":
+                return new StyleData(id, message("Filter"), "", "iconFilter.png");
             default:
                 return null;
         }

@@ -57,7 +57,7 @@ public abstract class BaseController_Attributes {
     protected Popup popup;
     protected ContextMenu popMenu;
     protected String targetFileSuffix;
-    protected boolean isSettingValues, isPop, needRecordVisit;
+    protected boolean isSettingValues, isPop;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected SaveAsType saveAsType;
 
@@ -312,9 +312,6 @@ public abstract class BaseController_Attributes {
         return isPop;
     }
 
-    public boolean isNeedRecordVisit() {
-        return needRecordVisit;
-    }
 
     /*
         task

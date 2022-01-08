@@ -497,26 +497,22 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 actualParameters = null;
                 return false;
             }
+            ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             for (int i = 0; i < tableData.size(); ++i) {
                 FileInformation d = tableController.fileInformation(i);
                 if (d == null) {
                     continue;
                 }
                 d.setHandled("");
+                if (selected != null && !selected.isEmpty() && !selected.contains(i)) {
+                    continue;
+                }
                 File file = d.getFile();
-                if (!isPreview && !sourceFiles.contains(file)) {
-                    sourceFiles.add(file);
-                }
-            }
-            if (isPreview) {
-                int index = 0;
-                ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-                if (selected != null && !selected.isEmpty()) {
-                    index = selected.get(0);
-                }
-                File file = tableController.file(index);
                 if (!sourceFiles.contains(file)) {
                     sourceFiles.add(file);
+                    if (isPreview) {
+                        break;
+                    }
                 }
             }
 

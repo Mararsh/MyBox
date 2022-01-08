@@ -37,7 +37,7 @@ public class TextReplaceBatchOptions extends ControlFindReplace {
         try {
             super.initControls();
 
-            setControls();
+            setParent(this);
 
             charsetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

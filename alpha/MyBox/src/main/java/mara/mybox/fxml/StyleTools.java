@@ -45,9 +45,6 @@ public class StyleTools {
         } else if (id.startsWith("scope")) {
             style = StylePrefix.scope(node, id);
 
-        } else if (id.startsWith("color")) {
-            style = StylePrefix.color(node, id);
-
         } else {
             style = getStyleData(node, id);
 

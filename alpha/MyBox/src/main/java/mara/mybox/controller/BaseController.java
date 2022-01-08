@@ -55,7 +55,6 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
             }
             AppVariables.alarmClockController = null;
             isPop = false;
-            needRecordVisit = mainMenuController != null;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

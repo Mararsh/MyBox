@@ -2,6 +2,7 @@ package mara.mybox.fxml.cell;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
@@ -19,8 +20,6 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
     public TableCell<T, ImageInformation> call(TableColumn<T, ImageInformation> param) {
         final ImageView imageview = new ImageView();
         imageview.setPreserveRatio(true);
-        imageview.setFitWidth(AppVariables.thumbnailWidth);
-//        imageview.setFitHeight(AppVariables.thumbnailWidth);
         TableCell<T, ImageInformation> cell = new TableCell<T, ImageInformation>() {
             @Override
             public void updateItem(ImageInformation item, boolean empty) {
@@ -30,11 +29,15 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
                     setGraphic(null);
                     return;
                 }
-                imageview.setImage(item.loadThumbnail(AppVariables.thumbnailWidth));
+                int width = item.getWidth() > AppVariables.thumbnailWidth ? AppVariables.thumbnailWidth : (int) item.getWidth();
+                Image image = item.loadThumbnail(width);
+                imageview.setImage(image);
                 imageview.setRotate(item.getThumbnailRotation());
+                imageview.setFitWidth(width);
                 setGraphic(imageview);
             }
         };
         return cell;
     }
+
 }

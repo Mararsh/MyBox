@@ -67,12 +67,12 @@ License:    Apache License Version 2.0
                         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="aidColumn" prefWidth="60.0" text="%ID" />
+                                <TableColumn fx:id="objectColumn" prefWidth="300.0" text="%Target" />
                                 <TableColumn fx:id="statusColumn" prefWidth="100.0" text="%Status" />
-                                <TableColumn fx:id="typeColumn" prefWidth="100.0" text="%Type" />
-                                <TableColumn fx:id="operationColumn" prefWidth="100.0" text="%Operation" />
-                                <TableColumn fx:id="objectColumn" prefWidth="200.0" text="%Target" />
+                                <TableColumn fx:id="typeColumn" prefWidth="120.0" text="%Type" />
+                                <TableColumn fx:id="operationColumn" prefWidth="120.0" text="%Operation" />
                                 <TableColumn fx:id="versionColumn" text="%Version" />
-                                <TableColumn fx:id="stageColumn" prefWidth="100.0" text="%Stage" />
+                                <TableColumn fx:id="stageColumn" prefWidth="120.0" text="%Stage" />
                             </columns>
                         </TableView>
                     </children>

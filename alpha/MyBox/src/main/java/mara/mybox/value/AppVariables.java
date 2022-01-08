@@ -44,7 +44,7 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
-            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
+            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs, isTesting;
     public static StyleData.StyleColor ControlColor;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
@@ -72,6 +72,7 @@ public class AppVariables {
             ignoreDbUnavailable = false;
             popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
             errorNotify = new SimpleBooleanProperty(false);
+            isTesting = false;
 
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {

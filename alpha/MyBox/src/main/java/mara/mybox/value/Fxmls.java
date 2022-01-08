@@ -195,7 +195,6 @@ public class Fxmls {
 
     public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
-    public static final String DataFileExcelExtractTextsFxml = "/fxml/DataFileExcelExtractTexts.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
     public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
@@ -261,7 +260,6 @@ public class Fxmls {
     public static final String FilesCopyFxml = "/fxml/FilesCopy.fxml";
     public static final String FilesMoveFxml = "/fxml/FilesMove.fxml";
     public static final String FilesFindFxml = "/fxml/FilesFind.fxml";
-    public static final String FilesFindBatchFxml = "/fxml/FilesFindBatch.fxml";
     public static final String FilesCompareFxml = "/fxml/FilesCompare.fxml";
     public static final String FilesRedundancyFxml = "/fxml/FilesRedundancy.fxml";
     public static final String FilesRedundancyResultsFxml = "/fxml/FilesRedundancyResults.fxml";

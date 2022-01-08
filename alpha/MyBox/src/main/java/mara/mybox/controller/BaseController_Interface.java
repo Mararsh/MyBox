@@ -31,6 +31,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 import javafx.util.Duration;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
@@ -40,6 +41,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.isTesting;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -455,7 +457,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setAsPop(String name) {
         try {
             isPop = true;
-            needRecordVisit = false;
             this.interfaceName = name;
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
@@ -734,6 +735,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (!checkBeforeNextAction(thisPane)) {
                 return false;
             }
+            if (!isTesting && getMyStage() != null && mainMenuController != null
+                    && !isPop && myStage.getOwner() == null) {
+                VisitHistoryTools.visitMenu(baseTitle, myFxml);
+            }
             leaveScene();
             return true;
         } catch (Exception e) {
@@ -864,6 +869,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 UserConfig.setInt(prefix + "StageHeight", (int) myStage.getHeight());
                 myStage = null;
             }
+
             myWindow = null;
             System.gc();
         } catch (Exception e) {
