@@ -1,5 +1,6 @@
 package mara.mybox.fxml.cell;
 
+import javafx.application.Platform;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
@@ -25,16 +26,18 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
             public void updateItem(ImageInformation item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(null);
+                setGraphic(null);
                 if (empty || item == null) {
-                    setGraphic(null);
                     return;
                 }
-                int width = item.getWidth() > AppVariables.thumbnailWidth ? AppVariables.thumbnailWidth : (int) item.getWidth();
-                Image image = item.loadThumbnail(width);
-                imageview.setImage(image);
-                imageview.setRotate(item.getThumbnailRotation());
-                imageview.setFitWidth(width);
-                setGraphic(imageview);
+                Platform.runLater(() -> {
+                    int width = item.getWidth() > AppVariables.thumbnailWidth ? AppVariables.thumbnailWidth : (int) item.getWidth();
+                    Image image = item.loadThumbnail(width);
+                    imageview.setImage(image);
+                    imageview.setRotate(item.getThumbnailRotation());
+                    imageview.setFitWidth(width);
+                    setGraphic(imageview);
+                });
             }
         };
         return cell;

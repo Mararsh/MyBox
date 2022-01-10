@@ -140,14 +140,14 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image addText(Image image, String textString,
+    public static Image addText(Image image, String textString, int lineHeight,
             java.awt.Font font, Color color, int x, int y,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent,
-            int shadow, int angle, boolean isOutline, boolean isVertical) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed,
+            boolean ignoreTransparent, int shadow, int angle, boolean isOutline) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageTextTools.addText(source, textString,
-                font, toAwtColor(color), x, y, blendMode, opacity, orderReversed, ignoreTransparent,
-                shadow, angle, isOutline, isVertical);
+        BufferedImage target = ImageTextTools.addText(source, textString, lineHeight,
+                font, toAwtColor(color), x, y, blendMode, opacity, orderReversed,
+                ignoreTransparent, shadow, angle, isOutline);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

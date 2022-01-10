@@ -10,6 +10,60 @@ import static mara.mybox.value.Languages.message;
  */
 public class StylePrefix {
 
+    public static StyleData color(Node node, String id) {
+        if (id == null || id.isEmpty()) {
+            return null;
+        }
+        switch (id) {
+            case "colorBrightnessRadio":
+                return new StyleData("colorBrightnessRadio", "", message("Brightness"), "", "iconBrightness.png");
+            case "colorHueRadio":
+                return new StyleData("colorHueRadio", "", message("Hue"), "", "iconHue.png");
+            case "colorSaturationRadio":
+                return new StyleData("colorSaturationRadio", "", message("Saturation"), "", "iconSaturation.png");
+            case "colorRedRadio":
+                return new StyleData("colorRedRadio", "", message("Red"), "", "");
+            case "colorGreenRadio":
+                return new StyleData("colorGreenRadio", "", message("Green"), "", "");
+            case "colorBlueRadio":
+                return new StyleData("colorBlueRadio", "", message("Blue"), "", "");
+            case "colorYellowRadio":
+                return new StyleData("colorYellowRadio", "", message("Yellow"), "", "");
+            case "colorCyanRadio":
+                return new StyleData("colorCyanRadio", "", message("Cyan"), "", "");
+            case "colorMagentaRadio":
+                return new StyleData("colorMagentaRadio", "", message("Magenta"), "", "");
+            case "colorOpacityRadio":
+                return new StyleData("colorOpacityRadio", "", message("Opacity"), "", "iconOpacity.png");
+            case "colorColorRadio":
+                return new StyleData("colorColorRadio", "", message("Color"), "", "iconDraw.png");
+            case "colorRGBRadio":
+                return new StyleData("colorRGBRadio", "", message("RGB"), "", "iconRGB.png");
+            case "colorIncreaseButton":
+                return new StyleData("colorIncreaseButton", message("Increase"), "ALT+2", "iconPlus.png");
+            case "colorDecreaseButton":
+                return new StyleData("colorDecreaseButton", message("Decrease"), "ALT+3", "iconMinus.png");
+            case "colorFilterButton":
+                return new StyleData("colorFilterButton", message("Filter"), "ALT+4", "iconFilter.png");
+            case "colorInvertButton":
+                return new StyleData("colorInvertButton", message("Invert"), "ALT+5", "iconInvert.png");
+            case "colorReplaceRadio":
+                return new StyleData("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
+            case "setRadio":
+                return new StyleData("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
+            case "invertRadio":
+                return new StyleData("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
+            case "increaseRadio":
+                return new StyleData("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
+            case "decreaseRadio":
+                return new StyleData("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
+            case "filterRadio":
+                return new StyleData("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
+            default:
+                return StyleTools.getStyleData(node, id);
+        }
+    }
+
     public static StyleData his(Node node, String id) {
         if (id == null || id.isEmpty()) {
             return null;

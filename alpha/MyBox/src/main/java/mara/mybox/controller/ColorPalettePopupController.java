@@ -248,7 +248,7 @@ public class ColorPalettePopupController extends BaseController {
     }
 
     @FXML
-    protected void popPaletteMenu() {
+    protected void popPaletteMenu(MouseEvent mouseEvent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -269,6 +269,35 @@ public class ColorPalettePopupController extends BaseController {
             }
 
             items.add(new SeparatorMenuItem());
+
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                if (popMenu != null && popMenu.isShowing()) {
+                    popMenu.hide();
+                }
+                popMenu = null;
+            });
+            items.add(menu);
+
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+            popMenu.getItems().addAll(items);
+
+            LocateTools.locateMouse(mouseEvent, popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void popDataMenu(MouseEvent mouseEvent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("ManageColors"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -310,7 +339,8 @@ public class ColorPalettePopupController extends BaseController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
             popMenu.getItems().addAll(items);
-            LocateTools.locateCenter(paletteButton, popMenu);
+
+            LocateTools.locateMouse(mouseEvent, popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

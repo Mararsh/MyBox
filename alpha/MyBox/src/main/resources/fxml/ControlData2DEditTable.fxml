@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
               <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                   <children>
                   <CheckBox fx:id="columnsCheck" mnemonicParsing="false" text="%Columns" />
-                      <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteRowsAction">
+                      <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteRowsAction">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                   <image>

@@ -127,6 +127,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
+        boolean ok = super.checkOptions();
         infoLabel.setText("");
         if (allPages()) {
             matrixPane.setDisable(true);
@@ -163,7 +164,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
             return false;
         } else {
             okButton.setDisable(false);
-            return super.checkOptions();
+            return ok;
         }
     }
 

@@ -295,26 +295,10 @@ public class MenuWebviewController extends MenuController {
 
     @FXML
     public void scriptAction() {
-        if (webView == null) {
+        if (webViewController == null) {
             return;
         }
-        TextInputController inputController = TextInputController.open(webViewController, "JavaScript", null);
-        inputController.getNotify().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                String value = inputController.getText();
-                if (value == null || value.isBlank()) {
-                    return;
-                }
-                inputController.closeStage();
-                try {
-                    webView.getEngine().executeScript(value);
-                    popDone();
-                } catch (Exception e) {
-                    popError(e.toString());
-                }
-            }
-        });
+        HtmlScriptController.open(webViewController);
     }
 
     /*

@@ -146,6 +146,13 @@ public abstract class BaseController_Attributes {
         return baseTitle;
     }
 
+    public String getRootBaseTitle() {
+        if (getMyStage() != null && myStage.getUserData() != null) {
+            return ((BaseController) myStage.getUserData()).getBaseTitle();
+        }
+        return baseTitle;
+    }
+
     public String getTitle() {
         if (getMyStage() != null) {
             return myStage.getTitle();

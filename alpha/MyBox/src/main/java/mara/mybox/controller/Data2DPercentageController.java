@@ -50,11 +50,9 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
+        boolean ok = super.checkOptions();
         targetController.setNotInTable(allPages());
-        if (!super.checkOptions()) {
-            return false;
-        }
-        boolean ok = prepareRows();
+        ok = ok && prepareRows();
         okButton.setDisable(!ok);
         return ok;
     }

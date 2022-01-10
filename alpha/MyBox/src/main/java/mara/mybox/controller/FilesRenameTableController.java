@@ -49,11 +49,9 @@ public class FilesRenameTableController extends FilesTableController {
             insertFilesButton.setDisable(true);
             insertDirectoryButton.setDisable(true);
             deleteButton.setDisable(true);
-            clearFilesButton.setDisable(true);
         } else {
             addFilesButton.setDisable(false);
             addDirectoryButton.setDisable(false);
-            clearFilesButton.setDisable(false);
             super.checkButtons();
         }
     }

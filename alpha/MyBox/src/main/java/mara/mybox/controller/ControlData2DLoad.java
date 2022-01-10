@@ -419,7 +419,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     @FXML
     public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
-        String newName = PopTools.askValue(getBaseTitle(), message("CurrentName") + ":" + targetData.getDataName(),
+        String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
                 message("NewName"), targetData.getDataName() + "m");
         if (newName == null || newName.isBlank()) {
             return;
@@ -774,10 +774,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 dataLabel.setText(name);
             }
             if (myStage != null) {
+                String title = getRootBaseTitle() + " : " + name;
                 if (data2D.isTableChanged()) {
-                    name += " *";
+                    title += " *";
                 }
-                myStage.setTitle(baseTitle + " : " + name);
+                myStage.setTitle(title);
             }
         } else {
             if (dataLabel != null) {

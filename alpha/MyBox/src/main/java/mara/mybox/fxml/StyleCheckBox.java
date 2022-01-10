@@ -64,6 +64,9 @@ public class StyleCheckBox {
         if (id.startsWith("contextMenu")) {
             return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
         }
+        if (id.startsWith("editable")) {
+            return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
+        }
         switch (id) {
             case "tableSubdirCheck":
                 return new StyleData("tableSubdirCheck", "", message("HandleSubDirectories"), "", "iconFolder.png");

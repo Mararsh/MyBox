@@ -131,9 +131,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
             tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
-                if (isSettingValues) {
-                    return;
-                }
                 tableChanged();
             });
 
@@ -279,6 +276,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void updateStatus() {
+        checkSelected();
         if (dataSizeLabel != null) {
             dataSizeLabel.setText(message("Rows") + ": "
                     + (tableData == null ? 0 : tableData.size())
@@ -592,10 +590,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
         if (deleteButton != null) {
-            deleteButton.setDisable(none);
+            deleteButton.setDisable(isEmpty);
         }
         if (deleteItemsButton != null) {
-            deleteItemsButton.setDisable(none);
+            deleteItemsButton.setDisable(isEmpty);
         }
         if (viewButton != null) {
             viewButton.setDisable(none);
@@ -741,6 +739,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public void deleteAction() {
         List<Integer> indice = tableView.getSelectionModel().getSelectedIndices();
         if (indice == null || indice.isEmpty()) {
+            clearAction();
             return;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
@@ -848,6 +847,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public void deleteRowsAction() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
+            clearAction();
             return;
         }
         isSettingValues = true;

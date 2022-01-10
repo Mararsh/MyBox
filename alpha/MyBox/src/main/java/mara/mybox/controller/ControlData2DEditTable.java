@@ -25,6 +25,7 @@ public class ControlData2DEditTable extends ControlData2DSelect {
     protected void setParameters(ControlData2DEdit editController) {
         try {
             dataController = editController.dataController;
+            baseTitle = dataController.baseTitle;
 
             paginationPane = dataController.paginationPane;
             pageSizeSelector = dataController.pageSizeSelector;

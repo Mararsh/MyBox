@@ -58,6 +58,7 @@ public class Data2DSortController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
+        boolean ok = super.checkOptions();
         targetController.setNotInTable(allPages());
         memoryNoticeLabel.setVisible(allPages());
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
@@ -66,7 +67,7 @@ public class Data2DSortController extends Data2DHandleController {
             okButton.setDisable(true);
             return false;
         }
-        return super.checkOptions();
+        return ok;
     }
 
     public List<Integer> adjustedCols() {

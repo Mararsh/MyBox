@@ -87,6 +87,9 @@ public class MenuController extends BaseChildController {
                 String name = baseName;
                 if (parent != null) {
                     name += parent.baseName;
+                    if (getMyStage() != null) {
+                        myStage.setTitle(parent.getTitle());
+                    }
                 }
                 if (node != null && node.getId() != null) {
                     name += node.getId();

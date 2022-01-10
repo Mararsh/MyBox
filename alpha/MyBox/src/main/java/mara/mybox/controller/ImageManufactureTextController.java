@@ -10,6 +10,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -29,6 +30,7 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -38,7 +40,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageManufactureTextController extends ImageManufactureOperationController {
 
-    protected int x, y, fontSize, shadow, angle;
+    protected int lineHeight, x, y, fontSize, shadow, angle;
     protected ImagesBlendMode blendMode;
     protected float opacity;
     protected Font font;
@@ -47,11 +49,13 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     protected FontWeight fontWeight;
 
     @FXML
-    protected TextField textInput, xInput, yInput;
+    protected TextArea textArea;
     @FXML
-    protected ComboBox<String> sizeBox, opacitySelector, blendSelector, styleBox, familyBox, angleBox, shadowBox;
+    protected TextField xInput, yInput;
     @FXML
-    protected CheckBox verticalCheck, outlineCheck, blendTopCheck, ignoreTransparentCheck;
+    protected ComboBox<String> lineHeightSelector, sizeBox, opacitySelector, blendSelector, styleBox, familyBox, angleBox, shadowBox;
+    @FXML
+    protected CheckBox outlineCheck, blendTopCheck, ignoreTransparentCheck;
     @FXML
     protected ColorSet colorSetController;
     @FXML
@@ -69,9 +73,37 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             fontFamily = UserConfig.getString(baseName + "TextFontFamily", "Arial");
             fontWeight = FontWeight.NORMAL;
             fontPosture = FontPosture.REGULAR;
+
             fontSize = 24;
             shadow = 0;
             angle = 0;
+
+            lineHeight = UserConfig.getInt(baseName + "TextLineHeight", -1);
+            List<String> heights = Arrays.asList(
+                    message("Automatic"), "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
+            lineHeightSelector.getItems().addAll(heights);
+            if (lineHeight <= 0) {
+                lineHeightSelector.setValue(message("Automatic"));
+            } else {
+                lineHeightSelector.setValue(lineHeight + "");
+            }
+            lineHeightSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            lineHeight = v;
+                        } else {
+                            lineHeight = -1;
+                        }
+                    } catch (Exception e) {
+                        lineHeight = -1;;
+                    }
+                    UserConfig.setInt(baseName + "TextLineHeight", lineHeight);
+                    write(true);
+                }
+            });
 
             colorSetController.init(this, baseName + "TextColor", Color.ORANGE);
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
@@ -251,18 +283,9 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             });
             outlineCheck.setSelected(UserConfig.getBoolean(baseName + "TextOutline", false));
 
-            verticalCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "TextVertical", verticalCheck.isSelected());
-                    write(true);
-                }
-            });
-            verticalCheck.setSelected(UserConfig.getBoolean(baseName + "TextVertical", false));
-
             isSettingValues = false;
 
-            textInput.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
+            textArea.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
             xInput.setText((int) (imageView.getImage().getWidth() / 2) + "");
             yInput.setText((int) (imageView.getImage().getHeight() / 2) + "");
             goAction();
@@ -301,7 +324,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         if (isSettingValues || x < 0 || y < 0
                 || x >= imageView.getImage().getWidth()
                 || y >= imageView.getImage().getHeight()
-                || textInput.getText().isBlank()) {
+                || textArea.getText().isEmpty()) {
             return;
         }
         synchronized (this) {
@@ -327,10 +350,10 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                             font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
                         }
                     }
-                    newImage = FxImageTools.addText(imageView.getImage(), textInput.getText().trim(),
+                    newImage = FxImageTools.addText(imageView.getImage(), textArea.getText(), lineHeight,
                             font, (Color) colorSetController.rect.getFill(), x, y,
                             blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected(),
-                            shadow, angle, outlineCheck.isSelected(), verticalCheck.isSelected());
+                            shadow, angle, outlineCheck.isSelected());
                     if (task == null || isCancelled()) {
                         return false;
                     }
@@ -348,7 +371,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
                     } else {
                         imageController.popSuccessful();
-                        imageController.updateImage(ImageOperation.Text, textInput.getText().trim(), null, newImage, cost);
+                        imageController.updateImage(ImageOperation.Text, null, null, newImage, cost);
                     }
                 }
 
@@ -387,12 +410,12 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             yInput.setStyle(UserConfig.badStyle());
             return false;
         }
-        if (textInput.getText().isBlank()) {
-            textInput.setStyle(UserConfig.badStyle());
+        if (textArea.getText().isEmpty()) {
+            textArea.setStyle(UserConfig.badStyle());
             return false;
         } else {
-            textInput.setStyle(null);
-            UserConfig.setString(baseName + "TextValue", textInput.getText().trim());
+            textArea.setStyle(null);
+            UserConfig.setString(baseName + "TextValue", textArea.getText());
         }
         return true;
     }

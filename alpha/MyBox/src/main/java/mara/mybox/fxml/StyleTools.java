@@ -35,8 +35,11 @@ public class StyleTools {
             return null;
         }
         String id = node.getId();
-        StyleData style = null;
-        if (id.startsWith("his")) {
+        StyleData style;
+        if (id.startsWith("color")) {
+            style = StylePrefix.color(node, id);
+
+        } else if (id.startsWith("his")) {
             style = StylePrefix.his(node, id);
 
         } else if (id.startsWith("settings")) {

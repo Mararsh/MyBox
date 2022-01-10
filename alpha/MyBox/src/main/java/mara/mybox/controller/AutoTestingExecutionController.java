@@ -8,11 +8,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
 import mara.mybox.data.TestCase;
 import mara.mybox.data.TestCase.Status;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.AppVariables.errorNotify;
@@ -55,6 +58,43 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             versionColumn.setCellValueFactory(new PropertyValueFactory<>("version"));
             stageColumn.setCellValueFactory(new PropertyValueFactory<>("stage"));
             statusColumn.setCellValueFactory(new PropertyValueFactory<>("statusName"));
+
+            tableView.setRowFactory((TableView<TestCase> param) -> {
+                try {
+                    return new TableRow<TestCase>() {
+                        @Override
+                        protected void updateItem(TestCase item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty || item == null) {
+                                setGraphic(null);
+                                setText(null);
+                                setTextFill(null);
+                                setStyle(null);
+                                return;
+                            }
+                            if (this.isSelected()) {
+                                setStyle(NodeStyleTools.selectedData);
+                            } else {
+                                switch (item.getStatus()) {
+                                    case Success:
+                                        setStyle("-fx-background-color: honeydew");
+                                        break;
+                                    case Fail:
+                                        setStyle("-fx-background-color: aliceblue");
+                                        break;
+                                    case Testing:
+                                        setStyle("-fx-background-color: lightyellow");
+                                        break;
+                                    default:
+                                        setStyle(null);
+                                }
+                            }
+                        }
+                    };
+                } catch (Exception e) {
+                    return null;
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

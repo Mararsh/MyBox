@@ -12,8 +12,6 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 
 /**
@@ -53,7 +51,10 @@ public class ImageTextTools {
         }
     }
 
-    public static BufferedImage addText(BufferedImage backImage, String text, Font font, Color color, int x, int y, PixelsBlend.ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent, int shadow, int angle, boolean isOutline, boolean isVertical) {
+    public static BufferedImage addText(BufferedImage backImage, String text, int lineHeight,
+            Font font, Color color, int x, int y, PixelsBlend.ImagesBlendMode blendMode,
+            float opacity, boolean orderReversed, boolean ignoreTransparent,
+            int shadow, int angle, boolean isOutline) {
         try {
             if (opacity > 1.0F || opacity < 0) {
                 opacity = 1.0F;
@@ -72,22 +73,24 @@ public class ImageTextTools {
             } else {
                 g.setBackground(Colors.TRANSPARENT);
             }
+            g.rotate(Math.toRadians(angle), x, y);
             float textOpacity = noBlend ? opacity : 1.0F;
-            if (isVertical) {
-                int ay = y;
-                for (int i = 0; i < text.length(); ++i) {
-                    String c = String.valueOf(text.charAt(i));
-                    addText(g, c, font, color, x, ay, textOpacity, shadow, angle, isOutline);
-                    ay += g.getFontMetrics().getStringBounds(c, g).getHeight();
+            String[] lines = text.split("\n", -1);
+            int liney = y;
+            for (String line : lines) {
+                addText(g, line, font, color, x, liney, textOpacity, shadow, isOutline);
+                if (lineHeight > 0) {
+                    liney += lineHeight;
+                } else {
+                    liney += g.getFontMetrics(font).getStringBounds(line, g).getHeight();
                 }
-            } else {
-                addText(g, text, font, color, x, y, textOpacity, shadow, angle, isOutline);
             }
             g.dispose();
             if (noBlend) {
                 return foreImage;
             } else {
-                return ImageBlend.blend(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                return ImageBlend.blend(foreImage, backImage, 0, 0,
+                        blendMode, opacity, orderReversed, ignoreTransparent);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -95,12 +98,12 @@ public class ImageTextTools {
         }
     }
 
-    public static void addText(Graphics2D g, String text, Font font, Color color, int x, int y, float opacity, int shadow, int angle, boolean isOutline) {
+    public static void addText(Graphics2D g, String text, Font font, Color color,
+            int x, int y, float opacity, int shadow, boolean isOutline) {
         try {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setFont(font);
-            g.rotate(Math.toRadians(angle), x, y);
             g.setColor(color.equals(Colors.TRANSPARENT) ? null : color);
             if (isOutline) {
                 FontRenderContext frc = g.getFontRenderContext();
@@ -122,7 +125,8 @@ public class ImageTextTools {
         }
     }
 
-    public static BufferedImage drawHTML2(BufferedImage backImage, BufferedImage html, DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc, int rotate, int margin) {
+    public static BufferedImage drawHTML2(BufferedImage backImage, BufferedImage html,
+            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc, int rotate, int margin) {
         try {
             if (html == null || backImage == null || bkRect == null) {
                 return backImage;
@@ -156,7 +160,8 @@ public class ImageTextTools {
         }
     }
 
-    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html, DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc, int rotate, int margin) {
+    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html,
+            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc, int rotate, int margin) {
         try {
             if (html == null || backImage == null || bkRect == null) {
                 return backImage;
@@ -184,7 +189,8 @@ public class ImageTextTools {
         }
     }
 
-    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html, int htmlX, int htmlY, int htmlWdith, int htmlHeight) {
+    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html,
+            int htmlX, int htmlY, int htmlWdith, int htmlHeight) {
         try {
             if (html == null || backImage == null) {
                 return backImage;

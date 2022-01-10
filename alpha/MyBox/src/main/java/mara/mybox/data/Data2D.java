@@ -82,6 +82,7 @@ public abstract class Data2D extends Data2DDefinition {
         tableChanged = false;
         options = null;
         matrix = null;
+        error = null;
     }
 
     @Override

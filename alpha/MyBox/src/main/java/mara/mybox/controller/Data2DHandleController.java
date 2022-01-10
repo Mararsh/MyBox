@@ -57,6 +57,7 @@ public abstract class Data2DHandleController extends BaseChildController {
         try {
             this.tableController = tableController;
             data2D = tableController.data2D;
+            getMyStage().setTitle(tableController.getTitle());
 
             if (targetController != null) {
                 targetController.setParameters(this, tableController);

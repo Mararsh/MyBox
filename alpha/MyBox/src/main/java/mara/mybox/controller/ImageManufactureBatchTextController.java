@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -26,6 +27,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -36,23 +38,25 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageManufactureBatchTextController extends BaseImageManufactureBatchController {
 
-    private int fontSize, angle, shadow, waterX, waterY, positionType, textWidth, textHeight, margin;
+    private int lineHeight, fontSize, angle, shadow, x, y, positionType, textWidth, textHeight, margin;
     protected PixelsBlend.ImagesBlendMode blendMode;
     protected float opacity;
     private java.awt.Font font;
     private java.awt.Color color;
 
     @FXML
-    protected ComboBox<String> waterFamilyBox, waterStyleBox, waterSizeBox, waterShadowBox,
+    protected TextArea textArea;
+    @FXML
+    protected ComboBox<String> lineHeightSelector, waterFamilyBox, waterStyleBox, waterSizeBox, waterShadowBox,
             waterAngleBox, opacitySelector, blendSelector;
     @FXML
     protected ColorSet colorSetController;
     @FXML
     protected ToggleGroup positionGroup;
     @FXML
-    protected TextField waterInput, waterXInput, waterYInput, marginInput;
+    protected TextField xInput, yInput, marginInput;
     @FXML
-    protected CheckBox outlineCheck, verticalCheck, blendTopCheck, ignoreTransparentCheck;
+    protected CheckBox outlineCheck, blendTopCheck, ignoreTransparentCheck;
 
     private class PositionType {
 
@@ -77,9 +81,9 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(Bindings.isEmpty(waterInput.textProperty()))
-                    .or(waterXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(waterYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(Bindings.isEmpty(textArea.textProperty()))
+                    .or(xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(yInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(marginInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
@@ -92,14 +96,40 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
     public void initOptionsSection() {
         try {
 
-            waterXInput.textProperty().addListener(new ChangeListener<String>() {
+            lineHeight = UserConfig.getInt(baseName + "TextLineHeight", -1);
+            List<String> heights = Arrays.asList(
+                    message("Automatic"), "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
+            lineHeightSelector.getItems().addAll(heights);
+            if (lineHeight <= 0) {
+                lineHeightSelector.setValue(message("Automatic"));
+            } else {
+                lineHeightSelector.setValue(lineHeight + "");
+            }
+            lineHeightSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            lineHeight = v;
+                        } else {
+                            lineHeight = -1;
+                        }
+                    } catch (Exception e) {
+                        lineHeight = -1;;
+                    }
+                    UserConfig.setInt(baseName + "TextLineHeight", lineHeight);
+                }
+            });
+
+            xInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
                     checkWaterPosition();
                 }
             });
-            waterYInput.textProperty().addListener(new ChangeListener<String>() {
+            yInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
@@ -270,10 +300,10 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
     }
 
     private void checkPositionType() {
-        waterXInput.setDisable(true);
-        waterXInput.setStyle(null);
-        waterYInput.setDisable(true);
-        waterYInput.setStyle(null);
+        xInput.setDisable(true);
+        xInput.setStyle(null);
+        yInput.setDisable(true);
+        yInput.setStyle(null);
         marginInput.setDisable(true);
         marginInput.setStyle(null);
 
@@ -303,8 +333,8 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
 
         } else if (Languages.message("Custom").equals(selected.getText())) {
             positionType = PositionType.Custom;
-            waterXInput.setDisable(false);
-            waterYInput.setDisable(false);
+            xInput.setDisable(false);
+            yInput.setDisable(false);
             checkWaterPosition();
         }
     }
@@ -327,27 +357,27 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
 
     private void checkWaterPosition() {
         try {
-            int v = Integer.valueOf(waterXInput.getText());
+            int v = Integer.valueOf(xInput.getText());
             if (v >= 0) {
-                waterX = v;
-                waterXInput.setStyle(null);
+                x = v;
+                xInput.setStyle(null);
             } else {
-                waterXInput.setStyle(UserConfig.badStyle());
+                xInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            waterXInput.setStyle(UserConfig.badStyle());
+            xInput.setStyle(UserConfig.badStyle());
         }
 
         try {
-            int v = Integer.valueOf(waterYInput.getText());
+            int v = Integer.valueOf(yInput.getText());
             if (v >= 0) {
-                waterY = v;
-                waterYInput.setStyle(null);
+                y = v;
+                yInput.setStyle(null);
             } else {
-                waterYInput.setStyle(UserConfig.badStyle());
+                yInput.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            waterYInput.setStyle(UserConfig.badStyle());
+            yInput.setStyle(UserConfig.badStyle());
         }
 
     }
@@ -381,7 +411,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
 
         color = FxColorTools.toAwtColor((Color) colorSetController.rect.getFill());
 
-        final String msg = waterInput.getText().trim();
+        final String msg = textArea.getText();
         final Text text = new Text(msg);
         text.setFont(FxFont);
         textWidth = (int) Math.round(text.getLayoutBounds().getWidth());
@@ -392,42 +422,42 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
-            if (waterInput.getText() == null || waterInput.getText().trim().isEmpty()) {
+            if (textArea.getText() == null || textArea.getText().isEmpty()) {
                 return null;
             }
 
-            int x, y;
+            int ix, iy;
             switch (positionType) {
                 case PositionType.Center:
-                    x = (source.getWidth() - textWidth) / 2;
-                    y = (source.getHeight() + textHeight) / 2;
+                    ix = (source.getWidth() - textWidth) / 2;
+                    iy = (source.getHeight() + textHeight) / 2;
                     break;
                 case PositionType.RightBottom:
-                    x = source.getWidth() - 1 - textWidth - margin;
-                    y = source.getHeight() - 1 - margin;
+                    ix = source.getWidth() - 1 - textWidth - margin;
+                    iy = source.getHeight() - 1 - margin;
                     break;
                 case PositionType.RightTop:
-                    x = source.getWidth() - 1 - textWidth - margin;
-                    y = textHeight + margin;
+                    ix = source.getWidth() - 1 - textWidth - margin;
+                    iy = textHeight + margin;
                     break;
                 case PositionType.LeftBottom:
-                    x = margin;
-                    y = source.getHeight() - 1 - margin;
+                    ix = margin;
+                    iy = source.getHeight() - 1 - margin;
                     break;
                 case PositionType.Custom:
-                    x = waterX - textWidth / 2;
-                    y = waterY + textHeight / 2;
+                    ix = x - textWidth / 2;
+                    iy = y + textHeight / 2;
                     break;
                 default:
-                    x = margin;
-                    y = textHeight + margin;
+                    ix = margin;
+                    iy = textHeight + margin;
                     break;
             }
 
             BufferedImage target = ImageTextTools.addText(source,
-                    waterInput.getText().trim(), font, color,
-                    x, y, blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected(),
-                    shadow, angle, outlineCheck.isSelected(), verticalCheck.isSelected());
+                    textArea.getText(), lineHeight, font, color,
+                    ix, iy, blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected(),
+                    shadow, angle, outlineCheck.isSelected());
 
             return target;
         } catch (Exception e) {

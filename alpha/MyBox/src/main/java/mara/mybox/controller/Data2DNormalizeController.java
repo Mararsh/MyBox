@@ -22,6 +22,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
+        boolean ok = super.checkOptions();
         targetController.setNotInTable(allPages());
         if (all()) {
             normalizeController.columnsRadio.fire();
@@ -31,7 +32,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
             normalizeController.rowsRadio.setDisable(false);
             normalizeController.matrixRadio.setDisable(false);
         }
-        return super.checkOptions();
+        return ok;
     }
 
     @Override

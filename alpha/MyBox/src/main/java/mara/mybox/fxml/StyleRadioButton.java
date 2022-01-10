@@ -106,14 +106,6 @@ public class StyleRadioButton {
                 return new StyleData("colorColorRadio", "", message("Color"), "", "iconDraw.png");
             case "colorRGBRadio":
                 return new StyleData("colorRGBRadio", "", message("RGB"), "", "iconRGB.png");
-            case "colorIncreaseButton":
-                return new StyleData("colorIncreaseButton", message("Increase"), "ALT+2", "iconPlus.png");
-            case "colorDecreaseButton":
-                return new StyleData("colorDecreaseButton", message("Decrease"), "ALT+3", "iconMinus.png");
-            case "colorFilterButton":
-                return new StyleData("colorFilterButton", message("Filter"), "ALT+4", "iconFilter.png");
-            case "colorInvertButton":
-                return new StyleData("colorInvertButton", message("Invert"), "ALT+5", "iconInvert.png");
             case "colorReplaceRadio":
                 return new StyleData("colorReplaceRadio", message("ReplaceColor"), "", "iconReplace.png");
             case "setRadio":

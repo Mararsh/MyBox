@@ -8,7 +8,7 @@ package mara.mybox.value;
 public class HtmlStyles {
 
     public enum HtmlStyle {
-        Default, Console, Blackboard, Ago, Book
+        Default, Console, Blackboard, Ago, Book, Grey
     }
 
     public static final String BaseStyle
@@ -51,6 +51,9 @@ public class HtmlStyles {
     public static final String BookStyle
             = "body { background-color:#F6F1EB; color:black;  }\n"
             + BaseStyle;
+    public static final String GreyStyle
+            = "body { background-color:#ececec; color:black;  }\n"
+            + BaseStyle;
 
     public static HtmlStyles.HtmlStyle styleName(String styleName) {
         for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
@@ -75,6 +78,8 @@ public class HtmlStyles {
                 return HtmlStyles.AgoStyle;
             case Book:
                 return HtmlStyles.BookStyle;
+            case Grey:
+                return HtmlStyles.GreyStyle;
         }
         return HtmlStyles.DefaultStyle;
     }
