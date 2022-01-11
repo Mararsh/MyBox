@@ -26,6 +26,7 @@ import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -43,6 +44,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
     protected float opacity;
     private java.awt.Font font;
     private java.awt.Color color;
+    private String text;
 
     @FXML
     protected TextArea textArea;
@@ -56,7 +58,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
     @FXML
     protected TextField xInput, yInput, marginInput;
     @FXML
-    protected CheckBox outlineCheck, blendTopCheck, ignoreTransparentCheck;
+    protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck, blendTopCheck, ignoreTransparentCheck;
 
     private class PositionType {
 
@@ -121,6 +123,24 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                     UserConfig.setInt(baseName + "TextLineHeight", lineHeight);
                 }
             });
+
+            verticalCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "TextVertical", verticalCheck.isSelected());
+                }
+            });
+            verticalCheck.setSelected(UserConfig.getBoolean(baseName + "TextVertical", false));
+
+            rightToLeftCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "TextRightToLeft", rightToLeftCheck.isSelected());
+                }
+            });
+            rightToLeftCheck.setSelected(UserConfig.getBoolean(baseName + "TextRightToLeft", false));
+
+            rightToLeftCheck.visibleProperty().bind(verticalCheck.selectedProperty());
 
             xInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -411,11 +431,14 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
 
         color = FxColorTools.toAwtColor((Color) colorSetController.rect.getFill());
 
-        final String msg = textArea.getText();
-        final Text text = new Text(msg);
-        text.setFont(FxFont);
-        textWidth = (int) Math.round(text.getLayoutBounds().getWidth());
-        textHeight = (int) Math.round(text.getLayoutBounds().getHeight());
+        text = textArea.getText();
+        if (verticalCheck.isSelected()) {
+            text = TextTools.vertical(text, !rightToLeftCheck.isSelected());
+        }
+        Text textNode = new Text(text);
+        textNode.setFont(FxFont);
+        textWidth = (int) Math.round(textNode.getLayoutBounds().getWidth());
+        textHeight = (int) Math.round(textNode.getLayoutBounds().getHeight());
         return true;
     }
 
@@ -455,7 +478,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             }
 
             BufferedImage target = ImageTextTools.addText(source,
-                    textArea.getText(), lineHeight, font, color,
+                    text, lineHeight, font, color,
                     ix, iy, blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected(),
                     shadow, angle, outlineCheck.isSelected());
 

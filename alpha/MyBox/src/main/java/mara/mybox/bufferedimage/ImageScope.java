@@ -21,6 +21,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -612,6 +613,13 @@ public class ImageScope extends BaseData {
     public void setColorDistanceSquare(int colorDistanceSquare) {
         this.colorDistanceSquare = colorDistanceSquare;
         this.colorDistance = (int) Math.sqrt(colorDistanceSquare);
+    }
+
+    public String getColorTypeName() {
+        if (colorScopeType == null) {
+            return null;
+        }
+        return message(colorScopeType.name());
     }
 
     /*

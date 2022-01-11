@@ -1,8 +1,6 @@
 package mara.mybox.db.table;
 
-import java.io.File;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -60,6 +58,11 @@ public class TableImageScope extends BaseTable<ImageScope> {
 
     public static final String Delete
             = "DELETE FROM image_scope WHERE image_location=? AND name=?";
+
+    @Override
+    public ImageScope readData(ResultSet results) {
+        return decode(results);
+    }
 
     public static List<ImageScope> read(String imageLocation) {
         List<ImageScope> records = new ArrayList<>();
@@ -229,77 +232,6 @@ public class TableImageScope extends BaseTable<ImageScope> {
         } catch (Exception e) {
             MyBoxLog.error(e);
             count = -1;
-        }
-        return count;
-    }
-
-    public static boolean clearScopes(String imageLocation) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM image_scope WHERE image_location='" + imageLocation + "'";
-            statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean delete(ImageScope scope) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(Delete)) {
-            statement.setString(1, scope.getFile());
-            statement.setString(2, scope.getName());
-            statement.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean delete(List<ImageScope> scopes) {
-        if (scopes == null || scopes.isEmpty()) {
-            return true;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            conn.setAutoCommit(false);
-            try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
-                for (ImageScope scope : scopes) {
-                    statement.setString(1, scope.getFile());
-                    statement.setString(2, scope.getName());
-                    statement.executeUpdate();
-                }
-            }
-            conn.commit();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public int clearInvalid(Connection conn) {
-        int count = 0;
-        try {
-            conn.setAutoCommit(true);
-            List<ImageScope> invalid = new ArrayList<>();
-            try ( PreparedStatement query = conn.prepareStatement(queryAllStatement());
-                     ResultSet results = query.executeQuery()) {
-                while (results.next()) {
-                    ImageScope data = readData(results);
-                    if (data.getFile() == null || !new File(data.getFile()).exists()) {
-                        invalid.add(data);
-                    }
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e, tableName);
-            }
-            count = invalid.size();
-            deleteData(conn, invalid);
-            conn.setAutoCommit(true);
-        } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
         }
         return count;
     }

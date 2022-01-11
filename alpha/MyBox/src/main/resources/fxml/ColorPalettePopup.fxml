@@ -25,7 +25,6 @@ License:    Apache License Version 2.0
         </ScrollPane>
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="label" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="paletteButton" mnemonicParsing="false" onMouseEntered="#popPaletteMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -35,6 +34,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+                <Label fx:id="label" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
             <Button fx:id="dataButton" mnemonicParsing="false" onMouseEntered="#popDataMenu">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

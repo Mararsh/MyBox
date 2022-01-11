@@ -55,6 +55,12 @@ License:    Apache License Version 2.0
                                                 <ComboBox fx:id="lineHeightSelector" editable="true" prefWidth="160.0" />
                                              </children>
                                           </FlowPane>
+                                          <HBox spacing="2.0">
+                                             <children>
+                                                <CheckBox fx:id="verticalCheck" mnemonicParsing="false" text="%Vertical" />
+                                                <CheckBox fx:id="rightToLeftCheck" mnemonicParsing="false" text="%RightToLeft" />
+                                             </children>
+                                          </HBox>
                                                         <FlowPane hgap="5.0" layoutX="20.0" layoutY="83.0" prefWrapLength="0.0" vgap="5.0">
                                                             <children>
                                                                 <Label text="%FontFamily" />

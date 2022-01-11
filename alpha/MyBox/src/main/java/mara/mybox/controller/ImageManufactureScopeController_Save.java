@@ -12,6 +12,7 @@ import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -42,9 +43,15 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         synchronized (this) {
             String name = scopeNameInput.getText().trim();
             if (name.isEmpty()) {
+                popError(message("InvalidParameters"));
                 return;
             }
             scope.setName(name);
+            if (sourceFile != null) {
+                scope.setFile(sourceFile.getAbsolutePath());
+            } else {
+                scope.setFile("Unknown");
+            }
             SingletonTask saveTask = new SingletonTask<Void>(this) {
 
                 @Override
@@ -55,7 +62,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
 
                 @Override
                 protected void whenSucceeded() {
-                    scopesSavedController.loadScopes();
+                    scopesSavedController.loadTableData();
                     popSaved();
                 }
             };

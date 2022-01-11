@@ -18,11 +18,11 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class BaseImageController_Image extends BaseImageController_MouseEvents {
-    
+
     public File imageFile() {
         return sourceFile;
     }
-    
+
     @Override
     public void sourceFileChanged(File file) {
         if (file == null) {
@@ -32,19 +32,19 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         framesNumber = 0;
         loadImageFile(file, loadWidth);
     }
-    
+
     public void loadImageFile(File file) {
         loadImageFile(file, loadWidth);
     }
-    
+
     public void loadImageFile(File file, int width) {
         loadImage(file, false, width, frameIndex);
     }
-    
+
     public void loadImageFile(File file, boolean onlyInformation) {
         loadImage(file, onlyInformation, loadWidth, frameIndex);
     }
-    
+
     public void loadImageFile(File file, int width, int index) {
         loadImage(file, false, width, index);
     }
@@ -60,7 +60,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             }
             loadTask = new SingletonTask<Void>(this) {
                 private ImageInformation targetInfo;
-                
+
                 @Override
                 protected boolean handle() {
                     targetInfo = new ImageInformation(file);
@@ -74,7 +74,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                     error = targetInfo.getError();
                     return true;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     recordFileOpened(file);
@@ -91,17 +91,17 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                         popError(error);
                     }
                 }
-                
+
             };
             start(loadTask);
         }
     }
-    
+
     public void askSample(ImageInformation imageInfo) {
         ImageTooLargeController controller = (ImageTooLargeController) openChildStage(Fxmls.ImageTooLargeFxml, true);
         controller.setParameters((BaseImageController) this, imageInfo);
     }
-    
+
     public void loadImage(File file, ImageInformation info) {
         if (info == null) {
             loadImageFile(file);
@@ -115,24 +115,24 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 return;
             }
             loadTask = new SingletonTask<Void>(this) {
-                
+
                 @Override
                 protected boolean handle() {
                     image = info.loadThumbnail(loadWidth);
                     return image != null;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     afterImageLoaded();
                     setImageChanged(exist);
                 }
-                
+
             };
             loadingController = start(loadTask);
         }
     }
-    
+
     public void loadImageInfo(ImageInformation info) {
         if (info == null) {
             loadImageFile(sourceFile);
@@ -144,7 +144,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         loadImage(info.getFile(), info);
     }
-    
+
     public void loadRegion(ImageInformation info) {
         if (info == null) {
             loadImageFile(sourceFile);
@@ -159,23 +159,23 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 return;
             }
             loadTask = new SingletonTask<Void>(this) {
-                
+
                 @Override
                 protected boolean handle() {
                     image = info.loadThumbnail(loadWidth);
                     return image != null;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     loadImage(image);
                 }
-                
+
             };
             loadingController = start(loadTask);
         }
     }
-    
+
     public void loadImage(Image inImage) {
         sourceFile = null;
         imageInformation = null;
@@ -183,7 +183,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         afterImageLoaded();
         setImageChanged(true);
     }
-    
+
     public void loadImage(File sourceFile, ImageInformation imageInformation,
             Image image, boolean changed) {
         this.sourceFile = sourceFile;
@@ -192,7 +192,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         afterImageLoaded();
         setImageChanged(changed);
     }
-    
+
     public void loadImage(Image inImage, int maxWidth) {
         sourceFile = null;
         imageInformation = null;
@@ -201,11 +201,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         afterImageLoaded();
         setImageChanged(true);
     }
-    
+
     public void loadFrame(int index) {
         loadImage(sourceFile, false, loadWidth, index);
     }
-    
+
     public void afterInfoLoaded() {
         if (infoButton != null) {
             infoButton.setDisable(imageInformation == null);
@@ -226,11 +226,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             nextButton.setDisable(imageFile() == null);
         }
     }
-    
+
     public boolean afterImageLoaded() {
         try {
             afterInfoLoaded();
-            
+
             if (imageInformation != null) {
                 frameIndex = imageInformation.getIndex();
                 if (imageInformation.getImageFileInformation() != null) {
@@ -243,7 +243,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 frameIndex = 0;
                 framesNumber = 0;
             }
-            
+
             if (image != null) {
                 setZoomStep(image);
             }
@@ -255,7 +255,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             if (image == null) {
                 return true;
             }
-            
+
             if (sampledView != null) {
                 if (imageInformation != null && imageInformation.isIsSampled()) {
                     NodeStyleTools.setTooltip(sampledView, imageInformation.sampleInformation(image));
@@ -264,25 +264,25 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                     sampledView.setVisible(false);
                 }
             }
-            
+
             if (isPop) {
                 paneSize();
             } else {
                 fitSize();
             }
             refinePane();
-            
+
             if (imageInformation == null) {
                 setImageChanged(true);
             } else {
                 setImageChanged(imageInformation.isIsScaled());
             }
             setMaskStroke();
-            
+
             isPickingColor = false;
             checkPickingColor();
             checkSelect();
-            
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -293,7 +293,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return false;
         }
     }
-    
+
     public void loadMultipleFramesImage(File file) {
         if (file == null || !file.exists() || file.length() == 0) {
             return;
@@ -301,10 +301,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
         controller.open(file);
     }
-    
+
     public void updateImage(Image image) {
         try {
             imageView.setImage(image);
+            refinePane();
 //            fitSize();
             drawMaskControls();
             setImageChanged(true);
@@ -312,7 +313,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     protected void setLoadWidth() {
         if (isSettingValues) {
             return;
@@ -330,7 +331,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             setImageChanged(false);
         }
     }
-    
+
     protected void checkSelect() {
         if (isSettingValues) {
             return;
@@ -345,5 +346,5 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         initMaskRectangleLine(selected);
         updateLabelsTitle();
     }
-    
+
 }

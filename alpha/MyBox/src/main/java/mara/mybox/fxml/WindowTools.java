@@ -27,7 +27,6 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
@@ -450,8 +449,6 @@ public class WindowTools {
                 new TableImageClipboard().clearInvalid(conn);
 
                 new TableImageEditHistory().clearInvalid(conn);
-
-                new TableImageScope().clearInvalid(conn);
 
                 new TableFileBackup().clearInvalid(conn);
 

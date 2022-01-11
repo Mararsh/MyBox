@@ -52,7 +52,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected int pageSize, editingIndex, viewingIndex;
     protected long pagesNumber, dataSize;
     protected long currentPage, startRowOfCurrentPage;  // 0-based
-    protected boolean dataSizeLoaded;
+    protected boolean dataSizeLoaded, loadInBackground;
 
     @FXML
     protected TableView<P> tableView;
@@ -129,7 +129,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
             if (tableView == null) {
                 return;
             }
-
             tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
                 tableChanged();
             });
@@ -217,7 +216,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
         };
-        start(task, message("LoadingTableData"));
+        start(task, !loadInBackground, message("LoadingTableData"));
     }
 
     protected void countPagination(long page) {

@@ -51,11 +51,14 @@ public class ImageTextTools {
         }
     }
 
-    public static BufferedImage addText(BufferedImage backImage, String text, int lineHeight,
-            Font font, Color color, int x, int y, PixelsBlend.ImagesBlendMode blendMode,
+    public static BufferedImage addText(BufferedImage backImage, String text,
+            int lineHeight, Font font, Color color, int x, int y, PixelsBlend.ImagesBlendMode blendMode,
             float opacity, boolean orderReversed, boolean ignoreTransparent,
             int shadow, int angle, boolean isOutline) {
         try {
+            if (text == null || text.isEmpty()) {
+                return backImage;
+            }
             if (opacity > 1.0F || opacity < 0) {
                 opacity = 1.0F;
             }
@@ -98,9 +101,13 @@ public class ImageTextTools {
         }
     }
 
-    public static void addText(Graphics2D g, String text, Font font, Color color,
+    public static void addText(Graphics2D g, String text,
+            Font font, Color color,
             int x, int y, float opacity, int shadow, boolean isOutline) {
         try {
+            if (text == null || text.isEmpty()) {
+                return;
+            }
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setFont(font);

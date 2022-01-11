@@ -29,6 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -55,7 +56,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     protected ComboBox<String> lineHeightSelector, sizeBox, opacitySelector, blendSelector, styleBox, familyBox, angleBox, shadowBox;
     @FXML
-    protected CheckBox outlineCheck, blendTopCheck, ignoreTransparentCheck;
+    protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck, blendTopCheck, ignoreTransparentCheck;
     @FXML
     protected ColorSet colorSetController;
     @FXML
@@ -283,6 +284,26 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             });
             outlineCheck.setSelected(UserConfig.getBoolean(baseName + "TextOutline", false));
 
+            verticalCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "TextVertical", verticalCheck.isSelected());
+                    write(true);
+                }
+            });
+            verticalCheck.setSelected(UserConfig.getBoolean(baseName + "TextVertical", false));
+
+            rightToLeftCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "TextRightToLeft", rightToLeftCheck.isSelected());
+                    write(true);
+                }
+            });
+            rightToLeftCheck.setSelected(UserConfig.getBoolean(baseName + "TextRightToLeft", false));
+
+            rightToLeftCheck.visibleProperty().bind(verticalCheck.selectedProperty());
+
             isSettingValues = false;
 
             textArea.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
@@ -337,6 +358,10 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
                 @Override
                 protected boolean handle() {
+                    String text = textArea.getText();
+                    if (verticalCheck.isSelected()) {
+                        text = TextTools.vertical(text, !rightToLeftCheck.isSelected());
+                    }
                     if (fontWeight == FontWeight.BOLD) {
                         if (fontPosture == FontPosture.REGULAR) {
                             font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, fontSize);
@@ -350,7 +375,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                             font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
                         }
                     }
-                    newImage = FxImageTools.addText(imageView.getImage(), textArea.getText(), lineHeight,
+                    newImage = FxImageTools.addText(imageView.getImage(), text, lineHeight,
                             font, (Color) colorSetController.rect.getFill(), x, y,
                             blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected(),
                             shadow, angle, outlineCheck.isSelected());

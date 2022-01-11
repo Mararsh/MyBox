@@ -74,7 +74,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
     protected void indicateScope() {
-        if (isSettingValues || imageView == null || !scopeView.isVisible()) {
+        if (isSettingValues || imageView == null || !scopeView.isVisible() || scope == null) {
             return;
         }
         synchronized (this) {
@@ -105,9 +105,6 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
                 @Override
                 protected void whenSucceeded() {
-                    if (scope == null) {
-                        return;
-                    }
                     scopeView.setImage(scopedImage);
                     scopeView.setFitWidth(imageView.getFitWidth());
                     scopeView.setFitHeight(imageView.getFitHeight());
