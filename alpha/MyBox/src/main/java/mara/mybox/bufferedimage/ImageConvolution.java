@@ -206,10 +206,7 @@ public class ImageConvolution extends PixelsOperation {
         }
         int width = source.getWidth();
         int height = source.getHeight();
-        int imageType = source.getType();
-        if (imageType == BufferedImage.TYPE_CUSTOM) {
-            imageType = BufferedImage.TYPE_INT_ARGB;
-        }
+        int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(width, height, imageType);
         imageOp.filter(source, target);
         return target;

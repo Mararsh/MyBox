@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 
 /**
@@ -274,10 +272,7 @@ public class MargionTools {
             if (addBottom) {
                 totalHegiht += MarginWidth;
             }
-            int imageType = source.getType();
-            if (addColor.getRGB() == Colors.TRANSPARENT.getRGB()) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(totalWidth, totalHegiht, imageType);
             Graphics2D g = target.createGraphics();
             g.setColor(addColor);

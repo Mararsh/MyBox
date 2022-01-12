@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 
 /**
@@ -96,10 +94,7 @@ public class TransformTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; ++j) {
                 int l = 0;
@@ -124,10 +119,7 @@ public class TransformTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int i = 0; i < width; ++i) {
                 int t = 0;

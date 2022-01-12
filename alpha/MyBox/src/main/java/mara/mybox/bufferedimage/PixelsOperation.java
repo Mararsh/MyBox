@@ -93,10 +93,7 @@ public abstract class PixelsOperation {
             return image;
         }
         try {
-            int imageType = image.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean isShowScope = (operationType == OperationType.ShowScope);
             boolean isWhole = (scope == null || scope.getScopeType() == ImageScope.ScopeType.All);
@@ -167,10 +164,7 @@ public abstract class PixelsOperation {
                 return image;
             }
             boolean isShowScope = operationType == OperationType.ShowScope;
-            int imageType = image.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean excluded = scope.isColorExcluded();
             if (excludeScope) {

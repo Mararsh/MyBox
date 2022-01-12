@@ -3,13 +3,16 @@ package mara.mybox.bufferedimage;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import mara.mybox.controller.ControlImageText;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Colors;
@@ -29,10 +32,7 @@ public class ImageTextTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
@@ -51,41 +51,92 @@ public class ImageTextTools {
         }
     }
 
-    public static BufferedImage addText(BufferedImage backImage, String text,
-            int lineHeight, Font font, Color color, int x, int y, PixelsBlend.ImagesBlendMode blendMode,
-            float opacity, boolean orderReversed, boolean ignoreTransparent,
-            int shadow, int angle, boolean isOutline) {
+    public static BufferedImage addText(BufferedImage backImage, ControlImageText optionsController) {
         try {
+            String text = optionsController.getText();
             if (text == null || text.isEmpty()) {
                 return backImage;
             }
+            float opacity = optionsController.getOpacity();
             if (opacity > 1.0F || opacity < 0) {
                 opacity = 1.0F;
             }
             int width = backImage.getWidth();
             int height = backImage.getHeight();
-            int imageType = backImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
-            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            BufferedImage foreImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = foreImage.createGraphics();
+            Color color = optionsController.getAwtColor();
             boolean noBlend = color.equals(Colors.TRANSPARENT);
             if (noBlend) {
                 g.drawImage(backImage, 0, 0, width, height, null);
             } else {
                 g.setBackground(Colors.TRANSPARENT);
             }
-            g.rotate(Math.toRadians(angle), x, y);
-            float textOpacity = noBlend ? opacity : 1.0F;
+            Font font = optionsController.getFont();
+            FontMetrics metrics = g.getFontMetrics(font);
+            optionsController.countBaseXY(g, metrics, width, height);
+            int baseX = optionsController.getBaseX();
+            int baseY = optionsController.getBaseY();
+            int linex = baseX, liney = baseY, lineHeight = optionsController.getLineHeight();
             String[] lines = text.split("\n", -1);
-            int liney = y;
-            for (String line : lines) {
-                addText(g, line, font, color, x, liney, textOpacity, shadow, isOutline);
-                if (lineHeight > 0) {
-                    liney += lineHeight;
+            int lend = lines.length - 1;
+            int shadow = optionsController.getShadow();
+            boolean isOutline = optionsController.isOutline();
+            float textOpacity = noBlend ? opacity : 1.0F;
+            g.rotate(Math.toRadians(optionsController.getAngle()), baseX, baseY);
+            if (optionsController.isVertical()) {
+                if (optionsController.isLeftToRight()) {
+                    for (int r = 0; r <= lend; r++) {
+                        String line = lines[r];
+                        liney = baseY;
+                        double wmax = 0;
+                        for (int i = 0; i < line.length(); i++) {
+                            String s = line.charAt(i) + "";
+                            addText(g, s, font, color, linex, liney, textOpacity, shadow, isOutline);
+                            Rectangle2D sBound = metrics.getStringBounds(s, g);
+                            if (lineHeight > 0) {
+                                liney += lineHeight;
+                            } else {
+                                liney += sBound.getHeight();
+                            }
+                            double sWidth = sBound.getWidth();
+                            if (sWidth > wmax) {
+                                wmax = sWidth;
+                            }
+                        }
+                        linex += wmax;
+                    }
                 } else {
-                    liney += g.getFontMetrics(font).getStringBounds(line, g).getHeight();
+                    for (int r = lend; r >= 0; r--) {
+                        String line = lines[r];
+                        liney = baseY;
+                        double wmax = 0;
+                        for (int i = 0; i < line.length(); i++) {
+                            String s = line.charAt(i) + "";
+                            addText(g, s, font, color, linex, liney, textOpacity, shadow, isOutline);
+                            Rectangle2D sBound = metrics.getStringBounds(s, g);
+                            if (lineHeight > 0) {
+                                liney += lineHeight;
+                            } else {
+                                liney += sBound.getHeight();
+                            }
+                            double sWidth = sBound.getWidth();
+                            if (sWidth > wmax) {
+                                wmax = sWidth;
+                            }
+                        }
+                        linex += wmax;
+                    }
+                }
+
+            } else {
+                for (String line : lines) {
+                    addText(g, line, font, color, linex, liney, textOpacity, shadow, isOutline);
+                    if (lineHeight > 0) {
+                        liney += lineHeight;
+                    } else {
+                        liney += g.getFontMetrics(font).getStringBounds(line, g).getHeight();
+                    }
                 }
             }
             g.dispose();
@@ -93,7 +144,8 @@ public class ImageTextTools {
                 return foreImage;
             } else {
                 return ImageBlend.blend(foreImage, backImage, 0, 0,
-                        blendMode, opacity, orderReversed, ignoreTransparent);
+                        optionsController.getBlendMode(), opacity,
+                        optionsController.orderReversed(), optionsController.ignoreTransparent());
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

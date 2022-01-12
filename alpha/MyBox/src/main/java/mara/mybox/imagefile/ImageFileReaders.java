@@ -132,8 +132,6 @@ public class ImageFileReaders {
             return null;
         }
         try {
-            SingletonTask task = imageInfo.getTask();
-            LoadingController loading = task != null ? task.getLoading() : null;
             ImageReadParam param = reader.getDefaultReadParam();
             Rectangle region = imageInfo.getRegion();
             if (region != null) {

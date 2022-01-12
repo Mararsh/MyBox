@@ -11,7 +11,6 @@ import mara.mybox.color.SRGB;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Languages;
 

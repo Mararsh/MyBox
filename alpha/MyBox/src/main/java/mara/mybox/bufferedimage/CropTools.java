@@ -20,10 +20,7 @@ public class CropTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             int bgPixel = bgColor.getRGB();
             for (int j = 0; j < height; ++j) {
@@ -59,10 +56,7 @@ public class CropTools {
             int y2 = (int) Math.round(Math.min(height - 1, bound.getBigY()));
             int w = x2 - x1 + 1;
             int h = y2 - y1 + 1;
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(w, h, imageType);
             int bgPixel = bgColor.getRGB();
             for (int y = 0; y < h; y++) {

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageTextBatch">
+    <children>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="%Base">
+                    <content>
+                        <VBox fx:id="baseBox" spacing="5.0">
+                            <children>
+                                <Label text="%Text" />
+                                <TextArea fx:id="textArea" minHeight="60.0" />
+                                <VBox fx:id="blendBox1" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                    <children>
+                                        <Label text="%Position" />
+                                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
+                                                <RadioButton fx:id="leftTopRadio" mnemonicParsing="false" selected="true" text="%LeftTop">
+                                       <toggleGroup>
+                                                        <ToggleGroup fx:id="positionGroup" />
+                                       </toggleGroup></RadioButton>
+                                                <RadioButton fx:id="rightTopRadio" mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" />
+                                                <RadioButton fx:id="rightBottomRadio" mnemonicParsing="false" text="%RightBottom" toggleGroup="$positionGroup" />
+                                                <RadioButton fx:id="leftBottomRadio" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
+                                                <RadioButton fx:id="centerRadio" mnemonicParsing="false" text="%Center" toggleGroup="$positionGroup" />
+                                                <RadioButton fx:id="customRadio" mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" />
+                                                <TextField prefWidth="90.0" promptText="X" fx:id="xInput" />
+                                                <TextField fx:id="yInput" prefWidth="90.0" promptText="Y" />
+                                            </children>
+                                        </FlowPane>
+                              <FlowPane hgap="5.0" layoutX="15.0" layoutY="35.0" prefWrapLength="0.0" vgap="5.0">
+                                 <children>
+                                                <Label text="%Margins" />
+                                                <TextField fx:id="marginInput" prefWidth="80.0" text="20" />
+                                 </children>
+                              </FlowPane>
+                              <Label fx:id="sizeLabel" />
+                                    </children>
+                                </VBox>
+                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconGo.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="%Style">
+                    <content>
+                        <VBox spacing="5.0">
+                            <children>
+                                <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%LineHeight" />
+                                        <ComboBox fx:id="lineHeightSelector" editable="true" prefWidth="160.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%FontColor" />
+                                        <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%FontFamily" />
+                                        <ComboBox fx:id="familyBox" prefWidth="200.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%FontStyle" />
+                                        <ComboBox fx:id="styleBox" prefWidth="160.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%FontSize" />
+                                        <ComboBox fx:id="sizeBox" editable="true" prefWidth="100.0" promptText="%Size" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%Shadow" />
+                                        <ComboBox fx:id="shadowBox" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%Angle" />
+                                        <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </FlowPane>
+                                <HBox spacing="2.0">
+                                    <children>
+                                        <CheckBox fx:id="verticalCheck" mnemonicParsing="false" text="%VerticalSettingOfTypes" />
+                                        <CheckBox fx:id="rightToLeftCheck" mnemonicParsing="false" text="%RightToLeft" />
+                                    </children>
+                                </HBox>
+                                <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%Outline" />
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="%BlendMode">
+                    <content>
+                        <VBox fx:id="blendBox" spacing="5.0">
+                            <children>
+                                <FlowPane fx:id="modePane" hgap="5.0" layoutX="10.0" layoutY="389.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                    <children>
+                                        <Label fx:id="blendLabel" text="%BlendMode" />
+                                        <ComboBox fx:id="blendSelector" prefWidth="200.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane fx:id="opacityPane" hgap="5.0" layoutX="10.0" layoutY="161.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%Opacity">
+                                            <FlowPane.margin>
+                                                <Insets />
+                                            </FlowPane.margin>
+                                        </Label>
+                                        <ComboBox fx:id="opacitySelector" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </FlowPane>
+                                <CheckBox fx:id="blendTopCheck" mnemonicParsing="false" selected="true" text="%OnTop" />
+                                <CheckBox fx:id="ignoreTransparentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" wrapText="true" />
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

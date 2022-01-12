@@ -215,17 +215,15 @@ public class ImageScopeTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
             g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
             DoubleRectangle rect = ellipse.getRectangle();
             g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()), (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
@@ -244,17 +242,15 @@ public class ImageScopeTools {
             if (!rect.isValid(width, height)) {
                 return source;
             }
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
             g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
             g.drawRect((int) rect.getSmallX(), (int) rect.getSmallY(), (int) rect.getWidth(), (int) rect.getHeight());
             g.dispose();
@@ -272,17 +268,15 @@ public class ImageScopeTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
             g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
             g.drawOval((int) circle.getCenterX() - (int) circle.getRadius(), (int) circle.getCenterY() - (int) circle.getRadius(), 2 * (int) circle.getRadius(), 2 * (int) circle.getRadius());
             g.dispose();
@@ -301,10 +295,7 @@ public class ImageScopeTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
@@ -312,7 +303,8 @@ public class ImageScopeTools {
             g.setComposite(ac);
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setColor(lineColor);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             //            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
             g.setStroke(stroke);
             for (int i = 0; i < rows.size(); ++i) {

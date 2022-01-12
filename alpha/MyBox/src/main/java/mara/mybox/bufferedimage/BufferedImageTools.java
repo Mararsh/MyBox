@@ -15,11 +15,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import javax.imageio.ImageIO;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.SystemTools;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.tools.MessageDigestTools;
-import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -114,13 +110,7 @@ public class BufferedImageTools {
     public static BufferedImage addArc(BufferedImage source, int arc, Color bgColor) {
         int width = source.getWidth();
         int height = source.getHeight();
-        int imageType = source.getType();
-        if (imageType == BufferedImage.TYPE_CUSTOM) {
-            imageType = BufferedImage.TYPE_INT_ARGB;
-        }
-        if (bgColor.getRGB() == Colors.TRANSPARENT.getRGB()) {
-            imageType = BufferedImage.TYPE_INT_ARGB;
-        }
+        int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(width, height, imageType);
         Graphics2D g = target.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -130,7 +120,6 @@ public class BufferedImageTools {
         g.setClip(new RoundRectangle2D.Double(0, 0, width, height, arc, arc));
         g.drawImage(source, 0, 0, null);
         g.dispose();
-
         return target;
     }
 

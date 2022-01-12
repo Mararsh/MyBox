@@ -33,6 +33,7 @@ import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ShadowTools;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ControlImageText;
 import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
@@ -140,14 +141,9 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image addText(Image image, String textString, int lineHeight,
-            java.awt.Font font, Color color, int x, int y,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed,
-            boolean ignoreTransparent, int shadow, int angle, boolean isOutline) {
+    public static Image addText(Image image, ControlImageText optionsController) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageTextTools.addText(source, textString, lineHeight,
-                font, toAwtColor(color), x, y, blendMode, opacity, orderReversed,
-                ignoreTransparent, shadow, angle, isOutline);
+        BufferedImage target = ImageTextTools.addText(source, optionsController);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

@@ -16,10 +16,7 @@ public class ScaleTools {
         if (width <= 0 || height <= 0 || (width == source.getWidth() && height == source.getHeight())) {
             return source;
         }
-        int imageType = source.getType();
-        if (imageType == BufferedImage.TYPE_CUSTOM) {
-            imageType = BufferedImage.TYPE_INT_ARGB;
-        }
+        int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(width, height, imageType);
         Graphics2D g = target.createGraphics();
         if (antiAlias == 1) {
@@ -163,10 +160,7 @@ public class ScaleTools {
             int[] wh = ScaleTools.scaleValues(source.getWidth(), source.getHeight(), targetW, targetH, BufferedImageTools.KeepRatioType.BaseOnSmaller);
             int finalW = wh[0];
             int finalH = wh[1];
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(targetW, targetH, imageType);
             Graphics2D g = target.createGraphics();
             g.setBackground(Colors.TRANSPARENT);

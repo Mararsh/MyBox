@@ -39,10 +39,7 @@ public class PenTools {
             int y = (int) Math.round(ellipse.getCenterY());
             int rx = (int) Math.round(ellipse.getRadiusX());
             int ry = (int) Math.round(ellipse.getRadiusY());
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
@@ -56,7 +53,8 @@ public class PenTools {
                 }
                 BasicStroke stroke;
                 if (dotted) {
-                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{strokeWidth, strokeWidth}, 0.0F);
+                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                        strokeWidth, strokeWidth}, 0.0F);
                 } else {
                     stroke = new BasicStroke(strokeWidth);
                 }
@@ -129,10 +127,7 @@ public class PenTools {
             int x = (int) Math.round(circle.getCenterX());
             int y = (int) Math.round(circle.getCenterY());
             int r = (int) Math.round(circle.getRadius());
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
@@ -146,7 +141,8 @@ public class PenTools {
                 }
                 BasicStroke stroke;
                 if (dotted) {
-                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{strokeWidth, strokeWidth}, 0.0F);
+                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                        strokeWidth, strokeWidth}, 0.0F);
                 } else {
                     stroke = new BasicStroke(strokeWidth);
                 }
@@ -217,10 +213,7 @@ public class PenTools {
             Map<String, int[]> xy = polylineData.getIntXY();
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage foreImage = new BufferedImage(width, height, imageType);
             Graphics2D g = foreImage.createGraphics();
             if (strokeColor.getRGB() == 0) {
@@ -232,7 +225,8 @@ public class PenTools {
             }
             BasicStroke stroke;
             if (dotted) {
-                stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{strokeWidth, strokeWidth}, 0.0F);
+                stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                    strokeWidth, strokeWidth}, 0.0F);
             } else {
                 stroke = new BasicStroke(strokeWidth);
             }
@@ -269,10 +263,7 @@ public class PenTools {
             }
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage linesImage = new BufferedImage(width, height, imageType);
             Graphics2D linesg = linesImage.createGraphics();
             linesg.setBackground(Color.WHITE);
@@ -324,10 +315,7 @@ public class PenTools {
             Map<String, int[]> xy = polygonData.getIntXY();
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
@@ -341,7 +329,8 @@ public class PenTools {
                 }
                 BasicStroke stroke;
                 if (dotted) {
-                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{strokeWidth, strokeWidth}, 0.0F);
+                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                        strokeWidth, strokeWidth}, 0.0F);
                 } else {
                     stroke = new BasicStroke(strokeWidth);
                 }
@@ -416,10 +405,7 @@ public class PenTools {
             int y1 = (int) Math.round(rect.getSmallY());
             int x2 = (int) Math.round(rect.getBigX());
             int y2 = (int) Math.round(rect.getBigY());
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
@@ -433,7 +419,8 @@ public class PenTools {
                 }
                 BasicStroke stroke;
                 if (dotted) {
-                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{strokeWidth, strokeWidth}, 0.0F);
+                    stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                        strokeWidth, strokeWidth}, 0.0F);
                 } else {
                     stroke = new BasicStroke(strokeWidth);
                 }
@@ -514,10 +501,7 @@ public class PenTools {
             }
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage foreImage = new BufferedImage(width, height, imageType);
             Graphics2D g = foreImage.createGraphics();
             if (strokeColor.getRGB() == 0) {
@@ -529,7 +513,8 @@ public class PenTools {
             }
             BasicStroke stroke;
             if (dotted) {
-                stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{strokeWidth, strokeWidth}, 0.0F);
+                stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                    strokeWidth, strokeWidth}, 0.0F);
             } else {
                 stroke = new BasicStroke(strokeWidth);
             }
@@ -581,10 +566,7 @@ public class PenTools {
             }
             int width = srcImage.getWidth();
             int height = srcImage.getHeight();
-            int imageType = srcImage.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage foreImage = new BufferedImage(width, height, imageType);
             Graphics2D g = foreImage.createGraphics();
             if (strokeColor.getRGB() == 0) {
@@ -596,7 +578,8 @@ public class PenTools {
             }
             BasicStroke stroke;
             if (dotted) {
-                stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{strokeWidth, strokeWidth}, 0.0F);
+                stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                    strokeWidth, strokeWidth}, 0.0F);
             } else {
                 stroke = new BasicStroke(strokeWidth);
             }
@@ -649,10 +632,7 @@ public class PenTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D gt = target.createGraphics();
             gt.drawImage(source, 0, 0, width, height, null);
@@ -736,4 +716,5 @@ public class PenTools {
                 && (y >= Math.min(line.getStartY(), line.getEndY()))
                 && (y <= Math.max(line.getStartY(), line.getEndY()));
     }
+
 }
