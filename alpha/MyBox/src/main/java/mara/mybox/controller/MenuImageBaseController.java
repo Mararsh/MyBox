@@ -32,7 +32,7 @@ public class MenuImageBaseController extends MenuController {
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton, infoAction;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, rulerYCheck, coordinateCheck, selectAreaCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, selectAreaCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthBox;
 
@@ -141,31 +141,32 @@ public class MenuImageBaseController extends MenuController {
                     }
                 });
             } else {
-                rulerXCheck.setSelected(UserConfig.getBoolean(baseName + "RulerX", false));
+                rulerXCheck.setSelected(UserConfig.getBoolean(baseName + "RulerXY", false));
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "RulerX", newValue);
-                        imageController.checkRulerX();
+                        UserConfig.setBoolean(baseName + "RulerXY", newValue);
+                        imageController.drawMaskRulerXY();
+                        imageController.drawMaskGrid();
                     }
                 });
             }
 
-            if (imageController.rulerYCheck != null) {
-                rulerYCheck.setSelected(imageController.rulerYCheck.isSelected());
-                rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (imageController.gridCheck != null) {
+                gridCheck.setSelected(imageController.gridCheck.isSelected());
+                gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        imageController.rulerYCheck.setSelected(newValue);
+                        imageController.gridCheck.setSelected(newValue);
                     }
                 });
             } else {
-                rulerYCheck.setSelected(UserConfig.getBoolean(baseName + "RulerY", false));
-                rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                gridCheck.setSelected(UserConfig.getBoolean(baseName + "GridLines", false));
+                gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "RulerY", newValue);
-                        imageController.checkRulerY();
+                        UserConfig.setBoolean(baseName + "GridLines", newValue);
+                        imageController.drawMaskGrid();
                     }
                 });
             }

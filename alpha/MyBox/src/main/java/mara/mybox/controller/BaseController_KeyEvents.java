@@ -5,7 +5,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Popup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 
@@ -601,7 +600,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
         }
 
-        if (getMyWindow() != null && !(getMyWindow() instanceof Popup) && !targetIsTextInput()) {
+        if (!isPopup() && !targetIsTextInput()) {
             return controlAltFilter(event);
         }
         return false;

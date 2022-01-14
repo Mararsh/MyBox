@@ -22,7 +22,9 @@ public class AlphaTools {
         }
         BufferedImage checked = source;
         if (FileExtensions.NoAlphaImages.contains(targetFormat.toLowerCase())) {
-            checked = AlphaTools.removeAlpha(source);
+            if (hasAlpha(source)) {
+                checked = AlphaTools.premultipliedAlpha(source, true);
+            }
         }
         return checked;
     }

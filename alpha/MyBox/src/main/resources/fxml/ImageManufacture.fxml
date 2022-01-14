@@ -366,15 +366,15 @@ License:    Apache License Version 2.0
                                                             </graphic>
                                                         </Button>
       
-                                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                                              <graphic>
-                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                      <image>
-                                                                          <Image url="@../buttons/Red/iconSave.png" />
-                                                                      </image>
-                                                                  </ImageView>
-                                                              </graphic>
-                                                          </Button>
+                                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconSave.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </FlowPane>
                                             </children>
@@ -394,15 +394,15 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                                             <children>
-                                                              <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconMenu.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </CheckBox>
+                                                                <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconMenu.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
                                                                 <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -421,20 +421,20 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </CheckBox>
-                                                                <CheckBox fx:id="rulerYCheck" mnemonicParsing="false">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconYRuler.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
                                                                 <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
                                                                                 <Image url="@../buttons/Red/iconXRuler.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
+                                                                <CheckBox fx:id="gridCheck" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconGrid.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -711,7 +711,7 @@ License:    Apache License Version 2.0
             </BorderPane.margin>
         </VBox>
     </center>
-   <padding>
-      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-   </padding>
+    <padding>
+        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+    </padding>
 </BorderPane>

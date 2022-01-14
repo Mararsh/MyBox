@@ -29,7 +29,6 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     protected ImageManufactureColorController colorController;
     protected ImageManufactureEffectsController effectController;
     protected ImageManufactureEnhancementController enhancementController;
-    protected ImageManufactureRichTextController richTextController;
     protected ImageManufactureTextController textController;
     protected ImageManufacturePenController penController;
     protected ImageManufactureTransformController transformController;
@@ -174,13 +173,6 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                 }
                 textController.paneExpanded();
                 currentController = textController;
-            } else if (currentPane.equals(richTextPane)) {
-                controller = checkPaneStatus(currentPane, Fxmls.ImageManufactureRichTextFxml);
-                if (controller != null) {
-                    richTextController = (ImageManufactureRichTextController) controller;
-                }
-                richTextController.paneExpanded();
-                currentController = richTextController;
             }
 
         } catch (Exception e) {
@@ -231,8 +223,6 @@ public class ImageManufactureOperationsController extends ImageViewerController 
             effectController.resetOperationPane();
         } else if (enhancementController == currentController) {
             enhancementController.resetOperationPane();
-        } else if (richTextController == currentController) {
-            richTextController.resetOperationPane();
         } else if (textController == currentController) {
             textController.resetOperationPane();
         } else if (penController == currentController) {

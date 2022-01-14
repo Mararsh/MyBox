@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.stage.Window;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
@@ -153,22 +154,23 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
     protected void initViewControls() {
         try {
             if (rulerXCheck != null) {
-                rulerXCheck.setSelected(UserConfig.getBoolean(baseName + "RulerX", false));
+                rulerXCheck.setSelected(UserConfig.getBoolean(baseName + "RulerXY", false));
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "RulerX", rulerXCheck.isSelected());
-                        checkRulerX();
+                        UserConfig.setBoolean(baseName + "RulerXY", rulerXCheck.isSelected());
+                        drawMaskRulerXY();
+                        drawMaskGrid();
                     }
                 });
             }
-            if (rulerYCheck != null) {
-                rulerYCheck.setSelected(UserConfig.getBoolean(baseName + "RulerY", false));
-                rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (gridCheck != null) {
+                gridCheck.setSelected(UserConfig.getBoolean(baseName + "GridLines", false));
+                gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "RulerY", rulerYCheck.isSelected());
-                        checkRulerY();
+                        UserConfig.setBoolean(baseName + "GridLines", gridCheck.isSelected());
+                        drawMaskGrid();
                     }
                 });
             }
@@ -189,16 +191,17 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
     }
 
-    protected void checkRulerX() {
+    public void drawMaskRulerXY() {
         drawMaskRulerX();
+        drawMaskRulerY();
     }
 
-    public void drawMaskRulerX() {
+    private void drawMaskRulerX() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerX();
-        if (UserConfig.getBoolean(baseName + "RulerX", false)) {
+        if (UserConfig.getBoolean(baseName + "RulerXY", false)) {
             Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
             double imageWidth = getImageWidth() / widthRatio();
             double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
@@ -235,7 +238,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
     }
 
-    public void clearMaskRulerX() {
+    private void clearMaskRulerX() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
@@ -249,16 +252,12 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
     }
 
-    protected void checkRulerY() {
-        drawMaskRulerY();
-    }
-
-    public void drawMaskRulerY() {
+    private void drawMaskRulerY() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerY();
-        if (UserConfig.getBoolean(baseName + "RulerY", false)) {
+        if (UserConfig.getBoolean(baseName + "RulerXY", false)) {
             Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
             double imageHeight = getImageHeight() / heightRatio();
             double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
@@ -294,7 +293,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
     }
 
-    public void clearMaskRulerY() {
+    private void clearMaskRulerY() {
         if (maskPane == null || imageView.getImage() == null) {
             return;
         }
@@ -302,6 +301,160 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         nodes.addAll(maskPane.getChildren());
         for (Node node : nodes) {
             if (node.getId() != null && node.getId().startsWith("MaskRulerY")) {
+                maskPane.getChildren().remove(node);
+                node = null;
+            }
+        }
+    }
+
+    public void drawMaskGrid() {
+        drawMaskGridX();
+        drawMaskGridY();
+    }
+
+    private void drawMaskGridX() {
+        if (maskPane == null || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        clearMaskGridX();
+        if (UserConfig.getBoolean(baseName + "GridLines", false)) {
+            Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
+            int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
+            double imageWidth = getImageWidth() / widthRatio();
+            double imageHeight = getImageHeight() / heightRatio();
+            double wratio = imageView.getBoundsInParent().getWidth() / imageWidth;
+            double hratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            int istep = getRulerStep(imageWidth);
+            int interval = UserConfig.getInt("GridLinesInterval", -1);
+            interval = interval <= 0 ? istep : interval;
+            float opacity = 0.1f;
+            try {
+                opacity = Float.valueOf(UserConfig.getString("GridLinesOpacity", "0.1"));
+            } catch (Exception e) {
+            }
+            for (int i = interval; i < imageWidth; i += interval) {
+                double x = i * wratio;
+                Line line = new Line(x, 0, x, imageHeight * hratio);
+                line.setId("GridLinesX" + i);
+                line.setStroke(lineColor);
+                line.setStrokeWidth(lineWidth);
+                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
+                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
+                line.setOpacity(opacity);
+                maskPane.getChildren().add(line);
+            }
+            int interval10 = interval * 10;
+            for (int i = interval10; i < imageWidth; i += interval10) {
+                double x = i * wratio;
+                Line line = new Line(x, 0, x, imageHeight * hratio);
+                line.setId("GridLinesX" + i);
+                line.setStroke(lineColor);
+                line.setStrokeWidth(lineWidth + 1);
+                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
+                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
+                line.setOpacity(opacity);
+                maskPane.getChildren().add(line);
+            }
+            if (!UserConfig.getBoolean(baseName + "RulerXY", false)) {
+                int step10 = istep * 10;
+                String style = " -fx-font-size: 0.8em; ";
+                for (int i = step10; i < imageWidth; i += step10) {
+                    double x = i * wratio;
+                    Text text = new Text(i + " ");
+                    text.setStyle(style);
+                    text.setFill(lineColor);
+                    text.setLayoutX(imageView.getLayoutX() + x - 10);
+                    text.setLayoutY(imageView.getLayoutY() + 15);
+                    text.setId("GridLinesXtext" + i);
+                    maskPane.getChildren().add(text);
+                }
+            }
+        }
+    }
+
+    private void drawMaskGridY() {
+        if (maskPane == null || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        clearMaskGridY();
+        if (UserConfig.getBoolean(baseName + "GridLines", false)) {
+            Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
+            int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
+            double imageWidth = getImageWidth() / widthRatio();
+            double imageHeight = getImageHeight() / heightRatio();
+            double wratio = imageView.getBoundsInParent().getWidth() / imageWidth;
+            double hratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            int istep = getRulerStep(imageHeight);
+            int interval = UserConfig.getInt("GridLinesInterval", -1);
+            interval = interval <= 0 ? istep : interval;
+            double w = imageWidth * wratio;
+            float opacity = 0.1f;
+            try {
+                opacity = Float.valueOf(UserConfig.getString("GridLinesOpacity", "0.1"));
+            } catch (Exception e) {
+            }
+            for (int j = interval; j < imageHeight; j += interval) {
+                double y = j * hratio;
+                Line line = new Line(0, y, w, y);
+                line.setId("GridLinesY" + j);
+                line.setStroke(lineColor);
+                line.setStrokeWidth(lineWidth);
+                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
+                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
+                line.setOpacity(opacity);
+                maskPane.getChildren().add(line);
+            }
+            int interval10 = interval * 10;
+            for (int j = interval10; j < imageHeight; j += interval10) {
+                double y = j * hratio;
+                Line line = new Line(0, y, w, y);
+                line.setId("GridLinesY" + j);
+                line.setStroke(lineColor);
+                line.setStrokeWidth(lineWidth + 2);
+                line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
+                line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
+                line.setOpacity(opacity);
+                maskPane.getChildren().add(line);
+            }
+            if (!UserConfig.getBoolean(baseName + "RulerXY", false)) {
+                String style = " -fx-font-size: 0.8em; ";
+                int step10 = istep * 10;
+                for (int j = step10; j < imageHeight; j += step10) {
+                    double y = j * hratio;
+                    Text text = new Text(j + " ");
+                    text.setStyle(style);
+                    text.setFill(lineColor);
+                    text.setLayoutX(imageView.getLayoutX());
+                    text.setLayoutY(imageView.getLayoutY() + y + 8);
+                    text.setId("GridLinesYtext" + j);
+                    maskPane.getChildren().add(text);
+                }
+            }
+        }
+    }
+
+    private void clearMaskGridX() {
+        if (maskPane == null || imageView.getImage() == null) {
+            return;
+        }
+        List<Node> nodes = new ArrayList<>();
+        nodes.addAll(maskPane.getChildren());
+        for (Node node : nodes) {
+            if (node.getId() != null && node.getId().startsWith("GridLinesX")) {
+                maskPane.getChildren().remove(node);
+                node = null;
+            }
+        }
+    }
+
+    private void clearMaskGridY() {
+        if (maskPane == null || imageView.getImage() == null) {
+            return;
+        }
+        List<Node> nodes = new ArrayList<>();
+        nodes.addAll(maskPane.getChildren());
+        for (Node node : nodes) {
+            if (node.getId() != null && node.getId().startsWith("GridLinesY")) {
                 maskPane.getChildren().remove(node);
                 node = null;
             }
@@ -316,6 +469,39 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
 
     public void clear() {
 
+    }
+
+    /*
+        static
+     */
+    public static void updateMaskRulerXY() {
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof BaseImageController_Mask) {
+                try {
+                    BaseImageController_Mask controller = (BaseImageController_Mask) object;
+                    controller.drawMaskRulerXY();
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
+    public static void updateMaskGrid() {
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof BaseImageController_Mask) {
+                try {
+                    BaseImageController_Mask controller = (BaseImageController_Mask) object;
+                    controller.drawMaskGrid();
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 
 }

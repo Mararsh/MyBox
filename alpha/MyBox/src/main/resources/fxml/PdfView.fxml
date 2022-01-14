@@ -130,20 +130,20 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </CheckBox>
-                                                                <CheckBox fx:id="rulerYCheck" mnemonicParsing="false">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconYRuler.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
                                                                 <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
                                                                                 <Image url="@../buttons/Red/iconXRuler.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
+                                                                <CheckBox fx:id="gridCheck" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconGrid.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -708,7 +708,7 @@ License:    Apache License Version 2.0
     <bottom>
         <Label fx:id="bottomLabel" />
     </bottom>
-   <padding>
-      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-   </padding>
+    <padding>
+        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+    </padding>
 </BorderPane>

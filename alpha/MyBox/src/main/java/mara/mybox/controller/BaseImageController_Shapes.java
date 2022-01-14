@@ -12,6 +12,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.stage.Window;
 import static mara.mybox.controller.BaseImageController_ImageView.DefaultAnchorColor;
 import static mara.mybox.controller.BaseImageController_ImageView.DefaultStrokeColor;
 import mara.mybox.data.DoubleCircle;
@@ -70,8 +71,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         try {
             setMaskStroke();
 
-            checkRulerX();
-            checkRulerY();
+            drawMaskRulerXY();
+            drawMaskGrid();
             checkCoordinate();
 
             drawMaskRectangleLine();
@@ -118,8 +119,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
 
             checkCoordinate();
-            checkRulerX();
-            checkRulerY();
+            drawMaskRulerXY();
 
             double strokeWidth = UserConfig.getInt("StrokeWidth", 2);
             setMaskLinesStroke(strokeColor, strokeWidth, true);
@@ -241,9 +241,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public void initMaskControls(boolean show) {
         try {
-            drawMaskRulerX();
-            drawMaskRulerY();
-
+            drawMaskRulerXY();
+            drawMaskGrid();
             initMaskRectangleLine(show);
             initMaskCircleLine(show);
             initMaskEllipseLine(show);
@@ -275,8 +274,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
             initMaskPolylineLine(true);
             initMaskPenlines(true);
-            drawMaskRulerX();
-            drawMaskRulerY();
+            drawMaskRulerXY();
+            drawMaskGrid();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -994,6 +993,24 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
         }
         return true;
+    }
+
+    /*
+        static
+     */
+    public static void updateMaskStroke() {
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof BaseImageController_Mask) {
+                try {
+                    BaseImageController controller = (BaseImageController) object;
+                    controller.setMaskStroke();
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 
 }

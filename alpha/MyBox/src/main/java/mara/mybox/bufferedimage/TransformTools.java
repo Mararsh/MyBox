@@ -55,7 +55,7 @@ public class TransformTools {
             g.drawImage(source, width / 2, height / 2, null);
         }
         g.dispose();
-        target = MargionTools.cutMargins(target, bgColor, true, true, true, true);
+        target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
         return target;
     }
 
@@ -82,7 +82,7 @@ public class TransformTools {
             g.shear(shearX, shearY);
             g.drawImage(source, 0, 0, null);
             g.dispose();
-            target = MargionTools.cutMargins(target, bgColor, true, true, true, true);
+            target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

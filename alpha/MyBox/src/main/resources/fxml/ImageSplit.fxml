@@ -175,20 +175,20 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </CheckBox>
-                                                                <CheckBox fx:id="rulerYCheck" mnemonicParsing="false">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconYRuler.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
                                                                 <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
                                                                                 <Image url="@../buttons/Red/iconXRuler.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </CheckBox>
+                                                                <CheckBox fx:id="gridCheck" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconGrid.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -228,15 +228,15 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" fx:id="xyLabel1" />
-                              <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconMenu.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </CheckBox>
+                                        <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconMenu.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
                                         <HBox fx:id="opBar" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                                             <children>
                                                 <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
@@ -335,9 +335,9 @@ License:    Apache License Version 2.0
                                 </ScrollPane>
                                 <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" />
                             </children>
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding> 
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding> 
                         </VBox>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
@@ -429,19 +429,19 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </FlowPane>
-                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                   <children>
-                                                                      <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                                                                          <graphic>
-                                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                  <image>
-                                                                                      <Image url="@../buttons/Red/iconOK.png" />
-                                                                                  </image>
-                                                                              </ImageView>
-                                                                          </graphic>
-                                                                      </Button>
-                                                   </children>
-                                                </HBox>
+                                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                                    <children>
+                                                                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconOK.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
                                                             </children>
                                                         </VBox>
                                                         <Label fx:id="promptLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
@@ -450,11 +450,11 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
-                                 <content> 
-                                              <fx:include fx:id="save" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesSave.fxml" />
-                                 </content>
-                              </ScrollPane>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+                                            <content> 
+                                                <fx:include fx:id="save" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesSave.fxml" />
+                                            </content>
+                                        </ScrollPane>
                                     </children>
                                 </VBox>
                             </content>

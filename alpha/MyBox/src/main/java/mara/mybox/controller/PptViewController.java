@@ -11,11 +11,11 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -34,16 +34,18 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  */
 public class PptViewController extends BaseFileImagesViewController {
 
+    protected ChangeListener<Number> textsDividerListener;
+
     @FXML
-    protected TextArea notesArea, slideArea;
+    protected TextArea slideArea, notesArea, masterArea, commentsArea;
     @FXML
-    protected Label notesLabel, slideLabel;
+    protected Label slideLabel, notesLabel, masterLabel, commentsLabel;
     @FXML
-    protected CheckBox notesCheck;
+    protected CheckBox moreCheck;
     @FXML
-    protected VBox textsBox;
+    protected SplitPane textsPane;
     @FXML
-    protected TitledPane notesPane;
+    protected TabPane morePane;
 
     public PptViewController() {
         baseTitle = message("PptView");
@@ -59,29 +61,44 @@ public class PptViewController extends BaseFileImagesViewController {
         try {
             super.initControls();
 
-            notesCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayNotes", true));
-            notesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            moreCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayMore", true));
+            moreCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkNotes();
-                    UserConfig.setBoolean(baseName + "DisplayNotes", notesCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "DisplayMore", moreCheck.isSelected());
+                    checkMore();
                 }
             });
-            checkNotes();
+
+            textsDividerListener = (ObservableValue<? extends Number> v, Number ov, Number nv) -> {
+                UserConfig.setString(baseName + "TextsPanePosition", nv.doubleValue() + "");
+            };
+
+            checkMore();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void checkNotes() {
-        if (notesCheck.isSelected()) {
-            if (!textsBox.getChildren().contains(notesPane)) {
-                textsBox.getChildren().add(notesPane);
+    public void checkMore() {
+        if (moreCheck.isSelected()) {
+            if (!textsPane.getItems().contains(morePane)) {
+                textsPane.getItems().add(morePane);
             }
+            double defaultv = 0.5;
+            try {
+                String v = UserConfig.getString(baseName + "TextsPanePosition", defaultv + "");
+                textsPane.setDividerPosition(0, Double.parseDouble(v));
+            } catch (Exception e) {
+                textsPane.setDividerPosition(0, defaultv);
+            }
+            textsPane.getDividers().get(0).positionProperty().removeListener(textsDividerListener);
+            textsPane.getDividers().get(0).positionProperty().addListener(textsDividerListener);
         } else {
-            if (textsBox.getChildren().contains(notesPane)) {
-                textsBox.getChildren().remove(notesPane);
+            if (textsPane.getItems().contains(morePane)) {
+                textsPane.getDividers().get(0).positionProperty().removeListener(textsDividerListener);
+                textsPane.getItems().remove(morePane);
             }
         }
     }
@@ -97,6 +114,7 @@ public class PptViewController extends BaseFileImagesViewController {
     public void loadFile(File file, int page) {
         try {
             initPage(file, page);
+
             if (file == null) {
                 return;
             }
@@ -155,6 +173,10 @@ public class PptViewController extends BaseFileImagesViewController {
         notesLabel.setText("");
         slideArea.clear();
         slideLabel.setText("");
+        masterArea.clear();
+        masterLabel.setText("");
+        commentsArea.clear();
+        commentsLabel.setText("");
         initCurrentPage();
         if (sourceFile == null) {
             return;
@@ -164,7 +186,7 @@ public class PptViewController extends BaseFileImagesViewController {
                 task.cancel();
             }
             task = new SingletonTask<Void>(this) {
-                private String slideTexts, notes;
+                private String slideTexts, notes, master, comments;
 
                 @Override
                 protected boolean handle() {
@@ -191,6 +213,12 @@ public class PptViewController extends BaseFileImagesViewController {
                         extractor.setSlidesByDefault(false);
                         extractor.setNotesByDefault(true);
                         notes = extractor.getText(slide);
+                        extractor.setNotesByDefault(false);
+                        extractor.setMasterByDefault(true);
+                        master = extractor.getText(slide);
+                        extractor.setMasterByDefault(false);
+                        extractor.setCommentsByDefault(true);
+                        comments = extractor.getText(slide);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -205,6 +233,10 @@ public class PptViewController extends BaseFileImagesViewController {
                     notesLabel.setText(message("Count") + ": " + notes.length());
                     slideArea.setText(slideTexts);
                     slideLabel.setText(message("Count") + ": " + slideTexts.length());
+                    masterArea.setText(master);
+                    masterLabel.setText(message("Count") + ": " + master.length());
+                    commentsArea.setText(comments);
+                    commentsLabel.setText(message("Count") + ": " + comments.length());
                 }
             };
             start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));

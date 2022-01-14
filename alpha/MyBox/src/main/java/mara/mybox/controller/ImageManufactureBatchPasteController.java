@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.bufferedimage.ImageBlend;
-import mara.mybox.bufferedimage.MargionTools;
+import mara.mybox.bufferedimage.MarginTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.TransformTools;
@@ -295,12 +295,12 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             BufferedImage bgImage = source;
             if (enlargeCheck.isSelected()) {
                 if (clipSource.getWidth() > bgImage.getWidth()) {
-                    bgImage = MargionTools.addMargins(bgImage,
+                    bgImage = MarginTools.addMargins(bgImage,
                             Colors.TRANSPARENT, clipSource.getWidth() - bgImage.getWidth() + 1,
                             false, false, false, true);
                 }
                 if (clipSource.getHeight() > bgImage.getHeight()) {
-                    bgImage = MargionTools.addMargins(bgImage,
+                    bgImage = MarginTools.addMargins(bgImage,
                             Colors.TRANSPARENT, clipSource.getHeight() - bgImage.getHeight() + 1,
                             false, true, false, false);
                 }

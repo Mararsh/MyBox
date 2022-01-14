@@ -12,11 +12,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.MargionTools;
+import mara.mybox.bufferedimage.MarginTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ValidationTools;
@@ -39,8 +38,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
     @FXML
     protected ComboBox<String> marginWidthBox;
     @FXML
-    protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
-            preAlphaCheck;
+    protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck;
     @FXML
     protected FlowPane setPane;
     @FXML
@@ -51,8 +49,6 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
     protected TextField distanceInput;
     @FXML
     protected RadioButton blurMarginsRadio;
-    @FXML
-    protected ImageView preAlphaTipsView;
 
     public ImageManufactureBatchMarginsController() {
         baseTitle = Languages.message("ImageManufactureBatchMargins");
@@ -151,7 +147,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
 
         } else if (Languages.message("BlurMargins").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.BlurMargins;
-            setPane.getChildren().addAll(widthBox, preAlphaTipsView, preAlphaCheck);
+            setPane.getChildren().addAll(widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
@@ -196,37 +192,27 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             BufferedImage target;
             switch (opType) {
                 case CutMarginsByWidth:
-                    target = MargionTools.cutMargins(source,
+                    target = MarginTools.cutMargins(source,
                             FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()),
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
                 case CutMarginsByColor:
-                    target = MargionTools.cutMargins(source,
+                    target = MarginTools.cutMargins(source,
                             width,
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
                 case AddMargins:
-                    target = MargionTools.addMargins(source,
+                    target = MarginTools.addMargins(source,
                             FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()), width,
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
                 case BlurMargins:
-                    if (preAlphaCheck.isSelected()) {
-                        target = MargionTools.blurMarginsNoAlpha(source,
-                                width,
-                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-
-                    } else {
-                        target = MargionTools.blurMarginsAlpha(source,
-                                width,
-                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-
-                    }
+                    target = MarginTools.blurMarginsAlpha(source,
+                            width, marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                            marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
                 default:
                     return null;

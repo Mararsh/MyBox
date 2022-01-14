@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -322,24 +323,19 @@ public class ImageScopeTools {
                 g.drawLine(col, 0, col, height);
             }
             if (showSize) {
-                List<String> texts = new ArrayList<>();
-                List<Integer> xs = new ArrayList<>();
-                List<Integer> ys = new ArrayList<>();
+                int fontSize = width / (cols.size() * 10);
+                Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
+                g.setFont(font);
+                FontMetrics metrics = g.getFontMetrics(font);
+                int yOffset = metrics.getAscent();
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     int h = rows.get(i + 1) - rows.get(i) + 1;
                     for (int j = 0; j < cols.size() - 1; ++j) {
                         int w = cols.get(j + 1) - cols.get(j) + 1;
-                        texts.add(w + "x" + h);
-                        xs.add(cols.get(j) + w / 3);
-                        ys.add(rows.get(i) + h / 3);
-                        //                    MyBoxLog.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
+                        int x = cols.get(j) + w / 3;
+                        int y = rows.get(i) + h / 3 + yOffset;
+                        g.drawString(w + "x" + h, (int) (x / scale), (int) (y / scale) + yOffset);
                     }
-                }
-                int fontSize = width / (cols.size() * 10);
-                Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
-                g.setFont(font);
-                for (int i = 0; i < texts.size(); ++i) {
-                    g.drawString(texts.get(i), xs.get(i), ys.get(i));
                 }
             }
             g.dispose();

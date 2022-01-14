@@ -4,7 +4,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -30,8 +29,6 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     protected FlowPane setBox;
     @FXML
     protected HBox opBox;
-    @FXML
-    protected Label commentsLabel;
 
     @Override
     public void initPane() {

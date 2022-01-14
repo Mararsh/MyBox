@@ -70,7 +70,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, rulerYCheck, coordinateCheck, contextMenuCheck, selectAreaCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, contextMenuCheck, selectAreaCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthBox;
     @FXML

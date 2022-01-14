@@ -35,7 +35,6 @@ import mara.mybox.bufferedimage.ShadowTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlImageText;
 import mara.mybox.controller.ImagesBrowserController;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
@@ -282,33 +281,6 @@ public class FxImageTools {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = PixelsOperationFactory.replaceColor(source,
                 ColorConvertTools.converColor(oldColor), ColorConvertTools.converColor(newColor), distance);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawHTML(Image backImage, Image html,
-            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
-            int rotate, int margin) {
-        if (html == null || backImage == null || bkRect == null) {
-            return backImage;
-        }
-        BufferedImage backBfImage = SwingFXUtils.fromFXImage(backImage, null);
-        BufferedImage htmlBfImage = SwingFXUtils.fromFXImage(html, null);
-        BufferedImage target = ImageTextTools.drawHTML(backBfImage, htmlBfImage,
-                bkRect, ColorConvertTools.converColor(bkColor), bkOpacity, bkarc, rotate, margin);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawHTML(Image backImage, BufferedImage html,
-            int htmlX, int htmlY, int htmlWdith, int htmlHeight) {
-        if (html == null || backImage == null) {
-            return backImage;
-        }
-        BufferedImage backBfImage = SwingFXUtils.fromFXImage(backImage, null);
-//        BufferedImage htmlBfImage = SwingFXUtils.fromFXImage(html, null);
-        BufferedImage target = ImageTextTools.drawHTML(backBfImage, html,
-                htmlX, htmlY, htmlWdith, htmlHeight);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

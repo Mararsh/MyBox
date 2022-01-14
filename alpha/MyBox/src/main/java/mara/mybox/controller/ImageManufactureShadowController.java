@@ -4,7 +4,6 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -13,7 +12,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.FileExtensions;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -28,22 +26,11 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
     @FXML
     protected ComboBox shadowBox;
     @FXML
-    protected CheckBox preAlphaCheck;
-    @FXML
     protected ColorSet colorSetController;
 
     @Override
     public void initPane() {
         try {
-            if (imageController.imageInformation != null
-                    && FileExtensions.NoAlphaImages.contains(imageController.imageInformation.getImageFormat())) {
-                preAlphaCheck.setSelected(true);
-                preAlphaCheck.setDisable(true);
-            } else {
-                preAlphaCheck.setSelected(false);
-                preAlphaCheck.setDisable(false);
-            }
-
             colorSetController.init(this, baseName + "Color", Color.BLACK);
 
             shadowBox.getItems().clear();
@@ -101,13 +88,8 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
 
                 @Override
                 protected boolean handle() {
-                    if (preAlphaCheck.isSelected()) {
-                        newImage = FxImageTools.addShadowNoAlpha(imageView.getImage(),
-                                shadow, (Color) colorSetController.rect.getFill());
-                    } else {
-                        newImage = FxImageTools.addShadowAlpha(imageView.getImage(),
-                                shadow, (Color) colorSetController.rect.getFill());
-                    }
+                    newImage = FxImageTools.addShadowAlpha(imageView.getImage(),
+                            shadow, (Color) colorSetController.rect.getFill());
                     if (task == null || isCancelled()) {
                         return false;
                     }

@@ -45,7 +45,6 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -66,7 +65,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @FXML
     protected VBox setBox, replaceBox;
     @FXML
-    protected HBox valueBox, alphaBox, valueColorBox;
+    protected HBox valueBox, valueColorBox;
     @FXML
     protected FlowPane opBox, originalColorPane, newColorPane;
     @FXML
@@ -85,9 +84,9 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
             colorInvertButton, demoButton, scopeButton;
     @FXML
-    protected CheckBox preAlphaCheck, distanceExcludeCheck, squareRootCheck;
+    protected CheckBox distanceExcludeCheck, squareRootCheck;
     @FXML
-    protected ImageView preAlphaTipsView, distanceTipsView;
+    protected ImageView distanceTipsView;
     @FXML
     protected ColorSet originalColorSetController, newColorSetController, valueColorSetController;
 
@@ -106,15 +105,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             colorDecreaseButton.disableProperty().bind(setButton.disableProperty());
             colorInvertButton.disableProperty().bind(setButton.disableProperty());
             colorFilterButton.disableProperty().bind(setButton.disableProperty());
-
-            if (imageController.imageInformation != null
-                    && FileExtensions.NoAlphaImages.contains(imageController.imageInformation.getImageFormat())) {
-                preAlphaCheck.setSelected(true);
-                preAlphaCheck.setDisable(true);
-            } else {
-                preAlphaCheck.setSelected(false);
-                preAlphaCheck.setDisable(false);
-            }
 
             valueColorSetController.init(this, baseName + "ValueColor", Color.TRANSPARENT);
             originalColorSetController.init(this, baseName + "OriginalColor", Color.WHITE);
@@ -243,7 +233,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorLabel.setText(message("Opacity"));
                     setBox.getChildren().addAll(valueColorBox, valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
-                    opBox.getChildren().addAll(colorFilterButton);
+                    opBox.getChildren().addAll(setButton, colorFilterButton);
 
                 } else if (colorRGBRadio.isSelected()) {
                     colorOperationType = OperationType.RGB;
@@ -321,7 +311,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 } else if (colorOpacityRadio.isSelected()) {
                     colorOperationType = OperationType.Opacity;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, alphaBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
@@ -463,15 +453,13 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         }
 
                     } else {
-                        if (colorOperationType == OperationType.Opacity && preAlphaCheck.isSelected()) {
-                            colorOperationType = OperationType.PreOpacity;
-                        }
                         pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
                                 scopeController.scope, colorOperationType, colorActionType);
                         pixelsOperation.setSkipTransparent(scopeController.ignoreTransparentCheck.isSelected());
                         switch (colorOperationType) {
                             case Color:
                                 pixelsOperation.setColorPara1(ColorConvertTools.converColor((Color) valueColorSetController.rect.getFill()));
+                                pixelsOperation.setIntPara1(colorValue * 255 / 100);
                                 pixelsOperation.setFloatPara1(colorValue / 100.0f);
                                 break;
                             case RGB:
@@ -491,7 +479,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             case Cyan:
                             case Magenta:
                             case Opacity:
-                            case PreOpacity:
                                 pixelsOperation.setIntPara1(colorValue);
                                 break;
                         }

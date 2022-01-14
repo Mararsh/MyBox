@@ -12,7 +12,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
@@ -52,9 +51,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
     @FXML
     protected Label colorUnit;
     @FXML
-    protected CheckBox preAlphaCheck, ignoreTransparentCheck;
-    @FXML
-    protected ImageView preAlphaTipsView;
+    protected CheckBox ignoreTransparentCheck;
     @FXML
     protected ColorSet colorSetController;
     @FXML
@@ -132,8 +129,6 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         increaseRadio.setDisable(false);
         decreaseRadio.setDisable(false);
         setRadio.setSelected(true);
-        preAlphaCheck.setVisible(false);
-        preAlphaTipsView.setVisible(false);
         colorUnit.setText("0-255");
         colorBox.setVisible(false);
 
@@ -228,8 +223,6 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             }
             invertRadio.setDisable(true);
             filterRadio.setDisable(true);
-            preAlphaCheck.setVisible(true);
-            preAlphaTipsView.setVisible(true);
         } else if (colorRGBRadio.isSelected()) {
             colorOperationType = OperationType.RGB;
             colorSlider.setMax(255);
@@ -296,9 +289,6 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             return null;
         }
         try {
-            if (colorOperationType == OperationType.Opacity && preAlphaCheck.isSelected()) {
-                colorOperationType = OperationType.PreOpacity;
-            }
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(source, null,
                     colorOperationType, colorActionType);
             pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
@@ -322,7 +312,6 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
                 case Magenta:
                 case RGB:
                 case Opacity:
-                case PreOpacity:
                     pixelsOperation.setIntPara1(colorValue);
                     break;
             }

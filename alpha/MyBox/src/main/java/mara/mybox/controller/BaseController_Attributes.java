@@ -202,6 +202,11 @@ public abstract class BaseController_Attributes {
         return myStage;
     }
 
+    public boolean isPopup() {
+        Window win = getMyWindow();
+        return win != null && (win instanceof Popup);
+    }
+
     /*
         get/set
      */

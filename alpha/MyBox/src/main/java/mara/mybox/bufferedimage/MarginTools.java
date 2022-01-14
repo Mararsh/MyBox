@@ -11,7 +11,7 @@ import mara.mybox.value.Colors;
  * @CreateDate 2018-6-27 18:58:57
  * @License Apache License Version 2.0
  */
-public class MargionTools {
+public class MarginTools {
 
     public static BufferedImage blurMarginsAlpha(BufferedImage source, int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         try {

@@ -91,9 +91,9 @@ public class StyleCheckBox {
             case "thumbCheck":
                 return new StyleData("thumbCheck", "", message("Thumbnails"), "", "iconBrowse.png");
             case "rulerXCheck":
-                return new StyleData("rulerXCheck", "", message("RulerX"), "", "iconXRuler.png");
-            case "rulerYCheck":
-                return new StyleData("rulerYCheck", "", message("RulerY"), "", "iconYRuler.png");
+                return new StyleData("rulerXCheck", "", message("Rulers"), "", "iconXRuler.png");
+            case "gridCheck":
+                return new StyleData(id, "", message("GridLines"), "", "iconGrid.png");
             case "statisticCheck":
                 return new StyleData("statisticCheck", "", message("Statistic"), "", "iconStatistic.png");
             case "transparentBackgroundCheck":

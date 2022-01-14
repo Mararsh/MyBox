@@ -261,8 +261,8 @@ public class ImageAnalyseController extends ImageViewerController {
             imageView.setImage(image);
             fitSize();
 
-            checkRulerX();
-            checkRulerY();
+            drawMaskRulerXY();
+            drawMaskGrid();
             checkCoordinate();
             setMaskStroke();
         } catch (Exception e) {

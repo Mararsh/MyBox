@@ -141,11 +141,11 @@
                         <Label fx:id="colorUnit" />
                     </children>
                 </HBox>
-                  <HBox fx:id="valueColorBox" alignment="CENTER_LEFT" spacing="5.0">
-                      <children>
-                          <fx:include fx:id="valueColorSet" source="ColorSet.fxml" />
-                      </children>
-                  </HBox>
+                <HBox fx:id="valueColorBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <fx:include fx:id="valueColorSet" source="ColorSet.fxml" />
+                    </children>
+                </HBox>
                 <FlowPane fx:id="opBox" hgap="5.0" prefWidth="80.0" vgap="5.0">
                     <children>
                         <Button fx:id="scopeButton" mnemonicParsing="false" onAction="#scopeAction">
@@ -204,16 +204,6 @@
                         </Button>
                     </children>
                 </FlowPane>
-                <HBox fx:id="alphaBox" alignment="CENTER_LEFT" spacing="5.0">
-                    <children>
-                        <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
-                        <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTips.png" />
-                            </image>
-                        </ImageView>
-                    </children>
-                </HBox>
                 <VBox fx:id="replaceBox" spacing="5.0">
                     <children>
                         <FlowPane fx:id="originalColorPane" hgap="5.0" layoutX="10.0" layoutY="211.0" prefWidth="80.0" vgap="5.0">

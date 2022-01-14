@@ -42,7 +42,6 @@ public class PixelsOperationFactory {
                 switch (colorActionType) {
                     case Filter:
                         return new FilterColor(image, scope);
-                    case Set:
                     default:
                         return new SetColor(image, scope);
                 }
@@ -297,13 +296,16 @@ public class PixelsOperationFactory {
 
         public SetColor(BufferedImage image, ImageScope scope) {
             this.operationType = PixelsOperation.OperationType.Color;
+            this.colorActionType = PixelsOperation.ColorActionType.Set;
             this.image = image;
             this.scope = scope;
+
         }
 
         @Override
         protected Color operateColor(Color color) {
-            return colorPara1;
+            return new Color(colorPara1.getRed(), colorPara1.getGreen(), colorPara1.getBlue(),
+                    Math.min(Math.max(intPara1, 0), 255));
         }
     }
 

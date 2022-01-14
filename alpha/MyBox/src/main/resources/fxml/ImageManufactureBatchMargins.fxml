@@ -79,12 +79,6 @@ License:    Apache License Version 2.0
                                                         <ComboBox fx:id="marginWidthBox" editable="true" prefWidth="80.0" />
                                                     </children>
                                                 </HBox>
-                                                <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconTips.png" />
-                                                    </image>
-                                                </ImageView>
-                                                <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
                                             </children>
                                         </FlowPane>
                                         <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">

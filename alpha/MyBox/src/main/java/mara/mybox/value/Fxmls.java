@@ -107,7 +107,6 @@ public class Fxmls {
     public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
     public static final String ImageManufactureEnhancementFxml = "/fxml/ImageManufactureEnhancement.fxml";
     public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
-    public static final String ImageManufactureRichTextFxml = "/fxml/ImageManufactureRichText.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
     public static final String ImageManufacturePenFxml = "/fxml/ImageManufacturePen.fxml";
     public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
@@ -129,7 +128,6 @@ public class Fxmls {
     public static final String ImageStatisticFxml = "/fxml/ImageStatistic.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
-    public static final String ImageTextFxml = "/fxml/ImageText.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
     public static final String ImageSampleFxml = "/fxml/ImageSample.fxml";

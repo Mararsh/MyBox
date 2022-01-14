@@ -20,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -48,7 +49,6 @@ public class ControlImageText extends BaseController {
     protected String fontFamily, fontName;
     protected FontPosture fontPosture;
     protected FontWeight fontWeight;
-    protected boolean checkBaseAtOnce;
     protected final SimpleBooleanProperty changeNotify;
 
     @FXML
@@ -71,6 +71,8 @@ public class ControlImageText extends BaseController {
     protected VBox baseBox;
     @FXML
     protected Label sizeLabel;
+    @FXML
+    protected HBox goBox;
 
     public ControlImageText() {
         changeNotify = new SimpleBooleanProperty(false);
@@ -84,11 +86,10 @@ public class ControlImageText extends BaseController {
         try {
             parentController = parent;
             this.imageView = imageView;
-            checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
+            boolean checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
             if (checkBaseAtOnce) {
-                baseBox.getChildren().remove(goButton);
+                baseBox.getChildren().removeAll(sizeLabel, goBox);
             }
-
             fontFamily = UserConfig.getString(baseName + "TextFontFamily", "Arial");
             fontWeight = FontWeight.NORMAL;
             fontPosture = FontPosture.REGULAR;
@@ -516,28 +517,30 @@ public class ControlImageText extends BaseController {
 
     public void countTextBound(Graphics2D g, FontMetrics metrics) {
         String[] lines = getText().split("\n", -1);
-        int lend = lines.length - 1, heightMax = 0, widthMax = 0;
+        int lend = lines.length - 1, heightMax = 0, charWidthMax = 0;
         textWidth = 0;
         textHeight = 0;
         if (isVertical()) {
             for (int r = 0; r <= lend; r++) {
                 String line = lines[r];
                 int rHeight = 0;
-                widthMax = 0;
+                charWidthMax = 0;
                 for (int i = 0; i < line.length(); i++) {
-                    String s = line.charAt(i) + "";
-                    Rectangle2D sBound = metrics.getStringBounds(s, g);
-                    if (lineHeight > 0) {
-                        rHeight += lineHeight;
-                    } else {
-                        rHeight += (int) sBound.getHeight();
-                    }
-                    int sWidth = (int) sBound.getWidth();
-                    if (sWidth > widthMax) {
-                        widthMax = sWidth;
+                    String c = line.charAt(i) + "";
+                    Rectangle2D cBound = metrics.getStringBounds(c, g);
+                    rHeight += (int) cBound.getHeight();
+                    if (lineHeight <= 0) {
+                        int charWidth = (int) cBound.getWidth();
+                        if (charWidth > charWidthMax) {
+                            charWidthMax = charWidth;
+                        }
                     }
                 }
-                textWidth += widthMax;
+                if (lineHeight > 0) {
+                    textWidth += lineHeight;
+                } else {
+                    textWidth += charWidthMax;
+                }
                 if (rHeight > heightMax) {
                     heightMax = rHeight;
                 }
@@ -552,11 +555,11 @@ public class ControlImageText extends BaseController {
                     textHeight += sBound.getHeight();
                 }
                 int sWidth = (int) sBound.getWidth();
-                if (sWidth > widthMax) {
-                    widthMax = sWidth;
+                if (sWidth > charWidthMax) {
+                    charWidthMax = sWidth;
                 }
             }
-            textWidth = widthMax;
+            textWidth = charWidthMax;
         }
         if (parentController instanceof ImageManufactureTextController) {
             Platform.runLater(new Runnable() {
@@ -889,14 +892,6 @@ public class ControlImageText extends BaseController {
 
     public void setMargin(int margin) {
         this.margin = margin;
-    }
-
-    public boolean isCheckBaseAtOnce() {
-        return checkBaseAtOnce;
-    }
-
-    public void setCheckBaseAtOnce(boolean checkBaseAtOnce) {
-        this.checkBaseAtOnce = checkBaseAtOnce;
     }
 
     public ToggleGroup getPositionGroup() {
