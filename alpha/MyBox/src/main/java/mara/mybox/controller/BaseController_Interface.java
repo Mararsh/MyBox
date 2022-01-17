@@ -275,15 +275,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 rightPane.setHvalue(0);
             }
 
-            if (tabPane != null) {
-                tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                    @Override
-                    public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                        MenuController.closeAll();
-                    }
-                });
-            }
-
             initNodes(thisPane);
             initSplitPanes();
             setControlsStyle();

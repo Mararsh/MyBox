@@ -21,7 +21,7 @@ public class ControlTimeLength extends BaseController {
 
     protected String name;
     protected long value, defaultValue;
-    protected boolean isSeconds, permitNotSetting, permitInvalid, permitZero;
+    protected boolean isSeconds, permitNotSet, permitInvalid, permitZero;
     protected SimpleBooleanProperty notify;
 
     @FXML
@@ -32,7 +32,7 @@ public class ControlTimeLength extends BaseController {
         defaultValue = 15;
         isSeconds = true;
         permitZero = false;
-        permitNotSetting = false;
+        permitNotSet = false;
         permitInvalid = false;
         notify = new SimpleBooleanProperty(false);
     }
@@ -56,8 +56,8 @@ public class ControlTimeLength extends BaseController {
         return this;
     }
 
-    public ControlTimeLength permitNotSetting(boolean permitUnlimit) {
-        this.permitNotSetting = permitUnlimit;
+    public ControlTimeLength permitNotSet(boolean permitUnlimit) {
+        this.permitNotSet = permitUnlimit;
         return this;
     }
 
@@ -65,8 +65,8 @@ public class ControlTimeLength extends BaseController {
         this.name = name;
 //        MyBoxLog.debug(name + " " + defaultValue + " " + value);
         lengthSelector.getItems().clear();
-        if (permitNotSetting) {
-            lengthSelector.getItems().add(Languages.message("NotSetting"));
+        if (permitNotSet) {
+            lengthSelector.getItems().add(Languages.message("NotSet"));
         }
         if (permitZero) {
             lengthSelector.getItems().add("0");
@@ -115,7 +115,7 @@ public class ControlTimeLength extends BaseController {
                     } catch (Exception e) {
                     }
                     if (value < 0) {
-                        if (permitNotSetting || permitInvalid) {
+                        if (permitNotSet || permitInvalid) {
                             lengthSelector.getEditor().setStyle(null);
                             UserConfig.setString(name, "-1");
                         } else {
@@ -132,10 +132,10 @@ public class ControlTimeLength extends BaseController {
 //        MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
         if (name != null) {
             String saved = UserConfig.getString(name, this.defaultValue + "");
-            if ("-1".equals(saved) || Languages.message("NotSetting").equals(saved)) {
+            if ("-1".equals(saved) || Languages.message("NotSet").equals(saved)) {
                 value = -1;
-                if (permitNotSetting) {
-                    lengthSelector.getSelectionModel().select(Languages.message("NotSetting"));
+                if (permitNotSet) {
+                    lengthSelector.getSelectionModel().select(Languages.message("NotSet"));
                 }
             } else {
                 try {
@@ -155,8 +155,8 @@ public class ControlTimeLength extends BaseController {
 
     public boolean select(long inValue) {
         if (inValue < 0) {
-            if (permitNotSetting) {
-                lengthSelector.getSelectionModel().select(Languages.message("NotSetting"));
+            if (permitNotSet) {
+                lengthSelector.getSelectionModel().select(Languages.message("NotSet"));
                 return true;
             } else {
                 return false;

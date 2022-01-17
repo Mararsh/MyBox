@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -20,6 +21,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
@@ -198,7 +200,11 @@ public class PptViewController extends BaseFileImagesViewController {
                         int width = ppt.getPageSize().width;
                         int height = ppt.getPageSize().height;
                         BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                        slide.draw(slideImage.createGraphics());
+                        Graphics2D g = slideImage.createGraphics();
+                        if (AppVariables.imageRenderHints != null) {
+                            g.addRenderingHints(AppVariables.imageRenderHints);
+                        }
+                        slide.draw(g);
                         if (dpi != 72) {
                             slideImage = ScaleTools.scaleImageByScale(slideImage, dpi / 72f);
                         }
@@ -259,7 +265,11 @@ public class PptViewController extends BaseFileImagesViewController {
                 }
                 Slide slide = slides.get(index);
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                slide.draw(slideImage.createGraphics());
+                Graphics2D g = slideImage.createGraphics();
+                if (AppVariables.imageRenderHints != null) {
+                    g.addRenderingHints(AppVariables.imageRenderHints);
+                }
+                slide.draw(g);
                 if (slideImage.getWidth() > ThumbWidth) {
                     slideImage = ScaleTools.scaleImageWidthKeep(slideImage, ThumbWidth);
                 }

@@ -46,15 +46,12 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     @FXML
     protected ToggleGroup scaleGroup, keepGroup, interpolationGroup, ditherGroup, antiAliasGroup, qualityGroup;
     @FXML
-    protected VBox setBox, pixelBox, keepBox, ratioBox, hintsBox;
+    protected VBox setBox, pixelBox, keepBox, ratioBox;
     @FXML
     protected ComboBox<String> scaleSelector;
     @FXML
     protected RadioButton dragRadio, scaleRadio, pixelsRadio,
-            widthRadio, heightRadio, largerRadio, smallerRadio,
-            interpolationNullRadio, interpolation9Radio, interpolation4Radio, interpolation1Radio,
-            ditherNullRadio, ditherOnRadio, ditherOffRadio, antiNullRadio, antiOnRadio, antiOffRadio,
-            qualityNullRadio, qualityOnRadio, qualityOffRadio;
+            widthRadio, heightRadio, largerRadio, smallerRadio;
     @FXML
     protected CheckBox keepRatioCheck;
     @FXML
@@ -188,7 +185,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
             if (dragRadio.isSelected()) {
                 scaleType = ScaleType.Dragging;
-                setBox.getChildren().addAll(keepBox, hintsBox, okButton);
+                setBox.getChildren().addAll(keepBox, okButton);
                 commentsLabel.setText(Languages.message("DragSizeComments"));
                 initDrag();
                 checkKeepType();
@@ -196,14 +193,14 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
             } else if (pixelsRadio.isSelected()) {
                 scaleType = ScaleType.Pixels;
-                setBox.getChildren().addAll(keepBox, pixelBox, hintsBox, okButton);
+                setBox.getChildren().addAll(keepBox, pixelBox, okButton);
                 checkKeepType();
                 checkPixelsWidth();
                 checkPixelsHeight();
 
             } else if (scaleRadio.isSelected()) {
                 scaleType = ScaleType.Scale;
-                setBox.getChildren().addAll(scaleSelector, hintsBox, okButton);
+                setBox.getChildren().addAll(scaleSelector, okButton);
                 checkScale();
             }
 
@@ -402,44 +399,20 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
                 @Override
                 protected boolean handle() {
-                    int interpolation = -1, dither = -1, anti = -1, quality = -1;
-                    if (interpolation9Radio.isSelected()) {
-                        interpolation = 9;
-                    } else if (interpolation4Radio.isSelected()) {
-                        interpolation = 4;
-                    } else if (interpolation1Radio.isSelected()) {
-                        interpolation = 1;
-                    }
-                    if (ditherOnRadio.isSelected()) {
-                        dither = 1;
-                    } else if (ditherOffRadio.isSelected()) {
-                        dither = 0;
-                    }
-                    if (antiOnRadio.isSelected()) {
-                        anti = 1;
-                    } else if (antiOffRadio.isSelected()) {
-                        anti = 0;
-                    }
-                    if (qualityOnRadio.isSelected()) {
-                        quality = 1;
-                    } else if (qualityOffRadio.isSelected()) {
-                        quality = 0;
-                    }
+
                     switch (scaleType) {
                         case Scale:
                             if (scale <= 0) {
                                 return false;
                             }
-                            newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), scale,
-                                    dither, anti, quality, interpolation);
+                            newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), scale);
                             break;
                         case Dragging:
                         case Pixels:
                             if (width <= 0 || height <= 0) {
                                 return false;
                             }
-                            newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), (int) width, (int) height,
-                                    dither, anti, quality, interpolation);
+                            newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), (int) width, (int) height);
                             break;
                         default:
                             return false;

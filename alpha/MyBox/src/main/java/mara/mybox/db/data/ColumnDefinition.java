@@ -40,7 +40,7 @@ public class ColumnDefinition extends BaseData {
         File, Image, // string of the path
         Double, Float, Long, Integer, Short,
         Datetime, Date, Era, // Looks Derby does not support date of BC(before Christ)
-        BLOB, Unknown
+        Clob, Blob, Unknown
     }
 
     public static enum OnDelete {

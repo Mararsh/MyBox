@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
 /**
@@ -275,6 +276,9 @@ public class MarginTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(totalWidth, totalHegiht, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.setColor(addColor);
             g.fillRect(0, 0, totalWidth, totalHegiht);
             g.drawImage(source, x, y, width, height, null);

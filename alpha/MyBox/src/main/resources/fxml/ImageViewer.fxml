@@ -238,12 +238,30 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
+                                                <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settings">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconSetting.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                                             </children>
                                                         </FlowPane>
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
+                              <TitledPane fx:id="renderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <fx:include fx:id="render" source="ControlImageRender.fxml" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                         <TitledPane fx:id="editPane" expanded="false" layoutX="10.0" layoutY="433.0" maxWidth="1.7976931348623157E308" text="%Edit">
                                             <content>
                                                 <VBox spacing="2.0">

@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -219,6 +219,9 @@ public class ImageScopeTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
@@ -246,6 +249,9 @@ public class ImageScopeTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
@@ -272,6 +278,9 @@ public class ImageScopeTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
@@ -299,10 +308,12 @@ public class ImageScopeTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setColor(lineColor);
             BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
                 lineWidth, lineWidth}, 0.0F);

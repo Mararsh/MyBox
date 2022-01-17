@@ -108,6 +108,19 @@ public class MenuController extends BaseChildController {
         }
     }
 
+    public void setTitle() {
+        try {
+            if (parentController != null) {
+                if (getMyStage() != null) {
+                    myStage.setTitle(parentController.getTitle());
+                }
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void setWidth(double w) {
         thisPane.setPrefWidth(w);
         thisPane.layout();

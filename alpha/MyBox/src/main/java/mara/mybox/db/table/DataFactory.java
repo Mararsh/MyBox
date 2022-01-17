@@ -7,6 +7,7 @@ import java.util.List;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BlobValue;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPalette;
 import mara.mybox.db.data.ColorPaletteName;
@@ -114,6 +115,9 @@ public class DataFactory {
         } else if (data instanceof Data2DCell) {
             return new TableData2DCell();
 
+        } else if (data instanceof BlobValue) {
+            return new TableBlobValue();
+
         }
         return null;
     }
@@ -194,6 +198,9 @@ public class DataFactory {
         } else if (data instanceof Data2DCell) {
             return Data2DCell.valid((Data2DCell) data);
 
+        } else if (data instanceof BlobValue) {
+            return BlobValue.valid((BlobValue) data);
+
         }
 
         return false;
@@ -272,6 +279,9 @@ public class DataFactory {
         } else if (data instanceof Data2DCell) {
             return Data2DCell.getValue((Data2DCell) data, name);
 
+        } else if (data instanceof BlobValue) {
+            return BlobValue.getValue((BlobValue) data, name);
+
         }
 
         return null;
@@ -349,6 +359,9 @@ public class DataFactory {
 
         } else if (data instanceof Data2DCell) {
             return Data2DCell.setValue((Data2DCell) data, name, value);
+
+        } else if (data instanceof BlobValue) {
+            return BlobValue.setValue((BlobValue) data, name, value);
 
         }
         return false;

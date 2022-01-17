@@ -12,7 +12,10 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.controller.ControlImageText;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fximage.FxColorTools.toAwtColor;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
 /**
@@ -22,49 +25,67 @@ import mara.mybox.value.Colors;
  */
 public class ImageTextTools {
 
-    public static BufferedImage addText(BufferedImage backImage, ControlImageText optionsController) {
+    public static BufferedImage addText(BufferedImage sourceImage, ControlImageText optionsController) {
         try {
-            String text = optionsController.getText();
+            String text = optionsController.text();
             if (text == null || text.isEmpty()) {
-                return backImage;
+                return sourceImage;
             }
             float opacity = optionsController.getOpacity();
             if (opacity > 1.0F || opacity < 0) {
                 opacity = 1.0F;
             }
-            int width = backImage.getWidth();
-            int height = backImage.getHeight();
+            int width = sourceImage.getWidth();
+            int height = sourceImage.getHeight();
+            Font font = optionsController.font();
             BufferedImage foreImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = foreImage.createGraphics();
-            Color color = optionsController.getAwtColor();
-            boolean noBlend = color.equals(Colors.TRANSPARENT);
-            if (noBlend) {
-                g.drawImage(backImage, 0, 0, width, height, null);
-            } else {
-                g.setBackground(Colors.TRANSPARENT);
+            Graphics2D fg = foreImage.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                fg.addRenderingHints(AppVariables.imageRenderHints);
             }
-            Font font = optionsController.getFont();
-            FontMetrics metrics = g.getFontMetrics(font);
-            optionsController.countBaseXY(g, metrics, width, height);
-            int baseX = optionsController.getBaseX();
-            int baseY = optionsController.getBaseY();
-            int linex = baseX, liney = baseY, lineHeight = optionsController.getLineHeight();
+            FontMetrics metrics = fg.getFontMetrics(font);
+            optionsController.countValues(fg, metrics, width, height);
+            BufferedImage backImage = sourceImage;
+            if (optionsController.showBorders()) {
+                int m = optionsController.getBordersMargin();
+                backImage = PenTools.drawRectangle(sourceImage,
+                        new DoubleRectangle(optionsController.getBaseX() - m,
+                                optionsController.getBaseY() - m,
+                                optionsController.getBaseX() + optionsController.getTextWidth() + m,
+                                optionsController.getBaseY() + optionsController.getTextHeight() + m),
+                        toAwtColor(optionsController.getBordersStrokeColorSetController().color()),
+                        optionsController.getBordersStrokeWidth(), optionsController.getBordersArc(),
+                        optionsController.bordersDotted(), optionsController.bordersFilled(),
+                        toAwtColor(optionsController.getBordersFillColorSetController().color()),
+                        PixelsBlend.ImagesBlendMode.NORMAL, optionsController.getBordersOpacity(), false, true);
+            }
+            Color textColor = optionsController.textColor();
+            boolean noBlend = textColor.equals(Colors.TRANSPARENT);
+            if (noBlend) {
+                fg.drawImage(backImage, 0, 0, width, height, null);
+            } else {
+                fg.setBackground(Colors.TRANSPARENT);
+            }
+            int textBaseX = optionsController.getBaseX();
+            int textBaseY = optionsController.getTextY();
+            int linex = textBaseX, liney = textBaseY, lineHeight = optionsController.getLineHeight();
             String[] lines = text.split("\n", -1);
             int lend = lines.length - 1;
             int shadow = optionsController.getShadow();
             boolean isOutline = optionsController.isOutline();
             boolean leftToRight = optionsController.isLeftToRight();
             float textOpacity = noBlend ? opacity : 1.0F;
-            g.rotate(Math.toRadians(optionsController.getAngle()), baseX, baseY);
+            fg.rotate(Math.toRadians(optionsController.getAngle()), textBaseX, textBaseY);
+//            fg.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             if (optionsController.isVertical()) {
                 for (int r = (leftToRight ? 0 : lend); (leftToRight ? r <= lend : r >= 0);) {
                     String line = lines[r];
-                    liney = baseY;
+                    liney = textBaseY;
                     double cWidthMax = 0;
                     for (int i = 0; i < line.length(); i++) {
                         String c = line.charAt(i) + "";
-                        addText(g, c, font, color, linex, liney, textOpacity, shadow, isOutline);
-                        Rectangle2D cBound = metrics.getStringBounds(c, g);
+                        addText(fg, c, font, textColor, linex, liney, textOpacity, shadow, isOutline);
+                        Rectangle2D cBound = metrics.getStringBounds(c, fg);
                         liney += cBound.getHeight();
                         if (lineHeight <= 0) {
                             double cWidth = cBound.getWidth();
@@ -86,15 +107,15 @@ public class ImageTextTools {
                 }
             } else {
                 for (String line : lines) {
-                    addText(g, line, font, color, linex, liney, textOpacity, shadow, isOutline);
+                    addText(fg, line, font, textColor, linex, liney, textOpacity, shadow, isOutline);
                     if (lineHeight > 0) {
                         liney += lineHeight;
                     } else {
-                        liney += g.getFontMetrics(font).getStringBounds(line, g).getHeight();
+                        liney += fg.getFontMetrics(font).getStringBounds(line, fg).getHeight();
                     }
                 }
             }
-            g.dispose();
+            fg.dispose();
             if (noBlend) {
                 return foreImage;
             } else {

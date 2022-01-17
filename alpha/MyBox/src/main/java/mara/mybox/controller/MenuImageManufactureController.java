@@ -27,6 +27,12 @@ public class MenuImageManufactureController extends MenuImageViewController {
         }
     }
 
+    @Override
+    public void updateImage() {
+        super.updateImage();
+        cropButton.setDisable(false);
+    }
+
     @FXML
     @Override
     public void undoAction() {

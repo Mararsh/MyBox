@@ -1,9 +1,11 @@
 package mara.mybox.fximage;
 
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -382,6 +384,16 @@ public class FxImageTools {
         Thread thread = new Thread(demoTask);
         thread.setDaemon(false);
         thread.start();
+    }
+
+    public static Image applyRenderHints(Image image, Map<RenderingHints.Key, Object> hints) {
+        if (image == null || hints == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = BufferedImageTools.applyRenderHints(source, hints);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
     }
 
 }

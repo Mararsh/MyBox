@@ -1,5 +1,6 @@
 package mara.mybox.bufferedimage;
 
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -302,7 +303,11 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             int pptHeight = ppt.getPageSize().height;
             Slide slide = slides.get(imageInfo.getIndex());
             bufferedImage = new BufferedImage(pptWidth, pptHeight, BufferedImage.TYPE_INT_ARGB);
-            slide.draw(bufferedImage.createGraphics());
+            Graphics2D g = bufferedImage.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
+            slide.draw(g);
             Rectangle region = imageInfo.getRegion();
             if (region != null) {
                 bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(bufferedImage, new DoubleRectangle(region));

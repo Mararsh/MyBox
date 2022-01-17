@@ -146,7 +146,7 @@ public class LocationDataEditController extends BaseController {
                     });
             checkSize();
 
-            directionSelector.getItems().addAll(Arrays.asList(Languages.message("NotSetting"),
+            directionSelector.getItems().addAll(Arrays.asList(Languages.message("NotSet"),
                     Languages.message("East") + " " + 90, Languages.message("West") + " " + 270,
                     Languages.message("North") + " " + 0, Languages.message("South") + " " + 180,
                     Languages.message("EastNorth") + " " + 45, Languages.message("WestNorth") + " " + 315,
@@ -155,7 +155,7 @@ public class LocationDataEditController extends BaseController {
             directionSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         try {
-                            if (newValue == null || newValue.isBlank() || Languages.message("NotSetting").equals(newValue)) {
+                            if (newValue == null || newValue.isBlank() || Languages.message("NotSet").equals(newValue)) {
                                 direction = AppValues.InvalidShort;
                                 return;
                             }
@@ -516,7 +516,7 @@ public class LocationDataEditController extends BaseController {
             if (v != AppValues.InvalidShort) {
                 directionSelector.setValue(v + "");
             } else {
-                directionSelector.setValue(Languages.message("NotSetting"));
+                directionSelector.setValue(Languages.message("NotSet"));
             }
             if (loadedLocationData.getImage() != null) {
                 sourceFileInput.setText(loadedLocationData.getImage().getAbsolutePath());

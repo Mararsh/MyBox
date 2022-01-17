@@ -59,31 +59,31 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 return;
             }
             loadTask = new SingletonTask<Void>(this) {
-                private ImageInformation targetInfo;
+                private ImageInformation loadedInfo;
 
                 @Override
                 protected boolean handle() {
-                    targetInfo = new ImageInformation(file);
-                    targetInfo.setIndex(index);
-                    targetInfo.setRequiredWidth(width);
-                    targetInfo.setTask(loadTask);
-                    targetInfo = ImageFileReaders.makeInfo(targetInfo, imageInformation, onlyInformation);
-                    if (targetInfo == null) {
+                    loadedInfo = new ImageInformation(file);
+                    loadedInfo.setIndex(index);
+                    loadedInfo.setRequiredWidth(width);
+                    loadedInfo.setTask(loadTask);
+                    loadedInfo = ImageFileReaders.makeInfo(loadedInfo, imageInformation, onlyInformation);
+                    if (loadedInfo == null) {
                         return false;
                     }
-                    error = targetInfo.getError();
+                    error = loadedInfo.getError();
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     recordFileOpened(file);
-                    if (targetInfo.isNeedSample()) {
-                        askSample(targetInfo);
+                    if (loadedInfo.isNeedSample()) {
+                        askSample(loadedInfo);
                     } else {
                         sourceFile = file;
-                        imageInformation = targetInfo;
-                        image = targetInfo.getThumbnail();
+                        imageInformation = loadedInfo;
+                        image = loadedInfo.getThumbnail();
                         afterInfoLoaded();
                         afterImageLoaded();
                     }
@@ -283,6 +283,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             checkPickingColor();
             checkSelect();
 
+            notifyLoad();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -314,10 +315,16 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
     }
 
+    protected void setLoadWidth(int width) {
+        loadWidth = width;
+        setLoadWidth();
+    }
+
     protected void setLoadWidth() {
         if (isSettingValues) {
             return;
         }
+        UserConfig.setInt(baseName + "LoadWidth", loadWidth);
         if (imageFile() != null) {
             loadImageFile(imageFile(), loadWidth);
         } else if (imageView.getImage() != null) {

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 import mara.mybox.value.FileExtensions;
 
@@ -276,6 +277,9 @@ public class AlphaTools {
             int startY = offsetY >= 0 ? offsetY : 0;
             BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             if (!exclude) {
                 g.setColor(bgColor);
             } else {

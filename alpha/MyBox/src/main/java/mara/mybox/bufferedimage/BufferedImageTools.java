@@ -13,9 +13,11 @@ import java.awt.image.ColorModel;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.MessageDigestTools;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -113,7 +115,9 @@ public class BufferedImageTools {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(width, height, imageType);
         Graphics2D g = target.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (AppVariables.imageRenderHints != null) {
+            g.addRenderingHints(AppVariables.imageRenderHints);
+        }
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         g.setColor(bgColor);
         g.fillRect(0, 0, width, height);
@@ -121,17 +125,6 @@ public class BufferedImageTools {
         g.drawImage(source, 0, 0, null);
         g.dispose();
         return target;
-    }
-
-    public static void applyQualityProperties(Graphics2D g2) {
-        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
     }
 
     public static GraphicsConfiguration getGraphicsConfiguration() {
@@ -146,6 +139,25 @@ public class BufferedImageTools {
         BufferedImage image = getGraphicsConfiguration().createCompatibleImage(width, height, transparency);
         image.coerceData(true);
         return image;
+    }
+
+    public static BufferedImage applyRenderHints(BufferedImage srcImage, Map<RenderingHints.Key, Object> hints) {
+        try {
+            if (srcImage == null || hints == null) {
+                return srcImage;
+            }
+            int width = srcImage.getWidth();
+            int height = srcImage.getHeight();
+            BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = target.createGraphics();
+            g.addRenderingHints(hints);
+            g.drawImage(srcImage, 0, 0, width, height, null);
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return srcImage;
+        }
     }
 
 }

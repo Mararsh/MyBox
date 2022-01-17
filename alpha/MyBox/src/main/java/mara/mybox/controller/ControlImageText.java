@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -29,8 +30,8 @@ import javafx.scene.text.FontWeight;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -42,37 +43,41 @@ import mara.mybox.value.UserConfig;
 public class ControlImageText extends BaseController {
 
     protected ImageView imageView;
-    protected int lineHeight, x, y, fontSize, shadow, angle, baseX, baseY, textWidth, textHeight;
-    protected int margin;
+    protected int margin, lineHeight, x, y, fontSize, shadow, angle, baseX, baseY, textY,
+            textWidth, textHeight, bordersStrokeWidth, bordersArc, bordersMargin;
     protected ImagesBlendMode blendMode;
-    protected float opacity;
-    protected String fontFamily, fontName;
+    protected float opacity, bordersOpacity;
+    protected String text, fontFamily, fontName;
     protected FontPosture fontPosture;
     protected FontWeight fontWeight;
     protected final SimpleBooleanProperty changeNotify;
+    protected boolean checkBaseAtOnce;
 
     @FXML
     protected TextArea textArea;
     @FXML
-    protected TextField xInput, yInput;
+    protected TextField xInput, yInput, marginInput, bordersMarginInput;
     @FXML
-    protected ComboBox<String> lineHeightSelector, sizeBox, opacitySelector, blendSelector, styleBox, familyBox, angleBox, shadowBox;
+    protected ComboBox<String> lineHeightSelector, fontSizeSelector, opacitySelector, blendSelector, fontStyleSelector,
+            fontFamilySelector, angleSelector, shadowSelector,
+            bordersStrokeWidthSelector, bordersArcSelector, bordersOpacitySelector;
     @FXML
-    protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck, blendTopCheck, ignoreTransparentCheck;
+    protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck, blendTopCheck, ignoreTransparentCheck,
+            bordersCheck, bordersFillCheck, bordersStrokeDottedCheck;
     @FXML
-    protected ColorSet colorSetController;
+    protected ColorSet colorSetController, bordersFillColorSetController, bordersStrokeColorSetController;
     @FXML
     protected ToggleGroup positionGroup;
     @FXML
     protected RadioButton rightBottomRadio, rightTopRadio, leftBottomRadio, leftTopRadio, centerRadio, customRadio;
     @FXML
-    protected TextField marginInput;
-    @FXML
-    protected VBox baseBox;
+    protected VBox baseBox, bordersBox;
     @FXML
     protected Label sizeLabel;
     @FXML
     protected HBox goBox;
+    @FXML
+    protected Button goBordersButton;
 
     public ControlImageText() {
         changeNotify = new SimpleBooleanProperty(false);
@@ -86,17 +91,83 @@ public class ControlImageText extends BaseController {
         try {
             parentController = parent;
             this.imageView = imageView;
-            boolean checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
+
+            initBase();
+            initStyle();
+            initBorders();
+
+            checkPositionType();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
+    }
+
+    public void initBase() {
+        try {
+            checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
+            textArea.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
+            margin = UserConfig.getInt(baseName + "Margin", 20);
+            marginInput.setText(margin + "");
+
+            positionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    checkPositionType();
+                    if (checkBaseAtOnce) {
+                        notifyChanged();
+                    }
+                }
+            });
+
             if (checkBaseAtOnce) {
                 baseBox.getChildren().removeAll(sizeLabel, goBox);
-            }
-            fontFamily = UserConfig.getString(baseName + "TextFontFamily", "Arial");
-            fontWeight = FontWeight.NORMAL;
-            fontPosture = FontPosture.REGULAR;
 
-            fontSize = 24;
-            shadow = 0;
-            angle = 0;
+                textArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        String v = textArea.getText();
+                        if (v != null && !v.equals(text)) {
+                            checkText();
+                            notifyChanged();
+                        }
+                    }
+                });
+
+                xInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        checkXY();
+                        notifyChanged();
+                    }
+                });
+
+                yInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        checkXY();
+                        notifyChanged();
+                    }
+                });
+
+                marginInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        checkMargin();
+                        notifyChanged();
+                    }
+                });
+
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
+    }
+
+    public void initStyle() {
+        try {
 
             lineHeight = UserConfig.getInt(baseName + "TextLineHeight", -1);
             List<String> heights = Arrays.asList(
@@ -133,9 +204,10 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            familyBox.getItems().addAll(javafx.scene.text.Font.getFamilies());
-            familyBox.getSelectionModel().select(fontFamily);
-            familyBox.valueProperty().addListener(new ChangeListener<String>() {
+            fontFamilySelector.getItems().addAll(javafx.scene.text.Font.getFamilies());
+            fontFamily = UserConfig.getString(baseName + "TextFontFamily", "Arial");
+            fontFamilySelector.getSelectionModel().select(fontFamily);
+            fontFamilySelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     fontFamily = newValue;
@@ -144,10 +216,12 @@ public class ControlImageText extends BaseController {
                 }
             });
 
+            fontWeight = FontWeight.NORMAL;
+            fontPosture = FontPosture.REGULAR;
             List<String> styles = Arrays.asList(message("Regular"), message("Bold"), message("Italic"), message("Bold Italic"));
-            styleBox.getItems().addAll(styles);
-            styleBox.getSelectionModel().select(0);
-            styleBox.valueProperty().addListener(new ChangeListener<String>() {
+            fontStyleSelector.getItems().addAll(styles);
+            fontStyleSelector.getSelectionModel().select(0);
+            fontStyleSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (message("Bold").equals(newValue)) {
@@ -173,9 +247,10 @@ public class ControlImageText extends BaseController {
 
             List<String> sizes = Arrays.asList(
                     "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
-            sizeBox.getItems().addAll(sizes);
-            sizeBox.getSelectionModel().select(UserConfig.getInt(baseName + "TextFontSize", 72) + "");
-            sizeBox.valueProperty().addListener(new ChangeListener<String>() {
+            fontSizeSelector.getItems().addAll(sizes);
+            fontSize = UserConfig.getInt(baseName + "TextFontSize", 72);
+            fontSizeSelector.getSelectionModel().select(fontSize + "");
+            fontSizeSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
@@ -184,12 +259,12 @@ public class ControlImageText extends BaseController {
                             fontSize = v;
                             UserConfig.setInt(baseName + "TextFontSize", v);
                             notifyChanged();
-                            ValidationTools.setEditorNormal(sizeBox);
+                            ValidationTools.setEditorNormal(fontSizeSelector);
                         } else {
-                            ValidationTools.setEditorBadStyle(sizeBox);
+                            ValidationTools.setEditorBadStyle(fontSizeSelector);
                         }
                     } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(sizeBox);
+                        ValidationTools.setEditorBadStyle(fontSizeSelector);
                     }
                 }
             });
@@ -249,9 +324,10 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            shadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
-            shadowBox.getSelectionModel().select(UserConfig.getInt(baseName + "TextShadow", 0) + "");
-            shadowBox.valueProperty().addListener(new ChangeListener<String>() {
+            shadowSelector.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
+            shadow = UserConfig.getInt(baseName + "TextShadow", 0);
+            shadowSelector.getSelectionModel().select(shadow + "");
+            shadowSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
@@ -259,21 +335,22 @@ public class ControlImageText extends BaseController {
                         if (v >= 0) {
                             shadow = v;
                             UserConfig.setInt(baseName + "TextShadow", v);
-                            ValidationTools.setEditorNormal(shadowBox);
+                            ValidationTools.setEditorNormal(shadowSelector);
                             notifyChanged();
                         } else {
-                            ValidationTools.setEditorBadStyle(shadowBox);
+                            ValidationTools.setEditorBadStyle(shadowSelector);
                         }
                     } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(shadowBox);
+                        ValidationTools.setEditorBadStyle(shadowSelector);
                     }
                 }
             });
 
-            angleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
+            angleSelector.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
-            angleBox.getSelectionModel().select(UserConfig.getInt(baseName + "TextAngle", 0) + "");
-            angleBox.valueProperty().addListener(new ChangeListener<String>() {
+            angle = UserConfig.getInt(baseName + "TextAngle", 0);
+            angleSelector.getSelectionModel().select(angle + "");
+            angleSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
@@ -281,13 +358,13 @@ public class ControlImageText extends BaseController {
                         if (v >= 0) {
                             angle = v;
                             UserConfig.setInt(baseName + "TextAngle", v);
-                            ValidationTools.setEditorNormal(angleBox);
+                            ValidationTools.setEditorNormal(angleSelector);
                             notifyChanged();
                         } else {
-                            ValidationTools.setEditorBadStyle(angleBox);
+                            ValidationTools.setEditorBadStyle(angleSelector);
                         }
                     } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(angleBox);
+                        ValidationTools.setEditorBadStyle(angleSelector);
                     }
                 }
             });
@@ -320,62 +397,149 @@ public class ControlImageText extends BaseController {
             });
             rightToLeftCheck.visibleProperty().bind(verticalCheck.selectedProperty());
 
-            textArea.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
-            margin = UserConfig.getInt(baseName + "Margin", 20);
-            marginInput.setText(margin + "");
+    public void initBorders() {
+        try {
+            bordersBox.disableProperty().bind(bordersCheck.selectedProperty().not());
 
-            positionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            bordersCheck.setSelected(UserConfig.getBoolean(baseName + "Borders", false));
+            bordersCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
-                    checkPositionType();
-                    if (checkBaseAtOnce) {
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Borders", bordersCheck.isSelected());
+                    notifyChanged();
+                }
+            });
+
+            bordersFillCheck.setSelected(UserConfig.getBoolean(baseName + "BordersFill", true));
+            bordersFillCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "BordersFill", bordersFillCheck.isSelected());
+                    if (showBorders()) {
                         notifyChanged();
                     }
                 }
             });
 
+            bordersFillColorSetController.init(this, baseName + "BordersFillColor", Color.WHITE);
+            bordersFillColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    if (showBorders()) {
+                        notifyChanged();
+                    }
+                }
+            });
+
+            bordersStrokeColorSetController.init(this, baseName + "BordersStrokeColor", Color.WHITE);
+            bordersStrokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    if (showBorders()) {
+                        notifyChanged();
+                    }
+                }
+            });
+
+            bordersStrokeWidth = UserConfig.getInt(baseName + "BordersStrokeWidth", 0);
+            bordersStrokeWidthSelector.getItems().addAll(Arrays.asList("0", "1", "2", "4", "3", "5", "10", "6"));
+            bordersStrokeWidthSelector.setValue(bordersStrokeWidth + "");
+            bordersStrokeWidthSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    bordersStrokeWidth = 0;
+                    try {
+                        bordersStrokeWidth = Integer.valueOf(newValue);
+                        if (bordersStrokeWidth < 0) {
+                            bordersStrokeWidth = 0;
+                        }
+                    } catch (Exception e) {
+                        bordersStrokeWidth = 0;
+                    }
+                    UserConfig.setInt(baseName + "BordersStrokeWidth", bordersStrokeWidth);
+                    if (showBorders()) {
+                        notifyChanged();
+                    }
+                }
+            });
+
+            bordersStrokeDottedCheck.setSelected(UserConfig.getBoolean(baseName + "BordersStrokeDotted", false));
+            bordersStrokeDottedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "BordersStrokeDotted", bordersStrokeDottedCheck.isSelected());
+                    if (showBorders()) {
+                        notifyChanged();
+                    }
+                }
+            });
+
+            bordersArc = UserConfig.getInt(baseName + "BordersArc", 0);
+            bordersArcSelector.getItems().addAll(Arrays.asList(
+                    "0", "3", "5", "2", "1", "8", "10", "15", "20", "30", "48", "64", "96"));
+            bordersArcSelector.setValue(bordersArc + "");
+            bordersArcSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    bordersArc = 0;
+                    try {
+                        bordersArc = Integer.valueOf(newValue);
+                        if (bordersArc < 0) {
+                            bordersArc = 0;
+                        }
+                    } catch (Exception e) {
+                        bordersArc = 0;
+                    }
+                    UserConfig.setInt(baseName + "BordersArc", bordersArc);
+                    if (showBorders()) {
+                        notifyChanged();
+                    }
+                }
+            });
+
+            bordersOpacity = UserConfig.getInt(baseName + "BordersOpacity", 50) / 100f;
+            bordersOpacity = (bordersOpacity >= 0.0f && bordersOpacity <= 1.0f) ? bordersOpacity : 0.5f;
+            bordersOpacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            bordersOpacitySelector.setValue(bordersOpacity + "");
+            bordersOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    bordersOpacity = 0.5f;
+                    try {
+                        bordersOpacity = Float.valueOf(newValue);
+                        if (bordersOpacity < 0.0f || bordersOpacity > 1.0f) {
+                            bordersOpacity = 0.5f;
+                        }
+                    } catch (Exception e) {
+                        bordersOpacity = 0.5f;
+                    }
+                    UserConfig.setInt(baseName + "BordersOpacity", (int) (bordersOpacity * 100));
+                    if (showBorders()) {
+                        notifyChanged();
+                    }
+                }
+            });
+
+            bordersMargin = UserConfig.getInt(baseName + "BordersMargin", 10);
+            bordersMarginInput.setText(bordersMargin + "");
+
             if (checkBaseAtOnce) {
-                textArea.textProperty().addListener(new ChangeListener<String>() {
+                goBordersButton.setVisible(false);
+                bordersMarginInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        checkText();
-                        notifyChanged();
+                        goBorders();
                     }
                 });
-
-                xInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        checkXY();
-                        notifyChanged();
-                    }
-                });
-
-                yInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        checkXY();
-                        notifyChanged();
-                    }
-                });
-
-                marginInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        checkMargin();
-                        notifyChanged();
-                    }
-                });
-
             }
-
-            checkPositionType();
-
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
-
     }
 
     public boolean checkText() {
@@ -480,43 +644,43 @@ public class ControlImageText extends BaseController {
     }
 
     public boolean checkParameters() {
-        return checkText() && checkPositionType();
+        return checkText() && checkPositionType() && checkBordersMargin();
     }
 
-    public void countBaseXY(Graphics2D g, FontMetrics metrics, double imageWidth, double imageHeight) {
-        int yOffset = metrics.getAscent();
+    public void countValues(Graphics2D g, FontMetrics metrics, double imageWidth, double imageHeight) {
         countTextBound(g, metrics);
         if (rightBottomRadio.isSelected()) {
             baseX = (int) imageWidth - 1 - margin - textWidth;
-            baseY = (int) imageHeight - 1 - margin + yOffset - textHeight;
+            baseY = (int) imageHeight - 1 - margin - textHeight;
 
         } else if (rightTopRadio.isSelected()) {
             baseX = (int) imageWidth - 1 - margin - textWidth;
-            baseY = margin + yOffset;
+            baseY = margin;
 
         } else if (leftBottomRadio.isSelected()) {
             baseX = margin;
-            baseY = (int) imageHeight - 1 - margin + yOffset - textHeight;
+            baseY = (int) imageHeight - 1 - margin - textHeight;
 
         } else if (leftTopRadio.isSelected()) {
             baseX = margin;
-            baseY = margin + yOffset;
+            baseY = margin;
 
         } else if (centerRadio.isSelected()) {
             baseX = (int) ((imageWidth - textWidth) / 2);
-            baseY = (int) ((imageHeight - textHeight) / 2) + yOffset;
+            baseY = (int) ((imageHeight - textHeight) / 2);
 
         } else if (customRadio.isSelected()) {
             baseX = x;
-            baseY = y + yOffset;
+            baseY = y;
         } else {
             baseX = 0;
-            baseY = yOffset;
+            baseY = 0;
         }
+        textY = baseY + metrics.getAscent();
     }
 
     public void countTextBound(Graphics2D g, FontMetrics metrics) {
-        String[] lines = getText().split("\n", -1);
+        String[] lines = text().split("\n", -1);
         int lend = lines.length - 1, heightMax = 0, charWidthMax = 0;
         textWidth = 0;
         textHeight = 0;
@@ -574,24 +738,70 @@ public class ControlImageText extends BaseController {
     @FXML
     @Override
     public void goAction() {
-        if (parentController instanceof ImageManufactureTextController) {
-            ((ImageManufactureTextController) parentController).goAction();
+        if (!checkParameters()) {
+            popError(Languages.message("InvalidParameters"));
+            return;
         }
+        notifyChanged();
+    }
+
+    public boolean checkBordersMargin() {
+        try {
+            bordersMargin = Integer.valueOf(bordersMarginInput.getText());
+            UserConfig.setInt(baseName + "BordersMargin", bordersMargin);
+        } catch (Exception e) {
+            bordersMarginInput.setStyle(UserConfig.badStyle());
+            return false;
+        }
+        return true;
+    }
+
+    @FXML
+    public void goBorders() {
+        goAction();
     }
 
     /*
-        get/set
+        refer
      */
-    public String getText() {
+    public String text() {
         return textArea.getText();
     }
 
-    public Color getColor() {
-        return (Color) colorSetController.rect.getFill();
+    public Font font() {
+        if (fontWeight == FontWeight.BOLD) {
+            if (fontPosture == FontPosture.REGULAR) {
+                return new java.awt.Font(fontFamily, java.awt.Font.BOLD, fontSize);
+            } else {
+                return new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, fontSize);
+            }
+        } else {
+            if (fontPosture == FontPosture.REGULAR) {
+                return new java.awt.Font(fontFamily, java.awt.Font.PLAIN, fontSize);
+            } else {
+                return new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
+            }
+        }
     }
 
-    public java.awt.Color getAwtColor() {
-        return FxColorTools.toAwtColor(getColor());
+    public javafx.scene.text.Font fxFont() {
+        if (fontWeight == FontWeight.BOLD) {
+            if (fontPosture == FontPosture.REGULAR) {
+                return javafx.scene.text.Font.font(fontFamily, FontWeight.BOLD, FontPosture.REGULAR, fontSize);
+            } else {
+                return javafx.scene.text.Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, fontSize);
+            }
+        } else {
+            if (fontPosture == FontPosture.REGULAR) {
+                return javafx.scene.text.Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, fontSize);
+            } else {
+                return javafx.scene.text.Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, fontSize);
+            }
+        }
+    }
+
+    public java.awt.Color textColor() {
+        return colorSetController.awtColor();
     }
 
     public boolean isVertical() {
@@ -614,38 +824,30 @@ public class ControlImageText extends BaseController {
         return ignoreTransparentCheck.isSelected();
     }
 
-    public Font getFont() {
-        if (fontWeight == FontWeight.BOLD) {
-            if (fontPosture == FontPosture.REGULAR) {
-                return new java.awt.Font(fontFamily, java.awt.Font.BOLD, fontSize);
-            } else {
-                return new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, fontSize);
-            }
-        } else {
-            if (fontPosture == FontPosture.REGULAR) {
-                return new java.awt.Font(fontFamily, java.awt.Font.PLAIN, fontSize);
-            } else {
-                return new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
-            }
-        }
+    public boolean showBorders() {
+        return bordersCheck.isSelected();
     }
 
-    public javafx.scene.text.Font getFxFont() {
-        if (fontWeight == FontWeight.BOLD) {
-            if (fontPosture == FontPosture.REGULAR) {
-                return javafx.scene.text.Font.font(fontFamily, FontWeight.BOLD, FontPosture.REGULAR, fontSize);
-            } else {
-                return javafx.scene.text.Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, fontSize);
-            }
-        } else {
-            if (fontPosture == FontPosture.REGULAR) {
-                return javafx.scene.text.Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, fontSize);
-            } else {
-                return javafx.scene.text.Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, fontSize);
-            }
-        }
+    public boolean bordersDotted() {
+        return bordersStrokeDottedCheck.isSelected();
     }
 
+    public boolean bordersFilled() {
+        return bordersFillCheck.isSelected();
+    }
+
+    public java.awt.Color bordersStrokeColor() {
+        return bordersStrokeColorSetController.awtColor();
+    }
+
+    public java.awt.Color bordersFillColor() {
+        return bordersFillColorSetController.awtColor();
+    }
+
+
+    /*
+        get/set
+     */
     public ImageView getImageView() {
         return imageView;
     }
@@ -783,11 +985,11 @@ public class ControlImageText extends BaseController {
     }
 
     public ComboBox<String> getSizeBox() {
-        return sizeBox;
+        return fontSizeSelector;
     }
 
-    public void setSizeBox(ComboBox<String> sizeBox) {
-        this.sizeBox = sizeBox;
+    public void setSizeBox(ComboBox<String> fontSizeSelector) {
+        this.fontSizeSelector = fontSizeSelector;
     }
 
     public ComboBox<String> getOpacitySelector() {
@@ -807,35 +1009,35 @@ public class ControlImageText extends BaseController {
     }
 
     public ComboBox<String> getStyleBox() {
-        return styleBox;
+        return fontStyleSelector;
     }
 
-    public void setStyleBox(ComboBox<String> styleBox) {
-        this.styleBox = styleBox;
+    public void setStyleBox(ComboBox<String> fontStyleSelector) {
+        this.fontStyleSelector = fontStyleSelector;
     }
 
     public ComboBox<String> getFamilyBox() {
-        return familyBox;
+        return fontFamilySelector;
     }
 
-    public void setFamilyBox(ComboBox<String> familyBox) {
-        this.familyBox = familyBox;
+    public void setFamilyBox(ComboBox<String> fontFamilySelector) {
+        this.fontFamilySelector = fontFamilySelector;
     }
 
     public ComboBox<String> getAngleBox() {
-        return angleBox;
+        return angleSelector;
     }
 
-    public void setAngleBox(ComboBox<String> angleBox) {
-        this.angleBox = angleBox;
+    public void setAngleBox(ComboBox<String> angleSelector) {
+        this.angleSelector = angleSelector;
     }
 
     public ComboBox<String> getShadowBox() {
-        return shadowBox;
+        return shadowSelector;
     }
 
-    public void setShadowBox(ComboBox<String> shadowBox) {
-        this.shadowBox = shadowBox;
+    public void setShadowBox(ComboBox<String> shadowSelector) {
+        this.shadowSelector = shadowSelector;
     }
 
     public CheckBox getOutlineCheck() {
@@ -996,6 +1198,198 @@ public class ControlImageText extends BaseController {
 
     public void setTextHeight(int textHeight) {
         this.textHeight = textHeight;
+    }
+
+    public int getBordersStrokeWidth() {
+        return bordersStrokeWidth;
+    }
+
+    public void setBordersStrokeWidth(int bordersStrokeWidth) {
+        this.bordersStrokeWidth = bordersStrokeWidth;
+    }
+
+    public int getBordersArc() {
+        return bordersArc;
+    }
+
+    public void setBordersArc(int bordersArc) {
+        this.bordersArc = bordersArc;
+    }
+
+    public int getBordersMargin() {
+        return bordersMargin;
+    }
+
+    public void setBordersMargin(int bordersMargin) {
+        this.bordersMargin = bordersMargin;
+    }
+
+    public float getBordersOpacity() {
+        return bordersOpacity;
+    }
+
+    public void setBordersOpacity(float bordersOpacity) {
+        this.bordersOpacity = bordersOpacity;
+    }
+
+    public boolean isCheckBaseAtOnce() {
+        return checkBaseAtOnce;
+    }
+
+    public void setCheckBaseAtOnce(boolean checkBaseAtOnce) {
+        this.checkBaseAtOnce = checkBaseAtOnce;
+    }
+
+    public TextField getBordersMarginInput() {
+        return bordersMarginInput;
+    }
+
+    public void setBordersMarginInput(TextField bordersMarginInput) {
+        this.bordersMarginInput = bordersMarginInput;
+    }
+
+    public ComboBox<String> getFontSizeSelector() {
+        return fontSizeSelector;
+    }
+
+    public void setFontSizeSelector(ComboBox<String> fontSizeSelector) {
+        this.fontSizeSelector = fontSizeSelector;
+    }
+
+    public ComboBox<String> getFontStyleSelector() {
+        return fontStyleSelector;
+    }
+
+    public void setFontStyleSelector(ComboBox<String> fontStyleSelector) {
+        this.fontStyleSelector = fontStyleSelector;
+    }
+
+    public ComboBox<String> getFontFamilySelector() {
+        return fontFamilySelector;
+    }
+
+    public void setFontFamilySelector(ComboBox<String> fontFamilySelector) {
+        this.fontFamilySelector = fontFamilySelector;
+    }
+
+    public ComboBox<String> getAngleSelector() {
+        return angleSelector;
+    }
+
+    public void setAngleSelector(ComboBox<String> angleSelector) {
+        this.angleSelector = angleSelector;
+    }
+
+    public ComboBox<String> getShadowSelector() {
+        return shadowSelector;
+    }
+
+    public void setShadowSelector(ComboBox<String> shadowSelector) {
+        this.shadowSelector = shadowSelector;
+    }
+
+    public ComboBox<String> getBordersStrokeWidthSelector() {
+        return bordersStrokeWidthSelector;
+    }
+
+    public void setBordersStrokeWidthSelector(ComboBox<String> bordersStrokeWidthSelector) {
+        this.bordersStrokeWidthSelector = bordersStrokeWidthSelector;
+    }
+
+    public ComboBox<String> getBordersArcSelector() {
+        return bordersArcSelector;
+    }
+
+    public void setBordersArcSelector(ComboBox<String> bordersArcSelector) {
+        this.bordersArcSelector = bordersArcSelector;
+    }
+
+    public ComboBox<String> getBordersOpacitySelector() {
+        return bordersOpacitySelector;
+    }
+
+    public void setBordersOpacitySelector(ComboBox<String> bordersOpacitySelector) {
+        this.bordersOpacitySelector = bordersOpacitySelector;
+    }
+
+    public CheckBox getBordersCheck() {
+        return bordersCheck;
+    }
+
+    public void setBordersCheck(CheckBox bordersCheck) {
+        this.bordersCheck = bordersCheck;
+    }
+
+    public CheckBox getBordersFillCheck() {
+        return bordersFillCheck;
+    }
+
+    public void setBordersFillCheck(CheckBox bordersFillCheck) {
+        this.bordersFillCheck = bordersFillCheck;
+    }
+
+    public CheckBox getBordersStrokeDottedCheck() {
+        return bordersStrokeDottedCheck;
+    }
+
+    public void setBordersStrokeDottedCheck(CheckBox bordersStrokeDottedCheck) {
+        this.bordersStrokeDottedCheck = bordersStrokeDottedCheck;
+    }
+
+    public ColorSet getBordersFillColorSetController() {
+        return bordersFillColorSetController;
+    }
+
+    public void setBordersFillColorSetController(ColorSet bordersFillColorSetController) {
+        this.bordersFillColorSetController = bordersFillColorSetController;
+    }
+
+    public ColorSet getBordersStrokeColorSetController() {
+        return bordersStrokeColorSetController;
+    }
+
+    public void setBordersStrokeColorSetController(ColorSet bordersStrokeColorSetController) {
+        this.bordersStrokeColorSetController = bordersStrokeColorSetController;
+    }
+
+    public VBox getBordersBox() {
+        return bordersBox;
+    }
+
+    public void setBordersBox(VBox bordersBox) {
+        this.bordersBox = bordersBox;
+    }
+
+    public Label getSizeLabel() {
+        return sizeLabel;
+    }
+
+    public void setSizeLabel(Label sizeLabel) {
+        this.sizeLabel = sizeLabel;
+    }
+
+    public HBox getGoBox() {
+        return goBox;
+    }
+
+    public void setGoBox(HBox goBox) {
+        this.goBox = goBox;
+    }
+
+    public Button getGoBordersButton() {
+        return goBordersButton;
+    }
+
+    public void setGoBordersButton(Button goBordersButton) {
+        this.goBordersButton = goBordersButton;
+    }
+
+    public int getTextY() {
+        return textY;
+    }
+
+    public void setTextY(int textY) {
+        this.textY = textY;
     }
 
 }

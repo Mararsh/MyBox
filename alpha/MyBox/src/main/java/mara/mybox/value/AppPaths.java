@@ -47,6 +47,10 @@ public class AppPaths {
         return getPath("imageClipboard");
     }
 
+    public static String getDataPath() {
+        return getPath("data");
+    }
+
     public static String getDataClipboardPath() {
         return getPath("dataClipboard");
     }

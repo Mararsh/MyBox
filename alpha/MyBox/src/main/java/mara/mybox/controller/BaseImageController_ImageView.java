@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -45,7 +46,8 @@ public abstract class BaseImageController_ImageView extends BaseController {
     protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
-    protected boolean isPickingColor, imageChanged, operateOriginalSize;
+    protected final SimpleBooleanProperty loadNotify;
+    protected boolean imageChanged, isPickingColor, operateOriginalSize;
     protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, // 0-based
             sizeChangeAware, zoomStep, xZoomStep, yZoomStep;
     protected LoadingController loadingController;
@@ -75,9 +77,12 @@ public abstract class BaseImageController_ImageView extends BaseController {
     protected ComboBox<String> zoomStepSelector, loadWidthBox;
     @FXML
     protected HBox operationBox;
+    @FXML
+    protected ControlImageRender renderController;
 
     public BaseImageController_ImageView() {
         baseTitle = message("Image");
+        loadNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -140,6 +145,10 @@ public abstract class BaseImageController_ImageView extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    public void notifyLoad() {
+        loadNotify.set(!loadNotify.get());
     }
 
     protected void initImageView() {

@@ -72,7 +72,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     }
 
     public void write(boolean editing) {
-        String text = optionsController.getText();
+        String text = optionsController.text();
         if (isSettingValues || optionsController.x < 0 || optionsController.y < 0
                 || optionsController.x >= imageView.getImage().getWidth()
                 || optionsController.y >= imageView.getImage().getHeight()

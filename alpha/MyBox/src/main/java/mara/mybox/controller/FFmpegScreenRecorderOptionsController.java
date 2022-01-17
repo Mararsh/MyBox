@@ -165,10 +165,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
 
             checkScope();
 
-            delayController.permitInvalid(false).permitNotSetting(true)
+            delayController.permitInvalid(false).permitNotSet(true)
                     .init(baseName + "Delay", 5);
 
-            durationController.permitInvalid(false).permitNotSetting(true)
+            durationController.permitInvalid(false).permitNotSet(true)
                     .init(baseName + "Duration", -1);
 
         } catch (Exception e) {

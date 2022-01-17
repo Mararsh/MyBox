@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
+import mara.mybox.db.table.TableBlobValue;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
@@ -574,6 +575,9 @@ public class DerbyBase {
             }
             if (!tables.contains("Data2D_Cell".toUpperCase())) {
                 new TableData2DCell().createTable(conn);
+            }
+            if (!tables.contains("Blob_Value".toUpperCase())) {
+                new TableBlobValue().createTable(conn);
             }
             return true;
         } catch (Exception e) {

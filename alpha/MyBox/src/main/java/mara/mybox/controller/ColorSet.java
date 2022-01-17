@@ -98,6 +98,10 @@ public class ColorSet extends BaseController {
         return (Color) rect.getFill();
     }
 
+    public java.awt.Color awtColor() {
+        return FxColorTools.toAwtColor(color());
+    }
+
     public String rgb() {
         return FxColorTools.color2rgb(color());
     }

@@ -1,5 +1,6 @@
 package mara.mybox.value;
 
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ public class AppVariables {
     public static ImageClipboardMonitor imageClipboardMonitor;
     public static Timer exitTimer;
     public static SimpleBooleanProperty errorNotify;
+    public static Map<RenderingHints.Key, Object> imageRenderHints;
 
     public static void initAppVaribles() {
         try {
@@ -73,6 +75,7 @@ public class AppVariables {
             popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
             errorNotify = new SimpleBooleanProperty(false);
             isTesting = false;
+            ImageRenderHints.loadImageRenderHints();
 
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {

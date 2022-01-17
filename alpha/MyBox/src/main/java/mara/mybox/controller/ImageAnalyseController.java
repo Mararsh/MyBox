@@ -262,7 +262,6 @@ public class ImageAnalyseController extends ImageViewerController {
             fitSize();
 
             drawMaskRulerXY();
-            drawMaskGrid();
             checkCoordinate();
             setMaskStroke();
         } catch (Exception e) {

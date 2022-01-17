@@ -39,6 +39,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlWebView;
@@ -646,6 +647,19 @@ public class PopTools {
         String style = UserConfig.getString(prefix + "WindowStyle", "");
         pane.setStyle(baseStyle + style);
         setMenuLabelsStyle(pane, baseStyle + style);
+    }
+
+    public static void closeAllPopup() {
+        try {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (window instanceof Popup) {
+                    window.hide();
+                }
+            }
+        } catch (Exception e) {
+        }
     }
 
 }

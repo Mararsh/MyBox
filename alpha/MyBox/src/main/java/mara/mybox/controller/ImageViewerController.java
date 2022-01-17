@@ -62,7 +62,7 @@ public class ImageViewerController extends BaseImageController {
     protected FileSortMode sortMode;
 
     @FXML
-    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, browsePane;
+    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, renderPane, browsePane;
     @FXML
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
@@ -97,6 +97,7 @@ public class ImageViewerController extends BaseImageController {
             initSaveAsPane();
             initEditPane();
             initBrowsePane();
+            initRenderPane();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -139,7 +140,6 @@ public class ImageViewerController extends BaseImageController {
                                 return;
                             }
                         }
-                        UserConfig.setInt(baseName + "LoadWidth", loadWidth);
                         setLoadWidth();
                     }
                 });
@@ -302,6 +302,20 @@ public class ImageViewerController extends BaseImageController {
                     UserConfig.setBoolean(baseName + "EditPane", editPane.isExpanded());
                 });
                 editPane.setExpanded(UserConfig.getBoolean(baseName + "EditPane", false));
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initRenderPane() {
+        try {
+            if (renderPane != null) {
+                renderPane.setExpanded(UserConfig.getBoolean(baseName + "RenderPane", true));
+                renderPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    UserConfig.setBoolean(baseName + "RenderPane", renderPane.isExpanded());
+                });
             }
 
         } catch (Exception e) {
@@ -823,13 +837,13 @@ public class ImageViewerController extends BaseImageController {
                 return;
             }
             FileRenameController controller = (FileRenameController) openStage(Fxmls.FileRenameFxml);
+            controller.set(sourceFile);
             controller.getMyStage().setOnHiding((WindowEvent event) -> {
                 File newFile = controller.getNewFile();
                 Platform.runLater(() -> {
                     fileRenamed(newFile);
                 });
             });
-            controller.set(sourceFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());
@@ -847,6 +861,7 @@ public class ImageViewerController extends BaseImageController {
             changeFile(imageInformation, newFile);
             updateLabelsTitle();
             makeImageNevigator();
+            notifyLoad();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());

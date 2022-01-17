@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
 /**
@@ -45,6 +46,9 @@ public class TransformTools {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
+        if (AppVariables.imageRenderHints != null) {
+            g.addRenderingHints(AppVariables.imageRenderHints);
+        }
         Color bgColor = Colors.TRANSPARENT;
         g.setBackground(bgColor);
         if (!isSkew) {
@@ -74,6 +78,9 @@ public class TransformTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             Color bgColor = Colors.TRANSPARENT;
             g.setBackground(bgColor);
             if (shearX < 0) {

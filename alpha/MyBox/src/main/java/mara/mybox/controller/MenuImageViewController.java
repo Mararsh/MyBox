@@ -2,6 +2,8 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.stage.Window;
@@ -25,17 +27,30 @@ public class MenuImageViewController extends MenuImageBaseController {
             this.imageViewerController = imageViewerController;
             super.setParameters(imageViewerController, x, y);
 
-            boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
-            if (cropButton != null) {
-                cropButton.setDisable(!selected);
+            if (selectAreaCheck != null && cropButton != null) {
+                selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        cropButton.setDisable(!newValue);
+                    }
+                });
             }
-            if (selectAllButton != null) {
-                selectAllButton.setDisable(!selected);
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void updateImage() {
+        super.updateImage();
+        boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
+        if (cropButton != null) {
+            cropButton.setDisable(!selected);
+        }
+        if (selectAllButton != null) {
+            selectAllButton.setDisable(!selected);
+        }
+
     }
 
     @FXML
@@ -75,6 +90,11 @@ public class MenuImageViewController extends MenuImageBaseController {
     @Override
     public void saveAction() {
         imageViewerController.saveAction();
+    }
+
+    @FXML
+    public void renameAction() {
+        imageViewerController.renameAction();
     }
 
     @FXML

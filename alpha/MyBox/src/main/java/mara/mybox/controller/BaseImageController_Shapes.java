@@ -72,7 +72,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             setMaskStroke();
 
             drawMaskRulerXY();
-            drawMaskGrid();
             checkCoordinate();
 
             drawMaskRectangleLine();
@@ -242,7 +241,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     public void initMaskControls(boolean show) {
         try {
             drawMaskRulerXY();
-            drawMaskGrid();
             initMaskRectangleLine(show);
             initMaskCircleLine(show);
             initMaskEllipseLine(show);
@@ -275,7 +273,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             initMaskPolylineLine(true);
             initMaskPenlines(true);
             drawMaskRulerXY();
-            drawMaskGrid();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

@@ -4,7 +4,9 @@ import com.sun.management.OperatingSystemMXBean;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,6 +28,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Window;
 import mara.mybox.MyBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
@@ -37,6 +40,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import static mara.mybox.fxml.WindowTools.reloadAll;
 import static mara.mybox.fxml.WindowTools.styleAll;
@@ -45,6 +49,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -60,9 +65,9 @@ public class SettingsController extends BaseController {
     protected int recentFileNumber, newJVM;
 
     @FXML
-    protected Tab interfaceTab, baseTab, imageTab, dataTab, mapTab;
+    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, mapTab;
     @FXML
-    protected ToggleGroup langGroup, controlColorGroup, derbyGroup, splitPanesGroup;
+    protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox stopAlarmCheck, closeCurrentCheck, recordWindowsSizeLocationCheck,
             anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
@@ -79,12 +84,13 @@ public class SettingsController extends BaseController {
             strokeWidthBox, anchorWidthBox, gridWidthSelector, gridIntervalSelector, gridOpacitySelector,
             popSizeSelector, popDurationSelector;
     @FXML
-    protected HBox imageHisBox, derbyBox;
+    protected HBox pdfMemBox, imageHisBox, derbyBox;
     @FXML
     protected Button settingsRecentOKButton, settingsChangeRootButton,
             settingsDataPathButton, settingsJVMButton;
     @FXML
     protected RadioButton chineseRadio, englishRadio, embeddedRadio, networkRadio,
+            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
             redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, darkGreenRadio;
     @FXML
     protected ColorSet strokeColorSetController, anchorColorSetController, gridColorSetController, alphaColorSetController,
@@ -94,6 +100,8 @@ public class SettingsController extends BaseController {
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
             derbyStatus;
+    @FXML
+    protected ControlImageRender renderController;
 
     public SettingsController() {
         baseTitle = message("Settings");
@@ -107,6 +115,7 @@ public class SettingsController extends BaseController {
             initInterfaceTab();
             initBaseTab();
             initDataTab();
+            initPdfTab();
             initImageTab();
             initMapTab();
 
@@ -209,6 +218,7 @@ public class SettingsController extends BaseController {
             popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
 
             checkLanguage();
+            checkPdfMem();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -818,6 +828,55 @@ public class SettingsController extends BaseController {
     }
 
     /*
+        PDF settings
+     */
+    public void initPdfTab() {
+        try {
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    protected void checkPdfMem() {
+        String pm = UserConfig.getString("PdfMemDefault", "1GB");
+        switch (pm) {
+            case "1GB":
+                pdfMem1GRadio.setSelected(true);
+                break;
+            case "2GB":
+                pdfMem2GRadio.setSelected(true);
+                break;
+            case "Unlimit":
+                pdfMemUnlimitRadio.setSelected(true);
+                break;
+            case "500MB":
+            default:
+                pdfMem500MRadio.setSelected(true);
+        }
+    }
+
+    @FXML
+    protected void PdfMem500MB(ActionEvent event) {
+        UserConfig.setPdfMem("500MB");
+    }
+
+    @FXML
+    protected void PdfMem1GB(ActionEvent event) {
+        UserConfig.setPdfMem("1GB");
+    }
+
+    @FXML
+    protected void PdfMem2GB(ActionEvent event) {
+        UserConfig.setPdfMem("2GB");
+    }
+
+    @FXML
+    protected void pdfMemUnlimit(ActionEvent event) {
+        UserConfig.setPdfMem("Unlimit");
+    }
+
+    /*
         Image settings
      */
     public void initImageTab() {
@@ -995,6 +1054,8 @@ public class SettingsController extends BaseController {
                 }
             });
 
+            renderController.setParentController(this);
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1074,6 +1135,30 @@ public class SettingsController extends BaseController {
     @FXML
     public void closeAction(ActionEvent event) {
         closeStage();
+    }
+
+    /*
+        static methods
+     */
+    public static SettingsController oneOpen(BaseController parent) {
+        SettingsController controller = null;
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof SettingsController) {
+                try {
+                    controller = (SettingsController) object;
+                    controller.toFront();
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (controller == null) {
+            controller = (SettingsController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.SettingsFxml, false);
+        }
+        return controller;
     }
 
 }

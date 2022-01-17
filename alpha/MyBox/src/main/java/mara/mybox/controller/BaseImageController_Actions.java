@@ -196,9 +196,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     public void settings() {
-        SettingsController controller = (SettingsController) openStage(Fxmls.SettingsFxml);
-        controller.setParentController(this);
-        controller.parentFxml = myFxml;
+        SettingsController controller = SettingsController.oneOpen(this);
         controller.tabPane.getSelectionModel().select(controller.imageTab);
     }
 

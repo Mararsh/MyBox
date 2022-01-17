@@ -116,7 +116,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             strokeWidth = v;
-                            UserConfig.setInt(strokeWidthKey, strokeWidth);
+                            UserConfig.setInt("ImagePenLineWidth", strokeWidth);
                             updateMask();
                             ValidationTools.setEditorNormal(strokeWidthBox);
                         } else {

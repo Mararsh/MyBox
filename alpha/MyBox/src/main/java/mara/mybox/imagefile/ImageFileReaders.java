@@ -20,6 +20,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
+import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageColor;
 import static mara.mybox.bufferedimage.ImageConvertTools.pixelSizeMm2dpi;
 import mara.mybox.bufferedimage.ImageFileInformation;
@@ -31,6 +32,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
+import static mara.mybox.value.AppVariables.imageRenderHints;
 import static mara.mybox.value.Languages.message;
 import net.sf.image4j.codec.ico.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
@@ -154,6 +156,8 @@ public class ImageFileReaders {
                 int requiredWidth = (int) imageInfo.getRequiredWidth();
                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
+                } else if (imageRenderHints != null) {
+                    bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
                 }
                 return bufferedImage;
             } catch (Exception e) {
@@ -243,9 +247,6 @@ public class ImageFileReaders {
                                 }
                                 imageInfo.setTask(task);
                                 BufferedImage bufferedImage = readFrame(reader, imageInfo);
-                                if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
-                                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
-                                }
                                 imageInfo.loadBufferedImage(bufferedImage);
                             }
                         }
