@@ -29,7 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -79,7 +79,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     @FXML
     protected Button button;
     @FXML
-    protected ImageView bitDepthTipsView, quanTipsView;
+    protected ImageView imageQuantizationTipsView, bwTipsView, imageThresholdTipsView;
 
     @Override
     public void initControls() {
@@ -97,11 +97,11 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) {
                     String selected = ((RadioButton) newv).getText();
-                    if (Languages.message("OTSU").equals(selected)) {
+                    if (message("OTSU").equals(selected)) {
                         intPara1 = 1;
-                    } else if (Languages.message("Default").equals(selected)) {
+                    } else if (message("Default").equals(selected)) {
                         intPara1 = 2;
-                    } else if (Languages.message("Threshold").equals(selected)) {
+                    } else if (message("Threshold").equals(selected)) {
                         intPara1 = 3;
                     }
                     intInput.setDisable(intPara1 != 3);
@@ -117,16 +117,6 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(quanTipsView, new Tooltip(Languages.message("QuantizationComments")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -150,7 +140,9 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         try {
             if (imageController != null) {
                 imageController.resetImagePane();
-                imageController.scopeTab();
+                if (scopeController != null && !scopeController.scopeWhole()) {
+                    imageController.scopeTab();
+                }
             }
 
             clearValues();
@@ -338,7 +330,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected void checkPosterizingAlgorithm() {
         String selected = ((RadioButton) quanGroup.getSelectedToggle()).getText();
         for (QuantizationAlgorithm algorithm : QuantizationAlgorithm.values()) {
-            if (Languages.message(algorithm.name()).equals(selected)) {
+            if (message(algorithm.name()).equals(selected)) {
                 quantizationAlgorithm = algorithm;
                 break;
             }
@@ -354,13 +346,13 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 if (quanBox.getChildren().contains(regionBox)) {
                     quanBox.getChildren().removeAll(regionBox, loopBox, actualLoopLabel);
                 }
-                weightLabel.setText(Languages.message("HSBWeight"));
+                weightLabel.setText(message("HSBWeight"));
                 break;
             case RGBUniformQuantization:
                 if (quanBox.getChildren().contains(regionBox)) {
                     quanBox.getChildren().removeAll(regionBox, loopBox, actualLoopLabel);
                 }
-                weightLabel.setText(Languages.message("RGBWeight"));
+                weightLabel.setText(message("RGBWeight"));
                 break;
             case KMeansClustering:
                 if (!quanBox.getChildren().contains(regionBox)) {
@@ -371,7 +363,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                     quanBox.getChildren().add(actualLoopLabel);
                 }
                 actualLoopLabel.setText("");
-                weightLabel.setText(Languages.message("RGBWeight"));
+                weightLabel.setText(message("RGBWeight"));
                 break;
             case PopularityQuantization:
                 if (!quanBox.getChildren().contains(regionBox)) {
@@ -380,7 +372,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 if (quanBox.getChildren().contains(loopBox)) {
                     quanBox.getChildren().removeAll(loopBox, actualLoopLabel);
                 }
-                weightLabel.setText(Languages.message("RGBWeight"));
+                weightLabel.setText(message("RGBWeight"));
         }
         isSettingValues = true;
         weightSelector.getItems().clear();
@@ -457,7 +449,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
 
     protected void makeEdgeBox() {
         try {
-            valueCheck.setText(Languages.message("Gray"));
+            valueCheck.setText(message("Gray"));
             valueCheck.setSelected(true);
             setBox.getChildren().addAll(edgeBox, valueCheck);
         } catch (Exception e) {
@@ -468,28 +460,28 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected void makeEmbossBox() {
         try {
             intPara1 = Direction.Top;
-            stringLabel.setText(Languages.message("Direction"));
+            stringLabel.setText(message("Direction"));
             stringBoxListener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (newValue == null || newValue.trim().isEmpty()) {
                         return;
                     }
-                    if (Languages.message("Top").equals(newValue)) {
+                    if (message("Top").equals(newValue)) {
                         intPara1 = Direction.Top;
-                    } else if (Languages.message("Bottom").equals(newValue)) {
+                    } else if (message("Bottom").equals(newValue)) {
                         intPara1 = Direction.Bottom;
-                    } else if (Languages.message("Left").equals(newValue)) {
+                    } else if (message("Left").equals(newValue)) {
                         intPara1 = Direction.Top;
-                    } else if (Languages.message("Right").equals(newValue)) {
+                    } else if (message("Right").equals(newValue)) {
                         intPara1 = Direction.Right;
-                    } else if (Languages.message("LeftTop").equals(newValue)) {
+                    } else if (message("LeftTop").equals(newValue)) {
                         intPara1 = Direction.LeftTop;
-                    } else if (Languages.message("RightBottom").equals(newValue)) {
+                    } else if (message("RightBottom").equals(newValue)) {
                         intPara1 = Direction.RightBottom;
-                    } else if (Languages.message("LeftBottom").equals(newValue)) {
+                    } else if (message("LeftBottom").equals(newValue)) {
                         intPara1 = Direction.LeftBottom;
-                    } else if (Languages.message("RightTop").equals(newValue)) {
+                    } else if (message("RightTop").equals(newValue)) {
                         intPara1 = Direction.RightTop;
                     } else {
                         intPara1 = Direction.Top;
@@ -497,14 +489,14 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 }
             };
             stringBox.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
-            stringBox.getItems().addAll(Arrays.asList(Languages.message("Top"), Languages.message("Bottom"),
-                    Languages.message("Left"), Languages.message("Right"),
-                    Languages.message("LeftTop"), Languages.message("RightBottom"),
-                    Languages.message("LeftBottom"), Languages.message("RightTop")));
-            stringBox.getSelectionModel().select(Languages.message("Top"));
+            stringBox.getItems().addAll(Arrays.asList(message("Top"), message("Bottom"),
+                    message("Left"), message("Right"),
+                    message("LeftTop"), message("RightBottom"),
+                    message("LeftBottom"), message("RightTop")));
+            stringBox.getSelectionModel().select(message("Top"));
 
             intPara2 = 3;
-            intBoxLabel.setText(Languages.message("Radius"));
+            intBoxLabel.setText(message("Radius"));
             intBoxListener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -525,7 +517,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             intBox.getItems().addAll(Arrays.asList("3", "5"));
             intBox.getSelectionModel().select(0);
 
-            valueCheck.setText(Languages.message("Gray"));
+            valueCheck.setText(message("Gray"));
             valueCheck.setSelected(true);
 
             setBox.getChildren().addAll(stringBoxPane, intBoxPane, valueCheck);
@@ -560,7 +552,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected void makeThresholdingBox() {
         try {
             intPara1 = 128;
-            intLabel.setText(Languages.message("Threshold"));
+            intLabel.setText(message("Threshold"));
             intInputListener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -586,7 +578,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             NodeStyleTools.setTooltip(intInput, new Tooltip("0~255"));
 
             intPara2 = 0;
-            intLabel2.setText(Languages.message("SmallValue"));
+            intLabel2.setText(message("SmallValue"));
             intInput2Listener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -611,7 +603,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             NodeStyleTools.setTooltip(intInput2, new Tooltip("0~255"));
 
             intPara3 = 255;
-            intLabel3.setText(Languages.message("BigValue"));
+            intLabel3.setText(message("BigValue"));
             intInput3Listener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -635,9 +627,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             intInput3.setText("255");
             NodeStyleTools.setTooltip(intInput3, new Tooltip("0~255"));
 
-            NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("ThresholdingComments")));
-
-            setBox.getChildren().addAll(intInputPane, intInputPane2, intInputPane3, tipsView);
+            setBox.getChildren().addAll(intInputPane, intInputPane2, intInputPane3, imageThresholdTipsView);
             if (okButton != null) {
                 okButton.disableProperty().bind(
                         intInput.styleProperty().isEqualTo(UserConfig.badStyle())
@@ -682,11 +672,13 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             intInput.setText("128");
             NodeStyleTools.setTooltip(intInput, new Tooltip("0~255"));
 
+            MyBoxLog.console(imageView != null);
+
             if (imageView != null) {
                 calculatorView = StyleTools.getIconImage("iconCalculator.png");
                 button.setGraphic(calculatorView);
                 button.setText("");
-                NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("Calculate")));
+                NodeStyleTools.setTooltip(button, new Tooltip(message("Calculate")));
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -698,8 +690,10 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
 
             intPara1 = 1;
             otsuRadio.setSelected(true);
+            intInput.setDisable(intPara1 != 3);
+            button.setDisable(intPara1 != 3);
 
-            valueCheck.setText(Languages.message("Dithering"));
+            valueCheck.setText(message("Dithering"));
             if (scopeController != null && scopeController.scope != null
                     && scopeController.scope.getScopeType() == ImageScope.ScopeType.Matting) {
                 valueCheck.setSelected(false);
@@ -708,15 +702,13 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 valueCheck.setSelected(true);
                 valueCheck.setDisable(false);
             }
-
-            NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("BWThresholdComments")));
-
             if (imageView != null) {
-                othersPane.getChildren().addAll(tipsView, button, valueCheck);
+                othersPane.getChildren().addAll(bwTipsView, button, valueCheck);
             } else {
-                othersPane.getChildren().addAll(tipsView, valueCheck);
+                othersPane.getChildren().addAll(bwTipsView, valueCheck);
             }
             setBox.getChildren().addAll(bwBox, intInputPane, othersPane);
+
             if (okButton != null) {
                 okButton.disableProperty().bind(
                         intInput.styleProperty().isEqualTo(UserConfig.badStyle())
@@ -732,7 +724,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected void makeSepiaBox() {
         try {
             intPara1 = 80;
-            intBoxLabel.setText(Languages.message("Intensity"));
+            intBoxLabel.setText(message("Intensity"));
             intBoxListener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -773,7 +765,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected void makeMosaicBox() {
         try {
             intPara1 = 80;
-            intBoxLabel.setText(Languages.message("Intensity"));
+            intBoxLabel.setText(message("Intensity"));
             intBoxListener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {

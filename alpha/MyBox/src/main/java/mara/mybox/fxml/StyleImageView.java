@@ -40,7 +40,7 @@ public class StyleImageView {
                     return new StyleData(id, "", Languages.message("ImageRefTips"), "", "iconTips.png");
                 case "distanceTipsView":
                     return new StyleData(id, "", Languages.message("ColorMatchComments"), "", "iconTips.png");
-                case "BWThresholdTipsView":
+                case "bwTipsView":
                     return new StyleData(id, "", Languages.message("BWThresholdComments"), "", "iconTips.png");
                 case "pdfMemTipsView":
                     return new StyleData(id, "", Languages.message("PdfMemComments"), "", "iconTips.png");
@@ -48,10 +48,10 @@ public class StyleImageView {
                     return new StyleData(id, "", Languages.message("PdfPageSizeComments"), "", "iconTips.png");
                 case "preAlphaTipsView":
                     return new StyleData(id, "", Languages.message("PremultipliedAlphaTips"), "", "iconTips.png");
-                case "thresholdingTipsView":
-                    return new StyleData(id, "", Languages.message("ThresholdingComments"), "", "iconTips.png");
-                case "quantizationTipsView":
-                    return new StyleData(id, "", Languages.message("QuantizationComments"), "", "iconTips.png");
+                case "imageThresholdTipsView":
+                    return new StyleData(id, "", Languages.message("ImageThresholdingComments"), "", "iconTips.png");
+                case "imageQuantizationTipsView":
+                    return new StyleData(id, "", Languages.message("ImageQuantizationComments"), "", "iconTips.png");
                 default:
                     return new StyleData(id, "", "", "iconTips.png");
             }

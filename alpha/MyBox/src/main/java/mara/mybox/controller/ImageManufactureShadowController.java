@@ -31,6 +31,8 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             colorSetController.init(this, baseName + "Color", Color.BLACK);
 
             shadowBox.getItems().clear();

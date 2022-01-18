@@ -47,6 +47,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
     @Override
     public void initPane() {
         try {
+            super.initPane();
 
             optionsController.setValues(this);
 

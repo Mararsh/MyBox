@@ -169,7 +169,7 @@ public class ImageAnalyseController extends ImageViewerController {
             NodeStyleTools.setTooltip(palette2Button, message("AddInColorPalette"));
             NodeStyleTools.setTooltip(tipsView, new Tooltip(
                     message("ImageAnalyseTips") + "\n\n-------------------------\n"
-                    + message("QuantizationComments")));
+                    + message("ImageQuantizationComments")));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

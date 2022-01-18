@@ -85,6 +85,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             lastPoint = null;
             setBox.getChildren().clear();
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {

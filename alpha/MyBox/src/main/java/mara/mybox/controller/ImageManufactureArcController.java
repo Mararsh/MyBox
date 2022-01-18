@@ -31,6 +31,8 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             colorSetController.init(this, baseName + "Color");
 
             arc = UserConfig.getInt(baseName + "Arc", 20);

@@ -8,7 +8,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -124,21 +123,19 @@ public class ImageBinary extends PixelsOperation {
         return newColor;
     }
 
-    public static BufferedImage byteBinary(BufferedImage image) {
+    public static BufferedImage byteBinary(BufferedImage srcImage) {
         try {
-            int width = image.getWidth();
-            int height = image.getHeight();
+            BufferedImage tmpImage = AlphaTools.removeAlpha(srcImage);
+            int width = tmpImage.getWidth();
+            int height = tmpImage.getHeight();
             BufferedImage binImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
             Graphics2D g = binImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
-            }
-            g.drawImage(image, 0, 0, null);
+            g.drawImage(srcImage, 0, 0, null);
             g.dispose();
             return binImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return image;
+            return srcImage;
         }
     }
 

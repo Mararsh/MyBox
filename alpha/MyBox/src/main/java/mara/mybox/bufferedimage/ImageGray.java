@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -61,21 +60,19 @@ public class ImageGray extends PixelsOperation {
         return ColorConvertTools.color2gray(color);
     }
 
-    public static BufferedImage byteGray(BufferedImage image) {
+    public static BufferedImage byteGray(BufferedImage srcImage) {
         try {
-            int width = image.getWidth();
-            int height = image.getHeight();
+            BufferedImage tmpImage = AlphaTools.removeAlpha(srcImage);
+            int width = tmpImage.getWidth();
+            int height = tmpImage.getHeight();
             BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
             Graphics2D g = grayImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
-            }
-            g.drawImage(image, 0, 0, null);
+            g.drawImage(tmpImage, 0, 0, null);
             g.dispose();
             return grayImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return image;
+            return srcImage;
         }
     }
 

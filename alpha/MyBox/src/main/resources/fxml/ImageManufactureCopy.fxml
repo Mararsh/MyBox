@@ -29,15 +29,6 @@
         <CheckBox fx:id="clipboardCheck" mnemonicParsing="false" text="%OpenClipboardAfterCopy" />
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Button fx:id="scopeButton" mnemonicParsing="false" onAction="#scopeAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTarget.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
                 <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -47,6 +38,15 @@
                         </ImageView>
                     </graphic>
                 </Button>
+                <CheckBox fx:id="scopeCheck" mnemonicParsing="false">
+                    <graphic> 
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconTarget.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
             </children>
         </HBox>
     </children>

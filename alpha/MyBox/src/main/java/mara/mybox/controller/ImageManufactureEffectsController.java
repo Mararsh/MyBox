@@ -70,6 +70,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             optionsController.setValues(this);
 
         } catch (Exception e) {
@@ -113,6 +115,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     try {
                         PixelsOperation pixelsOperation;
                         ImageConvolution imageConvolution;
+                        MyBoxLog.console(optionsController.effectType);
                         switch (optionsController.effectType) {
                             case EdgeDetect:
                                 if (optionsController.eightLaplaceRadio.isSelected()) {

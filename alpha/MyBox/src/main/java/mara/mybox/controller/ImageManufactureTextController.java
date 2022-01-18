@@ -33,6 +33,8 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             optionsController.setParameters(this, imageView);
 
             optionsController.changeNotify.addListener(new ChangeListener<Boolean>() {

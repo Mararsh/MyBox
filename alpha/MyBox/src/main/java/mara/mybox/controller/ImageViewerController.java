@@ -885,6 +885,11 @@ public class ImageViewerController extends BaseImageController {
         return true;
     }
 
+    public boolean scopeWhole() {
+        return scope == null || scope.getScopeType() == ImageScope.ScopeType.All;
+    }
+
+
     /*
         static methods
      */

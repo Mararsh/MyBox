@@ -37,7 +37,7 @@ public class TableSystemConf extends DerbyBase {
                 = " CREATE TABLE System_Conf ( "
                 + "  key_Name  VARCHAR(32672) NOT NULL PRIMARY KEY, "
                 + "  int_Value INTEGER, "
-                + "  string_Value VARCHAR(32672), "
+                + "  string_Value VARCHAR(32672) "
                 + " )";
     }
 

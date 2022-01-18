@@ -89,6 +89,14 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         tabPane.getSelectionModel().select(scopeTab);
     }
 
+    public boolean isImageTabSelected() {
+        return tabPane.getSelectionModel().getSelectedItem() == imageTab;
+    }
+
+    public boolean isScopeTabSelected() {
+        return tabPane.getSelectionModel().getSelectedItem() == scopeTab;
+    }
+
     @Override
     protected void zoomStepChanged() {
         xZoomStep = zoomStep;

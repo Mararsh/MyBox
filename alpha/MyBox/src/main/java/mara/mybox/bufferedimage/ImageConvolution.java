@@ -90,14 +90,15 @@ public class ImageConvolution extends PixelsOperation {
     @Override
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
         int pixel = image.getRGB(x, y);
+        Color newColor = new Color(pixel, true);
         if (x < radiusX || x + radiusX > maxX
                 || y < radiusY || y + radiusY > maxY) {
             if (edge_op == ConvolutionKernel.Edge_Op.COPY) {
                 target.setRGB(x, y, pixel);
-                return new Color(pixel, true);
+                return newColor;
             }
         }
-        Color newColor = applyConvolution(x, y);
+        newColor = applyConvolution(x, y);
         if (isEmboss) {
             int v = 128, red, blue, green;
             red = Math.min(Math.max(newColor.getRed() + v, 0), 255);
@@ -159,8 +160,7 @@ public class ImageConvolution extends PixelsOperation {
 
     }
 
-    public static BufferedImage applyConvolution(BufferedImage source,
-            ConvolutionKernel convolutionKernel) {
+    public static BufferedImage applyConvolution(BufferedImage source, ConvolutionKernel convolutionKernel) {
         BufferedImage clearedSource;
         int type = convolutionKernel.getType();
         if (type == ConvolutionKernel.Convolution_Type.EDGE_DETECTION
@@ -200,13 +200,17 @@ public class ImageConvolution extends PixelsOperation {
         return target;
     }
 
+    // source should have no alpha
     public static BufferedImage applyConvolveOp(BufferedImage source, ConvolveOp imageOp) {
         if (source == null || imageOp == null) {
             return source;
         }
         int width = source.getWidth();
         int height = source.getHeight();
-        int imageType = BufferedImage.TYPE_INT_ARGB;
+        int imageType = source.getType();
+        if (imageType == BufferedImage.TYPE_CUSTOM) {
+            imageType = BufferedImage.TYPE_INT_RGB;
+        }
         BufferedImage target = new BufferedImage(width, height, imageType);
         imageOp.filter(source, target);
         return target;

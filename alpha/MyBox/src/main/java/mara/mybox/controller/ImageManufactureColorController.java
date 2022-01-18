@@ -82,7 +82,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Label colorLabel, colorUnit, commentsLabel;
     @FXML
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
-            colorInvertButton, demoButton, scopeButton;
+            colorInvertButton, demoButton;
     @FXML
     protected CheckBox distanceExcludeCheck, squareRootCheck;
     @FXML
@@ -93,6 +93,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -219,26 +221,30 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(replaceBox);
                 commentsLabel.setText(Languages.message("ManufactureWholeImage"));
+                scopeCheck.setSelected(false);
+                scopeCheck.setDisable(true);
 
             } else {
-                imageController.scopeTab();
                 okButton.setDisable(true);
                 commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
-                opBox.getChildren().add(scopeButton);
+                scopeCheck.setDisable(false);
+                if (!scopeController.scopeWhole()) {
+                    imageController.scopeTab();
+                }
 
                 if (colorColorRadio.isSelected()) {
                     colorOperationType = OperationType.Color;
                     makeValuesBox(0, 100);
                     colorUnit.setText("0-100");
                     colorLabel.setText(message("Opacity"));
-                    setBox.getChildren().addAll(valueColorBox, valueBox, opBox);
+                    setBox.getChildren().addAll(valueColorBox, valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorFilterButton);
 
                 } else if (colorRGBRadio.isSelected()) {
                     colorOperationType = OperationType.RGB;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(colorIncreaseButton, colorDecreaseButton, colorInvertButton);
 
@@ -246,7 +252,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorOperationType = OperationType.Brightness;
                     makeValuesBox(0, 100);
                     colorUnit.setText("0-100");
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
@@ -254,7 +260,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorOperationType = OperationType.Saturation;
                     makeValuesBox(0, 100);
                     colorUnit.setText("0-100");
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
@@ -262,56 +268,56 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorOperationType = OperationType.Hue;
                     makeValuesBox(0, 360);
                     colorUnit.setText("0-360");
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
                 } else if (colorRedRadio.isSelected()) {
                     colorOperationType = OperationType.Red;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorGreenRadio.isSelected()) {
                     colorOperationType = OperationType.Green;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorBlueRadio.isSelected()) {
                     colorOperationType = OperationType.Blue;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorYellowRadio.isSelected()) {
                     colorOperationType = OperationType.Yellow;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorCyanRadio.isSelected()) {
                     colorOperationType = OperationType.Cyan;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorMagentaRadio.isSelected()) {
                     colorOperationType = OperationType.Magenta;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorOpacityRadio.isSelected()) {
                     colorOperationType = OperationType.Opacity;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox);
+                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 

@@ -91,6 +91,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             rotateAngle = currentAngle = 0;
             clipsController.setParameters(imageController, true);
 

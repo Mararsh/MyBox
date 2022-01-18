@@ -20,6 +20,7 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.imageRenderHints;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -79,6 +80,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     private void init() {
         standardAttributes = new LinkedHashMap();
         nativeAttributes = new LinkedHashMap();
+        imageType = -1;
         index = 0;
         duration = 500;
         dpi = 72;
@@ -152,7 +154,9 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         if (bufferedImage != null) {
             thumbnail = SwingFXUtils.toFXImage(bufferedImage, null);
             isScaled = width > 0 && bufferedImage.getWidth() != (int) width;
-            imageType = bufferedImage.getType();
+            if (imageType < 0) {
+                imageType = bufferedImage.getType();
+            }
             if (width <= 0) {
                 width = bufferedImage.getWidth();
                 height = bufferedImage.getHeight();
@@ -260,11 +264,16 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 }
                 if (bufferedImage != null) {
                     targetImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                    imageInfo.setImageType(bufferedImage.getType());
+                    if (imageInfo.getImageType() < 0) {
+                        imageInfo.setImageType(bufferedImage.getType());
+                    }
                 }
             }
             if (targetImage != null && infoWidth != (int) targetImage.getWidth()) {
                 imageInfo.setIsScaled(true);
+                if (imageInfo.isNeedSample()) {
+                    imageInfo.setIsSampled(true);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -288,6 +297,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             }
             if (width > 0 && bufferedImage.getWidth() != width) {
                 bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
+            } else if (imageRenderHints != null) {
+                bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -383,7 +394,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             return false;
         }
         try {
-            if (imageInfo.getWidth() > 0) {
+            if (imageInfo.getWidth() > 0 && imageInfo.getHeight() > 0) {
                 long channels = imageInfo.getColorChannels() > 0 ? imageInfo.getColorChannels() : 4;
                 long bytesSize = (long) (channels * imageInfo.getHeight() * imageInfo.getWidth());
                 long requiredMem = bytesSize * 6L;

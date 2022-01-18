@@ -236,6 +236,11 @@ public class ImageScope extends BaseData {
         return s;
     }
 
+    public boolean isWhole() {
+        return scopeType == ScopeType.All;
+    }
+
+
     /*
         SubClass should implement this
      */

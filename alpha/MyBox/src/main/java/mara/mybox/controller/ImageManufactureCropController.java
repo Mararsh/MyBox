@@ -38,6 +38,8 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             colorSetController.init(this, baseName + "CropColor");
 
             clipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CropPutClipboard", false));
@@ -76,8 +78,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
         imageController.showRightPane();
         imageController.resetImagePane();
         imageController.scopeTab();
-        if (scopeController.scope == null
-                || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
+        if (scopeController.scopeWhole()
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
             scopeController.scopeRectangleRadio.fire();
         }
@@ -86,8 +87,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     @FXML
     @Override
     public void okAction() {
-        if (scopeController.scope == null
-                || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
+        if (scopeController.scopeWhole()
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
             popError(Languages.message("InvalidScope"));
             return;

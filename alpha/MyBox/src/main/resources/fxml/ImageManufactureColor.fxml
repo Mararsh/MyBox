@@ -148,15 +148,6 @@
                 </HBox>
                 <FlowPane fx:id="opBox" hgap="5.0" prefWidth="80.0" vgap="5.0">
                     <children>
-                        <Button fx:id="scopeButton" mnemonicParsing="false" onAction="#scopeAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconTarget.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
                         <Button fx:id="setButton" mnemonicParsing="false" onAction="#setAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -204,6 +195,15 @@
                         </Button>
                     </children>
                 </FlowPane>
+                  <CheckBox fx:id="scopeCheck" mnemonicParsing="false">
+                      <graphic> 
+                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/Red/iconTarget.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </CheckBox>
                 <VBox fx:id="replaceBox" spacing="5.0">
                     <children>
                         <FlowPane fx:id="originalColorPane" hgap="5.0" layoutX="10.0" layoutY="211.0" prefWidth="80.0" vgap="5.0">

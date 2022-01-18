@@ -69,6 +69,8 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {

@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureEffectsOptionsController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureEffectsOptionsController">
     <children>
         <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="80.0" prefWrapLength="200.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
             <VBox.margin>
@@ -45,7 +52,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
                               <Label text="%Algorithm" />
-                                <ImageView fx:id="quanTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fx:id="imageQuantizationTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../buttons/Red/iconTips.png" />
                                     </image>
@@ -118,12 +125,17 @@
                     <children>
                         <Label fx:id="intLabel3" text="l" />
                         <TextField fx:id="intInput3" prefWidth="80.0" />
+                  <ImageView fx:id="imageThresholdTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconTips.png" />
+                     </image>
+                  </ImageView>
                     </children>
                 </FlowPane>
                 <FlowPane fx:id="othersPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" vgap="5.0">
                     <children>
                         <CheckBox fx:id="valueCheck" mnemonicParsing="false" text="CheckBox" />
-                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="bwTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/Red/iconTips.png" />
                             </image>

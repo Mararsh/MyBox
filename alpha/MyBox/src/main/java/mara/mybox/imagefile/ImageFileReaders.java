@@ -153,6 +153,7 @@ public class ImageFileReaders {
             BufferedImage bufferedImage;
             try {
                 bufferedImage = reader.read(imageInfo.getIndex(), param);
+                imageInfo.setImageType(bufferedImage.getType());
                 int requiredWidth = (int) imageInfo.getRequiredWidth();
                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);

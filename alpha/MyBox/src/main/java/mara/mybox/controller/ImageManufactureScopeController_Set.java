@@ -33,7 +33,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
     protected void setScopeControls() {
         try {
-            setBox.setVisible(scope != null && scope.getScopeType() != ImageScope.ScopeType.All);
+            setBox.setVisible(!scopeWhole());
             tabPane.getTabs().clear();
             scopeTips.setText("");
             NodeStyleTools.removeTooltip(scopeTips);
