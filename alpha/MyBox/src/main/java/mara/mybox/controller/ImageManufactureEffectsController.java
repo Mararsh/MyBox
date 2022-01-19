@@ -115,7 +115,6 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     try {
                         PixelsOperation pixelsOperation;
                         ImageConvolution imageConvolution;
-                        MyBoxLog.console(optionsController.effectType);
                         switch (optionsController.effectType) {
                             case EdgeDetect:
                                 if (optionsController.eightLaplaceRadio.isSelected()) {
@@ -160,7 +159,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                                 value = optionsController.intPara1 + "";
                                 break;
                             case Thresholding:
-                                pixelsOperation = PixelsOperationFactory.create(imageView.getImage(), scopeController.scope, optionsController.effectType);
+                                pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                                        scopeController.scope, optionsController.effectType);
                                 pixelsOperation.setIntPara1(optionsController.intPara1);
                                 pixelsOperation.setIntPara2(optionsController.intPara2);
                                 pixelsOperation.setIntPara3(optionsController.intPara3);
@@ -168,22 +168,10 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                                 newImage = pixelsOperation.operateFxImage();
                                 break;
                             case BlackOrWhite:
-                                ImageBinary imageBinary;
-                                switch (optionsController.intPara1) {
-                                    case 2:
-                                        imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, -1);
-                                        break;
-                                    case 3:
-                                        imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, optionsController.intPara2);
-                                        value = optionsController.intPara2 + "";
-                                        break;
-                                    default:
-                                        int t = ImageBinary.calculateThreshold(imageView.getImage());
-                                        imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, t);
-                                        value = t + "";
-                                        break;
-                                }
-                                imageBinary.setIsDithering(optionsController.valueCheck.isSelected());
+                                int threshold = optionsController.binaryController.threshold();
+                                value = threshold + "";
+                                ImageBinary imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, threshold);
+                                imageBinary.setIsDithering(optionsController.binaryController.dither());
                                 newImage = imageBinary.operateFxImage();
                                 break;
                             case Gray:

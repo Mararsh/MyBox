@@ -54,24 +54,24 @@ import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.ChartTools;
-import mara.mybox.fxml.ChartTools.ChartCoordinate;
-import mara.mybox.fxml.ChartTools.LabelType;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.Logarithmic10Coordinate;
-import mara.mybox.fxml.LogarithmicECoordinate;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SquareRootCoordinate;
+import mara.mybox.fxml.chart.ChartTools;
+import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
+import mara.mybox.fxml.chart.ChartTools.LabelType;
+import mara.mybox.fxml.chart.LabeledBarChart;
+import mara.mybox.fxml.chart.LabeledHorizontalBarChart;
+import mara.mybox.fxml.chart.Logarithmic10Coordinate;
+import mara.mybox.fxml.chart.LogarithmicECoordinate;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import mara.mybox.fxml.LabeledBarChart;
-import mara.mybox.fxml.LabeledHorizontalBarChart;
 
 /**
  * @Author Mara
@@ -117,11 +117,11 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     protected RadioButton numbersRadio, ratiosRadio, increasedRadio, confirmedRatio,
             increasedConfirmedRadio, healedRadio, healedRatioRadio, increasedHealedRadio,
             deadRadio, deadRatioRadio, increasedDeadRadio,
-            horizontalBarsChartRadio, verticalBarsChartRadio, linesChartRadio, linesChartHRadio, pieRadio, mapRadio,
+            horizontalBarChartRadio, barChartRadio, verticalLineChartRadio, lineChartRadio, pieRadio, mapRadio,
             cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio;
 
     public EpidemicReportsChartController() {
-        baseTitle = Languages.message("EpidemicReport");
+        baseTitle = message("EpidemicReport");
 
     }
 
@@ -186,15 +186,15 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     return;
                 }
                 String value = ((RadioButton) newValue).getText();
-                if (Languages.message("NameAndValue").equals(value)) {
+                if (message("NameAndValue").equals(value)) {
                     labelType = LabelType.NameAndValue;
-                } else if (Languages.message("Value").equals(value)) {
+                } else if (message("Value").equals(value)) {
                     labelType = LabelType.Value;
-                } else if (Languages.message("Name").equals(value)) {
+                } else if (message("Name").equals(value)) {
                     labelType = LabelType.Name;
-                } else if (Languages.message("NotDisplay").equals(value)) {
+                } else if (message("NotDisplay").equals(value)) {
                     labelType = LabelType.NotDisplay;
-                } else if (Languages.message("Pop").equals(value)) {
+                } else if (message("Pop").equals(value)) {
                     labelType = LabelType.Pop;
                 } else {
                     labelType = LabelType.NameAndValue;
@@ -231,13 +231,13 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                             return;
                         }
                         String value = ((RadioButton) newValue).getText();
-                        if (Languages.message("NotDisplay").equals(value)) {
+                        if (message("NotDisplay").equals(value)) {
                             legendSide = null;
-                        } else if (Languages.message("Left").equals(value)) {
+                        } else if (message("Left").equals(value)) {
                             legendSide = Side.LEFT;
-                        } else if (Languages.message("Top").equals(value)) {
+                        } else if (message("Top").equals(value)) {
                             legendSide = Side.TOP;
-                        } else if (Languages.message("Bottom").equals(value)) {
+                        } else if (message("Bottom").equals(value)) {
                             legendSide = Side.BOTTOM;
                         } else {
                             legendSide = Side.RIGHT;
@@ -504,46 +504,46 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     protected void checkValues() {
         valuesNames.clear();
         if (confirmedCheck.isSelected()) {
-            valuesNames.add(Languages.message("Confirmed"));
+            valuesNames.add(message("Confirmed"));
         }
         if (healedCheck.isSelected()) {
-            valuesNames.add(Languages.message("Healed"));
+            valuesNames.add(message("Healed"));
         }
         if (deadCheck.isSelected()) {
-            valuesNames.add(Languages.message("Dead"));
+            valuesNames.add(message("Dead"));
         }
         if (increasedConfirmedCheck.isSelected()) {
-            valuesNames.add(Languages.message("IncreasedConfirmed"));
+            valuesNames.add(message("IncreasedConfirmed"));
         }
         if (increasedHealedCheck.isSelected()) {
-            valuesNames.add(Languages.message("IncreasedHealed"));
+            valuesNames.add(message("IncreasedHealed"));
         }
         if (increasedDeadCheck.isSelected()) {
-            valuesNames.add(Languages.message("IncreasedDead"));
+            valuesNames.add(message("IncreasedDead"));
         }
         if (HealedConfirmedPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("HealedConfirmedPermillage"));
+            valuesNames.add(message("HealedConfirmedPermillage"));
         }
         if (DeadConfirmedPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("DeadConfirmedPermillage"));
+            valuesNames.add(message("DeadConfirmedPermillage"));
         }
         if (ConfirmedPopulationPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("ConfirmedPopulationPermillage"));
+            valuesNames.add(message("ConfirmedPopulationPermillage"));
         }
         if (HealedPopulationPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("HealedPopulationPermillage"));
+            valuesNames.add(message("HealedPopulationPermillage"));
         }
         if (DeadPopulationPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("DeadPopulationPermillage"));
+            valuesNames.add(message("DeadPopulationPermillage"));
         }
         if (ConfirmedAreaPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("ConfirmedAreaPermillage"));
+            valuesNames.add(message("ConfirmedAreaPermillage"));
         }
         if (HealedAreaPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("HealedAreaPermillage"));
+            valuesNames.add(message("HealedAreaPermillage"));
         }
         if (DeadAreaPermillageCheck.isSelected()) {
-            valuesNames.add(Languages.message("DeadAreaPermillage"));
+            valuesNames.add(message("DeadAreaPermillage"));
         }
     }
 
@@ -564,7 +564,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
             if (mapRadio.isSelected()) {
                 mapOptionsBox.setDisable(false);
-                chartName = Languages.message("Map");
+                chartName = message("Map");
                 chartBox.getChildren().clear();
                 chartBox.setVisible(false);
                 mapBox.setVisible(true);
@@ -574,22 +574,22 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 mapBox.setVisible(false);
                 chartBox.setVisible(true);
                 chartBox.toFront();
-                if (horizontalBarsChartRadio.isSelected()) {
-                    chartName = Languages.message("HorizontalBarsChart");
-                } else if (verticalBarsChartRadio.isSelected()) {
-                    chartName = Languages.message("VerticalBarsChart");
-                } else if (linesChartRadio.isSelected()) {
+                if (horizontalBarChartRadio.isSelected()) {
+                    chartName = message("HorizontalBarChart");
+                } else if (barChartRadio.isSelected()) {
+                    chartName = message("BarChart");
+                } else if (verticalLineChartRadio.isSelected()) {
                     if (locationsReports == null) {
                         return;
                     }
-                    chartName = Languages.message("VerticalLinesChart");
-                } else if (linesChartHRadio.isSelected()) {
+                    chartName = message("VerticalLineChart");
+                } else if (lineChartRadio.isSelected()) {
                     if (locationsReports == null) {
                         return;
                     }
-                    chartName = Languages.message("HorizontalLinesChart");
+                    chartName = message("LineChart");
                 } else if (pieRadio.isSelected()) {
-                    chartName = Languages.message("PieChart");
+                    chartName = message("PieChart");
                 }
             }
 
@@ -656,21 +656,21 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             if (mapRadio.isSelected()) {
                 drawMap(timeReports);
             } else {
-                if (horizontalBarsChartRadio.isSelected()) {
+                if (horizontalBarChartRadio.isSelected()) {
                     if (valuesNames.size() == 1) {
                         drawValueBarsHorizontal(timeReports);
                     } else {
                         drawValuesBarsHorizontal(timeReports);
                     }
-                } else if (verticalBarsChartRadio.isSelected()) {
+                } else if (barChartRadio.isSelected()) {
                     if (valuesNames.size() == 1) {
                         drawValueBarsVertical(timeReports);
                     } else {
                         drawValuesBarsVertical(timeReports);
                     }
-                } else if (linesChartRadio.isSelected()) {
+                } else if (verticalLineChartRadio.isSelected()) {
                     drawValuesLines(time, timeReports, true);
-                } else if (linesChartHRadio.isSelected()) {
+                } else if (lineChartRadio.isSelected()) {
                     drawValuesLines(time, timeReports, false);
                 } else if (pieRadio.isSelected()) {
                     drawPies(time, timeReports);
@@ -1299,19 +1299,19 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
     @Override
     protected void snapAllMenu() {
-        MenuItem menu = new MenuItem(Languages.message("JpgAllFrames"));
+        MenuItem menu = new MenuItem(message("JpgAllFrames"));
         menu.setOnAction((ActionEvent event) -> {
             snapAllFrames("jpg");
         });
         popMenu.getItems().add(menu);
 
-        menu = new MenuItem(Languages.message("PngAllFrames"));
+        menu = new MenuItem(message("PngAllFrames"));
         menu.setOnAction((ActionEvent event) -> {
             snapAllFrames("png");
         });
         popMenu.getItems().add(menu);
 
-        menu = new MenuItem(Languages.message("GifAllFrames"));
+        menu = new MenuItem(message("GifAllFrames"));
         menu.setOnAction((ActionEvent event) -> {
             snapAllFrames("gif");
         });
@@ -1396,7 +1396,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         }
                         snapEnd = false;
                         Platform.runLater(() -> {
-                            loading.setInfo(Languages.message("Snapping") + ": " + (frameIndex + 1) + "/" + chartTimes.size());
+                            loading.setInfo(message("Snapping") + ": " + (frameIndex + 1) + "/" + chartTimes.size());
                         });
                         if (frameTimer != null) {
                             frameTimer.cancel();
@@ -1452,14 +1452,14 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                                     File gifFile = new File(filePrefix + ".gif");
                                     if (loading != null) {
                                         Platform.runLater(() -> {
-                                            loading.setInfo(Languages.message("Saving") + ": " + gifFile);
+                                            loading.setInfo(message("Saving") + ": " + gifFile);
                                         });
                                     }
                                     ImageGifFile.writeImageFiles(snapshots, gifFile, interval, true);
                                     if (gifFile.exists()) {
                                         if (loading != null) {
                                             Platform.runLater(() -> {
-                                                loading.setInfo(Languages.message("Opening") + ": " + gifFile);
+                                                loading.setInfo(message("Opening") + ": " + gifFile);
                                             });
                                         }
                                         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);

@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.chart;
 
 import javafx.util.StringConverter;
 import mara.mybox.tools.StringTools;

@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.chart;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +15,9 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ChartTools.ChartCoordinate;
-import mara.mybox.fxml.ChartTools.LabelType;
+import mara.mybox.fxml.SquareRootCoordinate;
+import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
+import mara.mybox.fxml.chart.ChartTools.LabelType;
 import mara.mybox.tools.StringTools;
 
 /**

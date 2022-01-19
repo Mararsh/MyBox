@@ -444,6 +444,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     if (parent != null) {
                         parent.tableData.set(index, def);
                     }
+                    MyBoxLog.console(def.getD2did() + " " + data2D.getD2did());
                     if (def.getD2did() == data2D.getD2did()) {
                         data2D.setDataName(newName);
                         if (dataController != null) {
@@ -452,7 +453,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         if (parent != null) {
                             parent.updateStatus();
                         }
+                        MyBoxLog.console(data2D.getDataName());
+                        updateStatus();
                     }
+
                 }
 
             };

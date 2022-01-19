@@ -67,7 +67,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                         .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                         .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                         .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                        .or(formatController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                        .or(formatController.binaryController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 );
             }
         } catch (Exception e) {

@@ -8,17 +8,20 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
  * @CreateDate 2019-2-15
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageBinary extends PixelsOperation {
 
     protected boolean grayed, calculate;
+
+    public static enum BinaryAlgorithm {
+        OTSU, Threshold, Default
+    }
 
     public ImageBinary() {
         intPara1 = -1;
@@ -125,11 +128,13 @@ public class ImageBinary extends PixelsOperation {
 
     public static BufferedImage byteBinary(BufferedImage srcImage) {
         try {
-            BufferedImage tmpImage = AlphaTools.removeAlpha(srcImage);
-            int width = tmpImage.getWidth();
-            int height = tmpImage.getHeight();
+            int width = srcImage.getWidth();
+            int height = srcImage.getHeight();
             BufferedImage binImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
             Graphics2D g = binImage.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(srcImage, 0, 0, null);
             g.dispose();
             return binImage;

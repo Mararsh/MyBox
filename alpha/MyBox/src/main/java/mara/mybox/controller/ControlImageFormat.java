@@ -33,7 +33,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -51,11 +51,9 @@ public class ControlImageFormat extends BaseController {
     @FXML
     protected ComboBox<String> qualitySelector, icoWidthSelector;
     @FXML
-    protected ToggleGroup formatGroup, alphaGroup, binaryGroup;
+    protected ToggleGroup formatGroup, alphaGroup;
     @FXML
-    protected TextField profileInput, thresholdInput;
-    @FXML
-    protected CheckBox ditherCheck;
+    protected TextField profileInput;
     @FXML
     protected CheckBox embedProfileCheck, alphaCheck;
     @FXML
@@ -69,9 +67,11 @@ public class ControlImageFormat extends BaseController {
     @FXML
     protected RadioButton pngRadio, jpgRadio, tifRadio, gifRadio, bmpRadio, pnmRadio, wbmpRadio, icoRadio, pcxRadio,
             alphaKeepRadio, alphaRemoveRadio, alphaPreKeepRadio, alphaPreReomveRadio;
+    @FXML
+    protected ControlImageBinary binaryController;
 
     public ControlImageFormat() {
-        baseTitle = Languages.message("ImageConverterBatch");
+        baseTitle = message("ImageConverterBatch");
         notify = new SimpleBooleanProperty(false);
     }
 
@@ -96,7 +96,7 @@ public class ControlImageFormat extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(pcxRadio, Languages.message("PcxComments"));
+            NodeStyleTools.setTooltip(pcxRadio, message("PcxComments"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -144,29 +144,15 @@ public class ControlImageFormat extends BaseController {
                 }
             });
 
-            NodeTools.setRadioSelected(binaryGroup, UserConfig.getString(baseName + "Binary", Languages.message("OTSU")));
-            binaryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-                    checkBinary();
-                    notifyChange();
-                }
-            });
-
-            thresholdInput.setText(UserConfig.getString(baseName + "Threashold", "128"));
-            thresholdInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
-                    checkThreshold();
-                    notifyChange();
-                }
-            });
-
-            ditherCheck.setSelected(UserConfig.getBoolean(baseName + "Dither", true));
-            ditherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (parent instanceof BaseImageController) {
+                binaryController.setParameters(parent, ((BaseImageController) parent).imageView);
+            } else {
+                binaryController.setParameters(parent, null);
+            }
+            binaryController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    checkDither();
+                    checkBinary();
                     notifyChange();
                 }
             });
@@ -233,14 +219,14 @@ public class ControlImageFormat extends BaseController {
         List<String> colorSpaceList = new ArrayList<>();
         switch (format) {
             case "wbmp":
-                colorSpaceList.add(Languages.message("BlackOrWhite"));
+                colorSpaceList.add(message("BlackOrWhite"));
                 break;
             default:
                 colorSpaceList.addAll(ImageColorSpace.RGBColorSpaces);
                 if ("raw".equals(format) || FileExtensions.CMYKImages.contains(format)) {
                     colorSpaceList.addAll(ImageColorSpace.CMYKColorSpaces);
                 }
-                colorSpaceList.addAll(Arrays.asList(Languages.message("Gray"), Languages.message("BlackOrWhite"), Languages.message("IccProfile")));
+                colorSpaceList.addAll(Arrays.asList(message("Gray"), message("BlackOrWhite"), message("IccProfile")));
                 break;
         }
         String dcs = UserConfig.getString(baseName + "ColorSpace", "sRGB");
@@ -301,7 +287,7 @@ public class ControlImageFormat extends BaseController {
         attributes.setProfileName(null);
         UserConfig.setString(baseName + "ColorSpace", colorSpace);
 
-        if (Languages.message("IccProfile").equals(colorSpace)) {
+        if (message("IccProfile").equals(colorSpace)) {
             if (!colorspaceBox.getChildren().contains(profileBox)) {
                 colorspaceBox.getChildren().add(profileBox);
             }
@@ -312,7 +298,7 @@ public class ControlImageFormat extends BaseController {
                 colorspaceBox.getChildren().remove(profileBox);
             }
         }
-        if (Languages.message("BlackOrWhite").equals(colorSpace)) {
+        if (message("BlackOrWhite").equals(colorSpace)) {
             if (!thisPane.getChildren().contains(binaryBox)) {
                 thisPane.getChildren().add(binaryBox);
             }
@@ -321,18 +307,18 @@ public class ControlImageFormat extends BaseController {
             if (thisPane.getChildren().contains(binaryBox)) {
                 thisPane.getChildren().remove(binaryBox);
             }
-            thresholdInput.setStyle(null);
+            binaryController.thresholdInput.setStyle(null);
         }
 
         if (FileExtensions.PremultiplyAlphaImages.contains(attributes.getImageFormat())
-                && !Languages.message("BlackOrWhite").equals(colorSpace)) {
+                && !message("BlackOrWhite").equals(colorSpace)) {
             alphaKeepRadio.setDisable(false);
             alphaRemoveRadio.setDisable(false);
             alphaPreKeepRadio.setDisable(false);
             alphaPreReomveRadio.setDisable(false);
             alphaKeepRadio.fire();
         } else if (FileExtensions.AlphaImages.contains(attributes.getImageFormat())
-                && !Languages.message("BlackOrWhite").equals(colorSpace)) {
+                && !message("BlackOrWhite").equals(colorSpace)) {
             alphaKeepRadio.setDisable(false);
             alphaRemoveRadio.setDisable(false);
             alphaPreKeepRadio.setDisable(true);
@@ -386,13 +372,13 @@ public class ControlImageFormat extends BaseController {
             return;
         }
         String alpha = ((RadioButton) alphaGroup.getSelectedToggle()).getText();
-        if (Languages.message("Keep").equals(alpha)) {
+        if (message("Keep").equals(alpha)) {
             attributes.setAlpha(ImageAttributes.Alpha.Keep);
-        } else if (Languages.message("Remove").equals(alpha)) {
+        } else if (message("Remove").equals(alpha)) {
             attributes.setAlpha(ImageAttributes.Alpha.Remove);
-        } else if (Languages.message("PremultipliedAndKeep").equals(alpha)) {
+        } else if (message("PremultipliedAndKeep").equals(alpha)) {
             attributes.setAlpha(ImageAttributes.Alpha.PremultipliedAndKeep);
-        } else if (Languages.message("PremultipliedAndRemove").equals(alpha)) {
+        } else if (message("PremultipliedAndRemove").equals(alpha)) {
             attributes.setAlpha(ImageAttributes.Alpha.PremultipliedAndRemove);
         }
         UserConfig.setString(baseName + "Alpha", alpha);
@@ -486,57 +472,16 @@ public class ControlImageFormat extends BaseController {
 
     public void checkBinary() {
         try {
-            if (isSettingValues || !thisPane.getChildren().contains(binaryBox)) {
+            if (isSettingValues || attributes == null || !thisPane.getChildren().contains(binaryBox)) {
                 return;
             }
-            RadioButton selected = (RadioButton) binaryGroup.getSelectedToggle();
-            String s = selected.getText();
-            if (Languages.message("Threshold").equals(s)) {
-                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_THRESHOLD);
-                thresholdInput.setDisable(false);
-                checkThreshold();
-            } else if (Languages.message("OTSU").equals(s)) {
-                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_OTSU);
-                thresholdInput.setStyle(null);
-                thresholdInput.setDisable(true);
-            } else {
-                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.DEFAULT);
-                thresholdInput.setStyle(null);
-                thresholdInput.setDisable(true);
-            }
-            UserConfig.setString(baseName + "Binary", s);
-
-            checkDither();
+            attributes.setBinaryConversion(binaryController.algorithm());
+            attributes.setThreshold(binaryController.threshold());
+            attributes.setIsDithering(binaryController.dither());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void checkThreshold() {
-        try {
-            if (!thisPane.getChildren().contains(binaryBox)) {
-                return;
-            }
-            int inputValue = Integer.parseInt(thresholdInput.getText());
-            if (inputValue >= 0 && inputValue <= 255) {
-                attributes.setThreshold(inputValue);
-                thresholdInput.setStyle(null);
-                UserConfig.setString(baseName + "Threashold", inputValue + "");
-            } else {
-                thresholdInput.setStyle(UserConfig.badStyle());
-            }
-        } catch (Exception e) {
-            thresholdInput.setStyle(UserConfig.badStyle());
-        }
-    }
-
-    public void checkDither() {
-        if (isSettingValues || attributes == null) {
-            return;
-        }
-        attributes.setIsDithering(ditherCheck.isSelected());
-        UserConfig.setBoolean(baseName + "Dither", ditherCheck.isSelected());
     }
 
     public void checkDpi() {

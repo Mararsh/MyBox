@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.chart;
 
 import java.util.List;
 import java.util.Map;

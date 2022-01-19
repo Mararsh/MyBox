@@ -1,6 +1,6 @@
 package mara.mybox.fxml;
 
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -32,26 +32,24 @@ public class StyleImageView {
             return new StyleData(id, "", "", "iconDoubleRight.png");
         }
         if (id.startsWith("links")) {
-            return new StyleData(id, "", Languages.message("Links"), "iconLink.png");
+            return new StyleData(id, "", message("Links"), "iconLink.png");
         }
         if (id.toLowerCase().endsWith("tipsview")) {
             switch (id) {
                 case "refTipsView":
-                    return new StyleData(id, "", Languages.message("ImageRefTips"), "", "iconTips.png");
+                    return new StyleData(id, "", message("ImageRefTips"), "", "iconTips.png");
                 case "distanceTipsView":
-                    return new StyleData(id, "", Languages.message("ColorMatchComments"), "", "iconTips.png");
-                case "bwTipsView":
-                    return new StyleData(id, "", Languages.message("BWThresholdComments"), "", "iconTips.png");
+                    return new StyleData(id, "", message("ColorMatchComments"), "", "iconTips.png");
                 case "pdfMemTipsView":
-                    return new StyleData(id, "", Languages.message("PdfMemComments"), "", "iconTips.png");
+                    return new StyleData(id, "", message("PdfMemComments"), "", "iconTips.png");
                 case "pdfPageSizeTipsView":
-                    return new StyleData(id, "", Languages.message("PdfPageSizeComments"), "", "iconTips.png");
+                    return new StyleData(id, "", message("PdfPageSizeComments"), "", "iconTips.png");
                 case "preAlphaTipsView":
-                    return new StyleData(id, "", Languages.message("PremultipliedAlphaTips"), "", "iconTips.png");
+                    return new StyleData(id, "", message("PremultipliedAlphaTips"), "", "iconTips.png");
                 case "imageThresholdTipsView":
-                    return new StyleData(id, "", Languages.message("ImageThresholdingComments"), "", "iconTips.png");
+                    return new StyleData(id, "", message("ImageThresholdingComments"), "", "iconTips.png");
                 case "imageQuantizationTipsView":
-                    return new StyleData(id, "", Languages.message("ImageQuantizationComments"), "", "iconTips.png");
+                    return new StyleData(id, "", message("ImageQuantizationComments"), "", "iconTips.png");
                 default:
                     return new StyleData(id, "", "", "iconTips.png");
             }

@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -20,14 +18,11 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.BufferedImageTools.Direction;
-import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -48,17 +43,16 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected ChangeListener<String> intBoxListener, stringBoxListener, intInputListener,
             intInput2Listener, intInput3Listener;
     protected ChangeListener<Number> numberBoxListener;
-    protected ImageView calculatorView;
     protected Button paletteAddButton, htmlButton;
 
     @FXML
-    protected ToggleGroup effectGroup, bwGroup, quanGroup;
+    protected ToggleGroup effectGroup, quanGroup;
     @FXML
-    protected VBox setBox, bwBox, quanBox, edgeBox;
+    protected VBox setBox, binrayBox, quanBox, edgeBox;
     @FXML
     protected RadioButton PosterizingRadio, ThresholdingRadio, GrayRadio,
             SepiaRadio, BlackOrWhiteRadio, EdgeDetectionRadio, EmbossRadio,
-            effectMosaicRadio, effectFrostedRadio, otsuRadio,
+            effectMosaicRadio, effectFrostedRadio,
             rgbQuanRadio, hsbQuanRadio, popularQuanRadio, kmeansQuanRadio,
             eightLaplaceRadio, eightLaplaceExcludedRadio, fourLaplaceRadio, fourLaplaceExcludedRadio;
     @FXML
@@ -77,9 +71,9 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected Label intBoxLabel, intLabel, intLabel2, intLabel3, stringLabel,
             actualLoopLabel, weightLabel;
     @FXML
-    protected Button button;
+    protected ControlImageBinary binaryController;
     @FXML
-    protected ImageView imageQuantizationTipsView, bwTipsView, imageThresholdTipsView;
+    protected ImageView imageQuantizationTipsView, imageThresholdTipsView;
 
     @Override
     public void initControls() {
@@ -92,24 +86,6 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                     checkEffectType();
                 }
             });
-
-            bwGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) {
-                    String selected = ((RadioButton) newv).getText();
-                    if (message("OTSU").equals(selected)) {
-                        intPara1 = 1;
-                    } else if (message("Default").equals(selected)) {
-                        intPara1 = 2;
-                    } else if (message("Threshold").equals(selected)) {
-                        intPara1 = 3;
-                    }
-                    intInput.setDisable(intPara1 != 3);
-                    button.setDisable(intPara1 != 3);
-                }
-            });
-
-            calculatorView = new ImageView();
 
             initPosterizing();
 
@@ -133,6 +109,9 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             imageView = pController.imageView;
             paletteAddButton = pController.paletteAddButton;
             htmlButton = pController.htmlButton;
+            binaryController.setParameters(parentController, imageView);
+        } else {
+            binaryController.setParameters(parentController, null);
         }
     }
 
@@ -421,9 +400,6 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             intInput3.textProperty().removeListener(intInput3Listener);
         }
         valueCheck.setDisable(false);
-        button.setOnAction(null);
-        button.disableProperty().unbind();
-        button.setDisable(false);
         stringBox.getItems().clear();
         stringBox.getEditor().setStyle(null);
         intBox.getItems().clear();
@@ -644,74 +620,11 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
 
     protected void makeBlackWhiteBox() {
         try {
-            intPara2 = 128;
-            intLabel.setText("");
-            intInputListener = new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        if (newValue == null || newValue.trim().isEmpty()) {
-                            intPara2 = -1;
-                            intInput.setStyle(null);
-                            return;
-                        }
-                        int v = Integer.valueOf(intInput.getText());
-                        if (v >= 0 && v <= 255) {
-                            intPara2 = v;
-                            intInput.setStyle(null);
-                        } else {
-                            intInput.setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        intInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            };
-            intInput.textProperty().addListener(intInputListener);
-            intInput.setText("128");
-            NodeStyleTools.setTooltip(intInput, new Tooltip("0~255"));
-
-            MyBoxLog.console(imageView != null);
-
-            if (imageView != null) {
-                calculatorView = StyleTools.getIconImage("iconCalculator.png");
-                button.setGraphic(calculatorView);
-                button.setText("");
-                NodeStyleTools.setTooltip(button, new Tooltip(message("Calculate")));
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        int scaleValue = ImageBinary.calculateThreshold(imageView.getImage());
-                        intInput.setText(scaleValue + "");
-                    }
-                });
-            }
-
-            intPara1 = 1;
-            otsuRadio.setSelected(true);
-            intInput.setDisable(intPara1 != 3);
-            button.setDisable(intPara1 != 3);
-
-            valueCheck.setText(message("Dithering"));
-            if (scopeController != null && scopeController.scope != null
-                    && scopeController.scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                valueCheck.setSelected(false);
-                valueCheck.setDisable(true);
-            } else {
-                valueCheck.setSelected(true);
-                valueCheck.setDisable(false);
-            }
-            if (imageView != null) {
-                othersPane.getChildren().addAll(bwTipsView, button, valueCheck);
-            } else {
-                othersPane.getChildren().addAll(bwTipsView, valueCheck);
-            }
-            setBox.getChildren().addAll(bwBox, intInputPane, othersPane);
+            setBox.getChildren().addAll(binrayBox);
 
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        intInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                        binaryController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle())
                 );
             }
 

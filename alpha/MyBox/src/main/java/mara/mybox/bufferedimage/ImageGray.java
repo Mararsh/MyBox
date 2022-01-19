@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -62,12 +63,14 @@ public class ImageGray extends PixelsOperation {
 
     public static BufferedImage byteGray(BufferedImage srcImage) {
         try {
-            BufferedImage tmpImage = AlphaTools.removeAlpha(srcImage);
-            int width = tmpImage.getWidth();
-            int height = tmpImage.getHeight();
+            int width = srcImage.getWidth();
+            int height = srcImage.getHeight();
             BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
             Graphics2D g = grayImage.createGraphics();
-            g.drawImage(tmpImage, 0, 0, null);
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
+            g.drawImage(srcImage, 0, 0, null);
             g.dispose();
             return grayImage;
         } catch (Exception e) {

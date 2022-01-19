@@ -22,6 +22,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.bufferedimage.ImageBinary.BinaryAlgorithm;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.imagefile.ImageFileReaders.getReader;
@@ -94,10 +95,10 @@ public class ImageConvertTools {
             }
             int color = srcImage.getType();
             ImageBinary imageBinary;
-            if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
+            if (attributes.getBinaryConversion() == BinaryAlgorithm.Threshold
                     && attributes.getThreshold() >= 0) {
                 imageBinary = new ImageBinary(srcImage, attributes.getThreshold());
-            } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
+            } else if (attributes.getBinaryConversion() == BinaryAlgorithm.OTSU) {
                 imageBinary = new ImageBinary(srcImage, -1);
                 imageBinary.setCalculate(true);
             } else if (color != BufferedImage.TYPE_BYTE_BINARY || attributes.isIsDithering()) {

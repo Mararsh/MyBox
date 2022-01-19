@@ -68,16 +68,26 @@ public class StyleRadioButton {
                 return new StyleData("shapeRectangleRadio", "", message("Rectangle"), "", "iconRectangle.png");
             case "shapeCircleRadio":
                 return new StyleData("shapeCircleRadio", "", message("Circle"), "", "iconCircle.png");
-            case "horizontalBarsChartRadio":
-                return new StyleData(id, "", message("HorizontalBarsChart"), "", "iconBarsChartH.png");
-            case "verticalBarsChartRadio":
-                return new StyleData(id, "", message("VerticalBarsChart"), "", "iconBarsChart.png");
-            case "linesChartRadio":
-                return new StyleData(id, "", message("VerticalLinesChart"), "", "iconLinesChart.png");
-            case "linesChartHRadio":
-                return new StyleData(id, "", message("HorizontalLinesChart"), "", "iconLinesChartH.png");
+            case "horizontalBarChartRadio":
+                return new StyleData(id, "", message("HorizontalBarChart"), "", "iconBarChartH.png");
+            case "barChartRadio":
+                return new StyleData(id, "", message("BarChart"), "", "iconBarChart.png");
+            case "stackedBarChartRadio":
+                return new StyleData(id, "", message("StackedBarChart"), "", "iconStackedBarChart.png");
+            case "verticalLineChartRadio":
+                return new StyleData(id, "", message("VerticalLineChart"), "", "iconLineChartV.png");
+            case "lineChartRadio":
+                return new StyleData(id, "", message("LineChart"), "", "iconLineChart.png");
             case "pieRadio":
                 return new StyleData(id, "", message("PieChart"), "", "iconPieChart.png");
+            case "areaChartRadio":
+                return new StyleData(id, "", message("AreaChart"), "", "iconAreaChart.png");
+            case "stackedAreaChartRadio":
+                return new StyleData(id, "", message("StackedAreaChart"), "", "iconStackedAreaChart.png");
+            case "scatterChartRadio":
+                return new StyleData(id, "", message("ScatterChart"), "", "iconScatterChart.png");
+            case "bubbleChartRadio":
+                return new StyleData(id, "", message("BubbleChart"), "", "iconBubbleChart.png");
             case "mapRadio":
                 return new StyleData(id, "", message("Map"), "", "iconMap.png");
             case "pcxSelect":

@@ -47,7 +47,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
                     .or(targetPathController.valid.not())
                     .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(formatController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(formatController.binaryController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.icoWidthSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
