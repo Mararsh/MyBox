@@ -190,7 +190,7 @@ public class MyBoxLoadingController implements Initializable {
                                     inFile = arg;
                                     break;
                                 } else {
-                                    PopTools.alertError(MessageFormat.format(message("FilepathNonAscii"), arg));
+                                    PopTools.alertError(null, MessageFormat.format(message("FilepathNonAscii"), arg));
                                 }
                             }
                         }
@@ -249,7 +249,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!currentDataPath.exists()) {
                 if (!currentDataPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        PopTools.alertError(MessageFormat.format(message(lang,
+                        PopTools.alertError(null, MessageFormat.format(message(lang,
                                 "UserPathFail"), AppVariables.MyboxDataPath));
                     });
                     return false;
@@ -283,7 +283,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!AppVariables.MyBoxLogsPath.exists()) {
                 if (!AppVariables.MyBoxLogsPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        PopTools.alertError(MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxLogsPath));
+                        PopTools.alertError(null, MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxLogsPath));
                     });
                     return false;
                 }
@@ -296,7 +296,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!AppVariables.MyBoxLanguagesPath.exists()) {
                 if (!AppVariables.MyBoxLanguagesPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        PopTools.alertError(MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxLanguagesPath));
+                        PopTools.alertError(null, MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxLanguagesPath));
                     });
                     return false;
                 }
@@ -306,7 +306,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!AppVariables.MyBoxTempPath.exists()) {
                 if (!AppVariables.MyBoxTempPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        PopTools.alertError(MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxTempPath));
+                        PopTools.alertError(null, MessageFormat.format(message(lang, "UserPathFail"), AppVariables.MyBoxTempPath));
                     });
                     return false;
                 }

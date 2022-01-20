@@ -28,6 +28,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
         this.tableView = tableView;
         checked = new SimpleBooleanProperty(false);
         selectingRow = checkingBox = false;
+        getStyleClass().add("row-number");
 
         initListeners();
 

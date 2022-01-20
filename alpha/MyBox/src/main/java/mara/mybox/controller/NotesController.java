@@ -68,7 +68,7 @@ public class NotesController extends NotesController_Notes {
             super.afterSceneLoaded();
 
             if (tableNotebook.size() < 2
-                    && PopTools.askSure(getBaseTitle(), Languages.message("ImportExamples"))) {
+                    && PopTools.askSure(this,getBaseTitle(), Languages.message("ImportExamples"))) {
                 notebooksController.importExamples();
             } else {
                 loadBooks();

@@ -717,7 +717,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             return;
         }
 
-        if (!PopTools.askSure(getBaseTitle(), message("SureClearConditions")
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearConditions")
                 + "\n\n" + type + "\n" + title + "\n\n" + sql + "\n\n" + message("DataDeletedComments"))) {
             return;
         }
@@ -768,7 +768,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             return;
         }
         setClearSQL();
-        if (!PopTools.askSure(getBaseTitle(), message("SureClearConditions")
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearConditions")
                 + "\n\n" + clearCondition.getTitle().replaceAll("</br>", "\n")
                 + "\n\n" + clearSQL + "\n\n" + message("DataDeletedComments"))) {
             return;

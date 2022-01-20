@@ -1,13 +1,14 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
-import mara.mybox.data.TestCase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.dev.TestCase;
 import mara.mybox.value.Languages;
 
 /**
@@ -50,20 +51,8 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
             super.initControls();
             tableData.setAll(TestCase.testCases());
 
-            startButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -72,8 +61,9 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
     public void startAction() {
         try {
             List<TestCase> selected = tableView.getSelectionModel().getSelectedItems();
-            if (selected == null) {
-                return;
+            if (selected == null || selected.isEmpty()) {
+                selected = new ArrayList<>();
+                selected.addAll(tableData);
             }
             AutoTestingExecutionController.open(this, selected);
         } catch (Exception e) {

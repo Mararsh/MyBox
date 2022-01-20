@@ -297,7 +297,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
     @FXML
     public synchronized void clearBackups() {
-        if (sourceFile == null || !PopTools.askSure(getBaseTitle(), Languages.message("SureClear"))) {
+        if (sourceFile == null || !PopTools.askSure(this,getBaseTitle(), Languages.message("SureClear"))) {
             return;
         }
         if (task != null) {
@@ -383,7 +383,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             tableData.remove(selected);
             return;
         }
-        if (!PopTools.askSure(getBaseTitle(), Languages.message("SureOverrideCurrentFile"),
+        if (!PopTools.askSure(this,getBaseTitle(), Languages.message("SureOverrideCurrentFile"),
                 Languages.message("CurrentFile") + ":\n   " + sourceFile + "\n" + FileTools.showFileSize(sourceFile.length())
                 + "\n\n" + Languages.message("OverrideBy") + ":\n   " + backup + "\n" + FileTools.showFileSize(backup.length()))) {
             return;

@@ -211,7 +211,7 @@ public class MyBoxSetupController implements Initializable {
 
     @FXML
     protected void openDataPath(ActionEvent event) {
-        PopTools.browseURI(configPath.toURI());
+        PopTools.browseURI(null, configPath.toURI());
     }
 
     @FXML
@@ -228,7 +228,7 @@ public class MyBoxSetupController implements Initializable {
                 AppVariables.MyboxDataPath = dataPath.getAbsolutePath();
                 ConfigTools.writeConfigValue("MyBoxDataPath", AppVariables.MyboxDataPath);
             } else {
-                PopTools.alertError(MessageFormat.format(Languages.message(lang, "UserPathFail"), dataPath));
+                PopTools.alertError(null, MessageFormat.format(Languages.message(lang, "UserPathFail"), dataPath));
                 return;
             }
             DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";

@@ -294,7 +294,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             stage.toFront();
 
             Optional<String> result = dialog.showAndWait();
-            if (!result.isPresent()) {
+            if (result == null || !result.isPresent()) {
                 return;
             }
             String address = result.get();

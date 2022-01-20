@@ -547,7 +547,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 || (codecsTask != null && !codecsTask.isQuit())
                 || (queryTask != null && !queryTask.isQuit())
                 || (filtersTask != null && !filtersTask.isQuit())) {
-            if (!PopTools.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
+            if (!PopTools.askSure(this,getMyStage().getTitle(), message("TaskRunning"))) {
                 return false;
             }
             if (formatsTask != null) {

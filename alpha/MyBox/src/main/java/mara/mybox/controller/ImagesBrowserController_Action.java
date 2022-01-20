@@ -129,7 +129,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+                if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
                     return;
                 }
             }
@@ -461,7 +461,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+                if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
                     return;
                 }
             }

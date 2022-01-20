@@ -239,7 +239,10 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     public void askImportPredefined() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        if (alert != null) {
+            alert.close();
+        }
+        alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(baseTitle);
         alert.setHeaderText(Languages.message("ImportExamples") + " ?");
         alert.setContentText("1. " + Languages.message("ChineseHistoricalCapitals") + "\n"
@@ -256,6 +259,9 @@ public class LocationDataController extends BaseDataManageController<Location> {
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
+        if (result == null || !result.isPresent()) {
+            return;
+        }
         if (result.get() == button1) {
             ChineseHistoricalCapitals();
         } else if (result.get() == button2) {

@@ -402,7 +402,7 @@ public class MyBoxLanguagesController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+        if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
             return;
         }
         for (String name : selected) {

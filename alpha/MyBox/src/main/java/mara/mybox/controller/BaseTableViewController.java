@@ -742,7 +742,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(getBaseTitle(), message("SureDelete"))) {
+            if (!PopTools.askSure(this, getBaseTitle(), message("SureDelete"))) {
                 return;
             }
         }
@@ -801,7 +801,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        if (!PopTools.askSure(getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
             return;
         }
         synchronized (this) {

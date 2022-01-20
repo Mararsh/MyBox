@@ -442,7 +442,7 @@ public class ControlFindReplace extends BaseController {
             TableStringValues.add(baseName + "ReplaceString", findString);
         }
         if (operation == Operation.ReplaceAll && multiplePages) {
-            if (!PopTools.askSure(getMyStage().getTitle(), message("SureReplaceAll"))) {
+            if (!PopTools.askSure(this,getMyStage().getTitle(), message("SureReplaceAll"))) {
                 return false;
             }
         }

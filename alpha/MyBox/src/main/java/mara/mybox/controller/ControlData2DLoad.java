@@ -76,6 +76,29 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             });
             dataRowColumn.setEditable(false);
+            dataRowColumn.setCellFactory(new Callback<TableColumn<List<String>, Integer>, TableCell<List<String>, Integer>>() {
+                @Override
+                public TableCell<List<String>, Integer> call(TableColumn<List<String>, Integer> param) {
+                    try {
+                        TableCell<List<String>, Integer> cell = new TableCell<List<String>, Integer>() {
+                            @Override
+                            public void updateItem(Integer item, boolean empty) {
+                                super.updateItem(item, empty);
+                                setGraphic(null);
+                                if (empty || item == null) {
+                                    setText(null);
+                                    return;
+                                }
+                                setText(item + "");
+                            }
+                        };
+                        cell.getStyleClass().add("row-number");
+                        return cell;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            });
 
             updateStatus();
 

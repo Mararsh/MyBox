@@ -345,7 +345,10 @@ public class ControlData2D extends BaseController {
         if (attributesController.status == ControlData2DAttributes.Status.Modified
                 || columnsController.status == ControlData2DColumns.Status.Modified
                 || textController.status == ControlData2DEditText.Status.Modified) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            if (alert != null) {
+                alert.close();
+            }
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setHeaderText(getMyStage().getTitle());
             alert.setContentText(Languages.message("DataModifiedNotApplied"));
@@ -359,6 +362,9 @@ public class ControlData2D extends BaseController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent() ) {
+                return -99;
+            }
             if (result.get() == buttonApply) {
                 if (textController.status == ControlData2DEditText.Status.Modified) {
                     textController.okAction();
@@ -799,7 +805,10 @@ public class ControlData2D extends BaseController {
         if (!isChanged()) {
             goOn = true;
         } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            if (alert != null) {
+                alert.close();
+            }
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setHeaderText(getMyStage().getTitle());
             alert.setContentText(Languages.message("NeedSaveBeforeAction"));
@@ -813,6 +822,9 @@ public class ControlData2D extends BaseController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent() ) {
+                return false;
+            }
             if (result.get() == buttonSave) {
                 save();
                 goOn = false;

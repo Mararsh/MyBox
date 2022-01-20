@@ -299,7 +299,10 @@ public class ControlWebView extends BaseController {
                 public Boolean call(String message) {
                     try {
 //                        MyBoxLog.console("here:" + message);
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        if (alert != null) {
+                            alert.close();
+                        }
+                        alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle(parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle());
                         alert.setHeaderText(null);
                         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -309,7 +312,7 @@ public class ControlWebView extends BaseController {
                         stage.toFront();
                         alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
                         Optional<ButtonType> result = alert.showAndWait();
-                        return result.get() == ButtonType.YES;
+                        return result != null && result.get() == ButtonType.YES;
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
                         return false;

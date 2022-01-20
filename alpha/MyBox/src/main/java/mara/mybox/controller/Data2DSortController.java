@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -38,15 +40,39 @@ public class Data2DSortController extends Data2DHandleController {
 
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController);
-        refreshControls();
+        try {
+            super.setParameters(tableController);
+
+            colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkOptions();
+                }
+            });
+            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    refreshControls();
+                }
+            });
+
+            refreshControls();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
     }
 
     public void refreshControls() {
         try {
+            List<String> names = tableController.data2D.columnNames();
+            if (names == null || names.isEmpty()) {
+                colSelector.getItems().clear();
+                return;
+            }
             String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            colSelector.getItems().setAll(tableController.data2D.columnNames());
-            if (selectedCol != null) {
+            colSelector.getItems().setAll(names);
+            if (selectedCol != null && names.contains(selectedCol)) {
                 colSelector.setValue(selectedCol);
             } else {
                 colSelector.getSelectionModel().select(0);

@@ -1608,7 +1608,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 }
             }
             if (ask) {
-                if (PopTools.askSure(getMyStage().getTitle(), Languages.message("TaskRunning"))) {
+                if (PopTools.askSure(this,getMyStage().getTitle(), Languages.message("TaskRunning"))) {
                     stopped = true;
                 } else {
                     return false;

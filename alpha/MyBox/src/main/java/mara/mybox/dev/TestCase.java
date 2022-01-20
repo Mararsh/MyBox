@@ -1,9 +1,8 @@
-package mara.mybox.data;
+package mara.mybox.dev;
 
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.BaseController;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;

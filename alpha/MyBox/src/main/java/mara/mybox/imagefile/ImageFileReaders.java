@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -173,11 +172,10 @@ public class ImageFileReaders {
     public static ImageInformation makeInfo(File file, int width) {
         ImageInformation readInfo = new ImageInformation(file);
         readInfo.setRequiredWidth(width);
-        return makeInfo(readInfo, null, false);
+        return makeInfo(readInfo, false);
     }
 
-    public static ImageInformation makeInfo(ImageInformation readInfo,
-            ImageInformation existInfo, boolean onlyInformation) {
+    public static ImageInformation makeInfo(ImageInformation readInfo, boolean onlyInformation) {
         try {
             if (readInfo == null) {
                 return null;
@@ -186,29 +184,6 @@ public class ImageFileReaders {
             ImageInformation imageInfo = null;
             File file = readInfo.getFile();
             int index = readInfo.getIndex();
-            int requiredWidth = (int) readInfo.getRequiredWidth();
-
-            if (existInfo != null) {
-                ImageFileInformation referFileInfo = existInfo.getImageFileInformation();
-                if (referFileInfo != null && referFileInfo.getFile().equals(file)) {
-                    int size = referFileInfo.getNumberOfImages();
-                    if (size > 0 && index == existInfo.getIndex()) {
-                        fileInfo = referFileInfo;
-                        Image existThumb = existInfo.getThumbnail();
-                        if (existThumb != null) {
-                            if (requiredWidth > 0) {
-                                if (existThumb.getWidth() == requiredWidth) {
-                                    return existInfo;
-                                }
-                            } else {
-                                if (existThumb.getWidth() == existInfo.getWidth()) {
-                                    return existInfo;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             SingletonTask task = readInfo.getTask();
             LoadingController loading = task != null ? task.getLoading() : null;
             String format = readInfo.getImageFormat();

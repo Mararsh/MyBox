@@ -245,7 +245,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         imageController.showRightPane();
         imageController.resetImagePane();
         imageController.imageTab();
-        scrollPane.setHvalue(0);
     }
 
     public void selectClip() {

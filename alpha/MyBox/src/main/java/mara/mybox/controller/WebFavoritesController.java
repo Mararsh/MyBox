@@ -173,7 +173,7 @@ public class WebFavoritesController extends BaseSysTableController<WebFavorite> 
      */
     protected void loadTree(TreeNode node) {
         if (tableWebFavorite.size() < 1
-                && PopTools.askSure(getBaseTitle(), message("ImportExamples"))) {
+                && PopTools.askSure(this,getBaseTitle(), message("ImportExamples"))) {
             treeController.importExamples();
         } else {
             treeController.loadTree(node);

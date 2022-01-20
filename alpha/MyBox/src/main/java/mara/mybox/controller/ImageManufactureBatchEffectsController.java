@@ -94,7 +94,7 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
                         target = ImageGray.byteGray(source);
                         break;
                     case BlackOrWhite:
-                        int threshold = optionsController.binaryController.threshold();
+                        int threshold = optionsController.binaryController.threshold(source);
                         ImageBinary imageBinary = new ImageBinary(source, threshold);
                         imageBinary.setIsDithering(optionsController.binaryController.dither());
                         target = imageBinary.operate();

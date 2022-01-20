@@ -17,11 +17,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -124,10 +121,9 @@ public class AlarmClockTableController extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        if (!PopTools.askSure(myStage.getTitle(), Languages.message("SureClearAlarmClocks"))) {
+        if (!PopTools.askSure(myController, myStage.getTitle(), Languages.message("SureClearAlarmClocks"))) {
             return;
         }
-
         tableData.clear();
         deleteButton.setDisable(true);
         editButton.setDisable(true);

@@ -214,7 +214,6 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openDataExcel" text="%EditExcel" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelConvert" text="%ExcelConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelMerge" text="%ExcelMerge" />
-                                        <MenuItem mnemonicParsing="false" onAction="#extractTextsFromMS" text="%ExtractTextsFromMS" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDataText" text="%EditTextDataFile" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataConvert" text="%TextDataConvert" />

@@ -11,7 +11,7 @@
     -fx-border-color: #961c1c;
 }
 
-.column-header.editable-column > .label {
+.column-header.editable-column > .label{
     -fx-text-fill: #003472;
     -fx-font-weight: bolder;
 }
@@ -26,7 +26,6 @@
 .check-menu-item:focused:checked > .left-container > .check {
     -fx-background-color: black;
 }
-
 
 /*.radio-menu-item > .left-container {
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
@@ -133,6 +132,19 @@
 .uneditable, .uneditable:focused {
     -fx-background-color: #FDFDFD;
 }
+
+.row-number {
+    -fx-background-color: -fx-table-cell-border-color, #f7f7f7;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+    -fx-text-fill: grey;
+}
+
+.row-number:odd {
+    -fx-background-color: -fx-table-cell-border-color, #f5f5f5;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
 
 /*
     defined id

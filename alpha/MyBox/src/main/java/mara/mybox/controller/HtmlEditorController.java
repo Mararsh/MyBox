@@ -1059,6 +1059,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (codesChanged) {
                         Optional<ButtonType> result = alertClosingTab();
+                        if (result == null || !result.isPresent() ) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeCodes();
                         } else if (result.get() != buttonClose) {
@@ -1078,6 +1081,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (heChanged) {
                         Optional<ButtonType> result = alertClosingTab();
+                        if (result == null || !result.isPresent() ) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeEditor();
                         } else if (result.get() != buttonClose) {
@@ -1097,7 +1103,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (mdChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-
+                        if (result == null || !result.isPresent() ) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeMarkdown();
                         } else if (result.get() != buttonClose) {
@@ -1117,7 +1125,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (textsChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-
+                        if (result == null || !result.isPresent() ) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeTexts();
                         } else if (result.get() != buttonClose) {
@@ -1149,7 +1159,10 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     public Optional<ButtonType> alertClosingTab() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        if (alert != null) {
+            alert.close();
+        }
+        alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
         alert.setHeaderText(getMyStage().getTitle());
         alert.setContentText(message("ClosingEditorTabConfirm"));
@@ -1333,7 +1346,10 @@ public class HtmlEditorController extends WebAddressController {
         if (isPop || !fileChanged) {
             return true;
         } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            if (alert != null) {
+                alert.close();
+            }
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(message("FileChanged"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -1346,6 +1362,9 @@ public class HtmlEditorController extends WebAddressController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent() ) {
+                return false;
+            }
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;

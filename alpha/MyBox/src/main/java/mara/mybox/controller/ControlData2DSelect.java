@@ -72,6 +72,9 @@ public class ControlData2DSelect extends ControlData2DLoad {
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = new CheckBox(tableColumn.getText());
+                if (tableColumn.isEditable()) {
+                    cb.setStyle("-fx-text-fill: #003472; -fx-font-weight: bolder;");
+                }
                 cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -131,15 +134,16 @@ public class ControlData2DSelect extends ControlData2DLoad {
         }
     }
 
+    // If none selected then select all
     public List<Integer> checkedRowsIndices(boolean allRows) {
         try {
             checkedRowsIndices = new ArrayList<>();
-            if (allRows) {
+            List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+            if (allRows || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
                     checkedRowsIndices.add(i);
                 }
             } else {
-                List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
                 for (int i : selected) {
                     checkedRowsIndices.add(i);
                 }
@@ -151,18 +155,24 @@ public class ControlData2DSelect extends ControlData2DLoad {
         }
     }
 
+    // If none selected then select all
     public List<Integer> checkedColsIndices() {
         try {
             checkedColsIndices = new ArrayList<>();
+            List<Integer> all = new ArrayList<>();
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                if (cb.isSelected()) {
-                    int col = data2D.colOrder(cb.getText());
-                    if (col >= 0) {
+                int col = data2D.colOrder(cb.getText());
+                if (col >= 0) {
+                    all.add(col);
+                    if (cb.isSelected()) {
                         checkedColsIndices.add(col);
                     }
                 }
+            }
+            if (checkedColsIndices.isEmpty()) {
+                checkedColsIndices = all;
             }
             return checkedColsIndices;
         } catch (Exception e) {
@@ -171,15 +181,21 @@ public class ControlData2DSelect extends ControlData2DLoad {
         }
     }
 
+    // If none selected then select all
     public List<String> checkedColsNames() {
         try {
             List<String> names = new ArrayList<>();
+            List<String> all = new ArrayList<>();
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                all.add(cb.getText());
                 if (cb.isSelected()) {
                     names.add(cb.getText());
                 }
+            }
+            if (names.isEmpty()) {
+                names = all;
             }
             return names;
         } catch (Exception e) {
@@ -188,18 +204,24 @@ public class ControlData2DSelect extends ControlData2DLoad {
         }
     }
 
+    // If none selected then select all
     public List<Data2DColumn> checkedCols() {
         try {
             List<Data2DColumn> cols = new ArrayList<>();
+            List<Data2DColumn> all = new ArrayList<>();
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                if (cb.isSelected()) {
-                    Data2DColumn col = data2D.col(cb.getText());
-                    if (col != null) {
+                Data2DColumn col = data2D.col(cb.getText());
+                if (col != null) {
+                    all.add(col.cloneAll());
+                    if (cb.isSelected()) {
                         cols.add(col.cloneAll());
                     }
                 }
+            }
+            if (cols.isEmpty()) {
+                cols = all;
             }
             return cols;
         } catch (Exception e) {
@@ -208,6 +230,7 @@ public class ControlData2DSelect extends ControlData2DLoad {
         }
     }
 
+    // If none selected then select all
     public List<List<String>> selectedData(boolean all, boolean rowNumber) {
         try {
             if (!checkSelections(all)) {
@@ -271,7 +294,7 @@ public class ControlData2DSelect extends ControlData2DLoad {
     public void selectRows(List<Integer> rows) {
         try {
             isSettingValues = true;
-            if (rows != null && !rows.isEmpty()) {
+            if (rows != null && !rows.isEmpty() && rows.size() != tableData.size()) {
                 for (int i = 0; i < tableData.size(); i++) {
                     if (rows.contains(i)) {
                         tableView.getSelectionModel().select(i);

@@ -456,7 +456,10 @@ public class NoteEditorController extends HtmlEditorController {
         if (!fileChanged) {
             return true;
         } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            if (alert != null) {
+                alert.close();
+            }
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(message("NoteChanged"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -469,6 +472,9 @@ public class NoteEditorController extends HtmlEditorController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent() ) {
+                return false;
+            }
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;

@@ -472,7 +472,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+        if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
             return;
         }
         synchronized (this) {
@@ -507,7 +507,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (tableData.isEmpty()) {
             return;
         }
-        if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+        if (!PopTools.askSure(this, getMyStage().getTitle(), Languages.message("SureDelete"))) {
             return;
         }
         synchronized (this) {

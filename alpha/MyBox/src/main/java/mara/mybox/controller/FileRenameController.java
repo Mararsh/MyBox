@@ -78,7 +78,7 @@ public class FileRenameController extends BaseController {
                 return;
             }
             if (theFile.exists()) {
-                if (!PopTools.askSure(getBaseTitle(), Languages.message("SureReplaceExistedFile"))) {
+                if (!PopTools.askSure(this,getBaseTitle(), Languages.message("SureReplaceExistedFile"))) {
                     return;
                 }
             }

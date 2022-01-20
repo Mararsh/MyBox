@@ -452,7 +452,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 popError(message("NoData"));
                 return;
             }
-            if (!PopTools.askSure(baseTitle, selected.getName(), message("DeletePalette"))) {
+            if (!PopTools.askSure(this,baseTitle, selected.getName(), message("DeletePalette"))) {
                 return;
             }
             task = new SingletonTask<Void>(this) {

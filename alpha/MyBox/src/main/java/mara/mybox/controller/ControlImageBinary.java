@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -53,6 +55,7 @@ public class ControlImageBinary extends BaseController {
         parentController = parent;
         this.imageView = imageView;
         try {
+            calculateButton.setVisible(imageView != null);
 
             binaryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -76,8 +79,6 @@ public class ControlImageBinary extends BaseController {
             });
             NodeStyleTools.setTooltip(thresholdInput, new Tooltip(message("BWThresholdComments")));
 
-            calculateButton.setVisible(imageView != null);
-
             ditherCheck.setSelected(UserConfig.getBoolean(baseName + "Dither", false));
             ditherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -99,10 +100,10 @@ public class ControlImageBinary extends BaseController {
         try {
             if (!thresholdRadio.isSelected()) {
                 thresholdInput.setStyle(null);
-                thresholdInput.setDisable(true);
+                thresholdInput.setEditable(false);
                 return;
             }
-            thresholdInput.setDisable(false);
+            thresholdInput.setEditable(true);
             int v = Integer.valueOf(thresholdInput.getText());
             if (v >= 0 && v <= 255) {
                 threshold = v;
@@ -119,10 +120,10 @@ public class ControlImageBinary extends BaseController {
     @FXML
     public void calculateAction() {
         try {
-            if (imageView == null || imageView.getImage() == null) {
+            if (!(parentController instanceof BaseImageController)) {
                 return;
             }
-            int v = ImageBinary.calculateThreshold(imageView.getImage());
+            int v = ImageBinary.calculateThreshold(((BaseImageController) parentController).imageView.getImage());
             thresholdInput.setText(v + "");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -139,13 +140,21 @@ public class ControlImageBinary extends BaseController {
         }
     }
 
-    public int threshold() {
-        if (otsuRadio.isSelected() && imageView != null && imageView.getImage() != null) {
-            return ImageBinary.calculateThreshold(imageView.getImage());
+    public int threshold(BufferedImage image) {
+        if (otsuRadio.isSelected() && image != null) {
+            return ImageBinary.calculateThreshold(image);
         } else if (thresholdRadio.isSelected()) {
             return threshold;
         } else {
             return -1;
+        }
+    }
+
+    public int threshold() {
+        if (imageView != null && imageView.getImage() != null) {
+            return threshold(SwingFXUtils.fromFXImage(imageView.getImage(), null));
+        } else {
+            return threshold(null);
         }
     }
 

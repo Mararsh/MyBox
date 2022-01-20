@@ -257,7 +257,10 @@ public class LocationInMapController extends GeographyCodeMapController {
                 popFailed();
             }
         }
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        if (alert != null) {
+            alert.close();
+        }
+        alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(getBaseTitle());
         alert.setContentText(Languages.message("Saved"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -269,7 +272,7 @@ public class LocationInMapController extends GeographyCodeMapController {
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonEdit) {
+        if (result == null || result.get() != buttonEdit) {
             return;
         }
         GeographyCodeEditController controller

@@ -684,7 +684,10 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             // https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
             // This is a pretty annoying thing in JavaFX - they will automatically append the extension on Windows, but not on Linux or Mac.
             if (FileNameTools.getFileSuffix(file.getName()).isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
+                if (alert != null) {
+                    alert.close();
+                }
+                alert = new Alert(Alert.AlertType.WARNING);
                 alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 if (myStage != null) {
@@ -701,6 +704,9 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 stage.toFront();
                 stage.sizeToScene();
                 Optional<ButtonType> result = alert.showAndWait();
+                if (result == null || !result.isPresent() ) {
+                    return null;
+                }
                 if (result.get() != buttonSure) {
                     if (result.get() == buttonNo) {
                         return chooseSaveFile(title, defaultPath, defaultName, filters);

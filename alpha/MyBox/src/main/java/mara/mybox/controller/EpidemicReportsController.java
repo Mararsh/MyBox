@@ -350,7 +350,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     sourceController.loadTree(datasets);
                     timeController.loadTree("time", times, false);
                     if (datasets == null || datasets.isEmpty()) {
-                        if (PopTools.askSure(getBaseTitle(), Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
+                        if (PopTools.askSure(myController, getBaseTitle(), Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
                             predefined();
                         }
 

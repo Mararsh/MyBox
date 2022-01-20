@@ -14,7 +14,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
@@ -45,7 +45,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     protected int thumbWidth = AppVariables.thumbnailWidth;
 
     @FXML
-    protected HBox buttonsBox;
+    protected FlowPane buttonsPane;
     @FXML
     protected Button useClipButton, thumbsListButton;
     @FXML
@@ -118,7 +118,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             if (use) {
                 useClipButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             } else {
-                buttonsBox.getChildren().remove(useClipButton);
+                buttonsPane.getChildren().remove(useClipButton);
                 copyToSystemClipboardButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             }
             refreshAction();

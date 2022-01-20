@@ -29,6 +29,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -846,6 +847,14 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void cleanWindow() {
         try {
+            if (alert != null) {
+                try {
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.close();
+                } catch (Exception e) {
+                }
+                alert = null;
+            }
             if (myScene != null) {
                 myScene.setUserData(null);
                 myScene = null;
@@ -866,7 +875,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-
     }
 
     public boolean close() {

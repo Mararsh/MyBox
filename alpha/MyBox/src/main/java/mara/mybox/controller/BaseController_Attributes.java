@@ -56,6 +56,7 @@ public abstract class BaseController_Attributes {
     protected Timer popupTimer, timer;
     protected Popup popup;
     protected ContextMenu popMenu;
+    protected Alert alert;
     protected String targetFileSuffix;
     protected boolean isSettingValues, isPop;
     protected File sourceFile, sourcePath, targetPath, targetFile;
@@ -324,6 +325,13 @@ public abstract class BaseController_Attributes {
         return isPop;
     }
 
+    public Alert getAlert() {
+        return alert;
+    }
+
+    public void setAlert(Alert alert) {
+        this.alert = alert;
+    }
 
     /*
         task

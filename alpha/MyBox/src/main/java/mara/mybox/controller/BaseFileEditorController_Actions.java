@@ -110,7 +110,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
 
     private void saveExisted() {
         if (confirmCheck.isVisible() && confirmCheck.isSelected() && (autoSaveTimer == null)) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            if (alert != null) {
+                alert.close();
+            }
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(message("SureOverrideFile"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -123,6 +126,9 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent() ) {
+                return;
+            }
             if (result.get() == buttonCancel) {
                 return;
             } else if (result.get() == buttonSaveAs) {
