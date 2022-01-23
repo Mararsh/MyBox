@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import javafx.scene.paint.Color;
 import mara.mybox.data.Era;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
@@ -26,6 +27,7 @@ public class ColumnDefinition extends BaseData {
     protected String name, label, foreignName, foreignTable, foreignColumn;
     protected ColumnType type;
     protected int index, length, width;
+    protected Color color;
     protected boolean isPrimaryKey, notNull, isID, editable;
     protected OnDelete onDelete;
     protected OnUpdate onUpdate;
@@ -63,6 +65,7 @@ public class ColumnDefinition extends BaseData {
         timeFormat = Era.Format.Datetime;
         maxValue = null;
         minValue = null;
+        color = null;
     }
 
     public ColumnDefinition() {
@@ -93,7 +96,7 @@ public class ColumnDefinition extends BaseData {
     public ColumnDefinition cloneAll() {
         try {
             ColumnDefinition newData = (ColumnDefinition) super.clone();
-            newData.cloneAll(this);
+            newData.cloneFrom(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -101,7 +104,7 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public void cloneAll(ColumnDefinition c) {
+    public void cloneFrom(ColumnDefinition c) {
         try {
             if (c == null) {
                 return;
@@ -115,6 +118,7 @@ public class ColumnDefinition extends BaseData {
             index = c.index;
             length = c.length;
             width = c.width;
+            color = c.color;
             isPrimaryKey = c.isPrimaryKey;
             notNull = c.notNull;
             isID = c.isID;
@@ -180,10 +184,15 @@ public class ColumnDefinition extends BaseData {
             switch (type) {
                 case String:
                 case Text:
-                case Color:
                 case File:
                 case Image:
                     return length <= 0 || value.length() <= length;
+                case Color:
+                    if (length > 0 && value.length() > length) {
+                        return false;
+                    }
+                    Color.web(value);
+                    return true;
                 case Double:
                     Double.parseDouble(value.replaceAll(",", ""));
                     return true;
@@ -627,6 +636,14 @@ public class ColumnDefinition extends BaseData {
 
     public String getTypeString() {
         return message(type.name());
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
 }

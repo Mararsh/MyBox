@@ -122,9 +122,10 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                                        <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false" text="%ConfirmWhenDelete" />
                                                                     </children>
                                                                 </FlowPane>
+                                                                  <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false" text="%ConfirmWhenDelete" />
+                                                <CheckBox fx:id="handleSelectCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ImageHandleSelectedArea" wrapText="true" />
                                                             </children>
                                                         </VBox>
                                                         <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />

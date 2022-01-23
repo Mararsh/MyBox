@@ -9,7 +9,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Window;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ColorPalettePopupController;
 import mara.mybox.controller.ColorSet;
 import mara.mybox.controller.ControlColors;
 import mara.mybox.db.DerbyBase;
@@ -193,6 +195,22 @@ public class PaletteTools {
     }
 
     public static void afterPaletteImported(BaseController parent, String paletteName) {
+        UserConfig.setString("ColorPalettePopupPalette", paletteName);
+
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof ColorPalettePopupController) {
+                try {
+                    ColorPalettePopupController controller = (ColorPalettePopupController) object;
+                    controller.loadColors();
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+
         if (parent == null) {
             return;
         }
@@ -209,10 +227,11 @@ public class PaletteTools {
             }
             parent.popSuccessful();
         } else if (parent instanceof ColorSet) {
-            UserConfig.setString("ColorPalettePopupPalette", paletteName);
+
             ColorSet controller = (ColorSet) parent;
             controller.showColorPalette();
         }
+
     }
 
 }

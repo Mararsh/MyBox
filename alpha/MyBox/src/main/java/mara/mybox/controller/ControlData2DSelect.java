@@ -155,6 +155,26 @@ public class ControlData2DSelect extends ControlData2DLoad {
         }
     }
 
+    public List<List<String>> selectedRows(boolean allRows) {
+        try {
+            List<List<String>> data = new ArrayList<>();
+            List<List<String>> selected = tableView.getSelectionModel().getSelectedItems();
+            if (allRows || selected == null || selected.isEmpty()) {
+                for (int i = 0; i < tableData.size(); i++) {
+                    data.add(tableData.get(i));
+                }
+            } else {
+                for (List<String> d : selected) {
+                    data.add(d);
+                }
+            }
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     // If none selected then select all
     public List<Integer> checkedColsIndices() {
         try {

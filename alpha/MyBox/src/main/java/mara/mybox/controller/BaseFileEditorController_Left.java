@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class BaseFileEditorController_Left extends BaseFileEditorController_Actions {
-    
+
     protected void initFileTab() {
         try {
             infoController.setParent(this);
@@ -29,16 +29,17 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void initFormatTab() {
         try {
             if (formatPane != null) {
                 formatPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
+                    if (!isSettingValues) {
+                        UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
+                    }
                 });
-                formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", false));
             }
-            
+
             if (charsetSelector != null) {
                 charsetSelector.getItems().addAll(TextTools.getCharsetNames());
                 charsetSelector.setValue(UserConfig.getString(baseName + "SourceCharset", "UTF-8"));
@@ -49,49 +50,40 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void initSaveTab() {
         try {
             if (savePane != null) {
-                savePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "SavePane", savePane.isExpanded());
+                savePane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    if (!isSettingValues) {
+                        UserConfig.setBoolean(baseName + "SavePane", savePane.isExpanded());
+                    }
                 });
-                savePane.setExpanded(UserConfig.getBoolean(baseName + "SavePane", false));
             }
             if (confirmCheck != null) {
                 confirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmSave", true));
                 confirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "ConfirmSave", newValue);
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(baseName + "ConfirmSave", confirmCheck.isSelected());
                     }
                 });
             }
-            
+
             if (autoSaveCheck != null) {
-                autoSaveCheck.setDisable(true);
-                autoSaveCheck.disabledProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldValue, Boolean newValue) {
-                        checkAutoSave();
-                    }
-                });
                 autoSaveCheck.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
                 autoSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldValue, Boolean newValue) {
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                         checkAutoSave();
                     }
                 });
-                
+
                 autoSaveDurationController
                         .permitInvalid(!autoSaveCheck.isSelected())
                         .init(baseName + "AutoSaveDuration", 300);
@@ -102,36 +94,39 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void initBackupsTab() {
         try {
             if (backupPane == null) {
                 return;
             }
-            backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
-            backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
+            backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
+                }
             });
-            
+
             backupController.setControls(this, baseName);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void initSaveAsTab() {
         try {
             if (saveAsPane != null) {
-                saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    if (!isSettingValues) {
+                        UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                    }
                 });
-                saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", false));
+
             }
             if (targetCharsetSelector != null) {
                 targetCharsetSelector.getItems().addAll(TextTools.getCharsetNames());
@@ -155,7 +150,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
-            
+
             if (lineBreakGroup != null) {
                 initLineBreakGroup();
                 lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -168,28 +163,27 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 });
                 checkLineBreakGroup();
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void checkAutoSave() {
         try {
             if (autoSaveCheck == null) {
                 return;
             }
             UserConfig.setBoolean(baseName + "AutoSave", autoSaveCheck.isSelected());
-            autoSaveDurationController.permitInvalid(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
+            autoSaveDurationController.permitInvalid(!autoSaveCheck.isSelected());
             if (confirmCheck != null) {
-                confirmCheck.setVisible(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
+                confirmCheck.setVisible(!autoSaveCheck.isSelected());
             }
             if (autoSaveTimer != null) {
                 autoSaveTimer.cancel();
                 autoSaveTimer = null;
             }
-            if (sourceFile == null || autoSaveCheck.isDisabled()
-                    || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
+            if (sourceFile == null || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
                 return;
             }
             long interval = autoSaveDurationController.value * 1000;
@@ -205,29 +199,29 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     });
                 }
             }, interval, interval);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        
+
     }
-    
+
     protected void initLineBreakGroup() {
         try {
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void checkLineBreakGroup() {
         try {
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void initFilterTab() {
         try {
             if (filterPane != null) {
@@ -236,17 +230,17 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 });
                 filterPane.setExpanded(UserConfig.getBoolean(baseName + "FilterPane", false));
             }
-            
+
             if (filterButton != null && filterController != null) {
                 filterButton.disableProperty().bind(filterController.valid.not());
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        
+
     }
-    
+
     protected void initLocateTab() {
         try {
             if (locatePane != null) {
@@ -277,7 +271,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
-            
+
             locateObject = -1;
             if (objectNumberInput != null) {
                 objectNumberInput.textProperty().addListener(new ChangeListener<String>() {
@@ -300,16 +294,16 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
-            
+
             linesRange = null;
             objectsRange = null;
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        
+
     }
-    
+
     protected void initFindTab() {
         try {
             if (findReplaceController == null) {
@@ -319,12 +313,12 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             findPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                 UserConfig.setBoolean(baseName + "FindPane", findPane.isExpanded());
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void initPageBar() {
         try {
             List<String> values = new ArrayList();
@@ -348,7 +342,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     });
                 }
             });
-            
+
             pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -359,5 +353,5 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             MyBoxLog.error(e.toString());
         }
     }
-    
+
 }

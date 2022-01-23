@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.value.AppValues;
@@ -34,26 +35,26 @@ public class TableColor extends BaseTable<ColorData> {
     }
 
     public final TableColor defineColumns() {
-        addColumn(new ColumnDefinition("color_value", ColumnDefinition.ColumnType.Integer, true, true));
-        addColumn(new ColumnDefinition("rgba", ColumnDefinition.ColumnType.String, true).setLength(16));
-        addColumn(new ColumnDefinition("color_name", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("rgb", ColumnDefinition.ColumnType.String, true).setLength(16));
-        addColumn(new ColumnDefinition("srgb", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("hsb", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("adobeRGB", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("appleRGB", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("eciRGB", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("sRGBLinear", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("adobeRGBLinear", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("appleRGBLinear", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("calculatedCMYK", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("eciCMYK", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("adobeCMYK", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("xyz", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("cieLab", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("lchab", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("cieLuv", ColumnDefinition.ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("lchuv", ColumnDefinition.ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("color_value", ColumnType.Integer, true, true));
+        addColumn(new ColumnDefinition("rgba", ColumnType.Color, true).setLength(16));
+        addColumn(new ColumnDefinition("color_name", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("rgb", ColumnType.Color, true).setLength(16));
+        addColumn(new ColumnDefinition("srgb", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("hsb", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("adobeRGB", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("appleRGB", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("eciRGB", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("sRGBLinear", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("adobeRGBLinear", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("appleRGBLinear", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("calculatedCMYK", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("eciCMYK", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("adobeCMYK", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("xyz", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("cieLab", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("lchab", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("cieLuv", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("lchuv", ColumnType.String).setLength(128));
         orderColumns = "color_value DESC";
         return this;
     }

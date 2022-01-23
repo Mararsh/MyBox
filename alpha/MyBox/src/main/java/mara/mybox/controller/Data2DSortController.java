@@ -60,7 +60,6 @@ public class Data2DSortController extends Data2DHandleController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     public void refreshControls() {

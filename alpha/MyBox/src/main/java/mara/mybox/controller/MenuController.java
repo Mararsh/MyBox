@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -165,6 +166,19 @@ public class MenuController extends BaseChildController {
     public void popStyles(MouseEvent mouseEvent) {
         PopTools.popWindowStyles(this, baseStyle, mouseEvent);
     }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            if (parentController != null) {
+                return parentController.keyEventsFilter(event);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /*
         static methods

@@ -143,6 +143,7 @@ public class DataMigration {
                 statement.executeUpdate("ALTER TABLE User_Conf DROP COLUMN default_string_Value");
                 statement.executeUpdate("ALTER TABLE System_Conf DROP COLUMN default_int_Value");
                 statement.executeUpdate("ALTER TABLE System_Conf DROP COLUMN default_string_Value");
+                statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN color  VARCHAR(16)");
                 conn.commit();
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -1206,7 +1207,7 @@ public class DataMigration {
 //                            "Location_Data_SpermWhales_en.csv", "Location_Data_SpermWhales_zh.csv",
 //                            "Notes_Examples_en.txt", "Notes_Examples_zh.txt",
 //                            "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt",
-//                            "Epidemic_Report_JHU_2020924.csv"
+//                            "Epidemic_Report_examples.csv"
 //                    );
                     List<String> names = Arrays.asList(
                             "Notes_Examples_en.txt", "Notes_Examples_zh.txt",

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -14,18 +15,22 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
+import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
+import mara.mybox.fxml.cell.TableColorCommitCell;
 import mara.mybox.fxml.cell.TableComboBoxCell;
 import static mara.mybox.value.Languages.message;
 
@@ -54,7 +59,10 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected TableColumn<Data2DColumn, Integer> indexColumn, lengthColumn, widthColumn;
     @FXML
-    protected Button trimColumnsButton;
+    protected TableColumn<Data2DColumn, Color> colorColumn;
+
+    @FXML
+    protected Button renameColumnsButton, colorButton;
 
     public ControlData2DColumns() {
     }
@@ -64,7 +72,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         try {
             super.initControls();
 
-            trimColumnsButton.setDisable(true);
+            renameColumnsButton.setDisable(true);
+            colorButton.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -185,7 +194,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                     }
                 }
             });
-            indexColumn.setEditable(true);
+            editableColumn.setEditable(true);
             editableColumn.getStyleClass().add("editable-column");
 
             notNullColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
@@ -277,6 +286,27 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             widthColumn.setEditable(true);
             widthColumn.getStyleClass().add("editable-column");
 
+            TableColor tableColor = new TableColor();
+            colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
+            colorColumn.setCellFactory(TableColorCommitCell.create(this, tableColor));
+            colorColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Color>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, Color> t) {
+                    if (t == null) {
+                        return;
+                    }
+                    Data2DColumn column = t.getRowValue();
+                    Color v = t.getNewValue();
+                    if (column == null || v == null || v.equals(column.getColor())) {
+                        return;
+                    }
+                    column.setColor(v);
+                    status(Status.Modified);
+                }
+            });
+            colorColumn.setEditable(true);
+            colorColumn.getStyleClass().add("editable-column");
+
             checkData();
 
         } catch (Exception e) {
@@ -288,7 +318,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(trimColumnsButton, new Tooltip(message("RenameAllColumns")));
+            NodeStyleTools.setTooltip(renameColumnsButton, new Tooltip(message("RenameAllColumns")));
+            NodeStyleTools.setTooltip(colorButton, new Tooltip(message("RandomColors")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -360,7 +391,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     public void checkData() {
         checkButtons();
-        trimColumnsButton.setDisable(tableData.isEmpty());
+        renameColumnsButton.setDisable(tableData.isEmpty());
+        colorButton.setDisable(tableData.isEmpty());
     }
 
     public void status(Status newStatus) {
@@ -407,12 +439,28 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
-    public void trimAction() {
+    public void renameColumns() {
         try {
             String prefix = message(data2D.colPrefix());
             isSettingValues = true;
             for (int i = 0; i < tableData.size(); i++) {
                 tableData.get(i).setName(prefix + (i + 1));
+            }
+            tableView.refresh();
+            isSettingValues = false;
+            status(Status.Modified);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void randomColors() {
+        try {
+            isSettingValues = true;
+            Random r = new Random();
+            for (int i = 0; i < tableData.size(); i++) {
+                tableData.get(i).setColor(FxColorTools.randomColor(r));
             }
             tableView.refresh();
             isSettingValues = false;

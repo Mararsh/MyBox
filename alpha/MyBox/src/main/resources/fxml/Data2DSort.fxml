@@ -101,7 +101,7 @@ License:    Apache License Version 2.0
         </VBox>
         <VBox fx:id="operationBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
-                <Label minHeight="-Infinity" minWidth="-Infinity" text="%OrderBy" />
+                <Label minHeight="-Infinity" minWidth="-Infinity" text="%DataSortLabel" />
                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                     <children>
                         <Label minWidth="-Infinity" text="%Column" />
@@ -118,7 +118,7 @@ License:    Apache License Version 2.0
         </VBox>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"  styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" />
+                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

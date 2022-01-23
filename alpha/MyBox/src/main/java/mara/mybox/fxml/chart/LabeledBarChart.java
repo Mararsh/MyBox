@@ -15,9 +15,11 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SquareRootCoordinate;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
+import static mara.mybox.fxml.chart.ChartTools.createCategoryAxis;
+import static mara.mybox.fxml.chart.ChartTools.createNumberAxis;
 import mara.mybox.tools.StringTools;
 
 /**
@@ -30,6 +32,8 @@ import mara.mybox.tools.StringTools;
  */
 public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
 
+    protected CategoryAxis categoryAxis;
+    protected NumberAxis numberAxis;
     protected Map<Node, TextFlow> nodeMap = new HashMap<>();
     protected boolean intValue;
     protected String cssFile;
@@ -37,27 +41,13 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
     protected ChartCoordinate chartCoordinate;
     protected int textSize;
 
-    public static LabeledBarChart create(boolean displayCategoryAxis, ChartCoordinate chartCoordinate) {
-        CategoryAxis categoryAxis = new CategoryAxis();
-        categoryAxis.setSide(Side.BOTTOM);
-        categoryAxis.setTickLabelsVisible(displayCategoryAxis);
-        categoryAxis.setGapStartAndEnd(true);
+    public static LabeledBarChart xy(boolean showCategoryAxis, ChartCoordinate chartCoordinate) {
+        return new LabeledBarChart(createCategoryAxis(showCategoryAxis), createNumberAxis(chartCoordinate))
+                .setChartCoordinate(chartCoordinate);
+    }
 
-        NumberAxis numberAxis = new NumberAxis();
-        numberAxis.setSide(Side.LEFT);
-        switch (chartCoordinate) {
-            case LogarithmicE:
-                numberAxis.setTickLabelFormatter(new LogarithmicECoordinate());
-                break;
-            case Logarithmic10:
-                numberAxis.setTickLabelFormatter(new Logarithmic10Coordinate());
-                break;
-            case SquareRoot:
-                numberAxis.setTickLabelFormatter(new SquareRootCoordinate());
-                break;
-        }
-
-        return new LabeledBarChart(categoryAxis, numberAxis)
+    public static LabeledBarChart yx(boolean showCategoryAxis, ChartCoordinate chartCoordinate) {
+        return new LabeledBarChart(createNumberAxis(chartCoordinate), createCategoryAxis(showCategoryAxis))
                 .setChartCoordinate(chartCoordinate);
     }
 
@@ -66,7 +56,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         init();
     }
 
-    private void init() {
+    public final void init() {
         labelType = LabelType.NameAndValue;
         textSize = 10;
 //        this.setBarGap(0.0);
@@ -76,47 +66,69 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-
     }
 
-    public LabeledBarChart style(String cssFile) {
-        this.getStylesheets().add(LabeledBarChart.class.getResource(cssFile).toExternalForm());
-        return this;
+    public boolean isXY() {
+        return getXAxis() instanceof CategoryAxis;
+    }
+
+    public String category(Data<X, Y> item) {
+        return "" + (isXY() ? item.getXValue() : item.getYValue());
+    }
+
+    public String value(Data<X, Y> item) {
+        return "" + (isXY() ? item.getYValue() : item.getXValue());
+    }
+
+    public CategoryAxis categoryAxis() {
+        return isXY() ? (CategoryAxis) getXAxis() : (CategoryAxis) getYAxis();
+    }
+
+    public void displayCategoryAxis(boolean display) {
+        categoryAxis().setTickLabelsVisible(display);
+    }
+
+    public NumberAxis valueAxis() {
+        return isXY() ? (NumberAxis) getYAxis() : (NumberAxis) getXAxis();
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        if (labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
+        if (labelType == null || labelType == LabelType.NotDisplay) {
             return;
         }
         try {
             for (int j = 0; j < series.getData().size(); j++) {
                 Data<X, Y> item = series.getData().get(j);
-                String name = item.getXValue() + "";
-                String value = item.getYValue() + "";
-                String label;
-                String labelValue = StringTools.format(ChartTools.realValue(chartCoordinate, Double.valueOf(value)));
-                switch (labelType) {
-                    case Name:
-                        label = name;
-                        break;
-                    case Value:
-                        label = labelValue;
-                        break;
-                    case NameAndValue:
-                    default:
-                        label = name + " " + labelValue;
-                        break;
+                String name = category(item);
+                String value = value(item);
+                if (labelType == ChartTools.LabelType.Pop) {
+                    NodeStyleTools.setTooltip(item.getNode(), name + ": " + value);
+                } else {
+                    String label;
+                    String labelValue = StringTools.format(ChartTools.realValue(chartCoordinate, Double.valueOf(value)));
+                    switch (labelType) {
+                        case Name:
+                            label = name;
+                            break;
+                        case Value:
+                            label = labelValue;
+                            break;
+                        case NameAndValue:
+                        default:
+                            label = name + " " + labelValue;
+                            break;
+                    }
+                    Text text = new Text(label);
+                    text.setStyle("-fx-font-size: " + textSize + "px;  -fx-text-fill: black;");
+
+                    TextFlow textFlow = new TextFlow(text);
+                    textFlow.setTextAlignment(TextAlignment.CENTER);
+
+                    nodeMap.put(item.getNode(), textFlow);
+                    getPlotChildren().add(textFlow);
                 }
-                Text text = new Text(label);
-                text.setStyle("-fx-font-size: " + textSize + "px;  -fx-text-fill: black;");
-
-                TextFlow textFlow = new TextFlow(text);
-                textFlow.setTextAlignment(TextAlignment.CENTER);
-
-                nodeMap.put(item.getNode(), textFlow);
-                this.getPlotChildren().add(textFlow);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -147,6 +159,15 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         }
     }
 
+    public void clearData() {
+        this.getData().clear();
+        this.getPlotChildren().clear();
+    }
+
+
+    /*
+       get/set
+     */
     public Map<Node, TextFlow> getNodeMap() {
         return nodeMap;
     }

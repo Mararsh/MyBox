@@ -32,6 +32,28 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseFileEditorController_Main extends BaseFileEditorController_Pair {
 
+    protected void updatePanes() {
+        boolean nullFile = sourceFile == null;
+        isSettingValues = true;
+        if (savePane != null) {
+            savePane.setDisable(nullFile);
+            savePane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "SavePane", false));
+        }
+        if (saveAsPane != null) {
+            saveAsPane.setDisable(nullFile);
+            saveAsPane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "SaveAsPane", false));
+        }
+        if (formatPane != null) {
+            formatPane.setDisable(nullFile);
+            formatPane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "FormatPane", false));
+        }
+        if (backupPane != null) {
+            backupPane.setDisable(nullFile);
+            backupPane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "BackupPane", false));
+        }
+        isSettingValues = false;
+    }
+
     protected void initMainBox() {
         try {
             if (mainArea == null) {
@@ -214,6 +236,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         fileChanged.set(changed);
         bottomLabel.setText("");
         selectionLabel.setText("");
+        updatePanes();
         if (getMyStage() == null || sourceInformation == null) {
             return;
         }
@@ -240,9 +263,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
         if (okButton != null) {
             okButton.setDisable(changed);
-        }
-        if (autoSaveCheck != null) {
-            autoSaveCheck.setDisable(sourceFile == null);
         }
     }
 

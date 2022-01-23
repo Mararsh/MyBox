@@ -134,7 +134,7 @@ public class ColorSet extends BaseController {
                     WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
-            controller.load(this);
+            controller.load(this, rect);
 
             popup = makePopup();
             popup.getContent().add(pane);

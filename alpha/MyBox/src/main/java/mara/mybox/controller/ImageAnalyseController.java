@@ -139,13 +139,13 @@ public class ImageAnalyseController extends ImageViewerController {
 
             imageBox.disableProperty().bind(imageView.imageProperty().isNull());
 
+            selectAreaCheck.setSelected(false);
             selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadData(true, true, true);
                 }
             });
-            selectAreaCheck.setSelected(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

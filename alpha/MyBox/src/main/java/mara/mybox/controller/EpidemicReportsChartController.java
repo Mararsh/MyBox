@@ -62,7 +62,6 @@ import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
 import mara.mybox.fxml.chart.LabeledBarChart;
-import mara.mybox.fxml.chart.LabeledHorizontalBarChart;
 import mara.mybox.fxml.chart.Logarithmic10Coordinate;
 import mara.mybox.fxml.chart.LogarithmicECoordinate;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -1003,7 +1002,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 //        boolean intValue = !message("HealedRatio").equals(valueName)
 //                && !message("DeadRatio").equals(valueName);
         LabeledBarChart barChart
-                = LabeledBarChart.create(categoryAxisCheck.isSelected(), chartCoordinate)
+                = LabeledBarChart.xy(categoryAxisCheck.isSelected(), chartCoordinate)
                         .setIntValue(false)
                         .setLabelType(labelType)
                         .setTextSize(mapOptionsController.textSize);
@@ -1030,13 +1029,13 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         return barChart;
     }
 
-    protected LabeledHorizontalBarChart addHorizontalBarChart() {
+    protected LabeledBarChart addHorizontalBarChart() {
         chartBox.getChildren().clear();
-        LabeledHorizontalBarChart barChart
-                = LabeledHorizontalBarChart.create(categoryAxisCheck.isSelected(), chartCoordinate)
-                        .setIntValue(false)
-                        .setLabelType(labelType)
-                        .setTextSize(mapOptionsController.textSize);
+        LabeledBarChart barChart
+                = LabeledBarChart.yx(categoryAxisCheck.isSelected(), chartCoordinate);
+        barChart.setIntValue(false)
+                .setLabelType(labelType)
+                .setTextSize(mapOptionsController.textSize);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
         barChart.setBarGap(0.0);
@@ -1105,7 +1104,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             if (valuesNames.size() <= 1 || timeReports == null || timeReports.isEmpty()) {
                 return;
             }
-            LabeledHorizontalBarChart barChart = addHorizontalBarChart();
+            LabeledBarChart barChart = addHorizontalBarChart();
 
             Map<String, String> palette = new HashMap();
             List<XYChart.Series> seriesList = new ArrayList<>();
@@ -1178,7 +1177,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             return;
         }
         String valueName = orderNames.get(0);
-        LabeledHorizontalBarChart barChart = addHorizontalBarChart();
+        LabeledBarChart barChart = addHorizontalBarChart();
 
         Map<String, String> palette = new HashMap();
         for (int i = timeReports.size() - 1; i >= 0; i--) {

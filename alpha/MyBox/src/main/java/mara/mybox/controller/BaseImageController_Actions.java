@@ -67,6 +67,16 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 checkSelect();
             }
 
+            if (handleSelectCheck != null) {
+                handleSelectCheck.setSelected(UserConfig.getBoolean(baseName + "HandleSelectArea", true));
+                handleSelectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "HandleSelectArea", handleSelectCheck.isSelected());
+                    }
+                });
+            }
+
             if (pickColorCheck != null) {
                 pickColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
@@ -108,7 +118,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     public Image imageToHandle() {
-        Image selected = scopeImage();
+        Image selected = null;
+        if (handleSelectCheck == null || handleSelectCheck.isSelected()) {
+            selected = scopeImage();
+        }
         if (selected == null) {
             selected = imageView.getImage();
         }
@@ -142,7 +155,11 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     @Override
     public boolean popAction() {
-        ImagePopController.openView(this, imageView);
+        if (handleSelectCheck == null || handleSelectCheck.isSelected()) {
+            ImagePopController.openImage(this, scopeImage());
+        } else {
+            ImagePopController.openView(this, imageView);
+        }
         return true;
     }
 

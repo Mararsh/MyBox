@@ -3,14 +3,19 @@ package mara.mybox.fxml.chart;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.SquareRootCoordinate;
 
 /**
  * @Author Mara
@@ -25,6 +30,36 @@ public class ChartTools {
 
     public enum ChartCoordinate {
         Cartesian, LogarithmicE, Logarithmic10, SquareRoot
+    }
+
+    public static CategoryAxis createCategoryAxis(boolean displayCategoryAxis) {
+        CategoryAxis categoryAxis = new CategoryAxis();
+        categoryAxis.setSide(Side.BOTTOM);
+        categoryAxis.setTickLabelsVisible(displayCategoryAxis);
+        categoryAxis.setGapStartAndEnd(true);
+        return categoryAxis;
+    }
+
+    public static NumberAxis createNumberAxis(ChartCoordinate chartCoordinate) {
+        NumberAxis numberAxis = new NumberAxis();
+        numberAxis.setSide(Side.LEFT);
+        switch (chartCoordinate) {
+            case LogarithmicE:
+                numberAxis.setTickLabelFormatter(new LogarithmicECoordinate());
+                break;
+            case Logarithmic10:
+                numberAxis.setTickLabelFormatter(new Logarithmic10Coordinate());
+                break;
+            case SquareRoot:
+                numberAxis.setTickLabelFormatter(new SquareRootCoordinate());
+                break;
+        }
+        return numberAxis;
+    }
+
+    public static Chart style(Chart chart, String cssFile) {
+        chart.getStylesheets().add(Chart.class.getResource(cssFile).toExternalForm());
+        return chart;
     }
 
     public static void setLineChartColors(LineChart chart, Map<String, String> locationColors, boolean showLegend) {

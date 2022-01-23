@@ -46,7 +46,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 sourceInformation.setCharsetDetermined(true);
                 sourceInformation.setCharset(Charset.forName(charsetSelector.getSelectionModel().getSelectedItem()));
                 openFile(sourceFile);
-            };
+            }
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -99,6 +99,9 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     sourceInformation.setCurrentPageLineEnd(pageLinesNumber(pageText));
                     sourceInformation.setCurrentPageObjectStart(0);
                     sourceInformation.setCurrentPageObjectEnd(pageObjectsNumber(pageText));
+                    if (backupController != null && backupController.isBack()) {
+                        backupController.loadBackups(sourceFile);
+                    }
                     updateInterface(false);
                     loadTotalNumbers();
                 }
@@ -126,7 +129,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent() ) {
+            if (result == null || !result.isPresent()) {
                 return;
             }
             if (result.get() == buttonCancel) {

@@ -3,6 +3,7 @@ package mara.mybox.db.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.scene.paint.Color;
 import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
 import static mara.mybox.db.data.ColumnDefinition.columnType;
@@ -64,7 +65,7 @@ public class Data2DColumn extends ColumnDefinition {
     public Data2DColumn cloneAll() {
         try {
             Data2DColumn newData = (Data2DColumn) super.clone();
-            newData.cloneAll(this);
+            newData.cloneFrom(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -72,12 +73,12 @@ public class Data2DColumn extends ColumnDefinition {
         }
     }
 
-    public void cloneAll(Data2DColumn c) {
+    public void cloneFrom(Data2DColumn c) {
         try {
             if (c == null) {
                 return;
             }
-            super.cloneAll(c);
+            super.cloneFrom(c);
             data2DDefinition = c.data2DDefinition;
             d2cid = c.d2cid;
             d2id = c.d2id;
@@ -123,6 +124,8 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.getLength();
             case "width":
                 return data.getWidth();
+            case "color":
+                return data.getColor() == null ? null : data.getColor().toString();
             case "is_primary":
                 return data.isIsPrimaryKey();
             case "not_null":
@@ -177,6 +180,9 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
                 case "width":
                     data.setWidth(value == null ? null : (int) value);
+                    return true;
+                case "color":
+                    data.setColor(value == null ? null : Color.web((String) value));
                     return true;
                 case "is_primary":
                     data.setIsPrimaryKey(value == null ? false : (boolean) value);

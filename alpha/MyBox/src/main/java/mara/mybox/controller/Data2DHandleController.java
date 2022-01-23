@@ -116,19 +116,27 @@ public abstract class Data2DHandleController extends BaseChildController {
         if (dataLabel != null) {
             dataLabel.setText(data2D.displayName());
         }
-        infoLabel.setText("");
+        if (infoLabel != null) {
+            infoLabel.setText("");
+        }
         if (!tableController.checkSelections(all())) {
-            infoLabel.setText(message("SelectToHandle"));
+            if (infoLabel != null) {
+                infoLabel.setText(message("SelectToHandle"));
+            }
             okButton.setDisable(true);
             return false;
         }
         if (targetController != null && targetController.checkTarget() == null) {
-            infoLabel.setText(message("SelectToHandle"));
+            if (infoLabel != null) {
+                infoLabel.setText(message("SelectToHandle"));
+            }
             okButton.setDisable(true);
             return false;
         }
         if (allChanged()) {
-            infoLabel.setText(message("NeedSaveBeforeAction"));
+            if (infoLabel != null) {
+                infoLabel.setText(message("NeedSaveBeforeAction"));
+            }
             okButton.setDisable(true);
             return false;
         }

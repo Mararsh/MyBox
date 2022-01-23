@@ -44,6 +44,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("index", ColumnType.Integer));
         addColumn(new Data2DColumn("length", ColumnType.Integer));
         addColumn(new Data2DColumn("width", ColumnType.Integer));
+        addColumn(new Data2DColumn("color", ColumnType.Color).setLength(16));
         addColumn(new Data2DColumn("is_primary", ColumnType.Boolean));
         addColumn(new Data2DColumn("not_null", ColumnType.Boolean));
         addColumn(new Data2DColumn("is_id", ColumnType.Boolean));

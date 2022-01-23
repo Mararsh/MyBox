@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
@@ -22,6 +23,9 @@ public class MenuImageViewController extends MenuImageBaseController {
     protected ImageView imageView;
     protected ImageViewerController imageViewerController;
 
+    @FXML
+    protected CheckBox handleSelectCheck;
+
     public void setParameters(ImageViewerController imageViewerController, double x, double y) {
         try {
             this.imageViewerController = imageViewerController;
@@ -35,6 +39,37 @@ public class MenuImageViewController extends MenuImageBaseController {
                     }
                 });
             }
+
+            if (handleSelectCheck != null) {
+                if (imageController.handleSelectCheck == null) {
+                    nodesBox.getChildren().remove(handleSelectCheck);
+                } else {
+                    handleSelectCheck.setSelected(imageController.handleSelectCheck.isSelected());
+                    handleSelectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                            if (isSettingValues) {
+                                return;
+                            }
+                            isSettingValues = true;
+                            imageController.handleSelectCheck.setSelected(newValue);
+                            isSettingValues = false;
+                        }
+                    });
+                    imageController.handleSelectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                            if (isSettingValues) {
+                                return;
+                            }
+                            isSettingValues = true;
+                            handleSelectCheck.setSelected(newValue);
+                            isSettingValues = false;
+                        }
+                    });
+                }
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
