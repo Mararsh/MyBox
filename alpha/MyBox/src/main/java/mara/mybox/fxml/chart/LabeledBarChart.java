@@ -59,8 +59,8 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
     public final void init() {
         labelType = LabelType.NameAndValue;
         textSize = 10;
-//        this.setBarGap(0.0);
-//        this.setCategoryGap(0.0);
+        this.setBarGap(0.0);
+        this.setCategoryGap(0.0);
         this.setLegendSide(Side.TOP);
         this.setMaxWidth(Double.MAX_VALUE);
         this.setMaxHeight(Double.MAX_VALUE);
@@ -95,6 +95,8 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
+        setStyle(getStyle() + "; -fx-font-size: " + textSize + "px; ");
+
         if (labelType == null || labelType == LabelType.NotDisplay) {
             return;
         }

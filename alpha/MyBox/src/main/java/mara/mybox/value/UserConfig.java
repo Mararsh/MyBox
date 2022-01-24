@@ -41,6 +41,9 @@ public class UserConfig {
                 value = userConfigValues.get(key);
             } else {
                 value = TableUserConf.readString(key, defaultValue);
+                if (value == null) {
+                    return defaultValue;
+                }
                 userConfigValues.put(key, value);
             }
             return value;
@@ -70,6 +73,9 @@ public class UserConfig {
         }
         try {
             int v = TableUserConf.readInt(key, defaultValue);
+            if (v == AppValues.InvalidInteger) {
+                return defaultValue;
+            }
             userConfigValues.put(key, v + "");
             return v;
         } catch (Exception e) {
@@ -106,6 +112,70 @@ public class UserConfig {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static boolean setDouble(String key, double value) {
+        userConfigValues.put(key, value + "");
+        if (TableUserConf.writeString(key, value + "") > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static double getDouble(String key, double defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                double v = Double.valueOf(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
+                //                MyBoxLog.console(e.toString());
+            }
+        }
+        try {
+            String v = TableUserConf.readString(key, defaultValue + "");
+            if (v == null) {
+                return defaultValue;
+            }
+            double d = Double.valueOf(v);
+            userConfigValues.put(key, v);
+            return d;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
+    public static boolean setLong(String key, long value) {
+        userConfigValues.put(key, value + "");
+        if (TableUserConf.writeString(key, value + "") > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static long getLong(String key, long defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                long v = Long.valueOf(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
+                //                MyBoxLog.console(e.toString());
+            }
+        }
+        try {
+            String v = TableUserConf.readString(key, defaultValue + "");
+            if (v == null) {
+                return defaultValue;
+            }
+            long d = Long.valueOf(v);
+            userConfigValues.put(key, v);
+            return d;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
         }
     }
 

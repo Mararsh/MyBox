@@ -16,6 +16,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -127,7 +128,7 @@ License:    Apache License Version 2.0
                                        <content>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                              <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
                                              </padding>
                                              <children>
                                                     <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" />
@@ -196,7 +197,7 @@ License:    Apache License Version 2.0
                                                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                    <children>
                                                       <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
-                                                      <ComboBox fx:id="categorySelector" prefWidth="200.0" />
+                                                      <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
                                                    </children>
                                                 </FlowPane>
                                                   <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -228,97 +229,190 @@ License:    Apache License Version 2.0
                                     </ScrollPane>
                                  </content>
                               </Tab>
-                              <Tab text="%Display">
+                              <Tab text="%Plot">
                                  <content>
                                     <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                        <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                              <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
                                              </padding>
                                              <children>
+                                                <VBox spacing="2.0">
+                                                   <children>
+                                                      <FlowPane hgap="5.0" vgap="5.0">
+                                                         <children>
+                                                            <Label text="%Title" />
+                                                            <RadioButton mnemonicParsing="false" selected="true" text="%Top">
+                                                               <toggleGroup>
+                                                                  <ToggleGroup fx:id="titleSideGroup" />
+                                                               </toggleGroup>
+                                                            </RadioButton>
+                                                            <RadioButton mnemonicParsing="false" text="%Right" toggleGroup="$titleSideGroup" />
+                                                            <RadioButton mnemonicParsing="false" text="%Bottom" toggleGroup="$titleSideGroup" />
+                                                            <RadioButton mnemonicParsing="false" text="%Left" toggleGroup="$titleSideGroup" />
+                                                         </children>
+                                                      </FlowPane>
+                                                      <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" />
+                                                   </children>
+                                                </VBox>
+                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                   <children>
+                                                      <Label maxWidth="1.7976931348623157E308" text="%Legend" />
+                                                      <RadioButton mnemonicParsing="false" selected="true" text="%Top">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="legendGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton mnemonicParsing="false" text="%Right" toggleGroup="$legendGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Bottom" toggleGroup="$legendGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Left" toggleGroup="$legendGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%NotDisplay" toggleGroup="$legendGroup" />
+                                                   </children>
+                                                </FlowPane>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                   <children>
+                                                      <Label text="%TextSize" />
+                                                      <ComboBox fx:id="fontSizeSelector" editable="true" prefWidth="100.0" />
+                                                      <Label text="px" />
+                                                   </children>
+                                                </HBox>
+                                                <CheckBox fx:id="animatedCheck" mnemonicParsing="false" text="%Animated" />
                                                 <CheckBox mnemonicParsing="false" text="%AxisXYReverse" fx:id="xyReverseCheck" />
-                                                <CheckBox fx:id="categoryAxisCheck" mnemonicParsing="false" text="%DisplayCategoryAxisLabel" />
                                                 <CheckBox fx:id="hlinesCheck" mnemonicParsing="false" selected="true" text="%DisplayHorizontalGridLines" />
                                                 <CheckBox fx:id="vlinesCheck" mnemonicParsing="false" selected="true" text="%DisplayVerticalGridLines" />
-                                                <VBox fx:id="legendBox" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                <CheckBox fx:id="hZeroCheck" mnemonicParsing="false" selected="true" text="%DisplayHorizontalZeroLine" />
+                                                <CheckBox fx:id="vZeroCheck" mnemonicParsing="false" selected="true" text="%DisplayVerticalZeroLine" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab text="%CategoryAxis">
+                                 <content>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                       <content>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                                             </padding>
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                    <children>
-                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                      <Label text="%Label" />
+                                                      <TextField fx:id="categoryLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                   </children>
+                                                </HBox>
+                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                   <children>
+                                                      <Label maxWidth="1.7976931348623157E308" text="%Location" />
+                                                      <RadioButton mnemonicParsing="false" selected="true" text="%Bottom">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="categorySideGroup" />
+                                                         </toggleGroup></RadioButton>
+                                                      <RadioButton mnemonicParsing="false" text="%Top" toggleGroup="$categorySideGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Left" toggleGroup="$categorySideGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Right" toggleGroup="$categorySideGroup" />
+                                                   </children>
+                                                </FlowPane>
+                                                <CheckBox fx:id="categoryTickCheck" mnemonicParsing="false" selected="true" text="%DisplayTickLabel" />
+                                                <CheckBox fx:id="categoryMarkCheck" layoutX="15.0" layoutY="80.0" mnemonicParsing="false" selected="true" text="%DisplayTickMark" />
+                                                <CheckBox fx:id="categoryAxisAnimatedCheck" mnemonicParsing="false" text="%Animated" />
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                   <children>
+                                                      <Label text="%TickLabelRotation" />
+                                                      <ComboBox fx:id="categoryTickRotationSelector" editable="true" prefWidth="100.0" />
+                                                   </children>
+                                                </HBox>
+                                                <VBox fx:id="barOptionsBox" spacing="5.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                          <children>
-                                                            <Label text="%TextSize" />
-                                                            <ComboBox fx:id="labelSizeSelector" editable="true" prefWidth="100.0" />
+                                                            <Label text="%BarGap" />
+                                                            <ComboBox fx:id="barGapSelector" editable="true" prefWidth="100.0" />
                                                             <Label text="px" />
                                                          </children>
                                                       </HBox>
-                                                      <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" spacing="5.0">
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                          <children>
-                                                            <Label text="%TextColor" />
-                                                            <ComboBox fx:id="labelSizeSelector1" editable="true" prefWidth="100.0" />
+                                                            <Label text="%CategoryGap" />
+                                                            <ComboBox fx:id="categoryGapSelector" editable="true" prefWidth="100.0" />
                                                             <Label text="px" />
                                                          </children>
                                                       </HBox>
                                                    </children>
-                                                   <VBox.margin>
-                                                      <Insets top="10.0" />
-                                                   </VBox.margin>
                                                 </VBox>
-                                                <VBox fx:id="legendBox1" layoutX="15.0" layoutY="89.0" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                              <Tab text="%ValueAxis">
+                                 <content>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                       <content>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                                             </padding>
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                    <children>
-                                                      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Label maxWidth="1.7976931348623157E308" text="%Legend" />
-                                                            <RadioButton mnemonicParsing="false" selected="true" text="%NotDisplay">
-                                                               <toggleGroup>
-                                                                  <ToggleGroup fx:id="legendGroup" />
-                                                               </toggleGroup>
-                                                            </RadioButton>
-                                                            <RadioButton mnemonicParsing="false" text="%Right" toggleGroup="$legendGroup" />
-                                                            <RadioButton mnemonicParsing="false" text="%Bottom" toggleGroup="$legendGroup" />
-                                                            <RadioButton mnemonicParsing="false" text="%Top" toggleGroup="$legendGroup" />
-                                                            <RadioButton mnemonicParsing="false" text="%Left" toggleGroup="$legendGroup" />
-                                                         </children>
-                                                      </FlowPane>
+                                                      <Label text="%Label" />
+                                                      <TextField fx:id="numberLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                    </children>
-                                                </VBox>
-                                                <VBox fx:id="legendBox11" layoutX="15.0" layoutY="211.0" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                </HBox>
+                                                <CheckBox fx:id="numberTickCheck" mnemonicParsing="false" selected="true" text="%DisplayTickLabel" />
+                                                <CheckBox fx:id="numberMarkCheck" mnemonicParsing="false" selected="true" text="%DisplayTickMark" />
+                                                <CheckBox fx:id="numberAxisAnimatedCheck" mnemonicParsing="false" text="%Animated" />
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                    <children>
-                                                      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Label maxWidth="1.7976931348623157E308" text="%Label" />
-                                                            <RadioButton mnemonicParsing="false" selected="true" text="%NameAndValue">
-                                                               <toggleGroup>
-                                                                  <ToggleGroup fx:id="labelGroup" />
-                                                               </toggleGroup>
-                                                            </RadioButton>
-                                                            <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
-                                                            <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
-                                                            <RadioButton mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
-                                                            <RadioButton mnemonicParsing="false" text="%Pop" toggleGroup="$labelGroup" />
-                                                         </children>
-                                                      </FlowPane>
+                                                      <Label text="%TickLabelRotation" />
+                                                      <ComboBox fx:id="numberTickRotationSelector" editable="true" prefWidth="100.0" />
                                                    </children>
-                                                </VBox>
-                                                <VBox fx:id="legendBox111" layoutX="15.0" layoutY="221.0" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                </HBox>
+                                                <FlowPane hgap="5.0" vgap="5.0">
                                                    <children>
-                                                      <Label maxWidth="1.7976931348623157E308" text="%Coordinate">
-                                                         <VBox.margin>
-                                                            <Insets top="5.0" />
-                                                         </VBox.margin>
-                                                      </Label>
-                                                      <FlowPane hgap="2.0" vgap="2.0">
-                                                         <children>
-                                                            <RadioButton fx:id="cartesianRadio" mnemonicParsing="false" selected="true" text="%CartesianCoordinate">
-                                                               <toggleGroup>
-                                                                  <ToggleGroup fx:id="numberCoordinateGroup" />
-                                                               </toggleGroup>
-                                                            </RadioButton>
-                                                            <RadioButton fx:id="squareRootRadio" mnemonicParsing="false" text="%SquareRootCoordinate" toggleGroup="$numberCoordinateGroup" />
-                                                            <RadioButton fx:id="logarithmicERadio" mnemonicParsing="false" text="%LogarithmicECoordinate" toggleGroup="$numberCoordinateGroup" />
-                                                            <RadioButton fx:id="logarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$numberCoordinateGroup" />
-                                                         </children>
-                                                      </FlowPane>
+                                                      <Label maxWidth="1.7976931348623157E308" text="%Location" />
+                                                      <RadioButton mnemonicParsing="false" selected="true" text="%Left">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="numberSideGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton mnemonicParsing="false" text="%Right" toggleGroup="$numberSideGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Bottom" toggleGroup="$numberSideGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Top" toggleGroup="$numberSideGroup" />
                                                    </children>
-                                                </VBox>
+                                                </FlowPane>
+                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                   <children>
+                                                      <Label maxWidth="1.7976931348623157E308" text="%Label" />
+                                                      <RadioButton mnemonicParsing="false" selected="true" text="%NameAndValue">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="labelGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Pop" toggleGroup="$labelGroup" />
+                                                   </children>
+                                                </FlowPane>
+                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                   <children>
+                                                      <Label maxWidth="1.7976931348623157E308" text="%Coordinate" />
+                                                      <RadioButton fx:id="cartesianRadio" mnemonicParsing="false" selected="true" text="%CartesianCoordinate">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="numberCoordinateGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton fx:id="squareRootRadio" mnemonicParsing="false" text="%SquareRootCoordinate" toggleGroup="$numberCoordinateGroup" />
+                                                      <RadioButton fx:id="logarithmicERadio" mnemonicParsing="false" text="%LogarithmicECoordinate" toggleGroup="$numberCoordinateGroup" />
+                                                      <RadioButton fx:id="logarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$numberCoordinateGroup" />
+                                                   </children>
+                                                </FlowPane>
                                              </children>
                                           </VBox>
                                        </content>
@@ -342,7 +436,8 @@ License:    Apache License Version 2.0
                                               <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                           </image>
                                       </ImageView>
-                                      <Button fx:id="snapshotButton" mnemonicParsing="false" HBox.hgrow="NEVER">
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                      <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction" HBox.hgrow="NEVER">
                                           <graphic>
                                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                   <image>
@@ -351,19 +446,22 @@ License:    Apache License Version 2.0
                                               </ImageView>
                                           </graphic>
                                       </Button>
+                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                   </children>
                               </HBox>
-                              <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                                  <children>
-                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                          <children>
-                                              <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                                              <Label fx:id="frameLabel" minWidth="-Infinity" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                                          </children>
-                                      </HBox>
-                                          <VBox fx:id="chartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                  </children>
-                              </VBox>
+                                    <VBox fx:id="chartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </VBox>
                           </children>
                       </VBox>
                </content>

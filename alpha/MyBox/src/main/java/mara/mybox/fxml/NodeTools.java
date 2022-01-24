@@ -7,14 +7,19 @@ import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -22,6 +27,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
@@ -69,6 +75,38 @@ public class NodeTools {
             return node;
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static void children(Node node) {
+        try {
+            if (node == null) {
+                return;
+            }
+            MyBoxLog.debug(node.getClass() + " " + node.getId() + " " + node.getStyle());
+            if (node instanceof SplitPane) {
+                for (Node child : ((SplitPane) node).getItems()) {
+                    children(child);
+                }
+            } else if (node instanceof ScrollPane) {
+                children(((ScrollPane) node).getContent());
+            } else if (node instanceof TitledPane) {
+                children(((TitledPane) node).getContent());
+            } else if (node instanceof StackPane) {
+                for (Node child : ((StackPane) node).getChildren()) {
+                    children(child);
+                }
+            } else if (node instanceof TabPane) {
+                for (Tab tab : ((TabPane) node).getTabs()) {
+                    children(tab.getContent());
+                }
+            } else if (node instanceof Parent) {
+                for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                    children(child);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -144,7 +182,6 @@ public class NodeTools {
         if (scene == null) {
             return null;
         }
-        MyBoxLog.console(scene.getFocusOwner() != null);
         return isTextInput(scene.getFocusOwner());
     }
 
@@ -152,7 +189,6 @@ public class NodeTools {
         if (node == null) {
             return null;
         }
-        MyBoxLog.console(node.getClass());
         if (node instanceof TextInputControl) {
             return node;
         }

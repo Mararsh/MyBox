@@ -25,7 +25,7 @@ import mara.mybox.fxml.SquareRootCoordinate;
 public class ChartTools {
 
     public enum LabelType {
-        NotDisplay, NameAndValue, Value, Name, Pop
+        NotDisplay, NameAndValue, Value, Name, Pop, Default
     }
 
     public enum ChartCoordinate {
@@ -60,54 +60,6 @@ public class ChartTools {
     public static Chart style(Chart chart, String cssFile) {
         chart.getStylesheets().add(Chart.class.getResource(cssFile).toExternalForm());
         return chart;
-    }
-
-    public static void setLineChartColors(LineChart chart, Map<String, String> locationColors, boolean showLegend) {
-        if (chart == null || locationColors == null) {
-            return;
-        }
-        List<XYChart.Series> seriesList = chart.getData();
-        if (seriesList == null || seriesList.size() > locationColors.size()) {
-            return;
-        }
-        for (int i = 0; i < seriesList.size(); i++) {
-            XYChart.Series series = seriesList.get(i);
-            Node node = series.getNode().lookup(".chart-series-line");
-            if (node != null) {
-                String name = series.getName();
-                String color = locationColors.get(name);
-                if (color == null) {
-                    MyBoxLog.debug(name);
-                } else {
-                    node.setStyle("-fx-stroke: " + color + ";");
-                }
-            }
-        }
-        chart.setLegendVisible(showLegend);
-        if (showLegend) {
-            Set<Node> legendItems = chart.lookupAll("Label.chart-legend-item");
-            if (legendItems.isEmpty()) {
-                return;
-            }
-            for (Node legendItem : legendItems) {
-                Label legendLabel = (Label) legendItem;
-                Node legend = legendLabel.getGraphic();
-                if (legend != null) {
-                    for (int i = 0; i < seriesList.size(); i++) {
-                        String name = seriesList.get(i).getName();
-                        if (name.equals(legendLabel.getText())) {
-                            String color = locationColors.get(name);
-                            if (color == null) {
-                                MyBoxLog.debug(name);
-                            } else {
-                                legend.setStyle("-fx-background-color: " + color);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     // This can set more than 8 colors. javafx only supports 8 colors defined in css
@@ -194,6 +146,30 @@ public class ChartTools {
         }
     }
 
+    public static void setLineChartColors(LineChart chart, Map<String, String> palette, boolean showLegend) {
+        if (chart == null || palette == null) {
+            return;
+        }
+        List<XYChart.Series> seriesList = chart.getData();
+        if (seriesList == null || seriesList.size() > palette.size()) {
+            return;
+        }
+        for (int i = 0; i < seriesList.size(); i++) {
+            XYChart.Series series = seriesList.get(i);
+            Node node = series.getNode().lookup(".chart-series-line");
+            if (node != null) {
+                String name = series.getName();
+                String color = palette.get(name);
+                if (color == null) {
+                    MyBoxLog.debug(name);
+                } else {
+                    node.setStyle("-fx-stroke: " + color + ";");
+                }
+            }
+        }
+        setLegend(chart, palette, showLegend);
+    }
+
     public static void setBarChartColors(BarChart chart, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
@@ -214,6 +190,17 @@ public class ChartTools {
                     item.getNode().setStyle("-fx-bar-fill: " + color + ";");
                 }
             }
+        }
+        setLegend(chart, palette, showLegend);
+    }
+
+    public static void setLegend(XYChart chart, Map<String, String> palette, boolean showLegend) {
+        if (chart == null || palette == null) {
+            return;
+        }
+        List<XYChart.Series> seriesList = chart.getData();
+        if (seriesList == null) {
+            return;
         }
         chart.setLegendVisible(showLegend);
         if (showLegend) {
