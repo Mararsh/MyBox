@@ -1001,11 +1001,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         chartBox.getChildren().clear();
 //        boolean intValue = !message("HealedRatio").equals(valueName)
 //                && !message("DeadRatio").equals(valueName);
-        LabeledBarChart barChart
-                = LabeledBarChart.xy(categoryAxisCheck.isSelected(), chartCoordinate)
-                        .setIntValue(false)
-                        .setLabelType(labelType)
-                        .setTextSize(mapOptionsController.textSize);
+        LabeledBarChart barChart = new LabeledBarChart(new CategoryAxis(), new NumberAxis());
+        barChart.setIntValue(false).setLabelType(labelType)
+                .setTextSize(mapOptionsController.textSize)
+                .setChartCoordinate(chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
         barChart.setBarGap(0.0);
@@ -1031,11 +1030,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
     protected LabeledBarChart addHorizontalBarChart() {
         chartBox.getChildren().clear();
-        LabeledBarChart barChart
-                = LabeledBarChart.yx(categoryAxisCheck.isSelected(), chartCoordinate);
-        barChart.setIntValue(false)
-                .setLabelType(labelType)
-                .setTextSize(mapOptionsController.textSize);
+        LabeledBarChart barChart = new LabeledBarChart(new NumberAxis(), new CategoryAxis());
+        barChart.setIntValue(false).setLabelType(labelType)
+                .setTextSize(mapOptionsController.textSize)
+                .setChartCoordinate(chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
         barChart.setBarGap(0.0);
@@ -1088,9 +1086,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     double coordinateValue = ChartTools.coordinateValue(chartCoordinate, value.doubleValue());
                     XYChart.Data item = new XYChart.Data(label, coordinateValue);
                     series.getData().add(item);
-                    if (labelType == LabelType.Pop) {
-                        NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
-                    }
                 }
             }
             ChartTools.setBarChartColors(barChart, palette, legendSide != null);
@@ -1129,9 +1124,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     double coordinateValue = ChartTools.coordinateValue(chartCoordinate, value.doubleValue());
                     XYChart.Data item = new XYChart.Data(coordinateValue, label);
                     series.getData().add(item);
-                    if (labelType == LabelType.Pop) {
-                        NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
-                    }
                 }
             }
 
@@ -1165,9 +1157,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             XYChart.Data item = new XYChart.Data(label, coordinateValue);
             series.getData().add(item);
             barChart.getData().add(series);
-            if (labelType == LabelType.Pop) {
-                NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
-            }
         }
         ChartTools.setBarChartColors(barChart, palette, legendSide != null);
     }
@@ -1195,9 +1184,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             XYChart.Data item = new XYChart.Data(coordinateValue, label);
             series.getData().add(item);
             barChart.getData().add(series);
-            if (labelType == LabelType.Pop) {
-                NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
-            }
         }
         ChartTools.setBarChartColors(barChart, palette, legendSide != null);
     }

@@ -277,6 +277,21 @@ License:    Apache License Version 2.0
                                                       <Label text="px" />
                                                    </children>
                                                 </HBox>
+                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                   <children>
+                                                      <Label maxWidth="1.7976931348623157E308" text="%Label" />
+                                                      <RadioButton mnemonicParsing="false" selected="true" text="%NameAndValue">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="labelGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
+                                                      <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Pop" toggleGroup="$labelGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
+                                                   </children>
+                                                </FlowPane>
                                                 <CheckBox fx:id="animatedCheck" mnemonicParsing="false" text="%Animated" />
                                                 <CheckBox mnemonicParsing="false" text="%AxisXYReverse" fx:id="xyReverseCheck" />
                                                 <CheckBox fx:id="hlinesCheck" mnemonicParsing="false" selected="true" text="%DisplayHorizontalGridLines" />
@@ -384,20 +399,6 @@ License:    Apache License Version 2.0
                                                       <RadioButton mnemonicParsing="false" text="%Right" toggleGroup="$numberSideGroup" />
                                                       <RadioButton mnemonicParsing="false" text="%Bottom" toggleGroup="$numberSideGroup" />
                                                       <RadioButton mnemonicParsing="false" text="%Top" toggleGroup="$numberSideGroup" />
-                                                   </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                   <children>
-                                                      <Label maxWidth="1.7976931348623157E308" text="%Label" />
-                                                      <RadioButton mnemonicParsing="false" selected="true" text="%NameAndValue">
-                                                         <toggleGroup>
-                                                            <ToggleGroup fx:id="labelGroup" />
-                                                         </toggleGroup>
-                                                      </RadioButton>
-                                                      <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%Pop" toggleGroup="$labelGroup" />
                                                    </children>
                                                 </FlowPane>
                                                 <FlowPane hgap="2.0" vgap="2.0">

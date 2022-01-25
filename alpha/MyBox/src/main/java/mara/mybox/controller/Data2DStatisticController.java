@@ -274,7 +274,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                     data2D.setTask(task);
                     if (allPages()) {
                         if (modeCheck.isSelected() || medianCheck.isSelected()) {
-                            return statisticRows(data2D.allRows(tableController.checkedColsIndices()));
+                            return statisticRows(data2D.allRows(tableController.checkedColsIndices(), false));
                         } else {
                             return statisticFile();
                         }

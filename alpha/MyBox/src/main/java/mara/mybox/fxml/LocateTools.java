@@ -53,6 +53,17 @@ public class LocateTools {
         window.show(region, bounds.getMaxX() - window.getWidth() - 20, bounds.getMinY() + 50);
     }
 
+    public static void aboveCenter(Region region, Node refer) {
+        if (region == null || refer == null) {
+            return;
+        }
+        Bounds regionBounds = region.getBoundsInParent();
+        Bounds referBounds = refer.getBoundsInParent();
+        double xOffset = referBounds.getWidth() - regionBounds.getWidth();
+        region.setLayoutX(referBounds.getMinX() + xOffset / 2);
+        region.setLayoutY(referBounds.getMinY() - 10);
+    }
+
     public static void locateBelow(Node node, PopupWindow window) {
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
         window.show(node, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());

@@ -5,9 +5,8 @@ import java.util.Map;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
-import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.StackedBarChart;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -26,12 +25,11 @@ import mara.mybox.tools.StringTools;
  * By Roland
  *
  * @Author Mara
+ * @CreateDate 2022-1-25
  * @License Apache License Version 2.0
  */
-public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
+public class LabeledStackedBarChart<X, Y> extends StackedBarChart<X, Y> {
 
-    protected CategoryAxis categoryAxis;
-    protected NumberAxis numberAxis;
     protected Map<Node, TextFlow> nodeMap = new HashMap<>();
     protected boolean intValue;
     protected String cssFile;
@@ -39,7 +37,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
     protected ChartCoordinate chartCoordinate;
     protected int textSize;
 
-    public LabeledBarChart(Axis xAxis, Axis yAxis) {
+    public LabeledStackedBarChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
         init();
     }
@@ -47,7 +45,6 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
     public final void init() {
         labelType = LabelType.NameAndValue;
         textSize = 10;
-        this.setBarGap(0.0);
         this.setCategoryGap(0.0);
         this.setLegendSide(Side.TOP);
         this.setMaxWidth(Double.MAX_VALUE);
@@ -56,7 +53,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledBarChart setChartCoordinate(ChartCoordinate chartCoordinate) {
+    public LabeledStackedBarChart setChartCoordinate(ChartCoordinate chartCoordinate) {
         this.chartCoordinate = chartCoordinate;
         ChartTools.setChartCoordinate(this, chartCoordinate);
         return this;
@@ -65,11 +62,10 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        if (labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Point) {
+        if (labelType == null || labelType == LabelType.NotDisplay) {
             return;
         }
         try {
-            setStyle("-fx-font-size: " + textSize + "px;  -fx-text-fill: black;");
             boolean isXY = getXAxis() instanceof CategoryAxis;
             for (int s = 0; s < series.getData().size(); s++) {
                 Data<X, Y> item = series.getData().get(s);
@@ -81,7 +77,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
                     name = item.getYValue().toString();
                     value = item.getXValue().toString();
                 }
-                if (labelType == LabelType.Pop) {
+                if (labelType == ChartTools.LabelType.Pop) {
                     NodeStyleTools.setTooltip(item.getNode(), name + ": " + value);
                 } else {
                     String label;
@@ -143,7 +139,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         return nodeMap;
     }
 
-    public LabeledBarChart setNodeMap(Map<Node, TextFlow> nodeMap) {
+    public LabeledStackedBarChart setNodeMap(Map<Node, TextFlow> nodeMap) {
         this.nodeMap = nodeMap;
         return this;
     }
@@ -152,7 +148,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         return intValue;
     }
 
-    public LabeledBarChart setIntValue(boolean intValue) {
+    public LabeledStackedBarChart setIntValue(boolean intValue) {
         this.intValue = intValue;
         return this;
     }
@@ -161,7 +157,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         return cssFile;
     }
 
-    public LabeledBarChart setCssFile(String cssFile) {
+    public LabeledStackedBarChart setCssFile(String cssFile) {
         this.cssFile = cssFile;
         return this;
     }
@@ -170,7 +166,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         return labelType;
     }
 
-    public LabeledBarChart setLabelType(LabelType labelType) {
+    public LabeledStackedBarChart setLabelType(LabelType labelType) {
         this.labelType = labelType;
         return this;
     }
@@ -179,7 +175,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         return textSize;
     }
 
-    public LabeledBarChart setTextSize(int textSize) {
+    public LabeledStackedBarChart setTextSize(int textSize) {
         this.textSize = textSize;
         return this;
     }

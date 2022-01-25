@@ -388,7 +388,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public List<List<String>> allRows(List<Integer> cols) {
+    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return null;
         }
@@ -396,6 +396,7 @@ public class DataFileCSV extends DataFileText {
         try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {
+                int index = 1;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
@@ -408,9 +409,13 @@ public class DataFileCSV extends DataFileText {
                                     row.add(null);
                                 }
                             }
-                            if (!row.isEmpty()) {
-                                rows.add(row);
+                            if (row.isEmpty()) {
+                                continue;
                             }
+                            if (rowNumber) {
+                                row.add(0, index++ + "");
+                            }
+                            rows.add(row);
                         }
                     } catch (Exception e) {  // skip  bad lines
                     }
@@ -749,50 +754,6 @@ public class DataFileCSV extends DataFileText {
         } else {
             return null;
         }
-    }
-
-    @Override
-    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
-        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat())) {
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                int index = 1;
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record != null) {
-                            List<String> row = new ArrayList<>();
-                            for (int col : cols) {
-                                if (col >= 0 && col < record.size()) {
-                                    row.add(record.get(col));
-                                } else {
-                                    row.add(null);
-                                }
-                            }
-                            if (row.isEmpty()) {
-                                continue;
-                            }
-                            if (rowNumber) {
-                                row.add(0, index++ + "");
-                            }
-                            rows.add(row);
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        return rows;
     }
 
     @Override

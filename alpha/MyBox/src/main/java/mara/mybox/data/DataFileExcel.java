@@ -661,7 +661,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public List<List<String>> allRows(List<Integer> cols) {
+    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return null;
@@ -681,6 +681,7 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
+                int index = 1;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         Row fileRow = iterator.next();
@@ -703,9 +704,13 @@ public class DataFileExcel extends DataFile {
                                 row.add(null);
                             }
                         }
-                        if (!row.isEmpty()) {
-                            rows.add(row);
+                        if (row.isEmpty()) {
+                            continue;
                         }
+                        if (rowNumber) {
+                            row.add(0, index++ + "");
+                        }
+                        rows.add(row);
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
@@ -1656,65 +1661,6 @@ public class DataFileExcel extends DataFile {
         } else {
             return null;
         }
-    }
-
-    @Override
-    public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
-        if (file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                int index = 1;
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
-                        List<String> row = new ArrayList<>();
-                        if (rowNumber) {
-                            row.add(index++ + "");
-                        }
-                        for (int col : cols) {
-                            if (col >= 0 && col < record.size()) {
-                                row.add(record.get(col));
-                            } else {
-                                row.add(null);
-                            }
-                        }
-                        rows.add(row);
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        return rows;
     }
 
     public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {

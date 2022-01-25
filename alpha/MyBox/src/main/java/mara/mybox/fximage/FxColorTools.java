@@ -181,6 +181,10 @@ public class FxColorTools {
         }
     }
 
+    public static Color randomColor() {
+        return Color.web(randomRGB());
+    }
+
     public static Color randomColor(Random random) {
         return Color.web(randomRGB(random));
     }

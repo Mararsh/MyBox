@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,6 +24,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -165,6 +167,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         List<String> validNames = new ArrayList<>();
                         List<Data2DColumn> columns = new ArrayList<>();
                         List<Data2DColumn> savedColumns = data2D.getSavedColumns();
+                        Random random = new Random();
                         for (int i = 0; i < colNames.size(); i++) {
                             String name = colNames.get(i);
                             Data2DColumn column;
@@ -184,6 +187,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             column.setName(vname);
                             column.setD2id(d2did);
                             column.setIndex(i);
+                            if (column.getColor() == null) {
+                                column.setColor(FxColorTools.randomColor(random));
+                            }
                             columns.add(column);
                         }
                         data2D.setColumns(columns);
