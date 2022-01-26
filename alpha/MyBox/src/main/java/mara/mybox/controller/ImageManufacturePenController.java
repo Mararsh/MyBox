@@ -111,6 +111,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
             }
             strokeWidthBox.getItems().addAll(ws);
+            strokeWidthBox.getSelectionModel().select(UserConfig.getInt(strokeWidthKey, defaultStrokeWidth) + "");
             strokeWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -118,7 +119,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             strokeWidth = v;
-                            UserConfig.setInt("ImagePenLineWidth", strokeWidth);
+                            UserConfig.setInt(strokeWidthKey, strokeWidth);
                             updateMask();
                             ValidationTools.setEditorNormal(strokeWidthBox);
                         } else {
@@ -129,7 +130,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     }
                 }
             });
-            strokeWidthBox.getSelectionModel().select(UserConfig.getInt(strokeWidthKey, defaultStrokeWidth) + "");
 
             arcBox.getItems().clear();
             List<String> as = new ArrayList<>();
@@ -325,7 +325,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 imageController.maskRectangleLine.setOpacity(0);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, rectArcPane, blendBox);
                 commentsLabel.setText(Languages.message("PenRectangleTips"));
-                strokeWidthKey = "ImagePenLineWidth";
+                strokeWidthKey = "ImagePenShapeWidth";
                 defaultStrokeWidth = 5;
 
             } else if (circleRadio.equals(selected)) {
@@ -334,7 +334,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 imageController.maskCircleLine.setOpacity(0);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, blendBox);
                 commentsLabel.setText(Languages.message("PenCircleTips"));
-                strokeWidthKey = "ImagePenLineWidth";
+                strokeWidthKey = "ImagePenShapeWidth";
                 defaultStrokeWidth = 5;
 
             } else if (ellipseRadio.equals(selected)) {
@@ -343,7 +343,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 imageController.maskEllipseLine.setOpacity(0);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, blendBox);
                 commentsLabel.setText(Languages.message("PenEllipseTips"));
-                strokeWidthKey = "ImagePenLineWidth";
+                strokeWidthKey = "ImagePenShapeWidth";
                 defaultStrokeWidth = 5;
 
             } else if (polygonRadio.equals(selected)) {

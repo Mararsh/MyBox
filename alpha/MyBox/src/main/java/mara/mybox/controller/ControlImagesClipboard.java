@@ -201,7 +201,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
     @Override
     public List<ImageClipboard> readPageData() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             ((TableImageClipboard) tableDefinition).clearInvalid(conn);
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } catch (Exception e) {
@@ -325,13 +325,16 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
                 @Override
                 protected boolean handle() {
                     List<Image> examples = Arrays.asList(
+                            new Image("img/DocumentTools.png"), new Image("img/ImageTools.png"), new Image("img/FileTools.png"),
+                            new Image("img/NetworkTools.png"), new Image("img/DataTools.png"), new Image("img/MediaTools.png"),
+                            new Image("img/RecentAccess.png"), new Image("img/Settings.png"), new Image("img/About.png"),
+                            new Image("img/n1.png"), new Image("img/n2.png"), new Image("img/n5.png"),
+                            new Image("img/n3.png"), new Image("img/n4.png"), new Image("img/n6.png"),
+                            new Image("img/n7.png"), new Image("img/n8.png"), new Image("img/n9.png"),
                             new Image("img/ww1.png"), new Image("img/ww2.png"), new Image("img/ww5.png"),
                             new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
                             new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
-                            new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
-                            new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
-                            new Image("img/DocumentTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
-                            new Image("img/Settings.png"), new Image("img/zz1.png"), new Image("img/jade.png")
+                            new Image("img/zz1.png"), new Image("img/jade.png"), new Image("img/MyBox.png")
                     );
                     clips = new ArrayList<>();
                     for (int i = examples.size() - 1; i >= 0; --i) {

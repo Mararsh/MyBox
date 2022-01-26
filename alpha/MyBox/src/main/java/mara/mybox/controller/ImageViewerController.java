@@ -640,7 +640,7 @@ public class ImageViewerController extends BaseImageController {
 
                     @Override
                     protected boolean handle() {
-                        savedImage = imageView.getImage();
+                        savedImage = imageToHandle();
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(savedImage, null);
                         if (bufferedImage == null || task == null || isCancelled()) {
                             return false;
@@ -671,7 +671,11 @@ public class ImageViewerController extends BaseImageController {
                         sourceFile = targetFile;
                         recordFileWritten(sourceFile);
                         if (srcFile == null) {
-                            sourceFileChanged(sourceFile);
+                            if (savedImage != imageView.getImage()) {
+                                ControllerTools.openImageViewer(sourceFile);
+                            } else {
+                                sourceFileChanged(sourceFile);
+                            }
                         } else {
                             image = savedImage;
                             imageView.setImage(image);

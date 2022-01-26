@@ -245,6 +245,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         imageController.showRightPane();
         imageController.resetImagePane();
         imageController.imageTab();
+
     }
 
     public void selectClip() {
@@ -382,6 +383,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     tabPane.getSelectionModel().select(setPane);
                     okButton.setDisable(false);
                     okButton.requestFocus();
+                    imageController.adjustRightPane();
                     imageController.operation = ImageOperation.Paste;
                 }
             };

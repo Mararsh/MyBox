@@ -21,6 +21,9 @@ import mara.mybox.tools.StringTools;
  */
 public class ChartTools {
 
+    public static final String DefaultBubbleStyle
+            = "radial-gradient(center 50% 50%, radius 50%, transparent 0%, transparent 90%, derive(-fx-bubble-fill,0%) 100%)";
+
     public enum LabelType {
         NotDisplay, NameAndValue, Value, Name, Pop, Point
     }
@@ -126,13 +129,16 @@ public class ChartTools {
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setLineChartColors(XYChart chart, Map<String, String> palette, boolean showLegend) {
+    public static void setLineChartColors(XYChart chart, int lineWidth, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
         List<XYChart.Series> seriesList = chart.getData();
         if (seriesList == null || seriesList.size() > palette.size()) {
             return;
+        }
+        if (lineWidth < 0) {
+            lineWidth = 4;
         }
         for (XYChart.Series series : seriesList) {
             Node seriesNode = series.getNode();
@@ -146,7 +152,7 @@ public class ChartTools {
             }
             Node node = seriesNode.lookup(".chart-series-line");
             if (node != null) {
-                node.setStyle("-fx-stroke: " + color + ";");
+                node.setStyle("-fx-stroke: " + color + "; -fx-stroke-width: " + lineWidth + "px;");
             }
             for (int i = 0; i < series.getData().size(); i++) {
                 XYChart.Data item = (XYChart.Data) series.getData().get(i);
@@ -162,13 +168,16 @@ public class ChartTools {
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setAreaChartColors(XYChart chart, Map<String, String> palette, boolean showLegend) {
+    public static void setAreaChartColors(XYChart chart, int lineWidth, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
         List<XYChart.Series> seriesList = chart.getData();
         if (seriesList == null) {
             return;
+        }
+        if (lineWidth < 0) {
+            lineWidth = 1;
         }
         for (XYChart.Series series : seriesList) {
             if (series.getData() == null) {
@@ -185,7 +194,7 @@ public class ChartTools {
             }
             Node node = seriesNode.lookup(".chart-series-area-line");
             if (node != null) {
-                node.setStyle("-fx-stroke: " + color + ";");
+                node.setStyle("-fx-stroke: " + color + "; -fx-stroke-width: " + lineWidth + "px;");
             }
             node = seriesNode.lookup(".chart-series-area-fill");
             if (node != null) {
@@ -233,17 +242,18 @@ public class ChartTools {
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setBubbleChart​Colors(XYChart chart, List<String> palette, boolean showLegend) {
+    public static void setBubbleChart​Colors(XYChart chart, String bubbleStyle, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
         List<XYChart.Series> seriesList = chart.getData();
-        if (seriesList == null) {
+        if (seriesList == null || seriesList.size() > palette.size()) {
             return;
         }
         for (int s = 0; s < seriesList.size(); s++) {
             XYChart.Series series = seriesList.get(s);
-            String color = palette.get(s);
+            String name = series.getName();
+            String color = palette.get(name);
             if (color == null) {
                 color = FxColorTools.randomRGB();
             }
@@ -254,26 +264,15 @@ public class ChartTools {
                 }
                 Node node = item.getNode().lookup(".chart-bubble");
                 if (node != null) {
-                    node.setStyle("-fx-bubble-fill:  " + color + ";");
+                    String style = "-fx-bubble-fill:  " + color + ";";
+                    if (bubbleStyle != null && !bubbleStyle.isBlank()) {
+                        style += " -fx-background-color: " + bubbleStyle + ";";
+                    }
+                    node.setStyle(style);
                 }
             }
         }
-        chart.setLegendVisible(showLegend);
-        if (showLegend) {
-            Node legendItem = chart.lookup("Label.chart-legend-item");
-            if (legendItem == null) {
-                return;
-            }
-            Label legendLabel = (Label) legendItem;
-            Node legend = legendLabel.getGraphic();
-            if (legend != null) {
-                String color = palette.get(0);
-                if (color == null) {
-                    color = FxColorTools.randomRGB();
-                }
-                legend.setStyle("-fx-background-color: " + color);
-            }
-        }
+        setLegend(chart, palette, showLegend);
     }
 
     public static void setLegend(XYChart chart, Map<String, String> palette, boolean showLegend) {

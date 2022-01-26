@@ -1086,6 +1086,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         refreshStyle(splitPane);
         UserConfig.setBoolean(baseName + "ShowLeftControl", true);
         StyleTools.setIconName(leftPaneControl, "iconDoubleLeft.png");
+        leftPane.setHvalue(0);
     }
 
     @FXML
@@ -1131,6 +1132,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             refreshStyle(splitPane);
             UserConfig.setBoolean(baseName + "ShowRightControl", true);
             StyleTools.setIconName(rightPaneControl, "iconDoubleRight.png");
+            rightPane.setHvalue(0);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

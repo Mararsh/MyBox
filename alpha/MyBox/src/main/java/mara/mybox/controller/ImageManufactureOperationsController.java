@@ -175,6 +175,8 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                 currentController = textController;
             }
 
+            imageController.adjustRightPane();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

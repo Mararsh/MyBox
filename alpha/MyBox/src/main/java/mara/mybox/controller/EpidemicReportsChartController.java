@@ -57,13 +57,10 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SquareRootCoordinate;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
 import mara.mybox.fxml.chart.LabeledBarChart;
-import mara.mybox.fxml.chart.Logarithmic10Coordinate;
-import mara.mybox.fxml.chart.LogarithmicECoordinate;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
@@ -852,17 +849,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             lineChart.setLegendVisible(true);
             lineChart.setLegendSide(legendSide);
         }
-        switch (chartCoordinate) {
-            case LogarithmicE:
-                numberAxis.setTickLabelFormatter(new LogarithmicECoordinate());
-                break;
-            case Logarithmic10:
-                numberAxis.setTickLabelFormatter(new Logarithmic10Coordinate());
-                break;
-            case SquareRoot:
-                numberAxis.setTickLabelFormatter(new SquareRootCoordinate());
-                break;
-        }
+        ChartTools.setChartCoordinate(numberAxis, chartCoordinate);
         return lineChart;
     }
 
@@ -991,7 +978,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
             }
 
-            ChartTools.setLineChartColors(lineChart, palette, legendSide != null);
+            ChartTools.setLineChartColors(lineChart, 4, palette, legendSide != null);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

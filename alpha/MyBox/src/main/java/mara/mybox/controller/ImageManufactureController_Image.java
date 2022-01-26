@@ -1,5 +1,8 @@
 package mara.mybox.controller;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -95,6 +98,17 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     public boolean isScopeTabSelected() {
         return tabPane.getSelectionModel().getSelectedItem() == scopeTab;
+    }
+
+    public void adjustRightPane() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    rightPane.setHvalue(0);
+                });
+            }
+        }, 1000);
     }
 
     @Override
