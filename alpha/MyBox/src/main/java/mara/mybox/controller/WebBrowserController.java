@@ -211,7 +211,6 @@ public class WebBrowserController extends BaseController {
             if (object != null && object instanceof WebBrowserController) {
                 try {
                     controller = (WebBrowserController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -220,6 +219,7 @@ public class WebBrowserController extends BaseController {
         if (controller == null) {
             controller = (WebBrowserController) WindowTools.openStage(Fxmls.WebBrowserFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

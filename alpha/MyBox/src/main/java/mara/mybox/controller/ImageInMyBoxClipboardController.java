@@ -92,7 +92,6 @@ public class ImageInMyBoxClipboardController extends ImageViewerController {
             if (object != null && object instanceof ImageInMyBoxClipboardController) {
                 try {
                     controller = (ImageInMyBoxClipboardController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -101,6 +100,7 @@ public class ImageInMyBoxClipboardController extends ImageViewerController {
         if (controller == null) {
             controller = (ImageInMyBoxClipboardController) WindowTools.openStage(Fxmls.ImageInMyBoxClipboardFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

@@ -94,7 +94,7 @@ public class Data2DChartController extends Data2DHandleController {
             barGapSelector, categoryGapSelector, categoryFontSizeSelector, categoryTickRotationSelector,
             numberFontSizeSelector, numberTickRotationSelector;
     @FXML
-    protected VBox columnsBox, chartBox, xyPlotBox;
+    protected VBox columnsBox, snapBox, chartBox, xyPlotBox;
     @FXML
     protected HBox barGapBox, categoryGapBox, lineWidthBox, bubbleBox;
     @FXML
@@ -109,7 +109,7 @@ public class Data2DChartController extends Data2DHandleController {
     protected ToggleGroup chartGroup, titleSideGroup, labelGroup, legendGroup, numberCoordinateGroup,
             categorySideGroup, numberSideGroup;
     @FXML
-    protected Label columnsLabel;
+    protected Label columnsLabel, commentsLabel;
 
     @Override
     public void initControls() {
@@ -778,19 +778,38 @@ public class Data2DChartController extends Data2DHandleController {
     public void checkChartType() {
         try {
             columnsBox.getChildren().clear();
+            commentsLabel.setText("");
+
             boolean isPie = pieRadio.isSelected();
             if (isPie) {
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
+                commentsLabel.setText(message("ChartPieComments"));
 
             } else if (bubbleChartRadio.isSelected()) {
                 columnsLabel.setText(message("SizeColumns"));
+                commentsLabel.setText(message("BubbleChartComments"));
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, valueColumnsPane);
 
             } else {
                 columnsLabel.setText(message("ValueColumns"));
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnsPane);
 
+                if (barChartRadio.isSelected()) {
+                    commentsLabel.setText(message("BarChartComments"));
+                } else if (stackedBarChartRadio.isSelected()) {
+                    commentsLabel.setText(message("StackedBarChartComments"));
+                } else if (lineChartRadio.isSelected()) {
+                    commentsLabel.setText(message("LineChartComments"));
+                } else if (areaChartRadio.isSelected()) {
+                    commentsLabel.setText(message("AreaChartComments"));
+                } else if (stackedAreaChartRadio.isSelected()) {
+                    commentsLabel.setText(message("StackedAreaChartComments"));
+                } else if (scatterChartRadio.isSelected()) {
+                    commentsLabel.setText(message("ScatterChartComments"));
+                }
+
             }
+
             categoryTab.setDisable(isPie);
             valueTab.setDisable(isPie);
             xyPlotBox.setDisable(isPie);
@@ -885,12 +904,13 @@ public class Data2DChartController extends Data2DHandleController {
     }
 
     public String title() {
+        String prefix = categoryName() + " - ";
         if (bubbleChartRadio.isSelected()) {
-            return categoryName() + " - " + valueName() + " : " + valuesNames();
+            return prefix + valueName() + " - " + valuesNames();
         } else if (pieRadio.isSelected()) {
-            return categoryName() + " - " + valueName();
+            return prefix + valueName();
         } else {
-            return categoryName() + " - " + valuesNames();
+            return prefix + valuesNames();
         }
     }
 
@@ -1299,14 +1319,18 @@ public class Data2DChartController extends Data2DHandleController {
                 String rgb = FxColorTools.color2rgb(color);
                 palette.put(colName, rgb);
             }
+            double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue, sizeValue, sizeCoordinateValue;
             for (List<String> rowData : handledData) {
-                double categoryValue = data2D.doubleValue(rowData.get(0));
-                double categoryCoordinateValue = ChartTools.coordinateValue(chartCoordinate, categoryValue);
-                double numberValue = data2D.doubleValue(rowData.get(1));
-                double numberCoordinateValue = ChartTools.coordinateValue(chartCoordinate, numberValue);
+                categoryValue = data2D.doubleValue(rowData.get(0));
+                categoryCoordinateValue = ChartTools.coordinateValue(chartCoordinate, categoryValue);
+                numberValue = data2D.doubleValue(rowData.get(1));
+                numberCoordinateValue = ChartTools.coordinateValue(chartCoordinate, numberValue);
                 for (int i = 0; i < sizeNum; i++) {
-                    double sizeValue = data2D.doubleValue(rowData.get(i + 2));
-                    double sizeCoordinateValue = ChartTools.coordinateValue(chartCoordinate, sizeValue);
+                    sizeValue = data2D.doubleValue(rowData.get(i + 2));
+                    if (sizeValue <= 0) {
+                        continue;
+                    }
+                    sizeCoordinateValue = ChartTools.coordinateValue(chartCoordinate, sizeValue);
                     xyData = xyReverseCheck.isSelected()
                             ? new XYChart.Data(numberCoordinateValue, categoryCoordinateValue)
                             : new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
@@ -1331,7 +1355,9 @@ public class Data2DChartController extends Data2DHandleController {
             double total = 0;
             for (List<String> rowData : handledData) {
                 double d = data2D.doubleValue(rowData.get(1));
-                total += d;
+                if (d > 0) {
+                    total += d;
+                }
             }
             if (total == 0) {
                 total = Double.MIN_VALUE;
@@ -1339,6 +1365,9 @@ public class Data2DChartController extends Data2DHandleController {
             for (List<String> rowData : handledData) {
                 String name = rowData.get(0);
                 double d = data2D.doubleValue(rowData.get(1));
+                if (d <= 0) {
+                    continue;
+                }
                 double percent = DoubleTools.scale(d * 100 / total, 1);
                 String labelValue = StringTools.format(d);
                 switch (labelType) {
@@ -1366,8 +1395,13 @@ public class Data2DChartController extends Data2DHandleController {
                 paletteList.add(FxColorTools.randomRGB(random));
             }
 
-            pieChart.setLabelsVisible(labelType == LabelType.Name
-                    || labelType == LabelType.Value || labelType == LabelType.NameAndValue);
+            if (labelType == LabelType.Name
+                    || labelType == LabelType.Value || labelType == LabelType.NameAndValue) {
+                pieChart.setLabelsVisible(false);
+                pieChart.setLegendVisible(false);
+            } else {
+                pieChart.setLabelsVisible(true);
+            }
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -1407,7 +1441,7 @@ public class Data2DChartController extends Data2DHandleController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.load(NodeTools.snap(chartBox));
+        ImageViewerController.load(NodeTools.snap(snapBox));
     }
 
     @FXML

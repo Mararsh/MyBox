@@ -106,9 +106,10 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             public void run() {
                 Platform.runLater(() -> {
                     rightPane.setHvalue(0);
+                    rightPane.setVvalue(0);
                 });
             }
-        }, 1000);
+        }, 500);
     }
 
     @Override

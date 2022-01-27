@@ -208,6 +208,14 @@ public abstract class BaseController_Attributes {
         return win != null && (win instanceof Popup);
     }
 
+    public boolean isChild() {
+        if (getMyStage() != null) {
+            return myStage.getOwner() != null;
+        } else {
+            return false;
+        }
+    }
+
     /*
         get/set
      */

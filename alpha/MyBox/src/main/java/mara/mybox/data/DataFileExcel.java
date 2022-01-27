@@ -102,18 +102,15 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public long readDataDefinition() {
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            int sheetsNumber = wb.getNumberOfSheets();
-            sheetNames = new ArrayList<>();
-            for (int i = 0; i < sheetsNumber; i++) {
-                sheetNames.add(wb.getSheetName(i));
+        new DataFileExcelReader(this) {
+
+            @Override
+            public boolean readIterator() {
+                return true;
             }
-            if (sheet == null && sheetsNumber > 0) {
-                sheet = wb.getSheetAt(0).getSheetName();
-            }
-            wb.close();
-        } catch (Exception e) {
-        }
+
+        }.setReaderTask(task).start();
+
         return super.readDataDefinition();
     }
 
@@ -123,53 +120,47 @@ public class DataFileExcel extends DataFile {
             hasHeader = false;
             return null;
         }
-        List<String> names = null;
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            if (sourceSheet == null) {
-                return null;
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator == null) {
-                return null;
-            }
-            Row firstRow = null;
-            while (iterator.hasNext()) {
-                firstRow = iterator.next();
-                if (firstRow != null) {
-                    break;
+        List<String> names = new ArrayList<>();
+        new DataFileExcelReader(this) {
+
+            @Override
+            public boolean readIterator() {
+                try {
+                    Row firstRow = null;
+                    while (iterator.hasNext()) {
+                        firstRow = iterator.next();
+                        if (firstRow != null) {
+                            break;
+                        }
+                    }
+                    if (firstRow == null) {
+                        return false;
+                    }
+                    List values = new ArrayList<>();
+                    for (int col = firstRow.getFirstCellNum(); col < firstRow.getLastCellNum(); col++) {
+                        String v = MicrosoftDocumentTools.cellString(firstRow.getCell(col));
+                        values.add(v);
+                    }
+                    if (hasHeader && StringTools.noDuplicated(values, true)) {
+                        names.addAll(values);
+                    } else {
+                        hasHeader = false;
+                        for (int i = 1; i <= values.size(); i++) {
+                            names.add(colPrefix() + i);
+                        }
+                    }
+                    return true;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    if (task != null) {
+                        task.setError(e.toString());
+                    }
+                    return false;
                 }
             }
-            if (firstRow == null) {
-                return null;
-            }
-            List values = new ArrayList<>();
-            for (int col = firstRow.getFirstCellNum(); col < firstRow.getLastCellNum(); col++) {
-                String v = MicrosoftDocumentTools.cellString(firstRow.getCell(col));
-                values.add(v);
-            }
-            if (hasHeader && StringTools.noDuplicated(values, true)) {
-                names = values;
-            } else {
-                hasHeader = false;
-                names = new ArrayList<>();
-                for (int i = 1; i <= values.size(); i++) {
-                    names.add(colPrefix() + i);
-                }
-            }
-            wb.close();
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.console(e);
-        }
+
+        }.setReaderTask(task).start();
+
         return names;
     }
 
@@ -179,37 +170,27 @@ public class DataFileExcel extends DataFile {
         if (file == null || !file.exists() || file.length() == 0) {
             return 0;
         }
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null) {
-                while (iterator.hasNext()) {
-                    if (backgroundTask == null || backgroundTask.isCancelled()) {
+        new DataFileExcelReader(this) {
+
+            @Override
+            public boolean readRow() {
+                try {
+                    if (iterator == null || backgroundTask == null || backgroundTask.isCancelled()) {
                         dataSize = 0;
-                        break;
+                        readerStopped = true;
+                        return false;
                     }
-                    try {
-                        if (iterator.next() != null) {
-                            dataSize++;
-                        }
-                    } catch (Exception e) {  // skip  bad lines
+                    if (iterator.next() != null) {
+                        dataSize++;
                     }
+
+                } catch (Exception e) {
                 }
+                return true;
             }
-            wb.close();
-        } catch (Exception e) {
-            if (backgroundTask != null) {
-                backgroundTask.setError(e.toString());
-            }
-            MyBoxLog.console(e);
-            return -1;
-        }
+
+        }.setReaderTask(backgroundTask).start();
+
         if (hasHeader && dataSize > 0) {
             dataSize--;
         }
@@ -227,59 +208,45 @@ public class DataFileExcel extends DataFile {
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
         List<List<String>> rows = new ArrayList<>();
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+        new DataFileExcelReader(this) {
+            long rowIndex = -1;
+            int columnsNumber = columnsNumber();
+            long rowsEnd = startRowOfCurrentPage + pageSize;
+
+            @Override
+            public boolean readRow() {
+                try {
+                    Row fileRow = iterator.next();
+                    if (fileRow == null) {
+                        return true;
                     }
-                }
-                long rowIndex = -1;
-                int columnsNumber = columnsNumber();
-                long rowsEnd = startRowOfCurrentPage + pageSize;
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        if (++rowIndex < startRowOfCurrentPage) {
-                            continue;
-                        }
-                        if (rowIndex >= rowsEnd) {
+                    if (++rowIndex < startRowOfCurrentPage) {
+                        return true;
+                    }
+                    if (rowIndex >= rowsEnd) {
+                        readerStopped = true;
+                        return true;
+                    }
+                    List<String> row = new ArrayList<>();
+                    for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
+                        String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
+                        row.add(v);
+                        if (row.size() >= columnsNumber) {
                             break;
                         }
-                        List<String> row = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            row.add(v);
-                            if (row.size() >= columnsNumber) {
-                                break;
-                            }
-                        }
-                        for (int col = row.size(); col < columnsNumber; col++) {
-                            row.add(null);
-                        }
-                        row.add(0, "" + (rowIndex + 1));
-                        rows.add(row);
-                    } catch (Exception e) {  // skip  bad lines
                     }
+                    for (int col = row.size(); col < columnsNumber; col++) {
+                        row.add(null);
+                    }
+                    row.add(0, "" + (rowIndex + 1));
+                    rows.add(row);
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.console(e);
-            return null;
-        }
+
+        }.setReaderTask(task).start();
+
         endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
         return rows;
     }
@@ -624,39 +591,18 @@ public class DataFileExcel extends DataFile {
                 || colIndices == null || colIndices.isEmpty()) {
             return false;
         }
-        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = sourceBook.getSheet(sheet);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
+        new DataFileExcelReader(this) {
+
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    export(convertController, colIndices, record);
+                } catch (Exception e) {
                 }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    List<String> dataRow = new ArrayList<>();
-                    for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
-                        String v = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
-                        dataRow.add(v);
-                    }
-                    export(convertController, colIndices, dataRow);
-                }
+                return true;
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            convertController.updateLogs(e.toString());
-            return false;
-        }
-        task = null;
+
+        }.setReaderTask(task).start();
         return true;
     }
 
@@ -667,58 +613,33 @@ public class DataFileExcel extends DataFile {
             return null;
         }
         List<List<String>> rows = new ArrayList<>();
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+        new DataFileExcelReader(this) {
+            int index = 0;
+
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    List<String> row = new ArrayList<>();
+                    for (int col : cols) {
+                        if (col >= 0 && col < record.size()) {
+                            row.add(record.get(col));
+                        } else {
+                            row.add(null);
+                        }
                     }
-                }
-                int index = 1;
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
-                        List<String> row = new ArrayList<>();
-                        for (int col : cols) {
-                            if (col >= 0 && col < record.size()) {
-                                row.add(record.get(col));
-                            } else {
-                                row.add(null);
-                            }
-                        }
-                        if (row.isEmpty()) {
-                            continue;
-                        }
-                        if (rowNumber) {
-                            row.add(0, index++ + "");
-                        }
-                        rows.add(row);
-                    } catch (Exception e) {  // skip  bad lines
+                    if (row.isEmpty()) {
+                        return false;
                     }
+                    if (rowNumber) {
+                        row.add(0, ++index + "");
+                    }
+                    rows.add(row);
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+        }.setReaderTask(task).start();
+
         return rows;
     }
 
@@ -733,60 +654,31 @@ public class DataFileExcel extends DataFile {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
+        new DataFileExcelReader(this) {
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    for (int c = 0; c < colLen; c++) {
+                        sData[c].count++;
+                        int col = cols.get(c);
+                        if (col < 0 || col >= record.size()) {
                             continue;
                         }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
+                        double v = doubleValue(record.get(col));
+                        sData[c].sum += v;
+                        if (v > sData[c].maximum) {
+                            sData[c].maximum = v;
                         }
-                        if (record.isEmpty()) {
-                            continue;
+                        if (v < sData[c].minimum) {
+                            sData[c].minimum = v;
                         }
-                        for (int c = 0; c < colLen; c++) {
-                            sData[c].count++;
-                            int col = cols.get(c);
-                            if (col < 0 || col >= record.size()) {
-                                continue;
-                            }
-                            double v = doubleValue(record.get(col));
-                            sData[c].sum += v;
-                            if (v > sData[c].maximum) {
-                                sData[c].maximum = v;
-                            }
-                            if (v < sData[c].minimum) {
-                                sData[c].minimum = v;
-                            }
-                        }
-                    } catch (Exception e) {  // skip  bad lines
                     }
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
+        }.setReaderTask(task).start();
+
         boolean allInvalid = true;
         for (int c = 0; c < colLen; c++) {
             if (sData[c].count != 0) {
@@ -801,57 +693,29 @@ public class DataFileExcel extends DataFile {
         if (allInvalid) {
             return sData;
         }
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
+
+        new DataFileExcelReader(this) {
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    for (int c = 0; c < colLen; c++) {
+                        if (sData[c].count == 0) {
                             continue;
                         }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
+                        int col = cols.get(c);
+                        if (col < 0 || col >= record.size()) {
                             continue;
                         }
-                        for (int c = 0; c < colLen; c++) {
-                            if (sData[c].count == 0) {
-                                continue;
-                            }
-                            int col = cols.get(c);
-                            if (col < 0 || col >= record.size()) {
-                                continue;
-                            }
-                            double v = doubleValue(record.get(col));
-                            sData[c].variance += Math.pow(v - sData[c].mean, 2);
-                            sData[c].skewness += Math.pow(v - sData[c].mean, 3);
-                        }
-                    } catch (Exception e) {  // skip  bad lines
+                        double v = doubleValue(record.get(col));
+                        sData[c].variance += Math.pow(v - sData[c].mean, 2);
+                        sData[c].skewness += Math.pow(v - sData[c].mean, 3);
                     }
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
+        }.setReaderTask(task).start();
+
         for (int c = 0; c < colLen; c++) {
             if (sData[c].count == 0) {
                 continue;
@@ -859,7 +723,6 @@ public class DataFileExcel extends DataFile {
             sData[c].variance = Math.sqrt(sData[c].variance / sData[c].count);
             sData[c].skewness = Math.cbrt(sData[c].skewness / sData[c].count);
         }
-
         return sData;
     }
 
@@ -956,8 +819,7 @@ public class DataFileExcel extends DataFile {
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
         int tcolsNumber = 0, trowsNumber = 0;
-        try ( Workbook wb = WorkbookFactory.create(file);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -971,47 +833,43 @@ public class DataFileExcel extends DataFile {
                 csvPrinter.printRecord(names);
             }
             tcolsNumber = names.size();
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+
+            Object ret = new DataFileExcelReader(this) {
+
+                int rowsNum = 0;
+
+                @Override
+                public boolean handle(List<String> record) {
                     try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        List<String> dataRow = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            dataRow.add(v);
-                        }
                         List<String> row = new ArrayList<>();
                         if (rowNumber) {
-                            row.add((trowsNumber + 1) + "");
+                            row.add((rowsNum + 1) + "");
                         }
                         for (int i : cols) {
-                            if (i >= 0 && i < dataRow.size()) {
-                                row.add(dataRow.get(i));
+                            if (i >= 0 && i < record.size()) {
+                                row.add(record.get(i));
                             } else {
                                 row.add(null);
                             }
                         }
                         csvPrinter.printRecord(row);
-                        trowsNumber++;
-                    } catch (Exception e) {  // skip  bad lines
+                        rowsNum++;
+                    } catch (Exception e) {
                     }
+                    return true;
                 }
+
+                @Override
+                public Object returnValue() {
+                    return rowsNum;
+                }
+
+            }.setReaderTask(task).start();
+
+            if (ret != null) {
+                trowsNumber = (int) ret;
             }
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -1038,57 +896,30 @@ public class DataFileExcel extends DataFile {
         }
         int colLen = cols.size();
         double[] sum = new double[colLen];
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
+        new DataFileExcelReader(this) {
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    for (int c = 0; c < colLen; c++) {
+                        int col = cols.get(c);
+                        if (col < 0 || col >= record.size()) {
                             continue;
                         }
-                        List<String> dataRow = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            dataRow.add(v);
-                        }
-                        for (int c = 0; c < colLen; c++) {
-                            int col = cols.get(c);
-                            if (col < 0 || col >= dataRow.size()) {
-                                continue;
-                            }
-                            double v = doubleValue(dataRow.get(col));
-                            sum[c] += v;
-                        }
-                    } catch (Exception e) {  // skip  bad lines
+                        double v = doubleValue(record.get(col));
+                        sum[c] += v;
                     }
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
+        }.setReaderTask(task).start();
+
         File csvFile = tmpFile("percentage");
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
         int trowsNumber = 0;
-        try ( Workbook wb = WorkbookFactory.create(file);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
             row.add(message("Summation"));
@@ -1101,37 +932,20 @@ public class DataFileExcel extends DataFile {
             csvPrinter.printRecord(row);
             trowsNumber++;
 
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+            Object ret = new DataFileExcelReader(this) {
+
+                int rowsNum = 0;
+
+                @Override
+                public boolean handle(List<String> record) {
                     try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        List<String> dataRow = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            dataRow.add(v);
-                        }
-                        row = new ArrayList<>();
-                        row.add(trowsNumber++ + "");
+                        List<String> row = new ArrayList<>();
+                        row.add((rowsNum + 1) + "");
                         for (int c = 0; c < colLen; c++) {
                             int col = cols.get(c);
                             double v = 0;
-                            if (col >= 0 && col < dataRow.size()) {
-                                v = doubleValue(dataRow.get(col));
+                            if (col >= 0 && col < record.size()) {
+                                v = doubleValue(record.get(col));
                             }
                             if (withValues) {
                                 row.add(DoubleTools.scale(v, scale) + "");
@@ -1143,10 +957,23 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                    } catch (Exception e) {  // skip  bad lines
+                        rowsNum++;
+                    } catch (Exception e) {
                     }
+                    return true;
                 }
+
+                @Override
+                public Object returnValue() {
+                    return rowsNum;
+                }
+
+            }.setReaderTask(task).start();
+
+            if (ret != null) {
+                trowsNumber = (int) ret;
             }
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -1178,58 +1005,29 @@ public class DataFileExcel extends DataFile {
             max[c] = -Double.MAX_VALUE;
             min[c] = Double.MAX_VALUE;
         }
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
+        new DataFileExcelReader(this) {
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    for (int c = 0; c < colLen; c++) {
+                        int col = cols.get(c);
+                        if (col < 0 || col >= record.size()) {
                             continue;
                         }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
+                        double v = doubleValue(record.get(col));
+                        if (v > max[c]) {
+                            max[c] = v;
                         }
-                        if (record.isEmpty()) {
-                            continue;
+                        if (v < min[c]) {
+                            min[c] = v;
                         }
-                        for (int c = 0; c < colLen; c++) {
-                            int col = cols.get(c);
-                            if (col < 0 || col >= record.size()) {
-                                continue;
-                            }
-                            double v = doubleValue(record.get(col));
-                            if (v > max[c]) {
-                                max[c] = v;
-                            }
-                            if (v < min[c]) {
-                                min[c] = v;
-                            }
-                        }
-                    } catch (Exception e) {  // skip  bad lines
                     }
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
+        }.setReaderTask(task).start();
+
         double[] k = new double[colLen];
         for (int c = 0; c < colLen; c++) {
             double d = max[c] - min[c];
@@ -1240,8 +1038,7 @@ public class DataFileExcel extends DataFile {
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
         int tcolsNumber = 0, trowsNumber = 0;
-        try ( Workbook wb = WorkbookFactory.create(file);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -1255,36 +1052,17 @@ public class DataFileExcel extends DataFile {
                 csvPrinter.printRecord(names);
             }
             tcolsNumber = names.size();
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+
+            Object ret = new DataFileExcelReader(this) {
+
+                int rowsNum = 0;
+
+                @Override
+                public boolean handle(List<String> record) {
                     try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
                         List<String> row = new ArrayList<>();
                         if (rowNumber) {
-                            row.add((trowsNumber + 1) + "");
+                            row.add((rowsNum + 1) + "");
                         }
                         for (int c = 0; c < colLen; c++) {
                             int col = cols.get(c);
@@ -1297,11 +1075,23 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                        trowsNumber++;
-                    } catch (Exception e) {  // skip  bad lines
+                        rowsNum++;
+                    } catch (Exception e) {
                     }
+                    return true;
                 }
+
+                @Override
+                public Object returnValue() {
+                    return rowsNum;
+                }
+
+            }.setReaderTask(task).start();
+
+            if (ret != null) {
+                trowsNumber = (int) ret;
             }
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -1327,53 +1117,24 @@ public class DataFileExcel extends DataFile {
         }
         int colLen = cols.size();
         double[] sum = new double[colLen];
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
+        new DataFileExcelReader(this) {
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    for (int c = 0; c < colLen; c++) {
+                        int col = cols.get(c);
+                        if (col < 0 || col >= record.size()) {
                             continue;
                         }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
-                        for (int c = 0; c < colLen; c++) {
-                            int col = cols.get(c);
-                            if (col < 0 || col >= record.size()) {
-                                continue;
-                            }
-                            double v = doubleValue(record.get(col));
-                            sum[c] += Math.abs(v);
-                        }
-                    } catch (Exception e) {  // skip  bad lines
+                        double v = doubleValue(record.get(col));
+                        sum[c] += Math.abs(v);
                     }
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
+        }.setReaderTask(task).start();
+
         double[] k = new double[colLen];
         for (int c = 0; c < colLen; c++) {
             if (sum[c] == 0) {
@@ -1387,8 +1148,7 @@ public class DataFileExcel extends DataFile {
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
         int tcolsNumber = 0, trowsNumber = 0;
-        try ( Workbook wb = WorkbookFactory.create(file);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -1402,36 +1162,17 @@ public class DataFileExcel extends DataFile {
                 csvPrinter.printRecord(names);
             }
             tcolsNumber = names.size();
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+
+            Object ret = new DataFileExcelReader(this) {
+
+                int rowsNum = 0;
+
+                @Override
+                public boolean handle(List<String> record) {
                     try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
                         List<String> row = new ArrayList<>();
                         if (rowNumber) {
-                            row.add((trowsNumber + 1) + "");
+                            row.add((rowsNum + 1) + "");
                         }
                         for (int c = 0; c < colLen; c++) {
                             int col = cols.get(c);
@@ -1444,11 +1185,23 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                        trowsNumber++;
-                    } catch (Exception e) {  // skip  bad lines
+                        rowsNum++;
+                    } catch (Exception e) {
                     }
+                    return true;
                 }
+
+                @Override
+                public Object returnValue() {
+                    return rowsNum;
+                }
+
+            }.setReaderTask(task).start();
+
+            if (ret != null) {
+                trowsNumber = (int) ret;
             }
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -1475,52 +1228,35 @@ public class DataFileExcel extends DataFile {
         int colLen = cols.size();
         int tcolsNumber = 0, trowsNumber = 0;
         double[] sum = new double[colLen];
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
+        Object ret = new DataFileExcelReader(this) {
+            int num = 0;
+
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    for (int c = 0; c < colLen; c++) {
+                        int col = cols.get(c);
+                        if (col < 0 || col >= record.size()) {
                             continue;
                         }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
-                        for (int c = 0; c < colLen; c++) {
-                            int col = cols.get(c);
-                            if (col < 0 || col >= record.size()) {
-                                continue;
-                            }
-                            double v = doubleValue(record.get(col));
-                            sum[c] += Math.abs(v);
-                        }
-                        trowsNumber++;
-                    } catch (Exception e) {  // skip  bad lines
+                        double v = doubleValue(record.get(col));
+                        sum[c] += Math.abs(v);
                     }
+                    num++;
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+
+            @Override
+            public Object returnValue() {
+                return num;
             }
-            MyBoxLog.error(e);
+        }.setReaderTask(task).start();
+        if (ret != null) {
+            trowsNumber = (int) ret;
+        }
+        if (trowsNumber <= 0) {
             return null;
         }
         double[] mean = new double[colLen];
@@ -1528,53 +1264,24 @@ public class DataFileExcel extends DataFile {
             mean[c] = sum[c] / trowsNumber;
         }
         double[] variance = new double[colLen];
-        try ( Workbook wb = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
+        new DataFileExcelReader(this) {
+            @Override
+            public boolean handle(List<String> record) {
+                try {
+                    for (int c = 0; c < colLen; c++) {
+                        int col = cols.get(c);
+                        if (col < 0 || col >= record.size()) {
                             continue;
                         }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
-                        for (int c = 0; c < colLen; c++) {
-                            int col = cols.get(c);
-                            if (col < 0 || col >= record.size()) {
-                                continue;
-                            }
-                            double v = doubleValue(record.get(col));
-                            variance[c] += Math.pow(v - mean[c], 2);
-                        }
-                    } catch (Exception e) {  // skip  bad lines
+                        double v = doubleValue(record.get(col));
+                        variance[c] += Math.pow(v - mean[c], 2);
                     }
+                } catch (Exception e) {
                 }
+                return true;
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
+        }.setReaderTask(task).start();
+
         for (int c = 0; c < colLen; c++) {
             variance[c] = Math.sqrt(variance[c] / trowsNumber);
         }
@@ -1582,8 +1289,7 @@ public class DataFileExcel extends DataFile {
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
-        try ( Workbook wb = WorkbookFactory.create(file);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -1597,37 +1303,17 @@ public class DataFileExcel extends DataFile {
                 csvPrinter.printRecord(names);
             }
             tcolsNumber = names.size();
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = wb.getSheet(sheet);
-            } else {
-                sourceSheet = wb.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                trowsNumber = 0;
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
+
+            new DataFileExcelReader(this) {
+
+                int num = 0;
+
+                @Override
+                public boolean handle(List<String> record) {
                     try {
-                        Row fileRow = iterator.next();
-                        if (fileRow == null) {
-                            continue;
-                        }
-                        List<String> record = new ArrayList<>();
-                        for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                            String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                            record.add(v);
-                        }
-                        if (record.isEmpty()) {
-                            continue;
-                        }
                         List<String> row = new ArrayList<>();
                         if (rowNumber) {
-                            row.add((trowsNumber + 1) + "");
+                            row.add((num + 1) + "");
                         }
                         for (int c = 0; c < colLen; c++) {
                             int col = cols.get(c);
@@ -1640,11 +1326,13 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                        trowsNumber++;
-                    } catch (Exception e) {  // skip  bad lines
+                        num++;
+                    } catch (Exception e) {
                     }
+                    return true;
                 }
-            }
+            }.setReaderTask(task).start();
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

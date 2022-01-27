@@ -149,7 +149,6 @@ public class DataInMyBoxClipboardController extends BaseController {
             if (object != null && object instanceof DataInMyBoxClipboardController) {
                 try {
                     controller = (DataInMyBoxClipboardController) object;
-                    controller.toFront();
                     controller.refreshAction();
                     break;
                 } catch (Exception e) {
@@ -159,6 +158,7 @@ public class DataInMyBoxClipboardController extends BaseController {
         if (controller == null) {
             controller = (DataInMyBoxClipboardController) WindowTools.openStage(Fxmls.DataInMyBoxClipboardFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

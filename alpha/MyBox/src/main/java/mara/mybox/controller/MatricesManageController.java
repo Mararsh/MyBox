@@ -118,7 +118,6 @@ public class MatricesManageController extends BaseController {
             if (object != null && object instanceof MatricesManageController) {
                 try {
                     controller = (MatricesManageController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -127,6 +126,7 @@ public class MatricesManageController extends BaseController {
         if (controller == null) {
             controller = (MatricesManageController) WindowTools.openStage(Fxmls.MatricesManageFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

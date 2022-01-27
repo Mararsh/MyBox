@@ -448,6 +448,7 @@ License:    Apache License Version 2.0
                             <items>
                                 <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
                                 <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
+                                <CheckMenuItem fx:id="detailedDebugCheck" mnemonicParsing="false" onAction="#detailedDebug" text="%DetailedDebugLogs" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxLogs" text="%MyBoxLogs" />

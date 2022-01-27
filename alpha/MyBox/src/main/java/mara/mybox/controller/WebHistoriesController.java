@@ -238,7 +238,6 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
             if (object != null && object instanceof WebHistoriesController) {
                 try {
                     controller = (WebHistoriesController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -247,6 +246,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         if (controller == null) {
             controller = (WebHistoriesController) WindowTools.openStage(Fxmls.WebHistoriesFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

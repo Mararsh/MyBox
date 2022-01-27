@@ -487,7 +487,6 @@ public class AlarmClockController extends BaseController {
             if (object != null && object instanceof AlarmClockController) {
                 try {
                     controller = (AlarmClockController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -496,6 +495,7 @@ public class AlarmClockController extends BaseController {
         if (controller == null) {
             controller = (AlarmClockController) WindowTools.openStage(Fxmls.AlarmClockFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

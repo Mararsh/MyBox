@@ -68,7 +68,7 @@ public class NotesController extends NotesController_Notes {
             super.afterSceneLoaded();
 
             if (tableNotebook.size() < 2
-                    && PopTools.askSure(this,getBaseTitle(), Languages.message("ImportExamples"))) {
+                    && PopTools.askSure(this, getBaseTitle(), Languages.message("ImportExamples"))) {
                 notebooksController.importExamples();
             } else {
                 loadBooks();
@@ -99,7 +99,6 @@ public class NotesController extends NotesController_Notes {
             if (object != null && object instanceof NotesController) {
                 try {
                     controller = (NotesController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -108,6 +107,7 @@ public class NotesController extends NotesController_Notes {
         if (controller == null) {
             controller = (NotesController) WindowTools.openStage(Fxmls.NotesFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

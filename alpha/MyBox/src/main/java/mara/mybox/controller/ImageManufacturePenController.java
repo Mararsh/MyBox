@@ -111,7 +111,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
             }
             strokeWidthBox.getItems().addAll(ws);
-            strokeWidthBox.getSelectionModel().select(UserConfig.getInt(strokeWidthKey, defaultStrokeWidth) + "");
+            strokeWidth = UserConfig.getInt(strokeWidthKey, defaultStrokeWidth);
+            strokeWidthBox.getSelectionModel().select(strokeWidth + "");
             strokeWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {

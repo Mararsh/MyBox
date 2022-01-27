@@ -271,7 +271,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             return;
         }
         String currentSheetName = dataFileExcel.getSheet();
-        if (!PopTools.askSure(this,baseTitle, currentSheetName, message("SureDelete"))) {
+        if (!PopTools.askSure(this, baseTitle, currentSheetName, message("SureDelete"))) {
             return;
         }
         synchronized (this) {
@@ -337,20 +337,21 @@ public class DataFileExcelController extends BaseData2DFileController {
     public static DataFileExcelController open(File file, boolean withNames) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.setFile(file, withNames);
-        controller.toFront();
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileExcelController open(List<Data2DColumn> cols, List<List<String>> data) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.dataController.loadTmpData(cols, data);
-        controller.toFront();
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileExcelController open(Data2DDefinition def) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.loadDef(def);
+        controller.requestMouse();
         return controller;
     }
 

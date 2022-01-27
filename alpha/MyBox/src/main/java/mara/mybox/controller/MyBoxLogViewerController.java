@@ -123,7 +123,6 @@ public class MyBoxLogViewerController extends HtmlTableController {
             if (object != null && object instanceof MyBoxLogViewerController) {
                 try {
                     controller = (MyBoxLogViewerController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -132,6 +131,7 @@ public class MyBoxLogViewerController extends HtmlTableController {
         if (controller == null) {
             controller = (MyBoxLogViewerController) WindowTools.openStage(Fxmls.MyBoxLogViewerFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

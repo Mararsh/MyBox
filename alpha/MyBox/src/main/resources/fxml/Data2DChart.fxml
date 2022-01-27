@@ -13,6 +13,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -140,7 +141,6 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
                                              </padding>
                                              <children>
-                                                    <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
                                                 <Label minHeight="-Infinity" text="%SelectSomeOrNone" wrapText="true" />
                                                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                                                    <children>
@@ -241,6 +241,8 @@ License:    Apache License Version 2.0
                                                       </Button>
                                                       </children>
                                                   </HBox>
+                                                <Separator prefWidth="200.0" />
+                                                <Label fx:id="commentsLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
                                              </children>
                                           </VBox>
                                        </content>
@@ -555,10 +557,15 @@ License:    Apache License Version 2.0
                                       </Button>
                                   </children>
                               </HBox>
-                                    <VBox fx:id="chartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
+                        <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" VBox.vgrow="ALWAYS">
+                           <children>
+                                  <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                          <VBox fx:id="chartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </padding>
+                              </VBox>
+                           </children>
                         </VBox>
                           </children>
                       </VBox>

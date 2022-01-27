@@ -255,6 +255,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 });
                 leftPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
                 leftPane.setHvalue(0);
+                leftPane.setVvalue(0);
             }
 
             if (splitPane != null && rightPane != null && rightPaneControl != null) {
@@ -274,6 +275,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 });
                 rightPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
                 rightPane.setHvalue(0);
+                rightPane.setVvalue(0);
             }
 
             initNodes(thisPane);
@@ -389,6 +391,24 @@ public abstract class BaseController_Interface extends BaseController_Files {
             refreshStyle();
             toFront();
 
+            if (leftPane != null || rightPane != null) {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            if (leftPane != null) {
+                                leftPane.setHvalue(0);
+                                leftPane.setVvalue(0);
+                            }
+
+                            if (rightPane != null) {
+                                rightPane.setHvalue(0);
+                                rightPane.setVvalue(0);
+                            }
+                        });
+                    }
+                }, 1000);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -525,23 +545,25 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         getMyWindow().requestFocus();
                         getMyStage().setIconified(false);
                         myStage.toFront();
-                        if (selectFileButton != null) {
-                            selectFileButton.requestFocus();
-                        } else if (tipsView != null) {
-                            tipsView.requestFocus();
-                        } else {
-                            thisPane.requestFocus();
-                        }
-                        if (getMyWindow() instanceof Popup) {
-                            LocateTools.mouseCenter(myStage);
-                        }
-                        if (leftPane != null) {
-                            leftPane.setHvalue(0);
-                        }
                         checkAlwaysTop();
                     });
                 }
             }, 500);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void requestMouse() {
+        try {
+            if (getMyStage() == null) {
+                return;
+            }
+            Platform.runLater(() -> {
+                myStage.toFront();
+                myStage.requestFocus();
+                LocateTools.mouseCenter(myStage);
+            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1087,6 +1109,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         UserConfig.setBoolean(baseName + "ShowLeftControl", true);
         StyleTools.setIconName(leftPaneControl, "iconDoubleLeft.png");
         leftPane.setHvalue(0);
+        leftPane.setVvalue(0);
     }
 
     @FXML
@@ -1133,6 +1156,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             UserConfig.setBoolean(baseName + "ShowRightControl", true);
             StyleTools.setIconName(rightPaneControl, "iconDoubleRight.png");
             rightPane.setHvalue(0);
+            rightPane.setVvalue(0);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

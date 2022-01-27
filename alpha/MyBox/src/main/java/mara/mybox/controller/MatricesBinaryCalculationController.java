@@ -281,7 +281,6 @@ public class MatricesBinaryCalculationController extends BaseController {
             if (object != null && object instanceof MatricesBinaryCalculationController) {
                 try {
                     controller = (MatricesBinaryCalculationController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -290,6 +289,7 @@ public class MatricesBinaryCalculationController extends BaseController {
         if (controller == null) {
             controller = (MatricesBinaryCalculationController) WindowTools.openStage(Fxmls.MatricesBinaryCalculationFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

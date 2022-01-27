@@ -18,17 +18,17 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class MyBoxLog extends BaseData {
-    
+
     protected long mblid;
     protected Date time;
     protected LogType logType;
     protected String fileName, className, methodName, log, comments, callers, typeName;
     protected int line;
-    
+
     public static enum LogType {
         Console, Error, Debug, Info
     }
-    
+
     public MyBoxLog() {
         mblid = -1;
         time = new Date();
@@ -41,7 +41,7 @@ public class MyBoxLog extends BaseData {
     public static MyBoxLog create() {
         return new MyBoxLog();
     }
-    
+
     public static boolean setValue(MyBoxLog data, String column, Object value) {
         if (data == null || column == null) {
             return false;
@@ -84,7 +84,7 @@ public class MyBoxLog extends BaseData {
         }
         return false;
     }
-    
+
     public static Object getValue(MyBoxLog data, String column) {
         if (data == null || column == null) {
             return null;
@@ -113,12 +113,12 @@ public class MyBoxLog extends BaseData {
         }
         return null;
     }
-    
+
     public static boolean valid(MyBoxLog data) {
         return data != null
                 && data.getTime() != null && data.getLog() != null && data.getLogType() != null;
     }
-    
+
     public static String displayColumn(MyBoxLog data, ColumnDefinition column, Object value) {
         if (data == null || column == null || value == null) {
             return null;
@@ -128,7 +128,7 @@ public class MyBoxLog extends BaseData {
         }
         return DataFactory.displayColumnBase(data, column, value);
     }
-    
+
     public static short logType(LogType logType) {
         if (logType == null) {
             return 3;
@@ -145,7 +145,7 @@ public class MyBoxLog extends BaseData {
                 return 3;
         }
     }
-    
+
     public static LogType logType(short logType) {
         switch (logType) {
             case 0:
@@ -158,39 +158,39 @@ public class MyBoxLog extends BaseData {
                 return LogType.Info;
         }
     }
-    
+
     public static MyBoxLog console(Object log) {
         return log(LogType.Console, log, null);
     }
-    
+
     public static MyBoxLog console(Object log, String comments) {
         return log(LogType.Console, log, comments);
     }
-    
+
     public static MyBoxLog debug(Object log) {
         return log(LogType.Debug, log, null);
     }
-    
+
     public static MyBoxLog debug(Object log, String comments) {
         return log(LogType.Debug, log, comments);
     }
-    
+
     public static MyBoxLog error(Object log) {
         return log(LogType.Error, log, null);
     }
-    
+
     public static MyBoxLog error(Object log, String comments) {
         return log(LogType.Error, log, comments);
     }
-    
+
     public static MyBoxLog info(Object log) {
         return log(LogType.Info, log, null);
     }
-    
+
     public static MyBoxLog info(Object log, String comments) {
         return log(LogType.Info, log, comments);
     }
-    
+
     private static MyBoxLog log(LogType type, Object log, String comments) {
         try {
             if (type == null) {
@@ -204,7 +204,7 @@ public class MyBoxLog extends BaseData {
                 }
                 AppVariables.ignoreDbUnavailable = true; // Record only once
             }
-            
+
             StackTraceElement[] stacks = new Throwable().getStackTrace();
             if (stacks.length <= 2) {
                 return null;
@@ -236,7 +236,7 @@ public class MyBoxLog extends BaseData {
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
-            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Console));
+            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Debug));
             System.out.print(logText);
             if (AppVariables.popErrorLogs && type == LogType.Error) {
                 Platform.runLater(() -> {
@@ -259,19 +259,19 @@ public class MyBoxLog extends BaseData {
             return null;
         }
     }
-    
+
     public static String print(MyBoxLog log, boolean printCallers) {
         return print(log, "  ", printCallers);
     }
-    
+
     public static String println(MyBoxLog log, boolean printCallers) {
         return println(log, "  ", printCallers);
     }
-    
+
     public static String println(MyBoxLog log, String separator, boolean printCallers) {
         return print(log, separator, printCallers) + "\n";
     }
-    
+
     public static String print(MyBoxLog log, String separator, boolean printCallers) {
         if (log == null) {
             return "";
@@ -299,102 +299,102 @@ public class MyBoxLog extends BaseData {
     public Date getTime() {
         return time;
     }
-    
+
     public MyBoxLog setTime(Date time) {
         this.time = time;
         return this;
     }
-    
+
     public String getLog() {
         return log;
     }
-    
+
     public MyBoxLog setLog(String log) {
         this.log = log;
         return this;
     }
-    
+
     public LogType getLogType() {
         return logType;
     }
-    
+
     public MyBoxLog setLogType(LogType logType) {
         this.logType = logType;
         return this;
     }
-    
+
     public String getClassName() {
         return className;
     }
-    
+
     public MyBoxLog setClassName(String className) {
         this.className = className;
         return this;
     }
-    
+
     public String getMethodName() {
         return methodName;
     }
-    
+
     public MyBoxLog setMethodName(String methodName) {
         this.methodName = methodName;
         return this;
     }
-    
+
     public long getMblid() {
         return mblid;
     }
-    
+
     public MyBoxLog setMblid(long mblid) {
         this.mblid = mblid;
         return this;
     }
-    
+
     public String getComments() {
         return comments;
     }
-    
+
     public MyBoxLog setComments(String comments) {
         this.comments = comments;
         return this;
     }
-    
+
     public int getLine() {
         return line;
     }
-    
+
     public MyBoxLog setLine(int line) {
         this.line = line;
         return this;
     }
-    
+
     public String getFileName() {
         return fileName;
     }
-    
+
     public MyBoxLog setFileName(String fileName) {
         this.fileName = fileName;
         return this;
     }
-    
+
     public String getCallers() {
         return callers;
     }
-    
+
     public MyBoxLog setCallers(String callers) {
         this.callers = callers;
         return this;
     }
-    
+
     public String getTypeName() {
         if (logType != null) {
             typeName = Languages.message(logType.name());
         }
         return typeName;
     }
-    
+
     public void setTypeName(String typeName) {
         this.typeName = typeName;
     }
-    
+
 }
