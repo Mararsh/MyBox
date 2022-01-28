@@ -412,6 +412,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         Data2DColumn column = new Data2DColumn();
         column.setIndex(data2D.newColumnIndex());
         column.setName(data2D.colPrefix() + data2D.newColumnIndex());
+        column.setColor(FxColorTools.randomColor());
         return column;
     }
 
@@ -501,7 +502,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                     newRow.add(rowValues.get(0));
                     for (Data2DColumn row : tableData) {
                         int col = data2D.colOrder(row.getIndex()) + 1;
-                        if (col < 0 || col >= rowValues.size()) {
+                        if (col <= 0 || col >= rowValues.size()) {
                             newRow.add(null);
                         } else {
                             newRow.add(rowValues.get(col));

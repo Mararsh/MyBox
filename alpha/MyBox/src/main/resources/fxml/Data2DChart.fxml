@@ -184,6 +184,11 @@ License:    Apache License Version 2.0
                                                                   <Insets />
                                                                </FlowPane.margin>
                                                             </Label>
+                                                            <Label fx:id="columnsLabel1" layoutX="10.0" layoutY="17.0" text="%Selected">
+                                                               <FlowPane.margin>
+                                                                  <Insets left="20.0" />
+                                                               </FlowPane.margin>
+                                                            </Label>
                                                             <Button fx:id="selectAllColsButton" mnemonicParsing="false" onAction="#selectAllCols">
                                                                <graphic>
                                                                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -285,20 +290,6 @@ License:    Apache License Version 2.0
                                                       </Button>
                                                    </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                   <children>
-                                                      <Label minWidth="-Infinity" text="%LabelFontSize" />
-                                                      <ComboBox fx:id="plotFontSizeSelector" editable="true" prefWidth="100.0" />
-                                                      <Label text="px" />
-                                                   </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                   <children>
-                                                      <Label minWidth="-Infinity" text="%TickFontSize" />
-                                                      <ComboBox fx:id="tickFontSizeSelector" editable="true" prefWidth="100.0" />
-                                                      <Label text="px" />
-                                                   </children>
-                                                </HBox>
                                                 <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
                                                    <children>
                                                       <Label maxWidth="1.7976931348623157E308" text="%Legend" />
@@ -323,11 +314,49 @@ License:    Apache License Version 2.0
                                                       </RadioButton>
                                                       <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
                                                       <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
-                                                      <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%Pop" toggleGroup="$labelGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
+                                                      <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
+                                                      <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
                                                    </children>
                                                 </FlowPane>
+                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="111.0" vgap="5.0">
+                                                   <children>
+                                                      <Label maxWidth="1.7976931348623157E308" text="%LabelLocation" />
+                                                      <RadioButton mnemonicParsing="false" selected="true" text="%Above">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="labelLocaionGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton mnemonicParsing="false" text="%Below" toggleGroup="$labelLocaionGroup" />
+                                                      <RadioButton mnemonicParsing="false" text="%Center" toggleGroup="$labelLocaionGroup" />
+                                                   </children>
+                                                </FlowPane>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                   <children>
+                                                      <Label minWidth="-Infinity" text="%TitleFontSize" />
+                                                      <ComboBox fx:id="titleFontSizeSelector" editable="true" prefWidth="100.0" />
+                                                      <Label text="px" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="85.0" spacing="5.0">
+                                                   <children>
+                                                      <Label minWidth="-Infinity" text="%LabelFontSize" />
+                                                      <ComboBox fx:id="labelFontSizeSelector" editable="true" prefWidth="100.0" />
+                                                      <Label text="px" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                   <children>
+                                                      <Label minWidth="-Infinity" text="%TickFontSize" />
+                                                      <ComboBox fx:id="tickFontSizeSelector" editable="true" prefWidth="100.0" />
+                                                      <Label text="px" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="118.0" spacing="5.0">
+                                                   <children>
+                                                      <Label minWidth="-Infinity" text="%DecimalScale" />
+                                                      <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
+                                                   </children>
+                                                </HBox>
                                                 <CheckBox fx:id="animatedCheck" mnemonicParsing="false" text="%Animated" />
                                                 <CheckBox fx:id="autoTitleCheck" layoutX="15.0" layoutY="162.0" minHeight="-Infinity" mnemonicParsing="false" text="%AutoSetTitleLabel" wrapText="true" />
                                                 <VBox spacing="10.0" fx:id="xyPlotBox">
@@ -546,6 +575,15 @@ License:    Apache License Version 2.0
                                           </image>
                                       </ImageView>
                               <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="htmlButton" layoutX="466.0" layoutY="10.0" mnemonicParsing="false" onAction="#htmlAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconHtml.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                       <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction" HBox.hgrow="NEVER">
                                           <graphic>
                                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

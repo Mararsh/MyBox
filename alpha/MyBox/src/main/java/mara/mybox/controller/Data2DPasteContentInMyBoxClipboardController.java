@@ -102,15 +102,23 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
 
     public void makeControls(int row, int col) {
         try {
+            if (dataTarget == null) {
+                return;
+            }
             List<String> rows = new ArrayList<>();
             for (long i = 0; i < dataTarget.tableRowsNumber(); i++) {
                 rows.add("" + (i + 1));
             }
-            rowSelector.getItems().setAll(rows);
-            rowSelector.getSelectionModel().select(row);
+            if (!rows.isEmpty()) {
+                rowSelector.getItems().setAll(rows);
+                rowSelector.getSelectionModel().select(row);
+            }
 
-            colSelector.getItems().setAll(dataTarget.columnNames());
-            colSelector.getSelectionModel().select(col);
+            List<String> names = dataTarget.columnNames();
+            if (!names.isEmpty()) {
+                colSelector.getItems().setAll(names);
+                colSelector.getSelectionModel().select(col);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

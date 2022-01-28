@@ -372,6 +372,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
             myStage.setMinWidth(minSize);
             myStage.setMinHeight(minSize);
 
+            refreshStyle();
+
+            if (this instanceof LoadingController) {
+                return;
+            }
+
             setStageStatus();
 
             Rectangle2D screen = NodeTools.getScreen();
@@ -388,7 +394,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 myStage.setY(0);
             }
 
-            refreshStyle();
             toFront();
 
             if (leftPane != null || rightPane != null) {
@@ -803,8 +808,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public void leaveScene() {
-        cleanNode(thisPane);
-        cleanWindow();
+        try {
+            cleanNode(thisPane);
+            cleanWindow();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public static void cleanNode(Node node) {

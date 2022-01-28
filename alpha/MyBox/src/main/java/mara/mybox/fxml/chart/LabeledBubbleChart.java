@@ -2,7 +2,6 @@ package mara.mybox.fxml.chart;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
@@ -11,14 +10,11 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
+import mara.mybox.controller.Data2DChartController;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
-import mara.mybox.tools.StringTools;
 
 /**
  * Reference:
@@ -31,12 +27,13 @@ import mara.mybox.tools.StringTools;
  */
 public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
 
-    protected Map<Node, TextFlow> nodeMap = new HashMap<>();
-    protected boolean intValue;
-    protected String cssFile;
+    protected Map<Node, Node> nodeMap = new HashMap<>();
     protected LabelType labelType;
+    protected ChartTools.LabelLocation labelLocation;
+    protected Data2DChartController chartController;
     protected ChartCoordinate chartCoordinate;
-    protected int textSize;
+    protected int labelFontSize, scale;
+    protected boolean popLabel;
 
     public LabeledBubbleChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -45,12 +42,27 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
 
     public final void init() {
         labelType = LabelType.NameAndValue;
-        textSize = 10;
+        chartCoordinate = ChartCoordinate.Cartesian;
+        labelFontSize = 10;
+        scale = 2;
+        popLabel = false;
+        labelLocation = ChartTools.LabelLocation.Above;
         this.setLegendSide(Side.TOP);
         this.setMaxWidth(Double.MAX_VALUE);
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+    }
+
+    public LabeledBubbleChart setChartController(Data2DChartController chartController) {
+        this.chartController = chartController;
+        labelType = chartController.getLabelType();
+        labelFontSize = chartController.getLabelFontSize();
+        scale = chartController.getScale();
+        popLabel = chartController.getPopLabelCheck().isSelected();
+        labelLocation = chartController.getLabelLocation();
+        setChartCoordinate(chartController.getChartCoordinate());
+        return this;
     }
 
     public LabeledBubbleChart setChartCoordinate(ChartCoordinate chartCoordinate) {
@@ -62,46 +74,19 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        if (labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Point) {
+        if (labelType == null) {
             return;
         }
         try {
-            setStyle("-fx-font-size: " + textSize + "px;  -fx-text-fill: black;");
+            setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
             boolean isXY = getXAxis() instanceof CategoryAxis;
             for (int s = 0; s < series.getData().size(); s++) {
                 Data<X, Y> item = series.getData().get(s);
-                String name, value;
-                if (isXY) {
-                    name = item.getXValue().toString();
-                    value = item.getYValue().toString();
-                } else {
-                    name = item.getYValue().toString();
-                    value = item.getXValue().toString();
-                }
-                if (labelType == LabelType.Pop) {
-                    NodeStyleTools.setTooltip(item.getNode(), name + ": " + value);
-                } else {
-                    String label;
-                    String labelValue = StringTools.format(ChartTools.realValue(chartCoordinate, Double.valueOf(value)));
-                    switch (labelType) {
-                        case Name:
-                            label = name;
-                            break;
-                        case Value:
-                            label = labelValue;
-                            break;
-                        case NameAndValue:
-                        default:
-                            label = name + ": " + labelValue;
-                            break;
-                    }
-                    Text text = new Text(label);
-                    text.setStyle("-fx-font-size: " + textSize + "px;  -fx-text-fill: black;");
-                    TextFlow textFlow = new TextFlow(text);
-                    textFlow.setTextAlignment(TextAlignment.CENTER);
-
-                    nodeMap.put(item.getNode(), textFlow);
-                    getPlotChildren().add(textFlow);
+                Node label = ChartTools.makeLabel(item, isXY, labelType, popLabel, chartCoordinate, scale);
+                if (label != null) {
+                    label.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
+                    nodeMap.put(item.getNode(), label);
+                    getPlotChildren().add(label);
                 }
             }
         } catch (Exception e) {
@@ -124,43 +109,35 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        if (labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
+        if (labelType == null || labelLocation == null
+                || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
             return;
         }
         for (Node node : nodeMap.keySet()) {
-            TextFlow textFlow = nodeMap.get(node);
-            Bounds b = node.getBoundsInParent();
-            textFlow.relocate(b.getMinX() + b.getWidth() / 2, b.getMinY() + b.getHeight() / 2);
+            Node text = nodeMap.get(node);
+            switch (labelLocation) {
+                case Below:
+                    LocateTools.belowCenter(text, node);
+                    break;
+                case Above:
+                    LocateTools.aboveCenter(text, node);
+                    break;
+                case Center:
+                    LocateTools.center(text, node);
+                    break;
+            }
         }
     }
 
     /*
        get/set
      */
-    public Map<Node, TextFlow> getNodeMap() {
+    public Map<Node, Node> getNodeMap() {
         return nodeMap;
     }
 
-    public LabeledBubbleChart setNodeMap(Map<Node, TextFlow> nodeMap) {
+    public LabeledBubbleChart setNodeMap(Map<Node, Node> nodeMap) {
         this.nodeMap = nodeMap;
-        return this;
-    }
-
-    public boolean isIntValue() {
-        return intValue;
-    }
-
-    public LabeledBubbleChart setIntValue(boolean intValue) {
-        this.intValue = intValue;
-        return this;
-    }
-
-    public String getCssFile() {
-        return cssFile;
-    }
-
-    public LabeledBubbleChart setCssFile(String cssFile) {
-        this.cssFile = cssFile;
         return this;
     }
 
@@ -174,16 +151,25 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
     }
 
     public int getTextSize() {
-        return textSize;
+        return labelFontSize;
     }
 
     public LabeledBubbleChart setTextSize(int textSize) {
-        this.textSize = textSize;
+        this.labelFontSize = textSize;
         return this;
     }
 
-    public ChartCoordinate getChartCoordinate() {
-        return chartCoordinate;
+    public int getScale() {
+        return scale;
+    }
+
+    public LabeledBubbleChart setScale(int scale) {
+        this.scale = scale;
+        return this;
+    }
+
+    public Data2DChartController getChartController() {
+        return chartController;
     }
 
 }

@@ -989,7 +989,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 //        boolean intValue = !message("HealedRatio").equals(valueName)
 //                && !message("DeadRatio").equals(valueName);
         LabeledBarChart barChart = new LabeledBarChart(new CategoryAxis(), new NumberAxis());
-        barChart.setIntValue(false).setLabelType(labelType)
+        barChart.setLabelType(labelType)
                 .setTextSize(mapOptionsController.textSize)
                 .setChartCoordinate(chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);
@@ -1018,7 +1018,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     protected LabeledBarChart addHorizontalBarChart() {
         chartBox.getChildren().clear();
         LabeledBarChart barChart = new LabeledBarChart(new NumberAxis(), new CategoryAxis());
-        barChart.setIntValue(false).setLabelType(labelType)
+        barChart.setLabelType(labelType)
                 .setTextSize(mapOptionsController.textSize)
                 .setChartCoordinate(chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);

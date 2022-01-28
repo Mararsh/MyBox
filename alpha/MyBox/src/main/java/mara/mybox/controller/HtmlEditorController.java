@@ -1059,7 +1059,7 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (codesChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-                        if (result == null || !result.isPresent() ) {
+                        if (result == null || !result.isPresent()) {
                             return;
                         }
                         if (result.get() == buttonSynchronize) {
@@ -1081,7 +1081,7 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (heChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-                        if (result == null || !result.isPresent() ) {
+                        if (result == null || !result.isPresent()) {
                             return;
                         }
                         if (result.get() == buttonSynchronize) {
@@ -1103,7 +1103,7 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (mdChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-                        if (result == null || !result.isPresent() ) {
+                        if (result == null || !result.isPresent()) {
                             return;
                         }
                         if (result.get() == buttonSynchronize) {
@@ -1125,7 +1125,7 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (textsChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-                        if (result == null || !result.isPresent() ) {
+                        if (result == null || !result.isPresent()) {
                             return;
                         }
                         if (result.get() == buttonSynchronize) {
@@ -1362,7 +1362,7 @@ public class HtmlEditorController extends WebAddressController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent() ) {
+            if (result == null || !result.isPresent()) {
                 return false;
             }
             if (result.get() == buttonSave) {
@@ -1390,6 +1390,7 @@ public class HtmlEditorController extends WebAddressController {
         try {
             HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
             controller.loadContents(html);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

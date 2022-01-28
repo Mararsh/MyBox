@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.DataFileReader.Operation;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -22,7 +23,6 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -47,6 +47,7 @@ public class DataFileExcel extends DataFile {
 
     protected List<String> sheetNames;
     protected boolean currentSheetOnly;
+    protected int num;
 
     public DataFileExcel() {
         type = Type.Excel;
@@ -102,15 +103,8 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public long readDataDefinition() {
-        new DataFileExcelReader(this) {
-
-            @Override
-            public boolean readIterator() {
-                return true;
-            }
-
-        }.setReaderTask(task).start();
-
+        new DataFileExcelReader(this).
+                setReaderTask(task).start(Operation.ReadDefnition);
         return super.readDataDefinition();
     }
 
@@ -120,48 +114,9 @@ public class DataFileExcel extends DataFile {
             hasHeader = false;
             return null;
         }
-        List<String> names = new ArrayList<>();
-        new DataFileExcelReader(this) {
-
-            @Override
-            public boolean readIterator() {
-                try {
-                    Row firstRow = null;
-                    while (iterator.hasNext()) {
-                        firstRow = iterator.next();
-                        if (firstRow != null) {
-                            break;
-                        }
-                    }
-                    if (firstRow == null) {
-                        return false;
-                    }
-                    List values = new ArrayList<>();
-                    for (int col = firstRow.getFirstCellNum(); col < firstRow.getLastCellNum(); col++) {
-                        String v = MicrosoftDocumentTools.cellString(firstRow.getCell(col));
-                        values.add(v);
-                    }
-                    if (hasHeader && StringTools.noDuplicated(values, true)) {
-                        names.addAll(values);
-                    } else {
-                        hasHeader = false;
-                        for (int i = 1; i <= values.size(); i++) {
-                            names.add(colPrefix() + i);
-                        }
-                    }
-                    return true;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    if (task != null) {
-                        task.setError(e.toString());
-                    }
-                    return false;
-                }
-            }
-
-        }.setReaderTask(task).start();
-
-        return names;
+        DataFileReader reader = new DataFileExcelReader(this)
+                .setReaderTask(task).start(Operation.ReadColumns);
+        return reader.getNames();
     }
 
     @Override
@@ -170,30 +125,8 @@ public class DataFileExcel extends DataFile {
         if (file == null || !file.exists() || file.length() == 0) {
             return 0;
         }
-        new DataFileExcelReader(this) {
-
-            @Override
-            public boolean readRow() {
-                try {
-                    if (iterator == null || backgroundTask == null || backgroundTask.isCancelled()) {
-                        dataSize = 0;
-                        readerStopped = true;
-                        return false;
-                    }
-                    if (iterator.next() != null) {
-                        dataSize++;
-                    }
-
-                } catch (Exception e) {
-                }
-                return true;
-            }
-
-        }.setReaderTask(backgroundTask).start();
-
-        if (hasHeader && dataSize > 0) {
-            dataSize--;
-        }
+        new DataFileExcelReader(this)
+                .setReaderTask(backgroundTask).start(Operation.ReadTotal);
         return dataSize;
     }
 
@@ -207,47 +140,12 @@ public class DataFileExcel extends DataFile {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
-        List<List<String>> rows = new ArrayList<>();
-        new DataFileExcelReader(this) {
-            long rowIndex = -1;
-            int columnsNumber = columnsNumber();
-            long rowsEnd = startRowOfCurrentPage + pageSize;
-
-            @Override
-            public boolean readRow() {
-                try {
-                    Row fileRow = iterator.next();
-                    if (fileRow == null) {
-                        return true;
-                    }
-                    if (++rowIndex < startRowOfCurrentPage) {
-                        return true;
-                    }
-                    if (rowIndex >= rowsEnd) {
-                        readerStopped = true;
-                        return true;
-                    }
-                    List<String> row = new ArrayList<>();
-                    for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                        String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
-                        row.add(v);
-                        if (row.size() >= columnsNumber) {
-                            break;
-                        }
-                    }
-                    for (int col = row.size(); col < columnsNumber; col++) {
-                        row.add(null);
-                    }
-                    row.add(0, "" + (rowIndex + 1));
-                    rows.add(row);
-                } catch (Exception e) {
-                }
-                return true;
-            }
-
-        }.setReaderTask(task).start();
-
-        endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
+        DataFileReader reader = new DataFileExcelReader(this)
+                .setReaderTask(task).start(Operation.ReadPage);
+        List<List<String>> rows = reader.getRows();
+        if (rows != null) {
+            endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
+        }
         return rows;
     }
 
@@ -728,6 +626,8 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public boolean setValue(List<Integer> cols, String value) {
+        MyBoxLog.debug(cols);
+        MyBoxLog.debug(value);
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -806,7 +706,7 @@ public class DataFileExcel extends DataFile {
             }
             return false;
         }
-        return tmpFile != null && tmpFile.exists();
+        return FileTools.rename(tmpFile, file, false);
     }
 
     @Override
@@ -818,7 +718,8 @@ public class DataFileExcel extends DataFile {
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
-        int tcolsNumber = 0, trowsNumber = 0;
+        int tcolsNumber = 0;
+        num = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -834,16 +735,14 @@ public class DataFileExcel extends DataFile {
             }
             tcolsNumber = names.size();
 
-            Object ret = new DataFileExcelReader(this) {
-
-                int rowsNum = 0;
+            new DataFileExcelReader(this) {
 
                 @Override
                 public boolean handle(List<String> record) {
                     try {
                         List<String> row = new ArrayList<>();
                         if (rowNumber) {
-                            row.add((rowsNum + 1) + "");
+                            row.add((num + 1) + "");
                         }
                         for (int i : cols) {
                             if (i >= 0 && i < record.size()) {
@@ -853,22 +752,13 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                        rowsNum++;
+                        num++;
                     } catch (Exception e) {
                     }
                     return true;
                 }
 
-                @Override
-                public Object returnValue() {
-                    return rowsNum;
-                }
-
             }.setReaderTask(task).start();
-
-            if (ret != null) {
-                trowsNumber = (int) ret;
-            }
 
         } catch (Exception e) {
             if (task != null) {
@@ -881,7 +771,7 @@ public class DataFileExcel extends DataFile {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+                    .setColsNumber(tcolsNumber).setRowsNumber(num);
             return targetData;
         } else {
             return null;
@@ -918,7 +808,7 @@ public class DataFileExcel extends DataFile {
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
-        int trowsNumber = 0;
+        num = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
@@ -930,17 +820,15 @@ public class DataFileExcel extends DataFile {
                 }
             }
             csvPrinter.printRecord(row);
-            trowsNumber++;
+            num++;
 
-            Object ret = new DataFileExcelReader(this) {
-
-                int rowsNum = 0;
+            new DataFileExcelReader(this) {
 
                 @Override
                 public boolean handle(List<String> record) {
                     try {
                         List<String> row = new ArrayList<>();
-                        row.add((rowsNum + 1) + "");
+                        row.add(num + "");
                         for (int c = 0; c < colLen; c++) {
                             int col = cols.get(c);
                             double v = 0;
@@ -957,22 +845,13 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                        rowsNum++;
+                        num++;
                     } catch (Exception e) {
                     }
                     return true;
                 }
 
-                @Override
-                public Object returnValue() {
-                    return rowsNum;
-                }
-
             }.setReaderTask(task).start();
-
-            if (ret != null) {
-                trowsNumber = (int) ret;
-            }
 
         } catch (Exception e) {
             if (task != null) {
@@ -985,7 +864,7 @@ public class DataFileExcel extends DataFile {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(names.size()).setRowsNumber(trowsNumber);
+                    .setColsNumber(names.size()).setRowsNumber(num);
             return targetData;
         } else {
             return null;
@@ -1037,7 +916,8 @@ public class DataFileExcel extends DataFile {
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
-        int tcolsNumber = 0, trowsNumber = 0;
+        int tcolsNumber = 0;
+        num = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -1053,16 +933,14 @@ public class DataFileExcel extends DataFile {
             }
             tcolsNumber = names.size();
 
-            Object ret = new DataFileExcelReader(this) {
-
-                int rowsNum = 0;
+            new DataFileExcelReader(this) {
 
                 @Override
                 public boolean handle(List<String> record) {
                     try {
                         List<String> row = new ArrayList<>();
                         if (rowNumber) {
-                            row.add((rowsNum + 1) + "");
+                            row.add((num + 1) + "");
                         }
                         for (int c = 0; c < colLen; c++) {
                             int col = cols.get(c);
@@ -1075,22 +953,13 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                        rowsNum++;
+                        num++;
                     } catch (Exception e) {
                     }
                     return true;
                 }
 
-                @Override
-                public Object returnValue() {
-                    return rowsNum;
-                }
-
             }.setReaderTask(task).start();
-
-            if (ret != null) {
-                trowsNumber = (int) ret;
-            }
 
         } catch (Exception e) {
             if (task != null) {
@@ -1103,7 +972,7 @@ public class DataFileExcel extends DataFile {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+                    .setColsNumber(tcolsNumber).setRowsNumber(num);
             return targetData;
         } else {
             return null;
@@ -1147,7 +1016,8 @@ public class DataFileExcel extends DataFile {
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
-        int tcolsNumber = 0, trowsNumber = 0;
+        int tcolsNumber = 0;
+        num = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -1163,16 +1033,14 @@ public class DataFileExcel extends DataFile {
             }
             tcolsNumber = names.size();
 
-            Object ret = new DataFileExcelReader(this) {
-
-                int rowsNum = 0;
+            new DataFileExcelReader(this) {
 
                 @Override
                 public boolean handle(List<String> record) {
                     try {
                         List<String> row = new ArrayList<>();
                         if (rowNumber) {
-                            row.add((rowsNum + 1) + "");
+                            row.add((num + 1) + "");
                         }
                         for (int c = 0; c < colLen; c++) {
                             int col = cols.get(c);
@@ -1185,22 +1053,13 @@ public class DataFileExcel extends DataFile {
                             }
                         }
                         csvPrinter.printRecord(row);
-                        rowsNum++;
+                        num++;
                     } catch (Exception e) {
                     }
                     return true;
                 }
 
-                @Override
-                public Object returnValue() {
-                    return rowsNum;
-                }
-
             }.setReaderTask(task).start();
-
-            if (ret != null) {
-                trowsNumber = (int) ret;
-            }
 
         } catch (Exception e) {
             if (task != null) {
@@ -1213,7 +1072,7 @@ public class DataFileExcel extends DataFile {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+                    .setColsNumber(tcolsNumber).setRowsNumber(num);
             return targetData;
         } else {
             return null;
@@ -1226,10 +1085,10 @@ public class DataFileExcel extends DataFile {
             return null;
         }
         int colLen = cols.size();
-        int tcolsNumber = 0, trowsNumber = 0;
+        int tcolsNumber = 0;
+        num = 0;
         double[] sum = new double[colLen];
-        Object ret = new DataFileExcelReader(this) {
-            int num = 0;
+        new DataFileExcelReader(this) {
 
             @Override
             public boolean handle(List<String> record) {
@@ -1247,21 +1106,14 @@ public class DataFileExcel extends DataFile {
                 }
                 return true;
             }
-
-            @Override
-            public Object returnValue() {
-                return num;
-            }
         }.setReaderTask(task).start();
-        if (ret != null) {
-            trowsNumber = (int) ret;
-        }
-        if (trowsNumber <= 0) {
+
+        if (num <= 0) {
             return null;
         }
         double[] mean = new double[colLen];
         for (int c = 0; c < colLen; c++) {
-            mean[c] = sum[c] / trowsNumber;
+            mean[c] = sum[c] / num;
         }
         double[] variance = new double[colLen];
         new DataFileExcelReader(this) {
@@ -1283,12 +1135,13 @@ public class DataFileExcel extends DataFile {
         }.setReaderTask(task).start();
 
         for (int c = 0; c < colLen; c++) {
-            variance[c] = Math.sqrt(variance[c] / trowsNumber);
+            variance[c] = Math.sqrt(variance[c] / num);
         }
         File csvFile = tmpFile("normalizeZscore");
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
+        num = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -1305,8 +1158,6 @@ public class DataFileExcel extends DataFile {
             tcolsNumber = names.size();
 
             new DataFileExcelReader(this) {
-
-                int num = 0;
 
                 @Override
                 public boolean handle(List<String> record) {
@@ -1344,7 +1195,7 @@ public class DataFileExcel extends DataFile {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+                    .setColsNumber(tcolsNumber).setRowsNumber(num);
             return targetData;
         } else {
             return null;

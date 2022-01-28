@@ -730,6 +730,24 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    public List<String> columnNames(List<Integer> indices) {
+        try {
+            if (indices == null || columns == null || columns.isEmpty()) {
+                return null;
+            }
+            List<String> names = new ArrayList<>();
+            int len = columns.size();
+            for (Integer i : indices) {
+                if (i >= 0 && i < len) {
+                    names.add(columns.get(i).getName());
+                }
+            }
+            return names;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public boolean isColumnsValid() {
         return columns != null && !columns.isEmpty();
     }

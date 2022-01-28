@@ -1,11 +1,8 @@
 package mara.mybox.data;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -17,43 +14,20 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * @CreateDate 2022-1-27
  * @License Apache License Version 2.0
  */
-public class DataFileExcelReader {
+public class DataFileExcelReader extends DataFileReader {
 
-    protected DataFileExcel readerData;
-    protected File readerFile;
+    protected DataFileExcel readerExcel;
     protected String readerSheet;
-    protected boolean readerHasHeader, readerStopped, needCheckTask;
-    protected Iterator<Row> iterator;
-    protected Object returnedValue;
-    protected SingletonTask readerTask;
 
     public DataFileExcelReader(DataFileExcel data) {
-        this.readerData = data;
-        if (data != null) {
-            readerFile = data.getFile();
-            readerSheet = data.getSheet();
-            readerHasHeader = data.isHasHeader();
-            readerTask = data.getTask();
-            needCheckTask = readerTask != null;
-        }
+        this.readerExcel = data;
+        readerSheet = data.getSheet();
+        init(data);
     }
 
-    public DataFileExcelReader(File readerFile, String readerSheet) {
-        this.readerFile = readerFile;
-        this.readerSheet = readerSheet;
-    }
-
-    public boolean valid() {
-        return true;
-    }
-
-    public Object start() {
-        iterator = null;
-        readerStopped = false;
-        if (readerFile == null || !readerFile.exists() || readerFile.length() == 0 || !valid()) {
-            return null;
-        }
-        try (Workbook wb = WorkbookFactory.create(readerFile)) {
+    @Override
+    public void scanFile() {
+        try ( Workbook wb = WorkbookFactory.create(readerFile)) {
             Sheet sourceSheet;
             if (readerSheet != null) {
                 sourceSheet = wb.getSheet(readerSheet);
@@ -61,17 +35,37 @@ public class DataFileExcelReader {
                 sourceSheet = wb.getSheetAt(0);
                 readerSheet = sourceSheet.getSheetName();
             }
-            if (readerData != null) {
+            if (readerExcel != null) {
                 int sheetsNumber = wb.getNumberOfSheets();
                 List<String> sheetNames = new ArrayList<>();
                 for (int i = 0; i < sheetsNumber; i++) {
                     sheetNames.add(wb.getSheetName(i));
                 }
-                readerData.setSheetNames(sheetNames);
-                readerData.setSheet(readerSheet);
+                readerExcel.setSheetNames(sheetNames);
+                readerExcel.setSheet(readerSheet);
             }
             iterator = sourceSheet.iterator();
-            readIterator();
+            if (operation == null) {
+                readRecords();
+            } else {
+                switch (operation) {
+                    case ReadDefnition:
+                        readDefinition();
+                        break;
+                    case ReadColumns:
+                        readColumns();
+                        break;
+                    case ReadTotal:
+                        readTotal();
+                        break;
+                    case ReadPage:
+                        readPage();
+                        break;
+                    default:
+                        readRecords();
+                        break;
+                }
+            }
             wb.close();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -79,152 +73,109 @@ public class DataFileExcelReader {
                 readerTask.setError(e.toString());
             }
         }
-        return returnValue();
     }
 
-    public boolean readIterator() {
-        try {
-            if (iterator == null || !iterator.hasNext()) {
-                return true;
+    public void readColumns() {
+        if (iterator == null) {
+            return;
+        }
+        while (iterator.hasNext() && !readerStopped()) {
+            record = readRecord();
+            if (record == null || record.isEmpty()) {
+                continue;
             }
-            if (readerHasHeader) {
-                while (iterator.hasNext() && (iterator.next() == null) && !readerStopped()) {
-                }
-            }
-            while (iterator.hasNext() && !readerStopped()) {
-                readRow();
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
-            }
-            return false;
+            handleHeader();
+            return;
         }
     }
 
-    public boolean readRow() {
+    public void readTotal() {
+        if (iterator == null) {
+            return;
+        }
+        while (iterator.hasNext()) {
+            if (readerStopped()) {
+                rowIndex = 0;
+                return;
+            }
+            ++rowIndex;
+            iterator.next();
+        }
+    }
+
+    public void skipHeader() {
+        if (!readerHasHeader || iterator == null) {
+            return;
+        }
+        while (iterator.hasNext() && (iterator.next() == null) && !readerStopped()) {
+        }
+    }
+
+    public void readPage() {
+        if (iterator == null) {
+            return;
+        }
+        skipHeader();
+        rowIndex = 0;
+        while (iterator.hasNext() && !readerStopped()) {
+            if (++rowIndex < rowsStart) {
+                iterator.next();
+                continue;
+            }
+            if (rowIndex >= rowsEnd) {
+                readerStopped = true;
+                break;
+            }
+            record = readRecord();
+            if (record == null || record.isEmpty()) {
+                continue;
+            }
+            handlePageRow();
+        }
+    }
+
+    public void readRecords() {
+        if (iterator == null) {
+            return;
+        }
+        skipHeader();
+        rowIndex = 0;
+        while (iterator.hasNext() && !readerStopped()) {
+            record = readRecord();
+            if (record == null || record.isEmpty()) {
+                continue;
+            }
+            ++rowIndex;
+            handle(record);
+        }
+    }
+
+    @Override
+    public List<String> readRecord() {
         try {
             if (readerStopped() || iterator == null) {
-                return false;
+                return null;
             }
             Row readerFileRow = iterator.next();
             if (readerFileRow == null) {
-                return false;
+                return null;
             }
-            List<String> record = new ArrayList<>();
+            record = new ArrayList<>();
             for (int cellIndex = readerFileRow.getFirstCellNum(); cellIndex < readerFileRow.getLastCellNum(); cellIndex++) {
                 String v = MicrosoftDocumentTools.cellString(readerFileRow.getCell(cellIndex));
                 record.add(v);
             }
             if (record.isEmpty()) {
-                return false;
+                return null;
             }
-            return handle(record);
+            return record;
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (readerTask != null) {
                 readerTask.setError(e.toString());
             }
-            return false;
+            return null;
         }
-    }
-
-    public boolean handle(List<String> record) {
-        return true;
-    }
-
-    public Object returnValue() {
-        return null;
-    }
-
-    public boolean readerStopped() {
-        return readerStopped || (needCheckTask && (readerTask == null || readerTask.isCancelled()));
-    }
-
-    /*
-        get/set
-     */
-    public DataFileExcel getReaderData() {
-        return readerData;
-    }
-
-    public DataFileExcelReader setReaderData(DataFileExcel readerData) {
-        this.readerData = readerData;
-        return this;
-    }
-
-    public File getReaderFile() {
-        return readerFile;
-    }
-
-    public DataFileExcelReader setReaderFile(File readerFile) {
-        this.readerFile = readerFile;
-        return this;
-    }
-
-    public String getReaderSheet() {
-        return readerSheet;
-    }
-
-    public DataFileExcelReader setReaderSheet(String readerSheet) {
-        this.readerSheet = readerSheet;
-        return this;
-    }
-
-    public boolean isReaderHasHeader() {
-        return readerHasHeader;
-    }
-
-    public DataFileExcelReader setReaderHasHeader(boolean readerHasHeader) {
-        this.readerHasHeader = readerHasHeader;
-        return this;
-    }
-
-    public boolean isReaderCanceled() {
-        return readerStopped;
-    }
-
-    public DataFileExcelReader setReaderCanceled(boolean readerStopped) {
-        this.readerStopped = readerStopped;
-        return this;
-    }
-
-    public boolean isNeedCheckTask() {
-        return needCheckTask;
-    }
-
-    public DataFileExcelReader setNeedCheckTask(boolean needCheckTask) {
-        this.needCheckTask = needCheckTask;
-        return this;
-    }
-
-    public Iterator<Row> getIterator() {
-        return iterator;
-    }
-
-    public DataFileExcelReader setIterator(Iterator<Row> iterator) {
-        this.iterator = iterator;
-        return this;
-    }
-
-    public Object getReturnedValue() {
-        return returnedValue;
-    }
-
-    public DataFileExcelReader setReturnedValue(Object returnedValue) {
-        this.returnedValue = returnedValue;
-        return this;
-    }
-
-    public SingletonTask getReaderTask() {
-        return readerTask;
-    }
-
-    public DataFileExcelReader setReaderTask(SingletonTask readerTask) {
-        this.readerTask = readerTask;
-        return this;
     }
 
 }

@@ -110,6 +110,9 @@ public class WindowTools {
 
             // Close anyway
             stage.setOnHiding((WindowEvent event) -> {
+                if (controller != null) {
+                    controller.leaveScene();
+                }
                 WindowTools.closeWindow(stage);
             });
 
