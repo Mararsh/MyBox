@@ -130,7 +130,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     }
 
     public void checkMemoryLabel() {
-        if (allPages() && (modeCheck.isSelected() || medianCheck.isSelected())) {
+        if (sourceController.allPages() && (modeCheck.isSelected() || medianCheck.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
             }
@@ -171,7 +171,7 @@ public class Data2DStatisticController extends Data2DHandleController {
 
     public boolean prepareRows() {
         try {
-            List<String> names = tableController.checkedColsNames();
+            List<String> names = sourceController.checkedColsNames();
             if (names == null || names.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
@@ -262,7 +262,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     @FXML
     @Override
     public void okAction() {
-        if ((allPages() && !tableController.checkBeforeLoadingTableData())
+        if ((sourceController.allPages() && !editController.checkBeforeLoadingTableData())
                 || !checkOptions() || !prepareRows()) {
             return;
         }
@@ -272,14 +272,14 @@ public class Data2DStatisticController extends Data2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    if (allPages()) {
+                    if (sourceController.allPages()) {
                         if (modeCheck.isSelected() || medianCheck.isSelected()) {
-                            return statisticRows(data2D.allRows(tableController.checkedColsIndices(), false));
+                            return statisticRows(data2D.allRows(sourceController.checkedColsIndices(), false));
                         } else {
                             return statisticFile();
                         }
                     } else {
-                        return statisticRows(tableController.selectedData(all(), false));
+                        return statisticRows(sourceController.selectedData(false));
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -368,7 +368,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     }
 
     public boolean statisticFile() {
-        DoubleStatistic[] statisticData = data2D.statisticData(tableController.checkedColsIndices);
+        DoubleStatistic[] statisticData = data2D.statisticData(sourceController.checkedColsIndices);
         if (statisticData == null) {
             return false;
         }

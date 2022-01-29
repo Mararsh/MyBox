@@ -2,10 +2,8 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -31,18 +29,13 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
     @FXML
     protected ControlDataClipboardTable listController;
     @FXML
-    protected ControlData2DSelect selectController;
+    protected ControlData2DSource sourceController;
     @FXML
     protected Label nameLabel;
-    @FXML
-    protected CheckBox columnsCheck;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
-
-    public Data2DPasteContentInMyBoxClipboardController() {
-    }
 
     @Override
     public void initValues() {
@@ -51,11 +44,12 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
 
             dataClipboard = new DataClipboard();
 
-            selectController.setData(dataClipboard);
-            selectController.dataLabel = nameLabel;
-            selectController.baseTitle = baseTitle;
+            sourceController.setData(dataClipboard);
+            sourceController.dataLabel = nameLabel;
+            sourceController.baseTitle = baseTitle;
+            sourceController.showAllPages(false);
 
-            listController.setParameters(selectController);
+            listController.setParameters(sourceController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -67,20 +61,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
             this.parentController = target;
             targetTableController = target;
             dataTarget = target.data2D;
-
-            columnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (columnsCheck.isSelected()) {
-                        selectController.selectAllCols();
-                    } else {
-                        selectController.selectNoneCols();
-                    }
-                }
-            });
 
             targetTableController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -150,7 +130,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
                 popError(message("InvalidParameters"));
                 return;
             }
-            List<List<String>> data = selectController.selectedData(false, false);
+            List<List<String>> data = sourceController.selectedData(false);
             if (data == null || data.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;

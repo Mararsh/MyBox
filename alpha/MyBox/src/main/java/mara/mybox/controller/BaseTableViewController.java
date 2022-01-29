@@ -47,7 +47,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class BaseTableViewController<P> extends BaseController {
-    
+
     protected ObservableList<P> tableData;
     protected String tableName, idColumn, queryConditions, orderColumns, queryConditionsString;
     protected int pageSize, editingIndex, viewingIndex;
@@ -55,7 +55,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected long currentPage, startRowOfCurrentPage;  // 0-based
     protected boolean dataSizeLoaded, loadInBackground;
     protected final SimpleBooleanProperty selectNotify;
-    
+
     @FXML
     protected TableView<P> tableView;
     @FXML
@@ -70,18 +70,18 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected FlowPane paginationPane;
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
-    
+
     public BaseTableViewController() {
         tableName = "";
         TipsLabelKey = "TableTips";
         selectNotify = new SimpleBooleanProperty(false);
     }
-    
+
     @Override
     public void initValues() {
         try {
             super.initValues();
-            
+
             tableData = FXCollections.observableArrayList();
             pagesNumber = 1;
             currentPage = startRowOfCurrentPage = 0;
@@ -92,12 +92,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             initTable();
             initButtons();
             initPagination();
@@ -106,16 +106,16 @@ public abstract class BaseTableViewController<P> extends BaseController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void initMore() {
-        
+
     }
-    
+
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            
+
             if (deleteButton != null) {
                 NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
             }
@@ -135,16 +135,16 @@ public abstract class BaseTableViewController<P> extends BaseController {
             tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
                 tableChanged();
             });
-            
+
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener() {
                 @Override
                 public void onChanged(ListChangeListener.Change c) {
-                    selectNotify.set(selectNotify.get());
                     checkSelected();
+                    notifySelect();
                 }
             });
-            
+
             tableView.setOnMouseClicked((MouseEvent event) -> {
                 if (popMenu != null && popMenu.isShowing()) {
                     popMenu.hide();
@@ -157,9 +157,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     itemDoubleClicked();
                 }
             });
-            
+
             tableView.setItems(tableData);
-            
+
             if (deleteConfirmCheck != null) {
                 deleteConfirmCheck.selectedProperty().addListener(
                         (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -167,24 +167,31 @@ public abstract class BaseTableViewController<P> extends BaseController {
                         });
                 deleteConfirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmDelete", true));
             }
-            
+
             initColumns();
-            
+
             checkSelected();
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
+    public void notifySelect() {
+        if (isSettingValues) {
+            return;
+        }
+        selectNotify.set(!selectNotify.get());
+    }
+
     public boolean checkBeforeLoadingTableData() {
         return true;
     }
-    
+
     public void loadTableData() {
         loadPage(currentPage);
     }
-    
+
     public void loadPage(long page) {
         if (!checkBeforeLoadingTableData()) {
             return;
@@ -194,18 +201,18 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         task = new SingletonTask<Void>(this) {
             private List<P> data;
-            
+
             @Override
             protected boolean handle() {
                 countPagination(page);
                 data = readPageData();
                 return true;
             }
-            
+
             @Override
             protected void whenSucceeded() {
             }
-            
+
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -218,11 +225,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 isSettingValues = false;
                 postLoadedTableData();
             }
-            
+
         };
         start(task, !loadInBackground, message("LoadingTableData"));
     }
-    
+
     protected void countPagination(long page) {
         dataSize = readDataSize();
         if (dataSize < 0 || dataSize <= pageSize) {
@@ -239,7 +246,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         startRowOfCurrentPage = pageSize * currentPage;
     }
-    
+
     public void postLoadedTableData() {
         isSettingValues = true;
         tableView.refresh();
@@ -253,31 +260,31 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         setPagination();
     }
-    
+
     public long readDataSize() {
         return 0;
     }
-    
+
     public void loadDataSize() {
         dataSizeLoaded = true;
 //        setPagination();
     }
-    
+
     public List<P> readPageData() {
         return null;
     }
-    
+
     protected void tableChanged() {
         if (isSettingValues) {
             return;
         }
         tableChanged(true);
     }
-    
+
     public void tableChanged(boolean changed) {
         updateStatus();
     }
-    
+
     public void updateStatus() {
         checkSelected();
         if (dataSizeLabel != null) {
@@ -286,21 +293,21 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     + (dataSize > 0 ? "/" + dataSize : ""));
         }
     }
-    
+
     protected void checkSelected() {
         if (isSettingValues) {
             return;
         }
         checkButtons();
     }
-    
+
     public void itemClicked() {
     }
-    
+
     public void itemDoubleClicked() {
         editAction();
     }
-    
+
     protected void popTableMenu(MouseEvent event) {
         if (isSettingValues) {
             return;
@@ -326,16 +333,16 @@ public abstract class BaseTableViewController<P> extends BaseController {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
         popMenu.show(tableView, event.getScreenX(), event.getScreenY());
-        
+
     }
-    
+
     protected List<MenuItem> makeTableContextMenu() {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-            
+
             List<MenuItem> group = new ArrayList<>();
-            
+
             if (addButton != null && addButton.isVisible() && !addButton.isDisabled()) {
                 menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -343,7 +350,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 group.add(menu);
             }
-            
+
             if (viewButton != null && viewButton.isVisible() && !viewButton.isDisabled()) {
                 menu = new MenuItem(message("View"), StyleTools.getIconImage("iconView.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -351,7 +358,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 group.add(menu);
             }
-            
+
             if (editButton != null && editButton.isVisible() && !editButton.isDisabled()) {
                 menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -359,7 +366,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 group.add(menu);
             }
-            
+
             if (deleteButton != null && deleteButton.isVisible() && !deleteButton.isDisabled()) {
                 menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -367,7 +374,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 group.add(menu);
             }
-            
+
             if (clearButton != null && clearButton.isVisible() && !clearButton.isDisabled()) {
                 menu = new MenuItem(message("Clear"), StyleTools.getIconImage("iconClear.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -375,12 +382,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 group.add(menu);
             }
-            
+
             if (!group.isEmpty()) {
                 items.addAll(group);
                 items.add(new SeparatorMenuItem());
             }
-            
+
             if (paginationPane == null || paginationPane.isVisible()) {
                 if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
                     menu = new MenuItem(message("NextPage"), StyleTools.getIconImage("iconNext.png"));
@@ -389,7 +396,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     });
                     items.add(menu);
                 }
-                
+
                 if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
                     menu = new MenuItem(message("PreviousPage"), StyleTools.getIconImage("iconPrevious.png"));
                     menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -398,7 +405,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     items.add(menu);
                 }
             }
-            
+
             if (refreshButton != null && refreshButton.isVisible() && !refreshButton.isDisabled()) {
                 menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -406,7 +413,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 items.add(menu);
             }
-            
+
             if (moveUpButton != null && moveUpButton.isVisible() && !moveUpButton.isDisabled()) {
                 menu = new MenuItem(message("MoveUp"), StyleTools.getIconImage("iconUp.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -414,7 +421,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 items.add(menu);
             }
-            
+
             if (moveDownButton != null && moveDownButton.isVisible() && !moveDownButton.isDisabled()) {
                 menu = new MenuItem(message("MoveDown"), StyleTools.getIconImage("iconDown.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -422,21 +429,21 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 });
                 items.add(menu);
             }
-            
+
             menu = new MenuItem(message("Snapshot"), StyleTools.getIconImage("iconSnapshot.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 ImageViewerController.load(NodeTools.snap(tableView));
             });
             items.add(menu);
-            
+
             return items;
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
-    
+
     public void resetView() {
         isSettingValues = true;
         tableData.clear();
@@ -473,12 +480,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     }
                 });
             }
-            
+
             if (rowsSelectionColumn != null) {
                 tableView.setEditable(true);
                 rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -490,11 +497,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public P newData() {
         return null;
     }
-    
+
     public void addRows() {
         addRows(-1, 1);
     }
-    
+
     public void addRows(int index, int number) {
         if (number < 1) {
             return;
@@ -512,11 +519,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = false;
         tableChanged(true);
     }
-    
+
     public P dataCopy(P data) {
         return data;
     }
-    
+
     public void copySelected() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
@@ -532,7 +539,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = false;
         tableChanged(true);
     }
-    
+
     public String cellString(int row, int col) {
         try {
             return tableView.getColumns().get(col).getCellData(row).toString();
@@ -540,7 +547,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return null;
         }
     }
-    
+
     public List<List<String>> dataList() {
         try {
             if (tableData.isEmpty()) {
@@ -580,12 +587,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
      */
     protected void initButtons() {
         try {
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void checkButtons() {
         if (isSettingValues) {
             return;
@@ -621,19 +628,19 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     + (none ? 0 : tableView.getSelectionModel().getSelectedIndices().size()));
         }
     }
-    
+
     @FXML
     @Override
     public void addAction() {
         editNull();
     }
-    
+
     @FXML
     @Override
     public void addRowsAction() {
         TableAddRowsController.open(this);
     }
-    
+
     @FXML
     public void popAddMenu(MouseEvent mouseEvent) {
         try {
@@ -642,33 +649,33 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-            
+
             MenuItem menu;
-            
+
             menu = new MenuItem(message("AddInFront"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(0, 1);
             });
             popMenu.getItems().add(menu);
-            
+
             menu = new MenuItem(message("AddInEnd"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(-1, 1);
             });
             popMenu.getItems().add(menu);
-            
+
             menu = new MenuItem(message("AddBeforeSelected"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(tableView.getSelectionModel().getSelectedIndex(), 1);
             });
             popMenu.getItems().add(menu);
-            
+
             menu = new MenuItem(message("AddAfterSelected"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(tableView.getSelectionModel().getSelectedIndex() + 1, 1);
             });
             popMenu.getItems().add(menu);
-            
+
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -679,22 +686,22 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 }
             });
             popMenu.getItems().add(menu);
-            
+
             LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     public void editAction() {
         edit(tableView.getSelectionModel().getSelectedIndex());
     }
-    
+
     public void editNull() {
         editingIndex = -1;
     }
-    
+
     public void edit(int index) {
         if (index < 0 || tableData == null || index >= tableData.size()) {
             editNull();
@@ -702,16 +709,16 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         editingIndex = index;
     }
-    
+
     @FXML
     public void viewAction() {
         view(tableView.getSelectionModel().getSelectedIndex());
     }
-    
+
     public void viewNull() {
         viewingIndex = -1;
     }
-    
+
     public void view(int index) {
         if (index < 0 || tableData == null || index >= tableData.size()) {
             viewNull();
@@ -719,24 +726,24 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         viewingIndex = index;
     }
-    
+
     @FXML
     @Override
     public void copyAction() {
         copySelected();
     }
-    
+
     @FXML
     public void insertAction() {
         addRows(tableView.getSelectionModel().getSelectedIndex(), 1);
     }
-    
+
     @FXML
     @Override
     public void recoverAction() {
         edit(editingIndex);
     }
-    
+
     @FXML
     @Override
     public void deleteAction() {
@@ -761,15 +768,15 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 return;
             }
             task = new SingletonTask<Void>(this) {
-                
+
                 private int deletedCount = 0;
-                
+
                 @Override
                 protected boolean handle() {
                     deletedCount = deleteSelectedData();
                     return deletedCount >= 0;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     popInformation(message("Deleted") + ":" + deletedCount);
@@ -781,7 +788,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             start(task);
         }
     }
-    
+
     protected int deleteSelectedData() {
         List<P> selected = new ArrayList<>();
         selected.addAll(tableView.getSelectionModel().getSelectedItems());
@@ -790,15 +797,15 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         return deleteData(selected);
     }
-    
+
     protected int deleteData(List<P> data) {
         return 0;
     }
-    
+
     protected void afterDeletion() {
         refreshAction();
     }
-    
+
     @FXML
     @Override
     public void clearAction() {
@@ -814,13 +821,13 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
             task = new SingletonTask<Void>(this) {
                 int deletedCount = 0;
-                
+
                 @Override
                 protected boolean handle() {
                     deletedCount = clearData();
                     return deletedCount >= 0;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     popInformation(message("Deleted") + ":" + deletedCount);
@@ -832,7 +839,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             start(task);
         }
     }
-    
+
     protected int clearData() {
         int size = tableData.size();
         isSettingValues = true;
@@ -840,12 +847,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = false;
         return size;
     }
-    
+
     protected void afterClear() {
         resetView();
         afterDeletion();
     }
-    
+
     @FXML
     public void deleteRowsAction() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
@@ -858,12 +865,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = false;
         tableChanged(true);
     }
-    
+
     @FXML
     public void refreshAction() {
         loadPage(currentPage);
     }
-    
+
     @FXML
     public void moveUpAction() {
         List<Integer> selected = new ArrayList<>();
@@ -891,7 +898,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         isSettingValues = false;
         tableChanged(true);
     }
-    
+
     @FXML
     public void moveDownAction() {
         List<Integer> selected = new ArrayList<>();
@@ -921,7 +928,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         tableView.refresh();
         tableChanged(true);
     }
-    
+
     @FXML
     public void dataAction() {
         try {
@@ -961,7 +968,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     public void htmlAction() {
         try {
@@ -1018,10 +1025,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         checkPageSelector();
                     });
-            
+
             pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
                     "500", "1000", "2000", "5000", "10000", "20000", "50000"));
-            
+
             pageSizeSelector.setValue(pageSize + "");
             pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -1039,12 +1046,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
                             pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void pageSizeChanged(int v) {
         if (v <= 0) {
             return;
@@ -1056,7 +1063,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             loadTableData();
         }
     }
-    
+
     protected boolean checkPageSelector() {
         if (isSettingValues || pageSelector == null) {
             return false;
@@ -1077,7 +1084,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return false;
         }
     }
-    
+
     protected void setPagination() {
         try {
             if (paginationPane != null) {
@@ -1120,36 +1127,36 @@ public abstract class BaseTableViewController<P> extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        
+
     }
-    
+
     @FXML
     public void goPage() {
         checkPageSelector();
     }
-    
+
     @FXML
     @Override
     public void pageNextAction() {
         loadPage(currentPage + 1);
     }
-    
+
     @FXML
     @Override
     public void pagePreviousAction() {
         loadPage(currentPage - 1);
     }
-    
+
     @FXML
     @Override
     public void pageFirstAction() {
         loadPage(0);
     }
-    
+
     @FXML
     @Override
     public void pageLastAction() {
         loadPage(Integer.MAX_VALUE);
     }
-    
+
 }

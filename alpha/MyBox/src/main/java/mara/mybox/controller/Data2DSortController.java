@@ -64,7 +64,7 @@ public class Data2DSortController extends Data2DHandleController {
 
     public void refreshControls() {
         try {
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = editController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 colSelector.getItems().clear();
                 return;
@@ -84,8 +84,8 @@ public class Data2DSortController extends Data2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(allPages());
-        memoryNoticeLabel.setVisible(allPages());
+        targetController.setNotInTable(sourceController.allPages());
+        memoryNoticeLabel.setVisible(sourceController.allPages());
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
         if (orderCol < 0) {
             infoLabel.setText(message("SelectToHandle"));
@@ -97,7 +97,7 @@ public class Data2DSortController extends Data2DHandleController {
 
     public List<Integer> adjustedCols() {
         try {
-            colsNames = tableController.checkedColsNames();
+            colsNames = sourceController.checkedColsNames();
             String orderName = data2D.colName(orderCol);
             if (colsNames.contains(orderName)) {
                 colsNames.remove(orderName);
@@ -128,8 +128,8 @@ public class Data2DSortController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            handledData = tableController.selectedData(
-                    tableController.checkedRowsIndices(all()), adjustedCols(), showRowNumber());
+            handledData = sourceController.selectedData(
+                    sourceController.checkedRowsIndices(), adjustedCols(), showRowNumber());
             sort(handledData);
             if (showRowNumber()) {
                 handledData.add(0, colsNames);

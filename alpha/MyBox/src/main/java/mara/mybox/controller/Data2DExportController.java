@@ -10,9 +10,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -31,15 +28,13 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DExportController extends BaseTaskController {
 
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DEditTable editController;
     protected String filePrefix;
     protected List<Data2DColumn> selectedColumns;
     protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
 
     @FXML
-    protected ToggleGroup rowGroup;
-    @FXML
-    protected RadioButton allRowsRadio;
+    protected ControlData2DSource sourceController;
     @FXML
     protected VBox dataVBox, formatVBox, targetVBox;
     @FXML
@@ -55,7 +50,7 @@ public class Data2DExportController extends BaseTaskController {
 
     @Override
     public void setStageStatus() {
-        setAsPop(baseName);
+        setAsNormal();
     }
 
     @Override
@@ -78,25 +73,20 @@ public class Data2DExportController extends BaseTaskController {
         }
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DEditTable editController) {
         try {
-            this.tableController = tableController;
-            getMyStage().setTitle(tableController.getBaseTitle());
+            this.editController = editController;
+            getMyStage().setTitle(editController.getBaseTitle());
 
-            rowGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkOptions();
-                }
-            });
+            sourceController.setParameters(this, editController);
 
-            tableController.selectNotify.addListener(new ChangeListener<Boolean>() {
+            editController.selectNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();
                 }
             });
-            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            editController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();
@@ -111,11 +101,11 @@ public class Data2DExportController extends BaseTaskController {
 
     public boolean checkSource() {
         try {
-            dataLabel.setText(tableController.data2D.displayName());
+            dataLabel.setText(editController.data2D.displayName());
             infoLabel.setText("");
 
-            selectedColumnsIndices = tableController.checkedColsIndices();
-            selectedColumns = tableController.checkedCols();
+            selectedColumnsIndices = sourceController.checkedColsIndices();
+            selectedColumns = sourceController.checkedCols();
             if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()
                     || selectedColumns == null || selectedColumns.isEmpty()) {
                 infoLabel.setText(message("SelectToHandle"));
@@ -123,8 +113,8 @@ public class Data2DExportController extends BaseTaskController {
                 return false;
             }
 
-            if (!allRowsRadio.isSelected()) {
-                selectedRowsIndices = tableController.checkedRowsIndices(false);
+            if (!sourceController.allPages()) {
+                selectedRowsIndices = sourceController.checkedRowsIndices();
                 if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
                     infoLabel.setText(message("SelectToHandle"));
                     startButton.setDisable(true);
@@ -148,26 +138,20 @@ public class Data2DExportController extends BaseTaskController {
             if (!checkSource()) {
                 return false;
             }
-            if (allRowsRadio.isSelected() && tableController.data2D.isMutiplePages()
-                    && tableController.data2D.isTableChanged()) {
-                infoLabel.setText(message("NeedSaveBeforeAction"));
-                startButton.setDisable(true);
-                return false;
-            }
             targetPath = targetPathController.file;
             if (targetPath == null) {
                 infoLabel.setText(message("InvalidParameters"));
                 startButton.setDisable(true);
                 return false;
             }
-            if (!tableController.data2D.hasData()) {
+            if (!editController.data2D.hasData()) {
                 infoLabel.setText(message("NoData"));
                 startButton.setDisable(true);
                 return false;
             }
 
             startButton.setDisable(false);
-            filePrefix = tableController.data2D.getDataName();
+            filePrefix = editController.data2D.getDataName();
             if (filePrefix == null || filePrefix.isBlank()) {
                 filePrefix = DateTools.nowFileString();
             }
@@ -195,10 +179,10 @@ public class Data2DExportController extends BaseTaskController {
         try {
             convertController.setExport(targetPath, selectedColumns, filePrefix, targetPathController.isSkip());
 
-            if (!allRowsRadio.isSelected() || !tableController.data2D.isMutiplePages()) {
-                selectedRowsIndices = tableController.checkedRowsIndices(allRowsRadio.isSelected());
+            if (!sourceController.allPages() || !editController.data2D.isMutiplePages()) {
+                selectedRowsIndices = sourceController.checkedRowsIndices();
                 for (Integer row : selectedRowsIndices) {
-                    List<String> dataRow = tableController.tableData.get(row);
+                    List<String> dataRow = editController.tableData.get(row);
                     List<String> exportRow = new ArrayList<>();
                     for (Integer col : selectedColumnsIndices) {
                         exportRow.add(dataRow.get(col + 1));
@@ -207,9 +191,9 @@ public class Data2DExportController extends BaseTaskController {
                 }
 
             } else {
-                tableController.data2D.setTask(task);
-                tableController.data2D.export(convertController, selectedColumnsIndices);
-                tableController.data2D.setTask(null);
+                editController.data2D.setTask(task);
+                editController.data2D.export(convertController, selectedColumnsIndices);
+                editController.data2D.setTask(null);
             }
 
             convertController.closeWriters();
@@ -276,42 +260,6 @@ public class Data2DExportController extends BaseTaskController {
         cancelTask();
         close();
     }
-
-    /*
-        source
-     */
-    @FXML
-    public void selectAllRows() {
-        tableController.isSettingValues = true;
-        tableController.allRowsCheck.setSelected(false);
-        tableController.isSettingValues = false;
-        tableController.allRowsCheck.setSelected(true);
-    }
-
-    @FXML
-    public void selectNoneRows() {
-        tableController.isSettingValues = true;
-        tableController.allRowsCheck.setSelected(true);
-        tableController.isSettingValues = false;
-        tableController.allRowsCheck.setSelected(false);
-    }
-
-    @FXML
-    public void selectAllCols() {
-        tableController.isSettingValues = true;
-        tableController.columnsCheck.setSelected(false);
-        tableController.isSettingValues = false;
-        tableController.columnsCheck.setSelected(true);
-    }
-
-    @FXML
-    public void selectNoneCols() {
-        tableController.isSettingValues = true;
-        tableController.columnsCheck.setSelected(true);
-        tableController.isSettingValues = false;
-        tableController.columnsCheck.setSelected(false);
-    }
-
 
     /*
         static

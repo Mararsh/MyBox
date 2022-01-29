@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DEditTable extends ControlData2DSelect {
+public class ControlData2DEditTable extends ControlData2DLoad {
 
     public ControlData2DEditTable() {
         forDisplay = false;

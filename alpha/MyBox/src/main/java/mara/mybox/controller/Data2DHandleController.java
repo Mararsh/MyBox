@@ -7,9 +7,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
 import mara.mybox.data.DataFile;
@@ -32,7 +29,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class Data2DHandleController extends BaseChildController {
 
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DEditTable editController;
     protected Data2D data2D;
     protected List<List<String>> handledData;
     protected List<Data2DColumn> handledColumns;
@@ -40,9 +37,7 @@ public abstract class Data2DHandleController extends BaseChildController {
     protected DataFile handledFile;
 
     @FXML
-    protected ToggleGroup rowGroup;
-    @FXML
-    protected RadioButton allRowsRadio;
+    protected ControlData2DSource sourceController;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -50,17 +45,19 @@ public abstract class Data2DHandleController extends BaseChildController {
     @FXML
     protected Label dataLabel, infoLabel;
 
-    public Data2DHandleController() {
+    @Override
+    public void setStageStatus() {
+        setAsNormal();
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DEditTable editController) {
         try {
-            this.tableController = tableController;
-            data2D = tableController.data2D;
-            getMyStage().setTitle(tableController.getTitle());
+            this.editController = editController;
+
+            sourceController.setParameters(this, editController);
 
             if (targetController != null) {
-                targetController.setParameters(this, tableController);
+                targetController.setParameters(this, editController);
             }
 
             if (rowNumberCheck != null) {
@@ -82,30 +79,19 @@ public abstract class Data2DHandleController extends BaseChildController {
                 });
             }
 
-            if (rowGroup != null) {
-                rowGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        checkOptions();
-                    }
-                });
-            }
-
-            tableController.selectNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
-                }
-            });
-
-            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
-                }
-            });
-
             checkOptions();
+            sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkOptions();
+                }
+            });
+            sourceController.selectNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkOptions();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -113,13 +99,16 @@ public abstract class Data2DHandleController extends BaseChildController {
     }
 
     public boolean checkOptions() {
+        data2D = editController.data2D;
+        getMyStage().setTitle(editController.getTitle());
+
         if (dataLabel != null) {
-            dataLabel.setText(data2D.displayName());
+            dataLabel.setText(editController.data2D.displayName());
         }
         if (infoLabel != null) {
             infoLabel.setText("");
         }
-        if (!tableController.checkSelections(all())) {
+        if (!sourceController.checkSelections()) {
             if (infoLabel != null) {
                 infoLabel.setText(message("SelectToHandle"));
             }
@@ -131,61 +120,11 @@ public abstract class Data2DHandleController extends BaseChildController {
                 infoLabel.setText(message("SelectToHandle"));
             }
             okButton.setDisable(true);
-            return false;
-        }
-        if (allChanged()) {
-            if (infoLabel != null) {
-                infoLabel.setText(message("NeedSaveBeforeAction"));
-            }
-            okButton.setDisable(true);
+            MyBoxLog.debug("here");
             return false;
         }
         okButton.setDisable(false);
         return true;
-    }
-
-    @FXML
-    public void selectAllRows() {
-        tableController.isSettingValues = true;
-        tableController.allRowsCheck.setSelected(false);
-        tableController.isSettingValues = false;
-        tableController.allRowsCheck.setSelected(true);
-    }
-
-    @FXML
-    public void selectNoneRows() {
-        tableController.isSettingValues = true;
-        tableController.allRowsCheck.setSelected(true);
-        tableController.isSettingValues = false;
-        tableController.allRowsCheck.setSelected(false);
-    }
-
-    @FXML
-    public void selectAllCols() {
-        tableController.isSettingValues = true;
-        tableController.columnsCheck.setSelected(false);
-        tableController.isSettingValues = false;
-        tableController.columnsCheck.setSelected(true);
-    }
-
-    @FXML
-    public void selectNoneCols() {
-        tableController.isSettingValues = true;
-        tableController.columnsCheck.setSelected(true);
-        tableController.isSettingValues = false;
-        tableController.columnsCheck.setSelected(false);
-    }
-
-    public boolean all() {
-        return allRowsRadio != null && allRowsRadio.isSelected();
-    }
-
-    public boolean allPages() {
-        return all() && data2D.isMutiplePages();
-    }
-
-    public boolean allChanged() {
-        return allPages() && data2D.isTableChanged();
     }
 
     @FXML
@@ -195,11 +134,11 @@ public abstract class Data2DHandleController extends BaseChildController {
             if (!checkOptions()) {
                 return;
             }
-            handledColumns = tableController.checkedCols();
+            handledColumns = sourceController.checkedCols();
             if (showRowNumber()) {
                 handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
-            if (allPages()) {
+            if (sourceController.allPages()) {
                 handleFileTask();
             } else {
                 handleRowsTask();
@@ -352,12 +291,12 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public boolean handleRows() {
         try {
-            handledData = tableController.selectedData(all(), showRowNumber());
+            handledData = sourceController.selectedData(showRowNumber());
             if (handledData == null) {
                 return false;
             }
             if (showColNames()) {
-                List<String> names = tableController.checkedColsNames();
+                List<String> names = sourceController.checkedColsNames();
                 if (showRowNumber()) {
                     names.add(0, message("SourceRowNumber"));
                 }
@@ -380,37 +319,37 @@ public abstract class Data2DHandleController extends BaseChildController {
             }
             int row = targetController.row();
             int col = targetController.col();
-            int rowsNumber = data2D.tableRowsNumber();
-            int colsNumber = data2D.tableColsNumber();
+            int rowsNumber = editController.data2D.tableRowsNumber();
+            int colsNumber = editController.data2D.tableColsNumber();
             if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
                 popError(message("InvalidParameters"));
                 return false;
             }
-            tableController.isSettingValues = true;
+            editController.isSettingValues = true;
             if (targetController.replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + handledData.size(), rowsNumber); r++) {
-                    List<String> tableRow = tableController.tableData.get(r);
+                    List<String> tableRow = editController.tableData.get(r);
                     List<String> dataRow = handledData.get(r - row);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
-                    tableController.tableData.set(r, tableRow);
+                    editController.tableData.set(r, tableRow);
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
                 for (int r = 0; r < handledData.size(); r++) {
-                    List<String> newRow = tableController.data2D.newRow();
+                    List<String> newRow = editController.data2D.newRow();
                     List<String> dataRow = handledData.get(r);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));
                     }
                     newRows.add(newRow);
                 }
-                tableController.tableData.addAll(targetController.insertRadio.isSelected() ? row : row + 1, newRows);
+                editController.tableData.addAll(targetController.insertRadio.isSelected() ? row : row + 1, newRows);
             }
-            tableController.tableView.refresh();
-            tableController.isSettingValues = false;
-            tableController.tableChanged(true);
+            editController.tableView.refresh();
+            editController.isSettingValues = false;
+            editController.tableChanged(true);
             popDone();
             return true;
         } catch (Exception e) {
@@ -428,10 +367,10 @@ public abstract class Data2DHandleController extends BaseChildController {
         }
         switch (targetController.target) {
             case "systemClipboard":
-                tableController.copyToSystemClipboard(null, handledData);
+                editController.copyToSystemClipboard(null, handledData);
                 break;
             case "myBoxClipboard":
-                tableController.copyToMyBoxClipboard2(handledColumns, handledData);
+                editController.copyToMyBoxClipboard2(handledColumns, handledData);
                 break;
             case "csv":
                 DataFileCSVController.open(handledColumns, handledData);

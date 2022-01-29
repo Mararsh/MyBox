@@ -472,7 +472,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
+        if (!PopTools.askSure(this, getMyStage().getTitle(), Languages.message("SureDelete"))) {
             return;
         }
         synchronized (this) {
@@ -537,7 +537,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         float sum = 0.0f;
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
-                sum += matrixValues[j][i];
+                sum += Math.abs(matrixValues[j][i]);
             }
         }
         if (sum == 0) {

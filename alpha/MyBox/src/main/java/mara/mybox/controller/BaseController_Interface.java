@@ -424,6 +424,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public void setStageStatus() {
+        setAsNormal();
+    }
+
+    public void setAsNormal() {
         try {
             isPop = false;
             if (AppVariables.recordWindowsSizeLocation) {

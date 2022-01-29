@@ -51,7 +51,7 @@ public class Data2DPercentageController extends Data2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(allPages());
+        targetController.setNotInTable(sourceController.allPages());
         ok = ok && prepareRows();
         okButton.setDisable(!ok);
         return ok;
@@ -59,7 +59,7 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     public boolean prepareRows() {
         try {
-            List<Data2DColumn> cols = tableController.checkedCols();
+            List<Data2DColumn> cols = sourceController.checkedCols();
             if (cols == null || cols.isEmpty()) {
                 return false;
             }
@@ -94,18 +94,18 @@ public class Data2DPercentageController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            if (tableController.checkedRowsIndices == null || tableController.checkedRowsIndices.isEmpty()) {
+            if (sourceController.checkedRowsIndices == null || sourceController.checkedRowsIndices.isEmpty()) {
                 if (task != null) {
                     task.setError(message("SelectToHandle"));
                 }
                 return false;
             }
-            int colsLen = tableController.checkedColsIndices.size();
+            int colsLen = sourceController.checkedColsIndices.size();
             double[] sum = new double[colsLen];
-            for (int r : tableController.checkedRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+            for (int r : sourceController.checkedRowsIndices) {
+                List<String> tableRow = editController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
-                    sum[c] += data2D.doubleValue(tableRow.get(tableController.checkedColsIndices.get(c) + 1));
+                    sum[c] += data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
                 }
             }
             handledData = new ArrayList<>();
@@ -120,12 +120,12 @@ public class Data2DPercentageController extends Data2DHandleController {
                 row.add(DoubleTools.format(sum[c], scale));
             }
             handledData.add(row);
-            for (int r : tableController.checkedRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+            for (int r : sourceController.checkedRowsIndices) {
+                List<String> tableRow = editController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add((r + 1) + "");
                 for (int c = 0; c < colsLen; c++) {
-                    double d = data2D.doubleValue(tableRow.get(tableController.checkedColsIndices.get(c) + 1));
+                    double d = data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
                     if (valuesCheck.isSelected()) {
                         row.add(DoubleTools.format(d, scale));
                     }
@@ -149,7 +149,7 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.percentage(handledNames, tableController.checkedColsIndices, valuesCheck.isSelected());
+        return data2D.percentage(handledNames, sourceController.checkedColsIndices, valuesCheck.isSelected());
     }
 
     /*

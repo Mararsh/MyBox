@@ -23,8 +23,8 @@ public class Data2DNormalizeController extends Data2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(allPages());
-        if (all()) {
+        targetController.setNotInTable(sourceController.allPages());
+        if (sourceController.allPages()) {
             normalizeController.columnsRadio.fire();
             normalizeController.rowsRadio.setDisable(true);
             normalizeController.matrixRadio.setDisable(true);
@@ -38,8 +38,8 @@ public class Data2DNormalizeController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            List<Integer> checkedRowsIndices = tableController.checkedRowsIndices(false);
-            List<Integer> checkedColsIndices = tableController.checkedColsIndices();
+            List<Integer> checkedRowsIndices = sourceController.checkedRowsIndices();
+            List<Integer> checkedColsIndices = sourceController.checkedColsIndices();
             if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()
                     || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 return false;
@@ -49,7 +49,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
             double[][] matrix = new double[rowsNumber][colsNumber];
             for (int r = 0; r < rowsNumber; r++) {
                 int row = checkedRowsIndices.get(r);
-                List<String> tableRow = tableController.tableData.get(row);
+                List<String> tableRow = editController.tableData.get(row);
                 for (int c = 0; c < colsNumber; c++) {
                     int col = checkedColsIndices.get(c);
                     matrix[r][c] = data2D.doubleValue(tableRow.get(col + 1));
@@ -61,7 +61,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
             }
             handledData = new ArrayList<>();
             if (showColNames()) {
-                List<String> names = tableController.checkedColsNames();
+                List<String> names = sourceController.checkedColsNames();
                 if (showRowNumber()) {
                     names.add(0, message("SourceRowNumber"));
                 }
@@ -89,16 +89,16 @@ public class Data2DNormalizeController extends Data2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         if (normalizeController.minmaxRadio.isSelected()) {
-            return data2D.normalizeMinMax(tableController.checkedColsIndices,
+            return data2D.normalizeMinMax(sourceController.checkedColsIndices,
                     normalizeController.from, normalizeController.to,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected());
 
         } else if (normalizeController.l1Radio.isSelected()) {
-            return data2D.normalizeSum(tableController.checkedColsIndices,
+            return data2D.normalizeSum(sourceController.checkedColsIndices,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected());
 
         } else if (normalizeController.l2Radio.isSelected()) {
-            return data2D.normalizeZscore(tableController.checkedColsIndices,
+            return data2D.normalizeZscore(sourceController.checkedColsIndices,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected());
         }
         return null;

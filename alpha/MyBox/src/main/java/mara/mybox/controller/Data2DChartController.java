@@ -22,7 +22,6 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
@@ -112,7 +111,7 @@ public class Data2DChartController extends Data2DHandleController {
     @FXML
     protected HBox barGapBox, categoryGapBox, lineWidthBox, bubbleBox;
     @FXML
-    protected FlowPane valueColumnsPane, valueColumnPane, categoryColumnsPane;
+    protected FlowPane valueColumnsPane, categoryColumnsPane;
     @FXML
     protected TextField titleInput, categoryLabel, numberLabel, bubbleStyleInput;
     @FXML
@@ -122,8 +121,6 @@ public class Data2DChartController extends Data2DHandleController {
     @FXML
     protected ToggleGroup chartGroup, titleSideGroup, labelGroup, legendGroup, numberCoordinateGroup,
             categorySideGroup, numberSideGroup, labelLocaionGroup;
-    @FXML
-    protected Label columnsLabel, commentsLabel;
 
     @Override
     public void initControls() {
@@ -855,36 +852,16 @@ public class Data2DChartController extends Data2DHandleController {
     public void checkChartType() {
         try {
             columnsBox.getChildren().clear();
-            commentsLabel.setText("");
 
             boolean isPie = pieRadio.isSelected();
             if (isPie) {
-                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
-                commentsLabel.setText(message("ChartPieComments"));
-
-            } else if (bubbleChartRadio.isSelected()) {
-                columnsLabel.setText(message("SizeColumns"));
-                commentsLabel.setText(message("BubbleChartComments"));
-                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, valueColumnsPane);
-
-            } else {
-                columnsLabel.setText(message("ValueColumns"));
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnsPane);
 
-                if (barChartRadio.isSelected()) {
-                    commentsLabel.setText(message("BarChartComments"));
-                } else if (stackedBarChartRadio.isSelected()) {
-                    commentsLabel.setText(message("StackedBarChartComments"));
-                } else if (lineChartRadio.isSelected()) {
-                    commentsLabel.setText(message("LineChartComments"));
-                } else if (areaChartRadio.isSelected()) {
-                    commentsLabel.setText(message("AreaChartComments"));
-                } else if (stackedAreaChartRadio.isSelected()) {
-                    commentsLabel.setText(message("StackedAreaChartComments"));
-                } else if (scatterChartRadio.isSelected()) {
-                    commentsLabel.setText(message("ScatterChartComments"));
-                }
+            } else if (bubbleChartRadio.isSelected()) {
+                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnsPane);
 
+            } else {
+                columnsBox.getChildren().addAll(categoryColumnsPane);
             }
 
             categoryTab.setDisable(isPie);
@@ -960,7 +937,7 @@ public class Data2DChartController extends Data2DHandleController {
             categoryColumnSelector.getItems().clear();
             valueColumnSelector.getItems().clear();
 
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = editController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -1008,7 +985,7 @@ public class Data2DChartController extends Data2DHandleController {
     }
 
     public String valuesNames() {
-        return tableController.checkedColsNames().toString();
+        return sourceController.checkedColsNames().toString();
     }
 
     @Override
@@ -1278,7 +1255,7 @@ public class Data2DChartController extends Data2DHandleController {
             colsIndices.add(valueCol);
         }
         if (!pieRadio.isSelected()) {
-            checkedColsIndices = tableController.checkedColsIndices();
+            checkedColsIndices = sourceController.checkedColsIndices();
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;
@@ -1294,11 +1271,11 @@ public class Data2DChartController extends Data2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    if (allPages()) {
+                    if (sourceController.allPages()) {
                         handledData = data2D.allRows(colsIndices, false);
                     } else {
-                        handledData = tableController.selectedData(tableController.checkedRowsIndices(all()),
-                                colsIndices, false);
+                        handledData = sourceController.selectedData(
+                                sourceController.checkedRowsIndices(), colsIndices, false);
                     }
                     return handledData != null && !handledData.isEmpty();
                 } catch (Exception e) {
@@ -1586,11 +1563,11 @@ public class Data2DChartController extends Data2DHandleController {
     /*
         static
      */
-    public static Data2DChartController open(ControlData2DEditTable tableController) {
+    public static Data2DChartController open(ControlData2DEditTable editController) {
         try {
             Data2DChartController controller = (Data2DChartController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartFxml, false);
-            controller.setParameters(tableController);
+                    editController.getMyWindow(), Fxmls.Data2DChartFxml, false);
+            controller.setParameters(editController);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
