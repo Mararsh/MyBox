@@ -239,10 +239,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     public void askImportPredefined() {
-        if (alert != null) {
-            alert.close();
-        }
-        alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(baseTitle);
         alert.setHeaderText(Languages.message("ImportExamples") + " ?");
         alert.setContentText("1. " + Languages.message("ChineseHistoricalCapitals") + "\n"

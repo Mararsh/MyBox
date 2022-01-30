@@ -12,7 +12,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -25,13 +24,9 @@ License:    Apache License Version 2.0
                   <Image url="@../buttons/Red/iconTips.png" />
                </image>
             </ImageView>
-              <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
-                  <children>
-                  <Label fx:id="titleLabel" />
-                  <CheckBox fx:id="columnsCheck" minWidth="-Infinity" mnemonicParsing="false" text="%Columns" />
-                  <CheckBox fx:id="allPagesCheck" minWidth="-Infinity" mnemonicParsing="false" text="%AllPages" />
-                  </children>
-              </FlowPane>
+            <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="columnsCheck" minWidth="-Infinity" mnemonicParsing="false" text="%Columns" />
+            <CheckBox fx:id="allPagesCheck" minWidth="-Infinity" mnemonicParsing="false" text="%AllPages" />
          </children>
       </HBox>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

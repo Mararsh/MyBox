@@ -469,10 +469,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                 return;
             }
             String path = new File(fileNames.get(0)).getParent();
-            if (alert != null) {
-                alert.close();
-            }
-            alert = new Alert(Alert.AlertType.INFORMATION);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(getMyStage().getTitle());
             String info = MessageFormat.format(message("GeneratedFilesResult"),
                     fileNames.size(), "\"" + path + "\"");
@@ -499,7 +496,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             stage.sizeToScene();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent() ) {
+            if (result == null || !result.isPresent()) {
                 return;
             }
             if (result.get() == buttonOpen) {

@@ -43,7 +43,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
-    protected boolean forDisplay;
+    protected boolean forEdit;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected Label dataLabel;
 
@@ -54,7 +54,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         statusNotify = new SimpleBooleanProperty(false);
         loadedNotify = new SimpleBooleanProperty(false);
         savedNotify = new SimpleBooleanProperty(false);
-        forDisplay = true;
     }
 
     @Override
@@ -524,7 +523,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 String name = dataColumn.getName();
                 TableColumn tableColumn = new TableColumn<List<String>, String>(name);
                 tableColumn.setPrefWidth(dataColumn.getWidth());
-                tableColumn.setEditable(!forDisplay && dataColumn.isEditable());
+                tableColumn.setEditable(forEdit && dataColumn.isEditable());
                 tableColumn.setUserData(dataColumn.getIndex());
                 int col = i + 1;
 
@@ -544,7 +543,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     }
                 });
 
-                if (!forDisplay) {
+                if (forEdit) {
                     tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
                         @Override
                         public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {

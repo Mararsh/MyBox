@@ -25,8 +25,11 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
             @Override
             public void handle(MouseEvent event) {
                 TableView<S> table = getTableView();
-                if (table != null) {
-                    table.edit(rowIndex(), getTableColumn());
+                if (table != null && table.getItems() != null) {
+                    int index = rowIndex();
+                    if (index < table.getItems().size()) {
+                        table.edit(index, getTableColumn());
+                    }
                 }
             }
         });

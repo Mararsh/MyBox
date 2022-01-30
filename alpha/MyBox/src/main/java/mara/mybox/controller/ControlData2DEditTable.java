@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DEditTable extends ControlData2DLoad {
 
     public ControlData2DEditTable() {
-        forDisplay = false;
+        forEdit = true;
     }
 
     protected void setParameters(ControlData2DEdit editController) {

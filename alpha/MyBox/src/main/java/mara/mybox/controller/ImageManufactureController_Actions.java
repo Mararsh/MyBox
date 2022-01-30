@@ -351,10 +351,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         if (!imageLoaded.get() || !imageChanged) {
             return true;
         }
-        if (alert != null) {
-            alert.close();
-        }
-        alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
         alert.setContentText(Languages.message("ImageChanged"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -368,7 +365,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result == null || !result.isPresent() ) {
+        if (result == null || !result.isPresent()) {
             return false;
         }
         if (result.get() == buttonSave) {

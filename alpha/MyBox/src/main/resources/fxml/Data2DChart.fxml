@@ -251,6 +251,7 @@ License:    Apache License Version 2.0
                                                                         </RadioButton>
                                                                         <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
+                                                      <RadioButton layoutX="285.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
                                                                         <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
                                                                         <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
                                                                     </children>

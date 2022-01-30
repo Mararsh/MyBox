@@ -607,10 +607,7 @@ public class ImageViewerController extends BaseImageController {
                 ask = message("SureOverrideFile");
             }
             if (ask != null) {
-                if (alert != null) {
-                    alert.close();
-                }
-                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(ask);
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);

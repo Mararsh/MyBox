@@ -569,11 +569,7 @@ public class WeiboSnapRunController extends BaseController {
                 pageController.start(parameters);
                 closeStage();
             } else {
-
-                if (alert != null) {
-                    alert.close();
-                }
-                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(baseTitle);
                 alert.setContentText(errorString);
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -586,7 +582,7 @@ public class WeiboSnapRunController extends BaseController {
                 stage.toFront();
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result == null || !result.isPresent() ) {
+                if (result == null || !result.isPresent()) {
                     return;
                 }
                 if (result.get() == buttonRetry) {

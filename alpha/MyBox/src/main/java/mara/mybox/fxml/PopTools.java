@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
@@ -39,7 +40,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlWebView;
@@ -123,11 +123,7 @@ public class PopTools {
         try {
             Alert alert = new Alert(type);
             if (controller != null) {
-                if (controller.getAlert() != null) {
-                    controller.getAlert().close();
-                }
                 alert.setTitle(controller.getTitle());
-                controller.setAlert(alert);
             }
             alert.setHeaderText(null);
             alert.setContentText(information);
@@ -181,14 +177,12 @@ public class PopTools {
         return askSure(controller, title, null, sureString);
     }
 
+    // https://openjfx.io/javadoc/17/javafx.controls/javafx/scene/control/Dialog.html
     public static boolean askSure(BaseController controller, String title, String header, String sureString) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        if (controller != null) {
-            if (controller.getAlert() != null) {
-                controller.getAlert().close();
-            }
-            controller.setAlert(alert);
+        if (AppVariables.isTesting) {
+            return false;
         }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         if (header != null) {
             alert.setHeaderText(header);
@@ -196,7 +190,7 @@ public class PopTools {
         alert.setContentText(sureString);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         ButtonType buttonSure = new ButtonType(message("Sure"));
-        ButtonType buttonCancel = new ButtonType(message("Cancel"));
+        ButtonType buttonCancel = new ButtonType(message("Cancel"), ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
@@ -653,19 +647,6 @@ public class PopTools {
         String style = UserConfig.getString(prefix + "WindowStyle", "");
         pane.setStyle(baseStyle + style);
         setMenuLabelsStyle(pane, baseStyle + style);
-    }
-
-    public static void closeAllPopup() {
-        try {
-            List<Window> windows = new ArrayList<>();
-            windows.addAll(Window.getWindows());
-            for (Window window : windows) {
-                if (window instanceof Popup) {
-                    window.hide();
-                }
-            }
-        } catch (Exception e) {
-        }
     }
 
 }

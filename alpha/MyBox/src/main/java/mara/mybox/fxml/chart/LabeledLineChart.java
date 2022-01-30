@@ -62,6 +62,7 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
         popLabel = chartController.getPopLabelCheck().isSelected();
         labelLocation = chartController.getLabelLocation();
         setChartCoordinate(chartController.getChartCoordinate());
+        setCreateSymbols(labelType != null && labelType != LabelType.NotDisplay);
         return this;
     }
 

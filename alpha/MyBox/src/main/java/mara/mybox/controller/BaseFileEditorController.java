@@ -152,10 +152,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         if (isPop || fileChanged == null || !fileChanged.getValue()) {
             return true;
         } else {
-            if (alert != null) {
-                alert.close();
-            }
-            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(message("NeedSaveBeforeAction"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);

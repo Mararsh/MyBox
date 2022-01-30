@@ -1159,10 +1159,7 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     public Optional<ButtonType> alertClosingTab() {
-        if (alert != null) {
-            alert.close();
-        }
-        alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
         alert.setHeaderText(getMyStage().getTitle());
         alert.setContentText(message("ClosingEditorTabConfirm"));
@@ -1346,10 +1343,7 @@ public class HtmlEditorController extends WebAddressController {
         if (isPop || !fileChanged) {
             return true;
         } else {
-            if (alert != null) {
-                alert.close();
-            }
-            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(message("FileChanged"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);

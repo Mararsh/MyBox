@@ -971,10 +971,7 @@ public class GameEliminationController extends BaseController {
             }
         }
         if (selectedChesses.size() <= minimumAdjacent) {
-            if (alert != null) {
-                alert.close();
-            }
-            alert = new Alert(Alert.AlertType.ERROR);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(getBaseTitle());
             alert.setContentText(MessageFormat.format(message("ChessesNumberTooSmall"), minimumAdjacent + ""));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -1637,10 +1634,7 @@ public class GameEliminationController extends BaseController {
     protected void promptDeadlock() {
         try {
             SoundTools.BenWu2();
-            if (alert != null) {
-                alert.close();
-            }
-            alert = new Alert(Alert.AlertType.ERROR);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(getBaseTitle());
             alert.setContentText(message("NoValidElimination"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -1651,7 +1645,7 @@ public class GameEliminationController extends BaseController {
             stage.setAlwaysOnTop(true);
             stage.toFront();
             Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent() ) {
+            if (result == null || !result.isPresent()) {
                 return;
             }
             if (result.get() == buttonRenew) {

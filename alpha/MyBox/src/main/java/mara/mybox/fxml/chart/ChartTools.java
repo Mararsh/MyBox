@@ -17,7 +17,6 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SquareRootCoordinate;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -416,25 +415,6 @@ public class ChartTools {
             case SquareRoot:
                 numberAxis.setTickLabelFormatter(new SquareRootCoordinate());
                 break;
-        }
-    }
-
-    public static String label(LabelType labelType, String name, double value) {
-        if (null == labelType) {
-            return null;
-        } else {
-            switch (labelType) {
-                case NotDisplay:
-                    return null;
-                case Name:
-                    return name;
-                case Value:
-                    return StringTools.format(value);
-                case Pop:
-                    return "Pop###" + name + ": " + StringTools.format(value);
-                default:
-                    return name + ": " + StringTools.format(value);
-            }
         }
     }
 

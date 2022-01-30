@@ -32,7 +32,7 @@ import static mara.mybox.value.Languages.message;
 public class AutoTestingExecutionController extends BaseTableViewController<TestCase> {
 
     protected AutoTestingCasesController casesController;
-    protected int currentIndex;
+    protected int currentIndex, interval = 2000;
     protected TestCase currentCase;
     protected List<TestCase> testCases;
     protected BaseController currentController;
@@ -205,6 +205,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                         if (currentController != null) {
                             currentController.close();
                         }
+
                         if (currentCase != null && currentCase.getStatus() != Status.Fail) {
                             currentCase.setStatus(Status.Success);
                             tableData.set(currentIndex, currentCase);
@@ -216,7 +217,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                         goCurrentCase();
                     });
                 }
-            }, 2000);
+            }, interval);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

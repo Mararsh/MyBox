@@ -111,7 +111,7 @@ public class Data2DChartController extends Data2DHandleController {
     @FXML
     protected HBox barGapBox, categoryGapBox, lineWidthBox, bubbleBox;
     @FXML
-    protected FlowPane valueColumnsPane, categoryColumnsPane;
+    protected FlowPane valueColumnPane, categoryColumnsPane;
     @FXML
     protected TextField titleInput, categoryLabel, numberLabel, bubbleStyleInput;
     @FXML
@@ -121,6 +121,10 @@ public class Data2DChartController extends Data2DHandleController {
     @FXML
     protected ToggleGroup chartGroup, titleSideGroup, labelGroup, legendGroup, numberCoordinateGroup,
             categorySideGroup, numberSideGroup, labelLocaionGroup;
+
+    public Data2DChartController() {
+        TipsLabelKey = "DataChartTips";
+    }
 
     @Override
     public void initControls() {
@@ -145,7 +149,6 @@ public class Data2DChartController extends Data2DHandleController {
                         checkChartType();
                         okAction();
                     });
-            checkChartType();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -191,6 +194,8 @@ public class Data2DChartController extends Data2DHandleController {
                         labelType = LabelType.Value;
                     } else if (message("Name").equals(value)) {
                         labelType = LabelType.Name;
+                    } else if (message("Point").equals(value)) {
+                        labelType = LabelType.Point;
                     } else if (message("NotDisplay").equals(value)) {
                         labelType = LabelType.NotDisplay;
                     } else {
@@ -855,13 +860,16 @@ public class Data2DChartController extends Data2DHandleController {
 
             boolean isPie = pieRadio.isSelected();
             if (isPie) {
-                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnsPane);
+                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
+                sourceController.setLabel(message("PieChartLabel"));
 
             } else if (bubbleChartRadio.isSelected()) {
-                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnsPane);
+                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
+                sourceController.setLabel(message("BubbleChartLabel"));
 
             } else {
                 columnsBox.getChildren().addAll(categoryColumnsPane);
+                sourceController.setLabel(message("XYChartLabel"));
             }
 
             categoryTab.setDisable(isPie);
@@ -925,6 +933,7 @@ public class Data2DChartController extends Data2DHandleController {
                 }
             });
 
+            checkChartType();
             refreshSelectors();
             okAction();
         } catch (Exception e) {
@@ -1220,13 +1229,6 @@ public class Data2DChartController extends Data2DHandleController {
             pieChart = new PieChart();
             pieChart.setClockwise(clockwiseCheck.isSelected());
             pieChart.setLabelLineLength(10d);
-            if (labelType == LabelType.Name
-                    || labelType == LabelType.Value || labelType == LabelType.NameAndValue) {
-                pieChart.setLabelsVisible(true);
-            } else {
-                pieChart.setLabelsVisible(false);
-                pieChart.setLegendVisible(false);
-            }
             chart = pieChart;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -1445,7 +1447,7 @@ public class Data2DChartController extends Data2DHandleController {
                     case Point:
                     case Pop:
                     default:
-                        label = "";
+                        label = name;
                         break;
                 }
                 PieChart.Data item = new PieChart.Data(label, d);
@@ -1455,6 +1457,9 @@ public class Data2DChartController extends Data2DHandleController {
                 }
                 paletteList.add(FxColorTools.randomRGB(random));
             }
+
+            pieChart.setLabelsVisible(labelType == LabelType.Name
+                    || labelType == LabelType.Value || labelType == LabelType.NameAndValue);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

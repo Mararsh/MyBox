@@ -466,4 +466,17 @@ public class WindowTools {
         }
     }
 
+    public static void closeAllPopup() {
+        try {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (window instanceof Popup) {
+                    window.hide();
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
 }

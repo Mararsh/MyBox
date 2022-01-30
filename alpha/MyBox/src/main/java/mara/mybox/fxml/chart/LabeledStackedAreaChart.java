@@ -62,6 +62,7 @@ public class LabeledStackedAreaChart<X, Y> extends StackedAreaChart<X, Y> {
         popLabel = chartController.getPopLabelCheck().isSelected();
         labelLocation = chartController.getLabelLocation();
         setChartCoordinate(chartController.getChartCoordinate());
+        setCreateSymbols(labelType != null && labelType != LabelType.NotDisplay);
         return this;
     }
 

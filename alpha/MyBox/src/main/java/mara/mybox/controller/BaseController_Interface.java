@@ -29,7 +29,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -42,7 +41,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.isTesting;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -758,7 +756,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (!checkBeforeNextAction(thisPane)) {
                 return false;
             }
-            if (!isTesting && getMyStage() != null && mainMenuController != null
+            if (!AppVariables.isTesting && getMyStage() != null && mainMenuController != null
                     && !isPop && myStage.getOwner() == null) {
                 VisitHistoryTools.visitMenu(baseTitle, myFxml);
             }
@@ -882,14 +880,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void cleanWindow() {
         try {
-            if (alert != null) {
-                try {
-                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    stage.close();
-                } catch (Exception e) {
-                }
-                alert = null;
-            }
             if (myScene != null) {
                 myScene.setUserData(null);
                 myScene = null;

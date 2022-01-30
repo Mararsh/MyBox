@@ -6,7 +6,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -688,7 +688,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF6() {
-        PopTools.closeAllPopup();
+        WindowTools.closeAllPopup();
+        MenuController.closeAll();
         return true;
     }
 
@@ -726,7 +727,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (withdrawButton != null && !withdrawButton.isDisabled() && withdrawButton.isVisible()) {
             withdrawAction();
         }
-        PopTools.closeAllPopup();
+        WindowTools.closeAllPopup();
         MenuController.closeAll();
         return true;
     }
