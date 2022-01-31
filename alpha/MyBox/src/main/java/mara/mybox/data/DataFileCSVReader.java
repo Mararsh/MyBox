@@ -47,12 +47,17 @@ public class DataFileCSVReader extends DataFileReader {
         if (csvParser == null) {
             return;
         }
+        record = null;
         if (readerHasHeader) {
             try {
                 List<String> values = csvParser.getHeaderNames();
                 if (StringTools.noDuplicated(values, true)) {
                     names = new ArrayList<>();
                     names.addAll(values);
+                    return;
+                } else {
+                    record = new ArrayList<>();
+                    record.addAll(values);
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -60,18 +65,16 @@ public class DataFileCSVReader extends DataFileReader {
                     readerTask.setError(e.toString());
                 }
             }
-        }
-        if (names == null) {
-            readerHasHeader = false;
+        } else {
             while (iterator.hasNext() && !readerStopped()) {
                 readRecord();
-                if (record == null || record.isEmpty()) {
-                    continue;
+                if (record != null && !record.isEmpty()) {
+                    break;
                 }
-                handleHeader();
-                return;
             }
         }
+        readerHasHeader = false;
+        handleHeader();
     }
 
     @Override
@@ -85,8 +88,10 @@ public class DataFileCSVReader extends DataFileReader {
                 rowIndex = 0;
                 return;
             }
-            ++rowIndex;
-            iterator.next();
+            readRecord();
+            if (record != null && !record.isEmpty()) {
+                ++rowIndex;
+            }
         }
     }
 

@@ -152,6 +152,8 @@ public class TableAddRowsController extends BaseController {
             }
             tableViewController.addRows(index, number);
 
+            popSuccessful();
+
             setSelector();
 
         } catch (Exception e) {

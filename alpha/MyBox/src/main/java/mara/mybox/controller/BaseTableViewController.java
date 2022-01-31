@@ -267,7 +267,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     public void loadDataSize() {
         dataSizeLoaded = true;
-//        setPagination();
     }
 
     public List<P> readPageData() {

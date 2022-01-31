@@ -55,9 +55,6 @@ public abstract class DataFile extends Data2D {
                 .setReaderTask(backgroundTask).start(Operation.ReadTotal);
         if (reader != null) {
             dataSize = reader.getRowIndex();
-            if (hasHeader && dataSize > 0) {
-                dataSize--;
-            }
         }
         return dataSize;
     }
@@ -139,11 +136,11 @@ public abstract class DataFile extends Data2D {
     }
 
     @Override
-    public DataFileCSV copy(List<Integer> cols, boolean rowNumber, boolean colName) {
+    public DataFileCSV copy(List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = tmpFile("copy");
+        File csvFile = tmpCSV("copy");
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
@@ -151,7 +148,7 @@ public abstract class DataFile extends Data2D {
         DataFileReader reader;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
-            if (rowNumber) {
+            if (includeRowNumber) {
                 names.add(message("RowNumber"));
             }
             for (int i = 0; i < columns.size(); i++) {
@@ -159,13 +156,13 @@ public abstract class DataFile extends Data2D {
                     names.add(columns.get(i).getName());
                 }
             }
-            if (colName) {
+            if (includeColName) {
                 csvPrinter.printRecord(names);
             }
             tcolsNumber = names.size();
 
             reader = DataFileReader.create(this)
-                    .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(rowNumber)
+                    .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
                     .setReaderTask(task).start(DataFileReader.Operation.Copy);
 
         } catch (Exception e) {
@@ -178,7 +175,7 @@ public abstract class DataFile extends Data2D {
         if (reader != null && csvFile != null && csvFile.exists()) {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
+                    .setDelimiter(",").setHasHeader(includeColName)
                     .setColsNumber(tcolsNumber).setRowsNumber(reader.getRowIndex());
             return targetData;
         } else {
@@ -187,36 +184,37 @@ public abstract class DataFile extends Data2D {
     }
 
     @Override
-    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues) {
+    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues, boolean abs) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return null;
         }
         DataFileReader reader = DataFileReader.create(this)
-                .setCols(cols)
-                .setReaderTask(task).start(DataFileReader.Operation.CountSum);
+                .setCols(cols).setSumAbs(abs)
+                .setReaderTask(task).start(DataFileReader.Operation.PercentageSum);
         if (reader == null) {
             return null;
         }
         double[] colsSum = reader.getColValues();
-        File csvFile = tmpFile("percentage");
+        File csvFile = tmpCSV("percentage");
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
-            row.add(message("Summation"));
+            row.add(message("Count"));
             for (int c = 0; c < cols.size(); c++) {
                 row.add(DoubleTools.scale(colsSum[c], scale) + "");
                 if (withValues) {
-                    row.add("");
+                    row.add("100");
                 }
             }
             csvPrinter.printRecord(row);
 
             reader = DataFileReader.create(this)
                     .setCsvPrinter(csvPrinter).setColValues(colsSum).setCols(cols)
+                    .setWithValues(withValues).setSumAbs(abs)
                     .setReaderTask(task).start(DataFileReader.Operation.Percentage);
 
         } catch (Exception e) {
@@ -255,7 +253,7 @@ public abstract class DataFile extends Data2D {
             double d = sData[c].maximum - sData[c].minimum;
             sData[c].mean = (to - from) / (d == 0 ? Double.MIN_VALUE : d);
         }
-        File csvFile = tmpFile("normalizeMinMax");
+        File csvFile = tmpCSV("normalizeMinMax");
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
@@ -318,7 +316,7 @@ public abstract class DataFile extends Data2D {
                 colValues[c] = 1d / colValues[c];
             }
         }
-        File csvFile = tmpFile("normalizeSum");
+        File csvFile = tmpCSV("normalizeSum");
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
@@ -391,7 +389,7 @@ public abstract class DataFile extends Data2D {
         for (int c = 0; c < colLen; c++) {
             sData[c].mean = sData[c].sum / sData[c].count;
         }
-        File csvFile = tmpFile("normalizeZscore");
+        File csvFile = tmpCSV("normalizeZscore");
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');

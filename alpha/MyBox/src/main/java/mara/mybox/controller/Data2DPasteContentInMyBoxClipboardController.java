@@ -25,6 +25,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
     protected DataClipboard dataClipboard;
     protected ControlData2DLoad targetTableController;
     protected Data2D dataTarget;
+    protected int row, col;
 
     @FXML
     protected ControlDataClipboardTable listController;
@@ -64,14 +65,19 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
 
             targetTableController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        makeControls(rowSelector.getSelectionModel().getSelectedIndex(),
-                                colSelector.getSelectionModel().getSelectedIndex());
+                        makeControls(row, col);
                     });
 
-            targetTableController.dataController.statusNotify.addListener(
+            targetTableController.loadedNotify.addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        makeControls(row, col);
+                    });
+
+            sourceController.loadedNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         okButton.setDisable(!dataClipboard.hasData());
                     });
+            okButton.setDisable(true);
 
             makeControls(0, 0);
 
@@ -92,12 +98,16 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
             if (!rows.isEmpty()) {
                 rowSelector.getItems().setAll(rows);
                 rowSelector.getSelectionModel().select(row);
+            } else {
+                rowSelector.getItems().clear();
             }
 
             List<String> names = dataTarget.columnNames();
-            if (!names.isEmpty()) {
+            if (names != null && !names.isEmpty()) {
                 colSelector.getItems().setAll(names);
                 colSelector.getSelectionModel().select(col);
+            } else {
+                colSelector.getItems().clear();
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -117,13 +127,13 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
     @FXML
     @Override
     public void okAction() {
-        if (!dataClipboard.hasData()) {
-            popError(message("NoData"));
-            return;
-        }
         try {
-            int row = rowSelector.getSelectionModel().getSelectedIndex();
-            int col = colSelector.getSelectionModel().getSelectedIndex();
+            if (!dataClipboard.hasData()) {
+                popError(message("NoData"));
+                return;
+            }
+            row = rowSelector.getSelectionModel().getSelectedIndex();
+            col = colSelector.getSelectionModel().getSelectedIndex();
             int targetRowsNumber = dataTarget.tableRowsNumber();
             int targetColsNumber = dataTarget.tableColsNumber();
             if (row < 0 || row >= targetRowsNumber || col < 0 || col >= targetColsNumber) {

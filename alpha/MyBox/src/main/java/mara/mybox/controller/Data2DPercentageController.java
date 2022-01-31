@@ -7,6 +7,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -29,6 +32,10 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     @FXML
     protected CheckBox valuesCheck;
+    @FXML
+    protected ToggleGroup negativeGroup;
+    @FXML
+    protected RadioButton zeroRadio, absRadio;
 
     @Override
     public void initControls() {
@@ -40,6 +47,18 @@ public class Data2DPercentageController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "WithDataValues", valuesCheck.isSelected());
+                }
+            });
+
+            if (UserConfig.getBoolean(baseName + "NegativeAsZero", true)) {
+                zeroRadio.fire();
+            } else {
+                absRadio.fire();
+            }
+            negativeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    UserConfig.setBoolean(baseName + "NegativeAsZero", zeroRadio.isSelected());
                 }
             });
 
@@ -57,6 +76,7 @@ public class Data2DPercentageController extends Data2DHandleController {
         return ok;
     }
 
+    @FXML
     public boolean prepareRows() {
         try {
             List<Data2DColumn> cols = sourceController.checkedCols();
@@ -70,7 +90,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                 cName += "m";
             }
             handledNames.add(cName);
-            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Integer));
+            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
             for (Data2DColumn column : cols) {
                 if (valuesCheck.isSelected()) {
                     handledColumns.add(column.cloneAll());
@@ -91,6 +111,23 @@ public class Data2DPercentageController extends Data2DHandleController {
         }
     }
 
+    @FXML
+    @Override
+    public void okAction() {
+        try {
+            if (!checkOptions() || !prepareRows()) {
+                return;
+            }
+            if (sourceController.allPages()) {
+                handleFileTask();
+            } else {
+                handleRowsTask();
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
     @Override
     public boolean handleRows() {
         try {
@@ -105,19 +142,25 @@ public class Data2DPercentageController extends Data2DHandleController {
             for (int r : sourceController.checkedRowsIndices) {
                 List<String> tableRow = editController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
-                    sum[c] += data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
+                    double d = data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
+                    if (d < 0) {
+                        if (!zeroRadio.isSelected()) {
+                            sum[c] += Math.abs(d);
+                        }
+                    } else if (d > 0) {
+                        sum[c] += d;
+                    }
                 }
             }
             handledData = new ArrayList<>();
-            handledData.add(0, handledNames);
             int scale = data2D.getScale();
             List<String> row = new ArrayList<>();
             row.add(message("Count"));
             for (int c = 0; c < colsLen; c++) {
-                if (valuesCheck.isSelected()) {
-                    row.add("");
-                }
                 row.add(DoubleTools.format(sum[c], scale));
+                if (valuesCheck.isSelected()) {
+                    row.add("100");
+                }
             }
             handledData.add(row);
             for (int r : sourceController.checkedRowsIndices) {
@@ -132,6 +175,13 @@ public class Data2DPercentageController extends Data2DHandleController {
                     if (sum[c] == 0) {
                         row.add("0");
                     } else {
+                        if (d < 0) {
+                            if (!zeroRadio.isSelected()) {
+                                d = Math.abs(d);
+                            } else {
+                                d = 0;
+                            }
+                        }
                         row.add(DoubleTools.percentage(d, sum[c]));
                     }
                 }
@@ -149,7 +199,8 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.percentage(handledNames, sourceController.checkedColsIndices, valuesCheck.isSelected());
+        return data2D.percentage(handledNames, sourceController.checkedColsIndices,
+                valuesCheck.isSelected(), !zeroRadio.isSelected());
     }
 
     /*

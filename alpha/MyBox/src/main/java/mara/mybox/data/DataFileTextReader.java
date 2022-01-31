@@ -69,6 +69,7 @@ public class DataFileTextReader extends DataFileReader {
         try {
             String line;
             rowIndex = 0;
+            skipHeader();
             while ((line = textReader.readLine()) != null) {
                 if (readerStopped()) {
                     rowIndex = 0;

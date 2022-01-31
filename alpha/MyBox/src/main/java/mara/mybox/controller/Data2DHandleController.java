@@ -28,14 +28,14 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class Data2DHandleController extends BaseChildController {
-    
+
     protected ControlData2DEditTable editController;
     protected Data2D data2D;
     protected List<List<String>> handledData;
     protected List<Data2DColumn> handledColumns;
     protected DataFileCSV handledCSV;
     protected DataFile handledFile;
-    
+
     @FXML
     protected ControlData2DSource sourceController;
     @FXML
@@ -44,23 +44,23 @@ public abstract class Data2DHandleController extends BaseChildController {
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
     protected Label dataLabel, infoLabel;
-    
+
     @Override
     public void setStageStatus() {
         setAsNormal();
     }
-    
+
     public void setParameters(ControlData2DEditTable editController) {
         try {
             this.editController = editController;
-            
+
             sourceController.setParameters(this, editController);
             sourceController.setLabel(message("SelectRowsColumnsToHanlde"));
-            
+
             if (targetController != null) {
                 targetController.setParameters(this, editController);
             }
-            
+
             if (rowNumberCheck != null) {
                 rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
                 rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -79,7 +79,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                     }
                 });
             }
-            
+
             checkOptions();
             sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -93,16 +93,16 @@ public abstract class Data2DHandleController extends BaseChildController {
                     checkOptions();
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public boolean checkOptions() {
         data2D = editController.data2D;
         getMyStage().setTitle(editController.getTitle());
-        
+
         if (dataLabel != null) {
             dataLabel.setText(editController.data2D.displayName());
         }
@@ -126,7 +126,7 @@ public abstract class Data2DHandleController extends BaseChildController {
         okButton.setDisable(false);
         return true;
     }
-    
+
     @FXML
     @Override
     public void okAction() {
@@ -147,13 +147,13 @@ public abstract class Data2DHandleController extends BaseChildController {
             MyBoxLog.debug(e);
         }
     }
-    
+
     public void handleFileTask() {
         if (targetController == null) {
             return;
         }
         task = new SingletonTask<Void>(this) {
-            
+
             @Override
             protected boolean handle() {
                 try {
@@ -190,28 +190,28 @@ public abstract class Data2DHandleController extends BaseChildController {
                     return false;
                 }
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 popDone();
                 outputFile();
             }
-            
+
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.setTask(null);
                 task = null;
             }
-            
+
         };
         start(task);
     }
-    
+
     public DataFileCSV generatedFile() {
         return null;
     }
-    
+
     public void outputFile() {
         try {
             if (targetController == null || handledFile == null) {
@@ -240,13 +240,13 @@ public abstract class Data2DHandleController extends BaseChildController {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public synchronized void handleRowsTask() {
         if (targetController == null) {
             return;
         }
         task = new SingletonTask<Void>(this) {
-            
+
             @Override
             protected boolean handle() {
                 try {
@@ -257,7 +257,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                     return false;
                 }
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 if (targetController.inTable()) {
@@ -266,7 +266,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                     outputExternal();
                 }
             }
-            
+
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -276,19 +276,19 @@ public abstract class Data2DHandleController extends BaseChildController {
                     targetController.refreshControls();
                 }
             }
-            
+
         };
         start(task);
     }
-    
+
     public boolean showColNames() {
         return colNameCheck != null && colNameCheck.isSelected();
     }
-    
+
     public boolean showRowNumber() {
         return rowNumberCheck != null && rowNumberCheck.isSelected();
     }
-    
+
     public boolean handleRows() {
         try {
             handledData = sourceController.selectedData(showRowNumber());
@@ -311,7 +311,7 @@ public abstract class Data2DHandleController extends BaseChildController {
             return false;
         }
     }
-    
+
     public boolean updateTable() {
         try {
             if (targetController == null || !targetController.inTable() || handledData == null) {
@@ -358,7 +358,7 @@ public abstract class Data2DHandleController extends BaseChildController {
             return false;
         }
     }
-    
+
     public boolean outputExternal() {
         if (targetController == null || targetController.target == null
                 || handledData == null || handledData.isEmpty()) {
@@ -389,5 +389,5 @@ public abstract class Data2DHandleController extends BaseChildController {
         popDone();
         return true;
     }
-    
+
 }

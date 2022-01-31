@@ -169,6 +169,57 @@ public class Data2DStatisticController extends Data2DHandleController {
         medianCheck.setSelected(false);
     }
 
+    @FXML
+    @Override
+    public void okAction() {
+        if ((sourceController.allPages() && !editController.checkBeforeLoadingTableData())
+                || !checkOptions() || !prepareRows()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    if (sourceController.allPages()) {
+                        if (modeCheck.isSelected() || medianCheck.isSelected()) {
+                            return statisticRows(data2D.allRows(sourceController.checkedColsIndices(), false));
+                        } else {
+                            return statisticFile();
+                        }
+                    } else {
+                        return statisticRows(sourceController.selectedData(false));
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputExternal();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
+            }
+
+        };
+        start(task);
+    }
+
     public boolean prepareRows() {
         try {
             List<String> names = sourceController.checkedColsNames();
@@ -191,7 +242,6 @@ public class Data2DStatisticController extends Data2DHandleController {
             }
 
             handledData = new ArrayList<>();
-            handledData.add(0, handledNames);
             countRow = null;
             if (countCheck.isSelected()) {
                 countRow = new ArrayList<>();
@@ -257,57 +307,6 @@ public class Data2DStatisticController extends Data2DHandleController {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        if ((sourceController.allPages() && !editController.checkBeforeLoadingTableData())
-                || !checkOptions() || !prepareRows()) {
-            return;
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.setTask(task);
-                    if (sourceController.allPages()) {
-                        if (modeCheck.isSelected() || medianCheck.isSelected()) {
-                            return statisticRows(data2D.allRows(sourceController.checkedColsIndices(), false));
-                        } else {
-                            return statisticFile();
-                        }
-                    } else {
-                        return statisticRows(sourceController.selectedData(false));
-                    }
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (targetController.inTable()) {
-                    updateTable();
-                } else {
-                    outputExternal();
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
-            }
-
-        };
-        start(task);
     }
 
     // All as double to make things simple. 

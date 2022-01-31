@@ -37,6 +37,15 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
+                              <TitledPane fx:id="infoPane" text="%Info">
+                                 <content>
+                                    <VBox spacing="2.0">
+                                       <children>
+                                          <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                         <TitledPane fx:id="formatPane" maxWidth="1.7976931348623157E308" text="%Format">
                                             <content>
                                                 <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">

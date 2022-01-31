@@ -42,7 +42,7 @@ public class Data2DExportController extends BaseTaskController {
     @FXML
     protected CheckBox openCheck;
     @FXML
-    protected Label dataLabel, infoLabel;
+    protected Label infoLabel;
 
     public Data2DExportController() {
         baseTitle = Languages.message("Export");
@@ -101,7 +101,7 @@ public class Data2DExportController extends BaseTaskController {
 
     public boolean checkSource() {
         try {
-            dataLabel.setText(editController.data2D.displayName());
+            getMyStage().setTitle(editController.getTitle());
             infoLabel.setText("");
 
             selectedColumnsIndices = sourceController.checkedColsIndices();

@@ -42,15 +42,15 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <TitledPane fx:id="filePane" text="%File">
-                                            <content>
-                                                <VBox>
-                                                    <children>
-                                          <fx:include fx:id="info" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
+                              <TitledPane fx:id="infoPane" text="%Info">
+                                 <content>
+                                    <VBox spacing="2.0">
+                                       <children>
+                                          <TextArea fx:id="infoArea" editable="false" minHeight="-Infinity" styleClass="uneditable" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                         <TitledPane fx:id="formatPane" maxWidth="1.7976931348623157E308" text="%Format">
                                             <content>
                                                 <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">

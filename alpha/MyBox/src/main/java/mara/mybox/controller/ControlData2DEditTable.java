@@ -49,7 +49,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
      */
     @Override
     public synchronized void tableChanged(boolean changed) {
-        if (isSettingValues) {
+        if (isSettingValues || data2D == null) {
             return;
         }
         data2D.setTableChanged(changed);

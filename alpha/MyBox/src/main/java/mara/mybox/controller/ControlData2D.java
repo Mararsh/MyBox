@@ -215,7 +215,7 @@ public class ControlData2D extends BaseController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        data2D.initData();
+        data2D.resetData();
         data2D.cloneAll(data);
         readDefinition();
     }

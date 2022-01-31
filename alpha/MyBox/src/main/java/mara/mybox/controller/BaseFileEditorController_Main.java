@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,7 +15,6 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.AnchorPane;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceString;
-import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -304,7 +302,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         long fileLinesNumber = pageLinesNumber;
         int pageSize = sourceInformation.getPageSize();
         long currentPage = sourceInformation.getCurrentPage();
-        StringTable table = new StringTable();
+        StringBuilder s = new StringBuilder();
         if (sourceFile == null) {
             if (pageLabel != null) {
                 pageLabel.setText("");
@@ -328,7 +326,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 if (locatePane != null) {
                     locatePane.setDisable(true);
                 }
-                infoController.webEngine.loadContent(message("CountingTotalNumber"));
+                infoArea.setText(message("CountingTotalNumber"));
             } else {
                 fileObjectNumber = sourceInformation.getObjectsNumber();
                 fileLinesNumber = sourceInformation.getLinesNumber();
@@ -347,32 +345,42 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
                 sourceInformation.setPagesNumber(pagesNumber);
             }
-            table.add(Arrays.asList(message("FileSize"), FileTools.showFileSize(sourceFile.length())));
-            table.add(Arrays.asList(message("FileModifyTime"), DateTools.datetimeToString(sourceFile.lastModified())));
-            table.add(Arrays.asList((editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile")),
-                    StringTools.format(fileObjectNumber)));
-            table.add(Arrays.asList(message("LinesNumberInFile"), StringTools.format(fileLinesNumber)));
-            table.add(Arrays.asList((editType == Edit_Type.Bytes ? message("BytesPerPage") : message("LinesPerPage")),
-                    StringTools.format(pageSize)));
-            table.add(Arrays.asList(message("CurrentPage"),
-                    StringTools.format(currentPage + 1) + " / " + StringTools.format(pagesNumber)));
+            s.append(message("FileSize"))
+                    .append(": ").append(FileTools.showFileSize(sourceFile.length())).append("\n");
+            s.append(message("FileModifyTime"))
+                    .append(": ").append(DateTools.datetimeToString(sourceFile.lastModified())).append("\n");
+            s.append(editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
+                    .append(": ").append(StringTools.format(fileObjectNumber)).append("\n");
+            s.append(message("LinesNumberInFile"))
+                    .append(": ").append(StringTools.format(fileLinesNumber)).append("\n");
+            s.append(editType == Edit_Type.Bytes ? message("BytesPerPage") : message("LinesPerPage"))
+                    .append(": ").append(StringTools.format(pageSize)).append("\n");
+            s.append(message("CurrentPage"))
+                    .append(": ").append(StringTools.format(currentPage + 1)).append(" / ")
+                    .append(StringTools.format(pagesNumber)).append("\n");
         }
-        table.add(Arrays.asList(message("LineBreak"), sourceInformation.lineBreakName()));
-        table.add(Arrays.asList(message("Charset"), sourceInformation.getCharset().name()));
+        s.append(message("LineBreak"))
+                .append(": ").append(sourceInformation.lineBreakName()).append("\n");
+        s.append(message("Charset"))
+                .append(": ").append(sourceInformation.getCharset().name()).append("\n");
         if (pagesNumber > 1) {
-            table.add(Arrays.asList(editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage"),
-                    StringTools.format(pageObjectStart + 1) + " - " + StringTools.format(pageObjectEnd)
-                    + " ( " + StringTools.format(pageObjectsNumber) + " )"));
-            table.add(Arrays.asList(message("LinesRangeInPage"),
-                    StringTools.format(pageLineStart + 1) + " - " + StringTools.format(pageLineEnd)
-                    + " ( " + StringTools.format(pageLinesNumber) + " )"));
+            s.append(editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage"))
+                    .append(": ").append(StringTools.format(pageObjectStart + 1))
+                    .append(" - ").append(StringTools.format(pageObjectEnd))
+                    .append(" ( ").append(StringTools.format(pageObjectsNumber)).append(" )").append("\n");
+            s.append(message("LinesRangeInPage"))
+                    .append(": ").append(StringTools.format(pageLineStart + 1))
+                    .append(" - ").append(StringTools.format(pageLineEnd))
+                    .append(" ( ").append(StringTools.format(pageLinesNumber)).append(" )").append("\n");
         } else {
-            table.add(Arrays.asList(editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage"),
-                    StringTools.format(pageObjectsNumber)));
-            table.add(Arrays.asList(message("LinesNumberInPage"), StringTools.format(pageLinesNumber)));
+            s.append(editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage"))
+                    .append(": ").append(StringTools.format(pageObjectsNumber)).append("\n");
+            s.append(message("LinesNumberInPage"))
+                    .append(": ").append(StringTools.format(pageLinesNumber)).append("\n");
         }
-        table.add(Arrays.asList(message("PageModifyTime"), DateTools.nowString()));
-        infoController.webEngine.loadContent(table.html());
+        s.append(message("PageModifyTime"))
+                .append(": ").append(DateTools.nowString()).append("\n");
+        infoArea.setText(s.toString());
 
         pageBox.setDisable(changed);
         pagePreviousButton.setDisable(currentPage <= 0 || pagesNumber < 2);
@@ -400,6 +408,15 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             filterController.sourceLen = pageObjectsNumber;
             filterController.checkFilterStrings();
         }
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    leftPane.setHvalue(0);
+                });
+            }
+        }, 500);
     }
 
     // 0-based

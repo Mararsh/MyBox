@@ -7,14 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -204,126 +202,6 @@ public class DataMatrix extends Data2D {
             }
             rows.add(row);
         }
-        return rows;
-    }
-
-    public List<List<String>> normalization() {
-        rowsNumber = tableRowsNumber();
-        colsNumber = tableColsNumber();
-        if (rowsNumber <= 0 || colsNumber <= 0) {
-            return null;
-        }
-        double sum = 0d;
-        for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = tableRowWithoutNumber(r);
-            for (int c = 0; c < colsNumber; c++) {
-                sum += toDouble(row.get(c));
-            }
-        }
-        if (sum == 0) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        for (int r = 0; r < rowsNumber; r++) {
-            List<String> tableRow = tableRowWithoutNumber(r);
-            List<String> row = new ArrayList<>();
-            row.add("" + (r + 1));
-            for (int c = 0; c < colsNumber; c++) {
-                double d = toDouble(tableRow.get(c));
-                row.add(DoubleTools.format(d / sum, scale));
-            }
-            rows.add(row);
-        }
-        dataName = rowsNumber + "x" + colsNumber + "_" + message("Normalization");
-        return rows;
-    }
-
-    public List<List<String>> gaussianDistribution() {
-        rowsNumber = tableRowsNumber();
-        colsNumber = tableColsNumber();
-        if (rowsNumber <= 0 || colsNumber <= 0 || colsNumber != rowsNumber) {
-            return null;
-        }
-        float[][] m = ConvolutionKernel.makeGaussMatrix((int) rowsNumber / 2);
-        List<List<String>> rows = new ArrayList<>();
-        for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = new ArrayList<>();
-            row.add("" + (r + 1));
-            for (int c = 0; c < colsNumber; c++) {
-                row.add(DoubleTools.format(m[r][c], scale));
-            }
-            rows.add(row);
-        }
-        dataName = rowsNumber + "x" + colsNumber + "_" + message("GaussianDistribution");
-        return rows;
-    }
-
-    public List<List<String>> identifyMatrix() {
-        rowsNumber = tableRowsNumber();
-        colsNumber = tableColsNumber();
-        if (rowsNumber <= 0 || colsNumber <= 0) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = new ArrayList<>();
-            row.add("" + (r + 1));
-            for (int c = 0; c < colsNumber; c++) {
-                if (r == c) {
-                    row.add("1");
-                } else {
-                    row.add("0");
-                }
-            }
-            rows.add(row);
-        }
-        dataName = rowsNumber + "x" + colsNumber + "_" + message("IdentifyMatrix");
-        return rows;
-    }
-
-    public List<List<String>> upperTriangleMatrix() {
-        rowsNumber = tableRowsNumber();
-        colsNumber = tableColsNumber();
-        if (rowsNumber <= 0 || colsNumber <= 0) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = new ArrayList<>();
-            row.add("" + (r + 1));
-            for (int c = 0; c < colsNumber; c++) {
-                if (r <= c) {
-                    row.add("1");
-                } else {
-                    row.add("0");
-                }
-            }
-            rows.add(row);
-        }
-        dataName = rowsNumber + "x" + colsNumber + "_" + message("UpperTriangle");
-        return rows;
-    }
-
-    public List<List<String>> lowerTriangleMatrix() {
-        rowsNumber = tableRowsNumber();
-        colsNumber = tableColsNumber();
-        if (rowsNumber <= 0 || colsNumber <= 0) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = new ArrayList<>();
-            row.add("" + (r + 1));
-            for (int c = 0; c < colsNumber; c++) {
-                if (r >= c) {
-                    row.add("1");
-                } else {
-                    row.add("0");
-                }
-            }
-            rows.add(row);
-        }
-        dataName = rowsNumber + "x" + colsNumber + "_" + message("LowerTriangle");
         return rows;
     }
 

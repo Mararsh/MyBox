@@ -60,13 +60,6 @@ public class Data2DNormalizeController extends Data2DHandleController {
                 return false;
             }
             handledData = new ArrayList<>();
-            if (showColNames()) {
-                List<String> names = sourceController.checkedColsNames();
-                if (showRowNumber()) {
-                    names.add(0, message("SourceRowNumber"));
-                }
-                handledData.add(names);
-            }
             int scale = data2D.getScale();
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = new ArrayList<>();

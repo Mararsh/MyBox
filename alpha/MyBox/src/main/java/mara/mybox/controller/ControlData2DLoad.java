@@ -19,6 +19,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
@@ -189,6 +190,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             if (column.getColor() == null) {
                                 column.setColor(FxColorTools.randomColor(random));
                             }
+                            if (data2D.isMatrix()) {
+                                column.setType(ColumnDefinition.ColumnType.Double);
+                            }
                             columns.add(column);
                         }
                         data2D.setColumns(columns);
@@ -218,7 +222,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 isSettingValues = false;
                 if (dataController != null) {
                     dataController.loadData();   // Load data whatever
-                    dataController.notifyLoaded();
                 } else {
                     loadData();
                 }
@@ -233,9 +236,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             makeColumns();
             if (!validateData()) {
                 dataSizeLoaded = true;
-                if (dataController != null) {
-                    dataController.notifyLoaded();
-                }
                 notifyLoaded();
                 return;
             }
@@ -282,7 +282,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             public void run() {
                 if (data2D != null) {
-                    data2D.initData();
+                    data2D.resetData();
                 }
                 if (dataController != null) {
                     dataController.loadData();
@@ -310,7 +310,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.initData();
+                    data2D.resetData();
                     data2D.setTask(task);
                     List<Data2DColumn> columns = new ArrayList<>();
                     if (cols == null || cols.isEmpty()) {
@@ -364,7 +364,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 if (dataController != null) {
                     dataController.attributesController.loadData();
                     dataController.columnsController.loadData();
-                    dataController.notifyLoaded();
                 }
                 if (validateTable != null && !validateTable.isEmpty()) {
                     validateTable.htmlTable();
@@ -384,9 +383,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             dataSizeLoaded = true;
             setPagination();
             tableChanged(false);
-            if (dataController != null) {
-                dataController.notifyLoaded();
-            }
             notifyLoaded();
             return true;
         } catch (Exception e) {
@@ -443,6 +439,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public void notifyLoaded() {
         updateStatus();
         loadedNotify.set(!loadedNotify.get());
+        if (dataController != null) {
+            dataController.notifyLoaded();
+        }
     }
 
     @FXML
@@ -472,7 +471,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     if (parent != null) {
                         parent.tableData.set(index, def);
                     }
-                    MyBoxLog.console(def.getD2did() + " " + data2D.getD2did());
                     if (def.getD2did() == data2D.getD2did()) {
                         data2D.setDataName(newName);
                         if (dataController != null) {
@@ -481,7 +479,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         if (parent != null) {
                             parent.updateStatus();
                         }
-                        MyBoxLog.console(data2D.getDataName());
                         updateStatus();
                     }
 
@@ -741,9 +738,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
         if (saveButton != null) {
             saveButton.setDisable(false);
-        }
-        if (dataController != null) {
-            dataController.notifyLoaded();
         }
         notifyLoaded();
     }

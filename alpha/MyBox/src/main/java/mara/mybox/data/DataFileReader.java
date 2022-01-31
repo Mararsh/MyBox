@@ -38,7 +38,7 @@ public abstract class DataFileReader {
     public static enum Operation {
         ReadDefnition, ReadTotal, ReadColumns, ReadPage,
         ReadCols, Export, Copy, CountSum, CountSumMinMax, CountVariancesKewness,
-        Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
+        PercentageSum, Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
     }
 
     public abstract void scanFile();
@@ -75,9 +75,15 @@ public abstract class DataFileReader {
             failed = true;
             return null;
         }
+        readerFile = dataFile.getFile();
+        if (readerFile == null || !readerFile.exists() || readerFile.length() == 0) {
+            failed = true;
+            return null;
+        }
         if (cols != null && !cols.isEmpty()) {
             colsLen = cols.size();
         }
+
         switch (operation) {
             case ReadColumns:
                 dataFile.checkForLoad();
@@ -101,7 +107,14 @@ public abstract class DataFileReader {
                 }
                 break;
             case CountSum:
-                if (cols == null || cols.isEmpty() || csvPrinter == null) {
+                if (cols == null || cols.isEmpty()) {
+                    failed = true;
+                    return null;
+                }
+                colValues = new double[colsLen];
+                break;
+            case PercentageSum:
+                if (cols == null || cols.isEmpty()) {
                     failed = true;
                     return null;
                 }
@@ -146,11 +159,6 @@ public abstract class DataFileReader {
 
         this.operation = operation;
         readerStopped = false;
-        readerFile = dataFile.getFile();
-        if (readerFile == null || !readerFile.exists() || readerFile.length() == 0) {
-            failed = true;
-            return null;
-        }
         readerHasHeader = dataFile.isHasHeader();
         needCheckTask = readerTask != null;
         columnsNumber = dataFile.columnsNumber();
@@ -250,6 +258,9 @@ public abstract class DataFileReader {
                     break;
                 case CountSum:
                     handleSum();
+                    break;
+                case PercentageSum:
+                    handlePecentageSum();
                     break;
                 case Percentage:
                     handlePercentage();
@@ -393,6 +404,26 @@ public abstract class DataFileReader {
         }
     }
 
+    public void handlePecentageSum() {
+        try {
+            for (int c = 0; c < colsLen; c++) {
+                int col = cols.get(c);
+                if (col < 0 || col >= record.size()) {
+                    continue;
+                }
+                double v = dataFile.doubleValue(record.get(col));
+                if (v < 0) {
+                    if (sumAbs) {
+                        colValues[c] += Math.abs(v);
+                    }
+                } else if (v > 0) {
+                    colValues[c] += v;
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
     public void handlePercentage() {
         try {
             List<String> row = new ArrayList<>();
@@ -406,10 +437,18 @@ public abstract class DataFileReader {
                 if (withValues) {
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
-                if (colValues[c] == 0) {
+                if (v < 0) {
+                    if (sumAbs) {
+                        v = Math.abs(v);
+                    } else {
+                        v = 0;
+                    }
+                }
+                double s = colValues[c];
+                if (s == 0) {
                     row.add("0");
                 } else {
-                    row.add(DoubleTools.percentage(v, colValues[c]));
+                    row.add(DoubleTools.percentage(v, s));
                 }
             }
             csvPrinter.printRecord(row);

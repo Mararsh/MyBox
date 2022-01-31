@@ -72,7 +72,7 @@ public abstract class Data2D extends Data2DDefinition {
         initData();
     }
 
-    public final void initData() {
+    private void initData() {
         resetDefinition();
         dataSize = 0;
         pagesNumber = 1;
@@ -84,6 +84,10 @@ public abstract class Data2D extends Data2DDefinition {
         options = null;
         matrix = null;
         error = null;
+    }
+
+    public void resetData() {
+        initData();
     }
 
     @Override
@@ -179,7 +183,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public Data2D initData(File file, String sheet, long dataSize, long currentPage) {
-        initData();
+        resetData();
         this.file = file;
         this.sheet = sheet;
         this.dataSize = dataSize;
@@ -235,19 +239,9 @@ public abstract class Data2D extends Data2DDefinition {
         return type == Type.Texts;
     }
 
-    public File tmpFile(String prefix) {
-        String suffix;
-        if (isCSV() || isClipboard()) {
-            suffix = ".csv";
-        } else if (isExcel()) {
-            suffix = ".xlsx";
-        } else if (isTexts()) {
-            suffix = ".txt";
-        } else {
-            return null;
-        }
+    public File tmpCSV(String prefix) {
         return getPathTempFile(AppPaths.getGeneratedPath(),
-                FileNameTools.getFilePrefix(file) + "_" + prefix, suffix);
+                FileNameTools.getFilePrefix(file) + "_" + prefix, ".csv");
     }
 
     public boolean export(ControlDataConvert convertController, List<Integer> colIndices, List<String> dataRow) {
@@ -279,7 +273,7 @@ public abstract class Data2D extends Data2DDefinition {
         return null;
     }
 
-    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues) {
+    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues, boolean abs) {
         return null;
     }
 
@@ -311,7 +305,7 @@ public abstract class Data2D extends Data2DDefinition {
         matrix
      */
     public void initMatrix(double[][] matrix) {
-        initData();
+        resetData();
         this.matrix = matrix;
     }
 
@@ -475,6 +469,9 @@ public abstract class Data2D extends Data2DDefinition {
                         }
                         column.setD2id(did);
                         column.setIndex(i);
+                        if (d.isMatrix()) {
+                            column.setType(ColumnType.Double);
+                        }
                         columns.add(column);
                     }
                     d.getTableData2DColumn().save(conn, did, columns);

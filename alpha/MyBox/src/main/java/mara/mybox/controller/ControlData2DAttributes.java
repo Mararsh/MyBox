@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.util.Arrays;
 import java.util.Date;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,7 +34,7 @@ public class ControlData2DAttributes extends BaseController {
     protected short scale;
     protected int maxRandom;
     protected Status status;
-    protected final SimpleBooleanProperty invalid;
+    protected final SimpleBooleanProperty updateNotify;
 
     public enum Status {
         Loaded, Modified, Applied
@@ -49,7 +48,7 @@ public class ControlData2DAttributes extends BaseController {
     protected ComboBox<String> scaleSelector, randomSelector;
 
     public ControlData2DAttributes() {
-        invalid = new SimpleBooleanProperty(false);
+        updateNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -122,13 +121,6 @@ public class ControlData2DAttributes extends BaseController {
                         }
                     });
 
-            invalid.bind(Bindings.isEmpty(dataNameInput.textProperty())
-                    .or(Bindings.isEmpty(randomSelector.getEditor().textProperty()))
-                    .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(Bindings.isEmpty(randomSelector.getEditor().textProperty()))
-                    .or(randomSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -138,6 +130,20 @@ public class ControlData2DAttributes extends BaseController {
         try {
             this.dataController = dataController;
             tableData2DDefinition = dataController.tableData2DDefinition;
+
+            dataController.tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    updateInfo();
+                }
+            });
+
+            dataController.tableController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    updateInfo();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -178,7 +184,7 @@ public class ControlData2DAttributes extends BaseController {
         }
     }
 
-    protected void updateInfo() {
+    public void updateInfo() {
         if (data2D.isDataFile() && !data2D.isTmpData()) {
             infoArea.setVisible(true);
             String info = "";
@@ -217,6 +223,8 @@ public class ControlData2DAttributes extends BaseController {
             infoArea.setVisible(false);
             infoArea.clear();
         }
+
+        updateNotify.set(updateNotify.get());
     }
 
     public void status(Status newStatus) {

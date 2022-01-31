@@ -79,13 +79,16 @@ public class DataFileExcelReader extends DataFileReader {
             return;
         }
         rowIndex = 0;
+        skipHeader();
         while (iterator.hasNext()) {
             if (readerStopped()) {
                 rowIndex = 0;
                 return;
             }
-            ++rowIndex;
-            iterator.next();
+            readRecord();
+            if (record != null && !record.isEmpty()) {
+                ++rowIndex;
+            }
         }
     }
 

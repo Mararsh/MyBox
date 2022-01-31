@@ -44,6 +44,12 @@ public class DataFileExcel extends DataFile {
         type = Type.Excel;
     }
 
+    @Override
+    public void resetData() {
+        super.resetData();
+        sheetNames = null;
+    }
+
     public void setOptions(boolean hasHeader) {
         options = new HashMap<>();
         options.put("hasHeader", hasHeader);

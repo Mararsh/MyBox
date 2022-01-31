@@ -78,7 +78,6 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             }
             initPage(null);
 
-            initFileTab();
             initFormatTab();
             initSaveTab();
             initBackupsTab();

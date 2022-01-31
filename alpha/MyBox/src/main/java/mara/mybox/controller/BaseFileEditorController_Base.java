@@ -43,9 +43,9 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     }
 
     @FXML
-    protected TitledPane filePane, formatPane, savePane, saveAsPane, findPane, filterPane, locatePane, backupPane;
+    protected TitledPane infoPane, formatPane, savePane, saveAsPane, findPane, filterPane, locatePane, backupPane;
     @FXML
-    protected TextArea mainArea, lineArea, pairArea;
+    protected TextArea infoArea, mainArea, lineArea, pairArea;
     @FXML
     protected ComboBox<String> charsetSelector, targetCharsetSelector, pageSelector, pageSizeSelector;
     @FXML
@@ -72,8 +72,6 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     protected ControlTextFilter filterController;
     @FXML
     protected ControlFileBackup backupController;
-    @FXML
-    protected ControlWebView infoController;
 
     public BaseFileEditorController_Base() {
         fileChanged = new SimpleBooleanProperty(false);

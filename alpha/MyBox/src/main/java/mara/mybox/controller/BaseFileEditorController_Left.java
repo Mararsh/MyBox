@@ -22,14 +22,6 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseFileEditorController_Left extends BaseFileEditorController_Actions {
 
-    protected void initFileTab() {
-        try {
-            infoController.setParent(this);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected void initFormatTab() {
         try {
             if (formatPane != null) {

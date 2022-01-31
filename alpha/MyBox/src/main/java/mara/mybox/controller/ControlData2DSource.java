@@ -8,9 +8,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -18,22 +19,30 @@ import mara.mybox.dev.MyBoxLog;
  * @License Apache License Version 2.0
  */
 public class ControlData2DSource extends ControlData2DLoad {
-    
+
     protected ControlData2DEditTable editController;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
-    
+
     @FXML
     protected CheckBox columnsCheck, allPagesCheck;
     @FXML
     protected Label titleLabel;
     @FXML
-    protected FlowPane buttonsPane;
-    
+    protected HBox buttonsBox;
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
+            allPagesCheck.setSelected(UserConfig.getBoolean(baseName + "AllPages", false));
+            allPagesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "AllPages", allPagesCheck.isSelected());
+                }
+            });
+
             columnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -47,25 +56,25 @@ public class ControlData2DSource extends ControlData2DLoad {
                     }
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void showAllPages(boolean show) {
         if (show) {
-            if (!buttonsPane.getChildren().contains(allPagesCheck)) {
-                buttonsPane.getChildren().add(allPagesCheck);
+            if (!buttonsBox.getChildren().contains(allPagesCheck)) {
+                buttonsBox.getChildren().add(allPagesCheck);
             }
         } else {
-            if (buttonsPane.getChildren().contains(allPagesCheck)) {
+            if (buttonsBox.getChildren().contains(allPagesCheck)) {
                 allPagesCheck.setSelected(false);
-                buttonsPane.getChildren().remove(allPagesCheck);
+                buttonsBox.getChildren().remove(allPagesCheck);
             }
         }
     }
-    
+
     public void setParameters(BaseController parent, ControlData2DEditTable editController) {
         try {
             if (editController == null) {
@@ -73,7 +82,8 @@ public class ControlData2DSource extends ControlData2DLoad {
             }
             this.parentController = parent;
             this.editController = editController;
-            
+            data2D = editController.data2D;
+
             updateData();
             editController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -81,12 +91,12 @@ public class ControlData2DSource extends ControlData2DLoad {
                     updateData();
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void updateData() {
         if (editController == null) {
             return;
@@ -99,21 +109,21 @@ public class ControlData2DSource extends ControlData2DLoad {
         notifyLoaded();
         checkChanged();
     }
-    
+
     public void checkChanged() {
-        if (!editController.data2D.isMutiplePages() || editController.data2D.isTableChanged()) {
+        if (!data2D.isMutiplePages() || data2D.isTableChanged()) {
             allPagesCheck.setSelected(false);
             allPagesCheck.setDisable(true);
         } else {
             allPagesCheck.setDisable(false);
         }
     }
-    
+
     public boolean allPages() {
         checkChanged();
         return allPagesCheck.isSelected();
     }
-    
+
     @Override
     public void makeColumns() {
         try {
@@ -137,7 +147,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             MyBoxLog.error(e);
         }
     }
-    
+
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
@@ -164,7 +174,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             return null;
         }
     }
-    
+
     public List<List<String>> selectedRows() {
         try {
             List<List<String>> data = new ArrayList<>();
@@ -184,7 +194,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             return null;
         }
     }
-    
+
     public void selectRows(List<Integer> rows) {
         try {
             isSettingValues = true;
@@ -205,7 +215,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             MyBoxLog.debug(e);
         }
     }
-    
+
     @FXML
     public void selectAllCols() {
         try {
@@ -221,7 +231,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             MyBoxLog.debug(e);
         }
     }
-    
+
     @FXML
     public void selectNoneCols() {
         try {
@@ -246,7 +256,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                int col = editController.data2D.colOrder(cb.getText());
+                int col = data2D.colOrder(cb.getText());
                 if (col >= 0) {
                     all.add(col);
                     if (cb.isSelected()) {
@@ -295,7 +305,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                Data2DColumn col = editController.data2D.col(cb.getText());
+                Data2DColumn col = data2D.col(cb.getText());
                 if (col != null) {
                     all.add(col.cloneAll());
                     if (cb.isSelected()) {
@@ -325,7 +335,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             return null;
         }
     }
-    
+
     public List<List<String>> selectedData(List<Integer> rows, List<Integer> cols, boolean rowNumber) {
         try {
             if (rows == null || rows.isEmpty()
@@ -358,14 +368,14 @@ public class ControlData2DSource extends ControlData2DLoad {
             return null;
         }
     }
-    
+
     public boolean checkSelections() {
         checkedRowsIndices = checkedRowsIndices();
         checkedColsIndices = checkedColsIndices();
         return checkedRowsIndices != null && !checkedRowsIndices.isEmpty()
                 && checkedColsIndices != null && !checkedColsIndices.isEmpty();
     }
-    
+
     public boolean isSquare() {
         checkedRowsIndices = checkedRowsIndices();
         checkedColsIndices = checkedColsIndices();
@@ -373,7 +383,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 && !checkedRowsIndices.isEmpty()
                 && checkedRowsIndices.size() == checkedColsIndices.size();
     }
-    
+
     public void selectCols(List<Integer> cols) {
         try {
             isSettingValues = true;
@@ -381,7 +391,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 for (int i = 2; i < tableView.getColumns().size(); i++) {
                     TableColumn tableColumn = tableView.getColumns().get(i);
                     CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                    int col = editController.data2D.colOrder(cb.getText());
+                    int col = data2D.colOrder(cb.getText());
                     cb.setSelected(col >= 0 && cols.contains(col));
                 }
             } else {
@@ -393,14 +403,14 @@ public class ControlData2DSource extends ControlData2DLoad {
             MyBoxLog.debug(e);
         }
     }
-    
+
     public void restoreSelections() {
         selectRows(checkedRowsIndices);
         selectCols(checkedColsIndices);
     }
-    
+
     public void setLabel(String s) {
         titleLabel.setText(s);
     }
-    
+
 }
