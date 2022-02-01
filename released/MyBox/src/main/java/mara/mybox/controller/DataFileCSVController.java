@@ -163,24 +163,28 @@ public class DataFileCSVController extends BaseData2DFileController {
     public static DataFileCSVController open(File file, Charset charset, boolean withNames, char delimiter) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.setFile(file, charset, withNames, delimiter);
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileCSVController open(List<Data2DColumn> cols, List<List<String>> data) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.dataController.loadTmpData(cols, data);
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileCSVController openFile(File file) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.sourceFileChanged(file);
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileCSVController open(Data2DDefinition def) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.loadDef(def);
+        controller.requestMouse();
         return controller;
     }
 

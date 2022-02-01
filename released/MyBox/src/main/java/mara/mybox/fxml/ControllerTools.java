@@ -63,7 +63,7 @@ public class ControllerTools {
             return controller;
         }
         if (file.isDirectory()) {
-            PopTools.browseURI(file.toURI());
+            PopTools.browseURI(controller, file.toURI());
             return controller;
         }
         String suffix = FileNameTools.getFileSuffix(file.getAbsolutePath()).toLowerCase();

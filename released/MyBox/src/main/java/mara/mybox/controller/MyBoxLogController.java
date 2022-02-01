@@ -219,7 +219,6 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
             if (object != null && object instanceof MyBoxLogController) {
                 try {
                     controller = (MyBoxLogController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -228,6 +227,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
         if (controller == null) {
             controller = (MyBoxLogController) WindowTools.openStage(Fxmls.MyBoxLogsFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

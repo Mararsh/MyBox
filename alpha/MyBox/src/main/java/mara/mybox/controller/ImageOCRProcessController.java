@@ -40,6 +40,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.OCRTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
@@ -422,7 +423,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     ImageConvolution imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     BufferedImage bufferedImage = imageConvolution.operateImage();
-                    String tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    String tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -432,7 +433,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -441,7 +442,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     ImageContrast imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.HSB_Histogram_Equalization);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("HSBHistogramEqualization") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -450,7 +451,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.Gray_Histogram_Equalization);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GrayHistogramEqualization") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -461,7 +462,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageContrast.setIntPara1(100);
                     imageContrast.setIntPara2(100);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GrayHistogramStretching") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -471,7 +472,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                             ContrastAlgorithm.Gray_Histogram_Shifting);
                     imageContrast.setIntPara1(40);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GrayHistogramShifting") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -481,7 +482,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("UnsharpMasking") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -491,7 +492,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -501,7 +502,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -511,7 +512,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GaussianBlur") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -521,7 +522,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("AverageBlur") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -530,7 +531,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
                             null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
                     bufferedImage = pixelsOperation.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("Invert") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);

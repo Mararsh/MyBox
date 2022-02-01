@@ -192,6 +192,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
         updateStatus();
     }
 
+    @Override
     public void updateStatus() {
         if (TextClipboardTools.isMonitoring()) {
             bottomLabel.setText(Languages.message("MonitoringTextInSystemClipboard"));
@@ -214,7 +215,6 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
             }
             if (object instanceof TextInMyBoxClipboardController) {
                 controller = (TextInMyBoxClipboardController) object;
-                controller.toFront();
                 controller.refreshAction();
                 break;
             }
@@ -222,6 +222,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
         if (controller == null) {
             controller = (TextInMyBoxClipboardController) WindowTools.openStage(Fxmls.TextInMyBoxClipboardFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

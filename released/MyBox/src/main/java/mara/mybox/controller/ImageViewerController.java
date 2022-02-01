@@ -62,7 +62,7 @@ public class ImageViewerController extends BaseImageController {
     protected FileSortMode sortMode;
 
     @FXML
-    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, browsePane;
+    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, renderPane, browsePane;
     @FXML
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
@@ -97,6 +97,7 @@ public class ImageViewerController extends BaseImageController {
             initSaveAsPane();
             initEditPane();
             initBrowsePane();
+            initRenderPane();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -139,7 +140,6 @@ public class ImageViewerController extends BaseImageController {
                                 return;
                             }
                         }
-                        UserConfig.setInt(baseName + "LoadWidth", loadWidth);
                         setLoadWidth();
                     }
                 });
@@ -302,6 +302,20 @@ public class ImageViewerController extends BaseImageController {
                     UserConfig.setBoolean(baseName + "EditPane", editPane.isExpanded());
                 });
                 editPane.setExpanded(UserConfig.getBoolean(baseName + "EditPane", false));
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initRenderPane() {
+        try {
+            if (renderPane != null) {
+                renderPane.setExpanded(UserConfig.getBoolean(baseName + "RenderPane", true));
+                renderPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    UserConfig.setBoolean(baseName + "RenderPane", renderPane.isExpanded());
+                });
             }
 
         } catch (Exception e) {
@@ -606,7 +620,7 @@ public class ImageViewerController extends BaseImageController {
                 stage.toFront();
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonCancel) {
+                if (result == null || result.get() == buttonCancel) {
                     return;
                 } else if (result.get() == buttonSaveAs) {
                     saveAsAction();
@@ -623,7 +637,7 @@ public class ImageViewerController extends BaseImageController {
 
                     @Override
                     protected boolean handle() {
-                        savedImage = imageView.getImage();
+                        savedImage = imageToHandle();
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(savedImage, null);
                         if (bufferedImage == null || task == null || isCancelled()) {
                             return false;
@@ -654,7 +668,11 @@ public class ImageViewerController extends BaseImageController {
                         sourceFile = targetFile;
                         recordFileWritten(sourceFile);
                         if (srcFile == null) {
-                            sourceFileChanged(sourceFile);
+                            if (savedImage != imageView.getImage()) {
+                                ControllerTools.openImageViewer(sourceFile);
+                            } else {
+                                sourceFileChanged(sourceFile);
+                            }
                         } else {
                             image = savedImage;
                             imageView.setImage(image);
@@ -787,7 +805,7 @@ public class ImageViewerController extends BaseImageController {
             return false;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(getMyStage().getTitle(), message("SureDelete"))) {
+            if (!PopTools.askSure(this, getMyStage().getTitle(), message("SureDelete"))) {
                 return false;
             }
         }
@@ -823,13 +841,13 @@ public class ImageViewerController extends BaseImageController {
                 return;
             }
             FileRenameController controller = (FileRenameController) openStage(Fxmls.FileRenameFxml);
+            controller.set(sourceFile);
             controller.getMyStage().setOnHiding((WindowEvent event) -> {
                 File newFile = controller.getNewFile();
                 Platform.runLater(() -> {
                     fileRenamed(newFile);
                 });
             });
-            controller.set(sourceFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());
@@ -847,6 +865,7 @@ public class ImageViewerController extends BaseImageController {
             changeFile(imageInformation, newFile);
             updateLabelsTitle();
             makeImageNevigator();
+            notifyLoad();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());
@@ -869,6 +888,11 @@ public class ImageViewerController extends BaseImageController {
         MenuImageViewController.open(this, localToScreen.getX(), localToScreen.getY());
         return true;
     }
+
+    public boolean scopeWhole() {
+        return scope == null || scope.getScopeType() == ImageScope.ScopeType.All;
+    }
+
 
     /*
         static methods

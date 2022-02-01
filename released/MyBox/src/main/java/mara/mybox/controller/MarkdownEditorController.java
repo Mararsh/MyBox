@@ -22,8 +22,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
@@ -48,16 +46,12 @@ public class MarkdownEditorController extends TextEditorController {
     protected double htmlScrollLeft, htmlScrollTop;
 
     @FXML
-    protected TabPane tabPane;
-    @FXML
-    protected Tab markdownTab, htmlTab, codesTab;
-    @FXML
     protected TextArea codesArea;
     @FXML
     protected ComboBox<String> emulationSelector, indentSelector;
     @FXML
     protected CheckBox trimCheck, appendCheck, discardCheck, linesCheck, wrapCodesCheck,
-            refreshSwitchHtmlCheck, refreshChangeHtmlCheck, refreshSwitchCodesCheck, refreshChangeCodesCheck;
+            refreshChangeHtmlCheck, refreshChangeCodesCheck;
     @FXML
     protected TextField titleInput;
     @FXML
@@ -104,31 +98,6 @@ public class MarkdownEditorController extends TextEditorController {
     @Override
     protected void initPairBox() {
         try {
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue Tab, Tab oldValue, Tab newValue) {
-                    if (isSettingValues || sourceInformation == null) {
-                        return;
-                    }
-                    if (newValue == htmlTab) {
-                        if (htmlPage != sourceInformation.getCurrentPage() && refreshSwitchHtmlCheck.isSelected()) {
-                            markdown2html(true, false);
-                        }
-                    } else if (newValue == codesTab) {
-                        if (codesPage != sourceInformation.getCurrentPage() && refreshSwitchCodesCheck.isSelected()) {
-                            markdown2html(false, true);
-                        }
-                    }
-                }
-            });
-
-            refreshSwitchHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchHtml", true));
-            refreshSwitchHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchHtml", newValue);
-                }
-            });
             refreshChangeHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeHtml", true));
             refreshChangeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -144,13 +113,6 @@ public class MarkdownEditorController extends TextEditorController {
             });
             codesArea.setWrapText(wrapCodesCheck.isSelected());
 
-            refreshSwitchCodesCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchCodes", true));
-            refreshSwitchCodesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchCodes", newValue);
-                }
-            });
             refreshChangeCodesCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeCodes", true));
             refreshChangeCodesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -321,9 +283,7 @@ public class MarkdownEditorController extends TextEditorController {
     }
 
     protected void markdown2html() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        markdown2html(refreshChangeHtmlCheck.isSelected() || tab == htmlTab,
-                refreshChangeCodesCheck.isSelected() || tab == codesTab);
+        markdown2html(refreshChangeHtmlCheck.isSelected(), refreshChangeCodesCheck.isSelected());
     }
 
     protected void markdown2html(boolean updateHtml, boolean updateCodes) {
@@ -418,24 +378,8 @@ public class MarkdownEditorController extends TextEditorController {
     @FXML
     @Override
     public boolean popAction() {
-        try {
-            if (markdownTab.isSelected()) {
-                MarkdownPopController.open(this, mainArea);
-                return true;
-
-            } else if (htmlTab.isSelected()) {
-                HtmlPopController.openWebView(myController, webViewController.webView);
-                return true;
-
-            } else if (codesTab.isSelected()) {
-                HtmlCodesPopController.openInput(myController, codesArea);
-                return true;
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        return false;
+        MarkdownPopController.open(this, mainArea);
+        return true;
     }
 
     @FXML
@@ -443,22 +387,9 @@ public class MarkdownEditorController extends TextEditorController {
     public boolean menuAction() {
         try {
             closePopup();
-            if (markdownTab.isSelected()) {
-                Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
-                MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            } else if (htmlTab.isSelected()) {
-                Point2D localToScreen = webViewController.webView.localToScreen(webViewController.webView.getWidth() - 80, 80);
-                MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            } else if (codesTab.isSelected()) {
-                Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
-                MenuHtmlCodesController.open(myController, codesArea, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            }
+            Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
+            MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

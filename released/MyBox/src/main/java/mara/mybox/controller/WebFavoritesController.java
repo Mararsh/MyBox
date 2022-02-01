@@ -40,6 +40,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableImageFileCell;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -172,8 +173,8 @@ public class WebFavoritesController extends BaseSysTableController<WebFavorite> 
         tree
      */
     protected void loadTree(TreeNode node) {
-        if (tableWebFavorite.size() < 1
-                && PopTools.askSure(getBaseTitle(), message("ImportExamples"))) {
+        if (!AppVariables.isTesting && tableWebFavorite.size() < 1
+                && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
             treeController.importExamples();
         } else {
             treeController.loadTree(node);
@@ -637,7 +638,6 @@ public class WebFavoritesController extends BaseSysTableController<WebFavorite> 
             if (object != null && object instanceof WebFavoritesController) {
                 try {
                     controller = (WebFavoritesController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -646,6 +646,7 @@ public class WebFavoritesController extends BaseSysTableController<WebFavorite> 
         if (controller == null) {
             controller = (WebFavoritesController) WindowTools.openStage(Fxmls.WebFavoritesFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

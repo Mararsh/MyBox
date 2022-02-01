@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.bufferedimage.ImageInformation;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -68,7 +67,7 @@ public class ImageTooLargeController extends BaseController {
     @FXML
     public void mem() {
         thisPane.setDisable(true);
-        SettingsController controller = (SettingsController) loadScene(Fxmls.SettingsFxml);
+        SettingsController controller = SettingsController.oneOpen(this);
         controller.tabPane.getSelectionModel().select(controller.baseTab);
         closeStage();
     }

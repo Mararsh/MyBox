@@ -43,6 +43,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageManufactureEnhancementOptionsController extends ImageManufactureOperationController {
 
+    protected ImageManufactureEnhancementController enhancementController;
     protected OperationType enhanceType;
     protected int intPara1, intPara2, intPara3;
     protected List<ConvolutionKernel> kernels;
@@ -123,10 +124,14 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             return;
         }
         if (parentController instanceof ImageManufactureEnhancementController) {
-            ImageManufactureEnhancementController pController = (ImageManufactureEnhancementController) parentController;
-            imageController = pController.imageController;
-            commentsLabel = pController.commentsLabel;
-            okButton = pController.okButton;
+            enhancementController = (ImageManufactureEnhancementController) parentController;
+            imageController = enhancementController.imageController;
+            scopeController = enhancementController.scopeController;
+            imageView = enhancementController.imageView;
+            commentsLabel = enhancementController.commentsLabel;
+            okButton = enhancementController.okButton;
+        } else {
+            enhancementController = null;
         }
     }
 
@@ -134,9 +139,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
         try {
             if (imageController != null) {
                 imageController.resetImagePane();
-                imageController.imageTab();
             }
-
             clearValues();
             if (okButton != null && enhancementGroup.getSelectedToggle() == null) {
                 okButton.setDisable(true);
@@ -145,16 +148,24 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             RadioButton selected = (RadioButton) enhancementGroup.getSelectedToggle();
             if (ContrastRadio.equals(selected)) {
                 if (imageController != null) {
-                    imageController.imageTab();
                     commentsLabel.setText(Languages.message("ManufactureWholeImage"));
+                    imageController.imageTab();
                 }
                 enhanceType = OperationType.Contrast;
                 makeContrastBox();
+                if (enhancementController != null) {
+                    enhancementController.scopeCheck.setDisable(true);
+                }
 
             } else {
+                if (enhancementController != null) {
+                    enhancementController.scopeCheck.setDisable(false);
+                }
                 if (imageController != null) {
-                    imageController.scopeTab();
                     commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
+                    if (scopeController != null && !scopeController.scopeWhole()) {
+                        imageController.scopeTab();
+                    }
                 }
 
                 if (smoothRadio.equals(selected)) {

@@ -30,6 +30,28 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseFileEditorController_Main extends BaseFileEditorController_Pair {
 
+    protected void updatePanes() {
+        boolean nullFile = sourceFile == null;
+        isSettingValues = true;
+        if (savePane != null) {
+            savePane.setDisable(nullFile);
+            savePane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "SavePane", false));
+        }
+        if (saveAsPane != null) {
+            saveAsPane.setDisable(nullFile);
+            saveAsPane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "SaveAsPane", false));
+        }
+        if (formatPane != null) {
+            formatPane.setDisable(nullFile);
+            formatPane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "FormatPane", false));
+        }
+        if (backupPane != null) {
+            backupPane.setDisable(nullFile);
+            backupPane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "BackupPane", false));
+        }
+        isSettingValues = false;
+    }
+
     protected void initMainBox() {
         try {
             if (mainArea == null) {
@@ -212,6 +234,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         fileChanged.set(changed);
         bottomLabel.setText("");
         selectionLabel.setText("");
+        updatePanes();
         if (getMyStage() == null || sourceInformation == null) {
             return;
         }
@@ -238,9 +261,6 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
         if (okButton != null) {
             okButton.setDisable(changed);
-        }
-        if (autoSaveCheck != null) {
-            autoSaveCheck.setDisable(sourceFile == null);
         }
     }
 
@@ -282,7 +302,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         long fileLinesNumber = pageLinesNumber;
         int pageSize = sourceInformation.getPageSize();
         long currentPage = sourceInformation.getCurrentPage();
-        String fileInfo = "";
+        StringBuilder s = new StringBuilder();
         if (sourceFile == null) {
             if (pageLabel != null) {
                 pageLabel.setText("");
@@ -306,7 +326,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 if (locatePane != null) {
                     locatePane.setDisable(true);
                 }
-                fileInfo = message("CountingTotalNumber") + "\n\n";
+                infoLabel.setText(message("CountingTotalNumber"));
             } else {
                 fileObjectNumber = sourceInformation.getObjectsNumber();
                 fileLinesNumber = sourceInformation.getLinesNumber();
@@ -325,35 +345,42 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
                 sourceInformation.setPagesNumber(pagesNumber);
             }
-            fileInfo += message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + (editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
-                    + ": " + StringTools.format(fileObjectNumber) + "\n"
-                    + message("LinesNumberInFile") + ": " + StringTools.format(fileLinesNumber) + "\n"
-                    + (editType == Edit_Type.Bytes ? message("BytesPerPage") : message("LinesPerPage"))
-                    + ": " + StringTools.format(pageSize) + "\n"
-                    + message("CurrentPage") + ": " + StringTools.format(currentPage + 1)
-                    + " / " + StringTools.format(pagesNumber) + "\n";
+            s.append(message("FileSize"))
+                    .append(": ").append(FileTools.showFileSize(sourceFile.length())).append("\n");
+            s.append(message("FileModifyTime"))
+                    .append(": ").append(DateTools.datetimeToString(sourceFile.lastModified())).append("\n");
+            s.append(editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
+                    .append(": ").append(StringTools.format(fileObjectNumber)).append("\n");
+            s.append(message("LinesNumberInFile"))
+                    .append(": ").append(StringTools.format(fileLinesNumber)).append("\n");
+            s.append(editType == Edit_Type.Bytes ? message("BytesPerPage") : message("LinesPerPage"))
+                    .append(": ").append(StringTools.format(pageSize)).append("\n");
+            s.append(message("CurrentPage"))
+                    .append(": ").append(StringTools.format(currentPage + 1)).append(" / ")
+                    .append(StringTools.format(pagesNumber)).append("\n");
         }
-
-        String objectInfo, lineInfo;
+        s.append(message("LineBreak"))
+                .append(": ").append(sourceInformation.lineBreakName()).append("\n");
+        s.append(message("Charset"))
+                .append(": ").append(sourceInformation.getCharset().name()).append("\n");
         if (pagesNumber > 1) {
-            objectInfo = editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage");
-            objectInfo += ": " + StringTools.format(pageObjectStart + 1) + " - " + StringTools.format(pageObjectEnd)
-                    + " ( " + StringTools.format(pageObjectsNumber) + " )\n";
-            lineInfo = message("LinesRangeInPage")
-                    + ": " + StringTools.format(pageLineStart + 1) + " - " + StringTools.format(pageLineEnd)
-                    + " ( " + StringTools.format(pageLinesNumber) + " )\n";
+            s.append(editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage"))
+                    .append(": ").append(StringTools.format(pageObjectStart + 1))
+                    .append(" - ").append(StringTools.format(pageObjectEnd))
+                    .append(" ( ").append(StringTools.format(pageObjectsNumber)).append(" )").append("\n");
+            s.append(message("LinesRangeInPage"))
+                    .append(": ").append(StringTools.format(pageLineStart + 1))
+                    .append(" - ").append(StringTools.format(pageLineEnd))
+                    .append(" ( ").append(StringTools.format(pageLinesNumber)).append(" )").append("\n");
         } else {
-            objectInfo = editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage");
-            objectInfo += ": " + StringTools.format(pageObjectsNumber) + "\n";
-            lineInfo = message("LinesNumberInPage") + ": " + StringTools.format(pageLinesNumber) + "\n";
+            s.append(editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage"))
+                    .append(": ").append(StringTools.format(pageObjectsNumber)).append("\n");
+            s.append(message("LinesNumberInPage"))
+                    .append(": ").append(StringTools.format(pageLinesNumber)).append("\n");
         }
-        fileInfo += message("LineBreak") + ": " + sourceInformation.lineBreakName() + "\n"
-                + message("Charset") + ": " + sourceInformation.getCharset().name() + "\n"
-                + objectInfo + lineInfo
-                + message("PageModifyTime") + ": " + DateTools.nowString();
-        fileLabel.setText(fileInfo);
+        s.append(message("PageModifyTime"))
+                .append(": ").append(DateTools.nowString()).append("\n");
+        infoLabel.setText(s.toString());
 
         pageBox.setDisable(changed);
         pagePreviousButton.setDisable(currentPage <= 0 || pagesNumber < 2);
@@ -381,6 +408,15 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             filterController.sourceLen = pageObjectsNumber;
             filterController.checkFilterStrings();
         }
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    leftPane.setHvalue(0);
+                });
+            }
+        }, 500);
     }
 
     // 0-based

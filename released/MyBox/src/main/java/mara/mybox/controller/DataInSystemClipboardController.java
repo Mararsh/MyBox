@@ -49,7 +49,6 @@ public class DataInSystemClipboardController extends BaseController {
             if (object != null && object instanceof DataInSystemClipboardController) {
                 try {
                     controller = (DataInSystemClipboardController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -58,6 +57,7 @@ public class DataInSystemClipboardController extends BaseController {
         if (controller == null) {
             controller = (DataInSystemClipboardController) WindowTools.openStage(Fxmls.DataInSystemClipboardFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

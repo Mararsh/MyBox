@@ -242,7 +242,7 @@ public abstract class NotesController_Tags extends NotesController_Notebooks {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            if (!PopTools.askSure(getBaseTitle(), message("Tags"), message("SureDeleteAll"))) {
+            if (!PopTools.askSure(this,getBaseTitle(), message("Tags"), message("SureDeleteAll"))) {
                 return;
             }
             task = new SingletonTask<Void>(this) {
@@ -275,7 +275,7 @@ public abstract class NotesController_Tags extends NotesController_Notebooks {
                 popError(message("SelectToHandle"));
                 return;
             }
-            if (!PopTools.askSure(getBaseTitle(), message("Tags"), message("SureDelete"))) {
+            if (!PopTools.askSure(this,getBaseTitle(), message("Tags"), message("SureDelete"))) {
                 return;
             }
             task = new SingletonTask<Void>(this) {

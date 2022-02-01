@@ -29,7 +29,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class BaseImageController_Mask extends BaseImageController_ImageView {
-    
+
     public void initMaskPane() {
         if (maskPane == null) {
             return;
@@ -37,7 +37,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         try {
             maskPane.prefWidthProperty().bind(imageView.fitWidthProperty());
             maskPane.prefHeightProperty().bind(imageView.fitHeightProperty());
-            
+
             if (maskPane.getOnMouseClicked() == null) {
                 maskPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
@@ -46,7 +46,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                     }
                 });
             }
-            
+
             if (maskPane.getOnMouseMoved() == null) {
                 maskPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
                     @Override
@@ -55,7 +55,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                     }
                 });
             }
-            
+
             if (maskPane.getOnMouseDragged() == null) {
                 maskPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
                     @Override
@@ -64,7 +64,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                     }
                 });
             }
-            
+
             if (maskPane.getOnMousePressed() == null) {
                 maskPane.setOnMousePressed(new EventHandler<MouseEvent>() {
                     @Override
@@ -73,7 +73,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                     }
                 });
             }
-            
+
             if (maskPane.getOnMouseReleased() == null) {
                 maskPane.setOnMouseReleased(new EventHandler<MouseEvent>() {
                     @Override
@@ -82,12 +82,12 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                     }
                 });
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     public void paneClicked(MouseEvent event) {
         if (imageView.getImage() == null) {
@@ -98,21 +98,21 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         imageClicked(event, p);
         event.consume();
     }
-    
+
     @FXML
     public void imageClicked(MouseEvent event) {
 //        MyBoxLog.debug("imageClicked");
     }
-    
+
     public void imageClicked(MouseEvent event, DoublePoint p) {
     }
-    
+
     @FXML
     public DoublePoint showXY(MouseEvent event) {
         if (xyText == null || !xyText.isVisible()) {
             return null;
         }
-        if (!isPickingColor && !UserConfig.getBoolean(baseName + "PopCooridnate", false)) {
+        if (!isPickingColor && !UserConfig.getBoolean( "ImagePopCooridnate", false)) {
             xyText.setText("");
             return null;
         }
@@ -120,7 +120,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         showXY(event, p);
         return p;
     }
-    
+
     public DoublePoint showXY(MouseEvent event, DoublePoint p) {
         if (p == null) {
             xyText.setText("");
@@ -139,7 +139,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         xyText.setY(event.getY());
         return p;
     }
-    
+
     public IntPoint getImageXYint(MouseEvent event, ImageView view) {
         DoublePoint p = ImageViewTools.getImageXY(event, view);
         if (p == null) {
@@ -147,65 +147,65 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
         int ix = (int) Math.round(p.getX());
         int iy = (int) Math.round(p.getY());
-        
+
         return new IntPoint(ix, iy);
     }
-    
+
     protected void initViewControls() {
         try {
             if (rulerXCheck != null) {
-                rulerXCheck.setSelected(UserConfig.getBoolean(baseName + "RulerXY", false));
+                rulerXCheck.setSelected(UserConfig.getBoolean("ImageRulerXY", false));
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "RulerXY", rulerXCheck.isSelected());
+                        UserConfig.setBoolean("ImageRulerXY", rulerXCheck.isSelected());
                         drawMaskRulerXY();
                     }
                 });
             }
             if (gridCheck != null) {
-                gridCheck.setSelected(UserConfig.getBoolean(baseName + "GridLines", false));
+                gridCheck.setSelected(UserConfig.getBoolean("ImageGridLines", false));
                 gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "GridLines", gridCheck.isSelected());
+                        UserConfig.setBoolean("ImageGridLines", gridCheck.isSelected());
                         drawMaskGrid();
                     }
                 });
             }
-            
+
             if (coordinateCheck != null) {
-                coordinateCheck.setSelected(UserConfig.getBoolean(baseName + "PopCooridnate", false));
+                coordinateCheck.setSelected(UserConfig.getBoolean( "ImagePopCooridnate", false));
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "PopCooridnate", coordinateCheck.isSelected());
+                        UserConfig.setBoolean( "ImagePopCooridnate", coordinateCheck.isSelected());
                         checkCoordinate();
                     }
                 });
             }
-            
+
             if (renderController != null) {
                 renderController.setParentController(this);
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void drawMaskRulerXY() {
         drawMaskGrid();
         drawMaskRulerX();
         drawMaskRulerY();
     }
-    
+
     private void drawMaskRulerX() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerX();
-        if (UserConfig.getBoolean(baseName + "RulerXY", false)) {
+        if (UserConfig.getBoolean("ImageRulerXY", false)) {
             Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
             double imageWidth = getImageWidth() / widthRatio();
             double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
@@ -241,7 +241,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     private void clearMaskRulerX() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
@@ -255,13 +255,13 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     private void drawMaskRulerY() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerY();
-        if (UserConfig.getBoolean(baseName + "RulerXY", false)) {
+        if (UserConfig.getBoolean("ImageRulerXY", false)) {
             Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
             double imageHeight = getImageHeight() / heightRatio();
             double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
@@ -296,7 +296,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     private void clearMaskRulerY() {
         if (maskPane == null || imageView.getImage() == null) {
             return;
@@ -310,18 +310,18 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     public void drawMaskGrid() {
         drawMaskGridX();
         drawMaskGridY();
     }
-    
+
     private void drawMaskGridX() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskGridX();
-        if (UserConfig.getBoolean(baseName + "GridLines", false)) {
+        if (UserConfig.getBoolean( "ImageGridLines", false)) {
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
             lineWidth = lineWidth <= 0 ? 1 : lineWidth;
@@ -360,7 +360,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                 line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
                 line.setOpacity(opacity);
                 maskPane.getChildren().add(line);
-                if (!UserConfig.getBoolean(baseName + "RulerXY", false)) {
+                if (!UserConfig.getBoolean("ImageRulerXY", false)) {
                     Text text = new Text(i + " ");
                     text.setStyle(style);
                     text.setFill(lineColor);
@@ -372,13 +372,13 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     private void drawMaskGridY() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskGridY();
-        if (UserConfig.getBoolean(baseName + "GridLines", false)) {
+        if (UserConfig.getBoolean( "ImageGridLines", false)) {
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
             double imageWidth = getImageWidth() / widthRatio();
@@ -417,7 +417,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                 line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
                 line.setOpacity(opacity);
                 maskPane.getChildren().add(line);
-                if (!UserConfig.getBoolean(baseName + "RulerXY", false)) {
+                if (!UserConfig.getBoolean("ImageRulerXY", false)) {
                     Text text = new Text(j + " ");
                     text.setStyle(style);
                     text.setFill(lineColor);
@@ -429,7 +429,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     private void clearMaskGridX() {
         if (maskPane == null || imageView.getImage() == null) {
             return;
@@ -443,7 +443,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     private void clearMaskGridY() {
         if (maskPane == null || imageView.getImage() == null) {
             return;
@@ -457,15 +457,15 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     protected void checkCoordinate() {
         if (xyText != null) {
             xyText.setText("");
         }
     }
-    
+
     public void clear() {
-        
+
     }
 
     /*
@@ -485,7 +485,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
     public static void updateMaskGrid() {
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
@@ -500,5 +500,5 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
         }
     }
-    
+
 }

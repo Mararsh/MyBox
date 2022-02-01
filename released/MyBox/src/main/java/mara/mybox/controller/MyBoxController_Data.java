@@ -49,11 +49,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileExcelConvertFxml);
         });
 
-        MenuItem ExtractTextsFromMS = new MenuItem(message("ExtractTextsFromMS"));
-        ExtractTextsFromMS.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ExtractTextsFromMSFxml);
-        });
-
         MenuItem ExcelMerge = new MenuItem(message("ExcelMerge"));
         ExcelMerge.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DataFileExcelMergeFxml);
@@ -94,7 +89,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         Menu DataFile = new Menu(message("DataFile"));
         DataFile.getItems().addAll(
                 EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
-                EditExcel, ExcelConvert, ExcelMerge, ExtractTextsFromMS, new SeparatorMenuItem(),
+                EditExcel, ExcelConvert, ExcelMerge, new SeparatorMenuItem(),
                 TextData, TextDataConvert, TextDataMerge
         );
 

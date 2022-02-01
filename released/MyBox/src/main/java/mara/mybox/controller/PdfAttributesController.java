@@ -401,11 +401,11 @@ public class PdfAttributesController extends BaseController {
         ownerPassword = ownerPassword == null || ownerPassword.isBlank() ? null : ownerPassword;
         if (changeProtectionRadio.isSelected()) {
             if (userPassword != null || ownerPassword != null) {
-                if (!PopTools.askSure(myStage.getTitle(), Languages.message("SureSetPasswords"))) {
+                if (!PopTools.askSure(this,myStage.getTitle(), Languages.message("SureSetPasswords"))) {
                     return;
                 }
             } else {
-                if (!PopTools.askSure(myStage.getTitle(), Languages.message("SureUnsetPasswords"))) {
+                if (!PopTools.askSure(this,myStage.getTitle(), Languages.message("SureUnsetPasswords"))) {
                     return;
                 }
             }

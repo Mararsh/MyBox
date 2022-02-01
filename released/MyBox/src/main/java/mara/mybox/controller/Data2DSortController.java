@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -38,15 +40,38 @@ public class Data2DSortController extends Data2DHandleController {
 
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
-        super.setParameters(tableController);
-        refreshControls();
+        try {
+            super.setParameters(tableController);
+
+            colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkOptions();
+                }
+            });
+            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    refreshControls();
+                }
+            });
+
+            refreshControls();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void refreshControls() {
         try {
+            List<String> names = editController.data2D.columnNames();
+            if (names == null || names.isEmpty()) {
+                colSelector.getItems().clear();
+                return;
+            }
             String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            colSelector.getItems().setAll(tableController.data2D.columnNames());
-            if (selectedCol != null) {
+            colSelector.getItems().setAll(names);
+            if (selectedCol != null && names.contains(selectedCol)) {
                 colSelector.setValue(selectedCol);
             } else {
                 colSelector.getSelectionModel().select(0);
@@ -58,20 +83,21 @@ public class Data2DSortController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        targetController.setNotInTable(allPages());
-        memoryNoticeLabel.setVisible(allPages());
+        boolean ok = super.checkOptions();
+        targetController.setNotInTable(sourceController.allPages());
+        memoryNoticeLabel.setVisible(sourceController.allPages());
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
         if (orderCol < 0) {
             infoLabel.setText(message("SelectToHandle"));
             okButton.setDisable(true);
             return false;
         }
-        return super.checkOptions();
+        return ok;
     }
 
     public List<Integer> adjustedCols() {
         try {
-            colsNames = tableController.checkedColsNames();
+            colsNames = sourceController.checkedColsNames();
             String orderName = data2D.colName(orderCol);
             if (colsNames.contains(orderName)) {
                 colsNames.remove(orderName);
@@ -102,8 +128,8 @@ public class Data2DSortController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            handledData = tableController.selectedData(
-                    tableController.checkedRowsIndices(all()), adjustedCols(), showRowNumber());
+            handledData = sourceController.selectedData(
+                    sourceController.checkedRowsIndices(), adjustedCols(), showRowNumber());
             sort(handledData);
             if (showRowNumber()) {
                 handledData.add(0, colsNames);
@@ -151,7 +177,6 @@ public class Data2DSortController extends Data2DHandleController {
             if (!sort(rows)) {
                 return null;
             }
-            MyBoxLog.debug(colsNames);
             DataFileCSV dataFileCSV = new DataFileCSV();
             File file = dataFileCSV.tmpFile(colsNames, rows);
             dataFileCSV.setFile(file).setCharset(Charset.forName("UTF-8"))

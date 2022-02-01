@@ -140,9 +140,9 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             filterConditionsString = "";
 
-            infoArea.clear();
             mainArea.clear();
             lineArea.clear();
+            infoLabel.setText("");
             bottomLabel.setText("");
             selectionLabel.setText("");
             if (charsetSelector != null) {

@@ -12,7 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -25,7 +24,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -44,18 +42,15 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     @FXML
     protected ComboBox<String> marginWidthBox;
     @FXML
-    protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
-            preAlphaCheck;
+    protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck;
     @FXML
-    protected FlowPane colorBox, distanceBox, marginsBox, alphaBox;
+    protected FlowPane colorBox, distanceBox, marginsBox;
     @FXML
     protected HBox widthBox;
     @FXML
     protected TextField distanceInput;
     @FXML
     protected RadioButton dragRadio, addRadio, blurRadio, cutColorRadio, cutWidthRadio;
-    @FXML
-    protected ImageView preAlphaTipsView;
     @FXML
     protected VBox setBox;
     @FXML
@@ -74,21 +69,14 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             opGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
                     checkOperationType();
                 }
             });
-
-            if (imageController.imageInformation != null
-                    && FileExtensions.NoAlphaImages.contains(imageController.imageInformation.getImageFormat())) {
-                preAlphaCheck.setSelected(true);
-                preAlphaCheck.setDisable(true);
-            } else {
-                preAlphaCheck.setSelected(false);
-                preAlphaCheck.setDisable(false);
-            }
 
             colorSetController.init(this, baseName + "Color");
 
@@ -171,7 +159,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
         } else if (blurRadio.isSelected()) {
             opType = OperationType.BlurMargins;
-            setBox.getChildren().addAll(alphaBox, widthBox, marginsBox);
+            setBox.getChildren().addAll(widthBox, marginsBox);
             checkMarginWidth();
 
         }
@@ -288,15 +276,9 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
                             value = addedWidth + "";
                             break;
                         case BlurMargins:
-                            if (preAlphaCheck.isSelected()) {
-                                newImage = MarginTools.blurMarginsNoAlpha(imageView.getImage(), addedWidth,
-                                        marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                        marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                            } else {
-                                newImage = MarginTools.blurMarginsAlpha(imageView.getImage(), addedWidth,
-                                        marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                        marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                            }
+                            newImage = MarginTools.blurMarginsAlpha(imageView.getImage(), addedWidth,
+                                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                             value = addedWidth + "";
                             break;
                         default:

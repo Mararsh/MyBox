@@ -6,21 +6,27 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchColorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchColorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -45,35 +51,146 @@ License:    Apache License Version 2.0
                                                         <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Label text="%Object" />
-                                                                <RadioButton mnemonicParsing="false" selected="true" text="%Brightness">
+                                                                <RadioButton fx:id="colorColorRadio" selected="true">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconDraw.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="colorGroup" />
                                                                     </toggleGroup>
                                                                 </RadioButton>
-                                                                <RadioButton mnemonicParsing="false" text="%Saturation" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Hue" toggleGroup="$colorGroup" />
-                                                                <RadioButton fx:id="redRadio" mnemonicParsing="false" text="%Red" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="RGB" toggleGroup="$colorGroup" />
-                                                                <RadioButton fx:id="opacityRadio" mnemonicParsing="false" text="%Opacity" toggleGroup="$colorGroup" />
+                                                                <RadioButton fx:id="colorRGBRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconRGB.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorBrightnessRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconBrightness.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorHueRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconHue.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorSaturationRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconSaturation.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorOpacityRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconOpacity.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorRedRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <Rectangle fx:id="redRect" fill="red" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorGreenRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <Rectangle fx:id="greenRect" fill="green" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorBlueRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <Rectangle fx:id="blueRect" fill="blue" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorYellowRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <Rectangle fx:id="yellowRect" fill="yellow" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorCyanRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <Rectangle fx:id="cyanRect" fill="cyan" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="colorMagentaRadio" toggleGroup="$colorGroup">
+                                                                    <graphic>
+                                                                        <Rectangle fx:id="magentaRect" fill="magenta" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                    </graphic>
+                                                                </RadioButton>
                                                             </children>
                                                         </FlowPane>
                                                         <FlowPane hgap="5.0" layoutX="20.0" layoutY="20.0" vgap="5.0">
                                                             <children>
                                                                 <Label text="%Operation" />
-                                                                <RadioButton fx:id="setRadio" mnemonicParsing="false" selected="true" text="%Set">
+                                                                <RadioButton fx:id="setRadio" mnemonicParsing="false" selected="true">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="opGroup" />
                                                                     </toggleGroup>
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconEqual.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
                                                                 </RadioButton>
-                                                                <RadioButton fx:id="increaseRadio" mnemonicParsing="false" text="%Increase" toggleGroup="$opGroup" />
-                                                                <RadioButton fx:id="decreaseRadio" mnemonicParsing="false" text="%Decrease" toggleGroup="$opGroup" />
-                                                                <RadioButton fx:id="filterRadio" mnemonicParsing="false" text="%Filter" toggleGroup="$opGroup" />
-                                                                <RadioButton fx:id="invertRadio" mnemonicParsing="false" text="%Invert" toggleGroup="$opGroup" />
+                                                                <RadioButton fx:id="increaseRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconPlus.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="decreaseRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconMinus.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="filterRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconFilter.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="invertRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconInvert.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </RadioButton>
                                                             </children>
                                                         </FlowPane>
                                                         <FlowPane hgap="5.0" layoutX="20.0" layoutY="201.0" vgap="5.0">
@@ -81,14 +198,13 @@ License:    Apache License Version 2.0
                                                                 <Slider fx:id="colorSlider" blockIncrement="1.0" minorTickCount="1" prefHeight="44.0" prefWidth="150.0" showTickLabels="true" showTickMarks="true" value="5.0" />
                                                                 <TextField fx:id="colorInput" prefWidth="80.0" />
                                                                 <Label fx:id="colorUnit" text=" " />
-                                                                <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
-                                                                <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconTips.png" />
-                                                                    </image>
-                                                                </ImageView>
                                                             </children>
                                                         </FlowPane>
+                                                        <HBox fx:id="colorBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                            </children>
+                                                        </HBox>
                                                         <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
                                                     </children>
                                                     <padding>
@@ -97,8 +213,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </ScrollPane>
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
-                                                styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

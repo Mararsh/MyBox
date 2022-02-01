@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -26,6 +27,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -51,7 +53,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected int pageSize, editingIndex, viewingIndex;
     protected long pagesNumber, dataSize;
     protected long currentPage, startRowOfCurrentPage;  // 0-based
-    protected boolean dataSizeLoaded;
+    protected boolean dataSizeLoaded, loadInBackground;
+    protected final SimpleBooleanProperty selectNotify;
 
     @FXML
     protected TableView<P> tableView;
@@ -71,6 +74,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public BaseTableViewController() {
         tableName = "";
         TipsLabelKey = "TableTips";
+        selectNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -128,11 +132,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             if (tableView == null) {
                 return;
             }
-
             tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
-                if (isSettingValues) {
-                    return;
-                }
                 tableChanged();
             });
 
@@ -141,6 +141,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 @Override
                 public void onChanged(ListChangeListener.Change c) {
                     checkSelected();
+                    notifySelect();
                 }
             });
 
@@ -176,6 +177,13 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
+    public void notifySelect() {
+        if (isSettingValues) {
+            return;
+        }
+        selectNotify.set(!selectNotify.get());
+    }
+
     public boolean checkBeforeLoadingTableData() {
         return true;
     }
@@ -184,12 +192,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
         loadPage(currentPage);
     }
 
-    public synchronized void loadPage(long page) {
+    public void loadPage(long page) {
         if (!checkBeforeLoadingTableData()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonTask<Void>(this) {
             private List<P> data;
@@ -219,7 +227,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
         };
-        start(task, message("LoadingTableData"));
+        start(task, !loadInBackground, message("LoadingTableData"));
     }
 
     protected void countPagination(long page) {
@@ -259,7 +267,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     public void loadDataSize() {
         dataSizeLoaded = true;
-//        setPagination();
     }
 
     public List<P> readPageData() {
@@ -278,6 +285,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void updateStatus() {
+        checkSelected();
         if (dataSizeLabel != null) {
             dataSizeLabel.setText(message("Rows") + ": "
                     + (tableData == null ? 0 : tableData.size())
@@ -591,10 +599,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
         if (deleteButton != null) {
-            deleteButton.setDisable(none);
+            deleteButton.setDisable(isEmpty);
         }
         if (deleteItemsButton != null) {
-            deleteItemsButton.setDisable(none);
+            deleteItemsButton.setDisable(isEmpty);
         }
         if (viewButton != null) {
             viewButton.setDisable(none);
@@ -740,10 +748,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public void deleteAction() {
         List<Integer> indice = tableView.getSelectionModel().getSelectedIndices();
         if (indice == null || indice.isEmpty()) {
+            clearAction();
             return;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(getBaseTitle(), message("SureDelete"))) {
+            if (!PopTools.askSure(this, getBaseTitle(), message("SureDelete"))) {
                 return;
             }
         }
@@ -802,7 +811,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        if (!PopTools.askSure(getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
             return;
         }
         synchronized (this) {
@@ -847,6 +856,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public void deleteRowsAction() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
+            clearAction();
             return;
         }
         isSettingValues = true;
@@ -953,6 +963,46 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 data.add(row);
             }
             DataFileCSVController.open(Data2DColumn.toColumns(names), data);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void htmlAction() {
+        try {
+            if (tableData.isEmpty()) {
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            int rowsSelectionColumnIndex = -1;
+            if (rowsSelectionColumn != null) {
+                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+            }
+            int colsNumber = tableView.getColumns().size();
+            for (int c = 0; c < colsNumber; c++) {
+                if (c == rowsSelectionColumnIndex) {
+                    continue;
+                }
+                names.add(tableView.getColumns().get(c).getText());
+            }
+            StringTable table = new StringTable(names, baseTitle);
+            for (int r = 0; r < tableData.size(); r++) {
+                List<String> row = new ArrayList<>();
+                for (int c = 0; c < colsNumber; c++) {
+                    if (c == rowsSelectionColumnIndex) {
+                        continue;
+                    }
+                    String s = null;
+                    try {
+                        s = tableView.getColumns().get(c).getCellData(r).toString();
+                    } catch (Exception e) {
+                    }
+                    row.add(s);
+                }
+                table.add(row);
+            }
+            table.editHtml();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

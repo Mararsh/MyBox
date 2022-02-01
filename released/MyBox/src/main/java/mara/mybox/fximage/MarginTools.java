@@ -13,7 +13,6 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.MargionTools;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 
@@ -307,7 +306,7 @@ public class MarginTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = MargionTools.blurMarginsNoAlpha(source, blurWidth, blurTop, blurBottom, blurLeft, blurRight);
+        BufferedImage target = mara.mybox.bufferedimage.MarginTools.blurMarginsNoAlpha(source, blurWidth, blurTop, blurBottom, blurLeft, blurRight);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -317,7 +316,7 @@ public class MarginTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = MargionTools.blurMarginsAlpha(source, blurWidth, blurTop, blurBottom, blurLeft, blurRight);
+        BufferedImage target = mara.mybox.bufferedimage.MarginTools.blurMarginsAlpha(source, blurWidth, blurTop, blurBottom, blurLeft, blurRight);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

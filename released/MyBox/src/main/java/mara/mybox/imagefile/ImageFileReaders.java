@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -20,6 +19,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
+import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageColor;
 import static mara.mybox.bufferedimage.ImageConvertTools.pixelSizeMm2dpi;
 import mara.mybox.bufferedimage.ImageFileInformation;
@@ -31,6 +31,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
+import static mara.mybox.value.AppVariables.imageRenderHints;
 import static mara.mybox.value.Languages.message;
 import net.sf.image4j.codec.ico.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
@@ -132,8 +133,6 @@ public class ImageFileReaders {
             return null;
         }
         try {
-            SingletonTask task = imageInfo.getTask();
-            LoadingController loading = task != null ? task.getLoading() : null;
             ImageReadParam param = reader.getDefaultReadParam();
             Rectangle region = imageInfo.getRegion();
             if (region != null) {
@@ -153,9 +152,12 @@ public class ImageFileReaders {
             BufferedImage bufferedImage;
             try {
                 bufferedImage = reader.read(imageInfo.getIndex(), param);
+                imageInfo.setImageType(bufferedImage.getType());
                 int requiredWidth = (int) imageInfo.getRequiredWidth();
                 if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
+                } else if (imageRenderHints != null) {
+                    bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
                 }
                 return bufferedImage;
             } catch (Exception e) {
@@ -170,11 +172,10 @@ public class ImageFileReaders {
     public static ImageInformation makeInfo(File file, int width) {
         ImageInformation readInfo = new ImageInformation(file);
         readInfo.setRequiredWidth(width);
-        return makeInfo(readInfo, null, false);
+        return makeInfo(readInfo, false);
     }
 
-    public static ImageInformation makeInfo(ImageInformation readInfo,
-            ImageInformation existInfo, boolean onlyInformation) {
+    public static ImageInformation makeInfo(ImageInformation readInfo, boolean onlyInformation) {
         try {
             if (readInfo == null) {
                 return null;
@@ -183,29 +184,6 @@ public class ImageFileReaders {
             ImageInformation imageInfo = null;
             File file = readInfo.getFile();
             int index = readInfo.getIndex();
-            int requiredWidth = (int) readInfo.getRequiredWidth();
-
-            if (existInfo != null) {
-                ImageFileInformation referFileInfo = existInfo.getImageFileInformation();
-                if (referFileInfo != null && referFileInfo.getFile().equals(file)) {
-                    int size = referFileInfo.getNumberOfImages();
-                    if (size > 0 && index == existInfo.getIndex()) {
-                        fileInfo = referFileInfo;
-                        Image existThumb = existInfo.getThumbnail();
-                        if (existThumb != null) {
-                            if (requiredWidth > 0) {
-                                if (existThumb.getWidth() == requiredWidth) {
-                                    return existInfo;
-                                }
-                            } else {
-                                if (existThumb.getWidth() == existInfo.getWidth()) {
-                                    return existInfo;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             SingletonTask task = readInfo.getTask();
             LoadingController loading = task != null ? task.getLoading() : null;
             String format = readInfo.getImageFormat();
@@ -245,9 +223,6 @@ public class ImageFileReaders {
                                 }
                                 imageInfo.setTask(task);
                                 BufferedImage bufferedImage = readFrame(reader, imageInfo);
-                                if (requiredWidth > 0 && bufferedImage.getWidth() != requiredWidth) {
-                                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, requiredWidth);
-                                }
                                 imageInfo.loadBufferedImage(bufferedImage);
                             }
                         }

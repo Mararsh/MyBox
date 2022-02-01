@@ -238,7 +238,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
         if ((ffmpegOptionsController.encoderTask != null && !ffmpegOptionsController.encoderTask.isQuit())
                 || (ffmpegOptionsController.muxerTask != null && !ffmpegOptionsController.muxerTask.isQuit())
                 || (ffmpegOptionsController.queryTask != null && !ffmpegOptionsController.queryTask.isQuit())) {
-            if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("TaskRunning"))) {
+            if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("TaskRunning"))) {
                 return false;
             }
             if (ffmpegOptionsController.encoderTask != null) {

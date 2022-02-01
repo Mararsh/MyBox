@@ -241,9 +241,8 @@ public class TextInSystemClipboardController extends BaseController {
         TextInSystemClipboardController controller = running();
         if (controller == null) {
             controller = (TextInSystemClipboardController) WindowTools.openStage(Fxmls.TextInSystemClipboardFxml);
-        } else {
-            controller.toFront();
         }
+        controller.requestMouse();
         return controller;
     }
 

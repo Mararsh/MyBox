@@ -1,10 +1,12 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyEvent;
@@ -34,7 +36,7 @@ public abstract class BaseData2DFileController extends BaseController {
     protected ControlData2DColumns columnsController;
 
     @FXML
-    protected TitledPane saveAsPane, backupPane, formatPane;
+    protected TitledPane infoPane, saveAsPane, backupPane, formatPane;
     @FXML
     protected VBox formatBox;
     @FXML
@@ -42,9 +44,7 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     protected ControlData2D dataController;
     @FXML
-    protected Label nameLabel;
-    @FXML
-    protected CheckBox leftPaneCheck;
+    protected Label infoLabel, nameLabel;
 
     public BaseData2DFileController() {
         TipsLabelKey = "DataFileTips";
@@ -89,16 +89,6 @@ public abstract class BaseData2DFileController extends BaseController {
             initBackupsTab();
             initSaveAsTab();
 
-            leftPaneCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayLeftPane", true));
-            checkLeftPane();
-            leftPaneCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "DisplayLeftPane", leftPaneCheck.isSelected());
-                    checkLeftPane();
-                }
-            });
-
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
@@ -115,18 +105,27 @@ public abstract class BaseData2DFileController extends BaseController {
 
             checkStatus();
 
+            infoLabel.textProperty().bind(attributesController.infoArea.textProperty());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void checkLeftPane() {
-        if (leftPaneCheck.isSelected()) {
-            leftPaneControl.setVisible(true);
-            showLeftPane();
-        } else {
-            hideLeftPane();
-            leftPaneControl.setVisible(false);
+    protected void initInfoTab() {
+        try {
+            if (infoPane == null) {
+                return;
+            }
+            infoPane.setExpanded(UserConfig.getBoolean(baseName + "InfoPane", true));
+            infoPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "InfoPane", infoPane.isExpanded());
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -194,6 +193,14 @@ public abstract class BaseData2DFileController extends BaseController {
 
     protected void checkStatus() {
         leftPane.setDisable(data2D == null || data2D.isTmpData());
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    leftPane.setHvalue(0);
+                });
+            }
+        }, 500);
     }
 
     @FXML

@@ -1,6 +1,8 @@
 package mara.mybox.db.table;
 
 import java.lang.reflect.ParameterizedType;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -123,6 +125,10 @@ public abstract class BaseTable<D> {
                     return results.getTimestamp(column.getName());
                 case Date:
                     return results.getDate(column.getName());
+                case Blob:
+                    return results.getBlob(column.getName());
+                case Clob:
+                    return results.getClob(column.getName());
                 default:
                     MyBoxLog.debug(column.getName() + " " + column.getType());
             }
@@ -225,6 +231,20 @@ public abstract class BaseTable<D> {
                     } else {
                         Date date = (Date) value;
                         statement.setString(index, DateTools.datetimeToString(date.getTime()).substring(0, 10));
+                    }
+                    break;
+                case Clob:
+                    if (value == null) {
+                        statement.setNull(index, Types.CLOB);
+                    } else {
+                        statement.setClob(index, (Clob) value);
+                    }
+                    break;
+                case Blob:
+                    if (value == null) {
+                        statement.setNull(index, Types.BLOB);
+                    } else {
+                        statement.setBlob(index, (Blob) value);
                     }
                     break;
                 default:
@@ -406,6 +426,12 @@ public abstract class BaseTable<D> {
                     break;
                 case Date:
                     sql += "DATE";
+                    break;
+                case Blob:
+                    sql += "BLOB";
+                    break;
+                case Clob:
+                    sql += "CLOB";
                     break;
                 default:
                     MyBoxLog.debug(column.getName() + " " + column.getType());

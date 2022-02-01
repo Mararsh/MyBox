@@ -29,67 +29,67 @@ License:    Apache License Version 2.0
                     <children>
                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                      <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
-                                          <children>
-                                              <RadioButton fx:id="horizontalBarsChartRadio" mnemonicParsing="false" selected="true">
-                                                  <toggleGroup>
-                                                      <ToggleGroup fx:id="chartGroup" />
-                                                  </toggleGroup>
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconBarsChartH.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </RadioButton>
-                                              <RadioButton fx:id="verticalBarsChartRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconBarsChart.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </RadioButton>
-                                              <RadioButton fx:id="linesChartRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconLinesChart.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </RadioButton>
-                                              <RadioButton fx:id="linesChartHRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconLinesChartH.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </RadioButton>
-                                              <RadioButton fx:id="pieRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconPieChart.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </RadioButton>
-                                              <RadioButton fx:id="mapRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/iconMap.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </RadioButton>
-                                          </children>
-                                      </FlowPane>
+                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <RadioButton fx:id="horizontalBarChartRadio" mnemonicParsing="false" selected="true">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="chartGroup" />
+                                            </toggleGroup>
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconBarChartH.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioButton>
+                                        <RadioButton fx:id="barChartRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconBarChart.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioButton>
+                                        <RadioButton fx:id="verticalLineChartRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconLineChartV.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioButton>
+                                        <RadioButton fx:id="lineChartRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconLineChart.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioButton>
+                                        <RadioButton fx:id="pieRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPieChart.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioButton>
+                                        <RadioButton fx:id="mapRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconMap.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioButton>
+                                    </children>
+                                </FlowPane>
                                 <Button fx:id="snapshotButton" mnemonicParsing="false" onMouseEntered="#popSnapMenu" HBox.hgrow="NEVER">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

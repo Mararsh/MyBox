@@ -2,6 +2,7 @@ package mara.mybox.bufferedimage;
 
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
+import mara.mybox.bufferedimage.ImageBinary.BinaryAlgorithm;
 import mara.mybox.value.FileExtensions;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -18,15 +19,11 @@ public class ImageAttributes {
         Keep, Remove, PremultipliedAndKeep, PremultipliedAndRemove
     }
 
-    public static enum BinaryConversion {
-        DEFAULT, BINARY_OTSU, BINARY_THRESHOLD
-    }
-
     protected String imageFormat, compressionType, colorSpaceName;
     protected ImageType colorType;
     protected int density, threshold, quality, ratioAdjustion, width;
     protected Alpha alpha;
-    protected BinaryConversion binaryConversion;
+    protected BinaryAlgorithm binaryConversion;
     protected boolean embedProfile, keepRatio, isDithering;
     protected int sourceWidth, sourceHeight, targetWidth, targetHeight;
     protected ICC_Profile profile;
@@ -147,11 +144,11 @@ public class ImageAttributes {
         this.quality = quality;
     }
 
-    public BinaryConversion getBinaryConversion() {
+    public BinaryAlgorithm getBinaryConversion() {
         return binaryConversion;
     }
 
-    public void setBinaryConversion(BinaryConversion binaryConversion) {
+    public void setBinaryConversion(BinaryAlgorithm binaryConversion) {
         this.binaryConversion = binaryConversion;
     }
 

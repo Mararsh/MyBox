@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Calendar;
@@ -87,7 +88,11 @@ public class PptToPdfController extends BaseBatchFileController {
                     return message("Cancelled");
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                slide.draw(slideImage.createGraphics());
+                Graphics2D g = slideImage.createGraphics();
+                if (AppVariables.imageRenderHints != null) {
+                    g.addRenderingHints(AppVariables.imageRenderHints);
+                }
+                slide.draw(g);
                 if (task == null || task.isCancelled()) {
                     return message("Cancelled");
                 }

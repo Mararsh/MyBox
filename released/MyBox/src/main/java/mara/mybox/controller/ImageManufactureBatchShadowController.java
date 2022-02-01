@@ -6,7 +6,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
@@ -38,8 +37,6 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
     protected ToggleGroup shadowGroup;
     @FXML
     protected ComboBox<String> perBox, shadowBox;
-    @FXML
-    protected CheckBox preAlphaCheck;
 
     public ImageManufactureBatchShadowController() {
         baseTitle = Languages.message("ImageManufactureBatchShadow");
@@ -175,11 +172,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             }
             Color color = (Color) colorSetController.rect.getFill();
             BufferedImage target;
-            if (preAlphaCheck.isSelected()) {
-                target = ShadowTools.addShadowNoAlpha(source, value, FxColorTools.toAwtColor(color));
-            } else {
-                target = ShadowTools.addShadowAlpha(source, value, FxColorTools.toAwtColor(color));
-            }
+            target = ShadowTools.addShadowAlpha(source, value, FxColorTools.toAwtColor(color));
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

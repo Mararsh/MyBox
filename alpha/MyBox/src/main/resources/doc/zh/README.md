@@ -4,21 +4,24 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2021-12-30 版本6.5.1         
+2022-2-1 版本6.5.2         
 
-* 编辑表格：单击开始编辑，失焦提交修改；类型检验；行的复选框。       
-* 编辑数据：表格/文本为主/辅编辑模式，废弃表单模式；统一数据管理界面；处理逻辑从界面移至对象。     
-* 图像：改进图像文件的读取方法；在后端加载缩略图；颜色选择窗口可以直接加载示例调色盘。                         
-* 界面：网页和弹出窗口的样式可所有界面共享；查找/替换的选项可所有界面共享；截图当前窗口或节点的内容。                  
-* 解决：笔记无法输入换行；处理图像的“剪切”按钮失效；另存图片时未提供扩展名选项；长文件名导致弹出菜单失效或者备份失败；文本/字节编辑器的面板无法调整宽度。               
+* 图像：可显示网格；范围可被所有图片共享；滤色；可在图片上添加多行文字并设置背景边框；保存或修改图片时可选渲染参数。       
+* 数据：选择数据和参数以生成条图/线图/饼图/散点图/气泡图。                      
+* 界面：选择数据时，若不选则处理所有。         
+* 代码：弹出菜单改为子窗口；图像内部处理均用ARGB；自动测试-打开界面；减少数据处理的冗余代码。                
+* 解决：对非透明图片（如jpg）批量添加文本时处理错误；恢复备份时图像未更新；处理多页数据的多个功能有错；包含特殊字符时菜单无法弹出；
+弹出菜单打开时输入文本可能触发快捷键。         
 
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.1)           
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.2)             
  
+虎年吉祥！         
+
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.1-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-src.zip)   39M（大约值）       
+[MyBox-6.5.2-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-src.zip)   40M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -29,9 +32,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win10-x64.zip)  | 219MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac.dmg)  | 232MB  |  MyBox-6.5.1.app   |
+| win10 x64 | [MyBox-6.5.2-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-win10-x64.zip)  | 220MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.2-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.2-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-mac.dmg)  | 232MB  |  MyBox-6.5.2.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -43,14 +46,14 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-win-jar.zip)  | 154MB | Java 17或更高版本 |
-| linux | [MyBox-6.5.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
-| mac | [MyBox-6.5.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.1/MyBox-6.5.1-mac-jar.zip)  |  159MB  | Java 16 |
+| win | [MyBox-6.5.2-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-win-jar.zip)  | 156MB | Java 17或更高版本 |
+| linux | [MyBox-6.5.2-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
+| mac | [MyBox-6.5.2-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-mac-jar.zip)  |  159MB  | Java 16 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.5.1.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.2.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.5.1.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.2.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -68,9 +71,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.5.1.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.5.1.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.5.1.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.5.2.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.5.2.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.5.2.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -89,7 +92,7 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.1 | 2021-12-30 | [html](#devLog) |
+| 开发日志 | 6.5.2 | 2022-2-1 | [html](#devLog) |
 | 快捷键 | 6.4.7 |  2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -160,7 +163,7 @@ MyBox基于以下开放资源：
 
 
 # 当前版本       
-当前是版本6.5.1，已实现的特点概述如下:      
+当前是版本6.5.2，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
@@ -198,7 +201,8 @@ MyBox基于以下开放资源：
     - [管理数据](#manageData)
     - [编辑数据](#editData)
     - [数据文件](#dataFiles)
-    - [数据粘贴板](#dataClipboard)
+    - [系统粘贴板中数据](#dataInSystemClipboard)
+    - [MyBox粘贴板中的数据](#dataInMyBoxClipboard)
     - [矩阵](#matrix)
     - [通用的数据处理](#dataManufacture)
     - [地图数据](#mapData)
@@ -449,11 +453,12 @@ MyBox v5.3以前的版本均基于Java 8。
 2. 选择区域。
 3. 旋转可保存。
 4. 删除、重命名、恢复。
-5. 可选显示：坐标、横标尺、纵标尺、数据。
+5. 可选显示：坐标、标尺、网格、数据。
 6. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
 7. 同目录下图像文件导览，多种文件排序方式。
 8. 右键菜单。
-9. "剪裁"、“复制”、“保存为”、和各个功能是针对内存中当前图片所选择的区域。       
+9. 可选是处理选择的区域还是处理图片整体。       
+10. 保存或修改图片时可选渲染参数。       
 
 ![截屏-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer.jpg)       
 
@@ -579,6 +584,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  合并为一个动态gif文件
  	-  合并为一个PDF文件
  	-  合并为一个PPT文件
+ 	-  合并为一个视频文件（需要ffmpeg）
 
 ![截屏-editImages](https://mararsh.github.io/MyBox/snap-editImages.jpg)         
 
@@ -796,6 +802,7 @@ MyBox v5.3以前的版本均基于Java 8。
  		- 在编辑数据时，非法值将被拒绝。
  		- 在读取数据时，类型被忽略。
  		- 在计算数值时，非法数值被记为零。
+ 		- 数据类型影响排序的结果。
 	- 点击按钮“确定”以把修改应用于“表格”。
 	- 点击按钮“取消”以丢弃修改并从“表格”读取数据。
 6. 有修改时，页签头显示* 。若修改未应用，则显示 **。
@@ -807,10 +814,26 @@ MyBox v5.3以前的版本均基于Java 8。
 9. 处理数据：
 	- 对象：选择行、或文件中所有行，同时选择列。
 	- 操作：赋值、复制、粘贴、排序、统计、百分比、归一化、转置、导出
-	- 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。
-10. 同步显示数据的文本格式和网页格式。
+	- 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
+10. 数据图：
+	- “类别”列定义数据名字。
+	- “数值”列定义数据值，必须是数字。
+	- 除了饼图，多列可以被选为图中数字序列。
+ 		- 不同的数字序列显示为不同颜色或者形状。
+ 		- 当数据无法被解析为数字时，计为零。
+ 		- 忽略非法数据。
+	- 条图以条块的高度表示数据的大小。
+	- 线图以连接点的线条表示数据的趋势。
+	- 饼图以分割的圆表示数据的比例。数值列必须是非负数。
+	- 气泡图以不同半径的多个圆表示数据的大小。
+ 		- “类别”列和“数值”列定义数据的坐标。
+ 		- “大小”列定义数据的大小。
+ 		- 所有列都必须是数字，大小列必须时非负数。
+	- 散点图以符号表示数据的分布。
+11. 同步显示数据的文本格式和网页格式。
 
-![截屏-dataEdit](https://mararsh.github.io/MyBox/snap-dataEdit.jpg)         
+
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataChart.jpg)         
 
 
 ### 数据文件<a id="dataFiles" />
@@ -827,11 +850,22 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 可按最大行数分割转换后的文件。
 3. 合并csv/excel/文本数据文件。        
 
+![截屏-dataEdit](https://mararsh.github.io/MyBox/snap-dataEdit.jpg)         
   
 
-### 数据粘贴板<a id="dataClipboard" />
+### 系统粘贴板中数据<a id="dataInMyBoxClipboard" />
+1. 输入文本或粘贴系统粘贴板中文本。
+2. 选择数据行和列，粘贴到目标表单的指定位置。       
+
+![截屏-dataInSC](https://mararsh.github.io/MyBox/snap-dataInSC.jpg)         
+
+
+### MyBox粘贴板中的数据<a id="dataInSystemClipboard" />
 1. 复制、编辑、保存数据到数据库。
-2. 选择数据粘贴板中的数据，粘贴到目标表单的指定位置。       
+2. 选择数据行和列，粘贴到目标表单的指定位置。       
+
+![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-dataInMC.jpg)         
+
 
 
 ### 矩阵<a id="matrix" />
@@ -1461,7 +1495,8 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 5. 运行系统命令
 6. 管理语言
 7. 制作图标
-8. 给作者发消息
+8. 自动测试-打开界面
+9. 给作者发消息
 
 ## 设置<a id="settings" />
 1. 界面：
@@ -1499,6 +1534,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 2. 关闭其它窗口
 3. 重启MyBox
 4. 最近访问的界面
+5. 窗口/面板截屏
 
 ## 帮助<a id="helps" />
 1. MyBox快捷键：
@@ -1511,6 +1547,19 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 
 # 开发日志<a id="devLog" />            
+2022-2-1 版本6.5.2         
+
+* 图像：可显示网格；范围可被所有图片共享；滤色；可在图片上添加多行文字并设置背景边框；保存或修改图片时可选渲染参数。       
+* 数据：选择数据和参数以生成条图/线图/饼图/散点图/气泡图。                      
+* 界面：选择数据时，若不选则处理所有。         
+* 代码：弹出菜单改为子窗口；图像内部处理均用ARGB；自动测试-打开界面；减少数据处理的冗余代码。                
+* 解决：对非透明图片（如jpg）批量添加文本时处理错误；恢复备份时图像未更新；处理多页数据的多个功能有错；包含特殊字符时菜单无法弹出；
+弹出菜单打开时输入文本可能触发快捷键。               
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.2)           
+
+虎年吉祥！         
+
 2021-12-26 版本6.5.1         
 
 * 编辑表格：单击开始编辑，失焦提交修改；类型检验；行的复选框。       

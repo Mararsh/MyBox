@@ -107,7 +107,6 @@ public class Fxmls {
     public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
     public static final String ImageManufactureEnhancementFxml = "/fxml/ImageManufactureEnhancement.fxml";
     public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
-    public static final String ImageManufactureRichTextFxml = "/fxml/ImageManufactureRichText.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
     public static final String ImageManufacturePenFxml = "/fxml/ImageManufacturePen.fxml";
     public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
@@ -129,7 +128,6 @@ public class Fxmls {
     public static final String ImageStatisticFxml = "/fxml/ImageStatistic.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
-    public static final String ImageTextFxml = "/fxml/ImageText.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
     public static final String ImageSampleFxml = "/fxml/ImageSample.fxml";
@@ -188,6 +186,7 @@ public class Fxmls {
     public static final String Data2DPercentageFxml = "/fxml/Data2DPercentage.fxml";
     public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";
     public static final String Data2DNormalizeFxml = "/fxml/Data2DNormalize.fxml";
+    public static final String Data2DChartFxml = "/fxml/Data2DChart.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -195,7 +194,6 @@ public class Fxmls {
 
     public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
-    public static final String DataFileExcelExtractTextsFxml = "/fxml/DataFileExcelExtractTexts.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
     public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
@@ -261,7 +259,6 @@ public class Fxmls {
     public static final String FilesCopyFxml = "/fxml/FilesCopy.fxml";
     public static final String FilesMoveFxml = "/fxml/FilesMove.fxml";
     public static final String FilesFindFxml = "/fxml/FilesFind.fxml";
-    public static final String FilesFindBatchFxml = "/fxml/FilesFindBatch.fxml";
     public static final String FilesCompareFxml = "/fxml/FilesCompare.fxml";
     public static final String FilesRedundancyFxml = "/fxml/FilesRedundancy.fxml";
     public static final String FilesRedundancyResultsFxml = "/fxml/FilesRedundancyResults.fxml";
@@ -341,6 +338,8 @@ public class Fxmls {
     public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
+    public static final String AutoTestingCasesFxml = "/fxml/AutoTestingCases.fxml";
+    public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
 
     /*
         common
@@ -349,6 +348,7 @@ public class Fxmls {
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
     public static final String TextInputFxml = "/fxml/TextInput.fxml";
     public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
+    public static final String HtmlScriptFxml = "/fxml/HtmlScript.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

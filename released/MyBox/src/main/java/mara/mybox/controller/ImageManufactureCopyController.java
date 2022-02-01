@@ -35,6 +35,8 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             colorSetController.init(this, baseName + "CopyColor");
 
             clipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -62,7 +64,9 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     protected void paneExpanded() {
         imageController.showRightPane();
         imageController.resetImagePane();
-        imageController.scopeTab();
+        if (scopeController != null && !scopeController.scopeWhole()) {
+            imageController.scopeTab();
+        }
     }
 
     @FXML
@@ -84,8 +88,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                             newImage = imageView.getImage();
 
                         } else if (includeRadio.isSelected()) {
-                            if (scopeController.scope == null
-                                    || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
+                            if (scopeController.scopeWhole()
                                     || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
                                 newImage = imageView.getImage();
                             } else {

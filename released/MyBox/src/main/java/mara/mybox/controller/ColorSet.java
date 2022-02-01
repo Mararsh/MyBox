@@ -98,6 +98,10 @@ public class ColorSet extends BaseController {
         return (Color) rect.getFill();
     }
 
+    public java.awt.Color awtColor() {
+        return FxColorTools.toAwtColor(color());
+    }
+
     public String rgb() {
         return FxColorTools.color2rgb(color());
     }
@@ -130,7 +134,7 @@ public class ColorSet extends BaseController {
                     WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
-            controller.load(this);
+            controller.load(this, rect);
 
             popup = makePopup();
             popup.getContent().add(pane);

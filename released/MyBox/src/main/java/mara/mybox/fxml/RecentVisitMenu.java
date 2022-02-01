@@ -12,6 +12,7 @@ import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -58,97 +59,102 @@ public abstract class RecentVisitMenu {
     }
 
     public void pop() {
-        if (controller == null || event == null) {
-            return;
-        }
-        ContextMenu popMenu = controller.getPopMenu();
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
+        try {
+            if (controller == null || event == null) {
+                return;
+            }
+            ContextMenu popMenu = controller.getPopMenu();
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
 
-        MenuItem menu = new MenuItem(Languages.message("Select..."));
-        menu.setOnAction((ActionEvent event1) -> {
-            handleSelect();
-        });
-        popMenu.getItems().add(menu);
+            MenuItem menu = new MenuItem(Languages.message("Select..."));
+            menu.setOnAction((ActionEvent event1) -> {
+                handleSelect();
+            });
+            popMenu.getItems().add(menu);
 
-        List<VisitHistory> his = recentFiles();
-        if (his != null && !his.isEmpty()) {
-            List<String> files = new ArrayList<>();
-            for (VisitHistory h : his) {
-                String fname = h.getResourceValue();
-                if (!files.contains(fname)) {
-                    files.add(fname);
+            List<VisitHistory> his = recentFiles();
+            if (his != null && !his.isEmpty()) {
+                List<String> files = new ArrayList<>();
+                for (VisitHistory h : his) {
+                    String fname = h.getResourceValue();
+                    if (!files.contains(fname)) {
+                        files.add(fname);
+                    }
+                }
+                if (!files.isEmpty()) {
+                    popMenu.getItems().add(new SeparatorMenuItem());
+                    menu = new MenuItem(Languages.message("RecentAccessedFiles"));
+                    menu.setStyle("-fx-text-fill: #2e598a;");
+                    popMenu.getItems().add(menu);
+                    for (String fname : files) {
+                        menu = new MenuItem(limitMenuName(fname));
+                        menu.setOnAction((ActionEvent event1) -> {
+                            handleFile(fname);
+                        });
+                        popMenu.getItems().add(menu);
+                    }
                 }
             }
-            if (!files.isEmpty()) {
+
+            if (examples != null && !examples.isEmpty()) {
                 popMenu.getItems().add(new SeparatorMenuItem());
-                menu = new MenuItem(Languages.message("RecentAccessedFiles"));
+                menu = new MenuItem(Languages.message("Examples"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
-                for (String fname : files) {
-                    menu = new MenuItem(limitMenuName(fname));
+                for (String example : examples) {
+                    menu = new MenuItem(limitMenuName(example));
                     menu.setOnAction((ActionEvent event1) -> {
-                        handleFile(fname);
+                        handleFile(example);
                     });
                     popMenu.getItems().add(menu);
                 }
             }
-        }
-
-        if (examples != null && !examples.isEmpty()) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("Examples"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(menu);
-            for (String example : examples) {
-                menu = new MenuItem(limitMenuName(example));
-                menu.setOnAction((ActionEvent event1) -> {
-                    handleFile(example);
-                });
+            List<String> paths = paths();
+            if (paths != null && !paths.isEmpty()) {
+                popMenu.getItems().add(new SeparatorMenuItem());
+                menu = new MenuItem(Languages.message("RecentAccessedDirectories"));
+                menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
+                for (String path : paths) {
+                    menu = new MenuItem(limitMenuName(path));
+                    menu.setOnAction((ActionEvent event1) -> {
+                        handlePath(path);
+                    });
+                    popMenu.getItems().add(menu);
+                }
             }
-        }
-        List<String> paths = paths();
-        if (paths != null && !paths.isEmpty()) {
+
+            if (popMenu.getItems().isEmpty()) {
+                return;
+            }
+            controller.setPopMenu(popMenu);
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("RecentAccessedDirectories"));
+            menu = new MenuItem(Languages.message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event1) -> {
+                controller.getPopMenu().hide();
+                controller.setPopMenu(null);
+            });
             popMenu.getItems().add(menu);
-            for (String path : paths) {
-                menu = new MenuItem(limitMenuName(path));
-                menu.setOnAction((ActionEvent event1) -> {
-                    handlePath(path);
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
 
-        if (popMenu.getItems().isEmpty()) {
-            return;
+            LocateTools.locateMouse(event, popMenu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        controller.setPopMenu(popMenu);
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(Languages.message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent event1) -> {
-            controller.getPopMenu().hide();
-            controller.setPopMenu(null);
-        });
-        popMenu.getItems().add(menu);
-
-        LocateTools.locateMouse(event, popMenu);
     }
 
     // https://github.com/Mararsh/MyBox/issues/1266
-    // Error popped when menu name is longer than 56. Not sure whether this is a bug of javafx
+    // Error popped when menu name includes "_". Not sure whether this is a bug of javafx
     public String limitMenuName(String name) {
         if (name == null) {
             return null;
         }
-        return name.length() > 50 ? "..." + name.substring(name.length() - 50) : name;
+        name = name.replaceAll("_", " ");
+        return name.length() > 80 ? "..." + name.substring(name.length() - 80) : name;
     }
 
     public abstract void handleSelect();

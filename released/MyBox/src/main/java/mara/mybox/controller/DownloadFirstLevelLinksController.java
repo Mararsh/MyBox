@@ -44,7 +44,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -106,8 +105,6 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     protected TextCollectingVisitor textCollectingVisitor;
     protected String ttf;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab linksTab, optionsTab, downloadingTab, failedTab, logsTab;
     @FXML
@@ -1611,7 +1608,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 }
             }
             if (ask) {
-                if (PopTools.askSure(getMyStage().getTitle(), Languages.message("TaskRunning"))) {
+                if (PopTools.askSure(this,getMyStage().getTitle(), Languages.message("TaskRunning"))) {
                     stopped = true;
                 } else {
                     return false;

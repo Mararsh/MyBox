@@ -56,7 +56,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
-            clearFilesButton, listButton, exampleRegexButton;
+            listButton, exampleRegexButton;
     @FXML
     protected TableColumn<P, String> handledColumn, fileColumn, typeColumn;
     @FXML
@@ -391,6 +391,11 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         return true;
     }
 
+    protected boolean isSelected(int index) {
+        List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+        return selected == null || selected.isEmpty() || selected.contains(index);
+    }
+
     public void markFileHandling(int index) {
         Platform.runLater(new Runnable() {
             @Override
@@ -707,6 +712,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
+    @Override
     public void viewAction() {
         int index = tableView.getSelectionModel().getSelectedIndex();
         if (index < 0 || index > tableData.size() - 1) {
@@ -721,6 +727,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
+    @Override
     public void editAction() {
 
     }
@@ -998,6 +1005,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         List<Integer> selected = new ArrayList<>();
         selected.addAll(tableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
+            clearFilesAction();
             return;
         }
         isSettingValues = true;

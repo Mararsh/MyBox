@@ -6,8 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
 /**
@@ -67,6 +66,9 @@ public class ShadowTools {
             }
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             Color bgColor = Colors.TRANSPARENT;
             g.setColor(bgColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);
@@ -125,6 +127,9 @@ public class ShadowTools {
             }
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.setColor(alphaColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

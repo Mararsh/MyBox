@@ -17,12 +17,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DateTimeStringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.Era;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ColorStringConverter;
 import mara.mybox.fxml.DoubleStringFromatConverter;
 import mara.mybox.fxml.EraStringConverter;
 import mara.mybox.fxml.FloatStringFromatConverter;
@@ -281,6 +283,15 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             @Override
             public TableCell<S, Era> call(TableColumn<S, Era> param) {
                 return new TableAutoCommitCell<>(new EraStringConverter());
+            }
+        };
+    }
+
+    public static <S> Callback<TableColumn<S, Color>, TableCell<S, Color>> forColorColumn() {
+        return new Callback<TableColumn<S, Color>, TableCell<S, Color>>() {
+            @Override
+            public TableCell<S, Color> call(TableColumn<S, Color> param) {
+                return new TableAutoCommitCell<>(new ColorStringConverter());
             }
         };
     }

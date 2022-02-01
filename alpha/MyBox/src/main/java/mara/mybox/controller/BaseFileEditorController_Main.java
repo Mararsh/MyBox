@@ -326,7 +326,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 if (locatePane != null) {
                     locatePane.setDisable(true);
                 }
-                infoArea.setText(message("CountingTotalNumber"));
+                infoLabel.setText(message("CountingTotalNumber"));
             } else {
                 fileObjectNumber = sourceInformation.getObjectsNumber();
                 fileLinesNumber = sourceInformation.getLinesNumber();
@@ -380,7 +380,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
         }
         s.append(message("PageModifyTime"))
                 .append(": ").append(DateTools.nowString()).append("\n");
-        infoArea.setText(s.toString());
+        infoLabel.setText(s.toString());
 
         pageBox.setDisable(changed);
         pagePreviousButton.setDisable(currentPage <= 0 || pagesNumber < 2);

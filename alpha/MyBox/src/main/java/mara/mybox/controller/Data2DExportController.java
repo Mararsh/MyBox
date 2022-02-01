@@ -80,13 +80,13 @@ public class Data2DExportController extends BaseTaskController {
 
             sourceController.setParameters(this, editController);
 
-            editController.selectNotify.addListener(new ChangeListener<Boolean>() {
+            sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();
                 }
             });
-            editController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            sourceController.selectNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();

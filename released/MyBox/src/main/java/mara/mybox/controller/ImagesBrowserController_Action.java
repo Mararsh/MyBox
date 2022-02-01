@@ -129,7 +129,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+                if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
                     return;
                 }
             }
@@ -410,13 +410,13 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             }
             File file = info.getImageFileInformation().getFile();
             FileRenameController controller = (FileRenameController) WindowTools.openStage(Fxmls.FileRenameFxml);
+            controller.set(file);
             controller.getMyStage().setOnHiding((WindowEvent event) -> {
                 File newFile = controller.getNewFile();
                 Platform.runLater(() -> {
                     fileRenamed(index, newFile);
                 });
             });
-            controller.set(file);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -447,19 +447,21 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 recordFileOpened(newFile);
                 popInformation(MessageFormat.format(Languages.message("FileRenamed"), file.getAbsolutePath(), newFile.getAbsolutePath()));
             }
+            notifyLoad();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
+    @Override
     public void deleteAction() {
         try {
             if (selectedIndexes == null || selectedIndexes.isEmpty()) {
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+                if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
                     return;
                 }
             }

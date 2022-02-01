@@ -78,8 +78,8 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%Html">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
-                                        <MenuItem mnemonicParsing="false" onAction="#webFind" text="%WebFind" />
-                                        <MenuItem mnemonicParsing="false" onAction="#webElements" text="%WebElements" />
+                                        <MenuItem mnemonicParsing="false" onAction="#htmlFind" text="%WebFind" />
+                                        <MenuItem mnemonicParsing="false" onAction="#htmlElements" text="%WebElements" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlSnap" text="%HtmlSnap" />
                                         <MenuItem mnemonicParsing="false" onAction="#htmlExtractTables" text="%HtmlExtractTables" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
@@ -214,7 +214,6 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openDataExcel" text="%EditExcel" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelConvert" text="%ExcelConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelMerge" text="%ExcelMerge" />
-                                        <MenuItem mnemonicParsing="false" onAction="#extractTextsFromMS" text="%ExtractTextsFromMS" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDataText" text="%EditTextDataFile" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataConvert" text="%TextDataConvert" />
@@ -449,16 +448,17 @@ License:    Apache License Version 2.0
                             <items>
                                 <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
                                 <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
+                                <CheckMenuItem fx:id="detailedDebugCheck" mnemonicParsing="false" onAction="#detailedDebug" text="%DetailedDebugLogs" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxLogs" text="%MyBoxLogs" />
                                 <!--<MenuItem mnemonicParsing="false" onAction="#MyBoxData" text="%MyBoxData" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#runSystemCommand" text="%RunSystemCommand" />
-
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="manageLanguagesMenuItem" mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
-                                <MenuItem fx:id="makeIconsItem"  mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
+                                <MenuItem mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
+                                <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
+                                <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />
                             </items>

@@ -12,8 +12,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.value.AppVariables;
 import org.krysalis.barcode4j.ChecksumMode;
 import org.krysalis.barcode4j.HumanReadablePlacement;
 import org.krysalis.barcode4j.impl.AbstractBarcodeBean;
@@ -151,6 +152,9 @@ public class BarcodeTools {
             }
             BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             g.drawImage(picture, (width - aw) / 2, (height - ah) / 2, aw, ah, null);

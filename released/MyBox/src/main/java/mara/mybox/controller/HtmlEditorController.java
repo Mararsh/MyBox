@@ -33,7 +33,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
@@ -79,8 +78,6 @@ public class HtmlEditorController extends WebAddressController {
 
     @FXML
     protected HBox addressBox;
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab viewTab, codesTab, editorTab, markdownTab, textsTab, backupTab;
     @FXML
@@ -1062,6 +1059,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (codesChanged) {
                         Optional<ButtonType> result = alertClosingTab();
+                        if (result == null || !result.isPresent()) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeCodes();
                         } else if (result.get() != buttonClose) {
@@ -1081,6 +1081,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (heChanged) {
                         Optional<ButtonType> result = alertClosingTab();
+                        if (result == null || !result.isPresent()) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeEditor();
                         } else if (result.get() != buttonClose) {
@@ -1100,7 +1103,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (mdChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-
+                        if (result == null || !result.isPresent()) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeMarkdown();
                         } else if (result.get() != buttonClose) {
@@ -1120,7 +1125,9 @@ public class HtmlEditorController extends WebAddressController {
                 public void handle(Event event) {
                     if (textsChanged) {
                         Optional<ButtonType> result = alertClosingTab();
-
+                        if (result == null || !result.isPresent()) {
+                            return;
+                        }
                         if (result.get() == buttonSynchronize) {
                             synchronizeTexts();
                         } else if (result.get() != buttonClose) {
@@ -1349,6 +1356,9 @@ public class HtmlEditorController extends WebAddressController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;
@@ -1374,6 +1384,7 @@ public class HtmlEditorController extends WebAddressController {
         try {
             HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
             controller.loadContents(html);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

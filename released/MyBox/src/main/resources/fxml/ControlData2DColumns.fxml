@@ -37,16 +37,25 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-                <Button fx:id="trimColumnsButton" mnemonicParsing="false" onAction="#trimAction">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconNumber.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteRowsAction">
+            <Button fx:id="renameColumnsButton" mnemonicParsing="false" onAction="#renameColumns">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconRename.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="colorButton" mnemonicParsing="false" onAction="#randomColors">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconColor.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteRowsAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -107,6 +116,7 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="notNullColumn" text="%NotNull" />
                 <TableColumn fx:id="lengthColumn" prefWidth="75.0" text="%Length" />
                 <TableColumn fx:id="widthColumn" prefWidth="75.0" text="%Width" />
+            <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
             </columns>
         </TableView>
     </children>

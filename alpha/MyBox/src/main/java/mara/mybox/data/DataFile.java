@@ -11,7 +11,6 @@ import mara.mybox.data.DataFileReader.Operation;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -119,18 +118,17 @@ public abstract class DataFile extends Data2D {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        DataFileReader.create(this)
+        DataFileReader reader = DataFileReader.create(this)
                 .setStatisticData(sData).setCols(cols)
                 .setReaderTask(task).start(DataFileReader.Operation.CountSumMinMax);
-        for (int c = 0; c < colLen; c++) {
-            sData[c].mean = sData[c].sum / sData[c].count;
+        if (reader == null) {
+            return null;
         }
-        DataFileReader.create(this)
+        reader = DataFileReader.create(this)
                 .setStatisticData(sData).setCols(cols).setCountKewness(true)
                 .setReaderTask(task).start(DataFileReader.Operation.CountVariancesKewness);
-        for (int c = 0; c < colLen; c++) {
-            sData[c].variance = Math.sqrt(sData[c].variance / sData[c].count);
-            sData[c].skewness = Math.cbrt(sData[c].skewness / sData[c].count);
+        if (reader == null) {
+            return null;
         }
         return sData;
     }
@@ -243,6 +241,9 @@ public abstract class DataFile extends Data2D {
         }
         int colLen = cols.size();
         DoubleStatistic[] sData = new DoubleStatistic[colLen];
+        for (int c = 0; c < colLen; c++) {
+            sData[c] = new DoubleStatistic();
+        }
         DataFileReader reader = DataFileReader.create(this)
                 .setStatisticData(sData).setCols(cols)
                 .setReaderTask(task).start(DataFileReader.Operation.CountSumMinMax);
@@ -275,7 +276,7 @@ public abstract class DataFile extends Data2D {
 
             reader = DataFileReader.create(this)
                     .setStatisticData(sData).setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber)
+                    .setIncludeRowNumber(rowNumber).setFrom(from)
                     .setReaderTask(task).start(DataFileReader.Operation.NormalizeMinMax);
 
         } catch (Exception e) {
@@ -376,18 +377,11 @@ public abstract class DataFile extends Data2D {
         if (reader == null) {
             return null;
         }
-        for (int c = 0; c < colLen; c++) {
-            sData[c].mean = AppValues.InvalidDouble;
-            sData[c].variance = AppValues.InvalidDouble;
-        }
         reader = DataFileReader.create(this)
                 .setStatisticData(sData).setCols(cols).setCountKewness(false)
                 .setReaderTask(task).start(DataFileReader.Operation.CountVariancesKewness);
         if (reader == null) {
             return null;
-        }
-        for (int c = 0; c < colLen; c++) {
-            sData[c].mean = sData[c].sum / sData[c].count;
         }
         File csvFile = tmpCSV("normalizeZscore");
         CSVFormat targetFormat = CSVFormat.DEFAULT

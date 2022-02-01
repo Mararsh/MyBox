@@ -58,6 +58,18 @@ public class StyleCheckBox {
         if (id.startsWith("leftPane")) {
             return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
         }
+        if (id.startsWith("rightPane")) {
+            return new StyleData(id, "", message("RightPane"), "", "iconDoubleRight.png");
+        }
+        if (id.startsWith("contextMenu")) {
+            return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
+        }
+        if (id.startsWith("editable")) {
+            return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
+        }
+        if (id.startsWith("scope")) {
+            return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
+        }
         switch (id) {
             case "tableSubdirCheck":
                 return new StyleData("tableSubdirCheck", "", message("HandleSubDirectories"), "", "iconFolder.png");
@@ -82,9 +94,9 @@ public class StyleCheckBox {
             case "thumbCheck":
                 return new StyleData("thumbCheck", "", message("Thumbnails"), "", "iconBrowse.png");
             case "rulerXCheck":
-                return new StyleData("rulerXCheck", "", message("RulerX"), "", "iconXRuler.png");
-            case "rulerYCheck":
-                return new StyleData("rulerYCheck", "", message("RulerY"), "", "iconYRuler.png");
+                return new StyleData("rulerXCheck", "", message("Rulers"), "", "iconXRuler.png");
+            case "gridCheck":
+                return new StyleData(id, "", message("GridLines"), "", "iconGrid.png");
             case "statisticCheck":
                 return new StyleData("statisticCheck", "", message("Statistic"), "", "iconStatistic.png");
             case "transparentBackgroundCheck":

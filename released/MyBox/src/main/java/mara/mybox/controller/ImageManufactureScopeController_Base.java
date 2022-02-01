@@ -10,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -41,8 +40,6 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected ImageView scopeView, scopeTipsView;
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab areaTab, pointsTab, colorsTab, matchTab, pixTab, optionsTab, saveTab;
     @FXML
@@ -77,7 +74,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
     protected void indicateScope() {
-        if (isSettingValues || imageView == null || !scopeView.isVisible()) {
+        if (isSettingValues || imageView == null || !scopeView.isVisible() || scope == null) {
             return;
         }
         synchronized (this) {
@@ -108,9 +105,6 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
                 @Override
                 protected void whenSucceeded() {
-                    if (scope == null) {
-                        return;
-                    }
                     scopeView.setImage(scopedImage);
                     scopeView.setFitWidth(imageView.getFitWidth());
                     scopeView.setFitHeight(imageView.getFitHeight());
@@ -132,26 +126,23 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
         MenuImageScopeController.open((ImageManufactureScopeController) this, x, y);
     }
 
-    public void popMenu() {
+    @FXML
+    @Override
+    public boolean menuAction() {
         try {
             Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
             MenuImageScopeController.open((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+            return false;
         }
     }
 
     @FXML
     @Override
-    public boolean menuAction() {
-        imageController.menuAction();
-        return true;
-    }
-
-    @FXML
-    @Override
     public boolean popAction() {
-        imageController.popAction();
+        ImageScopePopController.open((ImageManufactureScopeController) this);
         return true;
     }
 

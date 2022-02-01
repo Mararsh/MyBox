@@ -328,9 +328,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
         ImageInSystemClipboardController controller = running();
         if (controller == null) {
             controller = (ImageInSystemClipboardController) WindowTools.openStage(Fxmls.ImageInSystemClipboardFxml);
-        } else {
-            controller.toFront();
         }
+        controller.requestMouse();
         return controller;
     }
 

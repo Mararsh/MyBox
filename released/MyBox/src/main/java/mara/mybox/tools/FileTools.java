@@ -84,6 +84,7 @@ public class FileTools {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            MyBoxLog.error(sourceFile + "    " + targetFile);
             return false;
         }
     }

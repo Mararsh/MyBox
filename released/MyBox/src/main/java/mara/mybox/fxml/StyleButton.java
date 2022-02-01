@@ -649,7 +649,6 @@ public class StyleButton {
                 return new StyleData("shearButton", message("Shear"), "", "iconShear.png");
             case "testButton":
                 return new StyleData("testButton", message("Test"), "", "iconGo.png");
-
             case "newTabButton":
                 return new StyleData(id, message("NewTab"), "", "iconPlus.png");
             case "strightButton":

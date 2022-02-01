@@ -18,79 +18,14 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSetValuesController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSetValuesController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%SetValues" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-        <Label fx:id="dataLabel" minHeight="-Infinity" wrapText="true" />
-        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-            <children>
-                <Label minHeight="-Infinity" text="%SelectRowsColumnsInTableHandle" wrapText="true" />
-                <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
-                    <children>
-                        <Label text="%Rows">
-                            <FlowPane.margin>
-                                <Insets />
-                            </FlowPane.margin>
-                        </Label>
-                        <RadioButton fx:id="allRowsRadio" mnemonicParsing="false" text="%AllPages">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="rowGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="rowTableRadio" mnemonicParsing="false" selected="true" text="%Selected" toggleGroup="$rowGroup" />
-                        <Button fx:id="selectAllRowsButton" mnemonicParsing="false" onAction="#selectAllRows">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconSelectAll.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="selectNoneRowsButton" mnemonicParsing="false" onAction="#selectNoneRows">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconSelectNone.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </FlowPane>
-                <FlowPane hgap="2.0" layoutX="15.0" layoutY="15.0" prefWrapLength="300.0" vgap="2.0">
-                    <children>
-                        <Label text="%Columns">
-                            <FlowPane.margin>
-                                <Insets />
-                            </FlowPane.margin>
-                        </Label>
-                        <Button fx:id="selectAllColsButton" mnemonicParsing="false" onAction="#selectAllCols">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconSelectAll.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="selectNoneColsButton" mnemonicParsing="false" onAction="#selectNoneCols">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconSelectNone.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </FlowPane>
-            </children>
-        </VBox>
+      <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <Label text="%Value" />
@@ -125,7 +60,7 @@ License:    Apache License Version 2.0
         </VBox>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"  styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" />
+                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

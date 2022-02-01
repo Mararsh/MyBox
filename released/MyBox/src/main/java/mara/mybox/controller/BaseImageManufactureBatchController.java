@@ -8,7 +8,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -35,7 +34,9 @@ public abstract class BaseImageManufactureBatchController extends BaseBatchImage
         if (formatController != null) {
             formatController.setParameters(this, false);
         }
-        browseButton.setDisable(true);
+        if (browseButton != null) {
+            browseButton.setDisable(true);
+        }
     }
 
     @Override

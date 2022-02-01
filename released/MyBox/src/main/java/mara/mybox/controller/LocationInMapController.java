@@ -269,7 +269,7 @@ public class LocationInMapController extends GeographyCodeMapController {
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonEdit) {
+        if (result == null || result.get() != buttonEdit) {
             return;
         }
         GeographyCodeEditController controller

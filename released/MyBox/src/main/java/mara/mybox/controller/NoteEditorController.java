@@ -469,6 +469,9 @@ public class NoteEditorController extends HtmlEditorController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;

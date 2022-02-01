@@ -179,7 +179,9 @@ public abstract class BaseMapController extends BaseController {
                         Platform.runLater(() -> {
                             SystemConfig.setBoolean("MapRunFirstTime" + AppValues.AppVersion, false);
                             controller.closeStage();
-                            parentController.reload();
+                            if (parentController != null) {
+                                parentController.reload();
+                            }
                         });
                     }
                 }, 4000);

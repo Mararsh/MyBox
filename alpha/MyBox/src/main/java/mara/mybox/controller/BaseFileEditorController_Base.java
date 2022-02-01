@@ -45,7 +45,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     @FXML
     protected TitledPane infoPane, formatPane, savePane, saveAsPane, findPane, filterPane, locatePane, backupPane;
     @FXML
-    protected TextArea infoArea, mainArea, lineArea, pairArea;
+    protected TextArea mainArea, lineArea, pairArea;
     @FXML
     protected ComboBox<String> charsetSelector, targetCharsetSelector, pageSelector, pageSizeSelector;
     @FXML
@@ -55,7 +55,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     @FXML
     protected ControlTimeLength autoSaveDurationController;
     @FXML
-    protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel,
+    protected Label infoLabel, editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel,
             filterConditionsLabel;
     @FXML
     protected Button charactersButton, linesButton, exampleFilterButton,

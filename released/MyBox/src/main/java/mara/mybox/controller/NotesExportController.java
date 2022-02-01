@@ -75,7 +75,6 @@ public class NotesExportController extends BaseTaskController {
     public void initControls() {
         try {
             super.initControls();
-            needRecordVisit = false;
             treeView = notebooksController.treeView;
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));

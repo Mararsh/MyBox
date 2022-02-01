@@ -262,7 +262,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 return true;
 
             } else if (tab == scopeTab) {
-                scopeController.popMenu();
+                scopeController.menuAction();
                 return true;
 
             }
@@ -365,6 +365,9 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
+        if (result == null || !result.isPresent()) {
+            return false;
+        }
         if (result.get() == buttonSave) {
             saveAction();
             return true;

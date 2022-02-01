@@ -144,19 +144,19 @@ public class ImageFileWriters {
     }
 
     // Not convert color space
-    public static boolean writeImageFile(BufferedImage image, ImageAttributes attributes, String targetFile) {
-        if (image == null || targetFile == null) {
+    public static boolean writeImageFile(BufferedImage srcImage, ImageAttributes attributes, String targetFile) {
+        if (srcImage == null || targetFile == null) {
             return false;
         }
         if (attributes == null) {
-            return writeImageFile(image, targetFile);
+            return writeImageFile(srcImage, targetFile);
         }
         try {
             String targetFormat = attributes.getImageFormat().toLowerCase();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-                return writeIcon(image, attributes.getWidth(), new File(targetFile));
+                return writeIcon(srcImage, attributes.getWidth(), new File(targetFile));
             }
-            BufferedImage targetImage = AlphaTools.checkAlpha(image, targetFormat);
+            BufferedImage targetImage = AlphaTools.checkAlpha(srcImage, targetFormat);
             ImageWriter writer = getWriter(targetFormat);
             ImageWriteParam param = getWriterParam(attributes, writer);
             IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, targetImage, writer, param);

@@ -22,16 +22,6 @@
                 <ComboBox fx:id="shadowBox" editable="true" prefWidth="100.0" />
             </children>
         </FlowPane>
-        <FlowPane hgap="5.0" layoutX="22.0" layoutY="143.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-            <children>
-                <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
-                <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../buttons/Red/iconTips.png" />
-                    </image>
-                </ImageView>
-            </children>
-        </FlowPane>
         <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -1,13 +1,9 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -47,14 +43,7 @@ public class FindPopController extends MenuTextBaseController {
             if (parent == null || node == null) {
                 return null;
             }
-            List<Window> windows = new ArrayList<>();
-            windows.addAll(Window.getWindows());
-            for (Window window : windows) {
-                Object object = window.getUserData();
-                if (object != null && object instanceof FindPopController) {
-                    ((FindPopController) object).close();
-                }
-            }
+            closeAll();
             FindPopController controller
                     = (FindPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.FindPopFxml, false);
             controller.setParameters(parent, node, x, y);

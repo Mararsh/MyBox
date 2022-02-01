@@ -161,11 +161,11 @@ public class MenuImageBaseController extends MenuController {
                     }
                 });
             } else {
-                coordinateCheck.setSelected(UserConfig.getBoolean(baseName + "PopCooridnate", false));
+                coordinateCheck.setSelected(UserConfig.getBoolean( "ImagePopCooridnate", false));
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "PopCooridnate", coordinateCheck.isSelected());
+                        UserConfig.setBoolean( "ImagePopCooridnate", coordinateCheck.isSelected());
                         imageController.checkCoordinate();
                     }
                 });
@@ -196,11 +196,11 @@ public class MenuImageBaseController extends MenuController {
                     }
                 });
             } else {
-                rulerXCheck.setSelected(UserConfig.getBoolean(baseName + "RulerXY", false));
+                rulerXCheck.setSelected(UserConfig.getBoolean("ImageRulerXY", false));
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "RulerXY", newValue);
+                        UserConfig.setBoolean("ImageRulerXY", newValue);
                         imageController.drawMaskRulerXY();
                     }
                 });
@@ -231,11 +231,11 @@ public class MenuImageBaseController extends MenuController {
                     }
                 });
             } else {
-                gridCheck.setSelected(UserConfig.getBoolean(baseName + "GridLines", false));
+                gridCheck.setSelected(UserConfig.getBoolean( "ImageGridLines", false));
                 gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "GridLines", newValue);
+                        UserConfig.setBoolean( "ImageGridLines", newValue);
                         imageController.drawMaskGrid();
                     }
                 });

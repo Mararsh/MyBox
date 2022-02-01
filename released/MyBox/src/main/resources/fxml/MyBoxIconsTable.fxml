@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+
+  <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxIconsTableController">
+      <children>
+      <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0">
+               <graphic>
+                  <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+               </graphic>
+            </TableColumn>
+            <TableColumn fx:id="objectColumn" prefWidth="100.0" text="%Icon" />
+            <TableColumn fx:id="typeColumn" prefWidth="400.0" text="%File" />
+            <TableColumn fx:id="sizeColumn" editable="false" prefWidth="100.0" text="%Size" />
+            <TableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifyTime" />
+         </columns>
+      </TableView>
+      </children>
+  </VBox>

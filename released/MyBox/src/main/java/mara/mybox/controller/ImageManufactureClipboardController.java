@@ -12,7 +12,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -50,8 +49,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     @FXML
     protected ControlImagesClipboard clipsController;
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab imagesPane, setPane;
     @FXML
@@ -94,6 +91,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             rotateAngle = currentAngle = 0;
             clipsController.setParameters(imageController, true);
 
@@ -246,7 +245,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         imageController.showRightPane();
         imageController.resetImagePane();
         imageController.imageTab();
-        scrollPane.setHvalue(0);
+
     }
 
     public void selectClip() {
@@ -384,6 +383,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     tabPane.getSelectionModel().select(setPane);
                     okButton.setDisable(false);
                     okButton.requestFocus();
+                    imageController.adjustRightPane();
                     imageController.operation = ImageOperation.Paste;
                 }
             };

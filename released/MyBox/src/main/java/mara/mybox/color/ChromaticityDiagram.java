@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -72,6 +72,9 @@ public class ChromaticityDiagram {
 //            MyBoxLog.console(width + " " + height);
             image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             g = image.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             if (bgColor != null) {
                 g.setColor(bgColor);
                 g.fillRect(0, 0, width, height);

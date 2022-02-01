@@ -99,11 +99,6 @@ public class ControlFindReplace extends BaseController {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
-        if (shareCheck != null && shareCheck.isSelected()) {
-            baseName = "FindReplace";
-        } else {
-            baseName = editerController.baseName;
-        }
         setControls();
     }
 
@@ -111,11 +106,6 @@ public class ControlFindReplace extends BaseController {
         try {
             this.parentController = parent;
             this.textInput = textInput;
-            if (shareCheck != null && shareCheck.isSelected()) {
-                baseName = "FindReplace";
-            } else {
-                baseName = editerController.baseName;
-            }
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -125,11 +115,6 @@ public class ControlFindReplace extends BaseController {
     public void setParent(BaseController parent) {
         try {
             this.parentController = parent;
-            if (shareCheck != null && shareCheck.isSelected()) {
-                baseName = "FindReplace";
-            } else {
-                baseName = editerController.baseName;
-            }
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -138,6 +123,11 @@ public class ControlFindReplace extends BaseController {
 
     public void setControls() {
         try {
+            baseName = "FindReplace";
+            if (shareCheck == null || !shareCheck.isSelected()) {
+                baseName = parentController.baseName + baseName;
+            }
+
             findArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -452,7 +442,7 @@ public class ControlFindReplace extends BaseController {
             TableStringValues.add(baseName + "ReplaceString", findString);
         }
         if (operation == Operation.ReplaceAll && multiplePages) {
-            if (!PopTools.askSure(getMyStage().getTitle(), message("SureReplaceAll"))) {
+            if (!PopTools.askSure(this,getMyStage().getTitle(), message("SureReplaceAll"))) {
                 return false;
             }
         }

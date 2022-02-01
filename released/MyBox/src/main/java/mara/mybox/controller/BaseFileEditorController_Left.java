@@ -11,7 +11,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Toggle;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.UserConfig;
@@ -23,20 +22,14 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseFileEditorController_Left extends BaseFileEditorController_Actions {
 
-    protected void initFileTab() {
-        try {
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected void initFormatTab() {
         try {
             if (formatPane != null) {
                 formatPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
+                    if (!isSettingValues) {
+                        UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
+                    }
                 });
-                formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", false));
             }
 
             if (charsetSelector != null) {
@@ -58,36 +51,27 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
     protected void initSaveTab() {
         try {
             if (savePane != null) {
-                savePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "SavePane", savePane.isExpanded());
+                savePane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    if (!isSettingValues) {
+                        UserConfig.setBoolean(baseName + "SavePane", savePane.isExpanded());
+                    }
                 });
-                savePane.setExpanded(UserConfig.getBoolean(baseName + "SavePane", false));
             }
             if (confirmCheck != null) {
                 confirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmSave", true));
                 confirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "ConfirmSave", newValue);
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(baseName + "ConfirmSave", confirmCheck.isSelected());
                     }
                 });
             }
 
             if (autoSaveCheck != null) {
-                autoSaveCheck.setDisable(true);
-                autoSaveCheck.disabledProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldValue, Boolean newValue) {
-                        checkAutoSave();
-                    }
-                });
                 autoSaveCheck.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
                 autoSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldValue, Boolean newValue) {
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                         checkAutoSave();
                     }
                 });
@@ -113,9 +97,10 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             if (backupPane == null) {
                 return;
             }
-            backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
-            backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
+            backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
+                }
             });
 
             backupController.setControls(this, baseName);
@@ -128,10 +113,12 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
     protected void initSaveAsTab() {
         try {
             if (saveAsPane != null) {
-                saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    if (!isSettingValues) {
+                        UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                    }
                 });
-                saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", false));
+
             }
             if (targetCharsetSelector != null) {
                 targetCharsetSelector.getItems().addAll(TextTools.getCharsetNames());
@@ -180,16 +167,15 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 return;
             }
             UserConfig.setBoolean(baseName + "AutoSave", autoSaveCheck.isSelected());
-            autoSaveDurationController.permitInvalid(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
+            autoSaveDurationController.permitInvalid(!autoSaveCheck.isSelected());
             if (confirmCheck != null) {
-                confirmCheck.setVisible(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
+                confirmCheck.setVisible(!autoSaveCheck.isSelected());
             }
             if (autoSaveTimer != null) {
                 autoSaveTimer.cancel();
                 autoSaveTimer = null;
             }
-            if (sourceFile == null || autoSaveCheck.isDisabled()
-                    || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
+            if (sourceFile == null || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
                 return;
             }
             long interval = autoSaveDurationController.value * 1000;

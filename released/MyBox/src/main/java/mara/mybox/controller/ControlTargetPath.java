@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
-import javafx.beans.property.SimpleBooleanProperty;
+import java.io.File;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -16,7 +17,7 @@ public class ControlTargetPath extends ControlTargetFile {
         checkQuit = false;
         permitNull = false;
         mustExist = true;
-        notify = new SimpleBooleanProperty(false);
+        defaultFile = new File(AppPaths.getGeneratedPath());
     }
 
     @Override

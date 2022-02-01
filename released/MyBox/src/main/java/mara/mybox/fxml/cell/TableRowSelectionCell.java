@@ -28,6 +28,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
         this.tableView = tableView;
         checked = new SimpleBooleanProperty(false);
         selectingRow = checkingBox = false;
+        getStyleClass().add("row-number");
 
         initListeners();
 
@@ -56,7 +57,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
     private void initListeners() {
         checkedListener = new ChangeListener<Boolean>() {
             @Override
-            public synchronized void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 int row = rowIndex();
                 if (checkingBox || row < 0) {
                     return;
@@ -74,7 +75,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
         selectedListener = new ListChangeListener<ListChangeListener.Change>() {
 
             @Override
-            public synchronized void onChanged(ListChangeListener.Change c) {
+            public void onChanged(ListChangeListener.Change c) {
                 int row = rowIndex();
                 if (checked == null || selectingRow || row < 0) {
                     return;

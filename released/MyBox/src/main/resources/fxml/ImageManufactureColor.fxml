@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureColorController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureColorController">
     <children>
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
@@ -132,24 +139,15 @@
                         <Label fx:id="colorLabel" text="%Value" />
                         <ComboBox fx:id="valueSelector" editable="true" prefWidth="100.0" />
                         <Label fx:id="colorUnit" />
-                        <HBox fx:id="valueColorBox" alignment="CENTER_LEFT" spacing="5.0">
-                            <children>
-                                <fx:include fx:id="valueColorSet" source="ColorSet.fxml" />
-                            </children>
-                        </HBox>
+                    </children>
+                </HBox>
+                <HBox fx:id="valueColorBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <fx:include fx:id="valueColorSet" source="ColorSet.fxml" />
                     </children>
                 </HBox>
                 <FlowPane fx:id="opBox" hgap="5.0" prefWidth="80.0" vgap="5.0">
                     <children>
-                        <Button fx:id="scopeButton" mnemonicParsing="false" onAction="#scopeAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconTarget.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
                         <Button fx:id="setButton" mnemonicParsing="false" onAction="#setAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -197,16 +195,15 @@
                         </Button>
                     </children>
                 </FlowPane>
-                <HBox fx:id="alphaBox" alignment="CENTER_LEFT" spacing="5.0">
-                    <children>
-                        <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
-                        <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTips.png" />
-                            </image>
-                        </ImageView>
-                    </children>
-                </HBox>
+                  <CheckBox fx:id="scopeCheck" mnemonicParsing="false">
+                      <graphic> 
+                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/Red/iconTarget.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </CheckBox>
                 <VBox fx:id="replaceBox" spacing="5.0">
                     <children>
                         <FlowPane fx:id="originalColorPane" hgap="5.0" layoutX="10.0" layoutY="211.0" prefWidth="80.0" vgap="5.0">
@@ -221,7 +218,7 @@
                                 <fx:include fx:id="newColorSet" source="ColorSet.fxml" />
                             </children>
                         </FlowPane>
-                        <VBox spacing="5.0"  styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                             <children>
                                 <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
                                     <children>

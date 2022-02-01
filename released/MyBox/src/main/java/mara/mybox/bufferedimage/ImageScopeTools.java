@@ -4,8 +4,8 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -215,17 +216,18 @@ public class ImageScopeTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
             g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
             DoubleRectangle rect = ellipse.getRectangle();
             g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()), (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
@@ -244,17 +246,18 @@ public class ImageScopeTools {
             if (!rect.isValid(width, height)) {
                 return source;
             }
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
             g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
             g.drawRect((int) rect.getSmallX(), (int) rect.getSmallY(), (int) rect.getWidth(), (int) rect.getHeight());
             g.dispose();
@@ -272,17 +275,18 @@ public class ImageScopeTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
             g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
             g.drawOval((int) circle.getCenterX() - (int) circle.getRadius(), (int) circle.getCenterY() - (int) circle.getRadius(), 2 * (int) circle.getRadius(), 2 * (int) circle.getRadius());
             g.dispose();
@@ -301,18 +305,18 @@ public class ImageScopeTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             g.drawImage(source, 0, 0, width, height, null);
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F);
             g.setComposite(ac);
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setColor(lineColor);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{lineWidth, lineWidth}, 0.0F);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0F, new float[]{
+                lineWidth, lineWidth}, 0.0F);
             //            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
             g.setStroke(stroke);
             for (int i = 0; i < rows.size(); ++i) {
@@ -330,24 +334,19 @@ public class ImageScopeTools {
                 g.drawLine(col, 0, col, height);
             }
             if (showSize) {
-                List<String> texts = new ArrayList<>();
-                List<Integer> xs = new ArrayList<>();
-                List<Integer> ys = new ArrayList<>();
+                int fontSize = width / (cols.size() * 10);
+                Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
+                g.setFont(font);
+                FontMetrics metrics = g.getFontMetrics(font);
+                int yOffset = metrics.getAscent();
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     int h = rows.get(i + 1) - rows.get(i) + 1;
                     for (int j = 0; j < cols.size() - 1; ++j) {
                         int w = cols.get(j + 1) - cols.get(j) + 1;
-                        texts.add(w + "x" + h);
-                        xs.add(cols.get(j) + w / 3);
-                        ys.add(rows.get(i) + h / 3);
-                        //                    MyBoxLog.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
+                        int x = cols.get(j) + w / 3;
+                        int y = rows.get(i) + h / 3 + yOffset;
+                        g.drawString(w + "x" + h, (int) (x / scale), (int) (y / scale) + yOffset);
                     }
-                }
-                int fontSize = width / (cols.size() * 10);
-                Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
-                g.setFont(font);
-                for (int i = 0; i < texts.size(); ++i) {
-                    g.drawString(texts.get(i), xs.get(i), ys.get(i));
                 }
             }
             g.dispose();

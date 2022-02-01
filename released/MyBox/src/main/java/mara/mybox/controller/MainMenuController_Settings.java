@@ -1,8 +1,17 @@
 package mara.mybox.controller;
 
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.StyleTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
@@ -20,6 +29,154 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class MainMenuController_Settings extends MainMenuController_Media {
+
+    @FXML
+    protected Menu settingsMenu;
+    @FXML
+    protected ToggleGroup langGroup;
+    @FXML
+    protected CheckMenuItem closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
+            controlTextCheck, hidpiIconsCheck;
+    @FXML
+    protected RadioMenuItem chineseMenuItem, englishMenuItem,
+            font12MenuItem, font15MenuItem, font17MenuItem,
+            normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
+            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, darkGreenMenuItem;
+    @FXML
+    protected MenuItem languagesSperatorMenuItem;
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            settingsMenu.setOnShowing((Event e) -> {
+                checkSettings();
+            });
+            checkSettings();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    protected void checkSettings() {
+        checkLanguage();
+        checkFontSize();
+        checkIconSize();
+        controlTextCheck.setSelected(AppVariables.controlDisplayText);
+        hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
+        closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
+        recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
+        popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
+        popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
+        controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
+        checkControlColor();
+    }
+
+    protected void checkLanguage() {
+        List<MenuItem> items = new ArrayList();
+        items.addAll(settingsMenu.getItems());
+        int pos1 = items.indexOf(englishMenuItem);
+        int pos2 = items.indexOf(languagesSperatorMenuItem);
+        for (int i = pos2 - 1; i > pos1; --i) {
+            items.remove(i);
+        }
+        List<String> languages = Languages.userLanguages();
+        if (languages != null && !languages.isEmpty()) {
+            String lang = Languages.getLanguage();
+            for (int i = 0; i < languages.size(); ++i) {
+                final String name = languages.get(i);
+                RadioMenuItem langItem = new RadioMenuItem(name);
+                langItem.setToggleGroup(langGroup);
+                langItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        Languages.setLanguage(name);
+                        parentController.reload();
+                    }
+                });
+                items.add(pos1 + 1 + i, langItem);
+                if (name.equals(lang)) {
+                    isSettingValues = true;
+                    langItem.setSelected(true);
+                    isSettingValues = false;
+                }
+            }
+        }
+        settingsMenu.getItems().clear();
+        settingsMenu.getItems().addAll(items);
+        if (AppVariables.currentBundle == Languages.BundleZhCN) {
+            chineseMenuItem.setSelected(true);
+        } else if (AppVariables.currentBundle == Languages.BundleEn) {
+            englishMenuItem.setSelected(true);
+        }
+
+    }
+
+    protected void checkFontSize() {
+        switch (AppVariables.sceneFontSize) {
+            case 12:
+                font12MenuItem.setSelected(true);
+                break;
+            case 15:
+                font15MenuItem.setSelected(true);
+                break;
+            case 17:
+                font17MenuItem.setSelected(true);
+                break;
+            default:
+                font12MenuItem.setSelected(false);
+                font15MenuItem.setSelected(false);
+                font17MenuItem.setSelected(false);
+                break;
+        }
+    }
+
+    protected void checkIconSize() {
+        switch (AppVariables.iconSize) {
+            case 20:
+                normalIconMenuItem.setSelected(true);
+                break;
+            case 15:
+                smallIconMenuItem.setSelected(true);
+                break;
+            case 30:
+                bigIconMenuItem.setSelected(true);
+                break;
+            default:
+                normalIconMenuItem.setSelected(false);
+                smallIconMenuItem.setSelected(false);
+                bigIconMenuItem.setSelected(false);
+                break;
+        }
+    }
+
+    protected void checkControlColor() {
+        switch (AppVariables.ControlColor) {
+            case Red:
+                redMenuItem.setSelected(true);
+                break;
+            case Pink:
+                pinkMenuItem.setSelected(true);
+                break;
+            case Blue:
+                blueMenuItem.setSelected(true);
+                break;
+            case LightBlue:
+                lightBlueMenuItem.setSelected(true);
+                break;
+            case Orange:
+                orangeMenuItem.setSelected(true);
+                break;
+            case DarkGreen:
+                darkGreenMenuItem.setSelected(true);
+                break;
+        }
+    }
 
     @FXML
     protected void settingsAction(ActionEvent event) {

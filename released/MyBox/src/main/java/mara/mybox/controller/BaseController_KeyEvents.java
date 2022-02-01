@@ -6,6 +6,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -36,8 +37,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     // return whether handled
     public boolean keyEventsFilter(KeyEvent event) {
         try {
-//        MyBoxLog.debug("filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
-//                + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
+//            MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused()
+//                    + "  " + "filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
+//                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
             keyEvent = event;
             if (event.isControlDown()) {
                 return controlAltFilter(event);
@@ -598,7 +600,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (!targetIsTextInput()) {
+
+        if (!isPopup() && !targetIsTextInput()) {
             return controlAltFilter(event);
         }
         return false;
@@ -685,8 +688,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF6() {
-        closePopup();
-        return false; // continue to close
+        WindowTools.closeAllPopup();
+        MenuController.closeAll();
+        return true;
     }
 
     public boolean keyF7() {
@@ -723,11 +727,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (withdrawButton != null && !withdrawButton.isDisabled() && withdrawButton.isVisible()) {
             withdrawAction();
         }
-        closePopup();
-//                else if (stopButton != null && !stopButton.isDisabled()) {
-//                    stopAction();
-//                }
-        return false;  // continue to close
+        WindowTools.closeAllPopup();
+        MenuController.closeAll();
+        return true;
     }
 
 }

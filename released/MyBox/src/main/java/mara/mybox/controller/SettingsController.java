@@ -4,7 +4,9 @@ import com.sun.management.OperatingSystemMXBean;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -27,6 +28,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Window;
 import mara.mybox.MyBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
@@ -38,6 +40,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import static mara.mybox.fxml.WindowTools.reloadAll;
 import static mara.mybox.fxml.WindowTools.styleAll;
@@ -46,6 +49,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -60,8 +64,6 @@ public class SettingsController extends BaseController {
 
     protected int recentFileNumber, newJVM;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, mapTab;
     @FXML
@@ -78,26 +80,28 @@ public class SettingsController extends BaseController {
     @FXML
     protected VBox localBox, dataBox;
     @FXML
-    protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox, iconSizeBox,
-            strokeWidthBox, anchorWidthBox, popSizeSelector, popDurationSelector;
+    protected ComboBox<String> styleBox, fontSizeBox, iconSizeBox,
+            strokeWidthBox, anchorWidthBox, gridWidthSelector, gridIntervalSelector, gridOpacitySelector,
+            popSizeSelector, popDurationSelector;
     @FXML
     protected HBox pdfMemBox, imageHisBox, derbyBox;
     @FXML
     protected Button settingsRecentOKButton, settingsChangeRootButton,
             settingsDataPathButton, settingsJVMButton;
     @FXML
-    protected RadioButton chineseRadio, englishRadio,
-            redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, darkGreenRadio,
+    protected RadioButton chineseRadio, englishRadio, embeddedRadio, networkRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
-            embeddedRadio, networkRadio;
+            redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, darkGreenRadio;
     @FXML
-    protected ColorSet strokeColorSetController, anchorColorSetController, alphaColorSetController,
+    protected ColorSet strokeColorSetController, anchorColorSetController, gridColorSetController, alphaColorSetController,
             popBgColorController, popInfoColorController, popErrorColorController, popWarnColorController;
     @FXML
     protected ListView languageList;
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
             derbyStatus;
+    @FXML
+    protected ControlImageRender renderController;
 
     public SettingsController() {
         baseTitle = message("Settings");
@@ -208,8 +212,6 @@ public class SettingsController extends BaseController {
 
             controlsTextCheck.setSelected(AppVariables.controlDisplayText);
             hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
-
-            imageWidthBox.getSelectionModel().select(UserConfig.getInt("MaxImageSampleWidth", 4096) + "");
 
             splitPaneSensitiveCheck.setSelected(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
@@ -633,7 +635,7 @@ public class SettingsController extends BaseController {
                     || newPath.trim().equals(AppVariables.MyboxDataPath)) {
                 return;
             }
-            if (!PopTools.askSure(getBaseTitle(), message("ChangeDataPathConfirm"))) {
+            if (!PopTools.askSure(this,getBaseTitle(), message("ChangeDataPathConfirm"))) {
                 return;
             }
             popInformation(message("CopyingFilesFromTo"));
@@ -757,7 +759,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearFileHistories(ActionEvent event) {
-        if (!PopTools.askSure(getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this,getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableVisitHistory().clear();
@@ -879,8 +881,8 @@ public class SettingsController extends BaseController {
      */
     public void initImageTab() {
         try {
-            strokeWidthBox.getItems().addAll(Arrays.asList(
-                    "1", "3", "5", "7", "9"));
+            strokeWidthBox.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
+            strokeWidthBox.getSelectionModel().select(UserConfig.getInt("StrokeWidth", 2) + "");
             strokeWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -890,11 +892,7 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 UserConfig.setInt("StrokeWidth", v);
                                 ValidationTools.setEditorNormal(strokeWidthBox);
-                                if (parentController instanceof BaseImageShapesController) {
-                                    ((BaseImageShapesController) parentController).setMaskStroke();
-                                } else if (parentController instanceof BaseImageController) {
-                                    ((BaseImageController) parentController).setMaskStroke();
-                                }
+                                BaseImageController.updateMaskStroke();
                             } else {
                                 ValidationTools.setEditorBadStyle(strokeWidthBox);
                             }
@@ -904,26 +902,19 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
-            strokeWidthBox.getSelectionModel().select(UserConfig.getString("StrokeWidth", "3"));
 
-            strokeColorSetController.init(this, "StrokeColor", Color.web(BaseImageShapesController.DefaultStrokeColor));
+            strokeColorSetController.init(this, "StrokeColor", Color.web(BaseImageController.DefaultStrokeColor));
             strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
-                    if (parentController != null) {
-                        if (parentController instanceof BaseImageShapesController) {
-                            ((BaseImageShapesController) parentController).setMaskStroke();
-                        } else if (parentController instanceof BaseImageController) {
-                            ((BaseImageController) parentController).setMaskStroke();
-                        }
-                    }
+                    BaseImageController.updateMaskStroke();
                     popSuccessful();
                 }
             });
 
-            anchorWidthBox.getItems().addAll(Arrays.asList(
-                    "10", "15", "20", "25", "30", "40", "50"));
+            anchorWidthBox.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
+            anchorWidthBox.getSelectionModel().select(UserConfig.getInt("AnchorWidth", 10) + "");
             anchorWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -933,11 +924,7 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 UserConfig.setInt("AnchorWidth", v);
                                 ValidationTools.setEditorNormal(anchorWidthBox);
-                                if (parentController instanceof BaseImageShapesController) {
-                                    ((BaseImageShapesController) parentController).setMaskStroke();
-                                } else if (parentController instanceof BaseImageController) {
-                                    ((BaseImageController) parentController).setMaskStroke();
-                                }
+                                BaseImageController.updateMaskStroke();
                             } else {
                                 ValidationTools.setEditorBadStyle(anchorWidthBox);
                             }
@@ -947,18 +934,13 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
-            anchorWidthBox.getSelectionModel().select(UserConfig.getString("AnchorWidth", "10"));
 
-            anchorColorSetController.init(this, "AnchorColor", Color.web(BaseImageShapesController.DefaultAnchorColor));
+            anchorColorSetController.init(this, "AnchorColor", Color.web(BaseImageController.DefaultAnchorColor));
             anchorColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
-                    if (parentController instanceof BaseImageShapesController) {
-                        ((BaseImageShapesController) parentController).setMaskStroke();
-                    } else if (parentController instanceof BaseImageController) {
-                        ((BaseImageController) parentController).setMaskStroke();
-                    }
+                    BaseImageController.updateMaskStroke();
                     popSuccessful();
                 }
             });
@@ -968,14 +950,75 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
                     UserConfig.setBoolean("AnchorSolid", new_toggle);
-                    if (parentController instanceof BaseImageShapesController) {
-                        ((BaseImageShapesController) parentController).setMaskStroke();
-                    } else if (parentController instanceof BaseImageController) {
+                    if (parentController instanceof BaseImageController) {
                         ((BaseImageController) parentController).setMaskStroke();
                     }
                 }
             });
             anchorSolidCheck.setSelected(UserConfig.getBoolean("AnchorSolid", true));
+
+            gridColorSetController.init(this, "GridLinesColor", Color.LIGHTGRAY);
+            gridColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    BaseImageController.updateMaskGrid();
+                }
+            });
+
+            gridWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
+            gridWidthSelector.getSelectionModel().select(UserConfig.getInt("GridLinesWidth", 1) + "");
+            gridWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            if (v > 0) {
+                                UserConfig.setInt("GridLinesWidth", v);
+                                ValidationTools.setEditorNormal(gridWidthSelector);
+                                BaseImageController.updateMaskGrid();
+                            } else {
+                                ValidationTools.setEditorBadStyle(gridWidthSelector);
+                            }
+                        } catch (Exception e) {
+                            ValidationTools.setEditorBadStyle(gridWidthSelector);
+                        }
+                    }
+                }
+            });
+
+            gridIntervalSelector.getItems().addAll(Arrays.asList(message("Automatic"), "10", "20", "25", "50", "100", "5", "1", "2", "200", "500"));
+            int gi = UserConfig.getInt("GridLinesInterval", -1);
+            gridIntervalSelector.getSelectionModel().select(gi <= 0 ? message("Automatic") : gi + "");
+            gridIntervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    int v = -1;
+                    try {
+                        if (!message("Automatic").equals(newValue)) {
+                            v = Integer.valueOf(newValue);
+                        }
+                    } catch (Exception e) {
+                    }
+                    UserConfig.setInt("GridLinesInterval", v);
+                    BaseImageController.updateMaskGrid();
+                }
+            });
+
+            gridOpacitySelector.getItems().addAll(Arrays.asList("0.5", "0.2", "1.0", "0.7", "0.1", "0.3", "0.8", "0.9", "0.6", "0.4"));
+            gridOpacitySelector.getSelectionModel().select(UserConfig.getString("GridLinesOpacity", "0.1"));
+            gridOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    float v = 0.1f;
+                    try {
+                        v = Float.valueOf(newValue);
+                    } catch (Exception e) {
+                    }
+                    UserConfig.setString("GridLinesOpacity", v + "");
+                    BaseImageController.updateMaskGrid();
+                }
+            });
 
             alphaColorSetController.init(this, "AlphaAsColor", Color.WHITE);
             alphaColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
@@ -1011,27 +1054,7 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            imageWidthBox.getItems().addAll(Arrays.asList(
-                    "4096", "2048", "8192", "1024", "10240", "6144", "512", "15360", "20480", "30720"));
-            imageWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        try {
-                            int v = Integer.valueOf(newValue);
-                            if (v > 0) {
-                                UserConfig.setInt("MaxImageSampleWidth", v);
-                                ValidationTools.setEditorNormal(imageWidthBox);
-                            } else {
-                                ValidationTools.setEditorBadStyle(imageWidthBox);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(imageWidthBox);
-                        }
-                    }
-                }
-            });
-            imageWidthBox.getSelectionModel().select(UserConfig.getString("MaxImageSampleWidth", "4096"));
+            renderController.setParentController(this);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -1057,7 +1080,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearImageHistories(ActionEvent event) {
-        if (!PopTools.askSure(getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this,getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableImageEditHistory().clear();
@@ -1112,6 +1135,30 @@ public class SettingsController extends BaseController {
     @FXML
     public void closeAction(ActionEvent event) {
         closeStage();
+    }
+
+    /*
+        static methods
+     */
+    public static SettingsController oneOpen(BaseController parent) {
+        SettingsController controller = null;
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof SettingsController) {
+                try {
+                    controller = (SettingsController) object;
+                    controller.toFront();
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (controller == null) {
+            controller = (SettingsController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.SettingsFxml, false);
+        }
+        return controller;
     }
 
 }

@@ -145,26 +145,26 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
             return;
         }
         String chainName = chainName(selectedItem);
-        NotesMoveNotebookController controller = (NotesMoveNotebookController) WindowTools.openStage(Fxmls.NotesMoveNotebookFxml);
+        NotesMoveNotebookController controller = (NotesMoveNotebookController) WindowTools.openChildStage(getMyWindow(), Fxmls.NotesMoveNotebookFxml, false);
         controller.setValues(notesController, selectedItem.getValue(), chainName);
     }
 
     @FXML
     @Override
     protected void exportNode() {
-        NotesExportController exportController = (NotesExportController) WindowTools.openStage(Fxmls.NotesExportFxml);
+        NotesExportController exportController = (NotesExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.NotesExportFxml, false);
         exportController.setParameters(notesController);
     }
 
     @FXML
     protected void importExamples() {
-        NotesImportController controller = (NotesImportController) WindowTools.openStage(Fxmls.NotesImportFxml);
+        NotesImportController controller = (NotesImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.NotesImportFxml, false);
         controller.importExamples(notesController);
     }
 
     @FXML
     protected void importFiles() {
-        NotesImportController c = (NotesImportController) WindowTools.openStage(Fxmls.NotesImportFxml);
+        NotesImportController c = (NotesImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.NotesImportFxml, false);
         c.notesController = notesController;
     }
 

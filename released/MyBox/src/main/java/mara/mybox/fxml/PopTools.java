@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
@@ -62,7 +63,7 @@ import mara.mybox.value.UserConfig;
  */
 public class PopTools {
 
-    public static void browseURI(URI uri) {
+    public static void browseURI(BaseController controller, URI uri) {
         if (uri == null) {
             return;
         }
@@ -114,7 +115,7 @@ public class PopTools {
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
             ControllerTools.openTarget(null, uri.toString());
         } else {
-            alertError(message("DesktopNotSupportBrowse"));
+            alertError(controller, message("DesktopNotSupportBrowse"));
         }
     }
 
@@ -154,10 +155,6 @@ public class PopTools {
         return alert(controller, Alert.AlertType.ERROR, information);
     }
 
-    public static Alert alertError(String information) {
-        return alertError(null, information);
-    }
-
     public static String askValue(String title, String header, String name, String initValue) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle(title);
@@ -169,18 +166,19 @@ public class PopTools {
         stage.setAlwaysOnTop(true);
         stage.toFront();
         Optional<String> result = dialog.showAndWait();
-        if (!result.isPresent()) {
+        if (result == null || !result.isPresent()) {
             return null;
         }
         String value = result.get();
         return value;
     }
 
-    public static boolean askSure(String title, String sureString) {
-        return askSure(title, null, sureString);
+    public static boolean askSure(BaseController controller, String title, String sureString) {
+        return askSure(controller, title, null, sureString);
     }
 
-    public static boolean askSure(String title, String header, String sureString) {
+    // https://openjfx.io/javadoc/17/javafx.controls/javafx/scene/control/Dialog.html
+    public static boolean askSure(BaseController controller, String title, String header, String sureString) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         if (header != null) {
@@ -189,13 +187,13 @@ public class PopTools {
         alert.setContentText(sureString);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         ButtonType buttonSure = new ButtonType(message("Sure"));
-        ButtonType buttonCancel = new ButtonType(message("Cancel"));
+        ButtonType buttonCancel = new ButtonType(message("Cancel"), ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
         Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == buttonSure;
+        return result != null && result.isPresent() && result.get() == buttonSure;
     }
 
     public static Popup makePopWindow(BaseController parent, String fxml) {

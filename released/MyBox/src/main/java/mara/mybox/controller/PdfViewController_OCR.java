@@ -17,7 +17,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.AlphaTools;
@@ -47,8 +46,6 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
     protected Task ocrTask;
     protected Thread ocrThread;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab imageTab, ocrTab, ocrOptionsTab;
     @FXML

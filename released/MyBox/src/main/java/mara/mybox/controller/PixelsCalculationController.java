@@ -17,21 +17,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -74,8 +69,6 @@ public class PixelsCalculationController extends BaseController {
     protected CheckBox sourceCheck, radioCheck;
     @FXML
     protected Label ratioLabel;
-    @FXML
-    protected TabPane tabPane;
 
     public PixelsCalculationController() {
         baseTitle = Languages.message("PixelsCalculator");

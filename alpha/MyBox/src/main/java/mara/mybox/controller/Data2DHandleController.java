@@ -80,7 +80,6 @@ public abstract class Data2DHandleController extends BaseChildController {
                 });
             }
 
-            checkOptions();
             sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -93,6 +92,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                     checkOptions();
                 }
             });
+            checkOptions();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

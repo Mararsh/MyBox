@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -39,8 +38,6 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
     protected ObservableList<FFmpegFilter> filtersData;
     protected SingletonTask formatsTask, codecsTask, filtersTask;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab queryTab;
     @FXML
@@ -550,7 +547,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 || (codecsTask != null && !codecsTask.isQuit())
                 || (queryTask != null && !queryTask.isQuit())
                 || (filtersTask != null && !filtersTask.isQuit())) {
-            if (!PopTools.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
+            if (!PopTools.askSure(this,getMyStage().getTitle(), message("TaskRunning"))) {
                 return false;
             }
             if (formatsTask != null) {

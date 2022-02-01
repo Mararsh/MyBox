@@ -16,6 +16,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -71,7 +72,7 @@ public abstract class Data2D extends Data2DDefinition {
         initData();
     }
 
-    public final void initData() {
+    private void initData() {
         resetDefinition();
         dataSize = 0;
         pagesNumber = 1;
@@ -82,6 +83,11 @@ public abstract class Data2D extends Data2DDefinition {
         tableChanged = false;
         options = null;
         matrix = null;
+        error = null;
+    }
+
+    public void resetData() {
+        initData();
     }
 
     @Override
@@ -177,7 +183,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public Data2D initData(File file, String sheet, long dataSize, long currentPage) {
-        initData();
+        resetData();
         this.file = file;
         this.sheet = sheet;
         this.dataSize = dataSize;
@@ -233,19 +239,9 @@ public abstract class Data2D extends Data2DDefinition {
         return type == Type.Texts;
     }
 
-    public File tmpFile(String prefix) {
-        String suffix;
-        if (isCSV() || isClipboard()) {
-            suffix = ".csv";
-        } else if (isExcel()) {
-            suffix = ".xlsx";
-        } else if (isTexts()) {
-            suffix = ".txt";
-        } else {
-            return null;
-        }
+    public File tmpCSV(String prefix) {
         return getPathTempFile(AppPaths.getGeneratedPath(),
-                FileNameTools.getFilePrefix(file) + "_" + prefix, suffix);
+                FileNameTools.getFilePrefix(file) + "_" + prefix, ".csv");
     }
 
     public boolean export(ControlDataConvert convertController, List<Integer> colIndices, List<String> dataRow) {
@@ -273,15 +269,11 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
-    public List<List<String>> allRows(List<Integer> cols) {
-        return null;
-    }
-
     public DoubleStatistic[] statisticData(List<Integer> cols) {
         return null;
     }
 
-    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues) {
+    public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues, boolean abs) {
         return null;
     }
 
@@ -313,7 +305,7 @@ public abstract class Data2D extends Data2DDefinition {
         matrix
      */
     public void initMatrix(double[][] matrix) {
-        initData();
+        resetData();
         this.matrix = matrix;
     }
 
@@ -477,6 +469,9 @@ public abstract class Data2D extends Data2DDefinition {
                         }
                         column.setD2id(did);
                         column.setIndex(i);
+                        if (d.isMatrix()) {
+                            column.setType(ColumnType.Double);
+                        }
                         columns.add(column);
                     }
                     d.getTableData2DColumn().save(conn, did, columns);
@@ -510,7 +505,7 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public String randomString(Random random) {
-        return DoubleTools.format(DoubleTools.random(random, maxRandom, false), scale);
+        return randomDouble(random, true);
 //        return (char) ('a' + random.nextInt(25)) + "";
     }
 
@@ -658,7 +653,7 @@ public abstract class Data2D extends Data2DDefinition {
             List<String> row = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
                 if (type == Type.Matrix) {
-                    row.add(randomDouble(random, false));
+                    row.add(randomDouble(random, true));
                 } else {
                     row.add(randomString(random));
                 }
@@ -732,6 +727,24 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    public List<String> columnNames(List<Integer> indices) {
+        try {
+            if (indices == null || columns == null || columns.isEmpty()) {
+                return null;
+            }
+            List<String> names = new ArrayList<>();
+            int len = columns.size();
+            for (Integer i : indices) {
+                if (i >= 0 && i < len) {
+                    names.add(columns.get(i).getName());
+                }
+            }
+            return names;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public boolean isColumnsValid() {
         return columns != null && !columns.isEmpty();
     }
@@ -772,9 +785,11 @@ public abstract class Data2D extends Data2DDefinition {
                 return null;
             }
             List<Data2DColumn> cols = new ArrayList<>();
+            Random random = new Random();
             for (String c : names) {
                 Data2DColumn col = new Data2DColumn(c, defaultColumnType());
                 col.setIndex(newColumnIndex());
+                col.setColor(FxColorTools.randomColor(random));
                 cols.add(col);
             }
             return cols;

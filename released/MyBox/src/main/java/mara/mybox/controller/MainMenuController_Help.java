@@ -3,12 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 

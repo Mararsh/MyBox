@@ -17,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -55,8 +54,6 @@ public class ControlData2D extends BaseController {
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
     @FXML
@@ -114,6 +111,7 @@ public class ControlData2D extends BaseController {
             if (parent != null) {
                 saveButton = parent.saveButton;
                 recoverButton = parent.recoverButton;
+                baseTitle = parent.baseTitle;
             }
 
             editController.setParameters(this);
@@ -217,7 +215,7 @@ public class ControlData2D extends BaseController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        data2D.initData();
+        data2D.resetData();
         data2D.cloneAll(data);
         readDefinition();
     }
@@ -361,6 +359,9 @@ public class ControlData2D extends BaseController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return -99;
+            }
             if (result.get() == buttonApply) {
                 if (textController.status == ControlData2DEditText.Status.Modified) {
                     textController.okAction();
@@ -651,6 +652,13 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("Charts"), StyleTools.getIconImage("iconCharts.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartController.open(tableController);
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
             menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DStatisticController.open(tableController);
@@ -794,6 +802,7 @@ public class ControlData2D extends BaseController {
         if (!isChanged()) {
             goOn = true;
         } else {
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setHeaderText(getMyStage().getTitle());
@@ -808,6 +817,9 @@ public class ControlData2D extends BaseController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
             if (result.get() == buttonSave) {
                 save();
                 goOn = false;

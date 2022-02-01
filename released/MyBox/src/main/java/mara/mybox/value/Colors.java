@@ -30,4 +30,7 @@ public class Colors {
 
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
+    public static int minValue = new Color(0, 0, 0, 0).getRGB();
+    public static int maxValue = new Color(255, 255, 255, 255).getRGB();
+
 }

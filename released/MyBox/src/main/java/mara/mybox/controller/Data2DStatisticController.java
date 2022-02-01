@@ -130,7 +130,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     }
 
     public void checkMemoryLabel() {
-        if (allPages() && (modeCheck.isSelected() || medianCheck.isSelected())) {
+        if (sourceController.allPages() && (modeCheck.isSelected() || medianCheck.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
             }
@@ -169,9 +169,60 @@ public class Data2DStatisticController extends Data2DHandleController {
         medianCheck.setSelected(false);
     }
 
+    @FXML
+    @Override
+    public void okAction() {
+        if ((sourceController.allPages() && !editController.checkBeforeLoadingTableData())
+                || !checkOptions() || !prepareRows()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    if (sourceController.allPages()) {
+                        if (modeCheck.isSelected() || medianCheck.isSelected()) {
+                            return statisticRows(data2D.allRows(sourceController.checkedColsIndices(), false));
+                        } else {
+                            return statisticFile();
+                        }
+                    } else {
+                        return statisticRows(sourceController.selectedData(false));
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputExternal();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
+            }
+
+        };
+        start(task);
+    }
+
     public boolean prepareRows() {
         try {
-            List<String> names = tableController.checkedColsNames();
+            List<String> names = sourceController.checkedColsNames();
             if (names == null || names.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
@@ -191,7 +242,6 @@ public class Data2DStatisticController extends Data2DHandleController {
             }
 
             handledData = new ArrayList<>();
-            handledData.add(0, handledNames);
             countRow = null;
             if (countCheck.isSelected()) {
                 countRow = new ArrayList<>();
@@ -259,57 +309,6 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
     }
 
-    @FXML
-    @Override
-    public void okAction() {
-        if ((allPages() && !tableController.checkBeforeLoadingTableData())
-                || !checkOptions() || !prepareRows()) {
-            return;
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.setTask(task);
-                    if (allPages()) {
-                        if (modeCheck.isSelected() || medianCheck.isSelected()) {
-                            return statisticRows(data2D.allRows(tableController.checkedColsIndices()));
-                        } else {
-                            return statisticFile();
-                        }
-                    } else {
-                        return statisticRows(tableController.selectedData(all(), false));
-                    }
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (targetController.inTable()) {
-                    updateTable();
-                } else {
-                    outputExternal();
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
-            }
-
-        };
-        start(task);
-    }
-
     // All as double to make things simple. 
     // To improve performance, this should be counting according to columns' types.
     public boolean statisticRows(List<List<String>> rows) {
@@ -368,7 +367,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     }
 
     public boolean statisticFile() {
-        DoubleStatistic[] statisticData = data2D.statisticData(tableController.checkedColsIndices);
+        DoubleStatistic[] statisticData = data2D.statisticData(sourceController.checkedColsIndices);
         if (statisticData == null) {
             return false;
         }

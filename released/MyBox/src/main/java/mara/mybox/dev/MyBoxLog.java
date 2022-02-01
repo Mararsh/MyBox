@@ -4,12 +4,12 @@ import java.util.Date;
 import javafx.application.Platform;
 import mara.mybox.controller.MyBoxLogViewerController;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import static mara.mybox.value.AppVariables.errorNotify;
 import mara.mybox.value.Languages;
 
 /**
@@ -236,7 +236,7 @@ public class MyBoxLog extends BaseData {
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
-            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Console));
+            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Debug));
             System.out.print(logText);
             if (AppVariables.popErrorLogs && type == LogType.Error) {
                 Platform.runLater(() -> {
@@ -250,6 +250,9 @@ public class MyBoxLog extends BaseData {
                     || (type == LogType.Debug && !AppVariables.saveDebugLogs);
             if (!notSave) {
                 new TableMyBoxLog().writeData(myboxLog);
+            }
+            if (type == LogType.Error) {
+                errorNotify.set(!errorNotify.get());
             }
             return myboxLog;
         } catch (Exception e) {

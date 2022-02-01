@@ -1,5 +1,6 @@
 package mara.mybox.value;
 
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
@@ -43,11 +45,13 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
-            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
+            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs, isTesting;
     public static StyleData.StyleColor ControlColor;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
     public static Timer exitTimer;
+    public static SimpleBooleanProperty errorNotify;
+    public static Map<RenderingHints.Key, Object> imageRenderHints;
 
     public static void initAppVaribles() {
         try {
@@ -69,6 +73,9 @@ public class AppVariables {
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;
             popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
+            errorNotify = new SimpleBooleanProperty(false);
+            isTesting = false;
+            ImageRenderHints.loadImageRenderHints();
 
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {

@@ -44,7 +44,7 @@ License:    Apache License Version 2.0
                                  <content>
                                     <VBox spacing="2.0">
                                        <children>
-                                          <TextArea fx:id="infoArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="ALWAYS" />
+                                          <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
                                        </children>
                                     </VBox>
                                  </content>

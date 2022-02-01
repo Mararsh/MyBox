@@ -38,7 +38,7 @@ public class EpidemicReportsImportController extends BaseImportCsvController<Epi
         if (statisticCheck.isSelected()) {
             startStatistic();
         } else {
-            if (PopTools.askSure(getBaseTitle(), Languages.message("EpidemicReportStatistic"))) {
+            if (PopTools.askSure(this,getBaseTitle(), Languages.message("EpidemicReportStatistic"))) {
                 startStatistic();
             }
         }

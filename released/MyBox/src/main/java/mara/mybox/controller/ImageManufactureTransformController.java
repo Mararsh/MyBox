@@ -35,6 +35,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @Override
     public void initPane() {
         try {
+            super.initPane();
+
             List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
                     "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",

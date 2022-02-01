@@ -4,18 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.web.WebEvent;
-import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -23,14 +19,11 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-5-14
  * @License Apache License Version 2.0
  */
-public class FunctionsListController extends BaseController {
+public class FunctionsListController extends ControlWebView {
 
     protected StringTable table;
     protected String goImage;
     protected Map<String, MenuItem> map;
-
-    @FXML
-    protected WebView webView;
 
     public FunctionsListController() {
         baseTitle = Languages.message("FunctionsList");

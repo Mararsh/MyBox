@@ -12,6 +12,7 @@ import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -67,8 +68,8 @@ public class NotesController extends NotesController_Notes {
         try {
             super.afterSceneLoaded();
 
-            if (tableNotebook.size() < 2
-                    && PopTools.askSure(getBaseTitle(), Languages.message("ImportExamples"))) {
+            if (!AppVariables.isTesting && tableNotebook.size() < 2
+                    && PopTools.askSure(this, getBaseTitle(), Languages.message("ImportExamples"))) {
                 notebooksController.importExamples();
             } else {
                 loadBooks();
@@ -99,7 +100,6 @@ public class NotesController extends NotesController_Notes {
             if (object != null && object instanceof NotesController) {
                 try {
                     controller = (NotesController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -108,6 +108,7 @@ public class NotesController extends NotesController_Notes {
         if (controller == null) {
             controller = (NotesController) WindowTools.openStage(Fxmls.NotesFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
@@ -56,7 +57,7 @@ public abstract class BaseController_Attributes {
     protected Popup popup;
     protected ContextMenu popMenu;
     protected String targetFileSuffix;
-    protected boolean isSettingValues, isPop, needRecordVisit;
+    protected boolean isSettingValues, isPop;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected SaveAsType saveAsType;
 
@@ -93,7 +94,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox topCheck, saveCloseCheck, closeRightPaneCheck;
+    protected CheckBox topCheck, saveCloseCheck, rightPaneCheck, leftPaneCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML
@@ -104,6 +105,8 @@ public abstract class BaseController_Attributes {
     protected ScrollPane leftPane, rightPane;
     @FXML
     protected ComboBox<String> dpiSelector;
+    @FXML
+    protected TabPane tabPane;
 
     public void setFileType() {
         setFileType(FileType.All);
@@ -139,6 +142,13 @@ public abstract class BaseController_Attributes {
             if (baseTitle == null) {
                 baseTitle = Languages.message("AppTitle");
             }
+        }
+        return baseTitle;
+    }
+
+    public String getRootBaseTitle() {
+        if (getMyStage() != null && myStage.getUserData() != null) {
+            return ((BaseController) myStage.getUserData()).getBaseTitle();
         }
         return baseTitle;
     }
@@ -190,6 +200,19 @@ public abstract class BaseController_Attributes {
             }
         }
         return myStage;
+    }
+
+    public boolean isPopup() {
+        Window win = getMyWindow();
+        return win != null && (win instanceof Popup);
+    }
+
+    public boolean isChild() {
+        if (getMyStage() != null) {
+            return myStage.getOwner() != null;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -307,10 +330,6 @@ public abstract class BaseController_Attributes {
 
     public boolean isIsPop() {
         return isPop;
-    }
-
-    public boolean isNeedRecordVisit() {
-        return needRecordVisit;
     }
 
     /*

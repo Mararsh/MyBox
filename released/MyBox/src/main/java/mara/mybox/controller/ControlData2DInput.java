@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -32,6 +33,7 @@ public class ControlData2DInput extends BaseController {
     protected List<List<String>> data;
     protected List<String> columnNames;
     protected String delimiterName;
+    protected final SimpleBooleanProperty statusNotify;
 
     @FXML
     protected TextArea textArea;
@@ -41,6 +43,7 @@ public class ControlData2DInput extends BaseController {
     protected ControlWebView htmlController;
 
     public ControlData2DInput() {
+        statusNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -229,6 +232,7 @@ public class ControlData2DInput extends BaseController {
                     if (validateTable != null && !validateTable.isEmpty()) {
                         validateTable.htmlTable();
                     }
+                    statusNotify.set(statusNotify.get());
                 }
 
             };
@@ -243,6 +247,10 @@ public class ControlData2DInput extends BaseController {
             return;
         }
         DataFileTextController.open(dataFileText.getColumns(), data);
+    }
+
+    public boolean hasData() {
+        return dataFileText != null && dataFileText.hasData();
     }
 
 }

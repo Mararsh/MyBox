@@ -53,6 +53,40 @@ public class LocateTools {
         window.show(region, bounds.getMaxX() - window.getWidth() - 20, bounds.getMinY() + 50);
     }
 
+    public static void aboveCenter(Node node, Node refer) {
+        if (node == null || refer == null) {
+            return;
+        }
+        Bounds regionBounds = node.getBoundsInParent();
+        Bounds referBounds = refer.getBoundsInParent();
+        double xOffset = referBounds.getWidth() - regionBounds.getWidth();
+        node.setLayoutX(referBounds.getMinX() + xOffset / 2);
+        node.setLayoutY(referBounds.getMinY() - 10);
+    }
+
+    public static void belowCenter(Node node, Node refer) {
+        if (node == null || refer == null) {
+            return;
+        }
+        Bounds regionBounds = node.getBoundsInParent();
+        Bounds referBounds = refer.getBoundsInParent();
+        double xOffset = referBounds.getWidth() - regionBounds.getWidth();
+        node.setLayoutX(referBounds.getMinX() + xOffset / 2);
+        node.setLayoutY(referBounds.getMaxY() + 10);
+    }
+
+    public static void center(Node node, Node refer) {
+        if (node == null || refer == null) {
+            return;
+        }
+        Bounds regionBounds = node.getBoundsInParent();
+        Bounds referBounds = refer.getBoundsInParent();
+        double xOffset = referBounds.getWidth() - regionBounds.getWidth();
+        double yOffset = referBounds.getHeight() - regionBounds.getHeight();
+        node.setLayoutX(referBounds.getMinX() + xOffset / 2);
+        node.setLayoutY(referBounds.getMinY() + yOffset / 2);
+    }
+
     public static void locateBelow(Node node, PopupWindow window) {
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
         window.show(node, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());

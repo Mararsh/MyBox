@@ -256,6 +256,9 @@ public class LocationDataController extends BaseDataManageController<Location> {
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
+        if (result == null || !result.isPresent()) {
+            return;
+        }
         if (result.get() == button1) {
             ChineseHistoricalCapitals();
         } else if (result.get() == button2) {

@@ -2,10 +2,8 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -27,22 +25,18 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
     protected DataClipboard dataClipboard;
     protected ControlData2DLoad targetTableController;
     protected Data2D dataTarget;
+    protected int row, col;
 
     @FXML
     protected ControlDataClipboardTable listController;
     @FXML
-    protected ControlData2DSelect selectController;
+    protected ControlData2DSource sourceController;
     @FXML
     protected Label nameLabel;
-    @FXML
-    protected CheckBox columnsCheck;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
-
-    public Data2DPasteContentInMyBoxClipboardController() {
-    }
 
     @Override
     public void initValues() {
@@ -51,11 +45,12 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
 
             dataClipboard = new DataClipboard();
 
-            selectController.setData(dataClipboard);
-            selectController.dataLabel = nameLabel;
-            selectController.baseTitle = baseTitle;
+            sourceController.setData(dataClipboard);
+            sourceController.dataLabel = nameLabel;
+            sourceController.baseTitle = baseTitle;
+            sourceController.showAllPages(false);
 
-            listController.setParameters(selectController);
+            listController.setParameters(sourceController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -68,30 +63,21 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
             targetTableController = target;
             dataTarget = target.data2D;
 
-            columnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (columnsCheck.isSelected()) {
-                        selectController.selectAllCols();
-                    } else {
-                        selectController.selectNoneCols();
-                    }
-                }
-            });
-
             targetTableController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        makeControls(rowSelector.getSelectionModel().getSelectedIndex(),
-                                colSelector.getSelectionModel().getSelectedIndex());
+                        makeControls(row, col);
                     });
 
-            targetTableController.dataController.statusNotify.addListener(
+            targetTableController.loadedNotify.addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        makeControls(row, col);
+                    });
+
+            sourceController.loadedNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         okButton.setDisable(!dataClipboard.hasData());
                     });
+            okButton.setDisable(true);
 
             makeControls(0, 0);
 
@@ -102,15 +88,27 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
 
     public void makeControls(int row, int col) {
         try {
+            if (dataTarget == null) {
+                return;
+            }
             List<String> rows = new ArrayList<>();
             for (long i = 0; i < dataTarget.tableRowsNumber(); i++) {
                 rows.add("" + (i + 1));
             }
-            rowSelector.getItems().setAll(rows);
-            rowSelector.getSelectionModel().select(row);
+            if (!rows.isEmpty()) {
+                rowSelector.getItems().setAll(rows);
+                rowSelector.getSelectionModel().select(row);
+            } else {
+                rowSelector.getItems().clear();
+            }
 
-            colSelector.getItems().setAll(dataTarget.columnNames());
-            colSelector.getSelectionModel().select(col);
+            List<String> names = dataTarget.columnNames();
+            if (names != null && !names.isEmpty()) {
+                colSelector.getItems().setAll(names);
+                colSelector.getSelectionModel().select(col);
+            } else {
+                colSelector.getItems().clear();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -129,20 +127,20 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
     @FXML
     @Override
     public void okAction() {
-        if (!dataClipboard.hasData()) {
-            popError(message("NoData"));
-            return;
-        }
         try {
-            int row = rowSelector.getSelectionModel().getSelectedIndex();
-            int col = colSelector.getSelectionModel().getSelectedIndex();
+            if (!dataClipboard.hasData()) {
+                popError(message("NoData"));
+                return;
+            }
+            row = rowSelector.getSelectionModel().getSelectedIndex();
+            col = colSelector.getSelectionModel().getSelectedIndex();
             int targetRowsNumber = dataTarget.tableRowsNumber();
             int targetColsNumber = dataTarget.tableColsNumber();
             if (row < 0 || row >= targetRowsNumber || col < 0 || col >= targetColsNumber) {
                 popError(message("InvalidParameters"));
                 return;
             }
-            List<List<String>> data = selectController.selectedData(false, false);
+            List<List<String>> data = sourceController.selectedData(false);
             if (data == null || data.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;

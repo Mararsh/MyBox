@@ -139,13 +139,13 @@ public class ImageAnalyseController extends ImageViewerController {
 
             imageBox.disableProperty().bind(imageView.imageProperty().isNull());
 
+            selectAreaCheck.setSelected(false);
             selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadData(true, true, true);
                 }
             });
-            selectAreaCheck.setSelected(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -169,7 +169,7 @@ public class ImageAnalyseController extends ImageViewerController {
             NodeStyleTools.setTooltip(palette2Button, message("AddInColorPalette"));
             NodeStyleTools.setTooltip(tipsView, new Tooltip(
                     message("ImageAnalyseTips") + "\n\n-------------------------\n"
-                    + message("QuantizationComments")));
+                    + message("ImageQuantizationComments")));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -261,8 +261,7 @@ public class ImageAnalyseController extends ImageViewerController {
             imageView.setImage(image);
             fitSize();
 
-            checkRulerX();
-            checkRulerY();
+            drawMaskRulerXY();
             checkCoordinate();
             setMaskStroke();
         } catch (Exception e) {

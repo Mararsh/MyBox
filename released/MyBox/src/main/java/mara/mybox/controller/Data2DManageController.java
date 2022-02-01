@@ -270,7 +270,6 @@ public class Data2DManageController extends BaseSysTableController<Data2DDefinit
             if (object != null && object instanceof Data2DManageController) {
                 try {
                     controller = (Data2DManageController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -279,6 +278,7 @@ public class Data2DManageController extends BaseSysTableController<Data2DDefinit
         if (controller == null) {
             controller = (Data2DManageController) WindowTools.openStage(Fxmls.Data2DManageFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

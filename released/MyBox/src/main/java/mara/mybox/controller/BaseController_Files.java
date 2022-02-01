@@ -701,6 +701,9 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 stage.toFront();
                 stage.sizeToScene();
                 Optional<ButtonType> result = alert.showAndWait();
+                if (result == null || !result.isPresent()) {
+                    return null;
+                }
                 if (result.get() != buttonSure) {
                     if (result.get() == buttonNo) {
                         return chooseSaveFile(title, defaultPath, defaultName, filters);

@@ -4,8 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
 /**
@@ -47,6 +46,9 @@ public class TransformTools {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
+        if (AppVariables.imageRenderHints != null) {
+            g.addRenderingHints(AppVariables.imageRenderHints);
+        }
         Color bgColor = Colors.TRANSPARENT;
         g.setBackground(bgColor);
         if (!isSkew) {
@@ -57,7 +59,7 @@ public class TransformTools {
             g.drawImage(source, width / 2, height / 2, null);
         }
         g.dispose();
-        target = MargionTools.cutMargins(target, bgColor, true, true, true, true);
+        target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
         return target;
     }
 
@@ -76,6 +78,9 @@ public class TransformTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
+            if (AppVariables.imageRenderHints != null) {
+                g.addRenderingHints(AppVariables.imageRenderHints);
+            }
             Color bgColor = Colors.TRANSPARENT;
             g.setBackground(bgColor);
             if (shearX < 0) {
@@ -84,7 +89,7 @@ public class TransformTools {
             g.shear(shearX, shearY);
             g.drawImage(source, 0, 0, null);
             g.dispose();
-            target = MargionTools.cutMargins(target, bgColor, true, true, true, true);
+            target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -96,10 +101,7 @@ public class TransformTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; ++j) {
                 int l = 0;
@@ -124,10 +126,7 @@ public class TransformTools {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int i = 0; i < width; ++i) {
                 int t = 0;

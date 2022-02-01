@@ -1,9 +1,11 @@
 package mara.mybox.fximage;
 
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -33,8 +35,8 @@ import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ShadowTools;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ControlImageText;
 import mara.mybox.controller.ImagesBrowserController;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
@@ -140,14 +142,9 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image addText(Image image, String textString,
-            java.awt.Font font, Color color, int x, int y,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent,
-            int shadow, int angle, boolean isOutline, boolean isVertical) {
+    public static Image addText(Image image, ControlImageText optionsController) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageTextTools.addText(source, textString,
-                font, toAwtColor(color), x, y, blendMode, opacity, orderReversed, ignoreTransparent,
-                shadow, angle, isOutline, isVertical);
+        BufferedImage target = ImageTextTools.addText(source, optionsController);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -290,33 +287,6 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image drawHTML(Image backImage, Image html,
-            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
-            int rotate, int margin) {
-        if (html == null || backImage == null || bkRect == null) {
-            return backImage;
-        }
-        BufferedImage backBfImage = SwingFXUtils.fromFXImage(backImage, null);
-        BufferedImage htmlBfImage = SwingFXUtils.fromFXImage(html, null);
-        BufferedImage target = ImageTextTools.drawHTML(backBfImage, htmlBfImage,
-                bkRect, ColorConvertTools.converColor(bkColor), bkOpacity, bkarc, rotate, margin);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawHTML(Image backImage, BufferedImage html,
-            int htmlX, int htmlY, int htmlWdith, int htmlHeight) {
-        if (html == null || backImage == null) {
-            return backImage;
-        }
-        BufferedImage backBfImage = SwingFXUtils.fromFXImage(backImage, null);
-//        BufferedImage htmlBfImage = SwingFXUtils.fromFXImage(html, null);
-        BufferedImage target = ImageTextTools.drawHTML(backBfImage, html,
-                htmlX, htmlY, htmlWdith, htmlHeight);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
     public static void blendDemoFx(BaseController parent, Button demoButton,
             Image foreImage, Image backImage, int x, int y,
             float opacity, boolean orderReversed, boolean ignoreTransparent) {
@@ -414,6 +384,16 @@ public class FxImageTools {
         Thread thread = new Thread(demoTask);
         thread.setDaemon(false);
         thread.start();
+    }
+
+    public static Image applyRenderHints(Image image, Map<RenderingHints.Key, Object> hints) {
+        if (image == null || hints == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = BufferedImageTools.applyRenderHints(source, hints);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
     }
 
 }

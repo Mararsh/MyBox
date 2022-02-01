@@ -786,4 +786,53 @@ public class TextTools {
         }
     }
 
+    public static String vertical(String text, boolean leftToRight) {
+        try {
+            if (text == null) {
+                return null;
+            }
+            StringBuilder s = new StringBuilder();
+            String[] lines = text.split("\n", -1);
+            int maxLen = 0;
+            for (String line : lines) {
+                int lineLen = line.length();
+                if (lineLen > maxLen) {
+                    maxLen = lineLen;
+                }
+            }
+            int end = lines.length - 1;
+            if (leftToRight) {
+                for (int r = 0; r < maxLen; r++) {
+                    for (int i = 0; i <= end; i++) {
+                        String line = lines[i];
+                        int lineLen = line.length();
+                        if (lineLen > r) {
+                            s.append(line.charAt(r));
+                        } else {
+                            s.append(" ");
+                        }
+                    }
+                    s.append("\n");
+                }
+            } else {
+                for (int r = 0; r < maxLen; r++) {
+                    for (int i = end; i >= 0; i--) {
+                        String line = lines[i];
+                        int lineLen = line.length();
+                        if (lineLen > r) {
+                            s.append(line.charAt(r));
+                        } else {
+                            s.append(" ");
+                        }
+                    }
+                    s.append("\n");
+                }
+            }
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return text;
+        }
+    }
+
 }

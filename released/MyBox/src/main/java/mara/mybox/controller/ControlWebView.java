@@ -309,7 +309,7 @@ public class ControlWebView extends BaseController {
                         stage.toFront();
                         alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
                         Optional<ButtonType> result = alert.showAndWait();
-                        return result.get() == ButtonType.YES;
+                        return result != null && result.get() == ButtonType.YES;
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
                         return false;
@@ -998,6 +998,25 @@ public class ControlWebView extends BaseController {
                 elementsMenu.getItems().setAll(elementsItems);
                 items.add(elementsMenu);
 
+                if (!(this instanceof ControlHtmlEditor)) {
+                    CheckMenuItem checkMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImage("iconEdit.png"));
+                    checkMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+                    checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            UserConfig.setBoolean("WebViewEditable", checkMenu.isSelected());
+                            webEngine.executeScript("document.body.contentEditable=" + checkMenu.isSelected());
+                        }
+                    });
+                    items.add(checkMenu);
+                }
+
+                menu = new MenuItem(message("Script"), StyleTools.getIconImage("iconScript.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    HtmlScriptController.open(this);
+                });
+                items.add(menu);
+
                 items.add(new SeparatorMenuItem());
             }
 
@@ -1061,43 +1080,6 @@ public class ControlWebView extends BaseController {
                 forwardAction();
             });
             menu.setDisable(hisSize < 2);
-            items.add(menu);
-
-            if (!(this instanceof ControlHtmlEditor)) {
-                items.add(new SeparatorMenuItem());
-                CheckMenuItem checkMenu = new CheckMenuItem(message("Editable"));
-                checkMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-                checkMenu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("WebViewEditable", checkMenu.isSelected());
-                        webEngine.executeScript("document.body.contentEditable=" + checkMenu.isSelected());
-                    }
-                });
-                items.add(checkMenu);
-            }
-
-            menu = new MenuItem(message("Script"), StyleTools.getIconImage("iconScript.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                TextInputController inputController
-                        = TextInputController.open(parentController != null ? parentController : myController, "JavaScript", null);
-                inputController.getNotify().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        String value = inputController.getText();
-                        if (value == null || value.isBlank()) {
-                            return;
-                        }
-                        inputController.closeStage();
-                        try {
-                            webEngine.executeScript(value);
-                            popDone();
-                        } catch (Exception e) {
-                            popError(e.toString());
-                        }
-                    }
-                });
-            });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());

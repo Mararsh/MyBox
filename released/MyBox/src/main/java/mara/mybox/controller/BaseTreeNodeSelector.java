@@ -9,7 +9,6 @@ import javafx.stage.Window;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.fxml.WindowTools;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -160,7 +159,6 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
             if (object != null && object.getClass().equals(myController.getClass())) {
                 try {
                     controller = (BaseTreeNodeSelector) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -170,8 +168,7 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
             controller = (BaseTreeNodeSelector) WindowTools.openStage(myFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
-            controller.getMyStage().requestFocus();
+            controller.requestMouse();
         }
         return controller;
     }

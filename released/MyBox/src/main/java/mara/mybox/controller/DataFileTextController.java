@@ -107,30 +107,35 @@ public class DataFileTextController extends BaseData2DFileController {
     public static DataFileTextController open(List<Data2DColumn> cols, List<List<String>> data) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
         controller.dataController.loadTmpData(cols, data);
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileTextController open(File file, Charset charset, boolean withNames, String delimiter) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
         controller.setFile(file, charset, withNames, delimiter);
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileTextController open() {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
         controller.createAction();
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileTextController load(Window parent) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openScene(parent, Fxmls.DataFileTextFxml);
         controller.createAction();
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileTextController open(Data2DDefinition def) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
         controller.loadDef(def);
+        controller.requestMouse();
         return controller;
     }
 

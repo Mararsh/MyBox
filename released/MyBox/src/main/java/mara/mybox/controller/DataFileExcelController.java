@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -123,32 +120,24 @@ public class DataFileExcelController extends BaseData2DFileController {
         return targetData;
     }
 
-    protected void afterFileLoaded() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public synchronized void run() {
-                Platform.runLater(() -> {
-                    sheetSelector.getItems().clear();
-                    List<String> sheets = dataFileExcel.getSheetNames();
-                    if (sheets != null && !sheets.isEmpty()) {
-                        sheetSelector.getItems().setAll(sheets);
-                    }
-                    sheetSelector.setValue(dataFileExcel.getSheet());
-                    deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
-                    int current = sheetSelector.getSelectionModel().getSelectedIndex();
-                    nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
-                    previousSheetButton.setDisable(current <= 0);
-                });
-            }
-        }, 300);
+    protected synchronized void afterFileLoaded() {
+        sheetSelector.getItems().clear();
+        List<String> sheets = dataFileExcel.getSheetNames();
+        int current = -1;
+        if (sheets != null && !sheets.isEmpty()) {
+            sheetSelector.getItems().addAll(sheets);
+            current = sheets.indexOf(dataFileExcel.getSheet());
+        }
+        sheetSelector.getSelectionModel().select(dataFileExcel.getSheet());
+        deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
+        nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
+        previousSheetButton.setDisable(current <= 0);
     }
 
     @Override
     protected void checkStatus() {
         super.checkStatus();
-        boolean invalid = dataFileExcel.isTmpData() || dataController.isChanged();
-        sheetsPane.setExpanded(!invalid);
-        sheetsPane.setDisable(invalid);
+        sheetsPane.setDisable(dataFileExcel.isTmpData() || dataController.isChanged());
     }
 
     @FXML
@@ -271,7 +260,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             return;
         }
         String currentSheetName = dataFileExcel.getSheet();
-        if (!PopTools.askSure(baseTitle, currentSheetName, message("SureDelete"))) {
+        if (!PopTools.askSure(this, baseTitle, currentSheetName, message("SureDelete"))) {
             return;
         }
         synchronized (this) {
@@ -337,20 +326,21 @@ public class DataFileExcelController extends BaseData2DFileController {
     public static DataFileExcelController open(File file, boolean withNames) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.setFile(file, withNames);
-        controller.toFront();
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileExcelController open(List<Data2DColumn> cols, List<List<String>> data) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.dataController.loadTmpData(cols, data);
-        controller.toFront();
+        controller.requestMouse();
         return controller;
     }
 
     public static DataFileExcelController open(Data2DDefinition def) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.loadDef(def);
+        controller.requestMouse();
         return controller;
     }
 

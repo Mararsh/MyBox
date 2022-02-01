@@ -16,15 +16,16 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DEditTable extends ControlData2DSelect {
+public class ControlData2DEditTable extends ControlData2DLoad {
 
     public ControlData2DEditTable() {
-        forDisplay = false;
+        forEdit = true;
     }
 
     protected void setParameters(ControlData2DEdit editController) {
         try {
             dataController = editController.dataController;
+            baseTitle = dataController.baseTitle;
 
             paginationPane = dataController.paginationPane;
             pageSizeSelector = dataController.pageSizeSelector;
@@ -48,7 +49,7 @@ public class ControlData2DEditTable extends ControlData2DSelect {
      */
     @Override
     public synchronized void tableChanged(boolean changed) {
-        if (isSettingValues) {
+        if (isSettingValues || data2D == null) {
             return;
         }
         data2D.setTableChanged(changed);

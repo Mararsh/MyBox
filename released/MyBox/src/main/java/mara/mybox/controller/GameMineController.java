@@ -23,7 +23,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -76,8 +75,6 @@ public class GameMineController extends BaseWebViewController {
         Disclosed, Closed, Marked, Suspected
     }
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab playTab, optionsTab;
     @FXML

@@ -38,6 +38,7 @@ public class TextInputController extends BaseChildController {
             parentController = parent;
             if (parent != null) {
                 baseName = parent.baseName;
+                getMyStage().setTitle(parent.getTitle());
             }
             getMyStage().centerOnScreen();
             titleLabel.setText(title);

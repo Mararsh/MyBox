@@ -2,8 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageConvolution;
@@ -13,7 +11,8 @@ import mara.mybox.bufferedimage.ImageQuantization;
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
-import mara.mybox.value.AppVariables;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
 
 /**
@@ -95,20 +94,9 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
                         target = ImageGray.byteGray(source);
                         break;
                     case BlackOrWhite:
-                        ImageBinary imageBinary;
-                        switch (optionsController.intPara1) {
-                            case 2:
-                                imageBinary = new ImageBinary(source, -1);
-                                break;
-                            case 3:
-                                imageBinary = new ImageBinary(source, optionsController.intPara2);
-                                break;
-                            default:
-                                int t = ImageBinary.calculateThreshold(source);
-                                imageBinary = new ImageBinary(source, t);
-                                break;
-                        }
-                        imageBinary.setIsDithering(optionsController.valueCheck.isSelected());
+                        int threshold = optionsController.binaryController.threshold(source);
+                        ImageBinary imageBinary = new ImageBinary(source, threshold);
+                        imageBinary.setIsDithering(optionsController.binaryController.dither());
                         target = imageBinary.operate();
                         break;
                     case Sepia:

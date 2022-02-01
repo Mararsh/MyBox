@@ -218,22 +218,6 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         }
     }
 
-//    public void initSplitDivider() {
-//        try {
-//            // https://stackoverflow.com/questions/40707295/how-to-add-listener-to-divider-position?r=SearchResults
-//            for (Node node : splitPane.lookupAll(".split-pane-divider")) {
-//                node.setOnMouseReleased(new EventHandler<MouseEvent>() {
-//                    @Override
-//                    public void handle(MouseEvent event) {
-//                        paneSize();
-//                    }
-//                });
-//            }
-//
-//        } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
-//        }
-//    }
     public void setParameters(ImageManufactureController parent) {
         try {
             this.parentController = parent;
@@ -281,7 +265,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
     @Override
     public void paneSizeChanged(double change) {
-
+        refinePane();
     }
 
     @Override

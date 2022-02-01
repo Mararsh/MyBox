@@ -14,13 +14,13 @@ public class Data2DCopyController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        targetController.setNotInTable(allPages());
+        targetController.setNotInTable(sourceController.allPages());
         return super.checkOptions();
     }
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.copy(tableController.checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
+        return data2D.copy(sourceController.checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 
     /*

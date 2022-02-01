@@ -17,13 +17,13 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Popup;
+import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
@@ -431,15 +431,22 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             if (parent == null || node == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.MenuHtmlCodesFxml, node, x, y);
-            if (popup == null) {
-                return null;
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof MenuHtmlCodesController) {
+                    try {
+                        MenuHtmlCodesController controller = (MenuHtmlCodesController) object;
+                        if (controller.textInput != null && controller.textInput.equals(node)) {
+                            controller.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
-            Object object = popup.getUserData();
-            if (object == null && !(object instanceof MenuHtmlCodesController)) {
-                return null;
-            }
-            MenuHtmlCodesController controller = (MenuHtmlCodesController) object;
+            MenuHtmlCodesController controller = (MenuHtmlCodesController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.MenuHtmlCodesFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,13 +14,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.Popup;
+import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
@@ -343,20 +345,31 @@ public class MenuTextEditController extends MenuTextBaseController {
     /*
         static methods
      */
+    public static void closeAll() {
+
+    }
+
     public static MenuTextEditController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.MenuTextEditFxml, node, x, y);
-            if (popup == null) {
-                return null;
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof MenuTextEditController) {
+                    try {
+                        MenuTextEditController controller = (MenuTextEditController) object;
+                        if (controller.textInput != null && controller.textInput.equals(node)) {
+                            controller.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
-            Object object = popup.getUserData();
-            if (object == null && !(object instanceof MenuTextEditController)) {
-                return null;
-            }
-            MenuTextEditController controller = (MenuTextEditController) object;
+            MenuTextEditController controller = (MenuTextEditController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.MenuTextEditFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

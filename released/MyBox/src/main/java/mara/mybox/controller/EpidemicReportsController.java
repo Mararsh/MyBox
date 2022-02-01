@@ -350,7 +350,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     sourceController.loadTree(datasets);
                     timeController.loadTree("time", times, false);
                     if (datasets == null || datasets.isEmpty()) {
-                        if (PopTools.askSure(getBaseTitle(), Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
+                        if (PopTools.askSure(myController, getBaseTitle(), Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
                             predefined();
                         }
 
@@ -943,8 +943,8 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         EpidemicReportsImportExternalCSVController controller
                 = (EpidemicReportsImportExternalCSVController) openStage(Fxmls.EpidemicReportsImportExternalCSVFxml);
         controller.parent = this;
-        File file = FxFileTools.getInternalFile("/data/db/Epidemic_Report_JHU_20200430.csv",
-                "data", "Epidemic_Report_JHU_20200430.csv");
+        File file = FxFileTools.getInternalFile("/data/db/Epidemic_Report_examples.csv",
+                "data", "Epidemic_Report_examples.csv");
         controller.predefined = false;
         controller.startFile(file, true, true);
     }

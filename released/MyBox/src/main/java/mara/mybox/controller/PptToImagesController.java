@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
@@ -10,6 +11,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -49,7 +51,7 @@ public class PptToImagesController extends BaseBatchFileController {
                     .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(formatController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(formatController.binaryController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -69,7 +71,11 @@ public class PptToImagesController extends BaseBatchFileController {
                     return message("Cancelled");
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                slide.draw(slideImage.createGraphics());
+                Graphics2D g = slideImage.createGraphics();
+                if (AppVariables.imageRenderHints != null) {
+                    g.addRenderingHints(AppVariables.imageRenderHints);
+                }
+                slide.draw(g);
                 BufferedImage targetImage = ImageConvertTools.convertColorSpace(slideImage, formatController.attributes);
                 if (task == null || task.isCancelled()) {
                     return message("Cancelled");

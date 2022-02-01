@@ -84,6 +84,7 @@ public class ControlData2DEditText extends BaseController {
             this.editController = editController;
             dataController = editController.dataController;
             tableController = editController.tableController;
+            baseTitle = dataController.baseTitle;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

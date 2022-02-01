@@ -39,11 +39,11 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                              <TitledPane fx:id="infoPane" text="%Info">
+                              <TitledPane fx:id="infoPane" minHeight="-Infinity" text="%Info">
                                  <content>
-                                    <VBox spacing="2.0">
+                                    <VBox>
                                        <children>
-                                          <TextArea fx:id="infoArea" editable="false" minHeight="-Infinity" styleClass="uneditable" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                          <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
                                        </children>
                                     </VBox>
                                  </content>

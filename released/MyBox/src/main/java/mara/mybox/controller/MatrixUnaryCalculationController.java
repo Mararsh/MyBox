@@ -410,7 +410,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             if (object != null && object instanceof MatrixUnaryCalculationController) {
                 try {
                     controller = (MatrixUnaryCalculationController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -419,6 +418,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         if (controller == null) {
             controller = (MatrixUnaryCalculationController) WindowTools.openStage(Fxmls.MatrixUnaryCalculationFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

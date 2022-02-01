@@ -25,7 +25,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -47,6 +47,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
     @Override
     public void initPane() {
         try {
+            super.initPane();
 
             optionsController.setValues(this);
 
@@ -180,7 +181,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     ImageContrast imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.HSB_Histogram_Equalization);
                     BufferedImage bufferedImage = imageContrast.operateImage();
-                    String tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    String tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("HSBHistogramEqualization") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -189,7 +190,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.Gray_Histogram_Equalization);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GrayHistogramEqualization") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -200,7 +201,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageContrast.setIntPara1(100);
                     imageContrast.setIntPara2(100);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GrayHistogramStretching") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -210,7 +211,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                             ContrastAlgorithm.Gray_Histogram_Shifting);
                     imageContrast.setIntPara1(40);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GrayHistogramShifting") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -232,7 +233,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     ImageConvolution imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("UnsharpMasking") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -242,7 +243,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("FourNeighborLaplace") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -252,7 +253,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("EightNeighborLaplace") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -262,7 +263,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("GaussianBlur") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -272,7 +273,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    tmpFile = AppPaths.getGeneratedPath() + File.separator
                             + Languages.message("AverageBlur") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);

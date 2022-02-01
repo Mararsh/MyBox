@@ -10,6 +10,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
 /**
@@ -93,10 +94,7 @@ public abstract class PixelsOperation {
             return image;
         }
         try {
-            int imageType = image.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean isShowScope = (operationType == OperationType.ShowScope);
             boolean isWhole = (scope == null || scope.getScopeType() == ImageScope.ScopeType.All);
@@ -167,10 +165,7 @@ public abstract class PixelsOperation {
                 return image;
             }
             boolean isShowScope = operationType == OperationType.ShowScope;
-            int imageType = image.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean excluded = scope.isColorExcluded();
             if (excludeScope) {
@@ -179,11 +174,17 @@ public abstract class PixelsOperation {
             if (isShowScope) {
                 if (excluded) {
                     Graphics2D g2d = target.createGraphics();
+                    if (AppVariables.imageRenderHints != null) {
+                        g2d.addRenderingHints(AppVariables.imageRenderHints);
+                    }
                     g2d.setColor(Colors.TRANSPARENT);
                     g2d.fillRect(0, 0, imageWidth, imageHeight);
                     g2d.dispose();
                 } else {
                     Graphics2D g2d = target.createGraphics();
+                    if (AppVariables.imageRenderHints != null) {
+                        g2d.addRenderingHints(AppVariables.imageRenderHints);
+                    }
                     g2d.setColor(Color.WHITE);
                     g2d.fillRect(0, 0, imageWidth, imageHeight);
                     g2d.dispose();

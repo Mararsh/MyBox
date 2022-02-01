@@ -33,6 +33,8 @@ public class ImagePopController extends BaseImageController {
 
     public void setControls() {
         try {
+            baseName += parentController.baseName;
+
             saveAsType = SaveAsType.Open;
 
             listener = new ChangeListener<Image>() {
@@ -74,10 +76,9 @@ public class ImagePopController extends BaseImageController {
         }
     }
 
-    public void setSourceImageView(String baseName, ImageView sourceImageView) {
+    public void setSourceImageView(BaseController parent, ImageView sourceImageView) {
         try {
-            this.baseName = baseName;
-
+            this.parentController = parent;
             this.sourceImageView = sourceImageView;
             refreshAction();
 
@@ -88,10 +89,9 @@ public class ImagePopController extends BaseImageController {
         }
     }
 
-    public void setImage(String baseName, Image image) {
+    public void setImage(BaseController parent, Image image) {
         try {
-            this.baseName = baseName;
-
+            this.parentController = parent;
             refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
 
@@ -138,7 +138,7 @@ public class ImagePopController extends BaseImageController {
                 return null;
             }
             ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
-            controller.setImage(parent.baseName, image);
+            controller.setImage(parent, image);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -152,7 +152,7 @@ public class ImagePopController extends BaseImageController {
                 return null;
             }
             ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
-            controller.setSourceImageView(parent.baseName, imageView);
+            controller.setSourceImageView(parent, imageView);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

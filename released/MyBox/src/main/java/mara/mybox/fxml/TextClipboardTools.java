@@ -118,7 +118,11 @@ public class TextClipboardTools {
         if (controller == null || textInput == null) {
             return;
         }
-        copyToSystemClipboard(controller, textInput.getSelectedText());
+        String text = textInput.getSelectedText();
+        if (text == null || text.isEmpty()) {
+            text = textInput.getText();
+        }
+        copyToSystemClipboard(controller, text);
     }
 
     public static void copyToSystemClipboard(BaseController controller, String text) {
@@ -166,7 +170,11 @@ public class TextClipboardTools {
         if (controller == null || textInput == null) {
             return;
         }
-        copyToMyBoxClipboard(controller, textInput.getSelectedText());
+        String text = textInput.getSelectedText();
+        if (text == null || text.isEmpty()) {
+            text = textInput.getText();
+        }
+        copyToMyBoxClipboard(controller, text);
     }
 
     public static void copyToMyBoxClipboard(BaseController controller, String text) {

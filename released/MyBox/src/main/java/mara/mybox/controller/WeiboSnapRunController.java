@@ -332,7 +332,7 @@ public class WeiboSnapRunController extends BaseController {
             setValues(parameters);
 //            MyBoxLog.debug(parameters.getWebAddress());
             if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty() || parameters.getTargetPath() == null) {
-                PopTools.alertError(message("InvalidParameters"));
+                PopTools.alertError(this, message("InvalidParameters"));
                 closeStage();
                 return;
             }
@@ -569,7 +569,6 @@ public class WeiboSnapRunController extends BaseController {
                 pageController.start(parameters);
                 closeStage();
             } else {
-
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(baseTitle);
                 alert.setContentText(errorString);
@@ -583,6 +582,9 @@ public class WeiboSnapRunController extends BaseController {
                 stage.toFront();
 
                 Optional<ButtonType> result = alert.showAndWait();
+                if (result == null || !result.isPresent()) {
+                    return;
+                }
                 if (result.get() == buttonRetry) {
                     parameters.setRetried(mainRetried + 1);
                     WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(Fxmls.WeiboSnapPostsFxml);

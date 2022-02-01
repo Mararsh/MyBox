@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" 
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageBinary">
+    <children>
+        <Label text="%BinaryAlgorithm" />
+        <HBox alignment="CENTER_LEFT" spacing="2.0">
+            <children>
+                <RadioButton fx:id="otsuRadio" mnemonicParsing="false" selected="true" text="%OTSU">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="binaryGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCalculator.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <RadioButton fx:id="defaultRadio" mnemonicParsing="false" text="%Default" toggleGroup="$binaryGroup" />
+        <FlowPane hgap="5.0" vgap="5.0">
+            <children>
+                <RadioButton fx:id="thresholdRadio" mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
+                <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
+            </children>
+        </FlowPane>
+        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

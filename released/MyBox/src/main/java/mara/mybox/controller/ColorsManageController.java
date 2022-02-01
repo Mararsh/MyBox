@@ -57,7 +57,6 @@ public class ColorsManageController extends BaseController {
             if (object != null && object instanceof ColorsManageController) {
                 try {
                     controller = (ColorsManageController) object;
-                    controller.toFront();
                     break;
                 } catch (Exception e) {
                 }
@@ -66,6 +65,7 @@ public class ColorsManageController extends BaseController {
         if (controller == null) {
             controller = (ColorsManageController) WindowTools.openStage(Fxmls.ColorsManageFxml);
         }
+        controller.requestMouse();
         return controller;
     }
 

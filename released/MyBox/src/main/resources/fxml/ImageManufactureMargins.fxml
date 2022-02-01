@@ -53,16 +53,6 @@
                         <CheckBox fx:id="marginsRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
                     </children>
                 </FlowPane>
-                <FlowPane fx:id="alphaBox" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                    <children>
-                        <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
-                        <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTips.png" />
-                            </image>
-                        </ImageView>
-                    </children>
-                </FlowPane>
             </children>
         </VBox>
         <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">

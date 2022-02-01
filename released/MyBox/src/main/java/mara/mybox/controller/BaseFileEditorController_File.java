@@ -142,8 +142,8 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
 
             mainArea.clear();
             lineArea.clear();
+            infoLabel.setText("");
             bottomLabel.setText("");
-            fileLabel.setText("");
             selectionLabel.setText("");
             if (charsetSelector != null) {
                 charsetSelector.getSelectionModel().select(UserConfig.getString(baseName + "SourceCharset", defaultCharset().name()));
@@ -165,6 +165,9 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 findReplaceController.findReplace = null;
                 setControlsStyle();
             }
+
+            updatePanes();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

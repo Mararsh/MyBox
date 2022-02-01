@@ -103,6 +103,15 @@ public class ImageItem {
             preDefined.put("img/DocumentTools.png", "DocumentToolsImageTips");
             preDefined.put("img/MediaTools.png", "MediaToolsImageTips");
             preDefined.put("img/NetworkTools.png", "NetworkToolsImageTips");
+            preDefined.put("img/n1.png", "N1ImageTips");
+            preDefined.put("img/n2.png", "N2ImageTips");
+            preDefined.put("img/n3.png", "N3ImageTips");
+            preDefined.put("img/n4.png", "N4ImageTips");
+            preDefined.put("img/n5.png", "N5ImageTips");
+            preDefined.put("img/n6.png", "N6ImageTips");
+            preDefined.put("img/n7.png", "N7ImageTips");
+            preDefined.put("img/n8.png", "N8ImageTips");
+            preDefined.put("img/n9.png", "N9ImageTips");
             preDefined.put("img/sn1.png", "sn1ImageTips");
             preDefined.put("img/sn2.png", "sn2ImageTips");
             preDefined.put("img/sn3.png", "sn3ImageTips");

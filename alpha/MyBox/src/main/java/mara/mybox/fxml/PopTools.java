@@ -179,9 +179,6 @@ public class PopTools {
 
     // https://openjfx.io/javadoc/17/javafx.controls/javafx/scene/control/Dialog.html
     public static boolean askSure(BaseController controller, String title, String header, String sureString) {
-        if (AppVariables.isTesting) {
-            return false;
-        }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         if (header != null) {

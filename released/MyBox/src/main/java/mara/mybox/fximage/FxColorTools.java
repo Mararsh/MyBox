@@ -11,8 +11,6 @@ import mara.mybox.color.SRGB;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -105,7 +103,7 @@ public class FxColorTools {
     }
 
     public static int color2Value(Color color) {
-        return ColorConvertTools.converColor(color).getRGB();
+        return color == null ? AppValues.InvalidInteger : ColorConvertTools.converColor(color).getRGB();
     }
 
     public static int web2Value(String web) {
@@ -181,6 +179,14 @@ public class FxColorTools {
                 return color;
             }
         }
+    }
+
+    public static Color randomColor() {
+        return Color.web(randomRGB());
+    }
+
+    public static Color randomColor(Random random) {
+        return Color.web(randomRGB(random));
     }
 
     public static List<String> randomRGBA(int size) {

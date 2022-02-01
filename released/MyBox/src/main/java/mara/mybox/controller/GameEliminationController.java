@@ -36,7 +36,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -105,8 +104,6 @@ public class GameEliminationController extends BaseController {
     protected String currentStyle, focusStyle, defaultStyle, arcStyle, shadowStyle;
     protected File soundFile;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab playTab, chessesTab, rulersTab, settingsTab;
     @FXML
@@ -736,7 +733,7 @@ public class GameEliminationController extends BaseController {
                 }
             }
             if (countedChesses.isEmpty()) {
-                if (!PopTools.askSure(getBaseTitle(), message("SureNoScore"))) {
+                if (!PopTools.askSure(this, getBaseTitle(), message("SureNoScore"))) {
                     return;
                 }
             }
@@ -1648,6 +1645,9 @@ public class GameEliminationController extends BaseController {
             stage.setAlwaysOnTop(true);
             stage.toFront();
             Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return;
+            }
             if (result.get() == buttonRenew) {
                 newGame(false);
                 popInformation(message("DeadlockDetectRenew"));

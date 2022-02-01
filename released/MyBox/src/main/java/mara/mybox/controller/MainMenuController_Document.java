@@ -103,6 +103,21 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void openHtmlEditor(ActionEvent event) {
+        loadScene(Fxmls.HtmlEditorFxml);
+    }
+
+    @FXML
+    protected void htmlFind(ActionEvent event) {
+        loadScene(Fxmls.HtmlFindFxml);
+    }
+
+    @FXML
+    protected void htmlElements(ActionEvent event) {
+        loadScene(Fxmls.HtmlElementsFxml);
+    }
+
+    @FXML
     protected void openHtmlToMarkdown(ActionEvent event) {
         loadScene(Fxmls.HtmlToMarkdownFxml);
     }
@@ -160,11 +175,6 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void openHtmlFrameset(ActionEvent event) {
         loadScene(Fxmls.HtmlFramesetFxml);
-    }
-
-    @FXML
-    protected void openHtmlEditor(ActionEvent event) {
-        loadScene(Fxmls.HtmlEditorFxml);
     }
 
     @FXML

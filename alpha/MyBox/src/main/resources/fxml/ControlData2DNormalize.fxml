@@ -45,7 +45,7 @@ License:    Apache License Version 2.0
                 <Label text="%Range" />
                 <TextField fx:id="fromInput" prefWidth="60.0" />
                 <Label layoutX="10.0" layoutY="14.0" />
-                <Label layoutX="10.0" layoutY="14.0" text="-" />
+                <Label layoutX="10.0" layoutY="14.0" text="," />
                 <TextField fx:id="toInput" layoutX="35.0" layoutY="10.0" prefWidth="60.0" />
                 <Button mnemonicParsing="false" onAction="#range01" text="(0,1)" />
                 <Button layoutX="186.0" layoutY="10.0" mnemonicParsing="false" onAction="#range11" text="(-1,1)" />

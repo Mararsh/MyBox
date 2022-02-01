@@ -6,15 +6,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -25,6 +29,43 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class MainMenuController_Development extends MainMenuController_Settings {
+
+    protected HBox memoryBox, cpuBox;
+    protected Timer memoryMonitorTimer, cpuMonitorTimer;
+    protected final int memoryMonitorInterval = 1000, cpuMonitorInterval = 1000;
+    protected Runtime r;
+    protected OperatingSystemMXBean osmxb;
+    protected Label sysMemLabel, myboxMemLabel, sysCpuLabel, myboxCpuLabel;
+    protected ProgressBar sysMemBar, myboxMemBar, sysCpuBar, myboxCpuBar;
+    protected long mb;
+
+    @FXML
+    protected Menu devMenu;
+    @FXML
+    protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck, detailedDebugCheck;
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            devMenu.setOnShowing((Event e) -> {
+                checkDev();
+            });
+            checkDev();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    protected void checkDev() {
+        monitorMemroyCheck.setSelected(UserConfig.getBoolean("MonitorMemroy", false));
+        monitorCpuCheck.setSelected(UserConfig.getBoolean("MonitorCpu", false));
+        detailedDebugCheck.setSelected(AppVariables.detailedDebugLogs);
+        checkMemroyMonitor();
+        checkCpuMonitor();
+    }
 
     protected void makeMemoryMonitorBox() {
         sysMemLabel = new Label();
@@ -221,6 +262,12 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
+    protected void detailedDebug() {
+        AppVariables.detailedDebugLogs = detailedDebugCheck.isSelected();
+        UserConfig.setBoolean("DetailedDebugLogs", AppVariables.detailedDebugLogs);
+    }
+
+    @FXML
     protected void MyBoxProperties(ActionEvent event) {
         openStage(Fxmls.MyBoxPropertiesFxml);
     }
@@ -232,7 +279,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     protected void MyBoxData(ActionEvent event) {
-        openStage(Fxmls.MyBoxDataFxml);
+        loadScene(Fxmls.MyBoxDataFxml);
     }
 
     @FXML
@@ -248,7 +295,12 @@ public abstract class MainMenuController_Development extends MainMenuController_
     // This is for developement to generate Icons automatically in different color style
     @FXML
     public void makeIcons() {
-        openStage(Fxmls.MyBoxIconsFxml);
+        loadScene(Fxmls.MyBoxIconsFxml);
+    }
+
+    @FXML
+    public void autoTesting() {
+        loadScene(Fxmls.AutoTestingCasesFxml);
     }
 
     @FXML

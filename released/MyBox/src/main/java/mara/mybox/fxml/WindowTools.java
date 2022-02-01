@@ -23,12 +23,10 @@ import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
@@ -112,6 +110,9 @@ public class WindowTools {
 
             // Close anyway
             stage.setOnHiding((WindowEvent event) -> {
+                if (controller != null) {
+                    controller.leaveScene();
+                }
                 WindowTools.closeWindow(stage);
             });
 
@@ -120,9 +121,6 @@ public class WindowTools {
 
             controller.afterSceneLoaded();
 
-            if (controller.isNeedRecordVisit()) {
-                VisitHistoryTools.visitMenu(controller.getBaseTitle(), controller.getMyFxml());
-            }
             Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
 
             return controller;
@@ -455,8 +453,6 @@ public class WindowTools {
 
                 new TableImageEditHistory().clearInvalid(conn);
 
-                new TableImageScope().clearInvalid(conn);
-
                 new TableFileBackup().clearInvalid(conn);
 
                 new TableData2DDefinition().clearInvalid(conn);
@@ -467,6 +463,19 @@ public class WindowTools {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static void closeAllPopup() {
+        try {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (window instanceof Popup) {
+                    window.hide();
+                }
+            }
+        } catch (Exception e) {
         }
     }
 

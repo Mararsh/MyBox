@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.Data2D;
@@ -34,8 +33,6 @@ public class ControlData2DView extends BaseController {
     protected String displayDelimiterName;
     protected Data2D data2D;
 
-    @FXML
-    protected TabPane tabPane;
     @FXML
     protected Tab htmlTab, textTab;
     @FXML
