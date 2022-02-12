@@ -29,7 +29,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-4-22
  * @License Apache License Version 2.0
  */
-public class MyBoxDataController extends BaseSysTableController<BaseTable> {
+public class DataTablesController extends BaseSysTableController<BaseTable> {
 
     @FXML
     protected ListView<String> tablesList;
@@ -38,7 +38,7 @@ public class MyBoxDataController extends BaseSysTableController<BaseTable> {
     @FXML
     protected FlowPane buttonsPane, colorsPane;
 
-    public MyBoxDataController() {
+    public DataTablesController() {
         baseTitle = Languages.message("MyBoxData");
         TipsLabelKey = "ColorsManageTips";
     }

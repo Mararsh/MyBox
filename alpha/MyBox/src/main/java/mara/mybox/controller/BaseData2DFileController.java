@@ -31,9 +31,7 @@ public abstract class BaseData2DFileController extends BaseController {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected ControlData2DEditTable tableController;
-    protected ControlData2DEditText textController;
     protected ControlData2DAttributes attributesController;
-    protected ControlData2DColumns columnsController;
 
     @FXML
     protected TitledPane infoPane, saveAsPane, backupPane, formatPane;
@@ -69,9 +67,7 @@ public abstract class BaseData2DFileController extends BaseController {
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             tableController = dataController.editController.tableController;
-            textController = dataController.editController.textController;
             attributesController = dataController.attributesController;
-            columnsController = dataController.columnsController;
 
             tableController.dataLabel = nameLabel;
             tableController.baseTitle = baseTitle;

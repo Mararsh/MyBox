@@ -59,11 +59,20 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconSplit.png" />
+                                <Image url="@../buttons/Red/iconMatrix.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </CheckBox>
+            <CheckBox fx:id="databaseCheck" layoutX="178.0" layoutY="10.0" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconDatabase.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
                 <CheckBox fx:id="myBoxClipboardCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -86,9 +95,10 @@ License:    Apache License Version 2.0
                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                     <children>
                         <RadioButton fx:id="timeRadio" layoutX="263.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ModifyTime">
-                     <toggleGroup>
+                            <toggleGroup>
                                 <ToggleGroup fx:id="orderGroup" />
-                     </toggleGroup></RadioButton>
+                            </toggleGroup>
+                        </RadioButton>
                         <RadioButton fx:id="nameRadio" mnemonicParsing="false" text="%Name" toggleGroup="$orderGroup" />
                         <RadioButton fx:id="idRadio" mnemonicParsing="false" text="%ID" toggleGroup="$orderGroup" />
                         <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%RowsNumber" toggleGroup="$orderGroup" />

@@ -23,7 +23,10 @@ public class StyleRadioButton {
             return new StyleData(id, "", message("Texts"), "", "iconTxt.png");
         }
         if (id.startsWith("matrix")) {
-            return new StyleData(id, "", message("Matrix"), "", "iconSplit.png");
+            return new StyleData(id, "", message("Matrix"), "", "iconMatrix.png");
+        }
+        if (id.startsWith("database")) {
+            return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
         }
         if (id.startsWith("systemClipboard")) {
             return new StyleData(id, "", message("SystemClipboard"), "", "iconSystemClipboard.png");

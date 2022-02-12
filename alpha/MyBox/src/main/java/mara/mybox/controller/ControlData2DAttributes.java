@@ -138,13 +138,6 @@ public class ControlData2DAttributes extends BaseController {
                 }
             });
 
-            dataController.tableController.loadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    updateInfo();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

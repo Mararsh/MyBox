@@ -452,12 +452,12 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxLogs" text="%MyBoxLogs" />
-                                <!--<MenuItem mnemonicParsing="false" onAction="#MyBoxData" text="%MyBoxData" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#runSystemCommand" text="%RunSystemCommand" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
+                                <MenuItem mnemonicParsing="false" onAction="#MyBoxTables" text="%MyBoxTables" />
                                 <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />

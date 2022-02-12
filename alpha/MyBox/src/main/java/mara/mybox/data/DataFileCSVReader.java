@@ -43,7 +43,7 @@ public class DataFileCSVReader extends DataFileReader {
     }
 
     @Override
-    public void readColumns() {
+    public void readColumnNames() {
         if (csvParser == null) {
             return;
         }

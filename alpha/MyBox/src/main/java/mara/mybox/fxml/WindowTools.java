@@ -382,6 +382,10 @@ public class WindowTools {
 
     public static void appExit() {
         try {
+            if (AppVariables.handlingExit) {
+                return;
+            }
+            AppVariables.handlingExit = true;
             if (Window.getWindows() != null) {
                 List<Window> windows = new ArrayList<>();
                 windows.addAll(Window.getWindows());
@@ -424,20 +428,23 @@ public class WindowTools {
             if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
                 MyBoxLog.info("Exit now. Bye!");
                 if (DerbyBase.status == DerbyStatus.Embedded) {
-                    MyBoxLog.debug("Shut down Derby...");
+                    MyBoxLog.info("Shut down Derby...");
                     DerbyBase.shutdownEmbeddedDerby();
                 }
+                AppVariables.handlingExit = false;
 
                 Platform.setImplicitExit(true);
                 System.gc();
                 Platform.exit(); // Some thread may still be alive after this
                 System.exit(0);  // Go
                 Runtime.getRuntime().halt(0);
+                return;
             }
 
         } catch (Exception e) {
 
         }
+        AppVariables.handlingExit = false;
 
     }
 

@@ -10,6 +10,7 @@ import java.util.Random;
 import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -41,7 +42,6 @@ public abstract class Data2D extends Data2DDefinition {
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected ControlData2DLoad loadController;
     protected boolean tableChanged;
-    protected double[][] matrix;
     protected SingletonTask task, backgroundTask;
     protected String error;
 
@@ -51,8 +51,6 @@ public abstract class Data2D extends Data2DDefinition {
     public abstract Data2DDefinition queryDefinition(Connection conn);
 
     public abstract void applyOptions();
-
-    public abstract List<String> readColumns();
 
     public abstract long readTotal();
 
@@ -82,7 +80,6 @@ public abstract class Data2D extends Data2DDefinition {
         newColumnIndex = -1;
         tableChanged = false;
         options = null;
-        matrix = null;
         error = null;
     }
 
@@ -125,7 +122,6 @@ public abstract class Data2D extends Data2DDefinition {
             backgroundTask = d.backgroundTask;
             error = d.error;
             options = d.options;
-            matrix = d.matrix;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -160,8 +156,11 @@ public abstract class Data2D extends Data2DDefinition {
             case MyBoxClipboard:
                 data = new DataClipboard();
                 break;
-            case Table:
+            case DatabaseTable:
                 data = new DataTable();
+                break;
+            case InternalTable:
+                data = new DataInternalTable();
                 break;
             default:
                 return null;
@@ -306,7 +305,6 @@ public abstract class Data2D extends Data2DDefinition {
      */
     public void initMatrix(double[][] matrix) {
         resetData();
-        this.matrix = matrix;
     }
 
     public boolean isMatrix() {
@@ -327,12 +325,13 @@ public abstract class Data2D extends Data2DDefinition {
     /*
         database
      */
-    public long readDataDefinition() {
+    public long readDataDefinition(Connection conn) {
+
         if (isTmpData()) {
             checkForLoad();
             return -1;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try {
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
                 cloneAll(definition);
@@ -354,10 +353,73 @@ public abstract class Data2D extends Data2DDefinition {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.console(e);
+            MyBoxLog.debug(e);
             return -1;
         }
         return d2did;
+    }
+
+    public boolean readColumns(Connection conn) {
+        try {
+            columns = null;
+            List<String> colNames = readColumnNames();
+            if (colNames == null || colNames.isEmpty()) {
+                hasHeader = false;
+                tableData2DColumn.clear(conn, d2did);
+
+            } else {
+                List<String> validNames = new ArrayList<>();
+                columns = new ArrayList<>();
+                Random random = new Random();
+                for (int i = 0; i < colNames.size(); i++) {
+                    String name = colNames.get(i);
+                    Data2DColumn column;
+                    if (savedColumns != null && i < savedColumns.size()) {
+                        column = savedColumns.get(i);
+                        if (!hasHeader) {
+                            name = column.getName();
+                        }
+                    } else {
+                        column = new Data2DColumn(name, defaultColumnType());
+                    }
+                    String vname = (name == null || name.isBlank()) ? message("Column") + (i + 1) : name;
+                    while (validNames.contains(vname)) {
+                        vname += "m";
+                    }
+                    validNames.add(vname);
+                    column.setName(vname);
+                    column.setD2id(d2did);
+                    column.setIndex(i);
+                    if (column.getColor() == null) {
+                        column.setColor(FxColorTools.randomColor(random));
+                    }
+                    if (isMatrix()) {
+                        column.setType(ColumnDefinition.ColumnType.Double);
+                    }
+                    columns.add(column);
+                }
+                if (!isTmpData()) {
+                    tableData2DColumn.save(conn, d2did, columns);
+                }
+            }
+            tableData2DDefinition.updateData(conn, this);
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    public List<String> readColumnNames() {
+        checkForLoad();
+        List<String> names = new ArrayList<>();
+        for (int i = 1; i <= colsNumber; i++) {
+            names.add(colPrefix() + i);
+        }
+        return names;
     }
 
     public boolean checkForLoad() {
@@ -408,11 +470,15 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    public boolean isTable() {
+        return type == Type.DatabaseTable || type == Type.InternalTable;
+    }
+
     public boolean isTmpData() {
         if (isDataFile()) {
             return isTmpFile();
         } else {
-            return d2did < 0;
+            return !isTable() && d2did < 0;
         }
     }
 
@@ -676,6 +742,18 @@ public abstract class Data2D extends Data2DDefinition {
             return null;
         }
     }
+
+    public long tableViewRowIndex(int row) {
+        if (loadController == null || row < 0 || row > tableData().size() - 1) {
+            return -1;
+        }
+        try {
+            return Long.valueOf(tableData().get(row).get(0));
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
 
     /*
         columns
@@ -946,14 +1024,6 @@ public abstract class Data2D extends Data2DDefinition {
 
     public void setLoadController(ControlData2DLoad loadController) {
         this.loadController = loadController;
-    }
-
-    public double[][] getMatrix() {
-        return matrix;
-    }
-
-    public void setMatrix(double[][] matrix) {
-        this.matrix = matrix;
     }
 
     public Map<String, Object> getOptions() {

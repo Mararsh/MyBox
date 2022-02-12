@@ -15,6 +15,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.FileBackup;
@@ -118,6 +119,9 @@ public class DataFactory {
         } else if (data instanceof BlobValue) {
             return new TableBlobValue();
 
+        } else if (data instanceof Data2DRow) {
+            return new TableData2D();
+
         }
         return null;
     }
@@ -201,6 +205,9 @@ public class DataFactory {
         } else if (data instanceof BlobValue) {
             return BlobValue.valid((BlobValue) data);
 
+        } else if (data instanceof Data2DRow) {
+            return Data2DRow.valid((Data2DRow) data);
+
         }
 
         return false;
@@ -282,6 +289,9 @@ public class DataFactory {
         } else if (data instanceof BlobValue) {
             return BlobValue.getValue((BlobValue) data, name);
 
+        } else if (data instanceof Data2DRow) {
+            return Data2DRow.getValue((Data2DRow) data, name);
+
         }
 
         return null;
@@ -362,6 +372,9 @@ public class DataFactory {
 
         } else if (data instanceof BlobValue) {
             return BlobValue.setValue((BlobValue) data, name, value);
+
+        } else if (data instanceof Data2DRow) {
+            return Data2DRow.setValue((Data2DRow) data, name, value);
 
         }
         return false;

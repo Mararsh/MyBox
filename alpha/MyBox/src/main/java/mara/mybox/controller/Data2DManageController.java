@@ -61,8 +61,9 @@ public class Data2DManageController extends BaseSysTableController<Data2DDefinit
         try {
             super.initControls();
 
-            data2D = Data2D.create(Data2DDefinition.Type.Table);
+            data2D = Data2D.create(Data2DDefinition.Type.DatabaseTable);
             tableDefinition = data2D.getTableData2DDefinition();
+            queryConditions = " data_type != " + Data2D.typeInternalTable();
             dataController.dataLabel = dataNameLabel;
             dataController.baseTitle = baseTitle;
 
@@ -229,9 +230,15 @@ public class Data2DManageController extends BaseSysTableController<Data2DDefinit
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Matrix"), StyleTools.getIconImage("iconSplit.png"));
+            menu = new MenuItem(message("Matrix"), StyleTools.getIconImage("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Matrix);
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DDefinition.openType(Data2DDefinition.Type.DatabaseTable);
             });
             popMenu.getItems().add(menu);
 

@@ -59,7 +59,7 @@ public class DataFileExcelReader extends DataFileReader {
     }
 
     @Override
-    public void readColumns() {
+    public void readColumnNames() {
         if (iterator == null) {
             return;
         }

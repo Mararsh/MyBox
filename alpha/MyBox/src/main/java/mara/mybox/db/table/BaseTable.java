@@ -97,45 +97,10 @@ public abstract class BaseTable<D> {
     }
 
     public Object readColumnValue(ResultSet results, ColumnDefinition column) {
-        try {
-            if (results == null || column == null) {
-                return null;
-            }
-            switch (column.getType()) {
-                case String:
-                case Text:
-                case Color:
-                case File:
-                case Image:
-                    return results.getString(column.getName());
-                case Double:
-                    return results.getDouble(column.getName());
-                case Float:
-                    return results.getFloat(column.getName());
-                case Long:
-                case Era:
-                    return results.getLong(column.getName());
-                case Integer:
-                    return results.getInt(column.getName());
-                case Boolean:
-                    return results.getBoolean(column.getName());
-                case Short:
-                    return results.getShort(column.getName());
-                case Datetime:
-                    return results.getTimestamp(column.getName());
-                case Date:
-                    return results.getDate(column.getName());
-                case Blob:
-                    return results.getBlob(column.getName());
-                case Clob:
-                    return results.getClob(column.getName());
-                default:
-                    MyBoxLog.debug(column.getName() + " " + column.getType());
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), tableName + " " + column.getName());
+        if (results == null || column == null) {
+            return null;
         }
-        return null;
+        return column.value(results);
     }
 
     public boolean setColumnValue(PreparedStatement statement, ColumnDefinition column, D data, int index) {
@@ -144,7 +109,6 @@ public abstract class BaseTable<D> {
         }
         try {
             Object value = getValue(data, column.getName());
-//            MyBoxLog.error(index + " " + column.getName() + " " + column.getType() + " " + value);
             // Not check maxValue/minValue.
             switch (column.getType()) {
                 case String:
@@ -361,6 +325,7 @@ public abstract class BaseTable<D> {
         foreignColumns = new ArrayList<>();
         timeFormat = Era.Format.Datetime;
         supportBatchUpdate = false;
+        newID = -1;
     }
 
     public BaseTable() {
@@ -1107,16 +1072,18 @@ public abstract class BaseTable<D> {
             if (setInsertStatement(conn, statement, data)) {
                 if (statement.executeUpdate() > 0) {
                     if (idColumn != null) {
+                        boolean ac = conn.getAutoCommit();
+                        conn.setAutoCommit(false);
                         try ( Statement query = conn.createStatement();
                                  ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
                                 setValue(data, idColumn, newID);
-
                             }
                         } catch (Exception e) {
                             MyBoxLog.error(e, tableName);
                         }
+                        conn.setAutoCommit(ac);
                     }
                     return data;
                 }
@@ -1354,11 +1321,14 @@ public abstract class BaseTable<D> {
     }
 
     public BaseTable readDefinitionFromDB(Connection conn, String tableName) {
+        if (tableName == null || tableName.isBlank()) {
+            return null;
+        }
+        List<String> primaryKeys = DerbyBase.primaryKeys(conn, tableName);
         try ( Statement statement = conn.createStatement()) {
             this.tableName = tableName;
             init();
-            conn.setReadOnly(true);
-            String sql = "SELECT columnname, columndatatype, columnnumber FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
+            String sql = "SELECT columnname, columndatatype, columnnumber, autoincrementvalue FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
                     + " where t.TABLEID=c.REFERENCEID AND tablename='" + tableName.toUpperCase() + "'"
                     + " order by columnnumber";
             try ( ResultSet resultSet = statement.executeQuery(sql)) {
@@ -1366,6 +1336,13 @@ public abstract class BaseTable<D> {
                     ColumnDefinition column = ColumnDefinition.create()
                             .setName(resultSet.getString("columnname").toLowerCase())
                             .setIndex(resultSet.getInt("columnnumber"));
+                    if (primaryKeys.contains(column.getName())) {
+                        column.setIsPrimaryKey(true);
+                        primaryColumns.add(column);
+                        if (resultSet.getLong("autoincrementvalue") > 0) {
+                            column.setIsID(true);
+                        }
+                    }
                     String type = resultSet.getString("columndatatype");
                     if (type.endsWith(" NOT NULL")) {
                         column.setNotNull(true);
@@ -1393,31 +1370,49 @@ public abstract class BaseTable<D> {
                         case "TIMESTAMP":
                             column.setType(ColumnType.Datetime);
                             break;
-                        case "Date":
+                        case "DATE":
                             column.setType(ColumnType.Date);
                             break;
                         default:
                             if (type.startsWith("VARCHAR") || type.startsWith("CHAR")) {
-                                try {
-                                    column.setLength(Integer.parseInt(type.substring(type.indexOf("(") + 1, type.indexOf(")"))));
-                                    column.setType(ColumnType.String);
-                                } catch (Exception e) {
-                                    MyBoxLog.debug(type);
-                                    column.setType(ColumnType.Unknown);
-                                }
+                                column.setType(ColumnType.String);
+                            } else if (type.startsWith("BLOB")) {
+                                column.setType(ColumnType.Blob);
+                            } else if (type.startsWith("CLOB")) {
+                                column.setType(ColumnType.Clob);
                             } else {
                                 column.setType(ColumnType.Unknown);
                                 MyBoxLog.debug(type);
                             }
+                            try {
+                                column.setLength(Integer.parseInt(type.substring(type.indexOf("(") + 1, type.indexOf(")"))));
+                            } catch (Exception e) {
+                            }
                     }
+
                     addColumn(column);
-//                    MyBoxLog.debug(column.getIndex() + " " + column.getName() + " " + column.getType().name() + " " + column.getLength());
+//                    MyBoxLog.debug(column.getIndex() + " " + column.getName() + " " + column.getType().name() + " " + column.isIsPrimaryKey() + " " + column.isIsID());
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
         }
         return this;
+    }
+
+    public boolean sameRow(D row1, D row2) {
+        if (tableName == null || columns.isEmpty() || row1 == null || row2 == null) {
+            return false;
+        }
+        for (ColumnDefinition column : primaryColumns) {
+            String name = column.getName();
+            Object v1 = getValue(row1, name);
+            Object v2 = getValue(row2, name);
+            if (v1 == null || v2 == null || !v1.equals(v2)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /*

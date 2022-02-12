@@ -68,11 +68,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
                         makeControls(row, col);
                     });
 
-            targetTableController.loadedNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        makeControls(row, col);
-                    });
-
             sourceController.loadedNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         okButton.setDisable(!dataClipboard.hasData());

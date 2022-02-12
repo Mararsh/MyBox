@@ -436,7 +436,6 @@ public class ControllerTools {
             table.newLinkRow("LatestRelease", "https://github.com/Mararsh/MyBox/releases");
             table.newLinkRow("KnownIssues", "https://github.com/Mararsh/MyBox/issues");
             table.newNameValueRow("", Languages.message("WelcomePR"));
-            table.newLinkRow("UserGuide", "https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf");
             table.newLinkRow("CloudStorage", "https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F");
             table.newLinkRow("MyBoxInternetDataPath", "https://github.com/Mararsh/MyBox_data");
             File htmFile = HtmlWriteTools.writeHtml(table.html());

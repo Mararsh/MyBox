@@ -45,7 +45,7 @@ public class DataFileTextReader extends DataFileReader {
     }
 
     @Override
-    public void readColumns() {
+    public void readColumnNames() {
         try {
             String line;
             while ((line = textReader.readLine()) != null && !readerStopped()) {

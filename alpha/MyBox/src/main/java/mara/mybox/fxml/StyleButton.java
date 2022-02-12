@@ -409,6 +409,12 @@ public class StyleButton {
         if (id.startsWith("matrixB")) {
             return new StyleData(id, message("SetAsMatrixB"), "", "iconB.png");
         }
+        if (id.startsWith("matrix")) {
+            return new StyleData(id, message("Matrix"), "", "iconMatrix.png");
+        }
+        if (id.startsWith("database")) {
+            return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
+        }
         if (id.startsWith("width")) {
             return new StyleData(id, message("Width"), "", "iconXRuler.png");
         }

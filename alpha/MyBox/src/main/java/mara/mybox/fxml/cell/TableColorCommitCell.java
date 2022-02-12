@@ -7,8 +7,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -51,17 +49,9 @@ public class TableColorCommitCell<S> extends TableCell<S, Color> {
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                TableView<S> table = getTableView();
-                if (table != null) {
-                    table.edit(rowIndex(), getTableColumn());
-                }
+                setColor();
             }
         });
-    }
-
-    public int rowIndex() {
-        TableRow row = getTableRow();
-        return row == null ? -1 : row.getIndex();
     }
 
     @Override
@@ -82,23 +72,16 @@ public class TableColorCommitCell<S> extends TableCell<S, Color> {
         setGraphic(rectangle);
     }
 
-    @Override
-    public void startEdit() {
-        super.startEdit();
-
+    public void setColor() {
         Node g = getGraphic();
         if (g == null || !(g instanceof Rectangle)) {
             return;
         }
-        setColor((Rectangle) g);
-    }
-
-    public void setColor(Rectangle rect) {
-        ColorPalettePopupController controller = ColorPalettePopupController.open(parent, rect);
+        ColorPalettePopupController controller = ColorPalettePopupController.open(parent, rectangle);
         controller.getSetNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                commitEdit((Color) rect.getFill());
+                commitEdit((Color) rectangle.getFill());
                 controller.close();
             }
         });

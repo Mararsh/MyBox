@@ -1,7 +1,9 @@
 package mara.mybox.db.data;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -368,6 +370,95 @@ public class ColumnDefinition extends BaseData {
     public ColumnDefinition cloneBase() {
         try {
             return (ColumnDefinition) clone();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Object value(ResultSet results) {
+        try {
+            if (results == null || type == null || name == null) {
+                return null;
+            }
+            switch (type) {
+                case String:
+                case Text:
+                case Color:
+                case File:
+                case Image:
+                    return results.getString(name);
+                case Double:
+                    return results.getDouble(name);
+                case Float:
+                    return results.getFloat(name);
+                case Long:
+                case Era:
+                    return results.getLong(name);
+                case Integer:
+                    return results.getInt(name);
+                case Boolean:
+                    return results.getBoolean(name);
+                case Short:
+                    return results.getShort(name);
+                case Datetime:
+                    return results.getTimestamp(name);
+                case Date:
+                    return results.getDate(name);
+                case Blob:
+                    return results.getBlob(name);
+                case Clob:
+                    return results.getClob(name);
+                default:
+                    MyBoxLog.debug(name + " " + type);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString(), name + " " + type);
+        }
+        return null;
+    }
+
+    public Object fromString(String string) {
+        try {
+            switch (type) {
+                case Double:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+                case Float:
+                    return Float.parseFloat(string.replaceAll(",", ""));
+                case Long:
+                case Era:
+                    return Long.parseLong(string.replaceAll(",", ""));
+                case Integer:
+                    return Integer.parseInt(string.replaceAll(",", ""));
+                case Boolean:
+                    String v = string.toLowerCase();
+                    return "1".equals(v) || "0".equals(v)
+                            || "true".equals(v) || "false".equals(v)
+                            || "yes".equals(v) || "no".equals(v)
+                            || Languages.message("true").equals(v) || Languages.message("false").equals(v)
+                            || Languages.message("yes").equals(v) || Languages.message("no").equals(v);
+                case Short:
+                    return Short.parseShort(string.replaceAll(",", ""));
+                case Datetime:
+                    return DateTools.stringToDatetime(string);
+                default:
+                    return string;
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public String toString(Object value) {
+        try {
+            if (value == null) {
+                return null;
+            }
+            switch (type) {
+                case Datetime:
+                    return DateTools.datetimeToString((Date) value);
+                default:
+                    return value + "";
+            }
         } catch (Exception e) {
             return null;
         }

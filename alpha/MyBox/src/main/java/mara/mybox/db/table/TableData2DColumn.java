@@ -234,7 +234,6 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
                 }
             }
             conn.commit();
-            existed = null;
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);
                 column.setD2id(d2id);

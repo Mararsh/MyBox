@@ -53,20 +53,6 @@ public class DataMatrix extends Data2D {
 
     @Override
     public void applyOptions() {
-//        dataSize = rowsNumber;
-    }
-
-    @Override
-    public List<String> readColumns() {
-        checkForLoad();
-        if (matrix != null) {
-            colsNumber = matrix != null ? matrix[0].length : 0;
-        }
-        List<String> names = new ArrayList<>();
-        for (int i = 1; i <= colsNumber; i++) {
-            names.add(colPrefix() + i);
-        }
-        return names;
     }
 
     @Override
@@ -80,8 +66,9 @@ public class DataMatrix extends Data2D {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
+        List<List<String>> rows = new ArrayList<>();
         if (d2did >= 0 && rowsNumber > 0 && colsNumber > 0) {
-            matrix = new double[(int) rowsNumber][(int) colsNumber];
+            double[][] matrix = new double[(int) rowsNumber][(int) colsNumber];
             try ( Connection conn = DerbyBase.getConnection();
                      PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
                 query.setLong(1, d2did);
@@ -92,16 +79,13 @@ public class DataMatrix extends Data2D {
                         matrix[(int) cell.getRow()][(int) cell.getCol()] = toDouble(cell.getValue());
                     }
                 }
+                rows = toTableData(matrix);
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
                 }
                 MyBoxLog.console(e);
             }
-        }
-        List<List<String>> rows = new ArrayList<>();
-        if (matrix != null) {
-            rows = toTableData(matrix);
         }
         rowsNumber = rows.size();
         dataSize = rowsNumber;

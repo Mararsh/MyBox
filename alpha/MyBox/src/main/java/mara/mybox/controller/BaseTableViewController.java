@@ -483,6 +483,14 @@ public abstract class BaseTableViewController<P> extends BaseController {
             if (rowsSelectionColumn != null) {
                 tableView.setEditable(true);
                 rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
+
+                rowsSelectionColumn.setPrefWidth(UserConfig.getInt("RowsSelectionColumnWidth", 100));
+                rowsSelectionColumn.widthProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
+                        UserConfig.setInt("RowsSelectionColumnWidth", nv.intValue());
+                    }
+                });
             }
 
         } catch (Exception e) {

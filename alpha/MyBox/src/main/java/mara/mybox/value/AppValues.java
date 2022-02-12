@@ -7,8 +7,8 @@ package mara.mybox.value;
  */
 public class AppValues {
 
-    public static final String AppVersion = "6.5.2";
-    public static final String AppVersionDate = "2022-2-1";
+    public static final String AppVersion = "6.5.3";
+    public static final String AppVersionDate = "2022-2-28";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 

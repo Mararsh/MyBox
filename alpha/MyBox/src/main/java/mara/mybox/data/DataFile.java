@@ -31,13 +31,13 @@ public abstract class DataFile extends Data2D {
     }
 
     @Override
-    public List<String> readColumns() {
+    public List<String> readColumnNames() {
         if (file == null || !file.exists() || file.length() == 0) {
             hasHeader = false;
             return null;
         }
         DataFileReader reader = DataFileReader.create(this)
-                .setReaderTask(task).start(Operation.ReadColumns);
+                .setReaderTask(task).start(Operation.ReadColumnNames);
         if (reader == null) {
             return null;
         }

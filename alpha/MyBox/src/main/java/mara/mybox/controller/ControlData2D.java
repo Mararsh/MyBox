@@ -106,6 +106,10 @@ public class ControlData2D extends BaseController {
         database
      */
     public void setDataType(BaseController parent, Data2D.Type type) {
+        setDataType(parent, type, false);
+    }
+
+    public void setDataType(BaseController parent, Data2D.Type type, boolean columnsReadOnly) {
         try {
             parentController = parent;
             if (parent != null) {
@@ -117,7 +121,7 @@ public class ControlData2D extends BaseController {
             editController.setParameters(this);
             viewController.setParameters(this);
             attributesController.setParameters(this);
-            columnsController.setParameters(this);
+            columnsController.setParameters(this, columnsReadOnly);
 
             setData(Data2D.create(type));
 
@@ -249,10 +253,12 @@ public class ControlData2D extends BaseController {
             }
         }
         loadedNotify.set(!loadedNotify.get());
+        notifyStatus();
     }
 
     public void notifySaved() {
         savedNotify.set(!savedNotify.get());
+        notifyStatus();
     }
 
     public synchronized void checkStatus() {

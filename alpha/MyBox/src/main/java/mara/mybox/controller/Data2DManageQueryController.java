@@ -7,6 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import mara.mybox.data.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -25,7 +26,7 @@ public class Data2DManageQueryController extends BaseChildController {
     @FXML
     protected ToggleGroup orderGroup;
     @FXML
-    protected CheckBox csvCheck, excelCheck, textsCheck, matrixCheck,
+    protected CheckBox csvCheck, excelCheck, textsCheck, matrixCheck, databaseCheck,
             myBoxClipboardCheck, descCheck;
     @FXML
     protected RadioButton idRadio, nameRadio, rowsRadio, colsRadio, timeRadio, fileRadio;
@@ -68,6 +69,14 @@ public class Data2DManageQueryController extends BaseChildController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Matrix", matrixCheck.isSelected());
+                }
+            });
+
+            databaseCheck.setSelected(UserConfig.getBoolean(baseName + "Database", true));
+            databaseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Database", databaseCheck.isSelected());
                 }
             });
 
@@ -137,6 +146,10 @@ public class Data2DManageQueryController extends BaseChildController {
             if (matrixCheck.isSelected()) {
                 condition += (condition.isEmpty() ? "" : " OR ") + " data_type=4 ";
             }
+            if (databaseCheck.isSelected()) {
+                condition += (condition.isEmpty() ? "" : " OR ") + " data_type=5 ";
+            }
+            condition += " AND data_type != " + Data2D.typeInternalTable();
             String orderColumns = null;
             if (idRadio.isSelected()) {
                 orderColumns = " d2did ";

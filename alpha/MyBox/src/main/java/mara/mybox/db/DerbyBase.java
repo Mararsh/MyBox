@@ -407,6 +407,19 @@ public class DerbyBase {
         return columns;
     }
 
+    // lower case
+    public static List<String> primaryKeys(Connection conn, String tablename) {
+        List<String> primaryKeys = new ArrayList<>();
+        try ( ResultSet resultSet = conn.getMetaData().getPrimaryKeys(null, "MARA", tablename)) {
+            while (resultSet.next()) {
+                primaryKeys.add(resultSet.getString("COLUMN_NAME").toLowerCase());
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return primaryKeys;
+    }
+
     public static String tableDefinition(Connection conn, String tablename) {
         String s = "";
         for (String column : columns(conn, tablename)) {

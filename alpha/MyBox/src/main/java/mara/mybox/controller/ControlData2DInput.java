@@ -166,7 +166,7 @@ public class ControlData2DInput extends BaseController {
                     }
                     dataFileText.setDelimiter(delimiterName);
                     dataFileText.setTask(task);
-                    List<String> names = dataFileText.readColumns();
+                    List<String> names = dataFileText.readColumnNames();
                     if (isCancelled()) {
                         return false;
                     }

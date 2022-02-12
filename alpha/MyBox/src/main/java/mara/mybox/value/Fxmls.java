@@ -332,7 +332,7 @@ public class Fxmls {
      */
     public static final String MyBoxLogsFxml = "/fxml/MyBoxLogs.fxml";
     public static final String MyBoxLogViewerFxml = "/fxml/MyBoxLogViewer.fxml";
-    public static final String MyBoxDataFxml = "/fxml/MyBoxData.fxml";
+    public static final String MyBoxTablesFxml = "/fxml/MyBoxTables.fxml";
     public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
     public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";

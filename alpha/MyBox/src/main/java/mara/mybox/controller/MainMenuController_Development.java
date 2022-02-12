@@ -278,8 +278,8 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
-    protected void MyBoxData(ActionEvent event) {
-        loadScene(Fxmls.MyBoxDataFxml);
+    protected void MyBoxTables(ActionEvent event) {
+        loadScene(Fxmls.MyBoxTablesFxml);
     }
 
     @FXML

@@ -72,7 +72,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                             <columns>
-                                                <TableColumn fx:id="rowsSelectionColumn"  minWidth="100.0" prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                                <TableColumn fx:id="rowsSelectionColumn"  prefWidth="-1.0" maxWidth="1.7976931348623157E308">
                                                     <graphic>
                                                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                                     </graphic>

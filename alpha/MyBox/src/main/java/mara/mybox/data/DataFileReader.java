@@ -36,14 +36,14 @@ public abstract class DataFileReader {
     protected SingletonTask readerTask;
 
     public static enum Operation {
-        ReadDefnition, ReadTotal, ReadColumns, ReadPage,
+        ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
         ReadCols, Export, Copy, CountSum, CountSumMinMax, CountVariancesKewness,
         PercentageSum, Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
     }
 
     public abstract void scanFile();
 
-    public abstract void readColumns();
+    public abstract void readColumnNames();
 
     public abstract void readTotal();
 
@@ -84,7 +84,7 @@ public abstract class DataFileReader {
             colsLen = cols.size();
         }
         switch (operation) {
-            case ReadColumns:
+            case ReadColumnNames:
                 dataFile.checkForLoad();
                 break;
             case ReadCols:
@@ -175,10 +175,10 @@ public abstract class DataFileReader {
                 readRecords();
             } else {
                 switch (operation) {
-                    case ReadDefnition:
+                    case ReadDefinition:
                         break;
-                    case ReadColumns:
-                        readColumns();
+                    case ReadColumnNames:
+                        readColumnNames();
                         break;
                     case ReadTotal:
                         readTotal();

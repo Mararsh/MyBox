@@ -99,10 +99,10 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public long readDataDefinition() {
+    public long readDataDefinition(Connection conn) {
         DataFileReader.create(this).
-                setReaderTask(task).start(DataFileReader.Operation.ReadDefnition);
-        return super.readDataDefinition();
+                setReaderTask(task).start(DataFileReader.Operation.ReadDefinition);
+        return super.readDataDefinition(conn);
     }
 
     @Override

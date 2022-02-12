@@ -50,7 +50,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-09-04
  * @License Apache License Version 2.0
  */
-public class ColorPalettePopupController extends BaseController {
+public class ColorPalettePopupController extends BaseChildController {
 
     protected Rectangle parentRect;
     protected TableColorPaletteName tableColorPaletteName;

@@ -16,6 +16,16 @@
     -fx-font-weight: bolder;
 }
 
+.column-header.primary-column > .label{
+    -fx-text-fill: #C32136;
+    -fx-font-weight: bolder;
+}
+
+.column-header.auto-column > .label{
+    -fx-text-fill: #CA6924;
+    -fx-font-weight: bolder;
+}
+
 .check-menu-item > .left-container {
     -fx-padding: 10;
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;

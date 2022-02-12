@@ -91,8 +91,7 @@ public class AlarmClockController extends BaseController {
 
             startInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
                     Date d = DateTools.stringToDatetime(startInput.getText());
                     if (d == null) {
                         startInput.setStyle(UserConfig.badStyle());

@@ -5,11 +5,12 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManageController;
-import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.MatricesManageController;
+import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -32,7 +33,7 @@ public class Data2DDefinition extends BaseData {
     protected Date modifyTime;
 
     public static enum Type {
-        Texts, CSV, Excel, MyBoxClipboard, Matrix, Table
+        Texts, CSV, Excel, MyBoxClipboard, Matrix, DatabaseTable, InternalTable
     }
 
     public Data2DDefinition() {
@@ -231,6 +232,10 @@ public class Data2DDefinition extends BaseData {
         return types[type];
     }
 
+    public static short typeInternalTable() {
+        return type(Data2DDefinition.Type.InternalTable);
+    }
+
     public static BaseController open(Data2DDefinition def) {
         if (def == null) {
             return Data2DManageController.open(def);
@@ -258,6 +263,10 @@ public class Data2DDefinition extends BaseData {
                 return DataInMyBoxClipboardController.open(def);
             case Matrix:
                 return MatricesManageController.open(def);
+            case DatabaseTable:
+                return MyBoxTablesController.open(def);
+            case InternalTable:
+                return MyBoxTablesController.open(def);
             default:
                 return Data2DManageController.open(def);
         }
