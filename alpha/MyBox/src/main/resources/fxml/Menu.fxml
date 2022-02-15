@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
             </children>
         </HBox>
         <Separator prefWidth="200.0" />
-        <VBox fx:id="nodesBox" maxHeight="-Infinity" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER" />
+        <VBox fx:id="nodesBox" maxHeight="-Infinity" minHeight="-Infinity" spacing="5.0" />
         <Separator prefWidth="200.0" />
         <HBox fx:id="bottomBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>

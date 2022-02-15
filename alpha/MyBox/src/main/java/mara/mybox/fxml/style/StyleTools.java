@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.style;
 
 import java.util.Map;
 import javafx.scene.Node;
@@ -13,7 +13,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleData.StyleColor;
+import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 

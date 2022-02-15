@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;

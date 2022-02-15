@@ -17,7 +17,7 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -235,6 +235,14 @@ public class WebBrowserController extends BaseController {
         WebBrowserController controller = oneOpen();
         if (controller != null && address != null) {
             controller.loadAddress(address, focus);
+        }
+        return controller;
+    }
+
+    public static WebBrowserController oneLoad(String contents, boolean focus) {
+        WebBrowserController controller = oneOpen();
+        if (controller != null && contents != null) {
+            controller.loadContents(contents, focus);
         }
         return controller;
     }

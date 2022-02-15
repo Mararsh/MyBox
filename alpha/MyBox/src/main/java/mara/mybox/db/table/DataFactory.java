@@ -1,11 +1,13 @@
 package mara.mybox.db.table;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BlobValue;
 import mara.mybox.db.data.ColorData;
@@ -42,6 +44,44 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class DataFactory {
+
+    public static List<String> InternalTables = new ArrayList<String>() {
+        {
+            addAll(Arrays.asList("ALARM_CLOCK", "BLOB_VALUE", "COLOR", "COLOR_PALETTE", "COLOR_PALETTE_NAME",
+                    "CONVOLUTION_KERNEL", "DATA2D_CELL", "DATA2D_COLUMN", "DATA2D_DEFINITION", "DATASET",
+                    "EPIDEMIC_REPORT", "FILE_BACKUP", "FLOAT_MATRIX", "GEOGRAPHY_CODE", "IMAGE_CLIPBOARD",
+                    "IMAGE_EDIT_HISTORY", "IMAGE_SCOPE", "LOCATION_DATA", "MEDIA", "MEDIA_LIST", "MYBOX_LOG",
+                    "NOTE", "NOTEBOOK", "NOTE_TAG", "QUERY_CONDITION", "STRING_VALUE", "STRING_VALUES", "SYSTEM_CONF",
+                    "TAG", "TEXT_CLIPBOARD", "TREE", "USER_CONF", "VISIT_HISTORY", "WEB_FAVORITE", "WEB_HISTORY"
+            ));
+        }
+    };
+
+    public static List<String> userTables() {
+        List<String> userTables = new ArrayList<>();
+        try ( Connection conn = DerbyBase.getConnection()) {
+            List<String> allTables = DerbyBase.allTables(conn);
+            for (String name : allTables) {
+                if (!InternalTables.contains(name)) {
+                    userTables.add(name);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return userTables;
+    }
+
+    public static String tableDefinition(String tableName) {
+        try {
+            TableData2D table = new TableData2D();
+            table.readDefinitionFromDB(tableName);
+            return table.html();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
 
     public static BaseTable create(BaseData data) {
         if (data == null) {

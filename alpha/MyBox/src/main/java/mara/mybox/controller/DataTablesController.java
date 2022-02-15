@@ -125,12 +125,12 @@ public class DataTablesController extends BaseSysTableController<BaseTable> {
                 protected boolean handle() {
                     tables = new ArrayList<>();
                     try ( Connection conn = DerbyBase.getConnection()) {
-                        List<String> allTables = DerbyBase.tables(conn);
-                        for (String table : allTables) {
-                            if (!table.startsWith("User_Data_".toUpperCase())) {
-                                tables.add(table);
-                            }
-                        }
+//                        List<String> allTables = DerbyBase.tables(conn);
+//                        for (String table : allTables) {
+//                            if (!table.startsWith("User_Data_".toUpperCase())) {
+//                                tables.add(table);
+//                            }
+//                        }
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -196,7 +196,7 @@ public class DataTablesController extends BaseSysTableController<BaseTable> {
     }
 
     @Override
-    protected int clearData() {
+    protected long clearData() {
         return 1;
     }
 

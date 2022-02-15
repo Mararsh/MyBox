@@ -43,14 +43,17 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlWebView;
+import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.MenuController;
 import mara.mybox.controller.TextInputController;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
@@ -236,6 +239,9 @@ public class PopTools {
         }
     }
 
+    /*
+        style
+     */
     public static ContextMenu popHtmlStyle(MouseEvent mouseEvent, ControlWebView controller) {
         try {
             if (mouseEvent == null || controller == null) {
@@ -344,6 +350,98 @@ public class PopTools {
         }
     }
 
+    public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
+        try {
+            ContextMenu popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            String baseName = parent.getBaseName();
+            MenuItem menu = new MenuItem(message("WindowStyle"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            Map<String, String> styles = new LinkedHashMap<>();
+            styles.put("None", "");
+            styles.put("Transparent", "; -fx-text-fill: black; -fx-background-color: transparent;");
+            styles.put("Console", "; -fx-text-fill: #CCFF99; -fx-background-color: black;");
+            styles.put("Blackboard", "; -fx-text-fill: white; -fx-background-color: #336633;");
+            styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
+            styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
+            ToggleGroup sgroup = new ToggleGroup();
+            String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
+            String currentStyle = UserConfig.getString(prefix + "WindowStyle", "");
+
+            for (String name : styles.keySet()) {
+                RadioMenuItem rmenu = new RadioMenuItem(message(name));
+                String style = styles.get(name);
+                rmenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setString(prefix + "WindowStyle", style);
+                        parent.getThisPane().setStyle(baseStyle + style);
+                        setMenuLabelsStyle(parent.getThisPane(), baseStyle + style);
+                    }
+                });
+                rmenu.setSelected(currentStyle != null && currentStyle.equals(style));
+                rmenu.setToggleGroup(sgroup);
+                popMenu.getItems().add(rmenu);
+            }
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
+            checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
+            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ShareWindowStyle", checkMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(checkMenu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            parent.closePopup();
+            parent.setPopMenu(popMenu);
+
+            LocateTools.locateMouse(mouseEvent, popMenu);
+            return popMenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void setMenuLabelsStyle(Node node, String style) {
+        if (node instanceof Label) {
+            node.setStyle(style);
+        } else if (node instanceof Parent && !(node instanceof TableView)) {
+            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                setMenuLabelsStyle(child, style);
+            }
+        }
+    }
+
+    public static void setWindowStyle(Pane pane, String baseName, String baseStyle) {
+        String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
+        String style = UserConfig.getString(prefix + "WindowStyle", "");
+        pane.setStyle(baseStyle + style);
+        setMenuLabelsStyle(pane, baseStyle + style);
+    }
+
+    /*
+        examples
+     */
     public static ContextMenu popEraExample(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
         try {
             if (inPopMenu != null && inPopMenu.isShowing()) {
@@ -470,7 +568,7 @@ public class PopTools {
                     input.clear();
                 }
             });
-
+            controller.addNode(clearButton);
             List<String> values = new ArrayList<>();
             values.addAll(Arrays.asList(
                     "orange", "pink", "lightblue", "wheat",
@@ -545,7 +643,7 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.setText(value);
+                        input.appendText(value);
                     }
                 });
                 valueButtons.add(button);
@@ -557,93 +655,136 @@ public class PopTools {
         }
     }
 
-    public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
+    public static void popSqlExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
-            ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 
-            String baseName = parent.getBaseName();
-            MenuItem menu = new MenuItem(message("WindowStyle"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            boolean isTextArea = input instanceof TextArea;
 
-            Map<String, String> styles = new LinkedHashMap<>();
-            styles.put("None", "");
-            styles.put("Transparent", "; -fx-text-fill: black; -fx-background-color: transparent;");
-            styles.put("Console", "; -fx-text-fill: #CCFF99; -fx-background-color: black;");
-            styles.put("Blackboard", "; -fx-text-fill: white; -fx-background-color: #336633;");
-            styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
-            styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
-            ToggleGroup sgroup = new ToggleGroup();
-            String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
-            String currentStyle = UserConfig.getString(prefix + "WindowStyle", "");
-
-            for (String name : styles.keySet()) {
-                RadioMenuItem rmenu = new RadioMenuItem(message(name));
-                String style = styles.get(name);
-                rmenu.setOnAction(new EventHandler<ActionEvent>() {
+            List<Node> topButtons = new ArrayList<>();
+            if (isTextArea) {
+                Button newLineButton = new Button(message("Newline"));
+                newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setString(prefix + "WindowStyle", style);
-                        parent.getThisPane().setStyle(baseStyle + style);
-                        setMenuLabelsStyle(parent.getThisPane(), baseStyle + style);
+                        input.appendText("\n");
                     }
                 });
-                rmenu.setSelected(currentStyle != null && currentStyle.equals(style));
-                rmenu.setToggleGroup(sgroup);
-                popMenu.getItems().add(rmenu);
+                topButtons.add(newLineButton);
             }
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
-            checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
-            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ShareWindowStyle", checkMenu.isSelected());
+                    input.clear();
                 }
             });
-            popMenu.getItems().add(checkMenu);
+            topButtons.add(clearButton);
+            controller.addFlowPane(topButtons);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            List<String> values = new ArrayList<>();
+            values.addAll(Arrays.asList(
+                    "SELECT * FROM ",
+                    " WHERE ", " ORDER BY ", " DESC ", " ASC ", " , ", " (   ) ",
+                    " >= ", " > ", " <= ", " < ", " != ",
+                    " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY",
+                    "INSERT INTO <table> (column1, column2) VALUES (value1, value2)",
+                    "UPDATE <table> SET <column1>=<value1>, <column2>=<value2> WHERE ",
+                    "DELETE FROM <table> WHERE ",
+                    " AND ", " OR ", " NOT ",
+                    " LIKE 'a%' ", " LIKE 'a_' ",
+                    " IS NULL ", " IS NOT NULL ",
+                    " BETWEEN <value1> AND <value2>",
+                    " IN ( <value1>, <value2> ) ",
+                    " IN (SELECT FROM <table> WHERE <condition>) ",
+                    " EXISTS (SELECT FROM <table> WHERE <condition>) ",
+                    " DATE('1998-02-26') ",
+                    " TIMESTAMP('1962-09-23 03:23:34.234') "
+            ));
 
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            List<Node> valueButtons = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (isTextArea) {
+                            input.appendText(value);
+                        } else {
+                            input.setText(value);
+                        }
+                        input.requestFocus();
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+
+            Hyperlink link = new Hyperlink("Derby Reference Manual");
+            link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    popMenu.hide();
+                    parent.openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
                 }
             });
-            popMenu.getItems().add(menu);
+            controller.addNode(link);
 
-            parent.closePopup();
-            parent.setPopMenu(popMenu);
-
-            LocateTools.locateMouse(mouseEvent, popMenu);
-            return popMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
     }
 
-    public static void setMenuLabelsStyle(Node node, String style) {
-        if (node instanceof Label) {
-            node.setStyle(style);
-        } else if (node instanceof Parent && !(node instanceof TableView)) {
-            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
-                setMenuLabelsStyle(child, style);
+    public static void popTableNames(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+        try {
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            controller.addNode(new Label(message("TableName")));
+
+            List<String> names = DataFactory.userTables();
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.appendText(name);
+                        input.requestFocus();
+                    }
+                });
+                valueButtons.add(button);
             }
+            controller.addFlowPane(valueButtons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
-    public static void setWindowStyle(Pane pane, String baseName, String baseStyle) {
-        String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
-        String style = UserConfig.getString(prefix + "WindowStyle", "");
-        pane.setStyle(baseStyle + style);
-        setMenuLabelsStyle(pane, baseStyle + style);
+    public static void popTableDefinition(BaseController parent, Node node, MouseEvent mouseEvent) {
+        try {
+            MenuController controller = MenuController.open(parent, node, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            controller.addNode(new Label(message("TableDefinition")));
+
+            List<String> names = DataFactory.userTables();
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        String html = DataFactory.tableDefinition(name);
+                        if (html != null) {
+                            HtmlPopController.openHtml(parent, html);
+                        } else {
+                            parent.popError(message("NotFound"));
+                        }
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

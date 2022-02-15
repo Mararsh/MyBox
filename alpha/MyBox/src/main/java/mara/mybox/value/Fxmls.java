@@ -187,6 +187,7 @@ public class Fxmls {
     public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";
     public static final String Data2DNormalizeFxml = "/fxml/Data2DNormalize.fxml";
     public static final String Data2DChartFxml = "/fxml/Data2DChart.fxml";
+    public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -203,6 +204,8 @@ public class Fxmls {
     public static final String MatricesManageFxml = "/fxml/MatricesManage.fxml";
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
+
+    public static final String DatabaseSQLFxml = "/fxml/DatabaseSQL.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
@@ -222,7 +225,6 @@ public class Fxmls {
     public static final String DatasetEditFxml = "/fxml/DatasetEdit.fxml";
 
     public static final String LocationDataFxml = "/fxml/LocationData.fxml";
-    public static final String LocationsDataInMapFxml = "/fxml/LocationsDataInMap.fxml";
     public static final String LocationDataEditFxml = "/fxml/LocationDataEdit.fxml";
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
     public static final String LocationDataImportCSVFxml = "/fxml/LocationDataImportCSV.fxml";

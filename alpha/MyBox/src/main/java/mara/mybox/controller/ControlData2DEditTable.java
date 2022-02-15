@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data.DataClipboard;
@@ -18,8 +19,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DEditTable extends ControlData2DLoad {
 
+    protected final SimpleBooleanProperty columnChangedNotify;
+
     public ControlData2DEditTable() {
         readOnly = false;
+        columnChangedNotify = new SimpleBooleanProperty(false);
     }
 
     protected void setParameters(ControlData2DEdit editController) {
@@ -44,6 +48,10 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         }
     }
 
+    public void notifyColumnChanged() {
+        columnChangedNotify.set(!columnChangedNotify.get());
+    }
+
     /*
         table
      */
@@ -62,6 +70,11 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
     @Override
     public boolean checkBeforeLoadingTableData() {
+        return checkBeforeNextAction();
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
         return dataController.checkBeforeNextAction();
     }
 
@@ -91,6 +104,21 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     @Override
     public void deleteAction() {
         deleteRowsAction();
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        if (data2D.isTmpData()) {
+            deleteAllRows();
+        } else {
+            super.clearAction();
+        }
+    }
+
+    @Override
+    protected long clearData() {
+        return data2D.clearData();
     }
 
     @FXML

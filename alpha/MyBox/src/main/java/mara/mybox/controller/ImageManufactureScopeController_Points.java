@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 
 /**

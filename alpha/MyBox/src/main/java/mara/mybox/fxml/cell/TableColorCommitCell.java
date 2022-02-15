@@ -6,17 +6,15 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Callback;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorPalettePopupController;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -81,20 +79,13 @@ public class TableColorCommitCell<S> extends TableCell<S, Color> {
         controller.getSetNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                commitEdit((Color) rectangle.getFill());
+                colorChanged(getIndex(), (Color) rectangle.getFill());
                 controller.close();
             }
         });
     }
 
-    public static <S> Callback<TableColumn<S, Color>, TableCell<S, Color>>
-            create(BaseController parent, TableColor tableColor) {
-        return new Callback<TableColumn<S, Color>, TableCell<S, Color>>() {
-            @Override
-            public TableCell<S, Color> call(TableColumn<S, Color> param) {
-                return new TableColorCommitCell<>(parent, tableColor);
-            }
-        };
+    public void colorChanged(int index, Color color) {
     }
 
 }

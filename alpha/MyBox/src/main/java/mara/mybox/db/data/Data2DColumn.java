@@ -310,7 +310,6 @@ public class Data2DColumn extends ColumnDefinition {
         }
     }
 
-
     /*
         get/set
      */

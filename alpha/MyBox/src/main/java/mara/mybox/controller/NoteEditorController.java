@@ -34,12 +34,12 @@ import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlReadTools;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 

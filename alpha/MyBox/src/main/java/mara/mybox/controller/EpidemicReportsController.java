@@ -40,7 +40,7 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
@@ -50,7 +50,7 @@ import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 

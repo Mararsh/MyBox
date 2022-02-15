@@ -594,6 +594,56 @@ public class DataFileExcel extends DataFile {
         }
     }
 
+    @Override
+     public long clearData() {
+        File tmpFile = TmpFileTools.getTempFile();
+        checkForLoad();
+        if (file != null && file.exists() && file.length() > 0) {
+            try ( Workbook sourceBook = WorkbookFactory.create(file)) {
+                if (sheet == null) {
+                    sheet = sourceBook.getSheetAt(0).getSheetName();
+                }
+                Workbook targetBook;
+                Sheet targetSheet;
+                File tmpDataFile = null;
+                int sheetsNumber = sourceBook.getNumberOfSheets();
+                if (sheetsNumber == 1) {
+                    targetBook = new XSSFWorkbook();
+                    targetSheet = targetBook.createSheet(sheet);
+                } else {
+                    tmpDataFile = TmpFileTools.getTempFile();
+                    FileCopyTools.copyFile(file, tmpDataFile);
+                    targetBook = WorkbookFactory.create(tmpDataFile);
+                    int index = targetBook.getSheetIndex(sheet);
+                    targetBook.removeSheetAt(index);
+                    targetSheet = targetBook.createSheet(sheet);
+                    targetBook.setSheetOrder(sheet, index);
+                }
+                if (hasHeader) {
+                    writeHeader(targetSheet, 0);
+                }
+
+                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                    targetBook.write(fileOut);
+                }
+                targetBook.close();
+                FileDeleteTools.delete(tmpDataFile);
+                if (FileTools.rename(tmpFile, file, false)) {
+                    return getDataSize();
+                } else {
+                    return -1;
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
 
     /*
         get/set

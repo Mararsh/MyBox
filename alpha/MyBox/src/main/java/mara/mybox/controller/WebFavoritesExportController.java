@@ -32,7 +32,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 

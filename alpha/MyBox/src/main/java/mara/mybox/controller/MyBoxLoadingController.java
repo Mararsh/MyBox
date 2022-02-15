@@ -45,6 +45,7 @@ public class MyBoxLoadingController implements Initializable {
     protected String lang;
     protected Stage myStage;
     protected Scene myScene;
+    protected MyBoxLoadingController loadingController;
 
     @FXML
     protected Pane thisPane;
@@ -76,24 +77,18 @@ public class MyBoxLoadingController implements Initializable {
             }
             myStage = (Stage) myScene.getWindow();
             myStage.setUserData(this);
+            loadingController = this;
             infoLabel.setText(message(lang, "Initializing..."));
             MyBoxLog.console("MyBox Config file:" + AppVariables.MyboxConfigFile);
             Task task = new Task<Void>() {
                 @Override
                 protected Void call() {
                     try {
-                        Platform.runLater(() -> {
-                            infoLabel.setText(MessageFormat.format(message(lang,
-                                    "InitializeDataUnder"), AppVariables.MyboxDataPath));
-                        });
+                        info(MessageFormat.format(message(lang, "InitializeDataUnder"), AppVariables.MyboxDataPath));
                         if (!initFiles(myStage)) {
                             return null;
                         }
-
-                        Platform.runLater(() -> {
-                            infoLabel.setText(MessageFormat.format(message(lang,
-                                    "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
-                        });
+                        info(MessageFormat.format(message(lang, "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
                         DerbyBase.status = DerbyBase.DerbyStatus.NotConnected;
                         String initDB = DerbyBase.startDerby();
                         if (DerbyBase.status != DerbyBase.DerbyStatus.Embedded
@@ -105,25 +100,19 @@ public class MyBoxLoadingController implements Initializable {
                             AppVariables.initAppVaribles();
                         } else {
                             // The following statements should be executed in this order
-                            Platform.runLater(() -> {
-                                infoLabel.setText(message(lang, "InitializingTables"));
-                            });
-                            DerbyBase.initTables();
-                            Platform.runLater(() -> {
-                                infoLabel.setText(message(lang, "InitializingVariables"));
-                            });
+                            info(message(lang, "InitializingTables"));
+                            DerbyBase.initTables(loadingController);
+
+                            info(message(lang, "InitializingVariables"));
                             AppVariables.initAppVaribles();
-                            Platform.runLater(() -> {
-                                infoLabel.setText(message(lang, "CheckingMigration"));
-                            });
+
+                            info(message(lang, "CheckingMigration"));
                             MyBoxLog.console(message(lang, "CheckingMigration"));
                             if (!DataMigration.checkUpdates()) {
                                 cancel();
                                 return null;
                             }
-                            Platform.runLater(() -> {
-                                infoLabel.setText(message(lang, "InitializingTableValues"));
-                            });
+                            info(message(lang, "InitializingTableValues"));
                             DerbyBase.initTableValues();
                         }
 
@@ -141,9 +130,7 @@ public class MyBoxLoadingController implements Initializable {
 
                 protected void initEnv() {
                     try {
-                        Platform.runLater(() -> {
-                            infoLabel.setText(message(lang, "InitializingEnv"));
-                        });
+                        info(message(lang, "InitializingEnv"));
 
                         ImageColorSpace.registrySupportedImageFormats();
                         ImageIO.setUseCache(true);
@@ -329,6 +316,12 @@ public class MyBoxLoadingController implements Initializable {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    public void info(String info) {
+        Platform.runLater(() -> {
+            infoLabel.setText(info);
+        });
     }
 
 }

@@ -36,7 +36,7 @@ import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 

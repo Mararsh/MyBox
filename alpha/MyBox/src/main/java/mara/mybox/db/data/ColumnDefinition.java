@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.data.Era;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
@@ -37,6 +38,7 @@ public class ColumnDefinition extends BaseData {
     protected Object defaultValue, value;
     protected Number maxValue, minValue;
     protected Map<Object, String> values;  // value, displayString
+    protected Random random = new Random();
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -67,7 +69,7 @@ public class ColumnDefinition extends BaseData {
         timeFormat = Era.Format.Datetime;
         maxValue = null;
         minValue = null;
-        color = null;
+        color = FxColorTools.randomColor(random);
     }
 
     public ColumnDefinition() {
@@ -491,6 +493,37 @@ public class ColumnDefinition extends BaseData {
             return ColumnType.String;
         }
         return types[type];
+    }
+
+    public static ColumnType sqlColumnType(int type) {
+        switch (type) {
+            case java.sql.Types.BOOLEAN:
+                return ColumnType.Boolean;
+            case java.sql.Types.DOUBLE:
+                return ColumnType.Double;
+            case java.sql.Types.FLOAT:
+                return ColumnType.Float;
+            case java.sql.Types.INTEGER:
+                return ColumnType.Integer;
+            case java.sql.Types.BIGINT:
+                return ColumnType.Long;
+            case java.sql.Types.SMALLINT:
+                return ColumnType.Short;
+            case java.sql.Types.TINYINT:
+                return ColumnType.Short;
+            case java.sql.Types.DATE:
+                return ColumnType.Date;
+            case java.sql.Types.TIMESTAMP:
+                return ColumnType.Datetime;
+            case java.sql.Types.VARCHAR:
+                return ColumnType.String;
+            case java.sql.Types.CLOB:
+                return ColumnType.Clob;
+            case java.sql.Types.BLOB:
+                return ColumnType.Blob;
+            default:
+                return ColumnType.String;
+        }
     }
 
     public static List<ColumnType> editTypes() {

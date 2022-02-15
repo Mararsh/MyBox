@@ -23,7 +23,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;

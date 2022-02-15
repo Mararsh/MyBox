@@ -220,19 +220,31 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataMerge" text="%TextDataMerge" />
                                     </items>
                                 </Menu>
+                                <Menu mnemonicParsing="false" text="%Matrix">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openMatricesManage" text="%MatricesManage" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openMatrixUnaryCalculation" text="%MatrixUnaryCalculation" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openMatricesBinaryCalculation" text="%MatricesBinaryCalculation" />
+                                    </items>
+                                </Menu>
+                                <Menu mnemonicParsing="false" text="%Database">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#DatabaseSQL" text="%DatabaseSQL" />
+                                    </items>
+                                </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openMatricesManage" text="%MatricesManage" />
-                                <MenuItem mnemonicParsing="false" onAction="#openMatrixUnaryCalculation" text="%MatrixUnaryCalculation" />
-                                <MenuItem mnemonicParsing="false" onAction="#openMatricesBinaryCalculation" text="%MatricesBinaryCalculation" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openGeographyCode" text="%GeographyCode" />
-                                <MenuItem mnemonicParsing="false" onAction="#openLocationInMap" text="%LocationInMap" />
-                                <MenuItem mnemonicParsing="false" onAction="#openLocationData" text="%LocationData" />
-                                <MenuItem mnemonicParsing="false" onAction="#ConvertCoordinate" text="%ConvertCoordinate" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openEpidemicReports" text="%EpidemicReport" />
+                                <Menu mnemonicParsing="false" text="%Location">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openGeographyCode" text="%GeographyCode" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openLocationInMap" text="%LocationInMap" />
+                                        <MenuItem mnemonicParsing="false" onAction="#ConvertCoordinate" text="%ConvertCoordinate" />
+                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openLocationData" text="%LocationData" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openEpidemicReports" text="%EpidemicReport" />
+                                    </items>
+                                </Menu>                              
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%Miscellaneous">
                                     <items>

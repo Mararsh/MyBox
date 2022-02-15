@@ -41,7 +41,7 @@ import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**

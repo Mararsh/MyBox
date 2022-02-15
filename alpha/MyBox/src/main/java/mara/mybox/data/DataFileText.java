@@ -363,7 +363,35 @@ public class DataFileText extends DataFile {
         } else {
             return null;
         }
+    }
 
+    @Override
+     public long clearData() {
+        File tmpFile = TmpFileTools.getTempFile();
+        checkForLoad();
+        if (file != null && file.exists() && file.length() > 0) {
+            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                     BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+                List<String> colsNames = columnNames();
+                if (hasHeader && colsNames != null) {
+                    readValidLine(reader);
+                    TextFileTools.writeLine(writer, colsNames, delimiter);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                return -1;
+            }
+            if (FileTools.rename(tmpFile, file, false)) {
+                return getDataSize();
+            } else {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
     }
 
 }

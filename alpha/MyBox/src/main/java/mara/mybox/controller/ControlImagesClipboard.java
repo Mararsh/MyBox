@@ -201,7 +201,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
     @Override
     public List<ImageClipboard> readPageData() {
-        try (Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             ((TableImageClipboard) tableDefinition).clearInvalid(conn);
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } catch (Exception e) {
@@ -224,8 +224,8 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
     @Override
     protected void afterClear() {
+        super.afterClear();
         FileDeleteTools.clearDir(new File(AppPaths.getImageClipboardPath()));
-        refreshAction();
     }
 
     @FXML

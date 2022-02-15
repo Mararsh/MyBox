@@ -184,9 +184,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 super.finalAction();
                 data2D.setTask(null);
                 task = null;
-                isSettingValues = true;
-                resetView();
-                isSettingValues = false;
+                resetView(false);
                 if (dataController != null) {
                     dataController.loadData();   // Load data whatever
                 } else {
@@ -324,9 +322,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 super.finalAction();
                 data2D.setTask(null);
                 task = null;
-                isSettingValues = true;
-                resetView();
-                isSettingValues = false;
+                resetView(false);
                 displayTmpData(data);
                 if (dataController != null) {
                     dataController.attributesController.loadData();

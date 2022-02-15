@@ -189,4 +189,19 @@ public class DataMatrix extends Data2D {
         return rows;
     }
 
+    @Override
+     public long clearData() {
+        long count = -1;
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
+            clear.setLong(1, d2did);
+            count = clear.executeUpdate();
+
+            conn.commit();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return count;
+    }
+
 }

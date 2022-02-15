@@ -6,7 +6,7 @@ import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**

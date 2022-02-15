@@ -199,4 +199,19 @@ public class HtmlPopController extends BaseWebViewController {
         }
     }
 
+    public static HtmlPopController openHtml(String html) {
+        try {
+            if (html == null) {
+                return null;
+            }
+            HtmlPopController controller = (HtmlPopController) WindowTools.openStage(Fxmls.HtmlPopFxml);
+            controller.openHtml("HtmlPop", html, null);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
 }

@@ -21,7 +21,7 @@ import javafx.util.Callback;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.value.Languages;

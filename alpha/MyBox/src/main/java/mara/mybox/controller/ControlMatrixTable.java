@@ -14,7 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.DataMatrix;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;

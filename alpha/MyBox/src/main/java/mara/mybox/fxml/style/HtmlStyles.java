@@ -1,4 +1,6 @@
-package mara.mybox.value;
+package mara.mybox.fxml.style;
+
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -57,7 +59,7 @@ public class HtmlStyles {
 
     public static HtmlStyles.HtmlStyle styleName(String styleName) {
         for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
-            if (style.name().equals(styleName) || Languages.message(style.name()).equals(styleName)) {
+            if (style.name().equals(styleName) || message(style.name()).equals(styleName)) {
                 return style;
             }
         }

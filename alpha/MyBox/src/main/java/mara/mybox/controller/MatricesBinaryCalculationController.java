@@ -17,7 +17,7 @@ import javafx.stage.Window;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;

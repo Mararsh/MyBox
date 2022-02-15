@@ -18,7 +18,7 @@ import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;

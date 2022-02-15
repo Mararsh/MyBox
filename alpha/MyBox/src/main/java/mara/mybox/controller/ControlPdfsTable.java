@@ -18,7 +18,7 @@ import javafx.util.converter.IntegerStringConverter;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;

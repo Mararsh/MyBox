@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
 /**

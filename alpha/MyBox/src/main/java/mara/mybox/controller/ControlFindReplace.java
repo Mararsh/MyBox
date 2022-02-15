@@ -24,7 +24,7 @@ import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.data.LongRange;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.ByteTools;

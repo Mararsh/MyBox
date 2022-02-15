@@ -50,11 +50,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void openLocationsDataInMap(ActionEvent event) {
-        loadScene(Fxmls.LocationsDataInMapFxml);
-    }
-
-    @FXML
     protected void openLocationInMap(ActionEvent event) {
         loadScene(Fxmls.LocationInMapFxml);
     }
@@ -62,6 +57,11 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     @FXML
     protected void ConvertCoordinate(ActionEvent event) {
         loadScene(Fxmls.ConvertCoordinateFxml);
+    }
+
+    @FXML
+    protected void Dataset(ActionEvent event) {
+        loadScene(Fxmls.DatasetFxml);
     }
 
     @FXML
@@ -132,6 +132,11 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     @FXML
     protected void openTextDataMerge(ActionEvent event) {
         loadScene(Fxmls.DataFileTextMergeFxml);
+    }
+
+    @FXML
+    protected void DatabaseSQL(ActionEvent event) {
+        loadScene(Fxmls.DatabaseSQLFxml);
     }
 
 }

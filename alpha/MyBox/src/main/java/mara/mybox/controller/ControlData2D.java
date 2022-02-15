@@ -34,7 +34,7 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -698,6 +698,13 @@ public class ControlData2D extends BaseController {
                 Data2DExportController.open(tableController);
             });
             menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DConvertToDataBaseController.open(tableController);
+            });
+            menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());

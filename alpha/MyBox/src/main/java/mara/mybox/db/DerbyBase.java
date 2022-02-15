@@ -11,6 +11,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import mara.mybox.controller.MyBoxLoadingController;
+import mara.mybox.data.DataInternalTable;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableBlobValue;
@@ -359,7 +361,7 @@ public class DerbyBase {
     }
 
     // Upper case
-    public static List<String> tables(Connection conn) {
+    public static List<String> allTables(Connection conn) {
         List<String> tables = new ArrayList<>();
         String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
         try ( Statement statement = conn.createStatement();
@@ -469,10 +471,10 @@ public class DerbyBase {
         return tables;
     }
 
-    public static boolean initTables() {
+    public static boolean initTables(MyBoxLoadingController loadingController) {
         MyBoxLog.console("Protocol: " + protocol + dbHome());
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
-            initTables(conn);
+            initTables(loadingController, conn);
             initIndexs(conn);
             initViews(conn);
             return true;
@@ -482,115 +484,160 @@ public class DerbyBase {
         }
     }
 
-    public static boolean initTables(Connection conn) {
+    public static boolean initTables(MyBoxLoadingController loadingController, Connection conn) {
         try {
-            List<String> tables = tables(conn);
+            DataInternalTable dataTable = new DataInternalTable();
+            List<String> tables = allTables(conn);
             MyBoxLog.console("Tables: " + tables.size());
 
-            if (!tables.contains("String_Values".toUpperCase())) {
-                new TableStringValues().init(conn);
+            if (!tables.contains("Data2D_Definition".toUpperCase())) {
+                new TableData2DDefinition().createTable(conn, null);
+                loadingController.info("Data2D_Definition");
             }
-            if (!tables.contains("image_scope".toUpperCase())) {
-                new TableImageScope().createTable(conn);
+            if (!tables.contains("Data2D_Column".toUpperCase())) {
+                new TableData2DColumn().createTable(conn, null);
+                loadingController.info("Data2D_Column");
+            }
+            if (!tables.contains("Data2D_Definition".toUpperCase())) {
+                dataTable.recordTable(conn, "Data2D_Definition");
+                loadingController.info("Data2D_Definition");
+            }
+            if (!tables.contains("Data2D_Column".toUpperCase())) {
+                dataTable.recordTable(conn, "Data2D_Column");
+                loadingController.info("Data2D_Column");
+            }
+            if (!tables.contains("MyBox_Log".toUpperCase())) {
+                new TableMyBoxLog().createTable(conn, dataTable);
+                loadingController.info("MyBox_Log");
             }
             if (!tables.contains("System_Conf".toUpperCase())) {
                 new TableSystemConf().init(conn);
+                loadingController.info("System_Conf");
             }
             if (!tables.contains("User_Conf".toUpperCase())) {
                 new TableUserConf().init(conn);
+                loadingController.info("User_Conf");
+            }
+            if (!tables.contains("String_Values".toUpperCase())) {
+                new TableStringValues().init(conn);
+                loadingController.info("String_Values");
+            }
+            if (!tables.contains("image_scope".toUpperCase())) {
+                new TableImageScope().createTable(conn, dataTable);
+                loadingController.info("image_scope");
             }
             if (!tables.contains("Alarm_Clock".toUpperCase())) {
                 new TableAlarmClock().init(conn);
+                loadingController.info("Alarm_Clock");
             }
             if (!tables.contains("Convolution_Kernel".toUpperCase())) {
                 new TableConvolutionKernel().init(conn);
+                loadingController.info("Convolution_Kernel");
             }
             if (!tables.contains("Float_Matrix".toUpperCase())) {
                 new TableFloatMatrix().init(conn);
+                loadingController.info("Float_Matrix");
             }
             if (!tables.contains("visit_history".toUpperCase())) {
                 new TableVisitHistory().init(conn);
+                loadingController.info("visit_history");
             }
             if (!tables.contains("media_list".toUpperCase())) {
                 new TableMediaList().init(conn);
+                loadingController.info("media_list");
             }
             if (!tables.contains("media".toUpperCase())) {
                 new TableMedia().init(conn);
+                loadingController.info("media");
             }
             if (!tables.contains("Web_History".toUpperCase())) {
-                new TableWebHistory().createTable(conn);
+                new TableWebHistory().createTable(conn, dataTable);
+                loadingController.info("Web_History");
             }
             if (!tables.contains("Geography_Code".toUpperCase())) {
-                new TableGeographyCode().createTable(conn);
+                new TableGeographyCode().createTable(conn, dataTable);
+                loadingController.info("Geography_Code");
             }
             if (!tables.contains("Dataset".toUpperCase())) {
-                new TableDataset().createTable(conn);
+                new TableDataset().createTable(conn, dataTable);
+                loadingController.info("Dataset");
             }
             if (!tables.contains("Location_Data".toUpperCase())) {
-                new TableLocationData().createTable(conn);
+                new TableLocationData().createTable(conn, dataTable);
+                loadingController.info("Location_Data");
             }
             if (!tables.contains("Epidemic_Report".toUpperCase())) {
-                new TableEpidemicReport().createTable(conn);
+                new TableEpidemicReport().createTable(conn, dataTable);
+                loadingController.info("Epidemic_Report");
             }
             if (!tables.contains("Query_Condition".toUpperCase())) {
                 new TableQueryCondition().init(conn);
+                loadingController.info("Query_Condition");
             }
             if (!tables.contains("String_Value".toUpperCase())) {
                 new TableStringValue().init(conn);
+                loadingController.info("String_Value");
             }
-            if (!tables.contains("MyBox_Log".toUpperCase())) {
-                new TableMyBoxLog().createTable(conn);
-            }
+
             if (!tables.contains("Image_Edit_History".toUpperCase())) {
-                new TableImageEditHistory().createTable(conn);
+                new TableImageEditHistory().createTable(conn, dataTable);
+                loadingController.info("Image_Edit_History");
             }
             if (!tables.contains("File_Backup".toUpperCase())) {
-                new TableFileBackup().createTable(conn);
+                new TableFileBackup().createTable(conn, dataTable);
+                loadingController.info("File_Backup");
             }
             if (!tables.contains("Notebook".toUpperCase())) {
-                new TableNotebook().createTable(conn);
+                new TableNotebook().createTable(conn, dataTable);
+                loadingController.info("Notebook");
             }
             if (!tables.contains("Note".toUpperCase())) {
-                new TableNote().createTable(conn);
+                new TableNote().createTable(conn, dataTable);
+                loadingController.info("Note");
             }
             if (!tables.contains("Tag".toUpperCase())) {
-                new TableTag().createTable(conn);
+                new TableTag().createTable(conn, dataTable);
+                loadingController.info("Tag");
             }
             if (!tables.contains("Note_Tag".toUpperCase())) {
-                new TableNoteTag().createTable(conn);
+                new TableNoteTag().createTable(conn, dataTable);
+                loadingController.info("Note_Tag");
             }
             if (!tables.contains("Color".toUpperCase())) {
-                new TableColor().createTable(conn);
+                new TableColor().createTable(conn, dataTable);
+                loadingController.info("Color");
             }
             if (!tables.contains("Color_Palette_Name".toUpperCase())) {
-                new TableColorPaletteName().createTable(conn);
+                new TableColorPaletteName().createTable(conn, dataTable);
+                loadingController.info("Color_Palette_Name");
             }
             if (!tables.contains("Color_Palette".toUpperCase())) {
-                new TableColorPalette().createTable(conn);
+                new TableColorPalette().createTable(conn, dataTable);
+                loadingController.info("Color_Palette");
             }
             if (!tables.contains("Tree".toUpperCase())) {
-                new TableTree().createTable(conn);
+                new TableTree().createTable(conn, dataTable);
+                loadingController.info("Tree");
             }
             if (!tables.contains("Web_Favorite".toUpperCase())) {
-                new TableWebFavorite().createTable(conn);
+                new TableWebFavorite().createTable(conn, dataTable);
+                loadingController.info("Web_Favorite");
             }
             if (!tables.contains("Image_Clipboard".toUpperCase())) {
-                new TableImageClipboard().createTable(conn);
+                new TableImageClipboard().createTable(conn, dataTable);
+                loadingController.info("Image_Clipboard");
             }
             if (!tables.contains("Text_Clipboard".toUpperCase())) {
-                new TableTextClipboard().createTable(conn);
-            }
-            if (!tables.contains("Data2D_Definition".toUpperCase())) {
-                new TableData2DDefinition().createTable(conn);
-            }
-            if (!tables.contains("Data2D_Column".toUpperCase())) {
-                new TableData2DColumn().createTable(conn);
+                new TableTextClipboard().createTable(conn, dataTable);
+                loadingController.info("Text_Clipboard");
             }
             if (!tables.contains("Data2D_Cell".toUpperCase())) {
-                new TableData2DCell().createTable(conn);
+                new TableData2DCell().createTable(conn, dataTable);
+                loadingController.info("Data2D_Cell");
             }
             if (!tables.contains("Blob_Value".toUpperCase())) {
-                new TableBlobValue().createTable(conn);
+                new TableBlobValue().createTable(conn, dataTable);
+                loadingController.info("Blob_Value");
             }
             return true;
         } catch (Exception e) {

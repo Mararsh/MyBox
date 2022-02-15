@@ -15,6 +15,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data.Data2D;
@@ -27,7 +28,7 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
@@ -43,12 +44,13 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> {
 
     protected ControlData2D dataController;
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DEditTable editController;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
     protected Status status;
     protected boolean readOnly;
+    protected Data2DConvertToDataBaseController convertController;
 
     public enum Status {
         Loaded, Modified, Applied
@@ -62,7 +64,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     protected TableColumn<Data2DColumn, Integer> indexColumn, lengthColumn, widthColumn;
     @FXML
     protected TableColumn<Data2DColumn, Color> colorColumn;
-
+    @FXML
+    protected FlowPane buttonsPane;
     @FXML
     protected Button renameColumnsButton, colorButton;
 
@@ -83,7 +86,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     protected void setParameters(ControlData2D dataController, boolean readOnly) {
         try {
             this.dataController = dataController;
-            tableController = dataController.tableController;
+            editController = dataController.tableController;
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             this.readOnly = readOnly;
@@ -91,6 +94,29 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    protected void setParameters(Data2DConvertToDataBaseController convertController) {
+        try {
+            this.convertController = convertController;
+            editController = convertController.editController;
+            tableData2DDefinition = editController.tableData2DDefinition;
+            tableData2DColumn = editController.tableData2DColumn;
+            readOnly = false;
+            buttonsPane.getChildren().removeAll(cancelButton, okButton);
+            makeColumns();
+            refreshData();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void refreshData() {
+        if (isSettingValues || editController.data2D == null) {
+            return;
+        }
+        setData(editController.data2D.cloneAll());
+        loadData();
     }
 
     protected void makeColumns() {
@@ -408,10 +434,28 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
             TableColor tableColor = new TableColor();
             colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
-            colorColumn.setCellFactory(TableColorCommitCell.create(this, tableColor));
+//            colorColumn.setCellFactory(TableColorCommitCell.create(tableColor));
+            colorColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Color>, TableCell<Data2DColumn, Color>>() {
+                @Override
+                public TableCell<Data2DColumn, Color> call(TableColumn<Data2DColumn, Color> param) {
+                    TableColorCommitCell<Data2DColumn> cell = new TableColorCommitCell<Data2DColumn>(myController, tableColor) {
+                        @Override
+                        public void colorChanged(int index, Color color) {
+                            if (isSettingValues || color == null || index < 0 || index >= tableData.size()) {
+                                return;
+                            }
+                            tableData.get(index).setColor(color);
+                            status(Status.Modified);
+                        }
+                    };
+                    return cell;
+                }
+            });
+
             colorColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Color>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<Data2DColumn, Color> t) {
+                    MyBoxLog.console("here");
                     if (isSettingValues || t == null) {
                         return;
                     }
@@ -420,6 +464,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                     if (column == null || v == null || v.equals(column.getColor())) {
                         return;
                     }
+                    MyBoxLog.console(v);
                     column.setColor(v);
                     status(Status.Modified);
                 }
@@ -449,7 +494,10 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         }
     }
 
-    public synchronized void loadData() {
+    public void loadData() {
+        if (isSettingValues) {
+            return;
+        }
         status = null;
         loadColumns();
         status(Status.Loaded);
@@ -498,7 +546,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             addRowsButton.setDisable(true);
             deleteButton.setDisable(true);
             renameColumnsButton.setDisable(true);
-            okButton.setDisable(true);
         }
     }
 
@@ -507,7 +554,12 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             return;
         }
         status = newStatus;
-        dataController.checkStatus();
+        if (dataController != null) {
+            dataController.checkStatus();
+        }
+        if (convertController == null) {
+            editController.notifyColumnChanged();
+        }
     }
 
     public boolean isChanged() {
@@ -593,6 +645,9 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     public boolean pickValues() {
         try {
+            if (convertController != null || editController == null) {
+                return false;
+            }
             StringTable validateTable = Data2DColumn.validate(tableData);
             if (validateTable != null && !validateTable.isEmpty()) {
                 Platform.runLater(new Runnable() {
@@ -606,7 +661,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             }
             List<List<String>> newTableData = new ArrayList<>();
             if (!tableData.isEmpty()) {
-                for (List<String> rowValues : tableController.tableData) {
+                for (List<String> rowValues : editController.tableData) {
                     List<String> newRow = new ArrayList<>();
                     newRow.add(rowValues.get(0));
                     for (Data2DColumn row : tableData) {
@@ -625,7 +680,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 columns.add(tableData.get(i).cloneAll());
             }
             data2D.setColumns(columns);
-            return tableController.updateData(newTableData, true);
+            return editController.updateData(newTableData, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

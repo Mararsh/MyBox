@@ -10,7 +10,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;

@@ -18,7 +18,7 @@ import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import static mara.mybox.value.Languages.message;
 import static mara.mybox.value.Languages.tableMessage;

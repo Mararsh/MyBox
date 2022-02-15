@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.style;
 
 import static mara.mybox.value.Languages.message;
 
@@ -336,8 +336,8 @@ public class StyleButton {
         if (id.startsWith("refresh")) {
             return new StyleData(id, message("Refresh"), "", "iconRefresh.png");
         }
-        if (id.startsWith("giveUp")) {
-            return new StyleData(id, message("GiveUp"), "", "iconCatFoot.png");
+        if (id.startsWith("help")) {
+            return new StyleData(id, message("HelpMe"), "", "iconCatFoot.png");
         }
         if (id.startsWith("manufacture")) {
             return new StyleData(id, message("Manufacture"), "", "iconEdit.png");
@@ -745,12 +745,8 @@ public class StyleButton {
                 return new StyleData("refreshMarkdownButton", message("Refresh"), "", "iconRefresh.png");
             case "streamMediaButton":
                 return new StyleData(id, message("StreamMedia"), "", "iconLink.png");
-            case "helpMeButton":
-                return new StyleData(id, message("HelpMe"), "", "iconCatFoot.png");
             case "pickColorButton":
                 return new StyleData(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
-            case "footButton":
-                return new StyleData(id, message("Footprints"), "", "iconCatFoot.png");
             case "chinaButton":
                 return new StyleData(id, message("China"), "", "iconChina.png");
             case "globalButton":

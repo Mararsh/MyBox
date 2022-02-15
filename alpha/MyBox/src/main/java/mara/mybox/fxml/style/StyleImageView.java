@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.style;
 
 import static mara.mybox.value.Languages.message;
 

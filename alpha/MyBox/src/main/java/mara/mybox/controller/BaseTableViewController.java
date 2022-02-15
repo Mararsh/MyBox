@@ -31,11 +31,11 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -443,7 +443,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    public void resetView() {
+    public void resetView(boolean changed) {
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
@@ -451,7 +451,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         dataSize = 0;
         startRowOfCurrentPage = 0;
         dataSizeLoaded = false;
-        tableChanged(false);
+        tableChanged(changed);
         checkSelected();
         editNull();
         viewNull();
@@ -816,10 +816,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        if (tableData == null || tableData.isEmpty()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearData"))) {
             return;
         }
         synchronized (this) {
@@ -827,7 +827,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 return;
             }
             task = new SingletonTask<Void>(this) {
-                int deletedCount = 0;
+                long deletedCount = 0;
 
                 @Override
                 protected boolean handle() {
@@ -847,7 +847,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    protected int clearData() {
+    protected long clearData() {
         int size = tableData.size();
         isSettingValues = true;
         tableData.clear();
@@ -856,19 +856,28 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     protected void afterClear() {
-        resetView();
-        afterDeletion();
+        resetView(false);
     }
 
     @FXML
     public void deleteRowsAction() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
-            clearAction();
+            deleteAllRows();
             return;
         }
         isSettingValues = true;
         tableData.removeAll(selected);
+        isSettingValues = false;
+        tableChanged(true);
+    }
+
+    public void deleteAllRows() {
+        isSettingValues = true;
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearTable"))) {
+            return;
+        }
+        tableData.clear();
         isSettingValues = false;
         tableChanged(true);
     }

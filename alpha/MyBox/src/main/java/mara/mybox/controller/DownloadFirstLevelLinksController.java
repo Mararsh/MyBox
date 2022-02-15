@@ -60,7 +60,7 @@ import mara.mybox.data.Link.FilenameType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
@@ -209,7 +209,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         try {
             List<String> urls = VisitHistoryTools.recentDownloadAddress();
             if (urls == null || urls.isEmpty()) {
-                urlSelector.getItems().add("https://www.kunnu.com/hongloumeng/");
+                urlSelector.getItems().add("https://www.cnblogs.com/Imageshop/p/10664478.html");
             } else {
                 urlSelector.getItems().addAll(urls);
             }
@@ -1608,7 +1608,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 }
             }
             if (ask) {
-                if (PopTools.askSure(this,getMyStage().getTitle(), Languages.message("TaskRunning"))) {
+                if (PopTools.askSure(this, getMyStage().getTitle(), Languages.message("TaskRunning"))) {
                     stopped = true;
                 } else {
                     return false;

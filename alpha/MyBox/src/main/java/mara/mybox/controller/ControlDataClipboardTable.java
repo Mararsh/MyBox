@@ -16,7 +16,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.tools.FileDeleteTools;
@@ -154,8 +154,8 @@ public class ControlDataClipboardTable extends BaseSysTableController<Data2DDefi
 
     @Override
     protected void afterClear() {
+        super.afterClear();
         FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
-        refreshAction();
         loadController.loadNull();
     }
 

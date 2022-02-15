@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.style;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;

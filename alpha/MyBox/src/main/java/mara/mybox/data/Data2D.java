@@ -60,6 +60,8 @@ public abstract class Data2D extends Data2DDefinition {
 
     public abstract boolean export(ControlDataConvert convertController, List<Integer> colIndices);
 
+    public abstract long clearData();
+
     /*
         class
      */

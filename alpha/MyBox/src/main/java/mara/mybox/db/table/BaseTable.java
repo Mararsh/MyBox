@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import mara.mybox.data.DataInternalTable;
 import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
@@ -23,7 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**
@@ -432,6 +433,10 @@ public abstract class BaseTable<D> {
     }
 
     public boolean createTable(Connection conn) {
+        return createTable(conn, new DataInternalTable());
+    }
+
+    public boolean createTable(Connection conn, DataInternalTable dataTable) {
         if (conn == null) {
             return false;
         }
@@ -439,6 +444,9 @@ public abstract class BaseTable<D> {
         try {
             sql = createTableStatement();
             conn.createStatement().executeUpdate(sql);
+            if (dataTable != null) {
+                dataTable.recordTable(conn, tableName);
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -461,7 +469,7 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public int clearData() {
+     public long clearData() {
         try ( Connection conn = DerbyBase.getConnection()) {
             return clearData(conn);
         } catch (Exception e) {

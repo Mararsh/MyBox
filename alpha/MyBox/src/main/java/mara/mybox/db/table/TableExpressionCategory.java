@@ -273,10 +273,9 @@ public class TableExpressionCategory extends BaseTable<Notebook> {
             sql = "DROP TABLE Notebook";
             update(conn, sql);
 
-            createTable(conn);
-            new TableNote().createTable(conn);
-            new TableNoteTag().createTable(conn);
-
+//            createTable(conn);
+//            new TableNote().createTable(conn);
+//            new TableNoteTag().createTable(conn);
             statement.executeUpdate(TableNote.Create_Time_Index);
             statement.executeUpdate(TableNoteTag.Create_Unique_Index);
 

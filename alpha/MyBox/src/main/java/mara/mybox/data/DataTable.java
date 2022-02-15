@@ -40,6 +40,16 @@ public class DataTable extends Data2D {
         tableData2D.readDefinitionFromDB(sheet);
     }
 
+    public void recordTable(Connection conn, String tableName) {
+        try {
+            setTable(tableName);
+            readDataDefinition(conn);
+            readColumns(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @Override
     public boolean checkForLoad() {
         if (dataName == null) {
@@ -50,7 +60,7 @@ public class DataTable extends Data2D {
 
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
-        return tableData2DDefinition.queryTable(conn, sheet);
+        return tableData2DDefinition.queryInternalTable(conn, sheet);
     }
 
     @Override
@@ -182,6 +192,11 @@ public class DataTable extends Data2D {
     @Override
     public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
         return false;
+    }
+
+    @Override
+     public long clearData() {
+        return tableData2D.clearData();
     }
 
 }

@@ -22,7 +22,7 @@ import javafx.scene.control.Tooltip;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;

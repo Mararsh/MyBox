@@ -273,6 +273,33 @@ public class DataFileCSV extends DataFileText {
         return FileTools.rename(tmpFile, file, false);
     }
 
+    @Override
+     public long clearData() {
+        File tmpFile = TmpFileTools.getTempFile();
+        CSVFormat cvsFormat = cvsFormat();
+        checkForLoad();
+        if (file != null && file.exists() && file.length() > 0) {
+            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), cvsFormat)) {
+                if (hasHeader) {
+                    writeHeader(csvPrinter);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                return -1;
+            }
+            if (FileTools.rename(tmpFile, file, false)) {
+                return getDataSize();
+            } else {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
+
     /*
         static
      */

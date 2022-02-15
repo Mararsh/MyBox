@@ -123,7 +123,7 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
         }
         return defaultValue;
     }

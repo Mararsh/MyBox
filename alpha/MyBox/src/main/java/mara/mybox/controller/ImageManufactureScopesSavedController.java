@@ -16,7 +16,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.UserConfig;

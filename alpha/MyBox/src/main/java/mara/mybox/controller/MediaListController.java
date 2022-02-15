@@ -14,7 +14,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
