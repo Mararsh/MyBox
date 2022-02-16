@@ -38,11 +38,11 @@ public class TableNoteTag extends BaseTable<NoteTag> {
     public final TableNoteTag defineColumns() {
         addColumn(new ColumnDefinition("ngid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("noteid", ColumnType.Long)
-                .setForeignName("Note_Tag_note_fk").setForeignTable("Note").setForeignColumn("ntid")
+                .setReferName("Note_Tag_note_fk").setReferTable("Note").setReferColumn("ntid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("tagid", ColumnType.Long)
-                .setForeignName("Note_Tag_tag_fk").setForeignTable("Tag").setForeignColumn("tgid")
+                .setReferName("Note_Tag_tag_fk").setReferTable("Tag").setReferColumn("tgid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;

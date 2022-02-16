@@ -284,7 +284,7 @@ public class DataMigration {
                     while (cquery.next()) {
                         Data2DColumn column = Data2DColumn.create().setD2id(d2did);
                         column.setType(ColumnDefinition.columnType(cquery.getShort("column_type")));
-                        column.setName(cquery.getString("column_name"));
+                        column.setColumnName(cquery.getString("column_name"));
                         column.setIndex(cquery.getInt("index"));
                         column.setLength(cquery.getInt("length"));
                         column.setWidth(cquery.getInt("width"));

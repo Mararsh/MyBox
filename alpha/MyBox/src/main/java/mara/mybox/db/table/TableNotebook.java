@@ -36,7 +36,7 @@ public class TableNotebook extends BaseTable<Notebook> {
         addColumn(new ColumnDefinition("name", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("description", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("owner", ColumnType.Long)
-                .setForeignName("Notebook_owner_fk").setForeignTable("Notebook").setForeignColumn("nbid")
+                .setReferName("Notebook_owner_fk").setReferTable("Notebook").setReferColumn("nbid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;

@@ -21,7 +21,7 @@ public class TableData2D extends BaseTable<Data2DRow> {
             row.setIndex(Integer.valueOf(values.get(0)));
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 ColumnDefinition column = columns.get(i);
-                String name = column.getName();
+                String name = column.getColumnName();
                 String value = values.get(i + 1);
                 if (value != null) {
                     row.setValue(name, column.fromString(value));

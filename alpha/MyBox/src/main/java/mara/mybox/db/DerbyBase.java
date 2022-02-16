@@ -409,40 +409,6 @@ public class DerbyBase {
         return columns;
     }
 
-    // lower case
-    public static List<String> primaryKeys(Connection conn, String tablename) {
-        List<String> primaryKeys = new ArrayList<>();
-        try ( ResultSet resultSet = conn.getMetaData().getPrimaryKeys(null, "MARA", tablename)) {
-            while (resultSet.next()) {
-                primaryKeys.add(resultSet.getString("COLUMN_NAME").toLowerCase());
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-        return primaryKeys;
-    }
-
-    public static String tableDefinition(Connection conn, String tablename) {
-        String s = "";
-        for (String column : columns(conn, tablename)) {
-            s += column + "\n";
-        }
-        return s;
-    }
-
-    public static String tableDefinition(String tablename) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            String s = "";
-            for (String column : columns(conn, tablename)) {
-                s += column + "\n";
-            }
-            return s;
-        } catch (Exception e) {
-            MyBoxLog.console(e, tablename);
-            return null;
-        }
-    }
-
     public static List<String> indexes(Connection conn) {
         List<String> indexes = new ArrayList<>();
         String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
@@ -486,28 +452,19 @@ public class DerbyBase {
 
     public static boolean initTables(MyBoxLoadingController loadingController, Connection conn) {
         try {
-            DataInternalTable dataTable = new DataInternalTable();
             List<String> tables = allTables(conn);
             MyBoxLog.console("Tables: " + tables.size());
 
             if (!tables.contains("Data2D_Definition".toUpperCase())) {
-                new TableData2DDefinition().createTable(conn, null);
+                new TableData2DDefinition().createTable(conn);
                 loadingController.info("Data2D_Definition");
             }
             if (!tables.contains("Data2D_Column".toUpperCase())) {
-                new TableData2DColumn().createTable(conn, null);
-                loadingController.info("Data2D_Column");
-            }
-            if (!tables.contains("Data2D_Definition".toUpperCase())) {
-                dataTable.recordTable(conn, "Data2D_Definition");
-                loadingController.info("Data2D_Definition");
-            }
-            if (!tables.contains("Data2D_Column".toUpperCase())) {
-                dataTable.recordTable(conn, "Data2D_Column");
+                new TableData2DColumn().createTable(conn);
                 loadingController.info("Data2D_Column");
             }
             if (!tables.contains("MyBox_Log".toUpperCase())) {
-                new TableMyBoxLog().createTable(conn, dataTable);
+                new TableMyBoxLog().createTable(conn);
                 loadingController.info("MyBox_Log");
             }
             if (!tables.contains("System_Conf".toUpperCase())) {
@@ -523,7 +480,7 @@ public class DerbyBase {
                 loadingController.info("String_Values");
             }
             if (!tables.contains("image_scope".toUpperCase())) {
-                new TableImageScope().createTable(conn, dataTable);
+                new TableImageScope().createTable(conn);
                 loadingController.info("image_scope");
             }
             if (!tables.contains("Alarm_Clock".toUpperCase())) {
@@ -551,23 +508,23 @@ public class DerbyBase {
                 loadingController.info("media");
             }
             if (!tables.contains("Web_History".toUpperCase())) {
-                new TableWebHistory().createTable(conn, dataTable);
+                new TableWebHistory().createTable(conn);
                 loadingController.info("Web_History");
             }
             if (!tables.contains("Geography_Code".toUpperCase())) {
-                new TableGeographyCode().createTable(conn, dataTable);
+                new TableGeographyCode().createTable(conn);
                 loadingController.info("Geography_Code");
             }
             if (!tables.contains("Dataset".toUpperCase())) {
-                new TableDataset().createTable(conn, dataTable);
+                new TableDataset().createTable(conn);
                 loadingController.info("Dataset");
             }
             if (!tables.contains("Location_Data".toUpperCase())) {
-                new TableLocationData().createTable(conn, dataTable);
+                new TableLocationData().createTable(conn);
                 loadingController.info("Location_Data");
             }
             if (!tables.contains("Epidemic_Report".toUpperCase())) {
-                new TableEpidemicReport().createTable(conn, dataTable);
+                new TableEpidemicReport().createTable(conn);
                 loadingController.info("Epidemic_Report");
             }
             if (!tables.contains("Query_Condition".toUpperCase())) {
@@ -580,63 +537,63 @@ public class DerbyBase {
             }
 
             if (!tables.contains("Image_Edit_History".toUpperCase())) {
-                new TableImageEditHistory().createTable(conn, dataTable);
+                new TableImageEditHistory().createTable(conn);
                 loadingController.info("Image_Edit_History");
             }
             if (!tables.contains("File_Backup".toUpperCase())) {
-                new TableFileBackup().createTable(conn, dataTable);
+                new TableFileBackup().createTable(conn);
                 loadingController.info("File_Backup");
             }
             if (!tables.contains("Notebook".toUpperCase())) {
-                new TableNotebook().createTable(conn, dataTable);
+                new TableNotebook().createTable(conn);
                 loadingController.info("Notebook");
             }
             if (!tables.contains("Note".toUpperCase())) {
-                new TableNote().createTable(conn, dataTable);
+                new TableNote().createTable(conn);
                 loadingController.info("Note");
             }
             if (!tables.contains("Tag".toUpperCase())) {
-                new TableTag().createTable(conn, dataTable);
+                new TableTag().createTable(conn);
                 loadingController.info("Tag");
             }
             if (!tables.contains("Note_Tag".toUpperCase())) {
-                new TableNoteTag().createTable(conn, dataTable);
+                new TableNoteTag().createTable(conn);
                 loadingController.info("Note_Tag");
             }
             if (!tables.contains("Color".toUpperCase())) {
-                new TableColor().createTable(conn, dataTable);
+                new TableColor().createTable(conn);
                 loadingController.info("Color");
             }
             if (!tables.contains("Color_Palette_Name".toUpperCase())) {
-                new TableColorPaletteName().createTable(conn, dataTable);
+                new TableColorPaletteName().createTable(conn);
                 loadingController.info("Color_Palette_Name");
             }
             if (!tables.contains("Color_Palette".toUpperCase())) {
-                new TableColorPalette().createTable(conn, dataTable);
+                new TableColorPalette().createTable(conn);
                 loadingController.info("Color_Palette");
             }
             if (!tables.contains("Tree".toUpperCase())) {
-                new TableTree().createTable(conn, dataTable);
+                new TableTree().createTable(conn);
                 loadingController.info("Tree");
             }
             if (!tables.contains("Web_Favorite".toUpperCase())) {
-                new TableWebFavorite().createTable(conn, dataTable);
+                new TableWebFavorite().createTable(conn);
                 loadingController.info("Web_Favorite");
             }
             if (!tables.contains("Image_Clipboard".toUpperCase())) {
-                new TableImageClipboard().createTable(conn, dataTable);
+                new TableImageClipboard().createTable(conn);
                 loadingController.info("Image_Clipboard");
             }
             if (!tables.contains("Text_Clipboard".toUpperCase())) {
-                new TableTextClipboard().createTable(conn, dataTable);
+                new TableTextClipboard().createTable(conn);
                 loadingController.info("Text_Clipboard");
             }
             if (!tables.contains("Data2D_Cell".toUpperCase())) {
-                new TableData2DCell().createTable(conn, dataTable);
+                new TableData2DCell().createTable(conn);
                 loadingController.info("Data2D_Cell");
             }
             if (!tables.contains("Blob_Value".toUpperCase())) {
-                new TableBlobValue().createTable(conn, dataTable);
+                new TableBlobValue().createTable(conn);
                 loadingController.info("Blob_Value");
             }
             return true;
@@ -838,6 +795,7 @@ public class DerbyBase {
 
     public static boolean initTableValues() {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+            DataInternalTable.recordTables(conn);
             if (TableGeographyCode.China(conn) == null) {
                 GeographyCodeTools.importPredefined(conn);
             }

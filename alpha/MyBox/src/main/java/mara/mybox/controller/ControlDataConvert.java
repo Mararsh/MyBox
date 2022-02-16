@@ -306,7 +306,7 @@ public class ControlDataConvert extends BaseController {
         columns = cols;
         names = new ArrayList<>();
         for (Data2DColumn c : columns) {
-            names.add(c.getName());
+            names.add(c.getColumnName());
         }
         return setParameters(prefix, skip);
     }

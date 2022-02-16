@@ -166,7 +166,7 @@ public class EpidemicReport extends BaseData {
         if (data == null || column == null || value == null) {
             return null;
         }
-        switch (column.getName()) {
+        switch (column.getColumnName()) {
             case "source":
                 return data.getSourceName();
         }

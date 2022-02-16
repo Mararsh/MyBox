@@ -1,61 +1,49 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.binding.Bindings;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tab;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseTable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Window;
+import mara.mybox.data.Data2D;
+import mara.mybox.data.DataTable;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.value.Languages;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2021-4-22
+ * @CreateDate 2022-2-16
  * @License Apache License Version 2.0
  */
-public class DataTablesController extends BaseSysTableController<BaseTable> {
+public class DataTablesController extends Data2DListController {
 
     @FXML
-    protected ListView<String> tablesList;
+    protected Button tableDefinitionButton;
     @FXML
-    protected Tab dataTab, colorsTab;
+    protected ControlData2D dataController;
     @FXML
-    protected FlowPane buttonsPane, colorsPane;
+    protected Label tableLabel;
 
     public DataTablesController() {
-        baseTitle = Languages.message("MyBoxData");
+        baseTitle = message("DatabaseTable");
         TipsLabelKey = "ColorsManageTips";
     }
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    public void setData2D() {
+        dataController.setDataType(this, Data2DDefinition.Type.DatabaseTable);
+        data2D = dataController.data2D;
+        loadController = dataController.editController.tableController;
     }
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.CSV);
+    public void setQueryConditions() {
+        queryConditions = " data_type=" + Data2D.type(Data2DDefinition.Type.DatabaseTable);
     }
 
     @Override
@@ -63,19 +51,9 @@ public class DataTablesController extends BaseSysTableController<BaseTable> {
         try {
             super.initControls();
 
-            tablesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-            tablesList.setCellFactory(p -> new ListCell<String>() {
-                @Override
-                public void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                        setGraphic(null);
-                        return;
-                    }
-                    setText(Languages.tableMessage(item.toLowerCase()));
-                }
-            });
+            saveButton.setDisable(true);
+            recoverButton.setDisable(true);
+            tableDefinitionButton.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -83,107 +61,19 @@ public class DataTablesController extends BaseSysTableController<BaseTable> {
     }
 
     @Override
-    protected void initColumns() {
+    public void load(Data2DDefinition source) {
         try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    protected void initButtons() {
-        try {
-            exportButton.disableProperty().bind(Bindings.isEmpty(tableData));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-
-        hideRightPane();
-        refreshTables();
-    }
-
-    /*
-        tables list
-     */
-    @FXML
-    protected void refreshTables() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
+            if (source == null || !dataController.checkBeforeNextAction()) {
                 return;
             }
-            task = new SingletonTask<Void>(this) {
-                private List<String> tables;
+            dataController.resetStatus();
+            data2D = Data2D.create(source.getType());
+            data2D.cloneAll(source);
+            dataController.loadDef(data2D);
 
-                @Override
-                protected boolean handle() {
-                    tables = new ArrayList<>();
-                    try ( Connection conn = DerbyBase.getConnection()) {
-//                        List<String> allTables = DerbyBase.tables(conn);
-//                        for (String table : allTables) {
-//                            if (!table.startsWith("User_Data_".toUpperCase())) {
-//                                tables.add(table);
-//                            }
-//                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    tablesList.getItems().setAll(tables);
-                }
-            };
-            start(task);
-        }
-    }
-
-
-    /*
-       Data
-     */
-    protected void refreshPalette() {
-
-        loadTableData();
-    }
-
-    @FXML
-    @Override
-    public void addAction() {
-
-    }
-
-    @FXML
-    protected void popExportMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
+            saveButton.setDisable(false);
+            recoverButton.setDisable(false);
+            tableDefinitionButton.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -191,43 +81,74 @@ public class DataTablesController extends BaseSysTableController<BaseTable> {
 
     @FXML
     @Override
-    public void deleteAction() {
+    public void recoverAction() {
+        load(data2D);
+    }
 
+    @FXML
+    @Override
+    public void saveAction() {
+        dataController.save();
+    }
+
+    @FXML
+    protected void tableDefinition() {
+        String html = DataTable.tableDefinition(data2D.getSheet());
+        if (html != null) {
+            HtmlPopController.openHtml(this, html);
+        } else {
+            popError(message("NotFound"));
+        }
+    }
+
+    @FXML
+    public void sql() {
+        DatabaseSQLController.oneOpen();
     }
 
     @Override
-    protected long clearData() {
-        return 1;
+    public void myBoxClipBoard() {
+        dataController.myBoxClipBoard();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return dataController.keyEventsFilter(event);
+        }
+        return true;
     }
 
     /*
-       Data
+        static
      */
-    @Override
-    public long readDataSize() {
-        return 1;
+    public static DataTablesController oneOpen() {
+        DataTablesController controller = null;
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof DataTablesController) {
+                try {
+                    controller = (DataTablesController) object;
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (controller == null) {
+            controller = (DataTablesController) WindowTools.openStage(Fxmls.DataTablesFxml);
+        }
+        controller.requestMouse();
+        return controller;
     }
 
-    @Override
-    public List<BaseTable> readPageData() {
-        return null;
-    }
-
-    @Override
-    protected int deleteData(List<BaseTable> data) {
-        return 0;
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        refreshPalette();
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-
+    public static DataTablesController open(Data2DDefinition def) {
+        DataTablesController controller = oneOpen();
+        if (def != null) {
+            controller.load(def);
+        }
+        return controller;
     }
 
 }

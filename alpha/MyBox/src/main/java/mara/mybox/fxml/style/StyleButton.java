@@ -415,6 +415,9 @@ public class StyleButton {
         if (id.startsWith("database")) {
             return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
         }
+        if (id.startsWith("tableDefinition")) {
+            return new StyleData(id, "", message("TableDefinition"), "", "iconSplit.png");
+        }
         if (id.startsWith("width")) {
             return new StyleData(id, message("Width"), "", "iconXRuler.png");
         }

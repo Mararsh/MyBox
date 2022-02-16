@@ -21,8 +21,6 @@ import mara.mybox.fximage.FxColorTools;
  */
 public class DataTable extends Data2D {
 
-    public static final String UserTablePrefix = "UT_";
-
     protected TableData2D tableData2D;
 
     public DataTable() {
@@ -34,15 +32,10 @@ public class DataTable extends Data2D {
         return type(Type.DatabaseTable);
     }
 
-    public void setTable(String tableName) {
-        resetData();
-        sheet = tableName;
-        tableData2D.readDefinitionFromDB(sheet);
-    }
-
     public void recordTable(Connection conn, String tableName) {
         try {
-            setTable(tableName);
+            resetData();
+            sheet = tableName != null ? tableName.toLowerCase() : null;
             readDataDefinition(conn);
             readColumns(conn);
         } catch (Exception e) {
@@ -71,9 +64,10 @@ public class DataTable extends Data2D {
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
-            if (tableData2D == null || d2did < 0) {
+            if (d2did < 0) {
                 return false;
             }
+            tableData2D.readDefinitionFromDB(conn, sheet);
             List<ColumnDefinition> dbColumns = tableData2D.getColumns();
             if (dbColumns == null) {
                 return false;
@@ -99,7 +93,9 @@ public class DataTable extends Data2D {
                 }
                 columns.add(column);
             }
+            colsNumber = columns.size();
             tableData2DColumn.save(conn, d2did, columns);
+            tableData2DDefinition.updateData(conn, this);
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -116,6 +112,8 @@ public class DataTable extends Data2D {
         if (tableData2D != null) {
             dataSize = tableData2D.size();
         }
+        rowsNumber = dataSize;
+        tableData2DDefinition.updateData(this);
         return dataSize;
     }
 
@@ -137,7 +135,7 @@ public class DataTable extends Data2D {
                 List<String> row = new ArrayList<>();
                 for (int i = 0; i < columns.size(); ++i) {
                     ColumnDefinition column = columns.get(i);
-                    Object value = trow.getValue(column.getName());
+                    Object value = trow.getValue(column.getColumnName());
                     row.add(column.toString(value));
                 }
                 row.add(0, ++rowIndex + "");
@@ -195,8 +193,37 @@ public class DataTable extends Data2D {
     }
 
     @Override
-     public long clearData() {
+    public long clearData() {
         return tableData2D.clearData();
+    }
+
+    /*
+        static
+     */
+    public static List<String> userTables() {
+        List<String> userTables = new ArrayList<>();
+        try ( Connection conn = DerbyBase.getConnection()) {
+            List<String> allTables = DerbyBase.allTables(conn);
+            for (String name : allTables) {
+                if (!DataInternalTable.InternalTables.contains(name)) {
+                    userTables.add(name);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return userTables;
+    }
+
+    public static String tableDefinition(String tableName) {
+        try {
+            TableData2D table = new TableData2D();
+            table.readDefinitionFromDB(tableName);
+            return table.html();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
     }
 
 }

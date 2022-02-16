@@ -157,9 +157,14 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DatabaseSQLFxml);
         });
 
+        MenuItem DatabaseTable = new MenuItem(message("DatabaseTable"));
+        DatabaseTable.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DataTablesFxml);
+        });
+
         Menu database = new Menu(message("Database"));
         database.getItems().addAll(
-                DatabaseSQL
+                DatabaseTable, DatabaseSQL
         );
 
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));

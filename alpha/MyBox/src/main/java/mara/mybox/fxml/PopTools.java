@@ -46,7 +46,7 @@ import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.MenuController;
 import mara.mybox.controller.TextInputController;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.data.DataTable;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -739,7 +739,7 @@ public class PopTools {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addNode(new Label(message("TableName")));
 
-            List<String> names = DataFactory.userTables();
+            List<String> names = DataTable.userTables();
             List<Node> valueButtons = new ArrayList<>();
             for (String name : names) {
                 Button button = new Button(name);
@@ -764,14 +764,14 @@ public class PopTools {
 
             controller.addNode(new Label(message("TableDefinition")));
 
-            List<String> names = DataFactory.userTables();
+            List<String> names = DataTable.userTables();
             List<Node> valueButtons = new ArrayList<>();
             for (String name : names) {
                 Button button = new Button(name);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        String html = DataFactory.tableDefinition(name);
+                        String html = DataTable.tableDefinition(name);
                         if (html != null) {
                             HtmlPopController.openHtml(parent, html);
                         } else {

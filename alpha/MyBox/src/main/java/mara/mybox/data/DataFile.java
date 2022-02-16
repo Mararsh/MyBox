@@ -55,6 +55,8 @@ public abstract class DataFile extends Data2D {
         if (reader != null) {
             dataSize = reader.getRowIndex();
         }
+        rowsNumber = dataSize;
+        tableData2DDefinition.updateData(this);
         return dataSize;
     }
 
@@ -151,7 +153,7 @@ public abstract class DataFile extends Data2D {
             }
             for (int i = 0; i < columns.size(); i++) {
                 if (cols.contains(i)) {
-                    names.add(columns.get(i).getName());
+                    names.add(columns.get(i).getColumnName());
                 }
             }
             if (includeColName) {
@@ -266,7 +268,7 @@ public abstract class DataFile extends Data2D {
             }
             for (int i = 0; i < columns.size(); i++) {
                 if (cols.contains(i)) {
-                    names.add(columns.get(i).getName());
+                    names.add(columns.get(i).getColumnName());
                 }
             }
             if (colName) {
@@ -329,7 +331,7 @@ public abstract class DataFile extends Data2D {
             }
             for (int i = 0; i < columns.size(); i++) {
                 if (cols.contains(i)) {
-                    names.add(columns.get(i).getName());
+                    names.add(columns.get(i).getColumnName());
                 }
             }
             if (colName) {
@@ -394,7 +396,7 @@ public abstract class DataFile extends Data2D {
             }
             for (int i = 0; i < columns.size(); i++) {
                 if (cols.contains(i)) {
-                    names.add(columns.get(i).getName());
+                    names.add(columns.get(i).getColumnName());
                 }
             }
             if (colName) {

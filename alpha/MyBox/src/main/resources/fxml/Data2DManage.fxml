@@ -104,7 +104,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308"  prefWidth="-1.0">
+                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
                                                     <graphic>
                                                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                                     </graphic>
@@ -207,7 +207,7 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DLoad.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="load" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DLoad.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>

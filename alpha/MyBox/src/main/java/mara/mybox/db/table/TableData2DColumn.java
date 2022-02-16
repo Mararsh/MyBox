@@ -37,7 +37,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
     public final TableData2DColumn defineColumns() {
         addColumn(new Data2DColumn("d2cid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new Data2DColumn("d2id", ColumnType.Long, true)
-                .setForeignName("Data2D_Column_d2id_fk").setForeignTable("Data2D_Definition").setForeignColumn("d2did")
+                .setReferName("Data2D_Column_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(Data2DColumn.OnDelete.Cascade));
         addColumn(new Data2DColumn("column_type", ColumnType.Short, true));
         addColumn(new Data2DColumn("column_name", ColumnType.String, true).setLength(StringMaxLength));

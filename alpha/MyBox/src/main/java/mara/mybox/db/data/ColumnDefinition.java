@@ -1,5 +1,6 @@
 package mara.mybox.db.data;
 
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,11 +28,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class ColumnDefinition extends BaseData {
 
-    protected String name, label, foreignName, foreignTable, foreignColumn;
+    protected String tableName, columnName, label, referName, referTable, referColumn;
     protected ColumnType type;
     protected int index, length, width;
     protected Color color;
-    protected boolean isPrimaryKey, notNull, isID, editable;
+    protected boolean isPrimaryKey, notNull, isID, editable, auto;
     protected OnDelete onDelete;
     protected OnUpdate onUpdate;
     protected Era.Format timeFormat;
@@ -78,20 +79,20 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition(String name, ColumnType type) {
         initColumnDefinition();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull) {
         initColumnDefinition();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
         this.notNull = notNull;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
         initColumnDefinition();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
         this.notNull = notNull;
         this.isPrimaryKey = isPrimaryKey;
@@ -113,11 +114,11 @@ public class ColumnDefinition extends BaseData {
             if (c == null) {
                 return;
             }
-            name = c.name;
+            columnName = c.columnName;
             label = c.label;
-            foreignName = c.foreignName;
-            foreignTable = c.foreignTable;
-            foreignColumn = c.foreignColumn;
+            referName = c.referName;
+            referTable = c.referTable;
+            referColumn = c.referColumn;
             type = c.type;
             index = c.index;
             length = c.length;
@@ -141,15 +142,15 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isForeignKey() {
-        return foreignTable != null && foreignColumn != null;
+        return referTable != null && referColumn != null;
     }
 
     public String foreignText() {
         if (!isForeignKey()) {
             return null;
         }
-        String sql = (foreignName != null && !foreignName.isBlank() ? "CONSTRAINT  " + foreignName + " " : "")
-                + "FOREIGN KEY (" + name + ") REFERENCES " + foreignTable + " (" + foreignColumn + ") ON DELETE ";
+        String sql = (referName != null && !referName.isBlank() ? "CONSTRAINT  " + referName + " " : "")
+                + "FOREIGN KEY (" + columnName + ") REFERENCES " + referTable + " (" + referColumn + ") ON DELETE ";
         switch (onDelete) {
             case NoAction:
                 sql += "NO ACTION";
@@ -379,7 +380,7 @@ public class ColumnDefinition extends BaseData {
 
     public Object value(ResultSet results) {
         try {
-            if (results == null || type == null || name == null) {
+            if (results == null || type == null || columnName == null) {
                 return null;
             }
             switch (type) {
@@ -388,33 +389,33 @@ public class ColumnDefinition extends BaseData {
                 case Color:
                 case File:
                 case Image:
-                    return results.getString(name);
+                    return results.getString(columnName);
                 case Double:
-                    return results.getDouble(name);
+                    return results.getDouble(columnName);
                 case Float:
-                    return results.getFloat(name);
+                    return results.getFloat(columnName);
                 case Long:
                 case Era:
-                    return results.getLong(name);
+                    return results.getLong(columnName);
                 case Integer:
-                    return results.getInt(name);
+                    return results.getInt(columnName);
                 case Boolean:
-                    return results.getBoolean(name);
+                    return results.getBoolean(columnName);
                 case Short:
-                    return results.getShort(name);
+                    return results.getShort(columnName);
                 case Datetime:
-                    return results.getTimestamp(name);
+                    return results.getTimestamp(columnName);
                 case Date:
-                    return results.getDate(name);
+                    return results.getDate(columnName);
                 case Blob:
-                    return results.getBlob(name);
+                    return results.getBlob(columnName);
                 case Clob:
-                    return results.getClob(name);
+                    return results.getClob(columnName);
                 default:
-                    MyBoxLog.debug(name + " " + type);
+                    MyBoxLog.debug(columnName + " " + type);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), name + " " + type);
+            MyBoxLog.debug(e.toString(), columnName + " " + type);
         }
         return null;
     }
@@ -476,7 +477,7 @@ public class ColumnDefinition extends BaseData {
     public static boolean valid(ColumnDefinition data) {
         return data != null
                 && data.getType() != null
-                && data.getName() != null && !data.getName().isBlank();
+                && data.getColumnName() != null && !data.getColumnName().isBlank();
     }
 
     public static short columnType(ColumnType type) {
@@ -560,12 +561,34 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
+    public static OnUpdate updateRule(short type) {
+        switch (type) {
+            case DatabaseMetaData.importedKeyRestrict:
+                return OnUpdate.Restrict;
+            default:
+                return OnUpdate.NoAction;
+        }
+    }
+
+    public static OnDelete deleteRule(short type) {
+        switch (type) {
+            case DatabaseMetaData.importedKeyRestrict:
+                return OnDelete.Restrict;
+            case DatabaseMetaData.importedKeyCascade:
+                return OnDelete.Cascade;
+            case DatabaseMetaData.importedKeySetNull:
+                return OnDelete.SetNull;
+            default:
+                return OnDelete.NoAction;
+        }
+    }
+
     /*
         customized get/set
      */
     public String getLabel() {
-        if (label == null && name != null) {
-            label = Languages.tableMessage(name.toLowerCase());
+        if (label == null && columnName != null) {
+            label = Languages.tableMessage(columnName.toLowerCase());
         }
         return label;
     }
@@ -573,12 +596,29 @@ public class ColumnDefinition extends BaseData {
     /*
         get/set
      */
-    public String getName() {
-        return name;
+    public String getTableName() {
+        return tableName;
     }
 
-    public ColumnDefinition setName(String name) {
-        this.name = name;
+    public ColumnDefinition setTableName(String tableName) {
+        this.tableName = tableName;
+        return this;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public ColumnDefinition setColumnName(String name) {
+        this.columnName = name;
         return this;
     }
 
@@ -636,21 +676,21 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public String getForeignTable() {
-        return foreignTable;
+    public String getReferTable() {
+        return referTable;
     }
 
-    public ColumnDefinition setForeignTable(String foreignTable) {
-        this.foreignTable = foreignTable;
+    public ColumnDefinition setReferTable(String primaryKeyTable) {
+        this.referTable = primaryKeyTable;
         return this;
     }
 
-    public String getForeignColumn() {
-        return foreignColumn;
+    public String getReferColumn() {
+        return referColumn;
     }
 
-    public ColumnDefinition setForeignColumn(String foreignColumn) {
-        this.foreignColumn = foreignColumn;
+    public ColumnDefinition setReferColumn(String primaryKeyColumn) {
+        this.referColumn = primaryKeyColumn;
         return this;
     }
 
@@ -740,12 +780,21 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public String getForeignName() {
-        return foreignName;
+    public String getReferName() {
+        return referName;
     }
 
-    public ColumnDefinition setForeignName(String foreignName) {
-        this.foreignName = foreignName;
+    public ColumnDefinition setReferName(String foreignName) {
+        this.referName = foreignName;
+        return this;
+    }
+
+    public boolean isAuto() {
+        return auto;
+    }
+
+    public ColumnDefinition setAuto(boolean auto) {
+        this.auto = auto;
         return this;
     }
 

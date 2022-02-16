@@ -328,7 +328,6 @@ public abstract class Data2D extends Data2DDefinition {
         database
      */
     public long readDataDefinition(Connection conn) {
-
         if (isTmpData()) {
             checkForLoad();
             return -1;
@@ -350,6 +349,7 @@ public abstract class Data2D extends Data2DDefinition {
                 d2did = definition.getD2did();
                 savedColumns = tableData2DColumn.read(conn, d2did);
             }
+
             options = null;
         } catch (Exception e) {
             if (task != null) {
@@ -368,7 +368,6 @@ public abstract class Data2D extends Data2DDefinition {
             if (colNames == null || colNames.isEmpty()) {
                 hasHeader = false;
                 tableData2DColumn.clear(conn, d2did);
-
             } else {
                 List<String> validNames = new ArrayList<>();
                 columns = new ArrayList<>();
@@ -379,7 +378,7 @@ public abstract class Data2D extends Data2DDefinition {
                     if (savedColumns != null && i < savedColumns.size()) {
                         column = savedColumns.get(i);
                         if (!hasHeader) {
-                            name = column.getName();
+                            name = column.getColumnName();
                         }
                     } else {
                         column = new Data2DColumn(name, defaultColumnType());
@@ -389,7 +388,7 @@ public abstract class Data2D extends Data2DDefinition {
                         vname += "m";
                     }
                     validNames.add(vname);
-                    column.setName(vname);
+                    column.setColumnName(vname);
                     column.setD2id(d2did);
                     column.setIndex(i);
                     if (column.getColor() == null) {
@@ -404,6 +403,7 @@ public abstract class Data2D extends Data2DDefinition {
                     tableData2DColumn.save(conn, d2did, columns);
                 }
             }
+            colsNumber = columns.size();
             tableData2DDefinition.updateData(conn, this);
             return true;
         } catch (Exception e) {
@@ -646,7 +646,7 @@ public abstract class Data2D extends Data2DDefinition {
                 return -1;
             }
             for (int i = 0; i < columns.size(); i++) {
-                if (name.equals(columns.get(i).getName())) {
+                if (name.equals(columns.get(i).getColumnName())) {
                     return i;
                 }
             }
@@ -661,7 +661,7 @@ public abstract class Data2D extends Data2DDefinition {
                 return null;
             }
             for (Data2DColumn c : columns) {
-                if (name.equals(c.getName())) {
+                if (name.equals(c.getColumnName())) {
                     return c;
                 }
             }
@@ -799,7 +799,7 @@ public abstract class Data2D extends Data2DDefinition {
             }
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : columns) {
-                names.add(column.getName());
+                names.add(column.getColumnName());
             }
             return names;
         } catch (Exception e) {
@@ -816,7 +816,7 @@ public abstract class Data2D extends Data2DDefinition {
             int len = columns.size();
             for (Integer i : indices) {
                 if (i >= 0 && i < len) {
-                    names.add(columns.get(i).getName());
+                    names.add(columns.get(i).getColumnName());
                 }
             }
             return names;
@@ -840,7 +840,7 @@ public abstract class Data2D extends Data2DDefinition {
         List<String> names = new ArrayList<>();
         for (Data2DColumn col : columns) {
             if (col.isEditable()) {
-                names.add(col.getName());
+                names.add(col.getColumnName());
             }
         }
         return names;
@@ -853,7 +853,7 @@ public abstract class Data2D extends Data2DDefinition {
         List<String> names = new ArrayList<>();
         for (Data2DColumn col : columns) {
             if (col.isNumberType()) {
-                names.add(col.getName());
+                names.add(col.getColumnName());
             }
         }
         return names;
@@ -885,7 +885,7 @@ public abstract class Data2D extends Data2DDefinition {
      */
     public String colName(int col) {
         try {
-            return column(col).getName();
+            return column(col).getColumnName();
         } catch (Exception e) {
             return null;
         }

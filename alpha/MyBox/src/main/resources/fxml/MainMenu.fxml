@@ -229,6 +229,7 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <Menu mnemonicParsing="false" text="%Database">
                                     <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#DatabaseTable" text="%DatabaseTable" />
                                         <MenuItem mnemonicParsing="false" onAction="#DatabaseSQL" text="%DatabaseSQL" />
                                     </items>
                                 </Menu>

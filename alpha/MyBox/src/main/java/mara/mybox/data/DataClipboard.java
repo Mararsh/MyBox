@@ -47,7 +47,7 @@ public class DataClipboard extends DataFileCSV {
         d.setTask(task);
         List<String> names = new ArrayList<>();
         for (Data2DColumn c : cols) {
-            names.add(c.getName());
+            names.add(c.getColumnName());
         }
         File tmpFile = d.tmpFile(names, data);
         if (tmpFile == null) {

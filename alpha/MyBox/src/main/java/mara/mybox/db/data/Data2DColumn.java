@@ -33,20 +33,20 @@ public class Data2DColumn extends ColumnDefinition {
 
     public Data2DColumn(String name, ColumnType type) {
         initData2DColumn();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
     }
 
     public Data2DColumn(String name, ColumnType type, boolean notNull) {
         initData2DColumn();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
         this.notNull = notNull;
     }
 
     public Data2DColumn(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
         initData2DColumn();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
         this.notNull = notNull;
         this.isPrimaryKey = isPrimaryKey;
@@ -117,7 +117,7 @@ public class Data2DColumn extends ColumnDefinition {
             case "column_type":
                 return columnType(data.getType());
             case "column_name":
-                return data.getName();
+                return data.getColumnName();
             case "index":
                 return data.getIndex();
             case "length":
@@ -143,11 +143,11 @@ public class Data2DColumn extends ColumnDefinition {
             case "label":
                 return data.getLabel();
             case "foreign_name":
-                return data.getForeignName();
+                return data.getReferName();
             case "foreign_table":
-                return data.getForeignTable();
+                return data.getReferTable();
             case "foreign_column":
-                return data.getForeignColumn();
+                return data.getReferColumn();
             case "values_list":
                 return null;
         }
@@ -170,7 +170,7 @@ public class Data2DColumn extends ColumnDefinition {
                     data.setType(columnType((short) value));
                     return true;
                 case "column_name":
-                    data.setName(value == null ? null : (String) value);
+                    data.setColumnName(value == null ? null : (String) value);
                     return true;
                 case "index":
                     data.setIndex(value == null ? null : (int) value);
@@ -209,13 +209,13 @@ public class Data2DColumn extends ColumnDefinition {
                     data.setLabel(value == null ? null : (String) value);
                     return true;
                 case "foreign_name":
-                    data.setForeignName(value == null ? null : (String) value);
+                    data.setReferName(value == null ? null : (String) value);
                     return true;
                 case "foreign_table":
-                    data.setForeignTable(value == null ? null : (String) value);
+                    data.setReferTable(value == null ? null : (String) value);
                     return true;
                 case "foreign_column":
-                    data.setForeignColumn(value == null ? null : (String) value);
+                    data.setReferColumn(value == null ? null : (String) value);
                     return true;
                 case "values_list":
                     return true;
@@ -239,15 +239,15 @@ public class Data2DColumn extends ColumnDefinition {
                 Data2DColumn column = columns.get(c);
                 if (!column.valid()) {
                     List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Invalid")));
+                    row.addAll(Arrays.asList(c + 1 + "", column.getColumnName(), message("Invalid")));
                     colsTable.add(row);
                 }
-                if (colsNames.contains(column.getName())) {
+                if (colsNames.contains(column.getColumnName())) {
                     List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Duplicated")));
+                    row.addAll(Arrays.asList(c + 1 + "", column.getColumnName(), message("Duplicated")));
                     colsTable.add(row);
                 }
-                colsNames.add(column.getName());
+                colsNames.add(column.getColumnName());
             }
             return colsTable;
         } catch (Exception e) {
@@ -263,7 +263,7 @@ public class Data2DColumn extends ColumnDefinition {
             }
             List<String> names = new ArrayList<>();
             for (Data2DColumn c : cols) {
-                names.add(c.getName());
+                names.add(c.getColumnName());
             }
             return names;
         } catch (Exception e) {

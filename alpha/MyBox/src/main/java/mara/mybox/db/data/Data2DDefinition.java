@@ -232,10 +232,6 @@ public class Data2DDefinition extends BaseData {
         return types[type];
     }
 
-    public static short typeInternalTable() {
-        return type(Data2DDefinition.Type.InternalTable);
-    }
-
     public static BaseController open(Data2DDefinition def) {
         if (def == null) {
             return Data2DManageController.open(def);

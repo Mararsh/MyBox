@@ -39,11 +39,11 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         addColumn(new ColumnDefinition("name_in_palette", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("order_number", ColumnType.Float));
         addColumn(new ColumnDefinition("paletteid", ColumnType.Long, true)
-                .setForeignName("Color_Palette_palette_fk").setForeignTable("Color_Palette_Name").setForeignColumn("cpnid")
+                .setReferName("Color_Palette_palette_fk").setReferTable("Color_Palette_Name").setReferColumn("cpnid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("cvalue", ColumnType.Integer, true)
-                .setForeignName("Color_Palette_color_fk").setForeignTable("Color").setForeignColumn("color_value")
+                .setReferName("Color_Palette_color_fk").setReferTable("Color").setReferColumn("color_value")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;

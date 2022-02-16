@@ -40,7 +40,7 @@ public class TableLocationData extends BaseTable<Location> {
     public final TableLocationData defineColumns() {
         addColumn(new ColumnDefinition("ldid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("datasetid", ColumnType.Long, true)
-                .setForeignName("Location_Data_datasetid_fk").setForeignTable("Dataset").setForeignColumn("dsid"));
+                .setReferName("Location_Data_datasetid_fk").setReferTable("Dataset").setReferColumn("dsid"));
         addColumn(new ColumnDefinition("label", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("address", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("longitude", ColumnType.Double, true).setMaxValue((double) 180).setMinValue((double) -180));

@@ -36,7 +36,7 @@ public class TableExpressionCategory extends BaseTable<Notebook> {
         addColumn(new ColumnDefinition("name", ColumnType.String, true).setLength(256));
         addColumn(new ColumnDefinition("description", ColumnType.String).setLength(4096));
         addColumn(new ColumnDefinition("owner", ColumnType.Long)
-                .setForeignName("Notebook_owner_fk").setForeignTable("Notebook").setForeignColumn("nbid")
+                .setReferName("Notebook_owner_fk").setReferTable("Notebook").setReferColumn("nbid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;

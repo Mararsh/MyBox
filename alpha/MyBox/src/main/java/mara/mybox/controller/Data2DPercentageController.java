@@ -94,9 +94,9 @@ public class Data2DPercentageController extends Data2DHandleController {
             for (Data2DColumn column : cols) {
                 if (valuesCheck.isSelected()) {
                     handledColumns.add(column.cloneAll());
-                    handledNames.add(column.getName());
+                    handledNames.add(column.getColumnName());
                 }
-                cName = column.getName() + "%";
+                cName = column.getColumnName() + "%";
                 while (handledNames.contains(cName)) {
                     cName += "m";
                 }

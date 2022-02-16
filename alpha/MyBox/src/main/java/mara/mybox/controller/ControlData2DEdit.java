@@ -57,7 +57,7 @@ public class ControlData2DEdit extends BaseController {
     }
 
     public boolean isChanged() {
-        return data2D.isTableChanged() || textController.isChanged();
+        return data2D != null && data2D.isTableChanged() || textController.isChanged();
     }
 
     @Override

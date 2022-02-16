@@ -280,7 +280,7 @@ public class ControlDataQuery extends BaseController {
             List<Node> buttons = new ArrayList<>();
             List<ColumnDefinition> columns = dataController.viewDefinition.getColumns();
             for (ColumnDefinition column : columns) {
-                String name = column.getName();
+                String name = column.getColumnName();
                 Button button = new Button(name);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override

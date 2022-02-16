@@ -1324,7 +1324,7 @@ public class Data2DChartController extends Data2DHandleController {
             for (int i = 0; i < checkedColsIndices.size(); i++) {
                 int colIndex = checkedColsIndices.get(i);
                 Data2DColumn column = data2D.column(colIndex);
-                String colName = column.getName();
+                String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);
 
@@ -1370,7 +1370,7 @@ public class Data2DChartController extends Data2DHandleController {
             for (int i = 0; i < sizeNum; i++) {
                 int colIndex = checkedColsIndices.get(i);
                 Data2DColumn column = data2D.column(colIndex);
-                String colName = column.getName();
+                String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);
                 seriesList.add(series);

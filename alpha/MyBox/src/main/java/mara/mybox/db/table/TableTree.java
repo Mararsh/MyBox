@@ -35,7 +35,7 @@ public class TableTree extends BaseTable<TreeNode> {
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("attribute", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("parent", ColumnType.Long)
-                .setForeignName("Tree_parent_fk").setForeignTable("Tree").setForeignColumn("nodeid")
+                .setReferName("Tree_parent_fk").setReferTable("Tree").setReferColumn("nodeid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;

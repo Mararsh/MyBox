@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -12,20 +13,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import mara.mybox.data.DataInternalTable;
 import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @param <D> Should be extened from "BaseData"
@@ -39,7 +39,7 @@ public abstract class BaseTable<D> {
     public final static int StringMaxLength = 32672;
 
     protected String tableName, idColumn, orderColumns;
-    protected List<ColumnDefinition> columns, primaryColumns, foreignColumns;
+    protected List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
     protected Era.Format timeFormat;
     protected boolean supportBatchUpdate;
     protected long newID = -1;
@@ -80,11 +80,11 @@ public abstract class BaseTable<D> {
             for (int i = 0; i < columns.size(); ++i) {
                 ColumnDefinition column = columns.get(i);
                 Object value = readColumnValue(results, column);
-                setValue(data, column.getName(), value);
+                setValue(data, column.getColumnName(), value);
             }
             for (int i = 0; i < foreignColumns.size(); ++i) {
                 ColumnDefinition column = foreignColumns.get(i);
-                String name = column.getName();
+                String name = column.getColumnName();
                 Object value = readForeignValue(results, name);
                 if (!setForeignValue(data, name, value)) {
                     return null;
@@ -109,7 +109,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         try {
-            Object value = getValue(data, column.getName());
+            Object value = getValue(data, column.getColumnName());
             // Not check maxValue/minValue.
             switch (column.getType()) {
                 case String:
@@ -213,12 +213,12 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 default:
-                    MyBoxLog.debug(column.getName() + " " + column.getType() + " " + value.toString());
+                    MyBoxLog.debug(column.getColumnName() + " " + column.getType() + " " + value.toString());
                     return false;
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), tableName + " " + column.getName());
+            MyBoxLog.debug(e.toString(), tableName + " " + column.getColumnName());
             return false;
         }
     }
@@ -324,6 +324,7 @@ public abstract class BaseTable<D> {
         columns = new ArrayList<>();
         primaryColumns = new ArrayList<>();
         foreignColumns = new ArrayList<>();
+        referredColumns = new ArrayList<>();
         timeFormat = Era.Format.Datetime;
         supportBatchUpdate = false;
         newID = -1;
@@ -335,15 +336,16 @@ public abstract class BaseTable<D> {
 
     public BaseTable addColumn(ColumnDefinition column) {
         if (column != null) {
+            column.setTableName(tableName);
             column.setIndex(columns.size() + 1);
             columns.add(column);
             if (column.isIsID()) {
-                idColumn = column.getName();
+                idColumn = column.getColumnName();
             }
             if (column.isIsPrimaryKey()) {
                 primaryColumns.add(column);
             }
-            if (column.getForeignTable() != null && column.getForeignColumn() != null) {
+            if (column.getReferTable() != null && column.getReferColumn() != null) {
                 foreignColumns.add(column);
             }
         }
@@ -357,7 +359,7 @@ public abstract class BaseTable<D> {
         String sql = "CREATE TABLE " + tableName + " ( \n";
         for (int i = 0; i < columns.size(); ++i) {
             ColumnDefinition column = columns.get(i);
-            sql += column.getName() + " ";
+            sql += column.getColumnName() + " ";
             switch (column.getType()) {
                 case String:
                 case Text:
@@ -400,7 +402,7 @@ public abstract class BaseTable<D> {
                     sql += "CLOB";
                     break;
                 default:
-                    MyBoxLog.debug(column.getName() + " " + column.getType());
+                    MyBoxLog.debug(column.getColumnName() + " " + column.getType());
                     return null;
             }
             if (column.isNotNull()) {
@@ -416,7 +418,7 @@ public abstract class BaseTable<D> {
             if (i > 0) {
                 sql += ", ";
             }
-            sql += primaryColumns.get(i).getName();
+            sql += primaryColumns.get(i).getColumnName();
 
         }
         sql += " ) ";
@@ -433,10 +435,6 @@ public abstract class BaseTable<D> {
     }
 
     public boolean createTable(Connection conn) {
-        return createTable(conn, new DataInternalTable());
-    }
-
-    public boolean createTable(Connection conn, DataInternalTable dataTable) {
         if (conn == null) {
             return false;
         }
@@ -444,9 +442,6 @@ public abstract class BaseTable<D> {
         try {
             sql = createTableStatement();
             conn.createStatement().executeUpdate(sql);
-            if (dataTable != null) {
-                dataTable.recordTable(conn, tableName);
-            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -469,7 +464,7 @@ public abstract class BaseTable<D> {
         }
     }
 
-     public long clearData() {
+    public long clearData() {
         try ( Connection conn = DerbyBase.getConnection()) {
             return clearData(conn);
         } catch (Exception e) {
@@ -559,7 +554,7 @@ public abstract class BaseTable<D> {
         if (tableName == null || columns.isEmpty()) {
             return null;
         }
-        String sql = "SELECT COUNT(" + columns.get(0).getName() + ") FROM " + tableName;
+        String sql = "SELECT COUNT(" + columns.get(0).getColumnName() + ") FROM " + tableName;
         return sql;
     }
 
@@ -614,7 +609,7 @@ public abstract class BaseTable<D> {
             } else {
                 sql += " AND ";
             }
-            sql += column.getName() + "=? ";
+            sql += column.getColumnName() + "=? ";
         }
         return sql;
     }
@@ -625,7 +620,7 @@ public abstract class BaseTable<D> {
         }
         List<ColumnDefinition> columnsList = new ArrayList<>();
         for (ColumnDefinition column : columns) {
-            String name = column.getName();
+            String name = column.getColumnName();
             if (idColumn != null && name.equals(idColumn)) {
                 continue;
             }
@@ -641,7 +636,7 @@ public abstract class BaseTable<D> {
         String sql = null;
         String v = null;
         for (ColumnDefinition column : columns) {
-            String name = column.getName();
+            String name = column.getColumnName();
             if (idColumn != null && name.equals(idColumn)) {
                 continue;
             }
@@ -678,7 +673,7 @@ public abstract class BaseTable<D> {
         }
         String update = null;
         for (ColumnDefinition column : columns) {
-            String name = column.getName();
+            String name = column.getColumnName();
             if (primaryColumns.contains(column)) {
                 continue;
             }
@@ -696,7 +691,7 @@ public abstract class BaseTable<D> {
             } else {
                 where += " AND ";
             }
-            where += column.getName() + "=?";
+            where += column.getColumnName() + "=?";
         }
         return update + (where != null ? where : "");
     }
@@ -713,7 +708,7 @@ public abstract class BaseTable<D> {
             } else {
                 where += " AND ";
             }
-            where += column.getName() + "=?";
+            where += column.getColumnName() + "=?";
         }
         return delete + (where != null ? where : "");
     }
@@ -724,7 +719,7 @@ public abstract class BaseTable<D> {
         }
         for (int i = 0; i < columns.size() - 1; i++) {
             ColumnDefinition column = columns.get(i);
-            if (columnName.equals(column.getName())) {
+            if (columnName.equals(column.getColumnName())) {
                 return i;
             }
         }
@@ -748,7 +743,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         for (ColumnDefinition column : columns) {
-            if (column.getName().equals(columnName)) {
+            if (column.getColumnName().equals(columnName)) {
                 return column;
             }
         }
@@ -761,32 +756,58 @@ public abstract class BaseTable<D> {
         }
         StringBuilder s = new StringBuilder();
         for (ColumnDefinition column : columns) {
-            s.append(column.getName()).append("\t\t")
+            s.append(column.getColumnName()).append("\t\t")
                     .append(column.getType().name()).append("\t\t")
                     .append(column.getLength() > 0 ? column.getLength() + "" : " ").append("\t\t")
-                    .append(column.isNotNull() ? Languages.message("NotNull") : "")
+                    .append(column.isNotNull() ? message("NotNull") : "")
                     .append("\n");
         }
         return s.toString();
     }
 
-    public String columnsTable() {
+    public String columnsHtml() {
         if (tableName == null || columns.isEmpty()) {
             return null;
         }
         List<String> names = new ArrayList<>();
-        names.addAll(Arrays.asList(Languages.message("Column"), Languages.message("Type"), Languages.message("Length"),
-                Languages.message("NotNull"), Languages.message("PrimaryKey"), Languages.message("AutoGenerated"), Languages.message("ForeignKey")));
+        names.addAll(Arrays.asList(message("Column"), message("Type"), message("Length"),
+                message("NotNull"), message("PrimaryKey"), message("AutoGenerated"),
+                message("ReferTable"), message("ReferColumn")));
         StringTable table = new StringTable(names, tableName);
         for (ColumnDefinition column : columns) {
             List<String> row = new ArrayList<>();
-            row.add(column.getName());
+            row.add(column.getColumnName());
             row.add(column.getType().name());
             row.add(column.getLength() > 0 ? column.getLength() + "" : "");
-            row.add(column.isNotNull() ? Languages.message("Yes") : "");
-            row.add(column.isIsPrimaryKey() ? Languages.message("Yes") : "");
-            row.add(column.isIsID() ? Languages.message("Yes") : "");
-            row.add(column.isForeignKey() ? Languages.message("Yes") : "");
+            row.add(column.isNotNull() ? message("Yes") : "");
+            row.add(column.isIsPrimaryKey() ? message("Yes") : "");
+            row.add(column.isAuto() ? message("Yes") : "");
+            row.add(column.getReferTable());
+            row.add(column.getReferColumn());
+            table.add(row);
+        }
+        return StringTable.tableDiv(table);
+    }
+
+    public String referredColumnsHtml() {
+        if (tableName == null || referredColumns.isEmpty()) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        names.addAll(Arrays.asList(message("Column"), message("Type"), message("Length"),
+                message("NotNull"), message("PrimaryKey"), message("AutoGenerated"),
+                message("ReferredByTable"), message("ReferredByColumn")));
+        StringTable table = new StringTable(names, message("Referred"));
+        for (ColumnDefinition column : referredColumns) {
+            List<String> row = new ArrayList<>();
+            row.add(column.getColumnName());
+            row.add(column.getType().name());
+            row.add(column.getLength() > 0 ? column.getLength() + "" : "");
+            row.add(column.isNotNull() ? message("Yes") : "");
+            row.add(column.isIsPrimaryKey() ? message("Yes") : "");
+            row.add(column.isAuto() ? message("Yes") : "");
+            row.add(column.getReferTable());
+            row.add(column.getReferColumn());
             table.add(row);
         }
         return StringTable.tableDiv(table);
@@ -796,7 +817,12 @@ public abstract class BaseTable<D> {
         if (tableName == null || columns.isEmpty()) {
             return null;
         }
-        String html = columnsTable() + "</BR><HR>" + createTableStatement().replaceAll("\n", "</BR>");
+        String html = columnsHtml();
+        String referred = referredColumnsHtml();
+        if (referred != null) {
+            html += "</BR>" + referred;
+        }
+        html += "</BR><HR>" + createTableStatement().replaceAll("\n", "</BR>");
         return HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
     }
 
@@ -1328,80 +1354,85 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public BaseTable readDefinitionFromDB(Connection conn, String tableName) {
-        if (tableName == null || tableName.isBlank()) {
+    public BaseTable readDefinitionFromDB(Connection conn, String tname) {
+        if (tname == null || tname.isBlank()) {
             return null;
         }
-        List<String> primaryKeys = DerbyBase.primaryKeys(conn, tableName);
-        try ( Statement statement = conn.createStatement()) {
-            this.tableName = tableName;
+        try {
+            this.tableName = tname.toLowerCase();
+            String tuname = tname.toUpperCase();
             init();
-            String sql = "SELECT columnname, columndatatype, columnnumber, autoincrementvalue FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
-                    + " where t.TABLEID=c.REFERENCEID AND tablename='" + tableName.toUpperCase() + "'"
-                    + " order by columnnumber";
-            try ( ResultSet resultSet = statement.executeQuery(sql)) {
+            DatabaseMetaData dbMeta = conn.getMetaData();
+            try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", tuname, "%")) {
                 while (resultSet.next()) {
+                    String name = resultSet.getString("COLUMN_NAME").toLowerCase();
                     ColumnDefinition column = ColumnDefinition.create()
-                            .setName(resultSet.getString("columnname").toLowerCase())
-                            .setIndex(resultSet.getInt("columnnumber"));
-                    if (primaryKeys.contains(column.getName())) {
-                        column.setIsPrimaryKey(true);
-                        primaryColumns.add(column);
-                        if (resultSet.getLong("autoincrementvalue") > 0) {
-                            column.setIsID(true);
+                            .setTableName(tableName)
+                            .setColumnName(name)
+                            .setType(ColumnDefinition.sqlColumnType(resultSet.getInt("DATA_TYPE")))
+                            .setLength(resultSet.getInt("COLUMN_SIZE"))
+                            .setNotNull("YES".equalsIgnoreCase(resultSet.getString("IS_NULLABLE")))
+                            .setAuto("YES".equalsIgnoreCase(resultSet.getString("IS_AUTOINCREMENT")));
+                    columns.add(column);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, tableName);
+            }
+            primaryColumns = new ArrayList<>();
+            try ( ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", tuname)) {
+                while (resultSet.next()) {
+                    String name = resultSet.getString("COLUMN_NAME").toLowerCase();
+                    for (ColumnDefinition column : columns) {
+                        if (name.equals(column.getColumnName())) {
+                            column.setIsPrimaryKey(true);
+                            if (column.isAuto()) {
+                                column.setIsID(true);
+                            }
+                            primaryColumns.add(column);
+                            break;
                         }
                     }
-                    String type = resultSet.getString("columndatatype");
-                    if (type.endsWith(" NOT NULL")) {
-                        column.setNotNull(true);
-                        type = type.substring(0, type.length() - " NOT NULL".length()).trim();
-                    }
-                    switch (type) {
-                        case "DOUBLE":
-                            column.setType(ColumnType.Double);
-                            break;
-                        case "BIGINT":
-                            column.setType(ColumnType.Long);
-                            break;
-                        case "SMALLINT":
-                            column.setType(ColumnType.Short);
-                            break;
-                        case "BOOLEAN":
-                            column.setType(ColumnType.Boolean);
-                            break;
-                        case "INTEGER":
-                            column.setType(ColumnType.Integer);
-                            break;
-                        case "FLOAT":
-                            column.setType(ColumnType.Float);
-                            break;
-                        case "TIMESTAMP":
-                            column.setType(ColumnType.Datetime);
-                            break;
-                        case "DATE":
-                            column.setType(ColumnType.Date);
-                            break;
-                        default:
-                            if (type.startsWith("VARCHAR") || type.startsWith("CHAR")) {
-                                column.setType(ColumnType.String);
-                            } else if (type.startsWith("BLOB")) {
-                                column.setType(ColumnType.Blob);
-                            } else if (type.startsWith("CLOB")) {
-                                column.setType(ColumnType.Clob);
-                            } else {
-                                column.setType(ColumnType.Unknown);
-                                MyBoxLog.debug(type);
-                            }
-                            try {
-                                column.setLength(Integer.parseInt(type.substring(type.indexOf("(") + 1, type.indexOf(")"))));
-                            } catch (Exception e) {
-                            }
-                    }
-
-                    addColumn(column);
-//                    MyBoxLog.debug(column.getIndex() + " " + column.getName() + " " + column.getType().name() + " " + column.isIsPrimaryKey() + " " + column.isIsID());
                 }
+            } catch (Exception e) {
             }
+            foreignColumns = new ArrayList<>();
+            try ( ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", tuname)) {
+                while (resultSet.next()) {
+                    String name = resultSet.getString("FKCOLUMN_NAME").toLowerCase();
+                    for (ColumnDefinition column : columns) {
+                        if (name.equals(column.getColumnName())) {
+                            column.setReferName(resultSet.getString("FK_NAME"))
+                                    .setReferTable(resultSet.getString("PKTABLE_NAME").toLowerCase())
+                                    .setReferColumn(resultSet.getString("PKCOLUMN_NAME").toLowerCase())
+                                    .setOnDelete(ColumnDefinition.deleteRule(resultSet.getShort("DELETE_RULE")))
+                                    .setOnUpdate(ColumnDefinition.updateRule(resultSet.getShort("UPDATE_RULE")));
+                            foreignColumns.add(column);
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+            }
+            referredColumns = new ArrayList<>();
+            try ( ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", tuname)) {
+                while (resultSet.next()) {
+                    String name = resultSet.getString("PKCOLUMN_NAME").toLowerCase();
+                    for (ColumnDefinition column : columns) {
+                        if (name.equals(column.getColumnName())) {
+                            ColumnDefinition rcolumn = column.cloneAll();
+                            rcolumn.setReferName(resultSet.getString("FK_NAME"))
+                                    .setReferTable(resultSet.getString("FKTABLE_NAME").toLowerCase())
+                                    .setReferColumn(resultSet.getString("FKCOLUMN_NAME").toLowerCase())
+                                    .setOnDelete(ColumnDefinition.deleteRule(resultSet.getShort("DELETE_RULE")))
+                                    .setOnUpdate(ColumnDefinition.updateRule(resultSet.getShort("UPDATE_RULE")));
+                            referredColumns.add(rcolumn);
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
         }
@@ -1413,7 +1444,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         for (ColumnDefinition column : primaryColumns) {
-            String name = column.getName();
+            String name = column.getColumnName();
             Object v1 = getValue(row1, name);
             Object v2 = getValue(row2, name);
             if (v1 == null || v2 == null || !v1.equals(v2)) {

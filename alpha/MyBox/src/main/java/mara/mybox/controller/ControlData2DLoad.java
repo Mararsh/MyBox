@@ -480,7 +480,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             List<Data2DColumn> columns = data2D.getColumns();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
-                String name = dataColumn.getName();
+                String name = dataColumn.getColumnName();
                 TableColumn tableColumn = new TableColumn<List<String>, String>(name);
                 tableColumn.setPrefWidth(dataColumn.getWidth());
                 tableColumn.setEditable(!readOnly && dataColumn.isEditable());

@@ -86,7 +86,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         addColumn(new ColumnDefinition("area", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("population", ColumnType.Long).setMinValue((long) 0));
         addColumn(new ColumnDefinition("owner", ColumnType.Long).setMinValue((long) 0)
-                .setForeignName("Geography_Code_owner_fk").setForeignTable("Geography_Code").setForeignColumn("gcid"));
+                .setReferName("Geography_Code_owner_fk").setReferTable("Geography_Code").setReferColumn("gcid"));
         addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("gcsource", ColumnType.Short).setMinValue((short) 0));
         return this;

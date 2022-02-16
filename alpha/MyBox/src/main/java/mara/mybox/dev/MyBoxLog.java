@@ -123,7 +123,7 @@ public class MyBoxLog extends BaseData {
         if (data == null || column == null || value == null) {
             return null;
         }
-        if ("log_type".equals(column.getName())) {
+        if ("log_type".equals(column.getColumnName())) {
             return Languages.message(data.getLogType().name());
         }
         return DataFactory.displayColumnBase(data, column, value);

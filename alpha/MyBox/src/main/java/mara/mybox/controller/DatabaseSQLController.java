@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Window;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -19,8 +20,10 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -36,7 +39,7 @@ public class DatabaseSQLController extends BaseController {
     @FXML
     protected TextArea sqlArea, outputArea;
     @FXML
-    protected Button listButton, examplesButton, helpDefinitionButton;
+    protected Button listButton, examplesButton, tableDefinitionButton;
     @FXML
     protected ControlWebView dataController;
 
@@ -60,7 +63,6 @@ public class DatabaseSQLController extends BaseController {
     public void setControlsStyle() {
         super.setControlsStyle();
         NodeStyleTools.setTooltip(listButton, new Tooltip(message("TableName")));
-        NodeStyleTools.setTooltip(helpDefinitionButton, new Tooltip(message("TableDefinition")));
     }
 
     @FXML
@@ -193,6 +195,30 @@ public class DatabaseSQLController extends BaseController {
             return;
         }
         DataFileTextController.open(db2Columns, data);
+    }
+
+    /*
+        static
+     */
+    public static DatabaseSQLController oneOpen() {
+        DatabaseSQLController controller = null;
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof DatabaseSQLController) {
+                try {
+                    controller = (DatabaseSQLController) object;
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (controller == null) {
+            controller = (DatabaseSQLController) WindowTools.openStage(Fxmls.DatabaseSQLFxml);
+        }
+        controller.requestMouse();
+        return controller;
     }
 
 }

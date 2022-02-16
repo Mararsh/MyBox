@@ -28,12 +28,12 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorCommitCell;
 import mara.mybox.fxml.cell.TableComboBoxCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -138,7 +138,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
             indexColumn.setEditable(false);
 
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("columnName"));
             if (!readOnly) {
                 nameColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
                 nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
@@ -152,8 +152,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                         if (column == null || v == null) {
                             return;
                         }
-                        if (!v.equals(column.getName())) {
-                            column.setName(v);
+                        if (!v.equals(column.getColumnName())) {
+                            column.setColumnName(v);
                             status(Status.Modified);
                         }
                     }
@@ -336,7 +336,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 primaryColumn.setCellFactory(new TableBooleanCell());
             }
 
-            autoColumn.setCellValueFactory(new PropertyValueFactory<>("isID"));
+            autoColumn.setCellValueFactory(new PropertyValueFactory<>("auto"));
             if (!readOnly) {
                 autoColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
                     @Override
@@ -346,7 +346,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                                 @Override
                                 protected boolean getCellValue(int rowIndex) {
                                     try {
-                                        return tableData.get(rowIndex).isIsID();
+                                        return tableData.get(rowIndex).isAuto();
                                     } catch (Exception e) {
                                         return false;
                                     }
@@ -362,8 +362,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                                         if (column == null) {
                                             return;
                                         }
-                                        if (value != column.isNotNull()) {
-                                            column.setIsID(value);
+                                        if (value != column.isAuto()) {
+                                            column.setAuto(value);
                                             status(Status.Modified);
                                         }
                                     } catch (Exception e) {
@@ -570,7 +570,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public Data2DColumn newData() {
         Data2DColumn column = new Data2DColumn();
         column.setIndex(data2D.newColumnIndex());
-        column.setName(data2D.colPrefix() + data2D.newColumnIndex());
+        column.setColumnName(data2D.colPrefix() + data2D.newColumnIndex());
         column.setColor(FxColorTools.randomColor());
         return column;
     }
@@ -581,7 +581,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             return null;
         }
         Data2DColumn column = data.copy();
-        column.setName(data.getName() + "_" + message("Copy"));
+        column.setColumnName(data.getColumnName() + "_" + message("Copy"));
         column.setIndex(data2D.newColumnIndex());
         return column;
     }
@@ -604,7 +604,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             String prefix = message(data2D.colPrefix());
             isSettingValues = true;
             for (int i = 0; i < tableData.size(); i++) {
-                tableData.get(i).setName(prefix + (i + 1));
+                tableData.get(i).setColumnName(prefix + (i + 1));
             }
             tableView.refresh();
             isSettingValues = false;

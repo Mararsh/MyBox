@@ -8,6 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.Data2D;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -149,7 +150,7 @@ public class Data2DManageQueryController extends BaseChildController {
             if (databaseCheck.isSelected()) {
                 condition += (condition.isEmpty() ? "" : " OR ") + " data_type=5 ";
             }
-            condition += " AND data_type != " + Data2D.typeInternalTable();
+            condition += " AND data_type != " + Data2D.type(Data2DDefinition.Type.InternalTable);
             String orderColumns = null;
             if (idRadio.isSelected()) {
                 orderColumns = " d2did ";

@@ -301,7 +301,7 @@ public class GeographyCode extends BaseData {
         if (data == null || column == null || value == null) {
             return null;
         }
-        switch (column.getName()) {
+        switch (column.getColumnName()) {
             case "owner":
                 return data.getOwner() + "";
             case "gcsource":

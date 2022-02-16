@@ -38,10 +38,10 @@ import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableDoubleCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**
@@ -96,7 +96,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
         queryPrefix = TableLocationData.ViewSelect;
         sizePrefix = TableLocationData.SizeSelectPrefix;
         clearPrefix = TableLocationData.ClearPrefix;
-        String html = viewDefinition.columnsTable() + "</BR><HR>"
+        String html = viewDefinition.columnsHtml() + "</BR><HR>"
                 + tableDefinition.createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + tableDataset.createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + TableLocationData.CreateView.replaceAll("\n", "</BR>");

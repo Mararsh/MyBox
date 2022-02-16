@@ -312,14 +312,14 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                     String name = item.substring(0, item.length() - message("Ascending").length() - 1);
                     ColumnDefinition column = viewDefinition.columnByMessage(name);
                     if (column != null) {
-                        String q = column.getName() + " ASC";
+                        String q = column.getColumnName() + " ASC";
                         queryOrder = queryOrder.isBlank() ? q : queryOrder + ", " + q;
                     }
                 } else if (item.endsWith(" " + message("Descending"))) {
                     String name = item.substring(0, item.length() - message("Descending").length() - 1);
                     ColumnDefinition column = viewDefinition.columnByMessage(name);
                     if (column != null) {
-                        String q = column.getName() + " DESC";
+                        String q = column.getColumnName() + " DESC";
                         queryOrder = queryOrder.isBlank() ? q : queryOrder + ", " + q;
                     }
                 }

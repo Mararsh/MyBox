@@ -46,7 +46,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         addColumn(new ColumnDefinition("data_set", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("locationid", ColumnType.Long, true)
-                .setForeignName("Epidemic_Report_locationid_fk").setForeignTable("Geography_Code").setForeignColumn("gcid"));
+                .setReferName("Epidemic_Report_locationid_fk").setReferTable("Geography_Code").setReferColumn("gcid"));
         addColumn(new ColumnDefinition("confirmed", ColumnType.Long));
         addColumn(new ColumnDefinition("healed", ColumnType.Long));
         addColumn(new ColumnDefinition("dead", ColumnType.Long));

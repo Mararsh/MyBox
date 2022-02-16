@@ -222,7 +222,7 @@ public class DataFileExcel extends DataFile {
         Row targetRow = targetSheet.createRow(index++);
         for (int col = 0; col < columns.size(); col++) {
             Cell targetCell = targetRow.createCell(col, CellType.STRING);
-            targetCell.setCellValue(columns.get(col).getName());
+            targetCell.setCellValue(columns.get(col).getColumnName());
         }
         return index;
     }
