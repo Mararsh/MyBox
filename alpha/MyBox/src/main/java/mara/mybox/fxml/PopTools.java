@@ -46,6 +46,7 @@ import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.MenuController;
 import mara.mybox.controller.TextInputController;
+import mara.mybox.data.DataInternalTable;
 import mara.mybox.data.DataTable;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -636,19 +637,7 @@ public class PopTools {
             setButtons.add(maxButton);
             controller.addFlowPane(setButtons);
 
-            List<String> values = TableStringValues.max(name, max);
-            List<Node> valueButtons = new ArrayList<>();
-            for (String value : values) {
-                Button button = new Button(value);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        input.appendText(value);
-                    }
-                });
-                valueButtons.add(button);
-            }
-            controller.addFlowPane(valueButtons);
+            addButtonsPane(controller, input, TableStringValues.max(name, max));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -682,43 +671,39 @@ public class PopTools {
             topButtons.add(clearButton);
             controller.addFlowPane(topButtons);
 
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
-                    "SELECT * FROM ",
-                    " WHERE ", " ORDER BY ", " DESC ", " ASC ", " , ", " (   ) ",
-                    " >= ", " > ", " <= ", " < ", " != ",
-                    " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY",
+            addButtonsPane(controller, input, Arrays.asList(
+                    "SELECT * FROM ", " WHERE ", " ORDER BY ", " DESC ", " ASC ",
+                    " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY"
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " , ", " (   ) ", " >= ", " > ", " <= ", " < ", " != "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " AND ", " OR ", " NOT ", " IS NULL ", " IS NOT NULL "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " LIKE 'a%' ", " LIKE 'a_' ", " BETWEEN <value1> AND <value2>"
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " IN ( <value1>, <value2> ) ", " IN (SELECT FROM <table> WHERE <condition>) "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " EXISTS (SELECT FROM <table> WHERE <condition>) "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " DATE('1998-02-26') ", " TIMESTAMP('1962-09-23 03:23:34.234') "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " COUNT ", " AVG ", " MAX ", " MIN ", " SUM ", " GROUP BY ", " HAVING "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " JOIN ", " INNER JOIN ", " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " CROSS JOIN "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
                     "INSERT INTO <table> (column1, column2) VALUES (value1, value2)",
                     "UPDATE <table> SET <column1>=<value1>, <column2>=<value2> WHERE ",
-                    "DELETE FROM <table> WHERE ",
-                    " AND ", " OR ", " NOT ",
-                    " LIKE 'a%' ", " LIKE 'a_' ",
-                    " IS NULL ", " IS NOT NULL ",
-                    " BETWEEN <value1> AND <value2>",
-                    " IN ( <value1>, <value2> ) ",
-                    " IN (SELECT FROM <table> WHERE <condition>) ",
-                    " EXISTS (SELECT FROM <table> WHERE <condition>) ",
-                    " DATE('1998-02-26') ",
-                    " TIMESTAMP('1962-09-23 03:23:34.234') "
+                    "DELETE FROM <table> WHERE ", "TRUNCATE TABLE "
             ));
-
-            List<Node> valueButtons = new ArrayList<>();
-            for (String value : values) {
-                Button button = new Button(value);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        if (isTextArea) {
-                            input.appendText(value);
-                        } else {
-                            input.setText(value);
-                        }
-                        input.requestFocus();
-                    }
-                });
-                valueButtons.add(button);
-            }
-            controller.addFlowPane(valueButtons);
 
             Hyperlink link = new Hyperlink("Derby Reference Manual");
             link.setOnAction(new EventHandler<ActionEvent>() {
@@ -734,12 +719,38 @@ public class PopTools {
         }
     }
 
-    public static void popTableNames(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+    public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> names) {
+        try {
+            List<Node> buttons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.appendText(name);
+                        input.requestFocus();
+                    }
+                });
+                buttons.add(button);
+            }
+            controller.addFlowPane(buttons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popTableNames(BaseController parent, TextInputControl input,
+            MouseEvent mouseEvent, boolean internal) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addNode(new Label(message("TableName")));
 
-            List<String> names = DataTable.userTables();
+            List<String> names;
+            if (internal) {
+                names = DataInternalTable.InternalTables;
+            } else {
+                names = DataTable.userTables();
+            }
             List<Node> valueButtons = new ArrayList<>();
             for (String name : names) {
                 Button button = new Button(name);
@@ -758,13 +769,19 @@ public class PopTools {
         }
     }
 
-    public static void popTableDefinition(BaseController parent, Node node, MouseEvent mouseEvent) {
+    public static void popTableDefinition(BaseController parent, Node node,
+            MouseEvent mouseEvent, boolean internal) {
         try {
             MenuController controller = MenuController.open(parent, node, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 
             controller.addNode(new Label(message("TableDefinition")));
 
-            List<String> names = DataTable.userTables();
+            List<String> names;
+            if (internal) {
+                names = DataInternalTable.InternalTables;
+            } else {
+                names = DataTable.userTables();
+            }
             List<Node> valueButtons = new ArrayList<>();
             for (String name : names) {
                 Button button = new Button(name);

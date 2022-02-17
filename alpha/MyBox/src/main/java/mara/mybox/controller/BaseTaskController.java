@@ -26,7 +26,7 @@ public class BaseTaskController extends BaseController {
     protected boolean cancelled;
 
     @FXML
-    protected Tab optionsTab, logsTab;
+    protected Tab logsTab;
     @FXML
     protected CheckBox verboseCheck;
     @FXML

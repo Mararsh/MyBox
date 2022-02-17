@@ -18,6 +18,7 @@ public class MyBoxTablesController extends DataTablesController {
 
     public MyBoxTablesController() {
         baseTitle = message("MyBoxTables");
+        internal = true;
     }
 
     @Override

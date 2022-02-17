@@ -125,6 +125,49 @@ public class DataExportController extends BaseTaskController {
 //        queryController.thisPane.setDisable(true);
     }
 
+    @Override
+    public boolean checkOptions() {
+        if (targetPath == null) {
+            tabPane.getSelectionModel().select(targetTab);
+            popError(Languages.message("InvalidTargetPath"));
+            return false;
+        }
+        if (targetNameInput.getText().trim().isBlank()) {
+            tabPane.getSelectionModel().select(targetTab);
+            popError(Languages.message("TargetPrefixEmpty"));
+            return false;
+        }
+        if (!currentPage) {
+            queryController.savedCondition = queryController.save();
+            if (queryController.savedCondition == null) {
+                popError(Languages.message("InvalidParameters"));
+                return false;
+            } else {
+                queryController.loadList();
+            }
+        }
+        if (!convertController.initParameters()) {
+            tabPane.getSelectionModel().select(formatsTab);
+            return false;
+        }
+        columns = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        for (Node node : fieldsPane.getChildren()) {
+            CheckBox cb = (CheckBox) node;
+            if (cb.isSelected()) {
+                columns.add((ColumnDefinition) (cb.getUserData()));
+                names.add(cb.getText());
+            }
+        }
+        if (columns.isEmpty()) {
+            tabPane.getSelectionModel().select(fieldsTab);
+            popError(Languages.message("NoData"));
+            return false;
+        }
+        convertController.names = names;
+        return true;
+    }
+
     @FXML
     @Override
     public void startAction() {
@@ -132,7 +175,7 @@ public class DataExportController extends BaseTaskController {
         if (queryController.savedCondition == null) {
             return;
         }
-        if (!checkSettings()) {
+        if (!checkOptions()) {
             return;
         }
         top = queryController.savedCondition.getTop();
@@ -428,48 +471,6 @@ public class DataExportController extends BaseTaskController {
             CheckBox cb = (CheckBox) node;
             cb.setSelected(false);
         }
-    }
-
-    public boolean checkSettings() {
-        if (targetPath == null) {
-            tabPane.getSelectionModel().select(targetTab);
-            popError(Languages.message("InvalidTargetPath"));
-            return false;
-        }
-        if (targetNameInput.getText().trim().isBlank()) {
-            tabPane.getSelectionModel().select(targetTab);
-            popError(Languages.message("TargetPrefixEmpty"));
-            return false;
-        }
-        if (!currentPage) {
-            queryController.savedCondition = queryController.save();
-            if (queryController.savedCondition == null) {
-                popError(Languages.message("InvalidParameters"));
-                return false;
-            } else {
-                queryController.loadList();
-            }
-        }
-        if (!convertController.initParameters()) {
-            tabPane.getSelectionModel().select(formatsTab);
-            return false;
-        }
-        columns = new ArrayList<>();
-        List<String> names = new ArrayList<>();
-        for (Node node : fieldsPane.getChildren()) {
-            CheckBox cb = (CheckBox) node;
-            if (cb.isSelected()) {
-                columns.add((ColumnDefinition) (cb.getUserData()));
-                names.add(cb.getText());
-            }
-        }
-        if (columns.isEmpty()) {
-            tabPane.getSelectionModel().select(fieldsTab);
-            popError(Languages.message("NoData"));
-            return false;
-        }
-        convertController.names = names;
-        return true;
     }
 
     protected boolean validTopOrder() {

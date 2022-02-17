@@ -1,10 +1,15 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
@@ -56,6 +61,27 @@ public class MenuTextBaseController extends MenuController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void addButtonsPane(List<String> names) {
+        List<Node> buttons = new ArrayList<>();
+        boolean isTextArea = textInput instanceof TextArea;
+        for (String name : names) {
+            Button button = new Button(name);
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (isTextArea) {
+                        textInput.appendText(name);
+                    } else {
+                        textInput.setText(name);
+                    }
+                    textInput.requestFocus();
+                }
+            });
+            buttons.add(button);
+        }
+        addFlowPane(buttons);
     }
 
     @FXML

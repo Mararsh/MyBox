@@ -50,10 +50,10 @@ import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
@@ -849,6 +849,88 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public List<MenuItem> operationsMenu() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            int hisSize = (int) webEngine.executeScript("window.history.length;");
+            menu = new MenuItem(message("Backward"), StyleTools.getIconImage("iconPrevious.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                backAction();
+            });
+            menu.setDisable(hisSize < 2);
+            items.add(menu);
+
+            menu = new MenuItem(message("Forward"), StyleTools.getIconImage("iconNext.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                forwardAction();
+            });
+            menu.setDisable(hisSize < 2);
+            items.add(menu);
+
+            menu = new MenuItem(message("ZoomIn"), StyleTools.getIconImage("iconZoomIn.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                zoomIn();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ZoomOut"), StyleTools.getIconImage("iconZoomOut.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                zoomOut();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                refresh();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Cancel"), StyleTools.getIconImage("iconCancel.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                cancelAction();
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    @FXML
+    public void popOperationsMenu(MouseEvent mouseEvent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (address != null && !address.isBlank()) {
+                menu = new MenuItem(address);
+                menu.setStyle("-fx-text-fill: #2e598a;");
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            }
+
+            items.addAll(operationsMenu());
+            items.add(new SeparatorMenuItem());
+
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+            popMenu.getItems().addAll(items);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
             String html = loadedHtml();
@@ -865,50 +947,11 @@ public class ControlWebView extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            Menu navMenu = new Menu("Html");
-            List<MenuItem> navItems = new ArrayList<>();
+            Menu opertionsMenu = new Menu("Operations", StyleTools.getIconImage("iconAsterisk.png"));
+            opertionsMenu.getItems().setAll(operationsMenu());
+            items.add(opertionsMenu);
 
-            int hisSize = (int) webEngine.executeScript("window.history.length;");
-            menu = new MenuItem(message("Backward"), StyleTools.getIconImage("iconPrevious.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                backAction();
-            });
-            menu.setDisable(hisSize < 2);
-            navItems.add(menu);
-
-            menu = new MenuItem(message("Forward"), StyleTools.getIconImage("iconNext.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                forwardAction();
-            });
-            menu.setDisable(hisSize < 2);
-            navItems.add(menu);
-
-            menu = new MenuItem(message("ZoomIn"), StyleTools.getIconImage("iconZoomIn.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                zoomIn();
-            });
-            navItems.add(menu);
-
-            menu = new MenuItem(message("ZoomOut"), StyleTools.getIconImage("iconZoomOut.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                zoomOut();
-            });
-            navItems.add(menu);
-
-            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                refresh();
-            });
-            navItems.add(menu);
-
-            menu = new MenuItem(message("Cancel"), StyleTools.getIconImage("iconCancel.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                cancelAction();
-            });
-            navItems.add(menu);
-
-            navMenu.getItems().setAll(navItems);
-            items.add(navMenu);
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem clickMenu = new CheckMenuItem(message("PopMenuWhenClickLink"), StyleTools.getIconImage("iconMenu.png"));
             clickMenu.setSelected(UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true));

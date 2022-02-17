@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Window;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -35,6 +34,7 @@ public class DatabaseSQLController extends BaseController {
 
     protected List<Data2DColumn> db2Columns;
     protected List<List<String>> data;
+    protected boolean internal;
 
     @FXML
     protected TextArea sqlArea, outputArea;
@@ -63,6 +63,7 @@ public class DatabaseSQLController extends BaseController {
     public void setControlsStyle() {
         super.setControlsStyle();
         NodeStyleTools.setTooltip(listButton, new Tooltip(message("TableName")));
+        startButton.requestFocus();
     }
 
     @FXML
@@ -92,7 +93,7 @@ public class DatabaseSQLController extends BaseController {
                          Statement statement = conn.createStatement()) {
                     for (String sql : cmds) {
                         try {
-                            TableStringValues.add(conn, "SQLHistories", sql);
+                            TableStringValues.add(conn, "SQLHistories" + (internal ? "Internal" : ""), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -175,17 +176,17 @@ public class DatabaseSQLController extends BaseController {
 
     @FXML
     protected void popSqlHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, sqlArea, mouseEvent, "SQLHistories");
+        PopTools.popStringValues(this, sqlArea, mouseEvent, "SQLHistories" + (internal ? "Internal" : ""));
     }
 
     @FXML
     protected void popTableNames(MouseEvent mouseEvent) {
-        PopTools.popTableNames(this, sqlArea, mouseEvent);
+        PopTools.popTableNames(this, sqlArea, mouseEvent, internal);
     }
 
     @FXML
     protected void popTableDefinition(MouseEvent mouseEvent) {
-        PopTools.popTableDefinition(this, sqlArea, mouseEvent);
+        PopTools.popTableDefinition(this, sqlArea, mouseEvent, internal);
     }
 
     @FXML
@@ -197,26 +198,16 @@ public class DatabaseSQLController extends BaseController {
         DataFileTextController.open(db2Columns, data);
     }
 
+    public void setInternal(boolean internal) {
+        this.internal = internal;
+    }
+
     /*
         static
      */
-    public static DatabaseSQLController oneOpen() {
-        DatabaseSQLController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof DatabaseSQLController) {
-                try {
-                    controller = (DatabaseSQLController) object;
-                    break;
-                } catch (Exception e) {
-                }
-            }
-        }
-        if (controller == null) {
-            controller = (DatabaseSQLController) WindowTools.openStage(Fxmls.DatabaseSQLFxml);
-        }
+    public static DatabaseSQLController open(boolean internal) {
+        DatabaseSQLController controller = (DatabaseSQLController) WindowTools.openStage(Fxmls.DatabaseSQLFxml);
+        controller.setInternal(internal);
         controller.requestMouse();
         return controller;
     }

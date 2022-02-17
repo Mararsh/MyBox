@@ -34,10 +34,10 @@ import javafx.util.Duration;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -570,6 +570,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 myStage.toFront();
                 myStage.requestFocus();
                 LocateTools.mouseCenter(myStage);
+                closePopup();
             });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

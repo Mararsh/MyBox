@@ -22,6 +22,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTablesController extends Data2DListController {
 
+    protected boolean internal;
+
     @FXML
     protected Button tableDefinitionButton;
     @FXML
@@ -103,7 +105,7 @@ public class DataTablesController extends Data2DListController {
 
     @FXML
     public void sql() {
-        DatabaseSQLController.oneOpen();
+        DatabaseSQLController.open(internal);
     }
 
     @Override
@@ -117,6 +119,10 @@ public class DataTablesController extends Data2DListController {
             return dataController.keyEventsFilter(event);
         }
         return true;
+    }
+
+    public void setInternal(boolean internal) {
+        this.internal = internal;
     }
 
     /*

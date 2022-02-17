@@ -204,6 +204,14 @@ public class BaseWebViewController extends BaseController {
     }
 
     @FXML
+    public void popOperationsMenu(MouseEvent mouseEvent) {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.popOperationsMenu(mouseEvent);
+    }
+
+    @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         if (webViewController == null) {
             return;

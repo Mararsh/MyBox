@@ -59,7 +59,6 @@ public class Data2DExportController extends BaseTaskController {
             super.initControls();
 
             convertController.setControls(this);
-
             openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenGenerated", false));
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
