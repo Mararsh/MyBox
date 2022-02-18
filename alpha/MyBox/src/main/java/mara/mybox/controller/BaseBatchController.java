@@ -30,8 +30,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
@@ -545,7 +545,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    protected void initLogs() {
+    public void initLogs() {
         if (logsTextArea != null) {
             logsTextArea.setText("");
             newLogs = new StringBuffer();
@@ -992,7 +992,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    protected void updateLogs(final String line) {
+    public void updateLogs(final String line) {
         updateLogs(line, true, false);
     }
 
@@ -1035,7 +1035,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     @FXML
     @Override
-    protected void clearLogs() {
+    public void clearLogs() {
         logsTextArea.setText("");
     }
 
@@ -1049,7 +1049,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    protected boolean targetFileGenerated(File target, int type) {
+    public boolean targetFileGenerated(File target, int type) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }

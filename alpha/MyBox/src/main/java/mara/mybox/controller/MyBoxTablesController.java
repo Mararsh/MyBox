@@ -1,10 +1,15 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Window;
-import mara.mybox.data.Data2D;
+import mara.mybox.data.DataInternalTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -22,8 +27,32 @@ public class MyBoxTablesController extends DataTablesController {
     }
 
     @Override
-    public void setQueryConditions() {
-        queryConditions = " data_type=" + Data2D.type(Data2DDefinition.Type.InternalTable);
+    public void initList() {
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    DataInternalTable dataTable = new DataInternalTable();
+                    TableData2DDefinition tableData2DDefinition = dataTable.getTableData2DDefinition();
+                    for (String name : DataInternalTable.InternalTables) {
+                        if (tableData2DDefinition.queryInternalTable(conn, name) == null) {
+                            dataTable.readDefinitionFromDB(conn, name);
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadTableData();
+            }
+
+        };
+        start(task);
     }
 
     /*

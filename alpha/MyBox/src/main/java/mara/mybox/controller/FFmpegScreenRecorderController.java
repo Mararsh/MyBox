@@ -23,8 +23,8 @@ import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -176,7 +176,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
-    protected boolean doTask() {
+    public boolean doTask() {
         if (optionsController.miaoCheck.isSelected()) {
             SoundTools.BenWu();
         }

@@ -8,8 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataTable;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -34,18 +34,23 @@ public class DataTablesController extends Data2DListController {
     public DataTablesController() {
         baseTitle = message("DatabaseTable");
         TipsLabelKey = "ColorsManageTips";
+        internal = false;
+    }
+
+    public Data2DDefinition.Type type() {
+        return internal ? Data2DDefinition.Type.InternalTable : Data2DDefinition.Type.DatabaseTable;
     }
 
     @Override
     public void setData2D() {
-        dataController.setDataType(this, Data2DDefinition.Type.DatabaseTable);
+        dataController.setDataType(this, type());
         data2D = dataController.data2D;
         loadController = dataController.editController.tableController;
     }
 
     @Override
     public void setQueryConditions() {
-        queryConditions = " data_type=" + Data2D.type(Data2DDefinition.Type.DatabaseTable);
+        queryConditions = " data_type=" + Data2DDefinition.type(type());
     }
 
     @Override
@@ -95,7 +100,7 @@ public class DataTablesController extends Data2DListController {
 
     @FXML
     protected void tableDefinition() {
-        String html = DataTable.tableDefinition(data2D.getSheet());
+        String html = TableData2D.tableDefinition(data2D.getSheet());
         if (html != null) {
             HtmlPopController.openHtml(this, html);
         } else {

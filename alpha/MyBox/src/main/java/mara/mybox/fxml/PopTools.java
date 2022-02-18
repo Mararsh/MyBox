@@ -48,6 +48,7 @@ import mara.mybox.controller.MenuController;
 import mara.mybox.controller.TextInputController;
 import mara.mybox.data.DataInternalTable;
 import mara.mybox.data.DataTable;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -788,7 +789,7 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        String html = DataTable.tableDefinition(name);
+                        String html = TableData2D.tableDefinition(name);
                         if (html != null) {
                             HtmlPopController.openHtml(parent, html);
                         } else {

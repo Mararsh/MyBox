@@ -39,7 +39,6 @@ public class ColumnDefinition extends BaseData {
     protected Object defaultValue, value;
     protected Number maxValue, minValue;
     protected Map<Object, String> values;  // value, displayString
-    protected Random random = new Random();
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -70,7 +69,7 @@ public class ColumnDefinition extends BaseData {
         timeFormat = Era.Format.Datetime;
         maxValue = null;
         minValue = null;
-        color = FxColorTools.randomColor(random);
+        color = FxColorTools.randomColor();
     }
 
     public ColumnDefinition() {
@@ -603,14 +602,6 @@ public class ColumnDefinition extends BaseData {
     public ColumnDefinition setTableName(String tableName) {
         this.tableName = tableName;
         return this;
-    }
-
-    public Random getRandom() {
-        return random;
-    }
-
-    public void setRandom(Random random) {
-        this.random = random;
     }
 
     public String getColumnName() {

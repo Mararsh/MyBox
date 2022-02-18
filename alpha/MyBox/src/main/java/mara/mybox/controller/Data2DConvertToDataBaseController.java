@@ -155,7 +155,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     }
 
     @Override
-    protected void beforeTask() {
+    public void beforeTask() {
         try {
             dataVBox.setDisable(true);
         } catch (Exception e) {
@@ -164,7 +164,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     }
 
     @Override
-    protected boolean doTask() {
+    public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
             String tableName = nameInput.getText().trim();
 
@@ -183,21 +183,8 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
                 return false;
             }
 
-            dataTable.setSheet(tableName);
-            dataTable.setDataName(tableName);
-            dataTable.setColsNumber(selectedColumns.size());
-            tableData2DDefinition.insertData(conn, dataTable);
-            conn.commit();
-            updateLogs("Definition written");
+            dataTable.recordTable(conn, tableName, selectedColumns);
 
-            long d2did = dataTable.getD2did();
-            for (Data2DColumn column : selectedColumns) {
-                column.setD2id(d2did);
-            }
-            dataTable.setColumns(selectedColumns);
-            tableData2DColumn.save(conn, d2did, selectedColumns);
-            conn.commit();
-            updateLogs("Columns written");
             return true;
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -206,7 +193,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     }
 
     @Override
-    protected void afterSuccess() {
+    public void afterSuccess() {
         try {
             SoundTools.miao3();
             DataTablesController.open(dataTable);
@@ -216,7 +203,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     }
 
     @Override
-    protected void afterTask() {
+    public void afterTask() {
         try {
             dataVBox.setDisable(false);
         } catch (Exception e) {

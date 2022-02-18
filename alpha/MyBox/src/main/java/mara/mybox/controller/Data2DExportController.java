@@ -162,7 +162,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected void beforeTask() {
+    public void beforeTask() {
         try {
             dataVBox.setDisable(true);
             formatVBox.setDisable(true);
@@ -174,7 +174,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected boolean doTask() {
+    public boolean doTask() {
         try {
             convertController.setExport(targetPath, selectedColumns, filePrefix, targetPathController.isSkip());
 
@@ -207,7 +207,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected void afterSuccess() {
+    public void afterSuccess() {
         try {
             SoundTools.miao3();
             if (openCheck.isSelected()) {
@@ -235,7 +235,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected void afterTask() {
+    public void afterTask() {
         try {
             dataVBox.setDisable(false);
             formatVBox.setDisable(false);

@@ -77,7 +77,7 @@ public class BaseTaskController extends BaseController {
 
     }
 
-    protected void beforeTask() {
+    public void beforeTask() {
     }
 
     public void startTask() {
@@ -113,11 +113,11 @@ public class BaseTaskController extends BaseController {
         start(task, false, null);
     }
 
-    protected boolean doTask() {
+    public boolean doTask() {
         return true;
     }
 
-    protected void afterSuccess() {
+    public void afterSuccess() {
     }
 
     public void cancelTask() {
@@ -132,12 +132,12 @@ public class BaseTaskController extends BaseController {
         cancelTask();
     }
 
-    protected void afterTask() {
+    public void afterTask() {
 
     }
 
     @FXML
-    protected void initLogs() {
+    public void initLogs() {
         logsTextArea.setText("");
         logsTotalLines = 0;
         if (maxLinesinput != null) {
@@ -149,7 +149,7 @@ public class BaseTaskController extends BaseController {
         }
     }
 
-    protected void updateLogs(final String line) {
+    public void updateLogs(final String line) {
         try {
             if (logsTextArea == null) {
                 return;
@@ -168,15 +168,15 @@ public class BaseTaskController extends BaseController {
     }
 
     @FXML
-    protected void clearLogs() {
+    public void clearLogs() {
         initLogs();
     }
 
-    protected boolean targetFileGenerated(File target) {
+    public boolean targetFileGenerated(File target) {
         return targetFileGenerated(target, TargetFileType);
     }
 
-    protected boolean targetFileGenerated(File target, int type) {
+    public boolean targetFileGenerated(File target, int type) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }

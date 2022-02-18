@@ -1,11 +1,8 @@
 package mara.mybox.data;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -33,28 +30,6 @@ public class DataInternalTable extends DataTable {
     @Override
     public int type() {
         return type(Type.InternalTable);
-    }
-
-    /*
-        static
-     */
-    public static void recordTables() {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            recordTables(conn);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public static void recordTables(Connection conn) {
-        try {
-            DataInternalTable dataTable = new DataInternalTable();
-            for (String table : InternalTables) {
-                dataTable.recordTable(conn, table.toLowerCase());
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
 }

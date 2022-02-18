@@ -29,6 +29,7 @@ import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
@@ -36,7 +37,6 @@ import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Fxmls;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -238,7 +238,7 @@ public class NotesExportController extends BaseTaskController {
     }
 
     @Override
-    protected boolean doTask() {
+    public boolean doTask() {
         if (selectedNode == null || targetPath == null) {
             return false;
         }
@@ -541,7 +541,7 @@ public class NotesExportController extends BaseTaskController {
     }
 
     @Override
-    protected void afterSuccess() {
+    public void afterSuccess() {
         browseURI(targetPath.toURI());
         if (framesetFile != null && framesetFile.exists()) {
             WebBrowserController.oneOpen(framesetFile);

@@ -224,10 +224,6 @@ public abstract class Data2D extends Data2DDefinition {
         return type == Type.CSV || type == Type.Excel || type == Type.Texts;
     }
 
-    public boolean isTmpFile() {
-        return file == null;
-    }
-
     public boolean isExcel() {
         return type == Type.Excel;
     }
@@ -477,10 +473,16 @@ public abstract class Data2D extends Data2DDefinition {
     }
 
     public boolean isTmpData() {
-        if (isDataFile()) {
-            return isTmpFile();
-        } else {
-            return !isTable() && d2did < 0;
+        switch (type) {
+            case CSV:
+            case Excel:
+            case Texts:
+                return file == null;
+            case DatabaseTable:
+            case InternalTable:
+                return sheet == null;
+            default:
+                return d2did < 0;
         }
     }
 

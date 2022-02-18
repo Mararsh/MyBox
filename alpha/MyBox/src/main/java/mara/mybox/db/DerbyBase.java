@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import mara.mybox.controller.MyBoxLoadingController;
-import mara.mybox.data.DataInternalTable;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableBlobValue;
@@ -455,14 +454,6 @@ public class DerbyBase {
             List<String> tables = allTables(conn);
             MyBoxLog.console("Tables: " + tables.size());
 
-            if (!tables.contains("Data2D_Definition".toUpperCase())) {
-                new TableData2DDefinition().createTable(conn);
-                loadingController.info("Data2D_Definition");
-            }
-            if (!tables.contains("Data2D_Column".toUpperCase())) {
-                new TableData2DColumn().createTable(conn);
-                loadingController.info("Data2D_Column");
-            }
             if (!tables.contains("MyBox_Log".toUpperCase())) {
                 new TableMyBoxLog().createTable(conn);
                 loadingController.info("MyBox_Log");
@@ -474,6 +465,14 @@ public class DerbyBase {
             if (!tables.contains("User_Conf".toUpperCase())) {
                 new TableUserConf().init(conn);
                 loadingController.info("User_Conf");
+            }
+            if (!tables.contains("Data2D_Definition".toUpperCase())) {
+                new TableData2DDefinition().createTable(conn);
+                loadingController.info("Data2D_Definition");
+            }
+            if (!tables.contains("Data2D_Column".toUpperCase())) {
+                new TableData2DColumn().createTable(conn);
+                loadingController.info("Data2D_Column");
             }
             if (!tables.contains("String_Values".toUpperCase())) {
                 new TableStringValues().init(conn);
@@ -795,7 +794,6 @@ public class DerbyBase {
 
     public static boolean initTableValues() {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
-            DataInternalTable.recordTables(conn);
             if (TableGeographyCode.China(conn) == null) {
                 GeographyCodeTools.importPredefined(conn);
             }

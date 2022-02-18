@@ -32,14 +32,47 @@ public class DataTable extends Data2D {
         return type(Type.DatabaseTable);
     }
 
-    public void recordTable(Connection conn, String tableName) {
+    public boolean readDefinitionFromDB(Connection conn, String tableName) {
         try {
-            resetData();
-            sheet = tableName != null ? tableName.toLowerCase() : null;
-            readDataDefinition(conn);
-            readColumns(conn);
+            if (conn == null || tableName == null) {
+                return false;
+            }
+            tableData2D.readDefinitionFromDB(conn, tableName);
+            List<ColumnDefinition> dbColumns = tableData2D.getColumns();
+            List<Data2DColumn> dataColumns = new ArrayList<>();
+            if (dbColumns != null) {
+                for (ColumnDefinition dbColumn : dbColumns) {
+                    Data2DColumn dataColumn = new Data2DColumn();
+                    dataColumn.cloneFrom(dbColumn);
+                    dataColumns.add(dataColumn);
+                }
+            }
+            return recordTable(conn, tableName, dataColumns);
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns) {
+        try {
+            resetData();
+            sheet = tableName.toLowerCase();
+            dataName = tableName;
+            colsNumber = dataColumns.size();
+            tableData2DDefinition.insertData(conn, this);
+            conn.commit();
+
+            for (Data2DColumn column : dataColumns) {
+                column.setD2id(d2did);
+            }
+            columns = dataColumns;
+            tableData2DColumn.save(conn, d2did, columns);
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -213,17 +246,6 @@ public class DataTable extends Data2D {
             MyBoxLog.console(e);
         }
         return userTables;
-    }
-
-    public static String tableDefinition(String tableName) {
-        try {
-            TableData2D table = new TableData2D();
-            table.readDefinitionFromDB(tableName);
-            return table.html();
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            return null;
-        }
     }
 
 }
