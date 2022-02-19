@@ -219,6 +219,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
             Data2DConvertToDataBaseController controller = (Data2DConvertToDataBaseController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DConvertToDatabaseFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

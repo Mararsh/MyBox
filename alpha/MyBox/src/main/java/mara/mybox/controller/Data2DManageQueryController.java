@@ -184,6 +184,7 @@ public class Data2DManageQueryController extends BaseChildController {
             Data2DManageQueryController controller = (Data2DManageQueryController) WindowTools.openChildStage(
                     manageController.getMyWindow(), Fxmls.Data2DManageQueryFxml, false);
             controller.setParameters(manageController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

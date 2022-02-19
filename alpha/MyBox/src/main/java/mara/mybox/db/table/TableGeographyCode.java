@@ -56,7 +56,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public final TableGeographyCode defineColumns() {
-        addColumn(new ColumnDefinition("gcid", ColumnType.Long, true, true).setIsID(true).setMinValue((long) 0));
+        addColumn(new ColumnDefinition("gcid", ColumnType.Long, true, true).setAuto(true).setMinValue((long) 0));
         addColumn(new ColumnDefinition("level", ColumnType.Short, true).setMaxValue((short) 10).setMinValue((short) 1));
         addColumn(new ColumnDefinition("coordinate_system", ColumnType.Short));
         addColumn(new ColumnDefinition("longitude", ColumnType.Double, true).setMaxValue((double) 180).setMinValue((double) -180));

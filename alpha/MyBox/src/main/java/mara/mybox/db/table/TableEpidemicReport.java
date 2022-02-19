@@ -42,7 +42,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
     }
 
     public final TableEpidemicReport defineColumns() {
-        addColumn(new ColumnDefinition("epid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("epid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("data_set", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("locationid", ColumnType.Long, true)

@@ -32,7 +32,7 @@ public class TableExpressionCategory extends BaseTable<Notebook> {
     }
 
     public final TableExpressionCategory defineColumns() {
-        addColumn(new ColumnDefinition("nbid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("nbid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("name", ColumnType.String, true).setLength(256));
         addColumn(new ColumnDefinition("description", ColumnType.String).setLength(4096));
         addColumn(new ColumnDefinition("owner", ColumnType.Long)

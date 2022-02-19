@@ -130,8 +130,8 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.isIsPrimaryKey();
             case "not_null":
                 return data.isNotNull();
-            case "is_id":
-                return data.isIsID();
+            case "is_auto":
+                return data.isAuto();
             case "editable":
                 return data.isEditable();
             case "max_value":
@@ -187,11 +187,11 @@ public class Data2DColumn extends ColumnDefinition {
                 case "is_primary":
                     data.setIsPrimaryKey(value == null ? false : (boolean) value);
                     return true;
+                case "is_auto":
+                    data.setAuto(value == null ? false : (boolean) value);
+                    return true;
                 case "not_null":
                     data.setNotNull(value == null ? false : (boolean) value);
-                    return true;
-                case "is_id":
-                    data.setIsID(value == null ? false : (boolean) value);
                     return true;
                 case "editable":
                     data.setEditable(value == null ? false : (boolean) value);

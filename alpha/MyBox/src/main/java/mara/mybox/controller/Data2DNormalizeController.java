@@ -105,6 +105,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
             Data2DNormalizeController controller = (Data2DNormalizeController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DNormalizeFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

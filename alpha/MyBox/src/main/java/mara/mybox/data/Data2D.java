@@ -472,6 +472,10 @@ public abstract class Data2D extends Data2DDefinition {
         return type == Type.DatabaseTable || type == Type.InternalTable;
     }
 
+    public boolean isInternalTable() {
+        return type == Type.InternalTable;
+    }
+
     public boolean isTmpData() {
         switch (type) {
             case CSV:

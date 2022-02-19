@@ -30,7 +30,7 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
     }
 
     public final TableImageClipboard defineColumns() {
-        addColumn(new ColumnDefinition("icid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("icid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("image_file", ColumnType.File, true).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("thumbnail_file", ColumnType.File).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("width", ColumnType.Integer));

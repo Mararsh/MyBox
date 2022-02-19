@@ -365,6 +365,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
             Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DSetValuesFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

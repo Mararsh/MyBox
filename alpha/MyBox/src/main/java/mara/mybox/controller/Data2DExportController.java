@@ -268,6 +268,7 @@ public class Data2DExportController extends BaseTaskController {
             Data2DExportController controller = (Data2DExportController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DExportFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

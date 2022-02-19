@@ -211,6 +211,7 @@ public class Data2DPercentageController extends Data2DHandleController {
             Data2DPercentageController controller = (Data2DPercentageController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DPercentageFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

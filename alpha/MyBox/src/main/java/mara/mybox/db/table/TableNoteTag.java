@@ -36,7 +36,7 @@ public class TableNoteTag extends BaseTable<NoteTag> {
     }
 
     public final TableNoteTag defineColumns() {
-        addColumn(new ColumnDefinition("ngid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("ngid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("noteid", ColumnType.Long)
                 .setReferName("Note_Tag_note_fk").setReferTable("Note").setReferColumn("ntid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)

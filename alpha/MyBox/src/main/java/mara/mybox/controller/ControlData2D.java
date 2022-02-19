@@ -34,8 +34,8 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -106,10 +106,6 @@ public class ControlData2D extends BaseController {
         database
      */
     public void setDataType(BaseController parent, Data2D.Type type) {
-        setDataType(parent, type, false);
-    }
-
-    public void setDataType(BaseController parent, Data2D.Type type, boolean columnsReadOnly) {
         try {
             parentController = parent;
             if (parent != null) {
@@ -121,7 +117,7 @@ public class ControlData2D extends BaseController {
             editController.setParameters(this);
             viewController.setParameters(this);
             attributesController.setParameters(this);
-            columnsController.setParameters(this, columnsReadOnly);
+            columnsController.setParameters(this);
 
             setData(Data2D.create(type));
 

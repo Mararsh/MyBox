@@ -31,7 +31,7 @@ public class TableTree extends BaseTable<TreeNode> {
     }
 
     public final TableTree defineColumns() {
-        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("attribute", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("parent", ColumnType.Long)

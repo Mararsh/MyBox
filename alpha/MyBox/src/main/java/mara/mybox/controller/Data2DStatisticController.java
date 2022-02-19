@@ -407,6 +407,7 @@ public class Data2DStatisticController extends Data2DHandleController {
             Data2DStatisticController controller = (Data2DStatisticController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DStatisticFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

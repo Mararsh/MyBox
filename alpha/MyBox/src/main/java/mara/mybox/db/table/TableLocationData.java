@@ -38,7 +38,7 @@ public class TableLocationData extends BaseTable<Location> {
     }
 
     public final TableLocationData defineColumns() {
-        addColumn(new ColumnDefinition("ldid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("ldid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("datasetid", ColumnType.Long, true)
                 .setReferName("Location_Data_datasetid_fk").setReferTable("Dataset").setReferColumn("dsid"));
         addColumn(new ColumnDefinition("label", ColumnType.String).setLength(StringMaxLength));

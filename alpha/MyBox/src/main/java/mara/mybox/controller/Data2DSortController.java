@@ -201,6 +201,7 @@ public class Data2DSortController extends Data2DHandleController {
             Data2DSortController controller = (Data2DSortController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DSortFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

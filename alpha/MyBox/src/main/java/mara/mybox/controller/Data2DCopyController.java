@@ -31,6 +31,7 @@ public class Data2DCopyController extends Data2DHandleController {
             Data2DCopyController controller = (Data2DCopyController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DCopyFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

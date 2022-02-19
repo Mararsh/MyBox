@@ -32,7 +32,7 @@ public class ColumnDefinition extends BaseData {
     protected ColumnType type;
     protected int index, length, width;
     protected Color color;
-    protected boolean isPrimaryKey, notNull, isID, editable, auto;
+    protected boolean isPrimaryKey, notNull, editable, auto;
     protected OnDelete onDelete;
     protected OnUpdate onUpdate;
     protected Era.Format timeFormat;
@@ -60,7 +60,7 @@ public class ColumnDefinition extends BaseData {
     public final void initColumnDefinition() {
         type = ColumnType.String;
         index = -1;
-        isPrimaryKey = notNull = isID = false;
+        isPrimaryKey = notNull = auto = false;
         editable = true;
         length = StringMaxLength;
         width = 100; // px
@@ -125,7 +125,7 @@ public class ColumnDefinition extends BaseData {
             color = c.color;
             isPrimaryKey = c.isPrimaryKey;
             notNull = c.notNull;
-            isID = c.isID;
+            auto = c.auto;
             editable = c.editable;
             onDelete = c.onDelete;
             onUpdate = c.onUpdate;
@@ -442,6 +442,8 @@ public class ColumnDefinition extends BaseData {
                     return Short.parseShort(string.replaceAll(",", ""));
                 case Datetime:
                     return DateTools.stringToDatetime(string);
+                case Color:
+                    return DateTools.stringToDatetime(string);
                 default:
                     return string;
             }
@@ -489,7 +491,6 @@ public class ColumnDefinition extends BaseData {
     public static ColumnType columnType(short type) {
         ColumnType[] types = ColumnType.values();
         if (type < 0 || type > types.length) {
-            MyBoxLog.console(type);
             return ColumnType.String;
         }
         return types[type];
@@ -655,15 +656,6 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setIndex(int index) {
         this.index = index;
-        return this;
-    }
-
-    public boolean isIsID() {
-        return isID;
-    }
-
-    public ColumnDefinition setIsID(boolean isID) {
-        this.isID = isID;
         return this;
     }
 

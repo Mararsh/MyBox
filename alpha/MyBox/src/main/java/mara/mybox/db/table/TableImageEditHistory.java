@@ -44,7 +44,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     }
 
     public final TableImageEditHistory defineColumns() {
-        addColumn(new ColumnDefinition("iehid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("iehid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("image_location", ColumnType.String, true).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("history_location", ColumnType.String, true).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("operation_time", ColumnType.Datetime, true));

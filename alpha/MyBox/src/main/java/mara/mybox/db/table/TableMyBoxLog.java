@@ -24,7 +24,7 @@ public class TableMyBoxLog extends BaseTable<MyBoxLog> {
     }
 
     public final TableMyBoxLog defineColumns() {
-        addColumn(new ColumnDefinition("mblid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("mblid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("log_type", ColumnType.Short, true));
         addColumn(new ColumnDefinition("log", ColumnType.String, true).setLength(StringMaxLength));

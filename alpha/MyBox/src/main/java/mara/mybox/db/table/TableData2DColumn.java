@@ -35,7 +35,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
     }
 
     public final TableData2DColumn defineColumns() {
-        addColumn(new Data2DColumn("d2cid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new Data2DColumn("d2cid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new Data2DColumn("d2id", ColumnType.Long, true)
                 .setReferName("Data2D_Column_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(Data2DColumn.OnDelete.Cascade));
@@ -46,8 +46,8 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("width", ColumnType.Integer));
         addColumn(new Data2DColumn("color", ColumnType.Color).setLength(16));
         addColumn(new Data2DColumn("is_primary", ColumnType.Boolean));
+        addColumn(new Data2DColumn("is_auto", ColumnType.Boolean));
         addColumn(new Data2DColumn("not_null", ColumnType.Boolean));
-        addColumn(new Data2DColumn("is_id", ColumnType.Boolean));
         addColumn(new Data2DColumn("editable", ColumnType.Boolean));
         addColumn(new Data2DColumn("on_delete", ColumnType.Short));
         addColumn(new Data2DColumn("on_update", ColumnType.Short));

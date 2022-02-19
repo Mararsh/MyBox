@@ -37,7 +37,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -52,13 +51,14 @@ import mara.mybox.fxml.chart.LabeledLineChart;
 import mara.mybox.fxml.chart.LabeledScatterChart;
 import mara.mybox.fxml.chart.LabeledStackedAreaChart;
 import mara.mybox.fxml.chart.LabeledStackedBarChart;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -1573,6 +1573,7 @@ public class Data2DChartController extends Data2DHandleController {
             Data2DChartController controller = (Data2DChartController) WindowTools.openChildStage(
                     editController.getMyWindow(), Fxmls.Data2DChartFxml, false);
             controller.setParameters(editController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

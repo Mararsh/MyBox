@@ -32,7 +32,7 @@ public class TableTextClipboard extends BaseTable<TextClipboard> {
     }
 
     public final TableTextClipboard defineColumns() {
-        addColumn(new ColumnDefinition("tcid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("tcid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("text", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("create_time", ColumnType.Datetime));
         orderColumns = "create_time DESC";

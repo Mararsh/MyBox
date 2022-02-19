@@ -561,7 +561,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     });
                 }
 
-                if (dataColumn.isIsID()) {
+                if (dataColumn.isAuto()) {
                     tableColumn.getStyleClass().clear();
                     tableColumn.getStyleClass().add("auto-column");
                 } else if (dataColumn.isIsPrimaryKey()) {

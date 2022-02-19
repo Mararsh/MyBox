@@ -121,7 +121,7 @@ public class DataTable extends Data2D {
                 if (column.getColor() == null) {
                     column.setColor(FxColorTools.randomColor(random));
                 }
-                if (column.isIsID()) {
+                if (column.isAuto()) {
                     column.setEditable(false);
                 }
                 columns.add(column);

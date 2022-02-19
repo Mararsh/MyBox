@@ -34,7 +34,7 @@ public class TableNote extends BaseTable<Note> {
     }
 
     public final TableNote defineColumns() {
-        addColumn(new ColumnDefinition("ntid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("ntid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("notebook", ColumnType.Long)
                 .setReferName("Notes_notebook_fk").setReferTable("Notebook").setReferColumn("nbid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)

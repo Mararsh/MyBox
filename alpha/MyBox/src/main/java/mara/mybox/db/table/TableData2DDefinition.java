@@ -33,7 +33,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     }
 
     public final TableData2DDefinition defineColumns() {
-        addColumn(new ColumnDefinition("d2did", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("d2did", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("data_type", ColumnType.Short, true));
         addColumn(new ColumnDefinition("data_name", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("file", ColumnType.File).setLength(StringMaxLength));

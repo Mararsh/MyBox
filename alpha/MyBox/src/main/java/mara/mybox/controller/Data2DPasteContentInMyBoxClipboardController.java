@@ -200,6 +200,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
             Data2DPasteContentInMyBoxClipboardController controller
                     = (Data2DPasteContentInMyBoxClipboardController) WindowTools.openChildStage(target.getMyStage(), Fxmls.Data2DPasteContentInMyBoxClipboardFxml, false);
             controller.setParameters(target);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

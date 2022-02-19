@@ -50,6 +50,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             Data2DLoadContentInSystemClipboardController controller = (Data2DLoadContentInSystemClipboardController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.Data2DLoadContentInSystemClipboardFxml, true);
             controller.setParameters(parent, text);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

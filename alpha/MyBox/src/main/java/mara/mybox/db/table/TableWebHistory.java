@@ -32,7 +32,7 @@ public class TableWebHistory extends BaseTable<WebHistory> {
     }
 
     public final TableWebHistory defineColumns() {
-        addColumn(new ColumnDefinition("whid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("whid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("address", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("visit_time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("title", ColumnType.String).setLength(StringMaxLength));
