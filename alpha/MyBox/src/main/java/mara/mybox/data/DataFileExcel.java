@@ -44,6 +44,19 @@ public class DataFileExcel extends DataFile {
         type = Type.Excel;
     }
 
+    public void cloneAll(DataFileExcel d) {
+        try {
+            if (d == null) {
+                return;
+            }
+            super.cloneAll(d);
+            sheetNames = d.sheetNames;
+            currentSheetOnly = d.currentSheetOnly;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     @Override
     public void resetData() {
         super.resetData();
@@ -595,7 +608,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-     public long clearData() {
+    public long clearData() {
         File tmpFile = TmpFileTools.getTempFile();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {

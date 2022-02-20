@@ -918,6 +918,34 @@ public class DerbyBase {
         }
     }
 
+    // https://db.apache.org/derby/docs/10.15/ref/crefsqlj1003454.html#crefsqlj1003454
+    // https://db.apache.org/derby/docs/10.15/ref/rrefkeywords29722.html
+    public static String fixedIdentifier(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.startsWith("\"") && name.endsWith("\"")) {
+            return name;
+        }
+        String s = "";
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if ((c > 64 && c < 91) || (c > 96 && c < 123) || c < 0 || c > 127) {
+                s += c;
+                continue;
+            }
+            if (i == 0) {
+                s += "a";
+            }
+            if (c == '_' || (c > 47 && c < 58)) {
+                s += c;
+            } else {
+                s += "_";
+            }
+        }
+        return s;
+    }
+
 
     /*
         get/set

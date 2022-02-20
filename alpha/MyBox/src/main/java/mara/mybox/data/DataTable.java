@@ -32,11 +32,35 @@ public class DataTable extends Data2D {
         return type(Type.DatabaseTable);
     }
 
+    public void cloneAll(DataTable d) {
+        try {
+            if (d == null) {
+                return;
+            }
+            super.cloneAll(d);
+            tableData2D = d.tableData2D;
+            if (tableData2D == null) {
+                tableData2D = new TableData2D();
+            }
+            tableData2D.setTableName(sheet);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void resetData() {
+        super.resetData();
+        tableData2D.reset();
+    }
+
     public boolean readDefinitionFromDB(Connection conn, String tableName) {
         try {
             if (conn == null || tableName == null) {
                 return false;
             }
+            tableData2D.reset();
+            tableData2D.setTableName(tableName);
             tableData2D.readDefinitionFromDB(conn, tableName);
             List<ColumnDefinition> dbColumns = tableData2D.getColumns();
             List<Data2DColumn> dataColumns = new ArrayList<>();
@@ -81,12 +105,16 @@ public class DataTable extends Data2D {
         if (dataName == null) {
             dataName = sheet;
         }
+        if (tableData2D == null) {
+            tableData2D = new TableData2D();
+        }
+        tableData2D.setTableName(sheet);
         return super.checkForLoad();
     }
 
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
-        return tableData2DDefinition.queryInternalTable(conn, sheet);
+        return tableData2DDefinition.queryTable(conn, sheet, type);
     }
 
     @Override

@@ -32,6 +32,18 @@ public class DataMatrix extends Data2D {
         return type(Type.Matrix);
     }
 
+    public void cloneAll(DataMatrix d) {
+        try {
+            if (d == null) {
+                return;
+            }
+            super.cloneAll(d);
+            tableData2DCell = d.tableData2DCell;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     @Override
     public boolean checkForLoad() {
         hasHeader = false;
@@ -190,7 +202,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-     public long clearData() {
+    public long clearData() {
         long count = -1;
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {

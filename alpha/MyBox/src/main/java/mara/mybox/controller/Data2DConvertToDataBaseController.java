@@ -13,6 +13,7 @@ import mara.mybox.data.Data2D;
 import mara.mybox.data.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DColumn;
@@ -38,7 +39,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected List<Data2DColumn> selectedColumns;
-    protected List<Integer> selectedColumnsIndices, selectedRowsIndices;
+    protected List<Integer> selectedRowsIndices;
 
     @FXML
     protected ControlData2DSource sourceController;
@@ -47,12 +48,12 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     @FXML
     protected TextField nameInput;
     @FXML
-    protected CheckBox importCheck;
+    protected CheckBox importCheck, autoCheck;
     @FXML
     protected Label dataLabel, infoLabel;
 
     public Data2DConvertToDataBaseController() {
-        baseTitle = message("ConvertToDatabaseTable");
+        TipsLabelKey = message("SqlIdentifierComments");
     }
 
     @Override
@@ -98,6 +99,14 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
                 }
             });
 
+            autoCheck.setSelected(UserConfig.getBoolean(baseName + "AutoColumn", true));
+            autoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "AutoColumn", autoCheck.isSelected());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -108,10 +117,8 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
             getMyStage().setTitle(editController.getTitle());
             infoLabel.setText("");
 
-            selectedColumnsIndices = sourceController.checkedColsIndices();
             selectedColumns = sourceController.checkedCols();
-            if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()
-                    || selectedColumns == null || selectedColumns.isEmpty()) {
+            if (selectedColumns == null || selectedColumns.isEmpty()) {
                 infoLabel.setText(message("SelectToHandle"));
                 return false;
             }
@@ -154,6 +161,35 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
         }
     }
 
+    public void makeTable() {
+        try {
+            selectedColumns = sourceController.checkedCols();
+
+            String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
+            tableData2D.reset();
+            tableData2D.setTableName(DerbyBase.fixedIdentifier(tableName));
+
+            if (autoCheck.isSelected()) {
+                List<String> selectedNames = sourceController.checkedColsNames();
+                String idname = tableName + "_id";
+                while (selectedNames.contains(idname)) {
+                    idname += "m";
+                }
+                Data2DColumn idcolumn = new Data2DColumn(idname, ColumnType.Long);
+                idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true);
+                selectedColumns.add(0, idcolumn);
+            }
+            for (Data2DColumn column : selectedColumns) {
+                column.setColumnName(DerbyBase.fixedIdentifier(column.getColumnName()));
+                ColumnDefinition c = new ColumnDefinition();
+                c.cloneFrom(column);
+                tableData2D.addColumn(column);
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+        }
+    }
+
     @Override
     public void beforeTask() {
         try {
@@ -166,14 +202,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     @Override
     public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            String tableName = nameInput.getText().trim();
-
-            tableData2D.setTableName(tableName);
-            for (Data2DColumn column : selectedColumns) {
-                ColumnDefinition c = new ColumnDefinition();
-                c.cloneFrom(column);
-                tableData2D.addColumn(column);
-            }
+            makeTable();
             String sql = tableData2D.createTableStatement();
             updateLogs(sql);
             if (conn.createStatement().executeUpdate(sql) >= 0) {
@@ -183,7 +212,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
                 return false;
             }
 
-            dataTable.recordTable(conn, tableName, selectedColumns);
+            dataTable.recordTable(conn, tableData2D.getTableName(), selectedColumns);
 
             return true;
         } catch (Exception e) {
@@ -208,6 +237,20 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
             dataVBox.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void sqlAction() {
+        try {
+            if (!checkOptions()) {
+                return;
+            }
+            makeTable();
+            String sql = tableData2D.createTableStatement();
+            TextPopController.loadText(this, sql);
+        } catch (Exception e) {
+            popError(e.toString());
         }
     }
 

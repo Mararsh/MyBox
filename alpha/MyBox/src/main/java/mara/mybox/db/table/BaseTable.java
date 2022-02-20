@@ -321,6 +321,9 @@ public abstract class BaseTable<D> {
         general methods which may need not change
      */
     private void init() {
+        tableName = null;
+        idColumn = null;
+        orderColumns = null;
         columns = new ArrayList<>();
         primaryColumns = new ArrayList<>();
         foreignColumns = new ArrayList<>();
@@ -331,6 +334,10 @@ public abstract class BaseTable<D> {
     }
 
     public BaseTable() {
+        init();
+    }
+
+    public void reset() {
         init();
     }
 
@@ -1364,9 +1371,9 @@ public abstract class BaseTable<D> {
             return null;
         }
         try {
-            this.tableName = tname.toLowerCase();
-            String tuname = tname.toUpperCase();
             init();
+            tableName = tname.toLowerCase();
+            String tuname = tname.toUpperCase();
             DatabaseMetaData dbMeta = conn.getMetaData();
             try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", tuname, "%")) {
                 while (resultSet.next()) {

@@ -36,7 +36,7 @@ public class MyBoxTablesController extends DataTablesController {
                     DataInternalTable dataTable = new DataInternalTable();
                     TableData2DDefinition tableData2DDefinition = dataTable.getTableData2DDefinition();
                     for (String name : DataInternalTable.InternalTables) {
-                        if (tableData2DDefinition.queryInternalTable(conn, name) == null) {
+                        if (tableData2DDefinition.queryTable(conn, name, Data2DDefinition.Type.InternalTable) == null) {
                             dataTable.readDefinitionFromDB(conn, name);
                         }
                     }

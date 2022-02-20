@@ -39,9 +39,19 @@ License:    Apache License Version 2.0
                               <children>
                                   <Label text="%TableName" />
                                   <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                  <CheckBox fx:id="importCheck" mnemonicParsing="false" text="%ImportData" />
+                              <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTipsRight.png" />
+                                 </image>
+                              </ImageView>
                               </children>
                           </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="2.0">
+                           <children>
+                              <CheckBox fx:id="autoCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%CreateAutoColumnPrimary" />
+                                  <CheckBox fx:id="importCheck" mnemonicParsing="false" selected="true" text="%ImportData" />
+                           </children>
+                        </HBox>
                         <fx:include fx:id="source" source="ControlData2DSource.fxml" />
                      </children>
                   </VBox>
@@ -89,6 +99,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <Button fx:id="sqlButton" layoutX="693.0" layoutY="10.0" mnemonicParsing="false" onAction="#sqlAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconSql.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

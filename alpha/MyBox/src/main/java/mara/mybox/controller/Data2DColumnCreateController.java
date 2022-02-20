@@ -33,6 +33,10 @@ public class Data2DColumnCreateController extends BaseChildController {
     @FXML
     protected ColorSet colorController;
 
+    public Data2DColumnCreateController() {
+        TipsLabelKey = message("SqlIdentifierComments");
+    }
+
     protected void setParameters(ControlData2DColumns columnsController) {
         try {
             this.columnsController = columnsController;

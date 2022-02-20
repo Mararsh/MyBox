@@ -319,18 +319,18 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             data2D = data;
             tableData2DDefinition = editController.tableData2DDefinition;
             tableData2DColumn = editController.tableData2DColumn;
-            makeColumns();
+            setColumns();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    protected void makeColumns() {
+    protected void setColumns() {
         try {
             if (data2D == null) {
                 return;
             }
-            if (data2D.isTable()) {
+            if (data2D.isTable() && data2D.getSheet() != null) {
                 typeColumn.setEditable(false);
                 typeColumn.getStyleClass().clear();
 
@@ -532,8 +532,9 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @Override
     public Data2DColumn newData() {
         Data2DColumn column = new Data2DColumn();
-        column.setIndex(data2D.newColumnIndex());
-        column.setColumnName(data2D.colPrefix() + data2D.newColumnIndex());
+        int index = data2D.newColumnIndex();
+        column.setIndex(index);
+        column.setColumnName(data2D.colPrefix() + (-index));
         column.setColor(FxColorTools.randomColor());
         return column;
     }
@@ -671,7 +672,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     @Override
     public void addRowsAction() {
-        if (data2D.isTable()) {
+        if (data2D.isTable() && data2D.getSheet() != null) {
             Data2DColumnCreateController.open(this);
         } else {
             super.addRowsAction();
