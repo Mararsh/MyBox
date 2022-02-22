@@ -383,9 +383,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     if (result != null) {
                         resultBox.getChildren().add(resultTablePane);
                         resultController.loadMatrix(result);
-//                        if (resultTableController.autoNameCheck.isSelected()) {
-//                            resultTableController.nameInput.setText(dataMatrix.getDataName() + " " + op);
-//                        }
                     } else if (resultValue != AppValues.InvalidDouble) {
                         resultBox.getChildren().add(resultArea);
                         resultArea.setText(resultValue + "");

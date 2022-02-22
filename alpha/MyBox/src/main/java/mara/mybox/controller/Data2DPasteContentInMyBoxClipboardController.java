@@ -5,11 +5,9 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.stage.Window;
 import mara.mybox.data.Data2D;
-import mara.mybox.data.DataClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -20,45 +18,28 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-13
  * @License Apache License Version 2.0
  */
-public class Data2DPasteContentInMyBoxClipboardController extends BaseChildController {
+public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxClipboardController {
 
-    protected DataClipboard dataClipboard;
+    protected ControlData2DSource sourceController;
     protected ControlData2DLoad targetTableController;
     protected Data2D dataTarget;
     protected int row, col;
 
-    @FXML
-    protected ControlDataClipboardTable listController;
-    @FXML
-    protected ControlData2DSource sourceController;
-    @FXML
-    protected Label nameLabel;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            dataClipboard = new DataClipboard();
-
-            sourceController.setData(dataClipboard);
-            sourceController.dataLabel = nameLabel;
-            sourceController.baseTitle = baseTitle;
-            sourceController.showAllPages(false);
-
-            listController.setParameters(sourceController);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    public void setStageStatus() {
+        setAsPop(baseName);
     }
 
     public void setParameters(ControlData2DLoad target) {
         try {
+            sourceController = (ControlData2DSource) loadController;
+            sourceController.showAllPages(false);
+
             this.parentController = target;
             targetTableController = target;
             dataTarget = target.data2D;
@@ -70,7 +51,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
 
             sourceController.loadedNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        okButton.setDisable(!dataClipboard.hasData());
+                        okButton.setDisable(!data2D.hasData());
                     });
             okButton.setDisable(true);
 
@@ -111,19 +92,14 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
 
     @FXML
     public void editAction() {
-        DataInMyBoxClipboardController.open(dataClipboard);
-    }
-
-    @FXML
-    public void refreshAction() {
-        listController.refreshAction();
+        DataInMyBoxClipboardController.open(data2D);
     }
 
     @FXML
     @Override
     public void okAction() {
         try {
-            if (!dataClipboard.hasData()) {
+            if (!data2D.hasData()) {
                 popError(message("NoData"));
                 return;
             }
@@ -172,6 +148,24 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
         }
     }
 
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
+    }
+
+    @Override
+    public boolean keyESC() {
+        close();
+        return false;
+    }
+
+    @Override
+    public boolean keyF6() {
+        close();
+        return false;
+    }
+
 
     /*
         static methods
@@ -198,7 +192,8 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
             }
             closeAll();
             Data2DPasteContentInMyBoxClipboardController controller
-                    = (Data2DPasteContentInMyBoxClipboardController) WindowTools.openChildStage(target.getMyStage(), Fxmls.Data2DPasteContentInMyBoxClipboardFxml, false);
+                    = (Data2DPasteContentInMyBoxClipboardController) WindowTools.openChildStage(target.getMyStage(),
+                            Fxmls.Data2DPasteContentInMyBoxClipboardFxml, false);
             controller.setParameters(target);
             controller.requestMouse();
             return controller;

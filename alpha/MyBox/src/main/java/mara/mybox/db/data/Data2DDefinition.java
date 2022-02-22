@@ -9,6 +9,7 @@ import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.DataFileTextController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
+import mara.mybox.controller.DataTablesController;
 import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
@@ -260,7 +261,7 @@ public class Data2DDefinition extends BaseData {
             case Matrix:
                 return MatricesManageController.open(def);
             case DatabaseTable:
-                return MyBoxTablesController.open(def);
+                return DataTablesController.open(def);
             case InternalTable:
                 return MyBoxTablesController.open(def);
             default:

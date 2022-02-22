@@ -9,6 +9,7 @@ import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
@@ -146,6 +147,11 @@ public class DataMatrix extends Data2D {
 
     @Override
     public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
+        return false;
+    }
+
+    @Override
+    public boolean writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
         return false;
     }
 

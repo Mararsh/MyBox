@@ -33,10 +33,8 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     @Override
-    public void initValues() {
+    public void initData() {
         try {
-            super.initValues();
-
             setDataType(Data2D.Type.Texts);
             dataFileText = (DataFileText) dataController.data2D;
         } catch (Exception e) {

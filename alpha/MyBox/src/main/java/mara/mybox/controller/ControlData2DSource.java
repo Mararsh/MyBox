@@ -268,6 +268,10 @@ public class ControlData2DSource extends ControlData2DLoad {
             if (checkedColsIndices.isEmpty()) {
                 checkedColsIndices = all;
             }
+//            int idOrder = data2D.idOrder();
+//            if (checkedColsIndices.contains(idOrder)) {
+//                checkedColsIndices.remove(idOrder);
+//            }
             return checkedColsIndices;
         } catch (Exception e) {
             MyBoxLog.debug(e);

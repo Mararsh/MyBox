@@ -14,6 +14,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -59,6 +60,8 @@ public abstract class Data2D extends Data2DDefinition {
     public abstract boolean savePageData(Data2D targetData);
 
     public abstract boolean export(ControlDataConvert convertController, List<Integer> colIndices);
+
+    public abstract boolean writeTable(Connection conn, TableData2D tableData2D, List<Integer> colIndices);
 
     public abstract long clearData();
 
@@ -301,10 +304,6 @@ public abstract class Data2D extends Data2DDefinition {
     /*
         matrix
      */
-    public void initMatrix(double[][] matrix) {
-        resetData();
-    }
-
     public boolean isMatrix() {
         return type == Type.Matrix;
     }
@@ -398,9 +397,9 @@ public abstract class Data2D extends Data2DDefinition {
                 if (!isTmpData()) {
                     tableData2DColumn.save(conn, d2did, columns);
                 }
+                colsNumber = columns.size();
+                tableData2DDefinition.updateData(conn, this);
             }
-            colsNumber = columns.size();
-            tableData2DDefinition.updateData(conn, this);
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -470,6 +469,10 @@ public abstract class Data2D extends Data2DDefinition {
 
     public boolean isTable() {
         return type == Type.DatabaseTable || type == Type.InternalTable;
+    }
+
+    public boolean isUserTable() {
+        return type == Type.DatabaseTable;
     }
 
     public boolean isInternalTable() {
@@ -653,6 +656,19 @@ public abstract class Data2D extends Data2DDefinition {
             }
             for (int i = 0; i < columns.size(); i++) {
                 if (name.equals(columns.get(i).getColumnName())) {
+                    return i;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return -1;
+    }
+
+    public int idOrder() {
+        try {
+            for (int i = 0; i < columns.size(); i++) {
+                Data2DColumn c = columns.get(i);
+                if (c.isIsPrimaryKey() && c.isAuto()) {
                     return i;
                 }
             }
@@ -885,6 +901,20 @@ public abstract class Data2D extends Data2DDefinition {
         }
     }
 
+    public Data2DColumn idColumn() {
+        try {
+            List<String> names = columnNames();
+            String idname = (sheet != null ? sheet : "t") + "_id";
+            while (names.contains(idname)) {
+                idname += "m";
+            }
+            Data2DColumn idcolumn = new Data2DColumn(idname, ColumnType.Long);
+            idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true);
+            return idcolumn;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /*
         attributes

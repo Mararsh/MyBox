@@ -1,9 +1,12 @@
 package mara.mybox.data;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.db.data.Data2DRow;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
@@ -29,6 +32,8 @@ public abstract class DataFileReader {
     protected double from;
     protected double[] colValues;
     protected ControlDataConvert convertController;
+    protected Connection conn;
+    protected TableData2D tableData2D;
     protected DoubleStatistic[] statisticData;
     protected CSVPrinter csvPrinter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
@@ -37,7 +42,7 @@ public abstract class DataFileReader {
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, Export, Copy, CountSum, CountSumMinMax, CountVariancesKewness,
+        ReadCols, Export, WriteTable, Copy, CountSum, CountSumMinMax, CountVariancesKewness,
         PercentageSum, Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
     }
 
@@ -97,6 +102,19 @@ public abstract class DataFileReader {
                 if (cols == null || cols.isEmpty() || convertController == null) {
                     failed = true;
                     return null;
+                }
+                break;
+            case WriteTable:
+                if (cols == null || cols.isEmpty() || conn == null || tableData2D == null) {
+                    failed = true;
+                    return null;
+                }
+                names = new ArrayList<>();
+                for (int col : cols) {
+                    try {
+                        names.add(tableData2D.getColumns().get(col).getColumnName());
+                    } catch (Exception e) {
+                    }
                 }
                 break;
             case Copy:
@@ -242,6 +260,9 @@ public abstract class DataFileReader {
                 case Export:
                     handleExport();
                     break;
+                case WriteTable:
+                    handleWriteTable();
+                    break;
                 case Copy:
                     handleCopy();
                     break;
@@ -315,6 +336,20 @@ public abstract class DataFileReader {
                 return;
             }
             convertController.writeRow(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleWriteTable() {
+        try {
+            Data2DRow data2DRow = new Data2DRow();
+            for (int i = 0; i < cols.size(); i++) {
+                try {
+                    data2DRow.setValue(names.get(i), record.get(cols.get(i)));
+                } catch (Exception e) {
+                }
+            }
+            tableData2D.insertData(conn, data2DRow);
         } catch (Exception e) {
         }
     }
@@ -638,6 +673,16 @@ public abstract class DataFileReader {
 
     public DataFileReader setConvertController(ControlDataConvert convertController) {
         this.convertController = convertController;
+        return this;
+    }
+
+    public DataFileReader setTableData2D(TableData2D tableData2D) {
+        this.tableData2D = tableData2D;
+        return this;
+    }
+
+    public DataFileReader setConn(Connection conn) {
+        this.conn = conn;
         return this;
     }
 

@@ -13,8 +13,8 @@ import mara.mybox.data.Data2D;
 import mara.mybox.data.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -39,7 +39,7 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected List<Data2DColumn> selectedColumns;
-    protected List<Integer> selectedRowsIndices;
+    protected List<Integer> selectedRowsIndices, selectedColumnsIndices;
 
     @FXML
     protected ControlData2DSource sourceController;
@@ -166,18 +166,17 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
             selectedColumns = sourceController.checkedCols();
 
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
-            tableData2D.reset();
             tableData2D.setTableName(DerbyBase.fixedIdentifier(tableName));
 
-            if (autoCheck.isSelected()) {
-                List<String> selectedNames = sourceController.checkedColsNames();
-                String idname = tableName + "_id";
-                while (selectedNames.contains(idname)) {
-                    idname += "m";
+            boolean havePrimaryKey = false;
+            for (Data2DColumn column : selectedColumns) {
+                if (column.isIsPrimaryKey()) {
+                    havePrimaryKey = true;
+                    break;
                 }
-                Data2DColumn idcolumn = new Data2DColumn(idname, ColumnType.Long);
-                idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true);
-                selectedColumns.add(0, idcolumn);
+            }
+            if (!havePrimaryKey) {
+                selectedColumns.add(0, dataTable.idColumn());
             }
             for (Data2DColumn column : selectedColumns) {
                 column.setColumnName(DerbyBase.fixedIdentifier(column.getColumnName()));
@@ -202,7 +201,12 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
     @Override
     public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
+            dataTable.resetData();
             makeTable();
+            if (tableData2D.exist(conn, tableData2D.getTableName())) {
+                updateLogs(message("AlreadyExisted"));
+                return false;
+            }
             String sql = tableData2D.createTableStatement();
             updateLogs(sql);
             if (conn.createStatement().executeUpdate(sql) >= 0) {
@@ -213,6 +217,28 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
             }
 
             dataTable.recordTable(conn, tableData2D.getTableName(), selectedColumns);
+
+            if (!importCheck.isSelected()) {
+                selectedColumnsIndices = sourceController.checkedColsIndices();
+                if (!sourceController.allPages() || !data2D.isMutiplePages()) {
+                    selectedRowsIndices = sourceController.checkedRowsIndices();
+                    List<String> names = sourceController.checkedColsNames();
+                    for (Integer row : selectedRowsIndices) {
+                        List<String> dataRow = editController.tableData.get(row);
+                        Data2DRow data2DRow = new Data2DRow();
+                        for (int i = 0; i < selectedColumnsIndices.size(); i++) {
+                            data2DRow.setValue(names.get(i), dataRow.get(selectedColumnsIndices.get(i) + 1));
+                        }
+                        tableData2D.insertData(conn, data2DRow);
+                    }
+
+                } else {
+                    data2D.setTask(task);
+                    data2D.writeTable(conn, tableData2D, selectedColumnsIndices);
+                    data2D.setTask(null);
+                }
+                conn.commit();
+            }
 
             return true;
         } catch (Exception e) {

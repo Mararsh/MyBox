@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMatrixTable.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DList.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>
@@ -54,16 +54,7 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/Red/iconTips.png" />
                                                     </image>
                                                 </ImageView>
-                                                <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSave.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
+                                                <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -87,6 +78,15 @@ License:    Apache License Version 2.0
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/Red/iconAdd.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSave.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

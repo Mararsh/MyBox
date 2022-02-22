@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DManageQueryController extends BaseChildController {
 
-    protected Data2DManageController manageController;
+    protected ControlData2DList listController;
 
     @FXML
     protected ToggleGroup orderGroup;
@@ -123,8 +123,8 @@ public class Data2DManageQueryController extends BaseChildController {
         }
     }
 
-    public void setParameters(Data2DManageController manageController) {
-        this.manageController = manageController;
+    public void setParameters(ControlData2DList manageController) {
+        this.listController = manageController;
     }
 
     @FXML
@@ -168,9 +168,9 @@ public class Data2DManageQueryController extends BaseChildController {
             if (orderColumns != null && descCheck.isSelected()) {
                 orderColumns += " DESC ";
             }
-            manageController.queryConditions = condition;
-            manageController.orderColumns = orderColumns;
-            manageController.refreshAction();
+            listController.queryConditions = condition;
+            listController.orderColumns = orderColumns;
+            listController.refreshAction();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -179,7 +179,7 @@ public class Data2DManageQueryController extends BaseChildController {
     /*
         static
      */
-    public static Data2DManageQueryController open(Data2DManageController manageController) {
+    public static Data2DManageQueryController open(ControlData2DList manageController) {
         try {
             Data2DManageQueryController controller = (Data2DManageQueryController) WindowTools.openChildStage(
                     manageController.getMyWindow(), Fxmls.Data2DManageQueryFxml, false);

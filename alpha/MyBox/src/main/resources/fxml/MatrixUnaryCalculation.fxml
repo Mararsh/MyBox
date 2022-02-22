@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMatrixTable.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DList.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>
@@ -175,11 +175,11 @@ License:    Apache License Version 2.0
                                                                         <TextField fx:id="powerInput" prefWidth="80.0" />
                                                                     </children>
                                                                 </HBox>
-                                                <VBox fx:id="normalizeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                   <children>
-                                                      <fx:include fx:id="normalize" source="ControlData2DNormalize.fxml" />
-                                                   </children>
-                                                </VBox>
+                                                                <VBox fx:id="normalizeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                    <children>
+                                                                        <fx:include fx:id="normalize" source="ControlData2DNormalize.fxml" />
+                                                                    </children>
+                                                                </VBox>
                                                             </children>
                                                         </VBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">

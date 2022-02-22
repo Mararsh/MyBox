@@ -49,9 +49,8 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     @Override
-    public void initValues() {
+    public void initData() {
         try {
-            super.initValues();
             setDataType(Data2D.Type.Excel);
             dataFileExcel = (DataFileExcel) dataController.data2D;
         } catch (Exception e) {

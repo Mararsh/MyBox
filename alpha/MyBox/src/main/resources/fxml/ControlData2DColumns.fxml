@@ -46,6 +46,15 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
+            <Button fx:id="numberButton" layoutX="642.0" layoutY="10.0" mnemonicParsing="false" onAction="#idColumn">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconNumber.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="colorButton" mnemonicParsing="false" onAction="#randomColors">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -1,10 +1,6 @@
 package mara.mybox.db.table;
 
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.data.DataInternalTable;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.dev.MyBoxLog;

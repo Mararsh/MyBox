@@ -60,6 +60,9 @@ public abstract class BaseTable<D> {
             return null;
         }
         String sql = queryStatement();
+        if (sql == null || sql.isBlank()) {
+            return null;
+        }
         try ( PreparedStatement statement = conn.prepareStatement(sql)) {
             if (setColumnsValues(statement, primaryColumns, data, 1) < 0) {
                 return null;
@@ -611,7 +614,7 @@ public abstract class BaseTable<D> {
     }
 
     public String queryStatement() {
-        if (tableName == null || columns.isEmpty()) {
+        if (tableName == null || columns.isEmpty() || primaryColumns.isEmpty()) {
             return null;
         }
         String sql = null;
@@ -840,6 +843,10 @@ public abstract class BaseTable<D> {
 
     public D exist(D data) {
         return query(data);
+    }
+
+    public D exist(Connection conn, D data) {
+        return readData(conn, data);
     }
 
     public D query(D data) {
@@ -1071,7 +1078,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         try {
-            D exist = exist(data);
+            D exist = exist(conn, data);
             if (exist != null) {
                 if (idColumn != null) {
                     setId(exist, data);
@@ -1464,6 +1471,18 @@ public abstract class BaseTable<D> {
             }
         }
         return true;
+    }
+
+    public boolean exist(Connection conn, String tableName) {
+        if (conn == null || tableName == null) {
+            return false;
+        }
+        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA", tableName, "%")) {
+            return resultSet.next();
+        } catch (Exception e) {
+//            MyBoxLog.error(e, tableName);
+        }
+        return false;
     }
 
     /*

@@ -29,6 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.tools.DoubleMatrixTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -145,6 +146,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     /*
         data
      */
+    public void loadDef(Data2DDefinition data) {
+        data2D = Data2D.create(data.getType());
+        data2D.cloneAll(data);
+        readDefinition();
+    }
+
     public synchronized void readDefinition() {
         if (data2D == null) {
             loadNull();
@@ -186,6 +193,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 task = null;
                 resetView(false);
                 if (dataController != null) {
+                    dataController.setData(data2D);
                     dataController.loadData();   // Load data whatever
                 } else {
                     loadData();
@@ -275,7 +283,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.resetData();
                     data2D.setTask(task);
                     List<Data2DColumn> columns = new ArrayList<>();
                     if (cols == null || cols.isEmpty()) {
@@ -304,7 +311,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             rows.add(row);
                         }
                     }
-                    data2D.setSheet("sheet1");
                     data2D.checkForLoad();
                     return true;
                 } catch (Exception e) {
@@ -352,6 +358,14 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    public void loadMatrix(double[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            loadNull();
+            return;
+        }
+        loadTmpData(data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
     }
 
     public synchronized boolean updateData(List<List<String>> newData, boolean columnsChanged) {

@@ -9,6 +9,7 @@ import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DataFileReader.Operation;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
@@ -91,6 +92,19 @@ public abstract class DataFile extends Data2D {
         DataFileReader reader = DataFileReader.create(this)
                 .setConvertController(convertController).setCols(cols)
                 .setReaderTask(task).start(Operation.Export);
+        return reader != null && !reader.isFailed();
+    }
+
+    @Override
+    public boolean writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
+        if (conn == null || tableData2D == null
+                || file == null || !file.exists() || file.length() == 0
+                || cols == null || cols.isEmpty()) {
+            return false;
+        }
+        DataFileReader reader = DataFileReader.create(this)
+                .setConn(conn).setTableData2D(tableData2D).setCols(cols)
+                .setReaderTask(task).start(Operation.WriteTable);
         return reader != null && !reader.isFailed();
     }
 

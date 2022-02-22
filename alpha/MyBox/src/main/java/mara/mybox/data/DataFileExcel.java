@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -96,9 +95,17 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
+    public boolean checkForLoad() {
+        if (sheet == null) {
+            sheet = "sheet1";
+        }
+        return true;
+    }
+
+    @Override
     public boolean checkForSave() {
         if (sheet == null) {
-            sheet = new Date().getTime() + "";
+            sheet = "sheet1";
         }
         if (dataName == null || dataName.isBlank()) {
             if (!isTmpData()) {

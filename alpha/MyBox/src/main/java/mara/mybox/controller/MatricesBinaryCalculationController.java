@@ -36,7 +36,7 @@ public class MatricesBinaryCalculationController extends BaseController {
     protected double[][] result;
 
     @FXML
-    protected ControlMatrixTable2 listController;
+    protected ControlMatrixTable listController;
     @FXML
     protected ControlData2D dataAController, dataBController, resultController;
     @FXML

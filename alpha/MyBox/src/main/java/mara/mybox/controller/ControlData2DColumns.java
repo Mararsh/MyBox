@@ -66,7 +66,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button renameColumnsButton, colorButton;
+    protected Button numberButton, renameColumnsButton, colorButton;
 
     public ControlData2DColumns() {
     }
@@ -339,9 +339,11 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
                 editableColumn.setEditable(false);
                 editableColumn.setCellFactory(new TableBooleanCell());
+                editableColumn.getStyleClass().clear();
 
                 notNullColumn.setEditable(false);
                 notNullColumn.setCellFactory(new TableBooleanCell());
+                notNullColumn.getStyleClass().clear();
 
                 lengthColumn.setEditable(false);
                 lengthColumn.getStyleClass().clear();
@@ -507,7 +509,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public void checkButtons() {
         super.checkButtons();
         renameColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
-        addRowsButton.setDisable(data2D == null || data2D.isInternalTable() || tableData.isEmpty());
+        numberButton.setDisable(data2D == null || !data2D.isUserTable() || data2D.getSheet() != null);
+        addRowsButton.setDisable(data2D == null || data2D.isInternalTable());
         deleteButton.setDisable(data2D == null || data2D.isInternalTable() || tableData.isEmpty());
         colorButton.setDisable(tableData.isEmpty());
     }
@@ -597,6 +600,17 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
+    public void idColumn() {
+        for (Data2DColumn column : tableData) {
+            if (column.isIsPrimaryKey() && column.isAuto()) {
+                alertError(message("AlreadyExisted"));
+                return;
+            }
+        }
+        tableData.add(0, data2D.idColumn());
+    }
+
+    @FXML
     @Override
     public void okAction() {
         if (status != Status.Modified) {
@@ -622,6 +636,19 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                     }
                 });
                 return false;
+            }
+            if (data2D.isTable()) {
+                boolean noPrimaryKey = true;
+                for (Data2DColumn column : tableData) {
+                    if (column.isIsPrimaryKey()) {
+                        noPrimaryKey = false;
+                        break;
+                    }
+                }
+                if (noPrimaryKey) {
+                    alertError(message("NoPrimaryKeys"));
+                    return false;
+                }
             }
             List<List<String>> newTableData = new ArrayList<>();
             if (!tableData.isEmpty()) {

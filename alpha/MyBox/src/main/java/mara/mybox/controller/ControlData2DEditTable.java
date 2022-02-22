@@ -174,7 +174,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
                 @Override
                 protected void whenSucceeded() {
                     DataInMyBoxClipboardController controller = DataInMyBoxClipboardController.oneOpen();
-                    controller.load(clip);
+                    controller.loadDef(clip);
                     popDone();
                 }
 
