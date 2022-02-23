@@ -634,13 +634,12 @@ public class TextTools {
             String delimiter = delimiterValue(delimiterName);
             int rowsNumber = data2D.tableRowsNumber();
             int colsNumber = data2D.tableColsNumber();
-            int colEnd;
+            int colEnd = colsNumber - 1;
             if (displayColNames) {
                 if (displayRowNames) {
                     s.append(message("RowNumber")).append(delimiter);
                 }
                 List<String> colNames = data2D.columnNames();
-                colEnd = colNames.size() - 1;
                 for (int c = 0; c <= colEnd; c++) {
                     s.append(colNames.get(c));
                     if (c < colEnd) {
@@ -656,7 +655,6 @@ public class TextTools {
                 if (displayRowNames) {
                     s.append(rowNames.get(i)).append(delimiter);
                 }
-                colEnd = colsNumber - 1;
                 List<String> rowValues = data2D.tableRowWithoutNumber(i);
                 if (rowValues == null) {
                     continue;

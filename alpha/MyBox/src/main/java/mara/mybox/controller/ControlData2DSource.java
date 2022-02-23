@@ -22,6 +22,7 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     protected ControlData2DEditTable editController;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
+    protected boolean idExclude = false;
 
     @FXML
     protected CheckBox columnsCheck, allPagesCheck;
@@ -74,6 +75,10 @@ public class ControlData2DSource extends ControlData2DLoad {
                 buttonsBox.getChildren().remove(allPagesCheck);
             }
         }
+    }
+
+    public void idExclude(boolean idExclude) {
+        this.idExclude = idExclude;
     }
 
     public void setParameters(BaseController parent, ControlData2DEditTable editController) {
@@ -254,11 +259,15 @@ public class ControlData2DSource extends ControlData2DLoad {
         try {
             checkedColsIndices = new ArrayList<>();
             List<Integer> all = new ArrayList<>();
+            int idOrder = -1;
+            if (idExclude) {
+                idOrder = data2D.idOrder();
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
                 int col = data2D.colOrder(cb.getText());
-                if (col >= 0) {
+                if (col >= 0 && col != idOrder) {
                     all.add(col);
                     if (cb.isSelected()) {
                         checkedColsIndices.add(col);
@@ -268,10 +277,6 @@ public class ControlData2DSource extends ControlData2DLoad {
             if (checkedColsIndices.isEmpty()) {
                 checkedColsIndices = all;
             }
-//            int idOrder = data2D.idOrder();
-//            if (checkedColsIndices.contains(idOrder)) {
-//                checkedColsIndices.remove(idOrder);
-//            }
             return checkedColsIndices;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -284,12 +289,19 @@ public class ControlData2DSource extends ControlData2DLoad {
         try {
             List<String> names = new ArrayList<>();
             List<String> all = new ArrayList<>();
+            int idOrder = -1;
+            if (idExclude) {
+                idOrder = data2D.idOrder();
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                all.add(cb.getText());
-                if (cb.isSelected()) {
-                    names.add(cb.getText());
+                int col = data2D.colOrder(cb.getText());
+                if (col >= 0 && col != idOrder) {
+                    all.add(cb.getText());
+                    if (cb.isSelected()) {
+                        names.add(cb.getText());
+                    }
                 }
             }
             if (names.isEmpty()) {
@@ -307,14 +319,19 @@ public class ControlData2DSource extends ControlData2DLoad {
         try {
             List<Data2DColumn> cols = new ArrayList<>();
             List<Data2DColumn> all = new ArrayList<>();
+            int idOrder = -1;
+            if (idExclude) {
+                idOrder = data2D.idOrder();
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                Data2DColumn col = data2D.col(cb.getText());
-                if (col != null) {
-                    all.add(col.cloneAll());
+                int col = data2D.colOrder(cb.getText());
+                if (col >= 0 && col != idOrder) {
+                    Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
+                    all.add(dcol);
                     if (cb.isSelected()) {
-                        cols.add(col.cloneAll());
+                        cols.add(dcol);
                     }
                 }
             }

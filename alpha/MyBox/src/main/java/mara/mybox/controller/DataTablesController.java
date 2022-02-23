@@ -34,10 +34,10 @@ public class DataTablesController extends BaseData2DController {
 
     @FXML
     protected void tableDefinition() {
-        if (data2D == null) {
+        if (loadController.data2D == null) {
             return;
         }
-        String html = TableData2D.tableDefinition(data2D.getSheet());
+        String html = TableData2D.tableDefinition(loadController.data2D.getSheet());
         if (html != null) {
             HtmlPopController.openHtml(this, html);
         } else {

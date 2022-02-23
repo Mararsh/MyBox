@@ -593,6 +593,10 @@ public class ColumnDefinition extends BaseData {
         return label;
     }
 
+    public boolean isId() {
+        return isPrimaryKey && auto;
+    }
+
     /*
         get/set
      */

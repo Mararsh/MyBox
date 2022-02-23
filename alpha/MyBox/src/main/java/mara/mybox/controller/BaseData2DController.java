@@ -18,7 +18,6 @@ import mara.mybox.dev.MyBoxLog;
 public abstract class BaseData2DController extends BaseController {
 
     protected Data2D.Type type;
-    protected Data2D data2D;
 
     @FXML
     protected ControlData2DList listController;
@@ -69,12 +68,10 @@ public abstract class BaseData2DController extends BaseController {
         try {
             if (dataController != null) {
                 dataController.setDataType(this, type);
-                data2D = dataController.data2D;
                 loadController = dataController.editController.tableController;
 
             } else if (loadController != null) {
-                data2D = Data2D.create(type);
-                loadController.setData(data2D);
+                loadController.setData(Data2D.create(type));
 
             }
 
@@ -115,10 +112,10 @@ public abstract class BaseData2DController extends BaseController {
 
     public void checkButtons() {
         if (saveButton != null) {
-            saveButton.setDisable(data2D == null || !data2D.isValid());
+            saveButton.setDisable(loadController.data2D == null || !loadController.data2D.isValid());
         }
         if (recoverButton != null) {
-            recoverButton.setDisable(data2D == null || data2D.isTmpData());
+            recoverButton.setDisable(loadController.data2D == null || loadController.data2D.isTmpData());
         }
     }
 
@@ -127,7 +124,6 @@ public abstract class BaseData2DController extends BaseController {
             return;
         }
         loadController.loadDef(def);
-        data2D = loadController.data2D;
         checkButtons();
     }
 
@@ -146,7 +142,7 @@ public abstract class BaseData2DController extends BaseController {
         if (dataController == null) {
             return;
         }
-        dataController.recoverFile();
+        dataController.recover();
     }
 
     @FXML
@@ -168,7 +164,7 @@ public abstract class BaseData2DController extends BaseController {
 
     @FXML
     public void editAction() {
-        Data2DDefinition.open(data2D);
+        Data2DDefinition.open(loadController.data2D);
     }
 
     @FXML
@@ -216,7 +212,6 @@ public abstract class BaseData2DController extends BaseController {
         try {
             dataController = null;
             loadController = null;
-            data2D = null;
         } catch (Exception e) {
         }
         super.cleanPane();

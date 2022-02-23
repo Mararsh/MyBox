@@ -168,11 +168,13 @@ public class ControlData2D extends BaseController {
     }
 
     public void recover() {
-        if (data2D.isMatrix()) {
-            recoverMatrix();
-        } else {
-            recoverFile();
+        resetStatus();
+        setData(tableController.data2D);
+        if (data2D.isDataFile()) {
+            data2D.initFile(data2D.getFile());
         }
+        MyBoxLog.console(data2D.displayName());
+        readDefinition();
     }
 
     /*
@@ -184,6 +186,8 @@ public class ControlData2D extends BaseController {
             if (!checkBeforeNextAction()) {
                 return;
             }
+            resetStatus();
+            setData(Data2D.create(type));
             data2D.initFile(file);
             readDefinition();
         } catch (Exception e) {
@@ -191,23 +195,11 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void recoverFile() {
-        resetStatus();
-        data2D.initFile(data2D.getFile());
-        readDefinition();
-    }
-
-
     /*
         matrix
      */
     public void loadMatrix(double[][] matrix) {
         tableController.loadMatrix(matrix);
-    }
-
-    public void recoverMatrix() {
-        resetStatus();
-        readDefinition();
     }
 
     /*
@@ -222,6 +214,7 @@ public class ControlData2D extends BaseController {
     }
 
     public synchronized void loadData() {
+        setData(tableController.data2D);
         tableController.loadData();
         attributesController.loadData();
         columnsController.loadData();
@@ -238,10 +231,12 @@ public class ControlData2D extends BaseController {
     }
 
     public void notifyStatus() {
+        data2D = tableController.data2D;
         statusNotify.set(!statusNotify.get());
     }
 
     public void notifyLoaded() {
+        notifyStatus();
         if (backupController != null) {
             if (data2D.isTmpData()) {
                 backupController.loadBackups(null);
@@ -250,15 +245,15 @@ public class ControlData2D extends BaseController {
             }
         }
         loadedNotify.set(!loadedNotify.get());
-        notifyStatus();
     }
 
     public void notifySaved() {
-        savedNotify.set(!savedNotify.get());
         notifyStatus();
+        savedNotify.set(!savedNotify.get());
     }
 
     public synchronized void checkStatus() {
+        data2D = tableController.data2D;
         String title = message("Table");
         if (data2D != null && data2D.isTableChanged()) {
             title += "*";
@@ -341,6 +336,7 @@ public class ControlData2D extends BaseController {
     }
 
     public synchronized int checkBeforeSave() {
+        setData(tableController.data2D);
         if (!tableController.dataSizeLoaded) {
             popError(message("CountingTotalNumber"));
             return -1;
@@ -396,6 +392,7 @@ public class ControlData2D extends BaseController {
     }
 
     public synchronized void save() {
+        setData(tableController.data2D);
         if (task != null && !task.isQuit()) {
             return;
         }
@@ -465,6 +462,7 @@ public class ControlData2D extends BaseController {
     }
 
     public synchronized void saveTable() {
+        setData(tableController.data2D);
         if (data2D.getSheet() == null) {
             String name = PopTools.askValue(getBaseTitle(), null, message("TableName"), null);
             if (name == null || name.isBlank()) {
@@ -472,7 +470,6 @@ public class ControlData2D extends BaseController {
             }
             data2D.setDataName(name);
         }
-        MyBoxLog.console(data2D.getClass());
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -484,7 +481,6 @@ public class ControlData2D extends BaseController {
                             return false;
                         }
                     }
-                    MyBoxLog.console(data2D.getClass() + "  " + data2D.getSheet());
                     data2D.savePageData(data2D);
                     return true;
                 } catch (Exception e) {
@@ -511,6 +507,7 @@ public class ControlData2D extends BaseController {
     }
 
     public synchronized void saveAs(Data2D targetData, SaveAsType saveAsType) {
+        setData(tableController.data2D);
         if (targetData == null || targetData.getFile() == null) {
             return;
         }
@@ -565,6 +562,7 @@ public class ControlData2D extends BaseController {
     @Override
     public void loadContentInSystemClipboard() {
         try {
+            setData(tableController.data2D);
             if (data2D == null || !checkBeforeNextAction()) {
                 return;
             }
@@ -646,6 +644,8 @@ public class ControlData2D extends BaseController {
     @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
+            setData(tableController.data2D);
+
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
             }
@@ -665,11 +665,7 @@ public class ControlData2D extends BaseController {
 
             menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
             menu.setOnAction((ActionEvent event) -> {
-                if (data2D.isMatrix()) {
-                    recoverMatrix();
-                } else {
-                    recoverFile();
-                }
+                recover();
             });
             menu.setDisable(invalidData || data2D.isTmpData());
             popMenu.getItems().add(menu);

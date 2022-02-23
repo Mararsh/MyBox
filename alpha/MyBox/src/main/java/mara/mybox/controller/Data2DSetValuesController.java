@@ -91,6 +91,16 @@ public class Data2DSetValuesController extends Data2DHandleController {
         }
     }
 
+    @Override
+    public void setParameters(ControlData2DEditTable editController) {
+        try {
+            sourceController.idExclude(true);
+            super.setParameters(editController);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void checkValue() {
         try {
             if (isSettingValues) {

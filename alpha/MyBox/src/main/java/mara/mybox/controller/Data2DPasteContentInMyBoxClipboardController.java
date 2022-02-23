@@ -51,7 +51,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
 
             sourceController.loadedNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        okButton.setDisable(!data2D.hasData());
+                        okButton.setDisable(!loadController.data2D.hasData());
                     });
             okButton.setDisable(true);
 
@@ -91,15 +91,10 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     }
 
     @FXML
-    public void editAction() {
-        DataInMyBoxClipboardController.open(data2D);
-    }
-
-    @FXML
     @Override
     public void okAction() {
         try {
-            if (!data2D.hasData()) {
+            if (!loadController.data2D.hasData()) {
                 popError(message("NoData"));
                 return;
             }

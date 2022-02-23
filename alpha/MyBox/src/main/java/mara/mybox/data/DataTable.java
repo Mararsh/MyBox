@@ -248,7 +248,6 @@ public class DataTable extends Data2D {
         if (targetData == null || !(targetData instanceof DataTable)) {
             return false;
         }
-        MyBoxLog.console(sheet + "  " + tableData2D.getTableName());
         try ( Connection conn = DerbyBase.getConnection()) {
             List<Data2DRow> dbRows = tableData2D.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
             List<Data2DRow> pageRows = new ArrayList<>();

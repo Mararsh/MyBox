@@ -903,15 +903,18 @@ public abstract class Data2D extends Data2DDefinition {
 
     public Data2DColumn idColumn() {
         try {
-            List<String> names = columnNames();
             String idname = (sheet != null ? sheet : "t") + "_id";
-            while (names.contains(idname)) {
-                idname += "m";
+            List<String> names = columnNames();
+            if (names != null) {
+                while (names.contains(idname)) {
+                    idname += "m";
+                }
             }
             Data2DColumn idcolumn = new Data2DColumn(idname, ColumnType.Long);
-            idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true);
+            idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
             return idcolumn;
         } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }

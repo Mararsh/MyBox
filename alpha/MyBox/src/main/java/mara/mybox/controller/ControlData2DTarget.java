@@ -12,6 +12,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
 
@@ -216,16 +217,22 @@ public class ControlData2DTarget extends BaseController {
             rowSelector.getSelectionModel().select(thisSelect >= 0 ? thisSelect : 0);
 
             String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            List<String> names = tableController.data2D.columnNames();
-            if (names == null) {
-                colSelector.getItems().clear();
-            } else {
+            if (tableController.data2D.getColumns() != null) {
+                List<String> names = tableController.data2D.columnNames();
+                for (Data2DColumn column : tableController.data2D.getColumns()) {
+                    MyBoxLog.debug(column.getColumnName() + " " + column.isId());
+                    if (!column.isId()) {
+                        names.add(column.getColumnName());
+                    }
+                }
                 colSelector.getItems().setAll(names);
                 if (selectedCol != null) {
                     colSelector.setValue(selectedCol);
                 } else {
                     colSelector.getSelectionModel().select(0);
                 }
+            } else {
+                colSelector.getItems().clear();
             }
 
         } catch (Exception e) {

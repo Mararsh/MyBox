@@ -56,7 +56,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             initBackupsTab();
             initSaveAsTab();
 
-            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     checkStatus();
@@ -148,7 +148,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
     }
 
     protected void checkStatus() {
-        leftPane.setDisable(data2D == null || data2D.isTmpData());
+        leftPane.setDisable(dataController.data2D == null || dataController.data2D.isTmpData());
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -172,18 +172,18 @@ public abstract class BaseData2DFileController extends BaseData2DController {
     @FXML
     public void refreshFile() {
         dataController.resetStatus();
-        data2D.initFile(data2D.getFile());
+        dataController.data2D.initFile(dataController.data2D.getFile());
         pickRefreshOptions();
         dataController.readDefinition();
     }
 
     @FXML
     public void editTextFile() {
-        if (data2D == null || data2D.getFile() == null) {
+        if (dataController.data2D == null || dataController.data2D.getFile() == null) {
             return;
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.sourceFileChanged(data2D.getFile());
+        controller.sourceFileChanged(dataController.data2D.getFile());
         controller.toFront();
     }
 

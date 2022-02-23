@@ -66,7 +66,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button numberButton, renameColumnsButton, colorButton;
+    protected Button renameColumnsButton, colorButton;
 
     public ControlData2DColumns() {
     }
@@ -348,11 +348,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 lengthColumn.setEditable(false);
                 lengthColumn.getStyleClass().clear();
 
-                if (!tableView.getColumns().contains(primaryColumn)) {
-                    tableView.getColumns().add(6, primaryColumn);
-                    tableView.getColumns().add(7, autoColumn);
-                }
-
             } else {
                 if (data2D.isMatrix()) {
                     typeColumn.setEditable(false);
@@ -451,10 +446,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
                 lengthColumn.setEditable(true);
                 lengthColumn.getStyleClass().add("editable-column");
-
-                if (tableView.getColumns().contains(primaryColumn)) {
-                    tableView.getColumns().removeAll(primaryColumn, autoColumn);
-                }
             }
 
             checkButtons();
@@ -509,7 +500,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public void checkButtons() {
         super.checkButtons();
         renameColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
-        numberButton.setDisable(data2D == null || !data2D.isUserTable() || data2D.getSheet() != null);
         addRowsButton.setDisable(data2D == null || data2D.isInternalTable());
         deleteButton.setDisable(data2D == null || data2D.isInternalTable() || tableData.isEmpty());
         colorButton.setDisable(tableData.isEmpty());

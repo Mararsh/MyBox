@@ -89,7 +89,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     public void setParameters(BaseData2DController data2DController) {
         try {
             this.data2DController = data2DController;
-            data2D = data2DController.data2D;
+            data2D = data2DController.loadController.data2D;
             tableDefinition = data2D.getTableData2DDefinition();
             tableName = tableDefinition.getTableName();
             idColumn = tableDefinition.getIdColumn();
