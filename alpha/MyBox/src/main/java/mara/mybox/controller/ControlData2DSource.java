@@ -20,9 +20,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DSource extends ControlData2DLoad {
 
-    protected ControlData2DEditTable editController;
+    protected ControlData2DEditTable tableController;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
     protected boolean idExclude = false;
+    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected CheckBox columnsCheck, allPagesCheck;
@@ -81,22 +82,24 @@ public class ControlData2DSource extends ControlData2DLoad {
         this.idExclude = idExclude;
     }
 
-    public void setParameters(BaseController parent, ControlData2DEditTable editController) {
+    public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
-            if (editController == null) {
+            if (tableController == null) {
                 return;
             }
             this.parentController = parent;
-            this.editController = editController;
-            data2D = editController.data2D;
+            this.tableController = tableController;
+            data2D = tableController.data2D;
 
             updateData();
-            editController.statusNotify.addListener(new ChangeListener<Boolean>() {
+
+            tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     updateData();
                 }
-            });
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -104,13 +107,13 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     public void updateData() {
-        if (editController == null) {
+        if (tableController == null) {
             return;
         }
-        data2D = editController.data2D.cloneAll();
+        data2D = tableController.data2D.cloneAll();
         makeColumns();
         isSettingValues = true;
-        tableData.setAll(editController.tableData);
+        tableData.setAll(tableController.tableData);
         isSettingValues = false;
         notifyLoaded();
         checkChanged();
@@ -433,6 +436,17 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void setLabel(String s) {
         titleLabel.setText(s);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+            tableController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

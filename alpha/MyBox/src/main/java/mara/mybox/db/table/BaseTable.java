@@ -1488,10 +1488,10 @@ public abstract class BaseTable<D> {
         if (conn == null || tableName == null) {
             return false;
         }
-        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA", tableName, "%")) {
+        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA", tableName.toUpperCase(), "%")) {
             return resultSet.next();
         } catch (Exception e) {
-//            MyBoxLog.error(e, tableName);
+            MyBoxLog.error(e, tableName);
         }
         return false;
     }

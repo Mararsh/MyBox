@@ -151,8 +151,8 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public boolean writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
-        return false;
+    public long writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
+        return -1;
     }
 
     public boolean isSquare() {

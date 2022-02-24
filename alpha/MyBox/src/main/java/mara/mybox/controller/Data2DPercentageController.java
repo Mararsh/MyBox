@@ -140,7 +140,7 @@ public class Data2DPercentageController extends Data2DHandleController {
             int colsLen = sourceController.checkedColsIndices.size();
             double[] sum = new double[colsLen];
             for (int r : sourceController.checkedRowsIndices) {
-                List<String> tableRow = editController.tableData.get(r);
+                List<String> tableRow = tableController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
                     double d = data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
                     if (d < 0) {
@@ -164,7 +164,7 @@ public class Data2DPercentageController extends Data2DHandleController {
             }
             handledData.add(row);
             for (int r : sourceController.checkedRowsIndices) {
-                List<String> tableRow = editController.tableData.get(r);
+                List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add((r + 1) + "");
                 for (int c = 0; c < colsLen; c++) {

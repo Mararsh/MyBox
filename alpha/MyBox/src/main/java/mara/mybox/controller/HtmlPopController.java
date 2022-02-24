@@ -136,9 +136,9 @@ public class HtmlPopController extends BaseWebViewController {
         try {
             if (sourceWebView != null) {
                 sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
-                sourceWebView = null;
             }
             listener = null;
+            sourceWebView = null;
         } catch (Exception e) {
         }
         super.cleanPane();

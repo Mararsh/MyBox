@@ -30,6 +30,7 @@ public class Data2DSortController extends Data2DHandleController {
     protected int orderCol;
     protected List<Integer> colsIndices;
     protected List<String> colsNames;
+    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected ComboBox<String> colSelector;
@@ -49,12 +50,14 @@ public class Data2DSortController extends Data2DHandleController {
                     checkOptions();
                 }
             });
-            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+
+            tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     refreshControls();
                 }
-            });
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
             refreshControls();
         } catch (Exception e) {
@@ -64,7 +67,7 @@ public class Data2DSortController extends Data2DHandleController {
 
     public void refreshControls() {
         try {
-            List<String> names = editController.data2D.columnNames();
+            List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 colSelector.getItems().clear();
                 return;
@@ -191,6 +194,16 @@ public class Data2DSortController extends Data2DHandleController {
             return null;
         }
 
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

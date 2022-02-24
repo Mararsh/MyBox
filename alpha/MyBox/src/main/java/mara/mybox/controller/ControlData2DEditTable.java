@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DEditTable extends ControlData2DLoad {
 
-    protected final SimpleBooleanProperty columnChangedNotify;
+    protected SimpleBooleanProperty columnChangedNotify;
 
     public ControlData2DEditTable() {
         readOnly = false;
@@ -50,6 +50,19 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
     public void notifyColumnChanged() {
         columnChangedNotify.set(!columnChangedNotify.get());
+    }
+
+    public void dataSaved() {
+        try {
+            popInformation(message("Saved"));
+            if (data2D.getFile() != null) {
+                recordFileWritten(data2D.getFile());
+            }
+            notifySaved();
+            readDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*
@@ -212,6 +225,15 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            columnChangedNotify = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

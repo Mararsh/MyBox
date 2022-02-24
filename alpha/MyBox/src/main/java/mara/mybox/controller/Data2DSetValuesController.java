@@ -92,10 +92,10 @@ public class Data2DSetValuesController extends Data2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable editController) {
+    public void setParameters(ControlData2DEditTable tableController) {
         try {
             sourceController.idExclude(true);
-            super.setParameters(editController);
+            super.setParameters(tableController);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -194,7 +194,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
             @Override
             protected void whenSucceeded() {
                 popDone();
-                editController.dataController.goPage();
+                tableController.dataController.goPage();
             }
 
             @Override
@@ -211,7 +211,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
     @Override
     public void handleRowsTask() {
         try {
-            editController.isSettingValues = true;
+            tableController.isSettingValues = true;
             boolean ok;
             if (gaussianDistributionRadio.isSelected()) {
                 ok = gaussianDistribution();
@@ -225,10 +225,10 @@ public class Data2DSetValuesController extends Data2DHandleController {
                 ok = setValue();
             }
             if (ok) {
-                editController.tableView.refresh();
+                tableController.tableView.refresh();
             }
-            editController.isSettingValues = false;
-            editController.tableChanged(true);
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
             popDone();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -240,17 +240,17 @@ public class Data2DSetValuesController extends Data2DHandleController {
         try {
             Random random = new Random();
             for (int row : sourceController.checkedRowsIndices) {
-                List<String> values = editController.tableData.get(row);
+                List<String> values = tableController.tableData.get(row);
                 for (int col : sourceController.checkedColsIndices) {
                     String v = value;
                     if (randomRadio.isSelected()) {
-                        v = editController.data2D.random(random, col, false);
+                        v = tableController.data2D.random(random, col, false);
                     } else if (randomNnRadio.isSelected()) {
-                        v = editController.data2D.random(random, col, true);
+                        v = tableController.data2D.random(random, col, true);
                     }
                     values.set(col + 1, v);
                 }
-                editController.tableData.set(row, values);
+                tableController.tableData.set(row, values);
             }
             return true;
         } catch (Exception e) {
@@ -263,10 +263,10 @@ public class Data2DSetValuesController extends Data2DHandleController {
     public boolean gaussianDistribution() {
         try {
             float[][] m = ConvolutionKernel.makeGaussMatrix((int) sourceController.checkedRowsIndices.size() / 2);
-            int scale = editController.data2D.getScale();
+            int scale = tableController.data2D.getScale();
             int rowIndex = 0, colIndex;
             for (int row : sourceController.checkedRowsIndices) {
-                List<String> tableRow = editController.tableData.get(row);
+                List<String> tableRow = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : sourceController.checkedColsIndices) {
                     try {
@@ -275,7 +275,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
                     }
                     colIndex++;
                 }
-                editController.tableData.set(row, tableRow);
+                tableController.tableData.set(row, tableRow);
                 rowIndex++;
             }
             return true;
@@ -290,7 +290,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
         try {
             int rowIndex = 0, colIndex;
             for (int row : sourceController.checkedRowsIndices) {
-                List<String> values = editController.tableData.get(row);
+                List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : sourceController.checkedColsIndices) {
                     if (rowIndex == colIndex) {
@@ -300,7 +300,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
                     }
                     colIndex++;
                 }
-                editController.tableData.set(row, values);
+                tableController.tableData.set(row, values);
                 rowIndex++;
             }
             return true;
@@ -315,7 +315,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
         try {
             int rowIndex = 0, colIndex;
             for (int row : sourceController.checkedRowsIndices) {
-                List<String> values = editController.tableData.get(row);
+                List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : sourceController.checkedColsIndices) {
                     if (rowIndex <= colIndex) {
@@ -325,7 +325,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
                     }
                     colIndex++;
                 }
-                editController.tableData.set(row, values);
+                tableController.tableData.set(row, values);
                 rowIndex++;
             }
             return true;
@@ -340,7 +340,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
         try {
             int rowIndex = 0, colIndex;
             for (int row : sourceController.checkedRowsIndices) {
-                List<String> values = editController.tableData.get(row);
+                List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : sourceController.checkedColsIndices) {
                     if (rowIndex >= colIndex) {
@@ -350,7 +350,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
                     }
                     colIndex++;
                 }
-                editController.tableData.set(row, values);
+                tableController.tableData.set(row, values);
                 rowIndex++;
             }
             return true;

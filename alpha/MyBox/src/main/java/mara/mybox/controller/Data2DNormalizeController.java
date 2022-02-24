@@ -49,7 +49,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
             double[][] matrix = new double[rowsNumber][colsNumber];
             for (int r = 0; r < rowsNumber; r++) {
                 int row = checkedRowsIndices.get(r);
-                List<String> tableRow = editController.tableData.get(row);
+                List<String> tableRow = tableController.tableData.get(row);
                 for (int c = 0; c < colsNumber; c++) {
                     int col = checkedColsIndices.get(c);
                     matrix[r][c] = data2D.doubleValue(tableRow.get(col + 1));

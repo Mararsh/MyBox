@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -23,6 +24,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     protected ControlData2DLoad targetTableController;
     protected Data2D dataTarget;
     protected int row, col;
+    protected ChangeListener<Boolean> targetStatusListener;
 
     @FXML
     protected ControlData2DInput inputController;
@@ -45,10 +47,13 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
 
             inputController.load(text);
 
-            targetTableController.statusNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        makeControls(row, col);
-                    });
+            targetStatusListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    makeControls(row, col);
+                }
+            };
+            targetTableController.statusNotify.addListener(targetStatusListener);
 
             inputController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -137,6 +142,18 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            targetTableController.statusNotify.removeListener(targetStatusListener);
+            targetStatusListener = null;
+            targetTableController = null;
+            dataTarget = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

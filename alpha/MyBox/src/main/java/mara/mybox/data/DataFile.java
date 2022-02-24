@@ -96,16 +96,20 @@ public abstract class DataFile extends Data2D {
     }
 
     @Override
-    public boolean writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
+    public long writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
         if (conn == null || tableData2D == null
                 || file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
-            return false;
+            return -1;
         }
         DataFileReader reader = DataFileReader.create(this)
                 .setConn(conn).setTableData2D(tableData2D).setCols(cols)
                 .setReaderTask(task).start(Operation.WriteTable);
-        return reader != null && !reader.isFailed();
+        if (reader != null && !reader.isFailed()) {
+            return reader.getCount();
+        } else {
+            return -1;
+        }
     }
 
     @Override

@@ -289,11 +289,11 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean writeTable(Connection conn, TableData2D targetTable, List<Integer> cols) {
+    public long writeTable(Connection conn, TableData2D targetTable, List<Integer> cols) {
         try {
             if (conn == null || tableData2D == null || sheet == null
                     || targetTable == null || cols == null || cols.isEmpty()) {
-                return false;
+                return -1;
             }
             String sql = "SELECT ";
             for (int i = 0; i < cols.size(); i++) {
@@ -307,18 +307,23 @@ public class DataTable extends Data2D {
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
                 conn.setAutoCommit(false);
+                long count = 0;
                 while (results.next()) {
                     Data2DRow row = tableData2D.readData(results);
                     targetTable.writeData(conn, row);
+                    if (++count % DerbyBase.BatchSize == 0) {
+                        conn.commit();
+                    }
                 }
                 conn.commit();
+                return count;
             } catch (Exception e) {
                 MyBoxLog.error(e, sql);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return false;
+        return -1;
     }
 
     @Override

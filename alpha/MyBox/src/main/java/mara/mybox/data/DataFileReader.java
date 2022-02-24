@@ -23,7 +23,7 @@ public abstract class DataFileReader {
     protected DataFile dataFile;
     protected File readerFile;
     protected Operation operation;
-    protected long rowIndex, rowsStart, rowsEnd;
+    protected long rowIndex, rowsStart, rowsEnd, count;
     protected int columnsNumber, colsLen, scale;
     protected List<String> record, names;
     protected List<List<String>> rows = new ArrayList<>();
@@ -178,6 +178,7 @@ public abstract class DataFileReader {
         rowIndex = 0;
         rowsStart = dataFile.startRowOfCurrentPage;
         rowsEnd = rowsStart + dataFile.pageSize;
+        count = 0;
         names = new ArrayList<>();
         rows = new ArrayList<>();
         scale = dataFile.getScale();
@@ -350,6 +351,7 @@ public abstract class DataFileReader {
                 }
             }
             tableData2D.insertData(conn, data2DRow);
+            count++;
         } catch (Exception e) {
         }
     }
@@ -709,6 +711,14 @@ public abstract class DataFileReader {
     public DataFileReader setCountKewness(boolean countKewness) {
         this.countKewness = countKewness;
         return this;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
 }

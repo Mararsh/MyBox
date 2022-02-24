@@ -46,7 +46,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
     protected boolean readOnly;
-    protected final SimpleBooleanProperty statusNotify, loadedNotify;
+    protected SimpleBooleanProperty statusNotify, loadedNotify;
     protected Label dataLabel;
 
     @FXML
@@ -297,9 +297,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         data2D.setHasHeader(true);
                         columns.addAll(cols);
                     }
-                    if (data2D.isUserTable()) {
-                        columns.add(0, data2D.idColumn());
-                    }
                     for (Data2DColumn column : columns) {
                         column.setIndex(data2D.newColumnIndex());
                     }
@@ -310,9 +307,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         for (int i = 0; i < data.size(); i++) {
                             List<String> row = new ArrayList<>();
                             row.add("-1");
-                            if (data2D.isUserTable()) {
-                                row.add(null);
-                            }
                             row.addAll(data.get(i));
                             rows.add(row);
                         }
@@ -830,6 +824,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     @Override
     public void cleanPane() {
         try {
+            statusNotify = null;
+            loadedNotify = null;
             dataController = null;
             data2D = null;
         } catch (Exception e) {

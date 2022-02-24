@@ -100,4 +100,13 @@ public class TableSizeController extends BaseController {
         close();
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            notify = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
 }

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -24,6 +25,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     protected ControlData2DLoad targetTableController;
     protected Data2D dataTarget;
     protected int row, col;
+    protected ChangeListener<Boolean> targetStatusListener;
 
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
@@ -44,10 +46,13 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             targetTableController = target;
             dataTarget = target.data2D;
 
-            targetTableController.statusNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        makeControls(row, col);
-                    });
+            targetStatusListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    makeControls(row, col);
+                }
+            };
+            targetTableController.statusNotify.addListener(targetStatusListener);
 
             sourceController.loadedNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -159,6 +164,19 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     public boolean keyF6() {
         close();
         return false;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            targetTableController.statusNotify.removeListener(targetStatusListener);
+            targetStatusListener = null;
+            targetTableController = null;
+            sourceController = null;
+            dataTarget = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 

@@ -24,9 +24,9 @@ import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -38,11 +38,11 @@ import mara.mybox.value.Languages;
 public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected static final int AutoExpandThreshold = 100;
+    protected static final String nodeSeparator = " > ";
 
     protected P ignoreNode = null, selectedNode = null, changedNode = null;
     protected SimpleBooleanProperty selectedNotify, changedNotify;
     protected boolean expandAll, manageMode;
-    protected String nodeSeparator = " > ";
 
     @FXML
     protected TreeView<P> treeView;
@@ -486,12 +486,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             }
             boolean isRoot = isRoot(node);
             if (isRoot) {
-                if (!PopTools.askSure(this,getBaseTitle(), Languages.message("Delete"), Languages.message("SureDeleteAll"))) {
+                if (!PopTools.askSure(this, getBaseTitle(), Languages.message("Delete"), Languages.message("SureDeleteAll"))) {
                     return;
                 }
             } else {
                 String chainName = chainName(targetItem);
-                if (!PopTools.askSure(this,getBaseTitle(), chainName, Languages.message("Delete"))) {
+                if (!PopTools.askSure(this, getBaseTitle(), chainName, Languages.message("Delete"))) {
                     return;
                 }
             }
@@ -868,6 +868,19 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     @Override
     public void cancelAction() {
         closeStage();
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            selectedNotify = null;
+            changedNotify = null;
+            ignoreNode = null;
+            selectedNode = null;
+            changedNode = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

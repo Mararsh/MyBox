@@ -13,9 +13,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -28,6 +28,9 @@ import mara.mybox.value.UserConfig;
 public class MenuImageBaseController extends MenuController {
 
     protected BaseImageController imageController;
+    protected ChangeListener<Boolean> colorListener, areaListener, coordinateListener,
+            rulersListener, gridListener, loadListener;
+    protected ChangeListener<String> widthListener, zoomListener;
 
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
@@ -75,7 +78,7 @@ public class MenuImageBaseController extends MenuController {
                         isSettingValues = false;
                     }
                 });
-                imageController.pickColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                colorListener = new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (isSettingValues) {
@@ -85,7 +88,8 @@ public class MenuImageBaseController extends MenuController {
                         pickColorCheck.setSelected(newValue);
                         isSettingValues = false;
                     }
-                });
+                };
+                imageController.pickColorCheck.selectedProperty().addListener(colorListener);
             } else {
                 pickColorCheck.setSelected(imageController.isPickingColor);
                 pickColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -113,7 +117,7 @@ public class MenuImageBaseController extends MenuController {
                             isSettingValues = false;
                         }
                     });
-                    imageController.selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    areaListener = new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                             if (isSettingValues) {
@@ -123,7 +127,8 @@ public class MenuImageBaseController extends MenuController {
                             selectAreaCheck.setSelected(newValue);
                             isSettingValues = false;
                         }
-                    });
+                    };
+                    imageController.selectAreaCheck.selectedProperty().addListener(areaListener);
                 } else {
                     selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
                     selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -149,7 +154,7 @@ public class MenuImageBaseController extends MenuController {
                         isSettingValues = false;
                     }
                 });
-                imageController.coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                coordinateListener = new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (isSettingValues) {
@@ -159,13 +164,14 @@ public class MenuImageBaseController extends MenuController {
                         coordinateCheck.setSelected(newValue);
                         isSettingValues = false;
                     }
-                });
+                };
+                imageController.coordinateCheck.selectedProperty().addListener(coordinateListener);
             } else {
-                coordinateCheck.setSelected(UserConfig.getBoolean( "ImagePopCooridnate", false));
+                coordinateCheck.setSelected(UserConfig.getBoolean("ImagePopCooridnate", false));
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean( "ImagePopCooridnate", coordinateCheck.isSelected());
+                        UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
                         imageController.checkCoordinate();
                     }
                 });
@@ -184,7 +190,7 @@ public class MenuImageBaseController extends MenuController {
                         isSettingValues = false;
                     }
                 });
-                imageController.rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                rulersListener = new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (isSettingValues) {
@@ -194,7 +200,8 @@ public class MenuImageBaseController extends MenuController {
                         rulerXCheck.setSelected(newValue);
                         isSettingValues = false;
                     }
-                });
+                };
+                imageController.rulerXCheck.selectedProperty().addListener(rulersListener);
             } else {
                 rulerXCheck.setSelected(UserConfig.getBoolean("ImageRulerXY", false));
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -219,7 +226,7 @@ public class MenuImageBaseController extends MenuController {
                         isSettingValues = false;
                     }
                 });
-                imageController.gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                gridListener = new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (isSettingValues) {
@@ -229,13 +236,14 @@ public class MenuImageBaseController extends MenuController {
                         gridCheck.setSelected(newValue);
                         isSettingValues = false;
                     }
-                });
+                };
+                imageController.gridCheck.selectedProperty().addListener(gridListener);
             } else {
-                gridCheck.setSelected(UserConfig.getBoolean( "ImageGridLines", false));
+                gridCheck.setSelected(UserConfig.getBoolean("ImageGridLines", false));
                 gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean( "ImageGridLines", newValue);
+                        UserConfig.setBoolean("ImageGridLines", newValue);
                         imageController.drawMaskGrid();
                     }
                 });
@@ -243,7 +251,7 @@ public class MenuImageBaseController extends MenuController {
 
             if (imageController.zoomStepSelector != null) {
                 zoomStepSelector.getItems().addAll(imageController.zoomStepSelector.getItems());
-                imageController.zoomStepSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                zoomListener = new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         if (isSettingValues) {
@@ -253,7 +261,8 @@ public class MenuImageBaseController extends MenuController {
                         zoomStepSelector.setValue(imageController.zoomStepSelector.getValue());
                         isSettingValues = false;
                     }
-                });
+                };
+                imageController.zoomStepSelector.getSelectionModel().selectedItemProperty().addListener(zoomListener);
             } else {
                 zoomStepSelector.getItems().addAll(
                         Arrays.asList("40", "20", "5", "1", "3", "15", "30", "50", "80", "100", "150", "200", "300", "500")
@@ -293,7 +302,7 @@ public class MenuImageBaseController extends MenuController {
                 if (imageController.loadWidthBox != null) {
                     loadWidthSelector.getItems().addAll(imageController.loadWidthBox.getItems());
                     loadWidthSelector.setValue(imageController.loadWidthBox.getValue());
-                    imageController.loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    widthListener = new ChangeListener<String>() {
                         @Override
                         public void changed(ObservableValue ov, String oldValue, String newValue) {
                             if (isSettingValues) {
@@ -303,7 +312,8 @@ public class MenuImageBaseController extends MenuController {
                             loadWidthSelector.setValue(imageController.loadWidthBox.getValue());
                             isSettingValues = false;
                         }
-                    });
+                    };
+                    imageController.loadWidthBox.getSelectionModel().selectedItemProperty().addListener(widthListener);
                 } else {
                     loadWidthSelector.getItems().addAll(Arrays.asList(message("OriginalSize"),
                             "512", "1024", "256", "128", "2048", "100", "80", "4096")
@@ -339,12 +349,13 @@ public class MenuImageBaseController extends MenuController {
 
             super.setParameters(imageController, imageController.imageView, x, y);
 
-            imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
+            loadListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     updateImage();
                 }
-            });
+            };
+            imageController.loadNotify.addListener(loadListener);
             updateImage();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -461,6 +472,33 @@ public class MenuImageBaseController extends MenuController {
     @FXML
     public void settings() {
         imageController.settings();
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (imageController != null) {
+                imageController.loadNotify.removeListener(loadListener);
+                imageController.loadWidthBox.getSelectionModel().selectedItemProperty().removeListener(widthListener);
+                imageController.zoomStepSelector.getSelectionModel().selectedItemProperty().removeListener(zoomListener);
+                imageController.gridCheck.selectedProperty().removeListener(gridListener);
+                imageController.rulerXCheck.selectedProperty().removeListener(rulersListener);
+                imageController.coordinateCheck.selectedProperty().removeListener(coordinateListener);
+                imageController.selectAreaCheck.selectedProperty().removeListener(areaListener);
+                imageController.pickColorCheck.selectedProperty().removeListener(colorListener);
+            }
+            loadListener = null;
+            widthListener = null;
+            zoomListener = null;
+            gridListener = null;
+            rulersListener = null;
+            coordinateListener = null;
+            areaListener = null;
+            colorListener = null;
+            imageController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

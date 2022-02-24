@@ -30,7 +30,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-2-13
  * @License Apache License Version 2.0
  */
-public class Data2DConvertToDataBaseController extends BaseTaskController {
+public class Data2DConvertToDataBaseController extends Data2DTableCreateController {
 
     protected TableData2D tableData2D;
     protected ControlData2DEditTable editController;
@@ -56,11 +56,6 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
-    @Override
-    public void setStageStatus() {
-        setAsNormal();
-    }
-
     public void setParameters(ControlData2DEditTable editController) {
         try {
             dataTable = new DataTable();
@@ -80,13 +75,13 @@ public class Data2DConvertToDataBaseController extends BaseTaskController {
             sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
+                    checkSource();
                 }
             });
             sourceController.selectNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
+                    checkSource();
                 }
             });
             checkSource();

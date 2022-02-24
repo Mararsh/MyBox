@@ -69,6 +69,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DChartController extends Data2DHandleController {
 
+    protected ChangeListener<Boolean> tableStatusListener, tableLoadListener;
     protected String selectedCategory, selectedValue;
     protected LabelType labelType;
     protected LabelLocation labelLocation;
@@ -919,19 +920,21 @@ public class Data2DChartController extends Data2DHandleController {
         try {
             super.setParameters(tableController);
 
-            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     refreshSelectors();
                 }
-            });
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
-            tableController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     okAction();
                 }
-            });
+            };
+            tableController.loadedNotify.addListener(tableLoadListener);
 
             checkChartType();
             refreshSelectors();
@@ -946,7 +949,7 @@ public class Data2DChartController extends Data2DHandleController {
             categoryColumnSelector.getItems().clear();
             valueColumnSelector.getItems().clear();
 
-            List<String> names = editController.data2D.columnNames();
+            List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -1565,14 +1568,26 @@ public class Data2DChartController extends Data2DHandleController {
 
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableController.loadedNotify.removeListener(tableLoadListener);
+            tableStatusListener = null;
+            tableLoadListener = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
     /*
         static
      */
-    public static Data2DChartController open(ControlData2DEditTable editController) {
+    public static Data2DChartController open(ControlData2DEditTable tableController) {
         try {
             Data2DChartController controller = (Data2DChartController) WindowTools.openChildStage(
-                    editController.getMyWindow(), Fxmls.Data2DChartFxml, false);
-            controller.setParameters(editController);
+                    tableController.getMyWindow(), Fxmls.Data2DChartFxml, false);
+            controller.setParameters(tableController);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

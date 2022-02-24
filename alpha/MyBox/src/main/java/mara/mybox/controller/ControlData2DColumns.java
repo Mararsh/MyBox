@@ -513,7 +513,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         if (dataController != null) {
             dataController.checkStatus();
         }
-        if (convertController == null) {
+        if (status == Status.Loaded || status == Status.Applied) {
             editController.notifyColumnChanged();
         }
     }
@@ -587,17 +587,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @FXML
-    public void idColumn() {
-        for (Data2DColumn column : tableData) {
-            if (column.isIsPrimaryKey() && column.isAuto()) {
-                alertError(message("AlreadyExisted"));
-                return;
-            }
-        }
-        tableData.add(0, data2D.idColumn());
     }
 
     @FXML

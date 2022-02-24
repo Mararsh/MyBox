@@ -172,6 +172,20 @@ public class TextPopController extends BaseChildController {
         }
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            if (sourceInput != null) {
+                sourceInput.textProperty().removeListener(listener);
+            }
+            listener = null;
+            sourceInput = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
+
     /*
         static methods
      */

@@ -16,11 +16,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
@@ -33,6 +33,9 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class MenuTextEditController extends MenuTextBaseController {
+
+    protected ChangeListener<String> textListener;
+    protected ChangeListener<IndexRange> selectionListener;
 
     @FXML
     protected HBox fileBox;
@@ -57,19 +60,21 @@ public class MenuTextEditController extends MenuTextBaseController {
                 fileBox.getChildren().removeAll(saveButton, recoverButton);
             }
             if (textInput != null) {
-                textInput.textProperty().addListener(new ChangeListener<String>() {
+                textListener = new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         checkEditPane();
                     }
-                });
+                };
+                textInput.textProperty().addListener(textListener);
 
-                textInput.selectionProperty().addListener(new ChangeListener<IndexRange>() {
+                selectionListener = new ChangeListener<IndexRange>() {
                     @Override
                     public void changed(ObservableValue ov, IndexRange oldValue, IndexRange newValue) {
                         checkEditPane();
                     }
-                });
+                };
+                textInput.selectionProperty().addListener(selectionListener);
                 checkEditPane();
             }
 
@@ -340,6 +345,20 @@ public class MenuTextEditController extends MenuTextBaseController {
             return;
         }
         ImageViewerController.load(NodeTools.snap(textInput));
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (textInput != null) {
+                textInput.textProperty().removeListener(textListener);
+                textInput.selectionProperty().removeListener(selectionListener);
+            }
+            textListener = null;
+            selectionListener = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

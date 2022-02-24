@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -25,7 +26,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.Data2D;
 import mara.mybox.data.DataClipboard;
-import mara.mybox.data.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -34,7 +34,6 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -56,6 +55,7 @@ public class ControlData2D extends BaseController {
     protected ControlData2DEditText textController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
+    protected ChangeListener<Boolean> tableCreatedListener;
 
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
@@ -399,8 +399,8 @@ public class ControlData2D extends BaseController {
         if (checkBeforeSave() < 0) {
             return;
         }
-        if (data2D.isTable()) {
-            saveTable();
+        if (data2D.isTable() && data2D.getSheet() == null) {
+            saveNewTable();
             return;
         }
         Data2D targetData = data2D.cloneAll();
@@ -443,12 +443,7 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                popInformation(message("Saved"));
-                if (data2D.getFile() != null) {
-                    recordFileWritten(data2D.getFile());
-                }
-                notifySaved();
-                readDefinition();
+                tableController.dataSaved();
             }
 
             @Override
@@ -461,49 +456,8 @@ public class ControlData2D extends BaseController {
         start(task);
     }
 
-    public synchronized void saveTable() {
-        setData(tableController.data2D);
-        if (data2D.getSheet() == null) {
-            String name = PopTools.askValue(getBaseTitle(), null, message("TableName"), null);
-            if (name == null || name.isBlank()) {
-                return;
-            }
-            data2D.setDataName(name);
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.setTask(task);
-                    if (data2D.getSheet() == null) {
-                        if (!((DataTable) data2D).createTable(data2D.getDataName())) {
-                            return false;
-                        }
-                    }
-                    data2D.savePageData(data2D);
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popInformation(message("Saved"));
-                notifySaved();
-                readDefinition();
-            }
-
-            @Override
-            protected void finalAction() {
-                data2D.setTask(null);
-                task = null;
-
-            }
-        };
-        start(task);
+    public void saveNewTable() {
+        Data2DTableCreateController.open(tableController);
     }
 
     public synchronized void saveAs(Data2D targetData, SaveAsType saveAsType) {

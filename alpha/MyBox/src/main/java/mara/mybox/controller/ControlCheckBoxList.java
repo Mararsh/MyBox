@@ -304,4 +304,17 @@ public class ControlCheckBoxList extends BaseController {
         return checkBoxs.get(index).isSelected();
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            mouseEvent = null;
+            checkedNotify = null;
+            rightClickedNotify = null;
+            checkedOrders = null;
+            checkBoxs = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
 }

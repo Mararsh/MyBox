@@ -61,7 +61,7 @@ public abstract class Data2D extends Data2DDefinition {
 
     public abstract boolean export(ControlDataConvert convertController, List<Integer> colIndices);
 
-    public abstract boolean writeTable(Connection conn, TableData2D tableData2D, List<Integer> colIndices);
+    public abstract long writeTable(Connection conn, TableData2D tableData2D, List<Integer> colIndices);
 
     public abstract long clearData();
 

@@ -29,7 +29,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class Data2DHandleController extends BaseChildController {
 
-    protected ControlData2DEditTable editController;
+    protected ControlData2DEditTable tableController;
     protected Data2D data2D;
     protected List<List<String>> handledData;
     protected List<Data2DColumn> handledColumns;
@@ -50,15 +50,15 @@ public abstract class Data2DHandleController extends BaseChildController {
         setAsNormal();
     }
 
-    public void setParameters(ControlData2DEditTable editController) {
+    public void setParameters(ControlData2DEditTable tableController) {
         try {
-            this.editController = editController;
+            this.tableController = tableController;
 
-            sourceController.setParameters(this, editController);
+            sourceController.setParameters(this, tableController);
             sourceController.setLabel(message("SelectRowsColumnsToHanlde"));
 
             if (targetController != null) {
-                targetController.setParameters(this, editController);
+                targetController.setParameters(this, tableController);
             }
 
             if (rowNumberCheck != null) {
@@ -100,11 +100,11 @@ public abstract class Data2DHandleController extends BaseChildController {
     }
 
     public boolean checkOptions() {
-        data2D = editController.data2D;
-        getMyStage().setTitle(editController.getTitle());
+        data2D = tableController.data2D;
+        getMyStage().setTitle(tableController.getTitle());
 
         if (dataLabel != null) {
-            dataLabel.setText(editController.data2D.displayName());
+            dataLabel.setText(tableController.data2D.displayName());
         }
         if (infoLabel != null) {
             infoLabel.setText("");
@@ -319,37 +319,37 @@ public abstract class Data2DHandleController extends BaseChildController {
             }
             int row = targetController.row();
             int col = targetController.col();
-            int rowsNumber = editController.data2D.tableRowsNumber();
-            int colsNumber = editController.data2D.tableColsNumber();
+            int rowsNumber = tableController.data2D.tableRowsNumber();
+            int colsNumber = tableController.data2D.tableColsNumber();
             if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
                 popError(message("InvalidParameters"));
                 return false;
             }
-            editController.isSettingValues = true;
+            tableController.isSettingValues = true;
             if (targetController.replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + handledData.size(), rowsNumber); r++) {
-                    List<String> tableRow = editController.tableData.get(r);
+                    List<String> tableRow = tableController.tableData.get(r);
                     List<String> dataRow = handledData.get(r - row);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
-                    editController.tableData.set(r, tableRow);
+                    tableController.tableData.set(r, tableRow);
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
                 for (int r = 0; r < handledData.size(); r++) {
-                    List<String> newRow = editController.data2D.newRow();
+                    List<String> newRow = tableController.data2D.newRow();
                     List<String> dataRow = handledData.get(r);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));
                     }
                     newRows.add(newRow);
                 }
-                editController.tableData.addAll(targetController.insertRadio.isSelected() ? row : row + 1, newRows);
+                tableController.tableData.addAll(targetController.insertRadio.isSelected() ? row : row + 1, newRows);
             }
-            editController.tableView.refresh();
-            editController.isSettingValues = false;
-            editController.tableChanged(true);
+            tableController.tableView.refresh();
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
             popDone();
             return true;
         } catch (Exception e) {
@@ -367,10 +367,10 @@ public abstract class Data2DHandleController extends BaseChildController {
         }
         switch (targetController.target) {
             case "systemClipboard":
-                editController.copyToSystemClipboard(null, handledData);
+                tableController.copyToSystemClipboard(null, handledData);
                 break;
             case "myBoxClipboard":
-                editController.copyToMyBoxClipboard2(handledColumns, handledData);
+                tableController.copyToMyBoxClipboard2(handledColumns, handledData);
                 break;
             case "csv":
                 DataFileCSVController.open(handledColumns, handledData);
@@ -388,6 +388,20 @@ public abstract class Data2DHandleController extends BaseChildController {
         }
         popDone();
         return true;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController = null;
+            data2D = null;
+            handledData = null;
+            handledColumns = null;
+            handledCSV = null;
+            handledFile = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

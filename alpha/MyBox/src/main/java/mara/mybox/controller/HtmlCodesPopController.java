@@ -151,6 +151,16 @@ public class HtmlCodesPopController extends TextPopController {
         }
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            clipboard = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
+
     /*
         static methods
      */

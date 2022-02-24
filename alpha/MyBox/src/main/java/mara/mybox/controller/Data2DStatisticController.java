@@ -172,7 +172,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     @FXML
     @Override
     public void okAction() {
-        if ((sourceController.allPages() && !editController.checkBeforeLoadingTableData())
+        if ((sourceController.allPages() && !tableController.checkBeforeLoadingTableData())
                 || !checkOptions() || !prepareRows()) {
             return;
         }

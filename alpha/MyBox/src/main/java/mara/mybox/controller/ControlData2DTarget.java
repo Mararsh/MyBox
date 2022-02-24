@@ -26,6 +26,7 @@ public class ControlData2DTarget extends BaseController {
     protected ControlData2DEditTable tableController;
     protected String target;
     protected boolean notInTable;
+    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -52,12 +53,13 @@ public class ControlData2DTarget extends BaseController {
                 }
             });
 
-            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     refreshControls();
                 }
-            });
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
             refreshControls();
 
@@ -220,7 +222,6 @@ public class ControlData2DTarget extends BaseController {
             if (tableController.data2D.getColumns() != null) {
                 List<String> names = tableController.data2D.columnNames();
                 for (Data2DColumn column : tableController.data2D.getColumns()) {
-                    MyBoxLog.debug(column.getColumnName() + " " + column.isId());
                     if (!column.isId()) {
                         names.add(column.getColumnName());
                     }
@@ -262,6 +263,17 @@ public class ControlData2DTarget extends BaseController {
             return -1;
         }
         return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+            tableController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }
