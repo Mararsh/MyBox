@@ -5,7 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import mara.mybox.data.Data2D;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -120,7 +120,7 @@ public abstract class BaseData2DController extends BaseController {
     }
 
     public void loadDef(Data2DDefinition def) {
-        if (def == null || loadController == null || !checkBeforeNextAction()) {
+        if (loadController == null || !checkBeforeNextAction()) {
             return;
         }
         loadController.loadDef(def);

@@ -80,6 +80,15 @@ public class TextInputController extends BaseChildController {
         this.notify = notify;
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            notify = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
     public static TextInputController open(BaseController parent, String title, String initValue) {
         try {
             TextInputController controller = (TextInputController) WindowTools.openChildStage(

@@ -18,8 +18,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
-import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -615,19 +615,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                     }
                 });
                 return false;
-            }
-            if (data2D.isTable()) {
-                boolean noPrimaryKey = true;
-                for (Data2DColumn column : tableData) {
-                    if (column.isIsPrimaryKey()) {
-                        noPrimaryKey = false;
-                        break;
-                    }
-                }
-                if (noPrimaryKey) {
-                    alertError(message("NoPrimaryKeys"));
-                    return false;
-                }
             }
             List<List<String>> newTableData = new ArrayList<>();
             if (!tableData.isEmpty()) {

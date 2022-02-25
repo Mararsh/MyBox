@@ -31,12 +31,12 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -1037,31 +1037,31 @@ public abstract class BaseTableViewController<P> extends BaseController {
             if (pageSelector == null) {
                 return;
             }
-            pageSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkPageSelector();
-                    });
+            pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> o, String ov, String nv) {
+                    checkPageSelector();
+                }
+            });
 
             pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
                     "500", "1000", "2000", "5000", "10000", "20000", "50000"));
-
             pageSizeSelector.setValue(pageSize + "");
-            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue.trim());
-                            if (v <= 0) {
-                                pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                            } else {
-                                pageSizeChanged(v);
-                            }
-                        } catch (Exception e) {
+            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> o, String ov, String nv) {
+                    try {
+                        int v = Integer.parseInt(nv.trim());
+                        if (v <= 0) {
                             pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                        } else {
+                            pageSizeChanged(v);
                         }
-                    });
+                    } catch (Exception e) {
+                        pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1148,6 +1148,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void goPage() {
+        MyBoxLog.debug("goPage");
         checkPageSelector();
     }
 

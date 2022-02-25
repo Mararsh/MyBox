@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;

@@ -18,8 +18,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
-import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -127,12 +127,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             tableData2DColumn = data2D.getTableData2DColumn();
 
             if (paginationPane != null) {
-                if (data2D.isMatrix()) {
-                    showPaginationPane(false);
-                } else {
-                    showPaginationPane(true);
-                    initPagination();
-                }
+                showPaginationPane(!data2D.isMatrix());
             }
             data2D.setLoadController(this);
             validateData();
@@ -146,6 +141,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         data
      */
     public void loadDef(Data2DDefinition data) {
+        if (data == null) {
+            loadNull();
+            return;
+        }
         data2D = Data2D.create(data.getType());
         data2D.cloneAll(data);
         readDefinition();
@@ -192,7 +191,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 task = null;
                 resetView(false);
                 if (dataController != null) {
-                    dataController.loadData();   // Load data whatever
+                    dataController.loadData(data2D);   // Load data whatever
                 } else {
                     loadData();
                 }
@@ -207,6 +206,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             makeColumns();
             if (!validateData()) {
                 dataSizeLoaded = true;
+                tableChanged(false);
                 notifyLoaded();
                 return;
             }
@@ -252,12 +252,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (data2D != null) {
-                    data2D.resetData();
-                }
                 if (dataController != null) {
-                    dataController.loadData();
+                    dataController.loadNull();
                 } else {
+                    if (data2D != null) {
+                        data2D.resetData();
+                    }
                     loadData();
                 }
             }
@@ -480,7 +480,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         table
      */
     @Override
-    public synchronized void tableChanged(boolean changed) {
+    public void tableChanged(boolean changed) {
         if (isSettingValues || data2D == null) {
             return;
         }
@@ -490,6 +490,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public void makeColumns() {
         try {
+            MyBoxLog.console("here");
             isSettingValues = true;
             tableData.clear();
             tableView.getColumns().remove(rowsSelectionColumn != null ? 2 : 1, tableView.getColumns().size());

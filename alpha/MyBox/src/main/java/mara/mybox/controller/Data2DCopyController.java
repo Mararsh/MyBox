@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import mara.mybox.data.DataFileCSV;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;

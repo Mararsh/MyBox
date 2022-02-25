@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,14 +17,13 @@ public class DataFileTextReader extends DataFileReader {
 
     public DataFileTextReader(DataFileText data) {
         this.readerText = data;
-        init(data);
     }
 
     @Override
-    public void scanFile() {
+    public void scanData() {
         try ( BufferedReader reader = new BufferedReader(new FileReader(readerFile, readerText.getCharset()))) {
             textReader = reader;
-            handleFile();
+            handleData();
             textReader = null;
             reader.close();
         } catch (Exception e) {

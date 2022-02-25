@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;

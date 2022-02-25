@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -24,8 +23,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.data.Data2D;
-import mara.mybox.data.DataClipboard;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -55,7 +54,6 @@ public class ControlData2D extends BaseController {
     protected ControlData2DEditText textController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
-    protected ChangeListener<Boolean> tableCreatedListener;
 
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
@@ -136,6 +134,7 @@ public class ControlData2D extends BaseController {
             tableData2DDefinition = data2D.getTableData2DDefinition();
             tableData2DColumn = data2D.getTableData2DColumn();
 
+            tableController.setData(data2D);
             editController.setData(data2D);
             viewController.setData(data2D);
             attributesController.setData(data2D);
@@ -156,8 +155,7 @@ public class ControlData2D extends BaseController {
                     setFileType(VisitHistory.FileType.CSV);
             }
 
-            checkStatus();
-
+//            checkStatus();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -205,23 +203,27 @@ public class ControlData2D extends BaseController {
     /*
         data
      */
-    public void loadDef(Data2DDefinition data) {
+    public void loadDef(Data2DDefinition def) {
         if (!checkBeforeNextAction()) {
             return;
         }
         resetStatus();
-        tableController.loadDef(data);
+        if (def == null) {
+            loadNull();
+        } else {
+            tableController.loadDef(def);
+        }
     }
 
-    public synchronized void loadData() {
-        setData(tableController.data2D);
+    public synchronized void loadData(Data2D data) {
+        setData(data);
         tableController.loadData();
         attributesController.loadData();
         columnsController.loadData();
     }
 
     public void loadNull() {
-        tableController.loadNull();
+        loadData(Data2D.create(type));
     }
 
     public boolean isChanged() {

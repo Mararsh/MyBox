@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data.DataTable;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -89,7 +89,6 @@ public class ControlNewDataTable extends BaseController {
                 return false;
             }
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
-            MyBoxLog.console(tableName);
             if (tableData2D.exist(conn, tableName)) {
                 taskController.popError(message("AlreadyExisted"));
                 return false;
@@ -106,15 +105,19 @@ public class ControlNewDataTable extends BaseController {
             tableData2D.reset();
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
             tableData2D.setTableName(tableName);
+            List<String> keys = new ArrayList<>();
             if (autoRadio.isSelected()) {
                 tableData2D.addColumn(dataTable.idColumn());
+            } else {
+                keys = columnsController.checkedValues();
             }
             for (int index : columnIndices) {
-                Data2DColumn column = tableController.data2D.getColumns().get(index);
-                ColumnDefinition c = new ColumnDefinition();
-                c.cloneFrom(column);
-                c.setColumnName(DerbyBase.fixedIdentifier(column.getColumnName()));
-                tableData2D.addColumn(column);
+                Data2DColumn dataColumn = tableController.data2D.getColumns().get(index);
+                ColumnDefinition dbColumn = new ColumnDefinition();
+                dbColumn.cloneFrom(dataColumn);
+                dbColumn.setColumnName(DerbyBase.fixedIdentifier(dataColumn.getColumnName()));
+                dbColumn.setIsPrimaryKey(keys.contains(dataColumn.getColumnName()));
+                tableData2D.addColumn(dbColumn);
             }
             return true;
         } catch (Exception e) {
@@ -157,6 +160,7 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean importData(Connection conn, List<Integer> rows) {
         try {
+            conn.setAutoCommit(false);
             count = 0;
             if (rows == null) {
                 for (List<String> pageRow : tableController.tableData) {
@@ -196,6 +200,7 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean importAllData(Connection conn) {
         try {
+            conn.setAutoCommit(false);
             dataTable.setTask(task);
             count = dataTable.writeTable(conn, tableData2D, columnIndices);
             dataTable.setTask(null);

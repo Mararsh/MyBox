@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -22,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class DataTable extends Data2D {
+public class DataTable extends Data2DOperation {
 
     protected TableData2D tableData2D;
 
@@ -199,46 +198,6 @@ public class DataTable extends Data2D {
         }
     }
 
-    @Override
-    public long readTotal() {
-        dataSize = 0;
-        if (tableData2D != null) {
-            dataSize = tableData2D.size();
-        }
-        rowsNumber = dataSize;
-        tableData2DDefinition.updateData(this);
-        return dataSize;
-    }
-
-    @Override
-    public List<List<String>> readPageData() {
-        if (d2did < 0 || sheet == null || !isColumnsValid()) {
-            startRowOfCurrentPage = endRowOfCurrentPage = 0;
-            return null;
-        }
-        if (startRowOfCurrentPage < 0) {
-            startRowOfCurrentPage = 0;
-        }
-        endRowOfCurrentPage = startRowOfCurrentPage;
-        List<List<String>> rows = new ArrayList<>();
-        List<Data2DRow> trows = tableData2D.query(startRowOfCurrentPage, pageSize);
-        if (trows != null) {
-            long rowIndex = startRowOfCurrentPage;
-            for (Data2DRow trow : trows) {
-                List<String> row = new ArrayList<>();
-                for (int i = 0; i < columns.size(); ++i) {
-                    ColumnDefinition column = columns.get(i);
-                    Object value = trow.getValue(column.getColumnName());
-                    row.add(column.toString(value));
-                }
-                row.add(0, ++rowIndex + "");
-                rows.add(row);
-            }
-        }
-        endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
-        return rows;
-    }
-
     public List<List<String>> pageRows() {
         return loadController == null ? null : loadController.getTableData();
     }
@@ -284,46 +243,45 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
-        return false;
-    }
-
-    @Override
-    public long writeTable(Connection conn, TableData2D targetTable, List<Integer> cols) {
-        try {
-            if (conn == null || tableData2D == null || sheet == null
-                    || targetTable == null || cols == null || cols.isEmpty()) {
-                return -1;
-            }
-            String sql = "SELECT ";
-            for (int i = 0; i < cols.size(); i++) {
-                int col = cols.get(i);
-                if (i > 0) {
-                    sql += ", ";
-                }
-                sql += columns.get(col).getColumnName();
-            }
-            sql += " FROM " + sheet;
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
-                conn.setAutoCommit(false);
-                long count = 0;
-                while (results.next()) {
-                    Data2DRow row = tableData2D.readData(results);
-                    targetTable.writeData(conn, row);
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        conn.commit();
-                    }
-                }
-                conn.commit();
-                return count;
-            } catch (Exception e) {
-                MyBoxLog.error(e, sql);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+    public boolean setValue(List<Integer> cols, String value) {
+        if (cols == null || cols.isEmpty()) {
+            return false;
         }
-        return -1;
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
+                 ResultSet results = query.executeQuery()) {
+            boolean isRandom = "MyBox##random".equals(value);
+            boolean isRandomNn = "MyBox##randomNn".equals(value);
+            Random random = new Random();
+            conn.setAutoCommit(false);
+            int count = 0;
+            while (results.next()) {
+                Data2DRow row = tableData2D.readData(results);
+                for (int col : cols) {
+                    Data2DColumn column = columns.get(col);
+                    String name = column.getColumnName();
+                    String v = value;
+                    if (isRandom) {
+                        v = random(random, col, false);
+                    } else if (isRandomNn) {
+                        v = random(random, col, true);
+                    }
+                    row.setValue(name, column.fromString(v));
+                }
+                tableData2D.updateData(conn, row);
+                if (++count % DerbyBase.BatchSize == 0) {
+                    conn.commit();
+                }
+            }
+            conn.commit();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
     }
 
     @Override

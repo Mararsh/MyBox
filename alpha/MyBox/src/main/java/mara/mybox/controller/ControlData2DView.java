@@ -10,14 +10,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import mara.mybox.data.Data2D;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -32,6 +32,7 @@ public class ControlData2DView extends BaseController {
     protected ControlData2D dataController;
     protected String displayDelimiterName;
     protected Data2D data2D;
+    protected ChangeListener<Boolean> delimiterListener;
 
     @FXML
     protected Tab htmlTab, textTab;
@@ -324,6 +325,18 @@ public class ControlData2DView extends BaseController {
     public void editText() {
         TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.loadContents(textArea.getText());
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            delimiterListener = null;
+            data2D = null;
+            dataController = null;
+            displayDelimiterName = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

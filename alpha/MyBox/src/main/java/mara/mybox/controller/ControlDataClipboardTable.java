@@ -29,13 +29,14 @@ public class ControlDataClipboardTable extends ControlData2DList {
         for (Data2DDefinition d : data) {
             FileDeleteTools.delete(d.getFile());
         }
-        return data2D.getTableData2DDefinition().deleteData(data);
+        return tableData2DDefinition.deleteData(data);
     }
 
     @Override
     protected void afterDeletion() {
         refreshAction();
-        if (data2D.getFile() != null && !data2D.getFile().exists()) {
+        File file = data2DController.loadController.data2D.getFile();
+        if (file != null && !file.exists()) {
             data2DController.dataController.loadNull();
         }
     }

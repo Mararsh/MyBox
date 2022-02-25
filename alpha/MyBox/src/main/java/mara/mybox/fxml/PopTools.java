@@ -46,8 +46,8 @@ import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.MenuController;
 import mara.mybox.controller.TextInputController;
-import mara.mybox.data.DataInternalTable;
-import mara.mybox.data.DataTable;
+import mara.mybox.data2d.DataInternalTable;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -299,21 +299,25 @@ public class PopTools {
 
             rmenu = new RadioMenuItem(message("Input") + "...");
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
+                ChangeListener<Boolean> getListener;
+
                 @Override
                 public void handle(ActionEvent event) {
                     TextInputController inputController = TextInputController.open(controller,
                             message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
-                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                    getListener = new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                             String value = inputController.getText();
                             if (value == null || value.isBlank()) {
                                 value = null;
                             }
+                            inputController.getNotify().removeListener(getListener);
                             controller.setStyle(value);
                             inputController.closeStage();
                         }
-                    });
+                    };
+                    inputController.getNotify().addListener(getListener);
                 }
             });
             rmenu.setSelected(currentStyle != null && !predefinedValue);

@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,12 +25,12 @@ public class DataFileCSVReader extends DataFileReader {
     }
 
     @Override
-    public void scanFile() {
+    public void scanData() {
         readerCSV.checkForLoad();
         try ( CSVParser parser = CSVParser.parse(readerFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
-            handleFile();
+            handleData();
             csvParser = null;
             parser.close();
         } catch (Exception e) {

@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -91,11 +92,24 @@ public class WindowTools {
                 stage.initStyle(stageStyle);
             }
             // External request to close
-            stage.setOnCloseRequest((WindowEvent event) -> {
-                if (!controller.leavingScene()) {
-                    event.consume();
-                } else {
-                    WindowTools.closeWindow(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.leavingScene()) {
+                        event.consume();
+                    } else {
+                        WindowTools.closeWindow(stage);
+                    }
+                }
+            });
+
+            stage.setOnHiding(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (controller != null) {
+                        controller.leaveScene();
+                    }
+                    WindowTools.closeWindow(stage);   // Close anyway
                 }
             });
 
@@ -106,14 +120,6 @@ public class WindowTools {
                         controller.closePopup();
                     }
                 }
-            });
-
-            // Close anyway
-            stage.setOnHiding((WindowEvent event) -> {
-                if (controller != null) {
-                    controller.leaveScene();
-                }
-                WindowTools.closeWindow(stage);
             });
 
             stage.setScene(scene);

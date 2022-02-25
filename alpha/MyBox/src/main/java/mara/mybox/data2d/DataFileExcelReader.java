@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ public class DataFileExcelReader extends DataFileReader {
     }
 
     @Override
-    public void scanFile() {
+    public void scanData() {
         try ( Workbook wb = WorkbookFactory.create(readerFile)) {
             Sheet sourceSheet;
             if (readerSheet != null) {
@@ -47,7 +47,7 @@ public class DataFileExcelReader extends DataFileReader {
                 readerExcel.setSheet(readerSheet);
             }
             iterator = sourceSheet.iterator();
-            handleFile();
+            handleData();
             wb.close();
         } catch (Exception e) {
             MyBoxLog.error(e);

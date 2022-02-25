@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.io.File;
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;

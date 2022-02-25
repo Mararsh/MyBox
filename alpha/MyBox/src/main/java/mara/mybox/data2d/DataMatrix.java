@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

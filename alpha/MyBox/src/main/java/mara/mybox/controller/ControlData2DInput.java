@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
-import mara.mybox.data.DataFileText;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -33,7 +33,8 @@ public class ControlData2DInput extends BaseController {
     protected List<List<String>> data;
     protected List<String> columnNames;
     protected String delimiterName;
-    protected final SimpleBooleanProperty statusNotify;
+    protected SimpleBooleanProperty statusNotify;
+    protected ChangeListener<Boolean> delimiterListener;
 
     @FXML
     protected TextArea textArea;
@@ -251,6 +252,22 @@ public class ControlData2DInput extends BaseController {
 
     public boolean hasData() {
         return dataFileText != null && dataFileText.hasData();
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            statusNotify = null;
+            delimiterListener = null;
+            loadController = null;
+            dataFileText = null;
+            data = null;
+            columnNames = null;
+            delimiterName = null;
+            columnNames = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

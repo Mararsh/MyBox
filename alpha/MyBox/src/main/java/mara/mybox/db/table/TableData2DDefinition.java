@@ -204,7 +204,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_Table)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(tableName));
+            statement.setString(2, DerbyBase.stringValue(tableName.toLowerCase()));
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);

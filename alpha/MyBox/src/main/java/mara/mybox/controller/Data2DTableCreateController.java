@@ -86,7 +86,6 @@ public class Data2DTableCreateController extends BaseTaskController {
             if (!attributesController.createTable(conn)) {
                 return false;
             }
-            conn.setAutoCommit(false);
             if (tableController.data2D.isMutiplePages()) {
                 attributesController.importAllData(conn);
             } else {

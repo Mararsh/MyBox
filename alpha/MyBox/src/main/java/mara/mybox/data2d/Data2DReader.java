@@ -1,10 +1,12 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.DoubleStatistic;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
@@ -15,12 +17,12 @@ import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
- * @CreateDate 2022-1-28
+ * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public abstract class DataFileReader {
+public abstract class Data2DReader {
 
-    protected DataFile dataFile;
+    protected Data2D data2D;
     protected File readerFile;
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
@@ -37,7 +39,6 @@ public abstract class DataFileReader {
     protected DoubleStatistic[] statisticData;
     protected CSVPrinter csvPrinter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
-
     protected SingletonTask readerTask;
 
     public static enum Operation {
@@ -46,7 +47,7 @@ public abstract class DataFileReader {
         PercentageSum, Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
     }
 
-    public abstract void scanFile();
+    public abstract void scanData();
 
     public abstract void readColumnNames();
 
@@ -56,7 +57,7 @@ public abstract class DataFileReader {
 
     public abstract void readRecords();
 
-    public static DataFileReader create(DataFile data) {
+    public static Data2DReader create(Data2D data) {
         if (data == null) {
             return null;
         }
@@ -66,31 +67,40 @@ public abstract class DataFileReader {
             return new DataFileCSVReader((DataFileCSV) data);
         } else if (data instanceof DataFileText) {
             return new DataFileTextReader((DataFileText) data);
+        } else if (data instanceof DataTable) {
+            return new DataTableReader((DataTable) data);
         }
         return null;
     }
 
-    public void init(DataFile data) {
-        this.dataFile = data;
-        readerTask = dataFile.getTask();
+    public void init(Data2D data) {
+        this.data2D = data;
+        readerTask = data2D.getTask();
     }
 
-    public DataFileReader start(Operation operation) {
-        if (dataFile == null || operation == null) {
+    public Data2DReader start(Operation operation) {
+        if (data2D == null || operation == null) {
             failed = true;
             return null;
         }
-        readerFile = dataFile.getFile();
-        if (readerFile == null || !readerFile.exists() || readerFile.length() == 0) {
-            failed = true;
-            return null;
+        readerFile = data2D.getFile();
+        if (data2D.isDataFile()) {
+            if (readerFile == null || !readerFile.exists() || readerFile.length() == 0) {
+                failed = true;
+                return null;
+            }
+        } else if (data2D.isTable()) {
+            if (data2D.getSheet() == null) {
+                failed = true;
+                return null;
+            }
         }
         if (cols != null && !cols.isEmpty()) {
             colsLen = cols.size();
         }
         switch (operation) {
             case ReadColumnNames:
-                dataFile.checkForLoad();
+                data2D.checkForLoad();
                 break;
             case ReadCols:
                 if (cols == null || cols.isEmpty()) {
@@ -172,23 +182,23 @@ public abstract class DataFileReader {
 
         this.operation = operation;
         readerStopped = false;
-        readerHasHeader = dataFile.isHasHeader();
+        readerHasHeader = data2D.isHasHeader();
         needCheckTask = readerTask != null;
-        columnsNumber = dataFile.columnsNumber();
+        columnsNumber = data2D.columnsNumber();
         rowIndex = 0;
-        rowsStart = dataFile.startRowOfCurrentPage;
-        rowsEnd = rowsStart + dataFile.pageSize;
+        rowsStart = data2D.startRowOfCurrentPage;
+        rowsEnd = rowsStart + data2D.pageSize;
         count = 0;
         names = new ArrayList<>();
         rows = new ArrayList<>();
-        scale = dataFile.getScale();
+        scale = data2D.getScale();
         record = new ArrayList<>();
-        scanFile();
+        scanData();
         afterScanned();
         return this;
     }
 
-    public void handleFile() {
+    public void handleData() {
         try {
             if (operation == null) {
                 readRecords();
@@ -227,10 +237,10 @@ public abstract class DataFileReader {
             } else {
                 readerHasHeader = false;
                 for (int i = 1; i <= record.size(); i++) {
-                    names.add(dataFile.colPrefix() + i);
+                    names.add(data2D.colPrefix() + i);
                 }
             }
-            dataFile.setHasHeader(readerHasHeader);
+            data2D.setHasHeader(readerHasHeader);
             readerStopped = true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -246,7 +256,7 @@ public abstract class DataFileReader {
             row.add(record.get(i));
         }
         for (int col = row.size(); col < columnsNumber; col++) {
-            row.add(dataFile.defaultColValue());
+            row.add(data2D.defaultColValue());
         }
         row.add(0, "" + (rowIndex + 1));
         rows.add(row);
@@ -351,7 +361,9 @@ public abstract class DataFileReader {
                 }
             }
             tableData2D.insertData(conn, data2DRow);
-            count++;
+            if (++count % DerbyBase.BatchSize == 0) {
+                conn.commit();
+            }
         } catch (Exception e) {
         }
     }
@@ -385,7 +397,7 @@ public abstract class DataFileReader {
                 if (col < 0 || col >= record.size()) {
                     continue;
                 }
-                double v = dataFile.doubleValue(record.get(col));
+                double v = data2D.doubleValue(record.get(col));
                 statisticData[c].sum += v;
                 if (v > statisticData[c].maximum) {
                     statisticData[c].maximum = v;
@@ -409,7 +421,7 @@ public abstract class DataFileReader {
                 if (col < 0 || col >= record.size()) {
                     continue;
                 }
-                double v = dataFile.doubleValue(record.get(col));
+                double v = data2D.doubleValue(record.get(col));
                 statisticData[c].variance += Math.pow(v - statisticData[c].mean, 2);
                 if (countKewness) {
                     statisticData[c].skewness += Math.pow(v - statisticData[c].mean, 3);
@@ -426,7 +438,7 @@ public abstract class DataFileReader {
                 if (col < 0 || col >= record.size()) {
                     continue;
                 }
-                double v = dataFile.doubleValue(record.get(col));
+                double v = data2D.doubleValue(record.get(col));
                 if (sumAbs) {
                     colValues[c] += Math.abs(v);
                 } else {
@@ -444,7 +456,7 @@ public abstract class DataFileReader {
                 if (col < 0 || col >= record.size()) {
                     continue;
                 }
-                double v = dataFile.doubleValue(record.get(col));
+                double v = data2D.doubleValue(record.get(col));
                 if (v < 0) {
                     if (sumAbs) {
                         colValues[c] += Math.abs(v);
@@ -465,7 +477,7 @@ public abstract class DataFileReader {
                 int col = cols.get(c);
                 double v = 0;
                 if (col >= 0 && col < record.size()) {
-                    v = dataFile.doubleValue(record.get(col));
+                    v = data2D.doubleValue(record.get(col));
                 }
                 if (withValues) {
                     row.add(DoubleTools.scale(v, scale) + "");
@@ -500,7 +512,7 @@ public abstract class DataFileReader {
                 if (col < 0 || col >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = dataFile.doubleValue(record.get(col));
+                    double v = data2D.doubleValue(record.get(col));
                     v = from + statisticData[c].mean * (v - statisticData[c].minimum);
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
@@ -521,7 +533,7 @@ public abstract class DataFileReader {
                 if (col < 0 || col >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = dataFile.doubleValue(record.get(col));
+                    double v = data2D.doubleValue(record.get(col));
                     v = v * colValues[c];
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
@@ -542,7 +554,7 @@ public abstract class DataFileReader {
                 if (col < 0 || col >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = dataFile.doubleValue(record.get(col));
+                    double v = data2D.doubleValue(record.get(col));
                     v = (v - statisticData[c].mean) / statisticData[c].variance;
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
@@ -608,107 +620,97 @@ public abstract class DataFileReader {
         return colValues;
     }
 
-    public DataFileReader setReaderData(DataFileExcel readerData) {
-        this.dataFile = readerData;
+    public Data2DReader setReaderData(Data2D readerData) {
+        this.data2D = readerData;
         return this;
     }
 
-    public DataFileReader setReaderFile(File readerFile) {
-        this.readerFile = readerFile;
-        return this;
-    }
-
-    public DataFileReader setReaderHasHeader(boolean readerHasHeader) {
+    public Data2DReader setReaderHasHeader(boolean readerHasHeader) {
         this.readerHasHeader = readerHasHeader;
         return this;
     }
 
-    public DataFileReader setReaderCanceled(boolean readerStopped) {
+    public Data2DReader setReaderCanceled(boolean readerStopped) {
         this.readerStopped = readerStopped;
         return this;
     }
 
-    public DataFileReader setNeedCheckTask(boolean needCheckTask) {
+    public Data2DReader setNeedCheckTask(boolean needCheckTask) {
         this.needCheckTask = needCheckTask;
         return this;
     }
 
-    public DataFileReader setReaderTask(SingletonTask readerTask) {
+    public Data2DReader setReaderTask(SingletonTask readerTask) {
         this.readerTask = readerTask;
         return this;
     }
 
-    public DataFileReader setNames(List<String> names) {
+    public Data2DReader setNames(List<String> names) {
         this.names = names;
         return this;
     }
 
-    public DataFileReader setDataFile(DataFile dataFile) {
-        this.dataFile = dataFile;
-        return this;
-    }
-
-    public DataFileReader setCols(List<Integer> cols) {
+    public Data2DReader setCols(List<Integer> cols) {
         this.cols = cols;
         return this;
     }
 
-    public DataFileReader setIncludeRowNumber(boolean includeRowNumber) {
+    public Data2DReader setIncludeRowNumber(boolean includeRowNumber) {
         this.includeRowNumber = includeRowNumber;
         return this;
     }
 
-    public DataFileReader setIncludeColName(boolean includeColName) {
+    public Data2DReader setIncludeColName(boolean includeColName) {
         this.includeColName = includeColName;
         return this;
     }
 
-    public DataFileReader setWithValues(boolean withValues) {
+    public Data2DReader setWithValues(boolean withValues) {
         this.withValues = withValues;
         return this;
     }
 
-    public DataFileReader setFrom(double from) {
+    public Data2DReader setFrom(double from) {
         this.from = from;
         return this;
     }
 
-    public DataFileReader setConvertController(ControlDataConvert convertController) {
+    public Data2DReader setConvertController(ControlDataConvert convertController) {
         this.convertController = convertController;
         return this;
     }
 
-    public DataFileReader setTableData2D(TableData2D tableData2D) {
+    public Data2DReader setTableData2D(TableData2D tableData2D) {
         this.tableData2D = tableData2D;
         return this;
     }
 
-    public DataFileReader setConn(Connection conn) {
+    public Data2DReader setConn(Connection conn) {
         this.conn = conn;
         return this;
     }
 
-    public DataFileReader setStatisticData(DoubleStatistic[] statisticData) {
+    public Data2DReader setStatisticData(DoubleStatistic[] statisticData) {
         this.statisticData = statisticData;
         return this;
     }
 
-    public DataFileReader setCsvPrinter(CSVPrinter csvPrinter) {
+    public Data2DReader setCsvPrinter(CSVPrinter csvPrinter) {
         this.csvPrinter = csvPrinter;
         return this;
     }
 
-    public DataFileReader setColValues(double[] colsSum) {
+    public Data2DReader setColValues(double[] colsSum) {
         this.colValues = colsSum;
         return this;
     }
 
-    public DataFileReader setSumAbs(boolean sumAbs) {
+    public Data2DReader setSumAbs(boolean sumAbs) {
         this.sumAbs = sumAbs;
         return this;
     }
 
-    public DataFileReader setCountKewness(boolean countKewness) {
+    public Data2DReader setCountKewness(boolean countKewness) {
         this.countKewness = countKewness;
         return this;
     }

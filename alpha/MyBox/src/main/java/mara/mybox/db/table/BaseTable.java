@@ -506,7 +506,7 @@ public abstract class BaseTable<D> {
         }
         String sql = null;
         try {
-            sql = "DELETE FROM " + tableName;
+            sql = "TRUNCATE TABLE " + tableName;
             return conn.createStatement().executeUpdate(sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);

@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.data2d;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -7,8 +7,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
-import mara.mybox.data.DataFileReader.Operation;
-import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.data.DoubleStatistic;
+import mara.mybox.data2d.Data2DReader.Operation;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
@@ -18,28 +18,17 @@ import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
- * @CreateDate 2021-10-18
+ * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public abstract class DataFile extends Data2D {
-
-    @Override
-    public Data2DDefinition queryDefinition(Connection conn) {
-        if (conn == null || type == null || file == null) {
-            return null;
-        }
-        return tableData2DDefinition.queryFile(conn, type, file);
-    }
+public abstract class Data2DOperation extends Data2D {
 
     @Override
     public List<String> readColumnNames() {
-        if (file == null || !file.exists() || file.length() == 0) {
-            hasHeader = false;
-            return null;
-        }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setReaderTask(task).start(Operation.ReadColumnNames);
         if (reader == null) {
+            hasHeader = false;
             return null;
         }
         return reader.getNames();
@@ -48,10 +37,7 @@ public abstract class DataFile extends Data2D {
     @Override
     public long readTotal() {
         dataSize = 0;
-        if (file == null || !file.exists() || file.length() == 0) {
-            return 0;
-        }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setReaderTask(backgroundTask).start(Operation.ReadTotal);
         if (reader != null) {
             dataSize = reader.getRowIndex();
@@ -63,7 +49,7 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public List<List<String>> readPageData() {
-        if (file == null || !file.exists() || file.length() == 0) {
+        if (d2did < 0 || !isColumnsValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
@@ -71,9 +57,10 @@ public abstract class DataFile extends Data2D {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setReaderTask(task).start(Operation.ReadPage);
         if (reader == null) {
+            startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
         List<List<String>> rows = reader.getRows();
@@ -85,11 +72,10 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public boolean export(ControlDataConvert convertController, List<Integer> cols) {
-        if (convertController == null || file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
+        if (convertController == null || cols == null || cols.isEmpty()) {
             return false;
         }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setConvertController(convertController).setCols(cols)
                 .setReaderTask(task).start(Operation.Export);
         return reader != null && !reader.isFailed();
@@ -97,12 +83,10 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public long writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
-        if (conn == null || tableData2D == null
-                || file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
+        if (conn == null || tableData2D == null || cols == null || cols.isEmpty()) {
             return -1;
         }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setConn(conn).setTableData2D(tableData2D).setCols(cols)
                 .setReaderTask(task).start(Operation.WriteTable);
         if (reader != null && !reader.isFailed()) {
@@ -114,13 +98,12 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
-        if (file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
+        if (cols == null || cols.isEmpty()) {
             return null;
         }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setCols(cols).setIncludeRowNumber(rowNumber)
-                .setReaderTask(task).start(DataFileReader.Operation.ReadCols);
+                .setReaderTask(task).start(Data2DReader.Operation.ReadCols);
         if (reader == null) {
             return null;
         }
@@ -129,8 +112,7 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public DoubleStatistic[] statisticData(List<Integer> cols) {
-        if (file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
+        if (cols == null || cols.isEmpty()) {
             return null;
         }
         int colLen = cols.size();
@@ -138,15 +120,15 @@ public abstract class DataFile extends Data2D {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setStatisticData(sData).setCols(cols)
-                .setReaderTask(task).start(DataFileReader.Operation.CountSumMinMax);
+                .setReaderTask(task).start(Data2DReader.Operation.CountSumMinMax);
         if (reader == null) {
             return null;
         }
-        reader = DataFileReader.create(this)
+        reader = Data2DReader.create(this)
                 .setStatisticData(sData).setCols(cols).setCountKewness(true)
-                .setReaderTask(task).start(DataFileReader.Operation.CountVariancesKewness);
+                .setReaderTask(task).start(Data2DReader.Operation.CountVariancesKewness);
         if (reader == null) {
             return null;
         }
@@ -155,7 +137,7 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public DataFileCSV copy(List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
-        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+        if (cols == null || cols.isEmpty()) {
             return null;
         }
         File csvFile = tmpCSV("copy");
@@ -163,7 +145,7 @@ public abstract class DataFile extends Data2D {
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
         long tcolsNumber = 0;
-        DataFileReader reader;
+        Data2DReader reader;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> names = new ArrayList<>();
             if (includeRowNumber) {
@@ -179,9 +161,9 @@ public abstract class DataFile extends Data2D {
             }
             tcolsNumber = names.size();
 
-            reader = DataFileReader.create(this)
+            reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
-                    .setReaderTask(task).start(DataFileReader.Operation.Copy);
+                    .setReaderTask(task).start(Data2DReader.Operation.Copy);
 
         } catch (Exception e) {
             if (task != null) {
@@ -203,13 +185,12 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues, boolean abs) {
-        if (file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
+        if (cols == null || cols.isEmpty()) {
             return null;
         }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setCols(cols).setSumAbs(abs)
-                .setReaderTask(task).start(DataFileReader.Operation.PercentageSum);
+                .setReaderTask(task).start(Data2DReader.Operation.PercentageSum);
         if (reader == null) {
             return null;
         }
@@ -230,10 +211,10 @@ public abstract class DataFile extends Data2D {
             }
             csvPrinter.printRecord(row);
 
-            reader = DataFileReader.create(this)
+            reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setColValues(colsSum).setCols(cols)
                     .setWithValues(withValues).setSumAbs(abs)
-                    .setReaderTask(task).start(DataFileReader.Operation.Percentage);
+                    .setReaderTask(task).start(Data2DReader.Operation.Percentage);
 
         } catch (Exception e) {
             if (task != null) {
@@ -256,7 +237,7 @@ public abstract class DataFile extends Data2D {
     @Override
     public DataFileCSV normalizeMinMax(List<Integer> cols, double from, double to,
             boolean rowNumber, boolean colName) {
-        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+        if (cols == null || cols.isEmpty()) {
             return null;
         }
         int colLen = cols.size();
@@ -264,9 +245,9 @@ public abstract class DataFile extends Data2D {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setStatisticData(sData).setCols(cols)
-                .setReaderTask(task).start(DataFileReader.Operation.CountSumMinMax);
+                .setReaderTask(task).start(Data2DReader.Operation.CountSumMinMax);
         if (reader == null) {
             return null;
         }
@@ -294,10 +275,10 @@ public abstract class DataFile extends Data2D {
             }
             tcolsNumber = names.size();
 
-            reader = DataFileReader.create(this)
+            reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setFrom(from)
-                    .setReaderTask(task).start(DataFileReader.Operation.NormalizeMinMax);
+                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeMinMax);
 
         } catch (Exception e) {
             if (task != null) {
@@ -319,13 +300,13 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public DataFileCSV normalizeSum(List<Integer> cols, boolean rowNumber, boolean colName) {
-        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+        if (cols == null || cols.isEmpty()) {
             return null;
         }
         int colLen = cols.size();
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setCols(cols).setSumAbs(true)
-                .setReaderTask(task).start(DataFileReader.Operation.CountSum);
+                .setReaderTask(task).start(Data2DReader.Operation.CountSum);
         if (reader == null) {
             return null;
         }
@@ -357,10 +338,10 @@ public abstract class DataFile extends Data2D {
             }
             tcolsNumber = names.size();
 
-            reader = DataFileReader.create(this)
+            reader = Data2DReader.create(this)
                     .setColValues(colValues).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber)
-                    .setReaderTask(task).start(DataFileReader.Operation.NormalizeSum);
+                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeSum);
 
         } catch (Exception e) {
             if (task != null) {
@@ -382,7 +363,7 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public DataFileCSV normalizeZscore(List<Integer> cols, boolean rowNumber, boolean colName) {
-        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
+        if (cols == null || cols.isEmpty()) {
             return null;
         }
         int colLen = cols.size();
@@ -391,15 +372,15 @@ public abstract class DataFile extends Data2D {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        DataFileReader reader = DataFileReader.create(this)
+        Data2DReader reader = Data2DReader.create(this)
                 .setStatisticData(sData).setCols(cols)
-                .setReaderTask(task).start(DataFileReader.Operation.CountSumMinMax);
+                .setReaderTask(task).start(Data2DReader.Operation.CountSumMinMax);
         if (reader == null) {
             return null;
         }
-        reader = DataFileReader.create(this)
+        reader = Data2DReader.create(this)
                 .setStatisticData(sData).setCols(cols).setCountKewness(false)
-                .setReaderTask(task).start(DataFileReader.Operation.CountVariancesKewness);
+                .setReaderTask(task).start(Data2DReader.Operation.CountVariancesKewness);
         if (reader == null) {
             return null;
         }
@@ -422,10 +403,10 @@ public abstract class DataFile extends Data2D {
             }
             tcolsNumber = names.size();
 
-            reader = DataFileReader.create(this)
+            reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber)
-                    .setReaderTask(task).start(DataFileReader.Operation.NormalizeZscore);
+                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeZscore);
 
         } catch (Exception e) {
             if (task != null) {

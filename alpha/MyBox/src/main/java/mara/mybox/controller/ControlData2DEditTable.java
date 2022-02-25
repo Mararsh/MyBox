@@ -4,7 +4,7 @@ import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.input.Clipboard;
-import mara.mybox.data.DataClipboard;
+import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -43,6 +43,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             pageLastButton = dataController.pageLastButton;
             saveButton = dataController.saveButton;
 
+            initPagination();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
