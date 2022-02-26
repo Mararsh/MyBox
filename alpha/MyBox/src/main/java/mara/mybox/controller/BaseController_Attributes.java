@@ -215,6 +215,14 @@ public abstract class BaseController_Attributes {
         }
     }
 
+    public Window owner() {
+        if (getMyStage() != null) {
+            return myStage.getOwner();
+        } else {
+            return null;
+        }
+    }
+
     /*
         get/set
      */
@@ -330,6 +338,10 @@ public abstract class BaseController_Attributes {
 
     public boolean isIsPop() {
         return isPop;
+    }
+
+    public String getInterfaceName() {
+        return interfaceName;
     }
 
     /*

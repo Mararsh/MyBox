@@ -21,56 +21,8 @@ import org.apache.commons.csv.CSVPrinter;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public abstract class Data2DOperation extends Data2D {
+public abstract class Data2D_Operations extends Data2D_Edit {
 
-    @Override
-    public List<String> readColumnNames() {
-        Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(task).start(Operation.ReadColumnNames);
-        if (reader == null) {
-            hasHeader = false;
-            return null;
-        }
-        return reader.getNames();
-    }
-
-    @Override
-    public long readTotal() {
-        dataSize = 0;
-        Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(backgroundTask).start(Operation.ReadTotal);
-        if (reader != null) {
-            dataSize = reader.getRowIndex();
-        }
-        rowsNumber = dataSize;
-        tableData2DDefinition.updateData(this);
-        return dataSize;
-    }
-
-    @Override
-    public List<List<String>> readPageData() {
-        if (d2did < 0 || !isColumnsValid()) {
-            startRowOfCurrentPage = endRowOfCurrentPage = 0;
-            return null;
-        }
-        if (startRowOfCurrentPage < 0) {
-            startRowOfCurrentPage = 0;
-        }
-        endRowOfCurrentPage = startRowOfCurrentPage;
-        Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(task).start(Operation.ReadPage);
-        if (reader == null) {
-            startRowOfCurrentPage = endRowOfCurrentPage = 0;
-            return null;
-        }
-        List<List<String>> rows = reader.getRows();
-        if (rows != null) {
-            endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
-        }
-        return rows;
-    }
-
-    @Override
     public boolean export(ControlDataConvert convertController, List<Integer> cols) {
         if (convertController == null || cols == null || cols.isEmpty()) {
             return false;
@@ -81,7 +33,6 @@ public abstract class Data2DOperation extends Data2D {
         return reader != null && !reader.isFailed();
     }
 
-    @Override
     public long writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
         if (conn == null || tableData2D == null || cols == null || cols.isEmpty()) {
             return -1;
@@ -96,7 +47,6 @@ public abstract class Data2DOperation extends Data2D {
         }
     }
 
-    @Override
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -110,7 +60,6 @@ public abstract class Data2DOperation extends Data2D {
         return reader.getRows();
     }
 
-    @Override
     public DoubleStatistic[] statisticData(List<Integer> cols) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -135,7 +84,6 @@ public abstract class Data2DOperation extends Data2D {
         return sData;
     }
 
-    @Override
     public DataFileCSV copy(List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -183,7 +131,6 @@ public abstract class Data2DOperation extends Data2D {
         }
     }
 
-    @Override
     public DataFileCSV percentage(List<String> names, List<Integer> cols, boolean withValues, boolean abs) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -234,7 +181,6 @@ public abstract class Data2DOperation extends Data2D {
         }
     }
 
-    @Override
     public DataFileCSV normalizeMinMax(List<Integer> cols, double from, double to,
             boolean rowNumber, boolean colName) {
         if (cols == null || cols.isEmpty()) {
@@ -298,7 +244,6 @@ public abstract class Data2DOperation extends Data2D {
         }
     }
 
-    @Override
     public DataFileCSV normalizeSum(List<Integer> cols, boolean rowNumber, boolean colName) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -361,7 +306,6 @@ public abstract class Data2DOperation extends Data2D {
         }
     }
 
-    @Override
     public DataFileCSV normalizeZscore(List<Integer> cols, boolean rowNumber, boolean colName) {
         if (cols == null || cols.isEmpty()) {
             return null;

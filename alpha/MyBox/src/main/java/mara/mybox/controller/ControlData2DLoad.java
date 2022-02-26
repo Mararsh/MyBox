@@ -127,7 +127,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             tableData2DColumn = data2D.getTableData2DColumn();
 
             if (paginationPane != null) {
-                showPaginationPane(!data2D.isMatrix());
+                showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
             }
             data2D.setLoadController(this);
             validateData();
@@ -490,7 +490,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public void makeColumns() {
         try {
-            MyBoxLog.console("here");
             isSettingValues = true;
             tableData.clear();
             tableView.getColumns().remove(rowsSelectionColumn != null ? 2 : 1, tableView.getColumns().size());

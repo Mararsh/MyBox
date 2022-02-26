@@ -460,12 +460,20 @@ public class PopTools {
             values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs, TimeZone.getDefault()));
             values.add(DateTools.datetimeToString(new Date(), TimeFormats.TimeMs, TimeZone.getDefault()));
             values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z", TimeZone.getDefault()));
-            values.addAll(Arrays.asList("2020-07-15T36:55:09", "960-01-23", "581", "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"));
+            values.addAll(Arrays.asList(
+                    "2020-07-15T36:55:09", "960-01-23", "581",
+                    "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"
+            ));
             if (Languages.isChinese()) {
-                values.addAll(Arrays.asList("\u516c\u5143960", "\u516c\u5143960-01-23", "\u516c\u51432020-07-10 10:10:10",
-                        "\u516c\u5143\u524d202", "\u516c\u5143\u524d770-12-11", "\u516c\u5143\u524d1046-03-10 10:10:10"));
+                values.addAll(Arrays.asList(
+                        "公元960", "公元960-01-23", "公元2020-07-10 10:10:10",
+                        "公元前202", "公元前770-12-11", "公元前1046-03-10 10:10:10"
+                ));
             }
-            values.addAll(Arrays.asList("202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC", "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"));
+            values.addAll(Arrays.asList(
+                    "202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC",
+                    "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"
+            ));
             MenuItem menu;
             for (String value : values) {
                 menu = new MenuItem(value);
@@ -539,7 +547,8 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.appendText(vv[0]);
+                        input.replaceText(input.getSelection(), vv[0]);
+                        input.requestFocus();
                     }
                 });
                 NodeStyleTools.setTooltip(button, new Tooltip(vv[0]));
@@ -661,7 +670,8 @@ public class PopTools {
                 newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.appendText("\n");
+                        input.replaceText(input.getSelection(), "\n");
+                        input.requestFocus();
                     }
                 });
                 topButtons.add(newLineButton);
@@ -732,7 +742,7 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.appendText(name);
+                        input.replaceText(input.getSelection(), name);
                         input.requestFocus();
                     }
                 });
@@ -762,7 +772,7 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.appendText(name);
+                        input.replaceText(input.getSelection(), name);
                         input.requestFocus();
                     }
                 });

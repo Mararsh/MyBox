@@ -492,4 +492,28 @@ public class WindowTools {
         }
     }
 
+    public static BaseController find(String interfaceName) {
+        try {
+            if (interfaceName == null || interfaceName.isBlank()) {
+                return null;
+            }
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof BaseController) {
+                    try {
+                        BaseController controller = (BaseController) object;
+                        if (interfaceName.equals(controller.getInterfaceName())) {
+                            return controller;
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
 }

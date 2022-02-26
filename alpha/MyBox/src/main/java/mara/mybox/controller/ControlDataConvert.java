@@ -17,10 +17,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -28,10 +28,10 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVFormat;
@@ -601,8 +601,8 @@ public class ControlDataConvert extends BaseController {
                 csvPrinter.close();
                 parent.targetFileGenerated(csvFile, VisitHistory.FileType.CSV);
                 csvPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.CSV).setTask(task);
-                d.setFile(csvFile)
+                Data2D d = Data2D.create(Data2DDefinition.Type.CSV);
+                d.setTask(task).setFile(csvFile)
                         .setCharset(csvWriteController.charset)
                         .setDelimiter(csvWriteController.delimiter + "")
                         .setHasHeader(csvWriteController.withNamesCheck.isSelected())
@@ -618,8 +618,8 @@ public class ControlDataConvert extends BaseController {
                 textWriter.close();
                 parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
                 textWriter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.Texts).setTask(task);
-                d.setFile(textFile)
+                Data2D d = Data2D.create(Data2DDefinition.Type.Texts);
+                d.setTask(task).setFile(textFile)
                         .setCharset(textWriteOptionsController.charset)
                         .setDelimiter(textDelimiter)
                         .setHasHeader(textWriteOptionsController.withNamesCheck.isSelected())
@@ -675,8 +675,8 @@ public class ControlDataConvert extends BaseController {
                 xssfBook.close();
                 parent.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
                 xssfBook = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.Excel).setTask(task);
-                d.setFile(xlsxFile).setSheet("sheet1")
+                Data2D d = Data2D.create(Data2DDefinition.Type.Excel);
+                d.setTask(task).setFile(xlsxFile).setSheet("sheet1")
                         .setHasHeader(excelWithNamesCheck.isSelected())
                         .setDataName(xlsxFile.getName())
                         .setColsNumber(columns.size())
@@ -690,8 +690,8 @@ public class ControlDataConvert extends BaseController {
                 dataClipboardPrinter.close();
                 parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
                 dataClipboardPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.MyBoxClipboard).setTask(task);
-                d.setFile(dataClipboardFile)
+                Data2D d = Data2D.create(Data2DDefinition.Type.MyBoxClipboard);
+                d.setTask(task).setFile(dataClipboardFile)
                         .setCharset(Charset.forName("UTF-8"))
                         .setDelimiter(",")
                         .setHasHeader(true)

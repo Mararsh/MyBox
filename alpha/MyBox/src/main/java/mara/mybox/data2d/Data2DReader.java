@@ -57,7 +57,7 @@ public abstract class Data2DReader {
 
     public abstract void readRecords();
 
-    public static Data2DReader create(Data2D data) {
+    public static Data2DReader create(Data2D_Edit data) {
         if (data == null) {
             return null;
         }

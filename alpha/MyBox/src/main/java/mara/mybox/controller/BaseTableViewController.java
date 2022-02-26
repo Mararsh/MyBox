@@ -1148,7 +1148,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void goPage() {
-        MyBoxLog.debug("goPage");
         checkPageSelector();
     }
 

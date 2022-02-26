@@ -1,5 +1,6 @@
 package mara.mybox.data2d;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-1-29
  * @License Apache License Version 2.0
  */
-public class DataTableReader extends DataFileReader {
+public class DataTableReader extends Data2DReader {
 
     protected DataTable readerTable;
 
@@ -26,12 +27,10 @@ public class DataTableReader extends DataFileReader {
 
     @Override
     public void scanData() {
-        try {
-            conn = DerbyBase.getConnection();
-            if (conn != null) {
-                handleData();
-                conn.close();
-            }
+        try ( Connection dconn = DerbyBase.getConnection()) {
+            conn = dconn;
+            handleData();
+            conn.close();
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (readerTask != null) {

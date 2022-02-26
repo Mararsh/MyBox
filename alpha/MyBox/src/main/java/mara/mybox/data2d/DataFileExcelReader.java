@@ -15,7 +15,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * @CreateDate 2022-1-27
  * @License Apache License Version 2.0
  */
-public class DataFileExcelReader extends DataFileReader {
+public class DataFileExcelReader extends Data2DReader {
 
     protected DataFileExcel readerExcel;
     protected String readerSheet;

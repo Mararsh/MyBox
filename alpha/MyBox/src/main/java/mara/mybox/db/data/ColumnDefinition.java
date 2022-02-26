@@ -215,8 +215,8 @@ public class ColumnDefinition extends BaseData {
                     return "1".equals(v) || "0".equals(v)
                             || "true".equals(v) || "false".equals(v)
                             || "yes".equals(v) || "no".equals(v)
-                            || Languages.message("true").equals(v) || Languages.message("false").equals(v)
-                            || Languages.message("yes").equals(v) || Languages.message("no").equals(v);
+                            || message("true").equals(v) || message("false").equals(v)
+                            || message("yes").equals(v) || message("no").equals(v);
                 case Short:
                     Short.parseShort(value);
                     return true;
@@ -308,6 +308,10 @@ public class ColumnDefinition extends BaseData {
     public boolean isNumberType() {
         return type == ColumnType.Double || type == ColumnType.Float
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
+    }
+
+    public boolean valueQuoted() {
+        return !isNumberType() && type == ColumnType.Boolean;
     }
 
     // works on java 17 while not work on java 16
@@ -433,11 +437,12 @@ public class ColumnDefinition extends BaseData {
                     return Integer.parseInt(string.replaceAll(",", ""));
                 case Boolean:
                     String v = string.toLowerCase();
-                    return "1".equals(v) || "0".equals(v)
-                            || "true".equals(v) || "false".equals(v)
-                            || "yes".equals(v) || "no".equals(v)
-                            || Languages.message("true").equals(v) || Languages.message("false").equals(v)
-                            || Languages.message("yes").equals(v) || Languages.message("no").equals(v);
+                    MyBoxLog.console(string);
+                    return "1".equals(v) || !"0".equals(v)
+                            || "true".equals(v) || !"false".equals(v)
+                            || "yes".equals(v) || !"no".equals(v)
+                            || message("true").equals(v) || !message("false").equals(v)
+                            || message("yes").equals(v) || !message("no").equals(v);
                 case Short:
                     return Short.parseShort(string.replaceAll(",", ""));
                 case Datetime:
@@ -460,6 +465,9 @@ public class ColumnDefinition extends BaseData {
             switch (type) {
                 case Datetime:
                     return DateTools.datetimeToString((Date) value);
+                case Boolean:
+                    MyBoxLog.console(value + "");
+                    return value + "";
                 default:
                     return value + "";
             }

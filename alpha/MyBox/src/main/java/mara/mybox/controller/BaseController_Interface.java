@@ -923,7 +923,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
         return close();
     }
 
-
     /*
         split panes
      */

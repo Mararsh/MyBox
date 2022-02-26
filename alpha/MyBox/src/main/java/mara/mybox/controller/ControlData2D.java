@@ -129,6 +129,7 @@ public class ControlData2D extends BaseController {
 
     public void setData(Data2D data) {
         try {
+            Data2D oldData = data2D;
             data2D = data;
             data2D.setLoadController(tableController);
             tableData2DDefinition = data2D.getTableData2DDefinition();
@@ -155,7 +156,6 @@ public class ControlData2D extends BaseController {
                     setFileType(VisitHistory.FileType.CSV);
             }
 
-//            checkStatus();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -171,7 +171,6 @@ public class ControlData2D extends BaseController {
         if (data2D.isDataFile()) {
             data2D.initFile(data2D.getFile());
         }
-        MyBoxLog.console(data2D.displayName());
         readDefinition();
     }
 

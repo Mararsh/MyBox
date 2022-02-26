@@ -74,6 +74,16 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
+    public List<String> readColumnNames() {
+        checkForLoad();
+        List<String> names = new ArrayList<>();
+        for (int i = 1; i <= colsNumber; i++) {
+            names.add(colPrefix() + i);
+        }
+        return names;
+    }
+
+    @Override
     public List<List<String>> readPageData() {
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
@@ -205,6 +215,10 @@ public class DataMatrix extends Data2D {
             rows.add(row);
         }
         return rows;
+    }
+
+    public boolean setValue(List<Integer> cols, String value) {
+        return false;
     }
 
     @Override

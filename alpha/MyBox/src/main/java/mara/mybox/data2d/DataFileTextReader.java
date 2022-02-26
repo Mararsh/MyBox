@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-1-29
  * @License Apache License Version 2.0
  */
-public class DataFileTextReader extends DataFileReader {
+public class DataFileTextReader extends Data2DReader {
 
     protected DataFileText readerText;
     protected BufferedReader textReader;

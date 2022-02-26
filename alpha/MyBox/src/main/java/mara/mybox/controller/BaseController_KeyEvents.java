@@ -6,6 +6,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 
@@ -63,8 +64,12 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return false;
         }
         String t = keyEvent.getTarget().toString();
-        return t.contains("TextField") || t.contains("ComboBox")
-                || t.contains("TextArea") || t.contains("WebView");
+//        MyBoxLog.console(this.getClass() + "  " + keyEvent.getCode() + "  " + t);
+        if (t.contains("TextField") || t.contains("ComboBox")
+                || t.contains("TextArea") || t.contains("WebView")) {
+            return true;
+        }
+        return NodeTools.textInputFocus(getMyScene()) != null;
     }
 
     public boolean altFilter(KeyEvent event) {
@@ -258,7 +263,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltV() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         if (pasteButton != null) {
             if (!pasteButton.isDisabled() && pasteButton.isVisible()) {
@@ -281,7 +286,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltA() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         if (allButton != null) {
             if (!allButton.isDisabled() && allButton.isVisible()) {
@@ -364,7 +369,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltD() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         if (deleteButton != null) {
             if (!deleteButton.isDisabled() && deleteButton.isVisible()) {
@@ -387,7 +392,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltX() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         if (cropButton != null) {
             if (!cropButton.isDisabled() && cropButton.isVisible()) {
@@ -420,7 +425,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltZ() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         if (undoButton != null) {
             if (!undoButton.isDisabled() && undoButton.isVisible()) {
@@ -433,7 +438,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltY() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         if (redoButton != null) {
             if (!redoButton.isDisabled() && redoButton.isVisible()) {
@@ -600,7 +605,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-
         if (!isPopup() && !targetIsTextInput()) {
             return controlAltFilter(event);
         }
@@ -613,28 +617,28 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean keyHome() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         return altHome();
     }
 
     public boolean keyEnd() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         return altEnd();
     }
 
     public boolean keyPageUp() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         return altPageUp();
     }
 
     public boolean keyPageDown() {
         if (targetIsTextInput()) {
-            return false;
+            return true;
         }
         return altPageDown();
     }

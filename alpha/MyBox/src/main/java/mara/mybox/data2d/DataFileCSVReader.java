@@ -13,7 +13,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2022-1-29
  * @License Apache License Version 2.0
  */
-public class DataFileCSVReader extends DataFileReader {
+public class DataFileCSVReader extends Data2DReader {
 
     protected DataFileCSV readerCSV;
     protected Iterator<CSVRecord> iterator;

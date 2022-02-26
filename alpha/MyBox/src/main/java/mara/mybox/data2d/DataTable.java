@@ -3,6 +3,7 @@ package mara.mybox.data2d;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,7 +22,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class DataTable extends Data2DOperation {
+public class DataTable extends Data2D {
 
     protected TableData2D tableData2D;
 
@@ -198,8 +199,9 @@ public class DataTable extends Data2DOperation {
         }
     }
 
-    public List<List<String>> pageRows() {
-        return loadController == null ? null : loadController.getTableData();
+    @Override
+    public List<String> readColumnNames() {
+        return null;
     }
 
     @Override
@@ -247,39 +249,66 @@ public class DataTable extends Data2DOperation {
         if (cols == null || cols.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
-                 ResultSet results = query.executeQuery()) {
-            boolean isRandom = "MyBox##random".equals(value);
-            boolean isRandomNn = "MyBox##randomNn".equals(value);
-            Random random = new Random();
-            conn.setAutoCommit(false);
-            int count = 0;
-            while (results.next()) {
-                Data2DRow row = tableData2D.readData(results);
+        boolean isRandom = "MyBox##random".equals(value);
+        boolean isRandomNn = "MyBox##randomNn".equals(value);
+        if (!isRandom && !isRandomNn) {
+            try ( Connection conn = DerbyBase.getConnection();
+                     Statement update = conn.createStatement()) {
+                String sql = null;
                 for (int col : cols) {
-                    Data2DColumn column = columns.get(col);
-                    String name = column.getColumnName();
-                    String v = value;
-                    if (isRandom) {
-                        v = random(random, col, false);
-                    } else if (isRandomNn) {
-                        v = random(random, col, true);
+                    if (sql == null) {
+                        sql = "";
+                    } else {
+                        sql += ", ";
                     }
-                    row.setValue(name, column.fromString(v));
+                    Data2DColumn column = columns.get(col);
+                    String quote = column.valueQuoted() ? "'" : "";
+                    sql += column.getColumnName() + "=" + quote + column.fromString(value) + quote;
                 }
-                tableData2D.updateData(conn, row);
-                if (++count % DerbyBase.BatchSize == 0) {
-                    conn.commit();
+                sql = "UPDATE " + sheet + " SET " + sql;
+                MyBoxLog.debug(sql);
+                update.executeUpdate(sql);
+                conn.commit();
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
                 }
+                MyBoxLog.error(e);
+                return false;
             }
-            conn.commit();
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+        } else {
+            try ( Connection conn = DerbyBase.getConnection();
+                     PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
+                     ResultSet results = query.executeQuery()) {
+                Random random = new Random();
+                conn.setAutoCommit(false);
+                int count = 0;
+                while (results.next()) {
+                    Data2DRow row = tableData2D.readData(results);
+                    for (int col : cols) {
+                        Data2DColumn column = columns.get(col);
+                        String name = column.getColumnName();
+                        String v = value;
+                        if (isRandom) {
+                            v = random(random, col, false);
+                        } else if (isRandomNn) {
+                            v = random(random, col, true);
+                        }
+                        row.setValue(name, column.fromString(v));
+                    }
+                    tableData2D.updateData(conn, row);
+                    if (++count % DerbyBase.BatchSize == 0) {
+                        conn.commit();
+                    }
+                }
+                conn.commit();
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e);
+                return false;
             }
-            MyBoxLog.error(e);
-            return false;
         }
         return true;
     }
