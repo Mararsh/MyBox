@@ -129,8 +129,12 @@ public class ControlData2D extends BaseController {
 
     public void setData(Data2D data) {
         try {
-            Data2D oldData = data2D;
-            data2D = data;
+            if (data2D == null || data2D == data || data2D.getType() != data.getType()) {
+                data2D = data;
+            } else {
+                data2D.resetData();
+                data2D.cloneAll(data);
+            }
             data2D.setLoadController(tableController);
             tableData2DDefinition = data2D.getTableData2DDefinition();
             tableData2DColumn = data2D.getTableData2DColumn();
@@ -431,10 +435,10 @@ public class ControlData2D extends BaseController {
                         backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.setTask(task);
+                    targetData.saveDefinition();
+                    data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.cloneAll(targetData);
-                    data2D.setTask(task);
-                    data2D.saveDefinition();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

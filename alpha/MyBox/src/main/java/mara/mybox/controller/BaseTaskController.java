@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
 public class BaseTaskController extends BaseController {
 
     protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
-    protected boolean cancelled;
+    protected boolean cancelled, successed;
 
     @FXML
     protected Tab logsTab;
@@ -78,6 +78,8 @@ public class BaseTaskController extends BaseController {
     }
 
     public void beforeTask() {
+        cancelled = false;
+        successed = false;
     }
 
     public void startTask() {
@@ -91,11 +93,13 @@ public class BaseTaskController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
+                successed = true;
                 afterSuccess();
             }
 
             @Override
             protected void whenCanceled() {
+                cancelled = true;
                 updateLogs(message("Cancel"));
             }
 
@@ -118,6 +122,7 @@ public class BaseTaskController extends BaseController {
     }
 
     public void afterSuccess() {
+
     }
 
     public void cancelTask() {
@@ -125,11 +130,16 @@ public class BaseTaskController extends BaseController {
             task.cancel();
             task = null;
         }
+
     }
 
     @Override
     public void cancelAction() {
-        cancelTask();
+        if (task != null) {
+            cancelTask();
+        } else {
+            close();
+        }
     }
 
     public void afterTask() {

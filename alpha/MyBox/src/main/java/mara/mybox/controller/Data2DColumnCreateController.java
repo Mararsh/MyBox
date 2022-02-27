@@ -29,7 +29,7 @@ public class Data2DColumnCreateController extends BaseChildController {
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio, dateRadio;
     @FXML
-    protected CheckBox primaryCheck, autoCheck, notNullCheck, editableCheck;
+    protected CheckBox notNullCheck, editableCheck;
     @FXML
     protected ColorSet colorController;
 
@@ -77,8 +77,6 @@ public class Data2DColumnCreateController extends BaseChildController {
             }
             Data2DColumn column = new Data2DColumn();
             column.setColumnName(name).setLength(length).setWidth(width)
-                    .setIsPrimaryKey(primaryCheck.isSelected())
-                    .setAuto(autoCheck.isSelected())
                     .setNotNull(notNullCheck.isSelected())
                     .setEditable(editableCheck.isSelected())
                     .setColor((Color) colorController.rect.getFill());

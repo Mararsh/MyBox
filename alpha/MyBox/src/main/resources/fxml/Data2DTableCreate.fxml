@@ -36,6 +36,7 @@ License:    Apache License Version 2.0
                      </padding>
                      <children>
                           <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlNewDataTable.fxml" VBox.vgrow="ALWAYS" />
+                        <Label minHeight="-Infinity" text="%NewTableComments" wrapText="true" />
                      </children>
                   </VBox>
                </content>

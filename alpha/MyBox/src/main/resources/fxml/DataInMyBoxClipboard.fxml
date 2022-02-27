@@ -55,24 +55,6 @@ License:    Apache License Version 2.0
                                        </image>
                                     </ImageView>
                                     <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconSave.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconRecover.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
                                     <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
                                        <graphic>
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -87,6 +69,24 @@ License:    Apache License Version 2.0
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../buttons/Red/iconAdd.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconRecover.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconSave.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>

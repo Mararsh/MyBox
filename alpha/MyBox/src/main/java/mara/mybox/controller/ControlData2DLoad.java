@@ -140,13 +140,18 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     /*
         data
      */
-    public void loadDef(Data2DDefinition data) {
-        if (data == null) {
+    public void loadDef(Data2DDefinition def) {
+        if (def == null) {
             loadNull();
             return;
         }
-        data2D = Data2D.create(data.getType());
-        data2D.cloneAll(data);
+        if (data2D == null || data2D.getType() != def.getType()) {
+            data2D = Data2D.create(def.getType());
+            data2D.cloneAll(def);
+        } else if (data2D != def) {
+            data2D.resetData();
+            data2D.cloneAll(def);
+        }
         readDefinition();
     }
 
@@ -281,8 +286,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
                     data2D.resetData();
+                    data2D.setTask(task);
                     List<Data2DColumn> columns = new ArrayList<>();
                     if (cols == null || cols.isEmpty()) {
                         data2D.setHasHeader(false);

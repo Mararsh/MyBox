@@ -33,12 +33,12 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         return reader != null && !reader.isFailed();
     }
 
-    public long writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
-        if (conn == null || tableData2D == null || cols == null || cols.isEmpty()) {
+    public long writeTable(Connection conn, TableData2D targetTable, List<Integer> cols) {
+        if (conn == null || targetTable == null || cols == null || cols.isEmpty()) {
             return -1;
         }
         Data2DReader reader = Data2DReader.create(this)
-                .setConn(conn).setTableData2D(tableData2D).setCols(cols)
+                .setConn(conn).setTableData2D(targetTable).setCols(cols)
                 .setReaderTask(task).start(Operation.WriteTable);
         if (reader != null && !reader.isFailed()) {
             return reader.getCount();

@@ -175,6 +175,7 @@ public class ControlNewDataTable extends BaseController {
             tableController.tableData2DDefinition.updateData(conn, dataTable);
             conn.commit();
             taskController.updateLogs(message("Imported") + ": " + count);
+            setRowsNumber(conn);
             return true;
         } catch (Exception e) {
             taskController.updateLogs(e.toString());
@@ -200,15 +201,28 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean importAllData(Connection conn) {
         try {
-            conn.setAutoCommit(false);
             dataTable.setTask(task);
-            count = dataTable.writeTable(conn, tableData2D, columnIndices);
+            count = tableController.data2D.writeTable(conn, tableData2D, columnIndices);
             dataTable.setTask(null);
             taskController.updateLogs(message("Imported") + ": " + count);
+            setRowsNumber(conn);
             return count >= 0;
         } catch (Exception e) {
             taskController.updateLogs(e.toString());
             return false;
+        }
+    }
+
+    public void setRowsNumber(Connection conn) {
+        try {
+            if (count <= 0) {
+                return;
+            }
+            dataTable.setRowsNumber(count);
+            dataTable.getTableData2DDefinition().updateData(conn, dataTable);
+            conn.commit();
+        } catch (Exception e) {
+            taskController.updateLogs(e.toString());
         }
     }
 

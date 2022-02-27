@@ -152,20 +152,39 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public String displayName() {
+        String name = titleName();
+        name = message(type.name()) + (d2did >= 0 ? " - " + d2did : "") + (name != null ? " - " + name : "");
+        return name;
+    }
+
+    public String titleName() {
         String name;
         if (isDataFile() && file != null) {
             name = file.getAbsolutePath();
             if (isExcel()) {
-                name += " - " + getSheet();
+                name += " - " + sheet;
             }
+        } else if (this.isTable()) {
+            name = sheet;
         } else {
-            name = getDataName();
+            name = dataName;
         }
         if (name == null && d2did < 0) {
             name = message("NewData");
         }
-        name = message(type.name()) + (d2did >= 0 ? " - " + d2did : "") + (name != null ? " - " + name : "");
         return name;
+    }
+
+    public String shortName() {
+        if (file != null) {
+            return file.getName();
+        } else if (sheet != null) {
+            return sheet;
+        } else if (dataName != null) {
+            return dataName;
+        } else {
+            return "";
+        }
     }
 
 
@@ -350,16 +369,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return names;
         } catch (Exception e) {
             return null;
-        }
-    }
-
-    public String titleName() {
-        if (file != null) {
-            return file.getAbsolutePath();
-        } else if (dataName != null) {
-            return dataName;
-        } else {
-            return "";
         }
     }
 

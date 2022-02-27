@@ -226,7 +226,7 @@ public abstract class BaseTable<D> {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), tableName + " " + column.getColumnName());
+            MyBoxLog.error(e.toString(), tableName + " " + column.getColumnName());
             return false;
         }
     }
@@ -491,6 +491,36 @@ public abstract class BaseTable<D> {
         }
     }
 
+    public boolean dropColumn(Connection conn, String name) {
+        if (conn == null || name == null || name.isBlank()) {
+            return false;
+        }
+        String sql = null;
+        try {
+            sql = "ALTER TABLE " + tableName + " DROP COLUMN " + name;
+            MyBoxLog.debug(sql);
+            return conn.createStatement().executeUpdate(sql) >= 0;
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+            return false;
+        }
+    }
+
+    public boolean addColumn(Connection conn, ColumnDefinition column) {
+        if (conn == null || column == null) {
+            return false;
+        }
+        String sql = null;
+        try {
+            sql = "ALTER TABLE " + tableName + " ADD COLUMN  " + createColumnDefiniton(column);
+            MyBoxLog.debug(sql);
+            return conn.createStatement().executeUpdate(sql) >= 0;
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+            return false;
+        }
+    }
+
     public long clearData() {
         try ( Connection conn = DerbyBase.getConnection()) {
             return clearData(conn);
@@ -575,6 +605,15 @@ public abstract class BaseTable<D> {
             labels.add(column.getLabel());
         }
         return labels;
+    }
+
+    public List<String> columnNames() {
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i < columns.size(); ++i) {
+            ColumnDefinition column = columns.get(i);
+            names.add(column.getColumnName());
+        }
+        return names;
     }
 
     public String sizeStatement() {
@@ -1401,7 +1440,7 @@ public abstract class BaseTable<D> {
                             .setColumnName(name)
                             .setType(ColumnDefinition.sqlColumnType(resultSet.getInt("DATA_TYPE")))
                             .setLength(resultSet.getInt("COLUMN_SIZE"))
-                            .setNotNull("YES".equalsIgnoreCase(resultSet.getString("IS_NULLABLE")))
+                            .setNotNull(!"YES".equalsIgnoreCase(resultSet.getString("IS_NULLABLE")))
                             .setAuto("YES".equalsIgnoreCase(resultSet.getString("IS_AUTOINCREMENT")));
                     columns.add(column);
                 }

@@ -36,6 +36,15 @@ public class Data2DRow extends BaseData {
         }
     }
 
+    public boolean isEmpty() {
+        try {
+            return values.keySet().isEmpty();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return true;
+        }
+    }
+
     /*
         static methods
      */

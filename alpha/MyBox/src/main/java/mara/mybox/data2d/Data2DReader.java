@@ -119,13 +119,7 @@ public abstract class Data2DReader {
                     failed = true;
                     return null;
                 }
-                names = new ArrayList<>();
-                for (int col : cols) {
-                    try {
-                        names.add(tableData2D.getColumns().get(col).getColumnName());
-                    } catch (Exception e) {
-                    }
-                }
+                names = data2D.columnNames();
                 break;
             case Copy:
                 if (cols == null || cols.isEmpty() || csvPrinter == null) {
@@ -354,17 +348,21 @@ public abstract class Data2DReader {
     public void handleWriteTable() {
         try {
             Data2DRow data2DRow = new Data2DRow();
-            for (int i = 0; i < cols.size(); i++) {
-                try {
-                    data2DRow.setValue(names.get(i), record.get(cols.get(i)));
-                } catch (Exception e) {
+            int len = record.size();
+            for (int col : cols) {
+                if (col >= 0 && col < len) {
+                    data2DRow.setValue(data2D.getColumns().get(col).getColumnName(), record.get(col));
                 }
+            }
+            if (data2DRow.isEmpty()) {
+                return;
             }
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {
                 conn.commit();
             }
         } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

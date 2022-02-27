@@ -44,7 +44,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> {
 
     protected ControlData2D dataController;
-    protected ControlData2DEditTable editController;
+    protected ControlData2DEditTable tableController;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
@@ -298,7 +298,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     protected void setParameters(ControlData2D dataController) {
         try {
             this.dataController = dataController;
-            editController = dataController.tableController;
+            tableController = dataController.tableController;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -307,7 +307,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     protected void setParameters(Data2DConvertToDataBaseController convertController) {
         try {
             this.convertController = convertController;
-            editController = convertController.editController;
+            tableController = convertController.tableController;
             buttonsPane.getChildren().removeAll(cancelButton, okButton);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -317,8 +317,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     protected void setData(Data2D data) {
         try {
             data2D = data;
-            tableData2DDefinition = editController.tableData2DDefinition;
-            tableData2DColumn = editController.tableData2DColumn;
+            tableData2DDefinition = tableController.tableData2DDefinition;
+            tableData2DColumn = tableController.tableData2DColumn;
             setColumns();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -514,7 +514,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             dataController.checkStatus();
         }
         if (status == Status.Loaded || status == Status.Applied) {
-            editController.notifyColumnChanged();
+            tableController.notifyColumnChanged();
         }
     }
 
@@ -551,8 +551,33 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     @FXML
     @Override
-    public void deleteAction() {
-        deleteRowsAction();
+    public void deleteRowsAction() {
+        List<Data2DColumn> selected = tableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            deleteAllRows();
+            return;
+        }
+        for (Data2DColumn column : selected) {
+            if (column.isIsPrimaryKey()) {
+                popError(message("PrimaryKeysCanNotDeleted"));
+                return;
+            }
+        }
+        isSettingValues = true;
+        tableData.removeAll(selected);
+        isSettingValues = false;
+        tableChanged(true);
+    }
+
+    @Override
+    public void deleteAllRows() {
+        for (Data2DColumn column : tableData) {
+            if (column.isIsPrimaryKey()) {
+                popError(message("PrimaryKeysCanNotDeleted"));
+                return;
+            }
+        }
+        super.deleteAllRows();
     }
 
     @FXML
@@ -602,7 +627,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     public boolean pickValues() {
         try {
-            if (convertController != null || editController == null) {
+            if (convertController != null || tableController == null) {
                 return false;
             }
             StringTable validateTable = Data2DColumn.validate(tableData);
@@ -618,7 +643,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             }
             List<List<String>> newTableData = new ArrayList<>();
             if (!tableData.isEmpty()) {
-                for (List<String> rowValues : editController.tableData) {
+                for (List<String> rowValues : tableController.tableData) {
                     List<String> newRow = new ArrayList<>();
                     newRow.add(rowValues.get(0));
                     for (Data2DColumn row : tableData) {
@@ -637,7 +662,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 columns.add(tableData.get(i).cloneAll());
             }
             data2D.setColumns(columns);
-            return editController.updateData(newTableData, true);
+            return tableController.updateData(newTableData, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

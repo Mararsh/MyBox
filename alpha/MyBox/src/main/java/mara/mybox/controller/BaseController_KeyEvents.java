@@ -69,6 +69,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 || t.contains("TextArea") || t.contains("WebView")) {
             return true;
         }
+        // When popup is shown, event target is always popup pane even when focus is actually in text input
         return NodeTools.textInputFocus(getMyScene()) != null;
     }
 

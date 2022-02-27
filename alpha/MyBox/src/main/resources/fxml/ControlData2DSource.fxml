@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
                 </ImageView>
                 <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                 <CheckBox fx:id="columnsCheck" minWidth="-Infinity" mnemonicParsing="false" text="%AllColumns" />
-                <CheckBox fx:id="allPagesCheck" minWidth="-Infinity" mnemonicParsing="false" text="%AllPages" />
+                <CheckBox fx:id="allPagesCheck" minWidth="-Infinity" mnemonicParsing="false" text="%AllDataRows" />
             </children>
         </HBox>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

@@ -104,7 +104,7 @@ public class Data2DTableCreateController extends BaseTaskController {
             SoundTools.miao3();
             tableController.dataController.setData(attributesController.dataTable);
             tableController.dataSaved();
-            closeStage();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -113,7 +113,8 @@ public class Data2DTableCreateController extends BaseTaskController {
     @Override
     public void afterTask() {
         try {
-            attributesBox.setDisable(false);
+            attributesBox.setDisable(successed);
+            startButton.setDisable(successed);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
