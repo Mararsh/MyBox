@@ -120,7 +120,6 @@ public class DataTable extends Data2D {
                 ColumnDefinition c = new ColumnDefinition();
                 c.cloneFrom(column);
                 tableData2D.addColumn(column);
-                MyBoxLog.debug(column.getColumnName() + " " + column.isNotNull());
             }
             if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
                 loadController.popError(message("Failed"));
@@ -132,29 +131,6 @@ public class DataTable extends Data2D {
             loadController.popError(e.toString());
             MyBoxLog.error(e);
             return false;
-        }
-    }
-
-    public Data2DRow from(List<String> values) {
-        try {
-            if (columns == null || values == null || values.isEmpty()) {
-                return null;
-            }
-            Data2DRow row = new Data2DRow();
-            row.setIndex(Integer.valueOf(values.get(0)));
-            for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
-                Data2DColumn column = columns.get(i);
-                String name = column.getColumnName();
-                String value = values.get(i + 1);
-                if (value != null) {
-                    row.setValue(name, column.fromString(value));
-                    MyBoxLog.debug(name + " " + column.getType() + " " + value + " " + column.fromString(value));
-                }
-            }
-            return row;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
         }
     }
 
@@ -195,31 +171,31 @@ public class DataTable extends Data2D {
             Random random = new Random();
             for (int i = 0; i < dbColumns.size(); i++) {
                 ColumnDefinition dbColumn = dbColumns.get(i);
-                Data2DColumn column = new Data2DColumn();
-                column.cloneFrom(dbColumn);
-                column.setD2id(d2did);
-                column.setIndex(i);
+                dbColumn.setIndex(i);
                 if (savedColumns != null) {
                     for (Data2DColumn scolumn : savedColumns) {
-                        if (column.getColumnName().equalsIgnoreCase(scolumn.getColumnName())) {
-                            column.setColor(scolumn.getColor());
-                            column.setWidth(scolumn.getWidth());
-                            column.setIndex(scolumn.getIndex());
+                        if (dbColumn.getColumnName().equalsIgnoreCase(scolumn.getColumnName())) {
+                            dbColumn.setIndex(scolumn.getIndex());
+                            dbColumn.setColor(scolumn.getColor());
+                            dbColumn.setWidth(scolumn.getWidth());
+                            dbColumn.setEditable(scolumn.isEditable());
+                            if (dbColumn.getDefaultValue() == null) {
+                                dbColumn.setDefaultValue(scolumn.getDefaultValue());
+                            }
                             break;
                         }
                     }
                 }
-                if (column.getColor() == null) {
-                    column.setColor(FxColorTools.randomColor(random));
+                if (dbColumn.getColor() == null) {
+                    dbColumn.setColor(FxColorTools.randomColor(random));
                 }
-                if (column.isAuto()) {
-                    column.setEditable(false);
+                if (dbColumn.isAuto()) {
+                    dbColumn.setEditable(false);
                 }
-                columns.add(column);
             }
-            Collections.sort(columns, new Comparator<Data2DColumn>() {
+            Collections.sort(dbColumns, new Comparator<ColumnDefinition>() {
                 @Override
-                public int compare(Data2DColumn v1, Data2DColumn v2) {
+                public int compare(ColumnDefinition v1, ColumnDefinition v2) {
                     int diff = v1.getIndex() - v2.getIndex();
                     if (diff == 0) {
                         return 0;
@@ -230,6 +206,17 @@ public class DataTable extends Data2D {
                     }
                 }
             });
+            for (int i = 0; i < dbColumns.size(); i++) {
+                ColumnDefinition column = dbColumns.get(i);
+                column.setIndex(i);
+            }
+            tableData2D.setColumns(dbColumns);
+            for (ColumnDefinition dbColumn : dbColumns) {
+                Data2DColumn column = new Data2DColumn();
+                column.cloneFrom(dbColumn);
+                column.setD2id(d2did);
+                columns.add(column);
+            }
             colsNumber = columns.size();
             tableData2DColumn.save(conn, d2did, columns);
             tableData2DDefinition.updateData(conn, this);
@@ -248,13 +235,93 @@ public class DataTable extends Data2D {
         return null;
     }
 
-    @Override
-    public boolean savePageData(Data2D targetData) {
-        if (targetData == null || !(targetData instanceof DataTable)) {
+    public Data2DRow from(List<String> values) {
+        try {
+            if (columns == null || values == null || values.isEmpty()) {
+                return null;
+            }
+            Data2DRow data2DRow = tableData2D.newRow();
+            data2DRow.setIndex(Integer.valueOf(values.get(0)));
+            for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
+                Data2DColumn column = columns.get(i);
+                String name = column.getColumnName();
+                Object value = column.fromString(values.get(i + 1));
+                if (value != null) {
+                    data2DRow.setValue(name, value);
+                }
+            }
+            return data2DRow;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public boolean updateTable(Connection conn) {
+        try {
+            List<String> dbColumnNames = tableData2D.columnNames();
+            List<String> dataColumnNames = new ArrayList<>();
+            for (Data2DColumn column : columns) {
+                String name = DerbyBase.fixedIdentifier(column.getColumnName());
+                dataColumnNames.add(name);
+                if (dbColumnNames.contains(name) && column.getIndex() < 0) {
+                    tableData2D.dropColumn(conn, name);
+                    conn.commit();
+                    dbColumnNames.remove(name);
+                }
+            }
+            for (String name : dbColumnNames) {
+                if (!dataColumnNames.contains(name)) {
+                    tableData2D.dropColumn(conn, name);
+                    conn.commit();
+                }
+            }
+            for (Data2DColumn column : columns) {
+                String name = DerbyBase.fixedIdentifier(column.getColumnName());
+                if (!dbColumnNames.contains(name)) {
+                    tableData2D.addColumn(conn, column);
+                    conn.commit();
+                }
+            }
+            List<ColumnDefinition> dbColumns = new ArrayList<>();
+            for (Data2DColumn column : columns) {
+                ColumnDefinition dbColumn = new ColumnDefinition();
+                dbColumn.cloneFrom(column);
+                dbColumns.add(dbColumn);
+            }
+            tableData2D.setColumns(dbColumns);
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
             return false;
         }
+    }
+
+    public String pageQuery() {
+        String sql = "SELECT * FROM " + sheet;
+        String orderby = null;
+        for (ColumnDefinition column : tableData2D.getPrimaryColumns()) {
+            if (orderby != null) {
+                orderby += "," + column.getColumnName();
+            } else {
+                orderby = column.getColumnName();
+            }
+        }
+        if (orderby != null && !orderby.isBlank()) {
+            sql += " ORDER BY " + orderby;
+        }
+        sql += " OFFSET " + startRowOfCurrentPage + " ROWS FETCH NEXT " + pageSize + " ROWS ONLY";
+        return sql;
+    }
+
+    @Override
+    public boolean savePageData(Data2D targetData) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            List<Data2DRow> dbRows = tableData2D.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
+            updateTable(conn);
+            List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());
             List<Data2DRow> pageRows = new ArrayList<>();
             List<List<String>> pageData = tableData();
             conn.setAutoCommit(false);
@@ -289,40 +356,6 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean saveDefinition(Connection conn) {
-        try {
-            if (!super.saveDefinition(conn)) {
-                return false;
-            }
-            List<String> dbColumnNames = tableData2D.columnNames();
-            MyBoxLog.debug(dbColumnNames);
-            List<String> dataColumnNames = new ArrayList<>();
-            for (Data2DColumn column : columns) {
-                String name = DerbyBase.fixedIdentifier(column.getColumnName());
-                dataColumnNames.add(name);
-                if (!dbColumnNames.contains(name)) {
-                    tableData2D.addColumn(conn, column);
-                    conn.commit();
-                }
-            }
-            MyBoxLog.debug(dbColumnNames);
-            for (String name : dbColumnNames) {
-                if (!dataColumnNames.contains(name)) {
-                    tableData2D.dropColumn(conn, name);
-                    conn.commit();
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    @Override
     public boolean setValue(List<Integer> cols, String value) {
         if (cols == null || cols.isEmpty()) {
             return false;
@@ -334,14 +367,21 @@ public class DataTable extends Data2D {
                      Statement update = conn.createStatement()) {
                 String sql = null;
                 for (int col : cols) {
+                    Data2DColumn column = columns.get(col);
+                    Object ovalue = column.fromString(value);
+                    if (ovalue == null) {
+                        continue;
+                    }
+                    String quote = column.valueQuoted() ? "'" : "";
                     if (sql == null) {
                         sql = "";
                     } else {
                         sql += ", ";
                     }
-                    Data2DColumn column = columns.get(col);
-                    String quote = column.valueQuoted() ? "'" : "";
-                    sql += column.getColumnName() + "=" + quote + column.fromString(value) + quote;
+                    sql += column.getColumnName() + "=" + quote + ovalue + quote;
+                }
+                if (sql == null) {
+                    return false;
                 }
                 sql = "UPDATE " + sheet + " SET " + sql;
                 update.executeUpdate(sql);

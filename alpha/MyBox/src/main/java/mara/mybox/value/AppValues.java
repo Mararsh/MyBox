@@ -29,6 +29,7 @@ public class AppValues {
     public static final short InvalidShort = Short.MIN_VALUE;
     public static final long InvalidLong = Long.MIN_VALUE;
     public static final double InvalidDouble = Double.MAX_VALUE;
+    public static final float InvalidFloat = Float.MIN_VALUE;
     public static final int InvalidInteger = Integer.MIN_VALUE;
 
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";

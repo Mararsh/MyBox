@@ -56,7 +56,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
-    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn;
+    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn;
     @FXML
     protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, primaryColumn, autoColumn;
     @FXML
@@ -104,8 +104,28 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
             indexColumn.setEditable(false);
 
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("columnName"));
+            defaultColumn.setCellValueFactory(new PropertyValueFactory<>("defaultValue"));
+            defaultColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
+            defaultColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
+                    if (t == null) {
+                        return;
+                    }
+                    Data2DColumn column = t.getRowValue();
+                    if (column == null) {
+                        return;
+                    }
+                    String v = t.getNewValue();
+                    if ((v == null && column.getDefaultValue() != null)
+                            || (v != null && !v.equals(column.getDefaultValue()))) {
+                        column.setDefaultValue(v);
+                        status(Status.Modified);
+                    }
+                }
+            });
 
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("columnName"));
             nameColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
             nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
                 @Override
@@ -126,7 +146,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeString"));
-
             ObservableList<String> types = FXCollections.observableArrayList();
             for (ColumnType type : Data2DColumn.editTypes()) {
                 types.add(message(type.name()));
@@ -156,6 +175,47 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
 
             editableColumn.setCellValueFactory(new PropertyValueFactory<>("editable"));
+            editableColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
+                @Override
+                public TableCell<Data2DColumn, Boolean> call(TableColumn<Data2DColumn, Boolean> param) {
+                    try {
+                        TableCheckboxCell<Data2DColumn, Boolean> cell = new TableCheckboxCell<>() {
+                            @Override
+                            protected boolean getCellValue(int rowIndex) {
+                                try {
+                                    return tableData.get(rowIndex).isEditable();
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            }
+
+                            @Override
+                            protected void setCellValue(int rowIndex, boolean value) {
+                                try {
+                                    if (rowIndex < 0) {
+                                        return;
+                                    }
+                                    Data2DColumn column = tableData.get(rowIndex);
+                                    if (column == null || column.isAuto()) {
+                                        return;
+                                    }
+                                    if (value != column.isEditable()) {
+                                        column.setEditable(value);
+                                        status(Status.Modified);
+                                    }
+                                } catch (Exception e) {
+                                    MyBoxLog.debug(e);
+                                }
+                            }
+                        };
+                        return cell;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            });
+            editableColumn.setEditable(true);
+            editableColumn.getStyleClass().add("editable-column");
 
             notNullColumn.setCellValueFactory(new PropertyValueFactory<>("notNull"));
             notNullColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
@@ -337,13 +397,12 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 nameColumn.setEditable(false);
                 nameColumn.getStyleClass().clear();
 
-                editableColumn.setEditable(false);
-                editableColumn.setCellFactory(new TableBooleanCell());
-                editableColumn.getStyleClass().clear();
-
                 notNullColumn.setEditable(false);
                 notNullColumn.setCellFactory(new TableBooleanCell());
                 notNullColumn.getStyleClass().clear();
+
+                defaultColumn.setEditable(false);
+                defaultColumn.getStyleClass().clear();
 
                 lengthColumn.setEditable(false);
                 lengthColumn.getStyleClass().clear();
@@ -359,48 +418,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
                 nameColumn.setEditable(true);
                 nameColumn.getStyleClass().add("editable-column");
-
-                editableColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
-                    @Override
-                    public TableCell<Data2DColumn, Boolean> call(TableColumn<Data2DColumn, Boolean> param) {
-                        try {
-                            TableCheckboxCell<Data2DColumn, Boolean> cell = new TableCheckboxCell<>() {
-                                @Override
-                                protected boolean getCellValue(int rowIndex) {
-                                    try {
-                                        return tableData.get(rowIndex).isEditable();
-                                    } catch (Exception e) {
-                                        return false;
-                                    }
-                                }
-
-                                @Override
-                                protected void setCellValue(int rowIndex, boolean value) {
-                                    try {
-                                        if (rowIndex < 0) {
-                                            return;
-                                        }
-                                        Data2DColumn column = tableData.get(rowIndex);
-                                        if (column == null) {
-                                            return;
-                                        }
-                                        if (value != column.isEditable()) {
-                                            column.setEditable(value);
-                                            status(Status.Modified);
-                                        }
-                                    } catch (Exception e) {
-                                        MyBoxLog.debug(e);
-                                    }
-                                }
-                            };
-                            return cell;
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    }
-                });
-                editableColumn.setEditable(true);
-                editableColumn.getStyleClass().add("editable-column");
 
                 notNullColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
                     @Override
@@ -446,6 +463,9 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
                 lengthColumn.setEditable(true);
                 lengthColumn.getStyleClass().add("editable-column");
+
+                defaultColumn.setEditable(true);
+                defaultColumn.getStyleClass().add("editable-column");
             }
 
             checkButtons();
@@ -690,11 +710,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     @Override
     public void addRowsAction() {
-        if (data2D.isTable() && data2D.getSheet() != null) {
-            Data2DColumnCreateController.open(this);
-        } else {
-            super.addRowsAction();
-        }
+        Data2DColumnCreateController.open(this);
     }
 
     public void addRow(Data2DColumn row) {

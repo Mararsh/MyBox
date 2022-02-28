@@ -435,10 +435,10 @@ public class ControlData2D extends BaseController {
                         backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.setTask(task);
-                    targetData.saveDefinition();
-                    data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.cloneAll(targetData);
+                    data2D.setTask(task);
+                    data2D.saveDefinition();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

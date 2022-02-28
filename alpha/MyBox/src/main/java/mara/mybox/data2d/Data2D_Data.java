@@ -278,8 +278,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         try {
             List<String> newRow = new ArrayList<>();
             newRow.add("-1");
-            for (int i = 0; i < columns.size(); i++) {
-                newRow.add(defaultColValue());
+            for (Data2DColumn column : columns) {
+                if (column.getDefaultValue() != null) {
+                    newRow.add(column.getDefaultValue());
+                } else {
+                    newRow.add(defaultColValue());
+                }
             }
             return newRow;
         } catch (Exception e) {

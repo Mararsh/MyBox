@@ -264,7 +264,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltV() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         if (pasteButton != null) {
             if (!pasteButton.isDisabled() && pasteButton.isVisible()) {
@@ -287,7 +287,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltA() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         if (allButton != null) {
             if (!allButton.isDisabled() && allButton.isVisible()) {
@@ -370,7 +370,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltD() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         if (deleteButton != null) {
             if (!deleteButton.isDisabled() && deleteButton.isVisible()) {
@@ -393,7 +393,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltX() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         if (cropButton != null) {
             if (!cropButton.isDisabled() && cropButton.isVisible()) {
@@ -426,7 +426,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltZ() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         if (undoButton != null) {
             if (!undoButton.isDisabled() && undoButton.isVisible()) {
@@ -439,7 +439,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean controlAltY() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         if (redoButton != null) {
             if (!redoButton.isDisabled() && redoButton.isVisible()) {
@@ -618,28 +618,28 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
     public boolean keyHome() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         return altHome();
     }
 
     public boolean keyEnd() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         return altEnd();
     }
 
     public boolean keyPageUp() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         return altPageUp();
     }
 
     public boolean keyPageDown() {
         if (targetIsTextInput()) {
-            return true;
+            return false;
         }
         return altPageDown();
     }

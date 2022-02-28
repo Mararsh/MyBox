@@ -2,6 +2,7 @@ package mara.mybox.db.data;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,7 +29,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ColumnDefinition extends BaseData {
 
-    protected String tableName, columnName, label, referName, referTable, referColumn;
+    protected String tableName, columnName, label, referName, referTable, referColumn, defaultValue;
     protected ColumnType type;
     protected int index, length, width;
     protected Color color;
@@ -36,7 +37,7 @@ public class ColumnDefinition extends BaseData {
     protected OnDelete onDelete;
     protected OnUpdate onUpdate;
     protected Era.Format timeFormat;
-    protected Object defaultValue, value;
+    protected Object value;
     protected Number maxValue, minValue;
     protected Map<Object, String> values;  // value, displayString
 
@@ -58,6 +59,8 @@ public class ColumnDefinition extends BaseData {
     }
 
     public final void initColumnDefinition() {
+        tableName = null;
+        columnName = null;
         type = ColumnType.String;
         index = -1;
         isPrimaryKey = notNull = auto = false;
@@ -70,6 +73,9 @@ public class ColumnDefinition extends BaseData {
         maxValue = null;
         minValue = null;
         color = FxColorTools.randomColor();
+        referName = null;
+        referTable = null;
+        referColumn = null;
     }
 
     public ColumnDefinition() {
@@ -113,6 +119,7 @@ public class ColumnDefinition extends BaseData {
             if (c == null) {
                 return;
             }
+            tableName = c.tableName;
             columnName = c.columnName;
             label = c.label;
             referName = c.referName;
@@ -310,10 +317,6 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
     }
 
-    public boolean valueQuoted() {
-        return !isNumberType() && type == ColumnType.Boolean;
-    }
-
     // works on java 17 while not work on java 16
 //    public String random(Random random, int maxRandom, short scale) {
 //        if (random == null) {
@@ -425,6 +428,9 @@ public class ColumnDefinition extends BaseData {
 
     public Object fromString(String string) {
         try {
+            if (string == null) {
+                return null;
+            }
             switch (type) {
                 case Double:
                     return Double.parseDouble(string.replaceAll(",", ""));
@@ -437,12 +443,8 @@ public class ColumnDefinition extends BaseData {
                     return Integer.parseInt(string.replaceAll(",", ""));
                 case Boolean:
                     String v = string.toLowerCase();
-                    MyBoxLog.console(string);
-                    return "1".equals(v) || !"0".equals(v)
-                            || "true".equals(v) || !"false".equals(v)
-                            || "yes".equals(v) || !"no".equals(v)
-                            || message("true").equals(v) || !message("false").equals(v)
-                            || message("yes").equals(v) || !message("no").equals(v);
+                    return "1".equals(v) || "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v)
+                            || message("true").equals(v) || message("yes").equals(v);
                 case Short:
                     return Short.parseShort(string.replaceAll(",", ""));
                 case Datetime:
@@ -466,7 +468,6 @@ public class ColumnDefinition extends BaseData {
                 case Datetime:
                     return DateTools.datetimeToString((Date) value);
                 case Boolean:
-                    MyBoxLog.console(value + "");
                     return value + "";
                 default:
                     return value + "";
@@ -475,6 +476,105 @@ public class ColumnDefinition extends BaseData {
             return null;
         }
     }
+
+    public boolean valueQuoted() {
+        return !isNumberType() && type != ColumnType.Boolean;
+    }
+
+    public String getDefValue() {
+        Object v = fromString(defaultValue);
+        switch (type) {
+            case String:
+            case Text:
+            case File:
+            case Image:
+            case Color:
+                if (v != null) {
+                    return "'" + defaultValue + "'";
+                } else {
+                    return "''";
+                }
+            case Double:
+            case Float:
+            case Long:
+            case Integer:
+            case Era:
+            case Short:
+                if (v != null) {
+                    return v + "";
+                } else {
+                    return "0";
+                }
+            case Boolean:
+                if (v != null) {
+                    return v + "";
+                } else {
+                    return "false";
+                }
+            case Datetime:
+                if (v != null) {
+                    return "'" + defaultValue + "'";
+                } else {
+                    return " CURRENT TIMESTAMP ";
+                }
+            case Date:
+                if (v != null) {
+                    return "'" + defaultValue + "'";
+                } else {
+                    return " CURRENT DATE ";
+                }
+            default:
+                return null;
+        }
+    }
+
+    public Object defaultValue() {
+        Object v = fromString(defaultValue);
+        switch (type) {
+            case String:
+            case Text:
+            case File:
+            case Image:
+            case Color:
+                if (v != null) {
+                    return defaultValue;
+                } else {
+                    return "";
+                }
+            case Double:
+            case Float:
+            case Long:
+            case Integer:
+            case Era:
+            case Short:
+                if (v != null) {
+                    return v;
+                } else {
+                    return 0;
+                }
+            case Boolean:
+                if (v != null) {
+                    return v;
+                } else {
+                    return false;
+                }
+            case Datetime:
+                if (v != null) {
+                    return v;
+                } else {
+                    return new Timestamp(new Date().getTime());
+                }
+            case Date:
+                if (v != null) {
+                    return v;
+                } else {
+                    return new java.sql.Date(new Date().getTime());
+                }
+            default:
+                return null;
+        }
+    }
+
 
     /*
         static methods
@@ -567,6 +667,36 @@ public class ColumnDefinition extends BaseData {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    public static short onUpdate(OnUpdate type) {
+        if (type == null) {
+            return 0;
+        }
+        return (short) (type.ordinal());
+    }
+
+    public static OnUpdate onUpdate(short type) {
+        OnUpdate[] types = OnUpdate.values();
+        if (type < 0 || type > types.length) {
+            return OnUpdate.Restrict;
+        }
+        return types[type];
+    }
+
+    public static short onDelete(OnDelete type) {
+        if (type == null) {
+            return 0;
+        }
+        return (short) (type.ordinal());
+    }
+
+    public static OnDelete onDelete(short type) {
+        OnDelete[] types = OnDelete.values();
+        if (type < 0 || type > types.length) {
+            return OnDelete.Restrict;
+        }
+        return types[type];
     }
 
     public static OnUpdate updateRule(short type) {
@@ -725,11 +855,11 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public Object getDefaultValue() {
+    public String getDefaultValue() {
         return defaultValue;
     }
 
-    public ColumnDefinition setDefaultValue(Object defaultValue) {
+    public ColumnDefinition setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }

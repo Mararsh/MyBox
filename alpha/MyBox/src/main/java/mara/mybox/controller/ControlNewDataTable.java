@@ -185,9 +185,14 @@ public class ControlNewDataTable extends BaseController {
 
     public void importRow(Connection conn, List<String> pageRow) {
         try {
-            Data2DRow data2DRow = new Data2DRow();
+            Data2DRow data2DRow = tableData2D.newRow();
             for (int col : columnIndices) {
-                data2DRow.setValue(tableController.data2D.getColumns().get(col).getColumnName(), pageRow.get(col + 1));
+                Data2DColumn column = tableController.data2D.getColumns().get(col);
+                String name = column.getColumnName();
+                Object value = column.fromString(pageRow.get(col + 1));
+                if (value != null) {
+                    data2DRow.setValue(name, value);
+                }
             }
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {

@@ -1,9 +1,13 @@
 package mara.mybox.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -11,6 +15,7 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -25,7 +30,9 @@ public class Data2DColumnCreateController extends BaseChildController {
     protected ControlData2DColumns columnsController;
 
     @FXML
-    protected TextField nameInput, lengthInput, widthInput;
+    protected TextField nameInput, defaultInput, lengthInput, widthInput;
+    @FXML
+    protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio, dateRadio;
     @FXML
@@ -44,6 +51,29 @@ public class Data2DColumnCreateController extends BaseChildController {
             colorController.init(this, baseName + "Color");
             colorController.setColor(FxColorTools.randomColor());
 
+            typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (stringRadio.isSelected()) {
+                        defaultInput.setText("");
+                    } else if (doubleRadio.isSelected()) {
+                        defaultInput.setText("0");
+                    } else if (floatRadio.isSelected()) {
+                        defaultInput.setText("0");
+                    } else if (longRadio.isSelected()) {
+                        defaultInput.setText("0");
+                    } else if (intRadio.isSelected()) {
+                        defaultInput.setText("0");
+                    } else if (shortRadio.isSelected()) {
+                        defaultInput.setText("0");
+                    } else if (booleanRadio.isSelected()) {
+                        defaultInput.setText("false");
+                    } else if (dateRadio.isSelected()) {
+                        defaultInput.setText(DateTools.nowString());
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -57,6 +87,12 @@ public class Data2DColumnCreateController extends BaseChildController {
             if (name == null || name.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("Name"));
                 return;
+            }
+            for (Data2DColumn column : columnsController.tableData) {
+                if (name.equalsIgnoreCase(column.getColumnName())) {
+                    popError(message("AlreadyExisted"));
+                    return;
+                }
             }
             int length;
             try {
@@ -96,6 +132,10 @@ public class Data2DColumnCreateController extends BaseChildController {
                 column.setType(ColumnType.Boolean);
             } else if (dateRadio.isSelected()) {
                 column.setType(ColumnType.Datetime);
+            }
+            String dv = defaultInput.getText();
+            if (dv != null) {
+                column.setDefaultValue(dv);
             }
 
             columnsController.addRow(column);

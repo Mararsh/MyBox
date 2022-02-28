@@ -67,9 +67,7 @@ public class DataTableReader extends Data2DReader {
     @Override
     public void readPage() {
         rowIndex = 0;
-        String sql = "SELECT * FROM " + readerTable.getSheet()
-                + " OFFSET " + rowsStart + " ROWS FETCH NEXT " + (rowsEnd - rowsStart) + " ROWS ONLY";
-        try ( PreparedStatement statement = conn.prepareStatement(sql);
+        try ( PreparedStatement statement = conn.prepareStatement(readerTable.pageQuery());
                  ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 makeRecord(tableData2D.readData(results));

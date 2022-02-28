@@ -134,6 +134,12 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.isAuto();
             case "editable":
                 return data.isEditable();
+            case "on_delete":
+                return onDelete(data.getOnDelete());
+            case "on_update":
+                return onUpdate(data.getOnUpdate());
+            case "default_value":
+                return data.getDefaultValue();
             case "max_value":
                 return number2String(data.getMaxValue());
             case "min_value":
@@ -195,6 +201,15 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
                 case "editable":
                     data.setEditable(value == null ? false : (boolean) value);
+                    return true;
+                case "on_delete":
+                    data.setOnDelete(onDelete((short) value));
+                    return true;
+                case "on_update":
+                    data.setOnUpdate(onUpdate((short) value));
+                    return true;
+                case "default_value":
+                    data.setDefaultValue(value == null ? null : (String) value);
                     return true;
                 case "max_value":
                     data.setMaxValue(string2Number(data.getType(), (String) value));

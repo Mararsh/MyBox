@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.dev.MyBoxLog;
 
@@ -9,6 +10,17 @@ import mara.mybox.dev.MyBoxLog;
  * @License Apache License Version 2.0
  */
 public class TableData2D extends BaseTable<Data2DRow> {
+
+    public Data2DRow newRow() {
+        Data2DRow data2DRow = new Data2DRow();
+        for (ColumnDefinition column : columns) {
+            Object v = column.fromString(column.getDefaultValue());
+            if (v != null) {
+                data2DRow.setValue(column.getColumnName(), v);
+            }
+        }
+        return data2DRow;
+    }
 
     /*
         static

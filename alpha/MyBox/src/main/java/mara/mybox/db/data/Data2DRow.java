@@ -48,10 +48,6 @@ public class Data2DRow extends BaseData {
     /*
         static methods
      */
-    public static Data2DRow create() {
-        return new Data2DRow();
-    }
-
     public static boolean valid(Data2DRow data) {
         return data != null;
     }

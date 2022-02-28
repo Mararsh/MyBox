@@ -7,6 +7,7 @@ import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
@@ -347,11 +348,16 @@ public abstract class Data2DReader {
 
     public void handleWriteTable() {
         try {
-            Data2DRow data2DRow = new Data2DRow();
+            Data2DRow data2DRow = tableData2D.newRow();
             int len = record.size();
             for (int col : cols) {
                 if (col >= 0 && col < len) {
-                    data2DRow.setValue(data2D.getColumns().get(col).getColumnName(), record.get(col));
+                    Data2DColumn column = data2D.getColumns().get(col);
+                    String name = column.getColumnName();
+                    Object value = column.fromString(record.get(col));
+                    if (value != null) {
+                        data2DRow.setValue(name, value);
+                    }
                 }
             }
             if (data2DRow.isEmpty()) {
