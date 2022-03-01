@@ -66,7 +66,7 @@ public class ControllerTools {
             PopTools.browseURI(controller, file.toURI());
             return controller;
         }
-        String suffix = FileNameTools.getFileSuffix(file.getAbsolutePath()).toLowerCase();
+        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
         if (FileExtensions.SupportedImages.contains(suffix)) {
             controller = openImageViewer(stage, file);
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {

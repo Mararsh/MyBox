@@ -6,7 +6,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -66,7 +65,7 @@ public class FileInformation {
             this.filesNumber = 1;
             this.fileSize = file.length();
             this.fileType = Languages.message("File");
-            this.fileSuffix = FileNameTools.getFileSuffix(fileName);
+            this.fileSuffix = FileNameTools.suffix(file.getName());
             if (this.fileSuffix == null || this.fileSuffix.isEmpty()) {
                 this.fileSuffix = Languages.message("Unknown");
             }

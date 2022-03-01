@@ -17,8 +17,8 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
@@ -151,8 +151,8 @@ public class WebBrowserController extends BaseController {
             String dname;
             if (name != null && !name.isBlank()) {
                 dname = name;
-                String nameSuffix = FileNameTools.getFileSuffix(name);
-                String addrSuffix = FileNameTools.getFileSuffix(address);
+                String nameSuffix = FileNameTools.suffix(name);
+                String addrSuffix = FileNameTools.suffix(address);
                 if (addrSuffix != null && !addrSuffix.isBlank()) {
                     if (nameSuffix == null || nameSuffix.isBlank()
                             || !addrSuffix.equalsIgnoreCase(nameSuffix)) {

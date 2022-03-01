@@ -113,8 +113,8 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             String prefix, suffix;
             File file = new File(address);
             if (file.exists()) {
-                prefix = FileNameTools.getFilePrefix(file.getName());
-                suffix = FileNameTools.getFileSuffix(file.getName());
+                prefix = FileNameTools.prefix(file.getName());
+                suffix = FileNameTools.suffix(file.getName());
             } else {
                 int posSlash = address.lastIndexOf('/');
 

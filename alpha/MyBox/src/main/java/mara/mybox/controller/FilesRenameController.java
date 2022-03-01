@@ -372,12 +372,12 @@ public class FilesRenameController extends BaseBatchFileController {
                     newName = FileNameTools.filter(prefixInput.getText()) + file.getName();
                     break;
                 case AppendSuffix:
-                    newName = FileNameTools.appendName(file.getName(), FileNameTools.filter(suffixInput.getText()));
+                    newName = FileNameTools.append(file.getName(), FileNameTools.filter(suffixInput.getText()));
                     break;
                 case AddSequenceNumber:
                     newName = "";
                     if (originalCheck.isSelected()) {
-                        newName += FileNameTools.getFilePrefix(file.getName());
+                        newName += FileNameTools.prefix(file.getName());
                     }
                     if (stringCheck.isSelected()) {
                         newName += FileNameTools.filter(stringInput.getText());
@@ -388,10 +388,10 @@ public class FilesRenameController extends BaseBatchFileController {
                     }
                     newName += pageNumber;
                     currentAccum++;
-                    newName += "." + FileNameTools.getFileSuffix(file.getName());
+                    newName += "." + FileNameTools.suffix(file.getName());
                     break;
                 case ChangeExtension:
-                    newName = FileNameTools.replaceFileSuffix(file.getName(), FileNameTools.filter(newExtInput.getText()));
+                    newName = FileNameTools.replaceSuffix(file.getName(), FileNameTools.filter(newExtInput.getText()));
                     break;
                 default:
                     return null;

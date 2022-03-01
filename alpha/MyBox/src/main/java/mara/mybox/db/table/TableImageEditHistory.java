@@ -112,7 +112,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         try {
             File hisFile = new File(hisname);
             FileDeleteTools.delete(hisFile);
-            File thumbFile = new File(FileNameTools.appendName(hisname, "_thumbnail"));
+            File thumbFile = new File(FileNameTools.append(hisname, "_thumbnail"));
             FileDeleteTools.delete(thumbFile);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -15,9 +15,9 @@ import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.TestCase;
 import mara.mybox.dev.TestCase.Status;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.AppVariables.errorNotify;
 import static mara.mybox.value.AppVariables.isTesting;
 import mara.mybox.value.Fxmls;
@@ -37,6 +37,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     protected List<TestCase> testCases;
     protected BaseController currentController;
     protected boolean canceled;
+    protected ChangeListener<Boolean> errorListener;
 
     @FXML
     protected TableColumn<TestCase, Integer> aidColumn;
@@ -106,15 +107,15 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         try {
             super.initControls();
 
-            errorNotify.addListener(new ChangeListener<Boolean>() {
+            errorListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (currentCase == null && currentIndex >= 0) {
+                    if (isTesting && currentCase != null && currentIndex >= 0) {
                         currentCase.setStatus(Status.Fail);
                         tableData.set(currentIndex, currentCase);
                     }
                 }
-            });
+            };
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -127,16 +128,6 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             this.testCases = testCases;
             tableData.setAll(testCases);
 
-            errorNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (isTesting && currentCase != null && currentIndex >= 0) {
-                        currentCase.setStatus(Status.Fail);
-                        tableData.set(currentIndex, currentCase);
-                    }
-                }
-            });
-
             startAction();
 
         } catch (Exception e) {
@@ -147,6 +138,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     @FXML
     @Override
     public void startAction() {
+        errorNotify.removeListener(errorListener);
         if (startButton.getUserData() != null) {
             isTesting = false;
             StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
@@ -160,6 +152,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         startButton.applyCss();
         startButton.setUserData("started");
         canceled = false;
+        errorNotify.addListener(errorListener);
 
         Window window = getMyWindow();
         window.setX(0);
@@ -177,6 +170,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             currentCase = null;
             currentController = null;
             if (canceled || testCases == null || currentIndex < 0 || currentIndex >= testCases.size()) {
+                errorNotify.removeListener(errorListener);
                 currentIndex = -1;
                 StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
                 startButton.applyCss();
@@ -237,7 +231,18 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             MyBoxLog.debug(e.toString());
             return null;
         }
+    }
 
+    @Override
+    public void cleanPane() {
+        try {
+            errorNotify.removeListener(errorListener);
+            errorListener = null;
+            currentController = null;
+            casesController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 

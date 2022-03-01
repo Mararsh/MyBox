@@ -14,10 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.IndexRange;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import thridparty.EncodingDetect;
@@ -343,7 +343,7 @@ public class TextTools {
                     while (true) {
                         int linesNumber = 0;
                         String line = null;
-                        File file = new File(FileNameTools.appendName(target.getFile().getAbsolutePath(), "-" + (++fileIndex)));
+                        File file = new File(FileNameTools.append(target.getFile().getAbsolutePath(), "-" + (++fileIndex)));
                         try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
                                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                             if (target.isWithBom()) {

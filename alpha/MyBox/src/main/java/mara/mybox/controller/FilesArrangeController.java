@@ -626,7 +626,7 @@ public class FilesArrangeController extends BaseBatchFileController {
         if (!file.exists()) {
             return file;
         }
-        String newName = FileNameTools.getFilePrefix(file.getName()) + renameAppdex + "." + FileNameTools.getFileSuffix(file.getName());
+        String newName = FileNameTools.prefix(file.getName()) + renameAppdex + "." + FileNameTools.suffix(file.getName());
         File newFile = new File(file.getParent() + File.separator + newName);
         if (!newFile.exists()) {
             return newFile;

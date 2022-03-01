@@ -120,7 +120,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         if (v == null || v.isBlank()) {
             targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
-            targetFileController.input(FileNameTools.getFilePrefix(v) + "." + ext);
+            targetFileController.input(FileNameTools.prefix(v) + "." + ext);
         }
     }
 

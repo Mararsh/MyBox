@@ -5,6 +5,7 @@ import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Fxmls;
@@ -64,7 +65,9 @@ public class FileDecompressController extends BaseController {
                 @Override
                 protected boolean handle() {
                     try {
-                        decompressedFile = makeTargetFile(CompressTools.decompressedName(sourceFile, compressor), targetPath);
+                        decompressedFile = makeTargetFile(
+                                new File(targetPath + File.separator + CompressTools.decompressedName(sourceFile, compressor)),
+                                targetPath);
                         if (decompressedFile == null) {
                             return true;
                         }
@@ -95,8 +98,8 @@ public class FileDecompressController extends BaseController {
                         return;
                     }
                     if (archiver != null) {
-                        FileUnarchiveController controller
-                                = (FileUnarchiveController) openStage(Fxmls.FileUnarchiveFxml);
+                        FileUnarchiveController controller = (FileUnarchiveController) WindowTools.openChildStage(
+                                myController.getMyWindow(), Fxmls.FileUnarchiveFxml, true);
                         controller.loadFile(decompressedFile, archiver);
                     } else {
                         File path = decompressedFile.getParentFile();

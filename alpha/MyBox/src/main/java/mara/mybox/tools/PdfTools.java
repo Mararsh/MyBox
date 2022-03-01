@@ -82,7 +82,7 @@ public class PdfTools {
     }
 
     public static boolean isPDF(String filename) {
-        String suffix = FileNameTools.getFileSuffix(filename);
+        String suffix = FileNameTools.suffix(filename);
         if (suffix == null) {
             return false;
         }

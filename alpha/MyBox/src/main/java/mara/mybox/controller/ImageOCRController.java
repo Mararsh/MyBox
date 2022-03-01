@@ -183,7 +183,7 @@ public class ImageOCRController extends ImageViewerController {
                 return false;
             }
 
-            String name = sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) : "";
+            String name = sourceFile != null ? FileNameTools.prefix(sourceFile.getName()) : "";
             regionsTableController.baseTitle = name + "_regions";
             wordsTableController.baseTitle = name + "_words";
             htmlController.baseTitle = name + "_texts";

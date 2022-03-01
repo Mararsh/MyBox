@@ -60,7 +60,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            String namePrefix = FileNameTools.namePrefix(srcFile.getName());
+            String namePrefix = FileNameTools.prefix(srcFile.getName());
             File target = makeTargetFile(Languages.message("Filter") + "-" + namePrefix, ".txt", targetPath);
             if (target == null) {
                 return Languages.message("Skip");

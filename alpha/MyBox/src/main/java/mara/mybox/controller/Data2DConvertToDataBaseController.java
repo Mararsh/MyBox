@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -21,9 +22,11 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DConvertToDataBaseController extends Data2DTableCreateController {
-    
+
     protected List<Integer> selectedRowsIndices, selectedColumnsIndices;
-    
+
+    @FXML
+    protected Tab dataTab;
     @FXML
     protected ControlData2DSource sourceController;
     @FXML
@@ -32,21 +35,21 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
     protected CheckBox importCheck;
     @FXML
     protected Label dataLabel, infoLabel;
-    
+
     public Data2DConvertToDataBaseController() {
         TipsLabelKey = message("SqlIdentifierComments");
     }
-    
+
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             super.setParameters(tableController);
-            
+
             attributesController.nameInput.setText(tableController.data2D.shortName());
-            
+
             sourceController.setParameters(this, tableController);
             sourceController.setLabel(message("SelectRowsColumnsToHanlde"));
-            
+
             sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -60,28 +63,30 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
                 }
             });
             checkSource();
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public boolean checkSource() {
         try {
             getMyStage().setTitle(tableController.getTitle());
             infoLabel.setText("");
-            
+
             selectedColumnsIndices = sourceController.checkedColsIndices();
             if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()) {
-                infoLabel.setText(message("SelectToHandle"));
+                infoLabel.setText(message("SelectToHandle") + ": " + message("Columns"));
+                tabPane.getSelectionModel().select(dataTab);
                 return false;
             }
             attributesController.setColumns(selectedColumnsIndices);
-            
+
             if (!sourceController.allPages()) {
                 selectedRowsIndices = sourceController.checkedRowsIndices();
                 if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
-                    infoLabel.setText(message("SelectToHandle"));
+                    infoLabel.setText(message("SelectToHandle") + ": " + message("Rows"));
+                    tabPane.getSelectionModel().select(dataTab);
                     return false;
                 }
             } else {
@@ -93,13 +98,14 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             return false;
         }
     }
-    
+
     @Override
     public boolean checkOptions() {
         try {
             infoLabel.setText("");
             if (!tableController.data2D.hasData()) {
                 infoLabel.setText(message("NoData"));
+                tabPane.getSelectionModel().select(dataTab);
                 return false;
             }
             return super.checkOptions();
@@ -108,7 +114,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             return false;
         }
     }
-    
+
     @Override
     public void beforeTask() {
         try {
@@ -118,7 +124,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
@@ -137,9 +143,9 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             updateLogs(e.toString());
             return false;
         }
-        
+
     }
-    
+
     @Override
     public void afterSuccess() {
         try {
@@ -149,7 +155,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void afterTask() {
         try {
@@ -175,5 +181,5 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             return null;
         }
     }
-    
+
 }

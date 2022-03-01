@@ -26,7 +26,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-11-25
  * @License Apache License Version 2.0
  */
-public class FilesTreeController extends BaseController {
+public class FilesTreeController extends BaseTaskController {
 
     protected boolean listenDoubleClick;
 

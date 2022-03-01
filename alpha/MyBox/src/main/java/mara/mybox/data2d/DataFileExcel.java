@@ -550,7 +550,7 @@ public class DataFileExcel extends DataFile {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File excelFile = new File(FileNameTools.replaceFileSuffix(csvFile.getAbsolutePath(), "xlsx"));
+        File excelFile = new File(FileNameTools.replaceSuffix(csvFile.getAbsolutePath(), "xlsx"));
         boolean targetHasHeader = false;
         int tcolsNumber = 0, trowsNumber = 0;
         String targetSheetName = message("Sheet") + "1";

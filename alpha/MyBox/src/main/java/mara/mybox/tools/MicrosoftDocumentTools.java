@@ -255,7 +255,7 @@ public class MicrosoftDocumentTools {
 
     public static File word2HtmlFile(File srcFile, Charset charset) {
         try {
-            String suffix = FileNameTools.getFileSuffix(srcFile.getName());
+            String suffix = FileNameTools.suffix(srcFile.getName());
             String html;
             if ("doc".equalsIgnoreCase(suffix)) {
                 html = word97Tohtml(srcFile, charset);

@@ -126,7 +126,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
     @Override
     public File makeTargetFile(File srcFile, File targetPath) {
         try {
-            String namePrefix = FileNameTools.getFilePrefix(srcFile.getName());
+            String namePrefix = FileNameTools.prefix(srcFile.getName());
             String nameSuffix = "";
             if (srcFile.isFile()) {
                 if (!"ico".equals(attributes.getImageFormat())) {

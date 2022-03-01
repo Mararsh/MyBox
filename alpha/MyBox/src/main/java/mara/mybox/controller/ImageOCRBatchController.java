@@ -426,7 +426,8 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 formats.add(ITesseract.RenderedFormat.PDF);
             }
             // Looks OCR engine does not support non-English file name
-            String actualPrefix = FileNameTools.getFilePrefix(targetFile.getAbsolutePath());
+            String actualPrefix = targetFile.getParent() + File.separator
+                    + FileNameTools.prefix(targetFile.getName());
             String tmpPrefix = TmpFileTools.getTempFile().getAbsolutePath();
 
             OCRinstance.createDocumentsWithResults​(lastImage, null,
@@ -524,7 +525,8 @@ public class ImageOCRBatchController extends BaseBatchImageController {
         }
         try {
             // Looks OCR engine does not support non-English file name
-            String actualPrefix = FileNameTools.getFilePrefix(targetFile.getAbsolutePath());
+            String actualPrefix = targetFile.getParent() + File.separator
+                    + FileNameTools.prefix(targetFile.getName());
             String tmpPrefix = TmpFileTools.getTempFile().getAbsolutePath();
 
             List<String> parameters = new ArrayList<>();
@@ -590,7 +592,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     @Override
     public File makeTargetFile(File srcFile, File targetPath) {
         try {
-            String namePrefix = FileNameTools.getFilePrefix(srcFile.getName());
+            String namePrefix = FileNameTools.prefix(srcFile.getName());
             namePrefix = namePrefix.replace(" ", "_");
             return makeTargetFile(namePrefix, ".txt", targetPath);
         } catch (Exception e) {
@@ -602,7 +604,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     @Override
     public void donePost() {
         if (textFiles != null && textFiles.size() > 1 && mergeCheck.isSelected()) {
-            File mFile = new File(FileNameTools.appendName(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
+            File mFile = new File(FileNameTools.append(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
             if (TextFileTools.mergeTextFiles(textFiles, mFile)) {
                 popInformation(MessageFormat.format(Languages.message("FilesGenerated"), mFile.getAbsolutePath()));
                 targetFileGenerated(mFile);

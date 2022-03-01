@@ -8,10 +8,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -36,10 +32,15 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
             openStage(Fxmls.FunctionsListFxml);
         });
 
+        MenuItem Shortcuts = new MenuItem(Languages.message("Shortcuts"));
+        Shortcuts.setOnAction((ActionEvent event1) -> {
+            openStage(Fxmls.ShortcutsFxml);
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                About, FunctionsList
+                About, Shortcuts, FunctionsList
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

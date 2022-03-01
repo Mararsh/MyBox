@@ -22,10 +22,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -116,7 +113,9 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
             File decompressedFile = null, archiveSource = srcFile;
             compressor = CompressTools.detectCompressor(srcFile);
             if (compressor != null) {
-                decompressedFile = makeTargetFile(CompressTools.decompressedName(srcFile, compressor), targetPath);
+                decompressedFile = makeTargetFile(
+                        new File(targetPath + File.separator + CompressTools.decompressedName(srcFile, compressor)),
+                        targetPath);
                 Map<String, Object> uncompressed = CompressTools.decompress(srcFile, compressor, decompressedFile);
                 if (uncompressed != null) {
                     compressor = (String) uncompressed.get("compressor");
@@ -225,8 +224,8 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
                     continue;
                 }
                 try {
-                    file = makeTargetFile(entry.getName(), targetPath);
-                    file.getParentFile().mkdirs();
+                    file = new File(targetPath + File.separator + entry.getName());
+                    file = makeTargetFile(file, file.getParentFile());
                 } catch (Exception e) {
                     recordError(e.toString());
                     continue;
@@ -261,8 +260,8 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
                     updateLogs(Languages.message("Handling...") + ":   " + entry.getName());
                 }
                 try {
-                    file = makeTargetFile(entry.getName(), targetPath);
-                    file.getParentFile().mkdirs();
+                    file = new File(targetPath + File.separator + entry.getName());
+                    file = makeTargetFile(file, file.getParentFile());
                 } catch (Exception e) {
                     recordError(e.toString());
                     continue;
@@ -299,8 +298,8 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
                     updateLogs(Languages.message("Handling...") + ":   " + entry.getName());
                 }
                 try {
-                    file = makeTargetFile(entry.getName(), targetPath);
-                    file.getParentFile().mkdirs();
+                    file = new File(targetPath + File.separator + entry.getName());
+                    file = makeTargetFile(file, file.getParentFile());
                 } catch (Exception e) {
                     recordError(e.toString());
                     continue;

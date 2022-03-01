@@ -55,7 +55,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             parentController.sourceFileChanged(file);
         }
         if (!file.isDirectory() && targetPrefixInput != null) {
-            targetPrefixInput.setText(FileNameTools.getFilePrefix(file.getName()));
+            targetPrefixInput.setText(FileNameTools.prefix(file.getName()));
         }
 
     }
@@ -603,7 +603,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     public String defaultTargetName(String prefix) {
         String defaultName = prefix != null ? prefix : "";
         if (sourceFile != null) {
-            defaultName += FileNameTools.prefixFilter(sourceFile) + "_";
+            defaultName += FileNameTools.filter(FileNameTools.prefix(sourceFile.getName())) + "_";
         }
         defaultName += DateTools.nowFileString();
         return defaultName;
@@ -655,15 +655,15 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             fileChooser.setInitialDirectory(defaultPath);
             String suffix = null, prefix = null;
             if (defaultName != null && !defaultName.isBlank()) {
-                suffix = FileNameTools.getFileSuffix(defaultName);
-                prefix = FileNameTools.getFilePrefix(defaultName);
+                suffix = FileNameTools.suffix(defaultName);
+                prefix = FileNameTools.prefix(defaultName);
             }
             if (prefix == null || prefix.isBlank()) {
                 prefix = DateTools.nowFileString();
             }
             if (filters != null) {
                 if (suffix == null || suffix.isBlank() || "*".equals(suffix)) {
-                    suffix = FileNameTools.getFileSuffix(filters.get(0).getExtensions().get(0));
+                    suffix = FileNameTools.suffix(filters.get(0).getExtensions().get(0));
                 }
                 fileChooser.getExtensionFilters().addAll(filters);
             }
@@ -683,7 +683,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
             // https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
             // This is a pretty annoying thing in JavaFX - they will automatically append the extension on Windows, but not on Linux or Mac.
-            if (FileNameTools.getFileSuffix(file.getName()).isEmpty()) {
+            if (FileNameTools.suffix(file.getName()).isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -721,31 +721,28 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public File makeTargetFile(File sourceFile, File targetPath) {
-        if (sourceFile.isDirectory()) {
-            return makeTargetFile(sourceFile.getName(), "", targetPath);
-        } else {
-            return makeTargetFile(sourceFile.getName(), targetPath);
+        if (sourceFile == null || targetPath == null) {
+            return null;
         }
-    }
-
-    public File makeTargetFile(String fileName, File targetPath) {
         try {
-            if (fileName == null || targetPath == null) {
-                return null;
-            }
-            String namePrefix = FileNameTools.namePrefix(fileName);
-            String nameSuffix;
-            if (targetFileSuffix != null) {
-                nameSuffix = "." + targetFileSuffix;
+            if (sourceFile.isDirectory()) {
+                return makeTargetFile(sourceFile.getName(), "", targetPath);
             } else {
-                nameSuffix = FileNameTools.getFileSuffix(fileName);
-                if (nameSuffix != null && !nameSuffix.isEmpty()) {
-                    nameSuffix = "." + nameSuffix;
+                String filename = sourceFile.getName();
+                String namePrefix = FileNameTools.prefix(filename);
+                String nameSuffix;
+                if (targetFileSuffix != null) {
+                    nameSuffix = "." + targetFileSuffix;
                 } else {
-                    nameSuffix = "";
+                    nameSuffix = FileNameTools.suffix(filename);
+                    if (nameSuffix != null && !nameSuffix.isEmpty()) {
+                        nameSuffix = "." + nameSuffix;
+                    } else {
+                        nameSuffix = "";
+                    }
                 }
+                return makeTargetFile(namePrefix, nameSuffix, targetPath);
             }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
         } catch (Exception e) {
             return null;
         }
@@ -760,7 +757,6 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 return targetPathController.makeTargetFile(namePrefix, nameSuffix, targetPath);
 
             }
-
             String targetPrefix = targetPath.getAbsolutePath() + File.separator
                     + FileNameTools.filter(namePrefix);
             String targetSuffix = FileNameTools.filter(nameSuffix);

@@ -355,7 +355,7 @@ public class DataFileText extends DataFile {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File txtFile = new File(FileNameTools.replaceFileSuffix(csvFile.getAbsolutePath(), "txt"));
+        File txtFile = new File(FileNameTools.replaceSuffix(csvFile.getAbsolutePath(), "txt"));
         if (FileCopyTools.copyFile(csvFile, txtFile)) {
             DataFileText targetData = new DataFileText();
             targetData.cloneAll(csvData);
@@ -367,7 +367,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-     public long clearData() {
+    public long clearData() {
         File tmpFile = TmpFileTools.getTempFile();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {

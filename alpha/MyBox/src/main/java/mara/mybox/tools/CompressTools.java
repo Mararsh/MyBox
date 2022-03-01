@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -154,7 +153,7 @@ public class CompressTools {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
         return detectCompressor(srcFile, compressorByExtension(ext));
     }
 
@@ -198,7 +197,7 @@ public class CompressTools {
     }
 
     public static Map<String, Object> decompress(File srcFile, File targetFile) {
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
         return CompressTools.decompress(srcFile, CompressTools.compressorByExtension(ext), targetFile);
     }
 
@@ -288,7 +287,7 @@ public class CompressTools {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
         return detectArchiver(srcFile, ext);
     }
 
@@ -327,7 +326,7 @@ public class CompressTools {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
         return readEntries(srcFile, ext, encoding);
     }
 

@@ -85,12 +85,12 @@ public class ControlNewDataTable extends BaseController {
                 return false;
             }
             if (!autoRadio.isSelected() && columnsController.checkedValues().isEmpty()) {
-                taskController.popError(message("SelectToHandle"));
+                taskController.popError(message("SelectToHandle") + ": " + message("PrimaryKey"));
                 return false;
             }
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
             if (tableData2D.exist(conn, tableName)) {
-                taskController.popError(message("AlreadyExisted"));
+                taskController.popError(message("AlreadyExisted") + ": " + message("TableName"));
                 return false;
             }
             return true;

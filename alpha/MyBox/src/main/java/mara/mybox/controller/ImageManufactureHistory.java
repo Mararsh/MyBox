@@ -79,6 +79,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
             sizeColumn.setCellValueFactory(new PropertyValueFactory<>("size"));
             sizeColumn.setCellFactory(new TableFileSizeCell());
+
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("operationTime"));
             timeColumn.setCellFactory(new TableDateCell());
 
@@ -257,7 +258,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             }
             String fname = his.getHistoryLocation();
             int width = AppVariables.thumbnailWidth;
-            String thumbname = FileNameTools.appendName(fname, "_thumbnail");
+            String thumbname = FileNameTools.append(fname, "_thumbnail");
             File thumbfile = new File(thumbname);
             BufferedImage bufferedImage;
             if (thumbfile.exists()) {
@@ -399,7 +400,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
                 private String getFilename() {
                     String name = getFilePath(currentFile) + File.separator
-                            + getFilePrefix(currentFile)
+                            + FileNameTools.prefix(currentFile.getName())
                             + "_" + (new Date().getTime()) + "_" + operation;
                     if (objectType != null && !objectType.trim().isEmpty()) {
                         name += "_" + objectType
@@ -455,7 +456,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
     protected String getFilePrefix(File file) {
         try {
-            String prefix = FileNameTools.getFilePrefix(file.getName());
+            String prefix = FileNameTools.prefix(file.getName());
             if (imageController.framesNumber > 1) {
                 prefix += "-frame" + imageController.frameIndex;
             }
@@ -476,7 +477,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (imageController.sourceFile == null) {
             return;
         }
-        if (!PopTools.askSure(this,getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
             return;
         }
         task = new SingletonTask<Void>(this) {

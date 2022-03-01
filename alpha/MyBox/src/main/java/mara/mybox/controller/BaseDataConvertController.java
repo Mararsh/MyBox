@@ -49,7 +49,7 @@ public abstract class BaseDataConvertController extends BaseBatchFileController 
         if (srcFile == null) {
             return null;
         }
-        return FileNameTools.getFilePrefix(srcFile.getName());
+        return FileNameTools.prefix(srcFile.getName());
     }
 
     @Override

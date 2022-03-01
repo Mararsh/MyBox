@@ -50,11 +50,12 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FloatTools;
@@ -62,7 +63,6 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -1091,7 +1091,7 @@ public class ImageAnalyseController extends ImageViewerController {
             }
             String name = null;
             if (sourceFile != null) {
-                name = FileNameTools.getFilePrefix(sourceFile.getName());
+                name = FileNameTools.prefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                     name, targetExtensionFilter);
@@ -1206,7 +1206,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     protected boolean handle() {
                         try {
 
-                            String subPath = FileNameTools.getFilePrefix(file.getName());
+                            String subPath = FileNameTools.prefix(file.getName());
                             String path = file.getParent() + "/" + subPath;
                             (new File(path)).mkdirs();
 

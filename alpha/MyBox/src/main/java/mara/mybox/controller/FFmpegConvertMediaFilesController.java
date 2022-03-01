@@ -57,10 +57,9 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
         try {
             String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || Languages.message("OriginalFormat").equals(ext)) {
-                ext = FileNameTools.getFileSuffix(srcFile.getName());
+                ext = FileNameTools.suffix(srcFile.getName());
             }
-            File target = makeTargetFile(FileNameTools.getFilePrefix(srcFile.getName()),
-                    "." + ext, targetPath);
+            File target = makeTargetFile(FileNameTools.prefix(srcFile.getName()), "." + ext, targetPath);
             if (target == null) {
                 return Languages.message("Skip");
             }
@@ -224,7 +223,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
         if (file == null) {
             return;
         }
-        if (Arrays.asList(FileExtensions.MediaPlayerSupports).contains(FileNameTools.getFileSuffix(file))) {
+        if (Arrays.asList(FileExtensions.MediaPlayerSupports).contains(FileNameTools.suffix(file.getName()))) {
             ControllerTools.openMediaPlayer(null, file);
 
         } else {
@@ -238,7 +237,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
         if ((ffmpegOptionsController.encoderTask != null && !ffmpegOptionsController.encoderTask.isQuit())
                 || (ffmpegOptionsController.muxerTask != null && !ffmpegOptionsController.muxerTask.isQuit())
                 || (ffmpegOptionsController.queryTask != null && !ffmpegOptionsController.queryTask.isQuit())) {
-            if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("TaskRunning"))) {
+            if (!PopTools.askSure(this, getMyStage().getTitle(), Languages.message("TaskRunning"))) {
                 return false;
             }
             if (ffmpegOptionsController.encoderTask != null) {

@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -23,6 +24,8 @@ public class Data2DTableCreateController extends BaseTaskController {
     protected ControlData2DEditTable tableController;
     protected ChangeListener<Boolean> columnStatusListener;
 
+    @FXML
+    protected Tab attributesTab;
     @FXML
     protected VBox attributesBox;
     @FXML
@@ -68,7 +71,11 @@ public class Data2DTableCreateController extends BaseTaskController {
     @Override
     public boolean checkOptions() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            return attributesController.checkOptions(conn);
+            boolean ok = attributesController.checkOptions(conn);
+            if (!ok) {
+                tabPane.getSelectionModel().select(attributesTab);
+            }
+            return ok;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

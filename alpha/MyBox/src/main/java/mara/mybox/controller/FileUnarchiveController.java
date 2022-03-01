@@ -248,8 +248,7 @@ public class FileUnarchiveController extends FilesTreeController {
             rootItem.setExpanded(true);
             rootInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean oldItem, Boolean newItem) {
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldItem, Boolean newItem) {
                     if (!isSettingValues) {
                         treeItemSelected(rootItem, newItem);
                     }
@@ -276,7 +275,7 @@ public class FileUnarchiveController extends FilesTreeController {
                 if ("file".equals(entry.getFileType())) {
                     totalFiles++;
                     nodeInfo.setFileName(entry.getFileName());
-                    nodeInfo.setFileSuffix(FileNameTools.getFileSuffix(entry.getFileName()));
+                    nodeInfo.setFileSuffix(FileNameTools.suffix(entry.getFileName()));
                     nodeInfo.setModifyTime(entry.getModifyTime());
                     long size = entry.getFileSize();
                     if (size < 0) {
@@ -401,8 +400,8 @@ public class FileUnarchiveController extends FilesTreeController {
                         continue;
                     }
                     try {
-                        file = makeTargetFile(entry.getName(), targetPath);
-                        file.getParentFile().mkdirs();
+                        file = new File(targetPath + File.separator + entry.getName());
+                        file = makeTargetFile(file, file.getParentFile());
                     } catch (Exception e) {
                         recordError(e.toString());
                         continue;
@@ -434,8 +433,8 @@ public class FileUnarchiveController extends FilesTreeController {
                     continue;
                 }
                 try {
-                    file = makeTargetFile(entry.getName(), targetPath);
-                    file.getParentFile().mkdirs();
+                    file = new File(targetPath + File.separator + entry.getName());
+                    file = makeTargetFile(file, file.getParentFile());
                 } catch (Exception e) {
                     recordError(e.toString());
                     continue;
@@ -466,8 +465,8 @@ public class FileUnarchiveController extends FilesTreeController {
             while (zEntries.hasMoreElements()) {
                 ZipArchiveEntry entry = zEntries.nextElement();
                 try {
-                    file = makeTargetFile(entry.getName(), targetPath);
-                    file.getParentFile().mkdirs();
+                    file = new File(targetPath + File.separator + entry.getName());
+                    file = makeTargetFile(file, file.getParentFile());
                 } catch (Exception e) {
                     recordError(e.toString());
                     continue;

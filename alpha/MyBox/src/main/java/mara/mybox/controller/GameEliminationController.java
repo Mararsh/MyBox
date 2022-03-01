@@ -68,13 +68,13 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageCheckBoxCell;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
@@ -867,7 +867,7 @@ public class GameEliminationController extends BaseController {
 
     public void selectSoundFile(File file) {
         recordFileOpened(file);
-        String suffix = FileNameTools.getFileSuffix(file);
+        String suffix = FileNameTools.suffix(file.getName());
         if (suffix == null
                 || (!"mp3".equals(suffix.toLowerCase()) && !"wav".equals(suffix.toLowerCase()))) {
             alertError(message("OnlySupportMp3Wav"));

@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
@@ -14,6 +16,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -39,8 +42,39 @@ public class BaseTaskController extends BaseController {
 
     @Override
     public void initControls() {
-        super.initControls();
-        initLogs();
+        try {
+            super.initControls();
+
+            logsMaxLines = UserConfig.getInt("TaskMaxLinesNumber", 5000);
+            if (logsMaxLines <= 0) {
+                logsMaxLines = 5000;
+            }
+            if (maxLinesinput != null) {
+                maxLinesinput.setText(logsMaxLines + "");
+                maxLinesinput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                        try {
+                            int iv = Integer.parseInt(maxLinesinput.getText());
+                            if (iv > 0) {
+                                logsMaxLines = iv;
+                                maxLinesinput.setStyle(null);
+                                UserConfig.setInt("TaskMaxLinesNumber", logsMaxLines);
+                            } else {
+                                maxLinesinput.setStyle(UserConfig.badStyle());
+                            }
+                        } catch (Exception e) {
+                            maxLinesinput.setStyle(UserConfig.badStyle());
+                        }
+                    }
+                });
+
+            }
+
+            initLogs();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     public boolean checkOptions() {
@@ -150,13 +184,6 @@ public class BaseTaskController extends BaseController {
     public void initLogs() {
         logsTextArea.setText("");
         logsTotalLines = 0;
-        if (maxLinesinput != null) {
-            try {
-                logsMaxLines = Integer.parseInt(maxLinesinput.getText());
-            } catch (Exception e) {
-                logsMaxLines = 5000;
-            }
-        }
     }
 
     public void updateLogs(final String line) {

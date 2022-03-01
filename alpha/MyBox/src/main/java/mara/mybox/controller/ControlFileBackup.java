@@ -286,7 +286,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (path == null) {
             return null;
         }
-        File backupFile = new File(path + FileNameTools.appendName(sourceFile.getName(), "-" + DateTools.nowFileString()));
+        File backupFile = new File(path + FileNameTools.append(sourceFile.getName(), "-" + DateTools.nowFileString()));
         return backupFile;
     }
 

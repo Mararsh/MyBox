@@ -603,7 +603,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     @Override
     public void postHandlePages() {
         try {
-            File tFile = makeTargetFile(FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName()),
+            File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
                     ".txt", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             if (TextFileTools.writeFile(tFile, ocrTexts) != null) {

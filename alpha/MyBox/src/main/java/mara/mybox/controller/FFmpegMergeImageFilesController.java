@@ -30,14 +30,14 @@ import net.sf.image4j.codec.ico.ICODecoder;
  * @License Apache License Version 2.0
  */
 public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController {
-    
+
     protected File lastFile;
     protected StringBuilder imageFileString;
-    
+
     public FFmpegMergeImageFilesController() {
         baseTitle = Languages.message("FFmpegMergeImagesFiles");
     }
-    
+
     @Override
     protected File handleImages() {
         try {
@@ -79,12 +79,12 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return null;
         }
     }
-    
+
     @Override
     public boolean matchType(File file) {
         return FileTools.isSupportedImage(file);
     }
-    
+
     public String handleDirectory(File directory, long duration) {
         try {
             if (directory == null || !directory.isDirectory()) {
@@ -110,7 +110,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return Languages.message("Failed");
         }
     }
-    
+
     public String handleFile(File file, long duration) {
         if (file == null) {
             return Languages.message("Failed");
@@ -118,7 +118,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         if (verboseCheck == null || verboseCheck.isSelected()) {
             updateLogs(Languages.message("Handling") + ": " + file, true);
         }
-        String format = FileNameTools.getFileSuffix(file).toLowerCase();
+        String format = FileNameTools.suffix(file.getName()).toLowerCase();
         if ("ico".equals(format) || "icon".equals(format)) {
             try {
                 List<BufferedImage> imageSrc = ICODecoder.read(file);
@@ -171,7 +171,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return Languages.message("Failed");
         }
     }
-    
+
     public boolean handleImage(BufferedImage image, long duration) {
         try {
             BufferedImage fitImage = ScaleTools.fitSize(image,
@@ -187,5 +187,5 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             return false;
         }
     }
-    
+
 }

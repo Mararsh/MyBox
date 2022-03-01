@@ -190,7 +190,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
 
     public File makeTargetFile() {
         try {
-            String namePrefix = FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName())
+            String namePrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName())
                     + "_page" + currentParameters.currentPage;
             if (!"ico".equals(attributes.getImageFormat())) {
                 if (appendColorCheck.isSelected()) {

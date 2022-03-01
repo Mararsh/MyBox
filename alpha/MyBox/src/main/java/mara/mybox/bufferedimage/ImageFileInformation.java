@@ -36,7 +36,9 @@ public class ImageFileInformation extends FileInformation {
 
     public ImageFileInformation(File file) {
         super(file);
-        imageFormat = FileNameTools.getFileSuffix(fileName).toLowerCase();
+        if (file != null) {
+            imageFormat = FileNameTools.suffix(file.getName()).toLowerCase();
+        }
     }
 
     /*
@@ -47,7 +49,7 @@ public class ImageFileInformation extends FileInformation {
             if (file == null || !file.exists()) {
                 return null;
             }
-            String suffix = FileNameTools.getFileSuffix(file);
+            String suffix = FileNameTools.suffix(file.getName());
             if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                 return readPDF(file);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {

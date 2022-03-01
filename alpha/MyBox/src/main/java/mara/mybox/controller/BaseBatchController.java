@@ -551,13 +551,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             newLogs = new StringBuffer();
             logsNewlines = 0;
             logsTotalLines = 0;
-            if (maxLinesinput != null) {
-                try {
-                    logsMaxLines = Integer.parseInt(maxLinesinput.getText());
-                } catch (Exception e) {
-                    logsMaxLines = 5000;
-                }
-            }
         }
     }
 
@@ -735,7 +728,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             sourceFilesSelector = new String[0];
         }
         String fname = file.getName();
-        String suffix = FileNameTools.getFileSuffix(fname);
+        String suffix = FileNameTools.suffix(fname);
         switch (fileSelectorType) {
 
             case ExtensionEuqalAny:
@@ -1040,12 +1033,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    public File makeTargetFile(String fileName, File targetPath) {
+    public File makeTargetFile(File srcFile, File targetPath) {
         File path = targetPath;
         if (targetSubdirCheck != null && targetSubdirCheck.isSelected()) {
-            path = new File(targetPath, FileNameTools.namePrefix(fileName));
+            path = new File(targetPath, FileNameTools.prefix(srcFile.getName()));
         }
-        return super.makeTargetFile(fileName, path);
+        return super.makeTargetFile(srcFile, path);
     }
 
     @Override

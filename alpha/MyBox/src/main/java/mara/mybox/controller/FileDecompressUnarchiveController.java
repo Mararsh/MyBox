@@ -9,6 +9,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -161,8 +162,8 @@ public class FileDecompressUnarchiveController extends BaseController {
                 protected void whenSucceeded() {
                     try {
                         if (archiver != null) {
-                            FileUnarchiveController controller
-                                    = (FileUnarchiveController) openStage(Fxmls.FileUnarchiveFxml);
+                            FileUnarchiveController controller = (FileUnarchiveController) WindowTools.openChildStage(
+                                    myController.getMyWindow(), Fxmls.FileUnarchiveFxml, true);
                             controller.loadFile(sourceFile, archiver);
 
                         } else if (compressor != null) {

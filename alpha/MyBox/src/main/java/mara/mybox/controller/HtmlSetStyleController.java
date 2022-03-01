@@ -9,10 +9,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -64,7 +64,7 @@ public class HtmlSetStyleController extends BaseBatchFileController {
 
     @Override
     public boolean matchType(File file) {
-        String suffix = FileNameTools.getFileSuffix(file.getName());
+        String suffix = FileNameTools.suffix(file.getName());
         if (suffix == null) {
             return false;
         }
@@ -96,7 +96,7 @@ public class HtmlSetStyleController extends BaseBatchFileController {
     @Override
     public File makeTargetFile(File sourceFile, File targetPath) {
         try {
-            String namePrefix = FileNameTools.getFilePrefix(sourceFile.getName());
+            String namePrefix = FileNameTools.prefix(sourceFile.getName());
             String nameSuffix = "";
             if (sourceFile.isFile()) {
                 nameSuffix = ".html";

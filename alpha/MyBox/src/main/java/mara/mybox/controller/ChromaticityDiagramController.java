@@ -932,7 +932,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
                 @Override
                 protected boolean handle() {
-                    String format = FileNameTools.getFileSuffix(file.getName());
+                    String format = FileNameTools.suffix(file.getName());
                     final BufferedImage bufferedImage = FxImageTools.toBufferedImage(imageView.getImage());
                     if (this == null || this.isCancelled()) {
                         return false;

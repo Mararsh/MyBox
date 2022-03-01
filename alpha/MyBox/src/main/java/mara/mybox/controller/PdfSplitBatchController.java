@@ -77,7 +77,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 currentParameters.currentTargetPath = targetPath;
                 if (currentParameters.targetSubDir) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
-                            + FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName()));
+                            + FileNameTools.prefix(currentParameters.currentSourceFile.getName()));
                     if (!currentParameters.currentTargetPath.exists()) {
                         currentParameters.currentTargetPath.mkdirs();
                     }
@@ -182,7 +182,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             info.setModificationDate(Calendar.getInstance());
             info.setProducer("MyBox v" + AppValues.AppVersion);
             info.setAuthor(UserConfig.getString("AuthorKey", System.getProperty("user.name")));
-            String targetPrefix = FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName());
+            String targetPrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName());
             int total = docs.size();
             for (PDDocument pd : docs) {
                 pd.setDocumentInformation(info);

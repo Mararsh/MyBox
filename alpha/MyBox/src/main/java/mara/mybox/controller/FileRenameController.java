@@ -48,8 +48,8 @@ public class FileRenameController extends BaseController {
             this.file = file;
             fileLabel.setText(file.getAbsolutePath());
             pathLabel.setText(file.getParent() + File.separator);
-            suffixLabel.setText("." + FileNameTools.getFileSuffix(file));
-            nameInput.setText(FileNameTools.getFilePrefix(file.getName()));
+            suffixLabel.setText("." + FileNameTools.suffix(file.getName()));
+            nameInput.setText(FileNameTools.prefix(file.getName()));
             nameInput.requestFocus();
             nameInput.selectAll();
 
@@ -78,7 +78,7 @@ public class FileRenameController extends BaseController {
                 return;
             }
             if (theFile.exists()) {
-                if (!PopTools.askSure(this,getBaseTitle(), Languages.message("SureReplaceExistedFile"))) {
+                if (!PopTools.askSure(this, getBaseTitle(), Languages.message("SureReplaceExistedFile"))) {
                     return;
                 }
             }

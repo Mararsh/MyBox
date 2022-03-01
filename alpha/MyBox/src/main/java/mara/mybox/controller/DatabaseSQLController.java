@@ -6,9 +6,12 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
@@ -24,6 +27,7 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -35,6 +39,7 @@ public class DatabaseSQLController extends BaseController {
     protected List<Data2DColumn> db2Columns;
     protected List<List<String>> data;
     protected boolean internal;
+    protected int maxLines;
 
     @FXML
     protected TextArea sqlArea, outputArea;
@@ -42,6 +47,8 @@ public class DatabaseSQLController extends BaseController {
     protected Button listButton, examplesButton, tableDefinitionButton;
     @FXML
     protected ControlWebView dataController;
+    @FXML
+    protected TextField maxLinesinput;
 
     public DatabaseSQLController() {
         baseTitle = message("DatabaseSQL");
@@ -53,6 +60,29 @@ public class DatabaseSQLController extends BaseController {
             super.initControls();
 
             dataController.setParent(this);
+
+            maxLines = UserConfig.getInt(baseName + "MaxLinesNumber", 5000);
+            if (maxLines <= 0) {
+                maxLines = 5000;
+            }
+            maxLinesinput.setText(maxLines + "");
+            maxLinesinput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    try {
+                        int iv = Integer.parseInt(maxLinesinput.getText());
+                        if (iv > 0) {
+                            maxLines = iv;
+                            maxLinesinput.setStyle(null);
+                            UserConfig.setInt(baseName + "MaxLinesNumber", maxLines);
+                        } else {
+                            maxLinesinput.setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        maxLinesinput.setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -116,10 +146,12 @@ public class DatabaseSQLController extends BaseController {
                                             db2Columns.add(dc);
                                         }
                                         StringTable table = new StringTable(names, sql);
-                                        while (results.next()) {
+                                        count = 0;
+                                        while (results.next() && count++ < maxLines) {
                                             List<String> row = new ArrayList<>();
                                             for (String name : names) {
-                                                row.add(results.getObject(name) + "");
+                                                Object v = results.getObject(name);
+                                                row.add(v == null ? "" : (v + ""));
                                             }
                                             table.add(row);
                                             data.add(row);

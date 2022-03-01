@@ -338,7 +338,7 @@ public class HtmlWriteTools {
             if (files == null || files.isEmpty()) {
                 return false;
             }
-            String namePrefix = FileNameTools.getFilePrefix(targetFile.getName());
+            String namePrefix = FileNameTools.prefix(targetFile.getName());
             File navFile = new File(targetFile.getParent() + File.separator + namePrefix + "_nav.html");
             StringBuilder nav = new StringBuilder();
             File first = null;
@@ -533,7 +533,7 @@ public class HtmlWriteTools {
                 Collections.sort(files, new Comparator<File>() {
                     @Override
                     public int compare(File f1, File f2) {
-                        return FileNameTools.compareFilename(f1, f2);
+                        return FileNameTools.compareName(f1, f2);
                     }
                 });
                 File frameFile = new File(path.getAbsolutePath() + File.separator + "0000_" + Languages.message("PathIndex") + ".html");

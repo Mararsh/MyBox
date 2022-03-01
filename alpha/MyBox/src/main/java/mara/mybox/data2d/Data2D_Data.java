@@ -91,8 +91,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public File tmpCSV(String prefix) {
-        return getPathTempFile(AppPaths.getGeneratedPath(),
-                FileNameTools.getFilePrefix(file) + "_" + prefix, ".csv");
+        return getPathTempFile(AppPaths.getGeneratedPath(), shortName() + "_" + prefix, ".csv");
     }
 
     /*
@@ -177,7 +176,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String shortName() {
         if (file != null) {
-            return file.getName();
+            return FileNameTools.prefix(file.getName());
         } else if (sheet != null) {
             return sheet;
         } else if (dataName != null) {

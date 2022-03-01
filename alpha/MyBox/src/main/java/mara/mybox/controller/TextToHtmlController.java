@@ -59,7 +59,7 @@ public class TextToHtmlController extends BaseBatchFileController {
                 return Languages.message("Skip");
             }
             String body = HtmlWriteTools.stringToHtml(TextFileTools.readTexts(srcFile));
-            String filePrefix = FileNameTools.getFilePrefix(target);
+            String filePrefix = FileNameTools.prefix(target.getName());
             String html = "<!DOCTYPE html><html>\n"
                     + headArea.getText().replace("####title####", filePrefix) + "\n"
                     + "    <body class=\"article\">\n"
@@ -78,7 +78,7 @@ public class TextToHtmlController extends BaseBatchFileController {
     @Override
     public File makeTargetFile(File sourceFile, File targetPath) {
         try {
-            String namePrefix = FileNameTools.getFilePrefix(sourceFile.getName());
+            String namePrefix = FileNameTools.prefix(sourceFile.getName());
             String nameSuffix = "";
             if (sourceFile.isFile()) {
                 nameSuffix = ".html";

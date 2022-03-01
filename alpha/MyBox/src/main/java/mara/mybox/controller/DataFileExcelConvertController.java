@@ -35,7 +35,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
 
     @Override
     public boolean matchType(File file) {
-        String suffix = FileNameTools.getFileSuffix(file.getName());
+        String suffix = FileNameTools.suffix(file.getName());
         if (suffix == null) {
             return false;
         }

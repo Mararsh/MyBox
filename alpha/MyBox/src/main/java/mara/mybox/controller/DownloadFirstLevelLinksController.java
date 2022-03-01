@@ -60,11 +60,11 @@ import mara.mybox.data.Link.FilenameType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -789,7 +789,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 link.setFile(filename);
             }
             File file = new File(filename);
-            String suffix = FileNameTools.getFileSuffix(filename);
+            String suffix = FileNameTools.suffix(file.getName());
             suffix = (suffix != null && !suffix.isBlank()) ? "." + suffix : "";
             String newName = file.getParent() + File.separator + link.pageName(filenameType) + suffix;
             link.setFile(newName);
@@ -1346,7 +1346,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             Collections.sort(files, new Comparator<File>() {
                 @Override
                 public int compare(File f1, File f2) {
-                    return FileNameTools.compareFilename(f1, f2);
+                    return FileNameTools.compareName(f1, f2);
                 }
             });
 

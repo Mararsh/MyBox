@@ -44,7 +44,7 @@ public class ImageTiffFile {
         try {
             IIOMetadata metadata;
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(file));
+                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.suffix(file.getName()));
                 if (reader == null) {
                     return null;
                 }
@@ -134,7 +134,8 @@ public class ImageTiffFile {
                         TIFFTag.TIFF_RATIONAL, 1, new long[][]{yRes});
                 nativeTree.getFirstChild().appendChild(fieldXRes.getAsNativeNode());
                 nativeTree.getFirstChild().appendChild(fieldYRes.getAsNativeNode());
-                char[] fieldUnit = new char[]{BaselineTIFFTagSet.RESOLUTION_UNIT_INCH};
+                char[] fieldUnit = new char[]{
+                    BaselineTIFFTagSet.RESOLUTION_UNIT_INCH};
                 TIFFField fieldResUnit = new TIFFField(
                         BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT),
                         TIFFTag.TIFF_SHORT, 1, fieldUnit);

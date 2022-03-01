@@ -62,7 +62,9 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     public ImageInformation(File file) {
         super(file);
         init();
-        imageFormat = FileNameTools.getFileSuffix(fileName);
+        if (file != null) {
+            imageFormat = FileNameTools.suffix(file.getName());
+        }
         if (imageFormat != null) {
             imageFormat = imageFormat.toLowerCase();
         }
@@ -253,7 +255,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             }
             if (targetImage == null && isReadFile && fileName != null) {
                 BufferedImage bufferedImage;
-                String suffix = FileNameTools.getFileSuffix(fileName);
+                String suffix = FileNameTools.suffix(fileName);
                 if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                     bufferedImage = readPDF(imageInfo, (int) targetWidth);
                 } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
@@ -362,7 +364,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 return null;
             }
             BufferedImage bufferedImage;
-            String suffix = FileNameTools.getFileSuffix(fileName);
+            String suffix = FileNameTools.suffix(fileName);
             if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                 bufferedImage = readPDF(imageInfo, (int) regionWidth);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {

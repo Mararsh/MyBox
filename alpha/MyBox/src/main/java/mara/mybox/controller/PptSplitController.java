@@ -67,7 +67,7 @@ public class PptSplitController extends BaseBatchFileController {
                 MyBoxLog.error(e.toString());
                 return e.toString();
             }
-            String suffix = FileNameTools.getFileSuffix(srcFile);
+            String suffix = FileNameTools.suffix(srcFile.getName());
             switch (splitWayController.splitType) {
                 case PagesNumber:
                     splitByPagesSize(srcFile, targetPath, total, suffix, splitWayController.pagesNumber);
@@ -151,7 +151,7 @@ public class PptSplitController extends BaseBatchFileController {
 
     public File makeTargetFile(File srcFile, int index, String ext, File targetPath) {
         try {
-            String filePrefix = FileNameTools.getFilePrefix(srcFile);
+            String filePrefix = FileNameTools.prefix(srcFile.getName());
             String splitPrefix = filePrefix + "_" + index;
             String splitSuffix = (ext.startsWith(".") ? "" : ".") + ext;
 

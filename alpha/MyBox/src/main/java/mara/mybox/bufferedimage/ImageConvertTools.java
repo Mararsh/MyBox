@@ -180,7 +180,7 @@ public class ImageConvertTools {
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
                 return convertToIcon(srcFile, attributes, targetFile);
             }
-            String sourceFormat = FileNameTools.getFileSuffix(srcFile);
+            String sourceFormat = FileNameTools.suffix(srcFile.getName());
             if ("ico".equals(sourceFormat) || "icon".equals(sourceFormat)) {
                 return convertFromIcon(srcFile, attributes, targetFile);
             }
@@ -271,7 +271,7 @@ public class ImageConvertTools {
             }
             List<BufferedImage> images = new ArrayList();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(srcFile)))) {
-                ImageReader reader = getReader(iis, FileNameTools.getFileSuffix(srcFile));
+                ImageReader reader = getReader(iis, FileNameTools.suffix(srcFile.getName()));
                 if (reader == null) {
                     return false;
                 }

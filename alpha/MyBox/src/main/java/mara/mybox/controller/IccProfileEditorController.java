@@ -43,11 +43,11 @@ import mara.mybox.color.IccXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import mara.mybox.tools.DateTools;
@@ -1849,7 +1849,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
         String name = null;
         if (isIccFile) {
-            name = FileNameTools.getFilePrefix(sourceFile.getName());
+            name = FileNameTools.prefix(sourceFile.getName());
         } else {
             name = embedICCName;
         }
@@ -2027,7 +2027,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
         String name;
         if (isIccFile) {
-            name = FileNameTools.getFilePrefix(sourceFile.getName());
+            name = FileNameTools.prefix(sourceFile.getName());
         } else {
             name = embedICCName;
         }

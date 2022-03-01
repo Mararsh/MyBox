@@ -43,9 +43,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
@@ -511,7 +511,7 @@ public class ControlImagesSave extends BaseController {
                 protected boolean handle() {
                     fileNames = new ArrayList<>();
                     try {
-                        String imagesFilePrefix = targetFile.getParent() + File.separator + FileNameTools.getFilePrefix(targetFile.getName());
+                        String imagesFilePrefix = targetFile.getParent() + File.separator + FileNameTools.prefix(targetFile.getName());
                         for (int i = 0; i < imageInfos.size(); ++i) {
                             if (task == null || task.isCancelled()) {
                                 return false;

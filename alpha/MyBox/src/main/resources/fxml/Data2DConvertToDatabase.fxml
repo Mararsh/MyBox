@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
         </HBox>
       <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="%Data">
+            <Tab fx:id="dataTab" text="%Data">
                <content>
                   <VBox fx:id="dataVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                      <padding>
@@ -45,7 +45,7 @@ License:    Apache License Version 2.0
                   </VBox>
                </content>
             </Tab>
-            <Tab text="%Attributes">
+            <Tab fx:id="attributesTab" text="%Attributes">
                <content>
                   <VBox fx:id="attributesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                      <padding>
