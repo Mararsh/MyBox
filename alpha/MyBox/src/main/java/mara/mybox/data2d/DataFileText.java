@@ -137,6 +137,7 @@ public class DataFileText extends DataFile {
                 }
             }
         } catch (Exception e) {
+//            MyBoxLog.console(e.toString());
         }
         hasHeader = false;
         return null;

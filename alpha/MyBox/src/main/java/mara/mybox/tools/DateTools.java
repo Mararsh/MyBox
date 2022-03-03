@@ -436,6 +436,9 @@ public class DateTools {
 
     public static String dateDuration(Date time1, Date time2) {
         Period period = period(time1, time2);
+        if (period == null) {
+            return null;
+        }
         String date = dateDuration(period.getYears(), period.getMonths(), period.getDays());
         return (period.isNegative() ? "-" : "") + date;
     }

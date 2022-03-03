@@ -270,8 +270,6 @@ public class Fxmls {
     public static final String FilesArchiveCompressFxml = "/fxml/FilesArchiveCompress.fxml";
     public static final String FilesCompressBatchFxml = "/fxml/FilesCompressBatch.fxml";
     public static final String FileDecompressUnarchiveFxml = "/fxml/FileDecompressUnarchive.fxml";
-    public static final String FileDecompressFxml = "/fxml/FileDecompress.fxml";
-    public static final String FileUnarchiveFxml = "/fxml/FileUnarchive.fxml";
     public static final String FilesDecompressUnarchiveBatchFxml = "/fxml/FilesDecompressUnarchiveBatch.fxml";
 
     /*

@@ -292,7 +292,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
     @FXML
     protected void JConsole(ActionEvent event) {
         try {
-            String cmd = System.getProperty("java.home") + File.separator + "jconsole";
+            String cmd = System.getProperty("java.home") + File.separator + "bin" + File.separator + "jconsole";
             if (SystemTools.isWindows()) {
                 cmd += ".exe";
             }

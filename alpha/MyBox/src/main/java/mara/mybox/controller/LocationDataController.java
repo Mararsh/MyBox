@@ -41,6 +41,7 @@ import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -223,7 +224,9 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 protected void whenSucceeded() {
                     if (datasets == null || datasets.isEmpty()) {
                         addButton.setDisable(true);
-                        askImportPredefined();
+                        if (!AppVariables.isTesting) {
+                            askImportPredefined();
+                        }
                     } else {
                         addButton.setDisable(false);
                         sourceController.loadTree(datasets);

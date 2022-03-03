@@ -56,12 +56,12 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected SingletonTask task;
 
     public ImageInformation() {
-        init();
+        initImage();
     }
 
     public ImageInformation(File file) {
         super(file);
-        init();
+        initImage();
         if (file != null) {
             imageFormat = FileNameTools.suffix(file.getName());
         }
@@ -71,7 +71,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     }
 
     public ImageInformation(Image image) {
-        init();
+        initImage();
         this.image = image;
         if (image != null) {
             width = (int) image.getWidth();
@@ -79,7 +79,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    private void init() {
+    public final void initImage() {
         standardAttributes = new LinkedHashMap();
         nativeAttributes = new LinkedHashMap();
         imageType = -1;
@@ -230,12 +230,12 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             double infoWidth = imageInfo.getWidth();
             double targetWidth = requiredWidth <= 0 ? infoWidth : requiredWidth;
             Image image = imageInfo.getImage();
-            String fileName = imageInfo.getFileName();
+            File file = imageInfo.getFile();
             if (image != null) {
                 double imageWidth = image.getWidth();
                 if (imageWidth == targetWidth) {
                     targetImage = image;
-                } else if (fileName == null || (requiredWidth > 0 && imageWidth > targetWidth)) {
+                } else if (file == null || (requiredWidth > 0 && imageWidth > targetWidth)) {
                     targetImage = mara.mybox.fximage.ScaleTools.scaleImage(image, (int) targetWidth);
                 }
             }
@@ -248,14 +248,14 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     }
                     if (thumbWidth == targetWidth) {
                         targetImage = thumb;
-                    } else if (fileName == null || (requiredWidth > 0 && thumbWidth > targetWidth)) {
+                    } else if (file == null || (requiredWidth > 0 && thumbWidth > targetWidth)) {
                         targetImage = mara.mybox.fximage.ScaleTools.scaleImage(thumb, (int) targetWidth);
                     }
                 }
             }
-            if (targetImage == null && isReadFile && fileName != null) {
+            if (targetImage == null && isReadFile && file != null) {
                 BufferedImage bufferedImage;
-                String suffix = FileNameTools.suffix(fileName);
+                String suffix = FileNameTools.suffix(file.getName());
                 if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                     bufferedImage = readPDF(imageInfo, (int) targetWidth);
                 } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
@@ -359,12 +359,12 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, (int) regionWidth);
                 return regionImage;
             }
-            String fileName = imageInfo.getFileName();
-            if (fileName == null) {
+            File file = imageInfo.getFile();
+            if (file == null) {
                 return null;
             }
             BufferedImage bufferedImage;
-            String suffix = FileNameTools.suffix(fileName);
+            String suffix = FileNameTools.suffix(file.getName());
             if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                 bufferedImage = readPDF(imageInfo, (int) regionWidth);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {

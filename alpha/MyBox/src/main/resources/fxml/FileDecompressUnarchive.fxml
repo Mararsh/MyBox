@@ -6,130 +6,239 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" minHeight="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                    <children>
-                        <Label text="%SourceFile" />
-                        <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconOpen.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-
-                    </children>
-                </HBox>
-                <TitledPane text="%CompressionFormat" VBox.vgrow="NEVER">
-                    <content>
-                        <VBox fx:id="compressBox" spacing="5.0">
-                            <children>
-                                <FlowPane fx:id="commonCompressPane" hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                    <tabs>
+                        <Tab fx:id="sourceTab" text="%Source">
+                            <content>
+                                <VBox fx:id="sourceVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
                                     <children>
-                                        <RadioButton layoutX="15.0" layoutY="56.0" selected="true" text="%DetectAutomatically">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="compressGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="gzRadio" layoutX="103.0" layoutY="10.0" text="gz" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="15.0" layoutY="15.0" text="bzip2" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="183.0" layoutY="15.0" text="xz" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="140.0" layoutY="56.0" text="z" toggleGroup="$compressGroup" />
-                                        <RadioButton fx:id="pack200Radio" layoutX="99.0" layoutY="15.0" text="pack200" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="435.0" layoutY="15.0" text="deflate" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="140.0" layoutY="56.0" text="deflate64" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="319.0" layoutY="56.0" text="lzma" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="15.0" layoutY="97.0" text="snappy-framed" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="176.0" layoutY="56.0" text="lz4-block" toggleGroup="$compressGroup" />
-                                        <RadioButton layoutX="266.0" layoutY="138.0" text="lz4-framed" toggleGroup="$compressGroup" />
-                                        <RadioButton text="%None" toggleGroup="$compressGroup" />
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%SourceFile" />
+                                                <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                  
+                                            </children>
+                                        </HBox>
+                                        <VBox fx:id="compressBox" spacing="5.0">
+                                            <children>
+                                                <Label text="%CompressionFormat" />
+                                                <FlowPane fx:id="commonCompressPane" hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <RadioButton layoutX="15.0" layoutY="56.0" selected="true" text="%DetectAutomatically">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="compressGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="gzRadio" layoutX="103.0" layoutY="10.0" text="gz" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="15.0" layoutY="15.0" text="bzip2" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="183.0" layoutY="15.0" text="xz" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="140.0" layoutY="56.0" text="z" toggleGroup="$compressGroup" />
+                                                        <RadioButton fx:id="pack200Radio" layoutX="99.0" layoutY="15.0" text="pack200" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="435.0" layoutY="15.0" text="deflate" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="140.0" layoutY="56.0" text="deflate64" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="319.0" layoutY="56.0" text="lzma" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="15.0" layoutY="97.0" text="snappy-framed" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="176.0" layoutY="56.0" text="lz4-block" toggleGroup="$compressGroup" />
+                                                        <RadioButton layoutX="266.0" layoutY="138.0" text="lz4-framed" toggleGroup="$compressGroup" />
+                                                        <RadioButton text="%None" toggleGroup="$compressGroup" />
+                                                    </children>
+                                                    <padding>
+                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                    </padding>
+                                                </FlowPane>
+                                            </children>
+                                        </VBox>
+                                        <VBox fx:id="archiveBox" spacing="10.0">
+                                            <children>
+                                                <Label text="%ArchiverFormat" />
+                                                <FlowPane hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <RadioButton selected="true" text="%DetectAutomatically">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="archiverGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="PosterizingRadio22" layoutX="266.0" layoutY="15.0" text="zip" toggleGroup="$archiverGroup" />
+                                                        <RadioButton fx:id="PosterizingRadio21" layoutX="266.0" layoutY="15.0" text="tar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton fx:id="PosterizingRadio2" layoutX="15.0" layoutY="15.0" text="jar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton fx:id="PosterizingRadio211" layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
+                                                        <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton fx:id="ThresholdingRadio2" layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
+                                                        <RadioButton fx:id="ThresholdingRadio21" text="arj" toggleGroup="$archiverGroup" />
+                                                        <RadioButton fx:id="ThresholdingRadio211" layoutX="997.0" layoutY="15.0" text="dump" toggleGroup="$archiverGroup" />
+                                                        <RadioButton text="%None" toggleGroup="$archiverGroup" />
+                                                    </children>
+                                                    <padding>
+                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                    </padding>
+                                                </FlowPane>
+                                                <FlowPane fx:id="sevenZCompressPane" hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <RadioButton layoutX="144.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="LZMA2">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="sevenCompressGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton layoutX="359.0" layoutY="10.0" mnemonicParsing="false" text="DEFLATE" toggleGroup="$sevenCompressGroup" />
+                                                        <RadioButton layoutX="574.0" layoutY="10.0" mnemonicParsing="false" text="BZIP2" toggleGroup="$sevenCompressGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="COPY" toggleGroup="$sevenCompressGroup" />
+                                                    </children>
+                                                </FlowPane>
+                                            </children>
+                                        </VBox>
+                                        <HBox fx:id="sourceBar" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="goCheckButton" mnemonicParsing="false" onAction="#handleFile"  styleClass="big" stylesheets="@../styles/MyBox.css" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconGo.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
                                     </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="selectionTab" text="%Selection">
+                            <content>
+                                <VBox fx:id="selectionVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </padding>
-                                </FlowPane>
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
-                <TitledPane fx:id="optionsPane" text="%ArchiverFormat" VBox.vgrow="NEVER">
-                    <content>
-                        <VBox fx:id="archiveBox" spacing="10.0">
-                            <children>
-                                <FlowPane hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <RadioButton selected="true" text="%DetectAutomatically">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="archiverGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="PosterizingRadio22" layoutX="266.0" layoutY="15.0" text="zip" toggleGroup="$archiverGroup" />
-                                        <RadioButton fx:id="PosterizingRadio21" layoutX="266.0" layoutY="15.0" text="tar" toggleGroup="$archiverGroup" />
-                                        <RadioButton fx:id="PosterizingRadio2" layoutX="15.0" layoutY="15.0" text="jar" toggleGroup="$archiverGroup" />
-                                        <RadioButton fx:id="PosterizingRadio211" layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
-                                        <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
-                                        <RadioButton fx:id="ThresholdingRadio2" layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
-                                        <RadioButton fx:id="ThresholdingRadio21" text="arj" toggleGroup="$archiverGroup" />
-                                        <RadioButton fx:id="ThresholdingRadio211" layoutX="997.0" layoutY="15.0" text="dump" toggleGroup="$archiverGroup" />
-                                        <RadioButton text="%None" toggleGroup="$archiverGroup" />
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label fx:id="sourceLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <HBox fx:id="encodingHBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label text="%EntriesNameEncoding" />
+                                                        <ComboBox fx:id="charsetSelector" prefWidth="150.0" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </HBox>
+                                        <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TreeTableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
+                                                <TreeTableColumn fx:id="selectedColumn" minWidth="-1.0" prefWidth="100.0" text="%Select" />
+                                                <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />
+                                                <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
+                                                <TreeTableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifiedTime" />
+                                                <TreeTableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
+                                            </columns>
+                                        </TreeTableView>
+                                        <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                            <children>
+                                                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openPath">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconOpen2.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconStart.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="targetTab" text="%TargetFiles">
+                            <content>
+                                <VBox fx:id="targetVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                    <children>
+                                        <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="logsTab" text="%Logs">
+                            <content>
+                                <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%MaxLines" />
+                                                <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
+                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                                <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
                                     </children>
                                     <padding>
-                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </padding>
-                                </FlowPane>
-                                <FlowPane fx:id="sevenZCompressPane" hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <RadioButton layoutX="144.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="LZMA2">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="sevenCompressGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton layoutX="359.0" layoutY="10.0" mnemonicParsing="false" text="DEFLATE" toggleGroup="$sevenCompressGroup" />
-                                        <RadioButton layoutX="574.0" layoutY="10.0" mnemonicParsing="false" text="BZIP2" toggleGroup="$sevenCompressGroup" />
-                                        <RadioButton mnemonicParsing="false" text="COPY" toggleGroup="$sevenCompressGroup" />
-                                    </children>
-                                </FlowPane>
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
-                <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
-                    <children>
-                        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconStart.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </HBox>
+                                </VBox>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
             </children>
             <BorderPane.margin>
                 <Insets />

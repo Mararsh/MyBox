@@ -27,6 +27,7 @@ public class BaseTaskController extends BaseController {
 
     protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
     protected boolean cancelled, successed;
+    protected Date startTime, endTime;
 
     @FXML
     protected Tab logsTab;
@@ -98,7 +99,6 @@ public class BaseTaskController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            initLogs();
             StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
             startButton.applyCss();
             startButton.setUserData("started");
@@ -108,7 +108,6 @@ public class BaseTaskController extends BaseController {
             beforeTask();
             startTask();
         }
-
     }
 
     public void beforeTask() {
@@ -121,6 +120,7 @@ public class BaseTaskController extends BaseController {
 
             @Override
             protected boolean handle() {
+                startTime = new Date();
                 return doTask();
 
             }
@@ -139,12 +139,13 @@ public class BaseTaskController extends BaseController {
 
             @Override
             protected void finalAction() {
+                endTime = new Date();
                 task = null;
                 StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
                 startButton.applyCss();
                 startButton.setUserData(null);
                 updateLogs(message("Completed") + " " + message("Cost")
-                        + " " + DateTools.datetimeMsDuration(new Date(), startTime));
+                        + " " + DateTools.datetimeMsDuration(endTime, startTime));
                 afterTask();
             }
         };
@@ -182,6 +183,9 @@ public class BaseTaskController extends BaseController {
 
     @FXML
     public void initLogs() {
+        if (logsTextArea == null) {
+            return;
+        }
         logsTextArea.setText("");
         logsTotalLines = 0;
     }
@@ -209,16 +213,35 @@ public class BaseTaskController extends BaseController {
         initLogs();
     }
 
+    @FXML
+    public void openPath() {
+        if (targetPath == null || !targetPath.exists()) {
+            return;
+        }
+        browseURI(targetPath.toURI());
+        recordFileOpened(targetPath);
+    }
+
     public boolean targetFileGenerated(File target) {
-        return targetFileGenerated(target, TargetFileType);
+        return targetFileGenerated(target, TargetFileType, true);
+    }
+
+    public boolean targetFileGenerated(File target, boolean record) {
+        return targetFileGenerated(target, TargetFileType, record);
     }
 
     public boolean targetFileGenerated(File target, int type) {
+        return targetFileGenerated(target, type, true);
+    }
+
+    public boolean targetFileGenerated(File target, int type, boolean record) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
         updateLogs(MessageFormat.format(message("FilesGenerated"), target.getAbsolutePath()));
-        recordFileWritten(target, type, type);
+        if (record) {
+            recordFileWritten(target, type, type);
+        }
         return true;
     }
 

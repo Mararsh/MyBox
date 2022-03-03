@@ -28,7 +28,7 @@ import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -40,7 +40,7 @@ import mara.mybox.value.UserConfig;
 public class FilesRenameController extends BaseBatchFileController {
 
     protected FilesRenameTableController filesController;
-    protected List<String> targetNames;
+    protected List<String> targetDatas;
     protected int currentAccum, digit, startNumber;
     protected RenameType renameType;
 
@@ -69,8 +69,7 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     public FilesRenameController() {
-        baseTitle = Languages.message("FilesRename");
-
+        baseTitle = message("FilesRename");
     }
 
     @Override
@@ -121,23 +120,23 @@ public class FilesRenameController extends BaseBatchFileController {
         renameOptionsBox.getChildren().clear();
 
         RadioButton selected = (RadioButton) renameGroup.getSelectedToggle();
-        if (Languages.message("ReplaceSubString").equals(selected.getText())) {
+        if (message("ReplaceSubString").equals(selected.getText())) {
             renameType = RenameType.ReplaceSubString;
             renameOptionsBox.getChildren().addAll(replaceBox);
 
-        } else if (Languages.message("AppendSuffix").equals(selected.getText())) {
+        } else if (message("AppendSuffix").equals(selected.getText())) {
             renameType = RenameType.AppendSuffix;
             renameOptionsBox.getChildren().addAll(suffixPane);
 
-        } else if (Languages.message("AppendPrefix").equals(selected.getText())) {
+        } else if (message("AppendPrefix").equals(selected.getText())) {
             renameType = RenameType.AppendPrefix;
             renameOptionsBox.getChildren().addAll(prefixPane);
 
-        } else if (Languages.message("AddSequenceNumber").equals(selected.getText())) {
+        } else if (message("AddSequenceNumber").equals(selected.getText())) {
             renameType = RenameType.AddSequenceNumber;
             renameOptionsBox.getChildren().addAll(numberBox);
 
-        } else if (Languages.message("ChangeExtension").equals(selected.getText())) {
+        } else if (message("ChangeExtension").equals(selected.getText())) {
             renameType = RenameType.ChangeExtension;
             renameOptionsBox.getChildren().addAll(extensionPane);
         }
@@ -197,34 +196,34 @@ public class FilesRenameController extends BaseBatchFileController {
         RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
         boolean desc = descentCheck.isSelected();
         FileSortMode sortMode = FileSortMode.ModifyTimeDesc;
-        if (Languages.message("OriginalFileName").equals(sort.getText())) {
+        if (message("OriginalFileName").equals(sort.getText())) {
             if (desc) {
                 sortMode = FileSortMode.NameDesc;
             } else {
                 sortMode = FileSortMode.NameAsc;
             }
-        } else if (Languages.message("CreateTime").equals(sort.getText())) {
+        } else if (message("CreateTime").equals(sort.getText())) {
             if (desc) {
                 sortMode = FileSortMode.CreateTimeDesc;
             } else {
                 sortMode = FileSortMode.CreateTimeAsc;
             }
 
-        } else if (Languages.message("ModifyTime").equals(sort.getText())) {
+        } else if (message("ModifyTime").equals(sort.getText())) {
             if (desc) {
                 sortMode = FileSortMode.ModifyTimeDesc;
             } else {
                 sortMode = FileSortMode.ModifyTimeAsc;
             }
 
-        } else if (Languages.message("Size").equals(sort.getText())) {
+        } else if (message("Size").equals(sort.getText())) {
             if (desc) {
                 sortMode = FileSortMode.SizeDesc;
             } else {
                 sortMode = FileSortMode.SizeAsc;
             }
 
-        } else if (Languages.message("AddedSequence").equals(sort.getText())) {
+        } else if (message("AddedSequence").equals(sort.getText())) {
             sortMode = null;
 
         }
@@ -252,10 +251,10 @@ public class FilesRenameController extends BaseBatchFileController {
         String newName = renameFile(srcFile);
         if (newName != null) {
             d.setData(new File(newName).getAbsolutePath());
-            return Languages.message("Successful");
+            return message("Successful");
         } else {
             d.setData("");
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
@@ -410,8 +409,8 @@ public class FilesRenameController extends BaseBatchFileController {
         }
 
         for (FileInformation f : tableData) {
-            String originalName = f.getFileName();
-            if (Languages.message("File").equals(f.getFileType())) {
+            String originalName = f.getFile().getAbsolutePath();
+            if (message("File").equals(f.getFileType())) {
                 String newName = f.getData();
                 if (newName == null || newName.trim().isEmpty()) {
                     continue;
@@ -421,21 +420,21 @@ public class FilesRenameController extends BaseBatchFileController {
                     File oldFile = new File(originalName);
                     if (oldFile.exists()) {
                         if (targetSkipRadio.isSelected()) {
-                            f.setHandled(Languages.message("FailRecovered"));
+                            f.setHandled(message("FailRecovered"));
                             continue;
                         } else {
                             FileDeleteTools.delete(oldFile);
                         }
                     }
                     if (FileTools.rename(newFile, oldFile)) {
-                        f.setHandled(Languages.message("Recovered"));
-                        f.setFileName(originalName);
+                        f.setHandled(message("Recovered"));
+                        f.setFile(oldFile);
                     } else {
-                        f.setHandled(Languages.message("FailRecovered"));
+                        f.setHandled(message("FailRecovered"));
                     }
                 }
                 f.setData("");
-            } else if (Languages.message("Directory").equals(f.getFileType())) {
+            } else if (message("Directory").equals(f.getFileType())) {
                 currentNewNames = newNames.get(originalName);
                 if (currentNewNames == null) {
                     continue;
@@ -452,7 +451,7 @@ public class FilesRenameController extends BaseBatchFileController {
                         recovered++;
                     }
                 }
-                f.setHandled(MessageFormat.format(Languages.message("DirRecoverSummary"),
+                f.setHandled(MessageFormat.format(message("DirRecoverSummary"),
                         currentNewNames.size(), recovered));
                 newNames.remove(originalName);
             }
@@ -466,8 +465,8 @@ public class FilesRenameController extends BaseBatchFileController {
             return;
         }
         for (FileInformation f : selected) {
-            String originalName = f.getFileName();
-            if (Languages.message("File").equals(f.getFileType())) {
+            String originalName = f.getFile().getAbsolutePath();
+            if (message("File").equals(f.getFileType())) {
                 String newName = f.getData();
                 if (newName == null || newName.trim().isEmpty()) {
                     continue;
@@ -477,21 +476,21 @@ public class FilesRenameController extends BaseBatchFileController {
                     File oldFile = new File(originalName);
                     if (oldFile.exists()) {
                         if (targetSkipRadio.isSelected()) {
-                            f.setHandled(Languages.message("FailRecovered"));
+                            f.setHandled(message("FailRecovered"));
                             continue;
                         } else {
                             FileDeleteTools.delete(oldFile);
                         }
                     }
                     if (FileTools.rename(newFile, oldFile)) {
-                        f.setHandled(Languages.message("Recovered"));
-                        f.setFileName(originalName);
+                        f.setHandled(message("Recovered"));
+                        f.setFile(oldFile);
                     } else {
-                        f.setHandled(Languages.message("FailRecovered"));
+                        f.setHandled(message("FailRecovered"));
                     }
                 }
                 f.setData("");
-            } else if (Languages.message("Directory").equals(f.getFileType())) {
+            } else if (message("Directory").equals(f.getFileType())) {
                 currentNewNames = newNames.get(originalName);
                 if (currentNewNames == null) {
                     continue;
@@ -506,7 +505,7 @@ public class FilesRenameController extends BaseBatchFileController {
                     File oldFile = new File(originalFileName);
                     if (oldFile.exists()) {
                         if (targetSkipRadio.isSelected()) {
-                            f.setHandled(Languages.message("FailRecovered"));
+                            f.setHandled(message("FailRecovered"));
                             continue;
                         } else {
                             FileDeleteTools.delete(oldFile);
@@ -516,7 +515,7 @@ public class FilesRenameController extends BaseBatchFileController {
                         recovered++;
                     }
                 }
-                f.setHandled(MessageFormat.format(Languages.message("DirRecoverSummary"),
+                f.setHandled(MessageFormat.format(message("DirRecoverSummary"),
                         currentNewNames.size(), recovered));
                 newNames.remove(originalName);
             }
@@ -536,7 +535,6 @@ public class FilesRenameController extends BaseBatchFileController {
             f.setHandled("");
             String newName = f.getData();
             if (newName != null && !newName.isEmpty()) {
-                f.setFileName(newName);
                 f.setFile(new File(newName));
                 f.setData("");
             }
@@ -549,7 +547,7 @@ public class FilesRenameController extends BaseBatchFileController {
             if (tableData == null || tableData.isEmpty()) {
                 return;
             }
-            File f = new File(tableData.get(0).getFileName());
+            File f = tableData.get(0).getFile();
             if (f.isDirectory()) {
                 browseURI(new File(f.getPath()).toURI());
             } else {

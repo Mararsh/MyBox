@@ -28,13 +28,13 @@ import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.fxml.cell.TableTimeCell;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -252,7 +252,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 fileColumn.setPrefWidth(320);
             }
             if (typeColumn != null) {
-                typeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSuffix"));
+                typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
             }
             if (numberColumn != null) {
                 numberColumn.setCellValueFactory(new PropertyValueFactory<>("filesNumber"));
@@ -719,11 +719,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             return;
         }
         FileInformation info = fileInformation(index);
-        if (info.getData() != null && !info.getData().isEmpty()) {
-            view(info.getData());
-        } else {
-            view(info.getFile());
-        }
+        view(info.getFile());
     }
 
     @FXML

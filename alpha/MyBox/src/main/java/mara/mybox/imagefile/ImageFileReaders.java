@@ -376,7 +376,7 @@ public class ImageFileReaders {
                 ImageInformation imageInfo = ImageInformation.create(targetFormat, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(targetFormat);
-                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setFile(file);
                 imageInfo.setCreateTime(fileInfo.getCreateTime());
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
                 imageInfo.setFileSize(fileInfo.getFileSize());
@@ -398,7 +398,7 @@ public class ImageFileReaders {
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);
-                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setFile(file);
                 imageInfo.setCreateTime(fileInfo.getCreateTime());
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
                 imageInfo.setFileSize(fileInfo.getFileSize());

@@ -106,7 +106,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (target == null) {
             return message("Skip");
         }
-        targetFileGenerated(target);
+        targetFileGenerated(target, true);
         return message("Successful");
     }
 
@@ -1042,7 +1042,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    public boolean targetFileGenerated(File target, int type) {
+    public boolean targetFileGenerated(File target, int type, boolean record) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
@@ -1053,7 +1053,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
-        recordFileWritten(target, type, type);
+        if (record) {
+            recordFileWritten(target, type, type);
+        }
         return true;
     }
 

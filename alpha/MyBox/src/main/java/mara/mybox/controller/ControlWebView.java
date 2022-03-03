@@ -468,18 +468,20 @@ public class ControlWebView extends BaseController {
         try {
             String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
             setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
-            pageLoadedNotify.set(!pageLoadedNotify.get());
             setWebViewLabel(message("Loaded"));
 
             webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
             if (!(this instanceof ControlHtmlEditor)) {
-                webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+                try {
+                    webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+                } catch (Exception e) {
+                }
             }
-
             Document doc = webEngine.getDocument();
             charset = HtmlReadTools.charset(doc);
             framesDoc.clear();
             addDocListener(doc);
+            pageLoadedNotify.set(!pageLoadedNotify.get());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

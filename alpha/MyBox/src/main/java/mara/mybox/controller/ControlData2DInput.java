@@ -11,8 +11,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
-import mara.mybox.data2d.DataFileText;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -104,7 +104,7 @@ public class ControlData2DInput extends BaseController {
 
     @FXML
     public void delimiterActon() {
-        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, false);
+        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, true);
         controller.okNotify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -153,36 +153,41 @@ public class ControlData2DInput extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = TmpFileTools.getTempFile();
-                    TextFileTools.writeFile(tmpFile, text, Charset.forName("UTF-8"));
-                    dataFileText.initFile(tmpFile);
-                    dataFileText.setHasHeader(nameCheck.isSelected());
-                    dataFileText.setCharset(Charset.forName("UTF-8"));
-                    dataFileText.setPageSize(Integer.MAX_VALUE);
-                    if (delimiterName == null || delimiterName.isEmpty()) {
-                        delimiterName = dataFileText.guessDelimiter();
-                    }
-                    if (delimiterName == null || delimiterName.isEmpty()) {
-                        delimiterName = ",";
-                    }
-                    dataFileText.setDelimiter(delimiterName);
-                    dataFileText.setTask(task);
-                    List<String> names = dataFileText.readColumnNames();
-                    if (isCancelled()) {
+                    try {
+                        File tmpFile = TmpFileTools.getTempFile();
+                        TextFileTools.writeFile(tmpFile, text, Charset.forName("UTF-8"));
+                        dataFileText.initFile(tmpFile);
+                        dataFileText.setHasHeader(nameCheck.isSelected());
+                        dataFileText.setCharset(Charset.forName("UTF-8"));
+                        dataFileText.setPageSize(Integer.MAX_VALUE);
+                        if (delimiterName == null || delimiterName.isEmpty()) {
+                            delimiterName = dataFileText.guessDelimiter();
+                        }
+                        if (delimiterName == null || delimiterName.isEmpty()) {
+                            delimiterName = ",";
+                        }
+                        dataFileText.setDelimiter(delimiterName);
+                        dataFileText.setTask(task);
+                        List<String> names = dataFileText.readColumnNames();
+                        if (isCancelled()) {
+                            return false;
+                        }
+                        if (names != null && !names.isEmpty()) {
+                            List<Data2DColumn> columns = new ArrayList<>();
+                            for (int i = 0; i < names.size(); i++) {
+                                Data2DColumn column = new Data2DColumn(names.get(i), dataFileText.defaultColumnType());
+                                column.setIndex(i);
+                                columns.add(column);
+                            }
+                            dataFileText.setColumns(columns);
+                            validateTable = Data2DColumn.validate(columns);
+                        }
+                        data = dataFileText.readPageData();
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
                         return false;
                     }
-                    if (names != null && !names.isEmpty()) {
-                        List<Data2DColumn> columns = new ArrayList<>();
-                        for (int i = 0; i < names.size(); i++) {
-                            Data2DColumn column = new Data2DColumn(names.get(i), dataFileText.defaultColumnType());
-                            column.setIndex(i);
-                            columns.add(column);
-                        }
-                        dataFileText.setColumns(columns);
-                        validateTable = Data2DColumn.validate(columns);
-                    }
-                    data = dataFileText.readPageData();
-                    return data != null && !data.isEmpty();
                 }
 
                 @Override
@@ -199,13 +204,15 @@ public class ControlData2DInput extends BaseController {
                             tcols.addAll(columnNames);
                         }
                         StringTable table = new StringTable(tcols);
-                        for (int i = 0; i < data.size(); i++) {
-                            List<String> row = new ArrayList<>();
-                            row.add(dataFileText.rowName(i));
-                            List<String> drow = data.get(i);
-                            drow.remove(0);
-                            row.addAll(drow);
-                            table.add(row);
+                        if (data != null) {
+                            for (int i = 0; i < data.size(); i++) {
+                                List<String> row = new ArrayList<>();
+                                row.add(dataFileText.rowName(i));
+                                List<String> drow = data.get(i);
+                                drow.remove(0);
+                                row.addAll(drow);
+                                table.add(row);
+                            }
                         }
                         htmlController.loadContents(table.html());
                         editButton.setDisable(false);

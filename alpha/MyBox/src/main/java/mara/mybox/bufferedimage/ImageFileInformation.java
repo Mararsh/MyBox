@@ -85,7 +85,7 @@ public class ImageFileInformation extends FileInformation {
                     imageInfo = ImageInformation.create(format, file);
                     imageInfo.setImageFileInformation(fileInfo);
                     imageInfo.setImageFormat(format);
-                    imageInfo.setFileName(fileInfo.getFileName());
+                    imageInfo.setFile(file);
                     imageInfo.setCreateTime(fileInfo.getCreateTime());
                     imageInfo.setModifyTime(fileInfo.getModifyTime());
                     imageInfo.setFileSize(fileInfo.getFileSize());
@@ -123,7 +123,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);
-                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setFile(file);
                 imageInfo.setCreateTime(fileInfo.getCreateTime());
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
                 imageInfo.setFileSize(fileInfo.getFileSize());
@@ -163,7 +163,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);
-                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setFile(file);
                 imageInfo.setCreateTime(fileInfo.getCreateTime());
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
                 imageInfo.setFileSize(fileInfo.getFileSize());

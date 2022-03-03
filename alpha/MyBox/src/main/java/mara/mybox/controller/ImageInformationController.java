@@ -12,11 +12,11 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageInformationPng;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**
@@ -73,7 +73,7 @@ public class ImageInformationController extends HtmlTableController {
                 }
                 s.append(makeImageInformationTable(i, iInfo)).append("</br>\n");
             }
-            html = HtmlWriteTools.html(finfo.getFileName(), HtmlStyles.styleValue("Default"), s.toString());
+            html = HtmlWriteTools.html(finfo.getFile().getAbsolutePath(), HtmlStyles.styleValue("Default"), s.toString());
             loadContents​(html);
             if (indexSelector.getItems().isEmpty()) {
                 iccBox.setVisible(false);
@@ -366,7 +366,7 @@ public class ImageInformationController extends HtmlTableController {
 
             IccProfileEditorController controller
                     = (IccProfileEditorController) openStage(Fxmls.IccProfileEditorFxml);
-            String name = Languages.message("File") + " : " + imageInfo.getFileName() + "  "
+            String name = Languages.message("File") + " : " + imageInfo.getFile().getAbsolutePath() + "  "
                     + Languages.message("Image") + " " + imageIndex;
             controller.externalData(name, iInfo.getIccProfile());
 

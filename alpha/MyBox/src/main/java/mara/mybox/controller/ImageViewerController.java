@@ -825,9 +825,7 @@ public class ImageViewerController extends BaseImageController {
         ImageFileInformation finfo = info.getImageFileInformation();
         if (finfo != null) {
             finfo.setFile(file);
-            finfo.setFileName(file.getAbsolutePath());
         }
-        info.setFileName(file.getAbsolutePath());
         info.setFile(file);
     }
 

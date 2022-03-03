@@ -63,7 +63,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 d2did = definition.getD2did();
                 savedColumns = tableData2DColumn.read(conn, d2did);
             }
-
             options = null;
         } catch (Exception e) {
             if (task != null) {
@@ -142,7 +141,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
     }
 
     public List<List<String>> readPageData() {
-        if (d2did < 0 || !isColumnsValid()) {
+        if (!isColumnsValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }

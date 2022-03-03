@@ -18,6 +18,7 @@ import mara.mybox.dev.TestCase.Status;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.errorNotify;
 import static mara.mybox.value.AppVariables.isTesting;
 import mara.mybox.value.Fxmls;
@@ -35,7 +36,6 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     protected int currentIndex, interval = 2000;
     protected TestCase currentCase;
     protected List<TestCase> testCases;
-    protected BaseController currentController;
     protected boolean canceled;
     protected ChangeListener<Boolean> errorListener;
 
@@ -140,14 +140,10 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     public void startAction() {
         errorNotify.removeListener(errorListener);
         if (startButton.getUserData() != null) {
-            isTesting = false;
-            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-            startButton.applyCss();
-            startButton.setUserData(null);
-            canceled = true;
+            stopCases();
             return;
         }
-        isTesting = true;
+        AppVariables.isTesting = true;
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         startButton.setUserData("started");
@@ -165,72 +161,74 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         goCurrentCase();
     }
 
+    public void stopCases() {
+        canceled = true;
+        errorNotify.removeListener(errorListener);
+        currentIndex = -1;
+        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
+        startButton.applyCss();
+        startButton.setUserData(null);
+        AppVariables.isTesting = false;
+    }
+
     public void goCurrentCase() {
         try {
             currentCase = null;
-            currentController = null;
             if (canceled || testCases == null || currentIndex < 0 || currentIndex >= testCases.size()) {
-                errorNotify.removeListener(errorListener);
-                currentIndex = -1;
-                StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-                startButton.applyCss();
-                startButton.setUserData(null);
+                stopCases();
                 return;
             }
+            AppVariables.isTesting = true;
             currentCase = tableData.get(currentIndex);
-            currentCase.setController(null);
             currentCase.setStatus(Status.Testing);
             tableData.set(currentIndex, currentCase);
-
-            currentController = runCurrentCase();
-
-            if (currentController == null) {
-                currentCase.setStatus(Status.Fail);
-                tableData.set(currentIndex, currentCase);
-                currentIndex++;
-                goCurrentCase();
-                return;
-            }
-            currentCase.setController(currentController);
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        if (currentController != null) {
-                            currentController.close();
-                        }
-
-                        if (currentCase != null && currentCase.getStatus() != Status.Fail) {
-                            currentCase.setStatus(Status.Success);
-                            tableData.set(currentIndex, currentCase);
-                        }
-                        if (canceled) {
-                            return;
-                        }
-                        currentIndex++;
-                        goCurrentCase();
-                    });
-                }
-            }, interval);
-
+            tableView.scrollTo(currentIndex);
+            runCurrentCase();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
 
     }
 
-    public BaseController runCurrentCase() {
+    public void runCurrentCase() {
         try {
             if (canceled || currentCase == null) {
-                return null;
+                return;
             }
-            currentController = openStage(currentCase.getFxml());
+            BaseController currentController = openStage(currentCase.getFxml());
 
-            return currentController;
+            if (currentController == null) {
+                currentCase.setStatus(Status.Fail);
+                tableData.set(currentIndex, currentCase);
+            } else {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            if (currentController != null) {
+                                currentController.close();
+                            }
+                            if (currentCase != null && currentCase.getStatus() != Status.Fail) {
+                                currentCase.setStatus(Status.Success);
+                                tableData.set(currentIndex, currentCase);
+                            }
+                            if (canceled) {
+                                return;
+                            }
+                            currentIndex++;
+                            goCurrentCase();
+                        });
+                    }
+                }, interval);
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            return null;
+            if (currentCase != null) {
+                currentCase.setStatus(Status.Fail);
+                tableData.set(currentIndex, currentCase);
+            }
         }
+
     }
 
     @Override
@@ -238,7 +236,6 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         try {
             errorNotify.removeListener(errorListener);
             errorListener = null;
-            currentController = null;
             casesController = null;
         } catch (Exception e) {
         }

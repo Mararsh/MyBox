@@ -13,13 +13,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.DateTools;
-import mara.mybox.fxml.SoundTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -71,7 +68,7 @@ public class FilesFindController extends BaseBatchFileController {
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
             fileColumn.setPrefWidth(400);
 
-            typeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSuffix"));
+            typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
 
             sizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
             sizeColumn.setCellFactory(new TableFileSizeCell());

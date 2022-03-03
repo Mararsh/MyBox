@@ -23,6 +23,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -30,6 +32,7 @@ import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
@@ -432,6 +435,18 @@ public abstract class BaseTableViewController<P> extends BaseController {
             menu = new MenuItem(message("Snapshot"), StyleTools.getIconImage("iconSnapshot.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 ImageViewerController.load(NodeTools.snap(tableView));
+            });
+            items.add(menu);
+
+            menu = new MenuItem("Html", StyleTools.getIconImage("iconHtml.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                htmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Data"), StyleTools.getIconImage("iconData.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                dataAction();
             });
             items.add(menu);
 
@@ -947,82 +962,131 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void dataAction() {
-        try {
-            if (tableData.isEmpty()) {
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            int rowsSelectionColumnIndex = -1;
-            if (rowsSelectionColumn != null) {
-                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-            }
-            int colsNumber = tableView.getColumns().size();
-            for (int c = 0; c < colsNumber; c++) {
-                if (c == rowsSelectionColumnIndex) {
-                    continue;
-                }
-                names.add(tableView.getColumns().get(c).getText());
-            }
-            List<List<String>> data = new ArrayList<>();
-            for (int r = 0; r < tableData.size(); r++) {
-                List<String> row = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    if (c == rowsSelectionColumnIndex) {
-                        continue;
-                    }
-                    String s = null;
-                    try {
-                        s = tableView.getColumns().get(c).getCellData(r).toString();
-                    } catch (Exception e) {
-                    }
-                    row.add(s);
-                }
-                data.add(row);
-            }
-            DataFileCSVController.open(Data2DColumn.toColumns(names), data);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (tableData.isEmpty()) {
+            popError(message("NoData"));
+            return;
         }
+        SingletonTask dataTask = new SingletonTask<Void>(this) {
+            private List<String> names;
+            private List<List<String>> data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    names = new ArrayList<>();
+                    int rowsSelectionColumnIndex = -1;
+                    if (rowsSelectionColumn != null) {
+                        rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+                    }
+                    int colsNumber = tableView.getColumns().size();
+                    for (int c = 0; c < colsNumber; c++) {
+                        if (c == rowsSelectionColumnIndex) {
+                            continue;
+                        }
+                        names.add(tableView.getColumns().get(c).getText());
+                    }
+                    data = new ArrayList<>();
+                    for (int r = 0; r < tableData.size(); r++) {
+                        List<String> row = new ArrayList<>();
+                        for (int c = 0; c < colsNumber; c++) {
+                            if (c == rowsSelectionColumnIndex) {
+                                continue;
+                            }
+                            String s = null;
+                            try {
+                                s = tableView.getColumns().get(c).getCellData(r).toString();
+                            } catch (Exception e) {
+                            }
+                            row.add(s);
+                        }
+                        data.add(row);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                DataFileCSVController.open(Data2DColumn.toColumns(names), data);
+            }
+        };
+        start(dataTask, false, message("LoadingTableData"));
     }
 
     @FXML
     public void htmlAction() {
-        try {
-            if (tableData.isEmpty()) {
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            int rowsSelectionColumnIndex = -1;
-            if (rowsSelectionColumn != null) {
-                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-            }
-            int colsNumber = tableView.getColumns().size();
-            for (int c = 0; c < colsNumber; c++) {
-                if (c == rowsSelectionColumnIndex) {
-                    continue;
-                }
-                names.add(tableView.getColumns().get(c).getText());
-            }
-            StringTable table = new StringTable(names, baseTitle);
-            for (int r = 0; r < tableData.size(); r++) {
-                List<String> row = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    if (c == rowsSelectionColumnIndex) {
-                        continue;
-                    }
-                    String s = null;
-                    try {
-                        s = tableView.getColumns().get(c).getCellData(r).toString();
-                    } catch (Exception e) {
-                    }
-                    row.add(s);
-                }
-                table.add(row);
-            }
-            table.editHtml();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (tableData.isEmpty()) {
+            popError(message("NoData"));
+            return;
         }
+        SingletonTask htmlTask = new SingletonTask<Void>(this) {
+            private StringTable table;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    List<String> names = new ArrayList<>();
+                    int rowsSelectionColumnIndex = -1;
+                    if (rowsSelectionColumn != null) {
+                        rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+                    }
+                    int colsNumber = tableView.getColumns().size();
+                    for (int c = 0; c < colsNumber; c++) {
+                        if (c == rowsSelectionColumnIndex) {
+                            continue;
+                        }
+                        names.add(tableView.getColumns().get(c).getText());
+                    }
+                    table = new StringTable(names, baseTitle);
+                    for (int r = 0; r < tableData.size(); r++) {
+                        List<String> row = new ArrayList<>();
+                        for (int c = 0; c < colsNumber; c++) {
+                            if (c == rowsSelectionColumnIndex) {
+                                continue;
+                            }
+                            String s = null;
+                            try {
+                                Object cellData = tableView.getColumns().get(c).getCellData(r);
+                                Image image = null;
+                                int width = 20;
+                                if (cellData instanceof ImageView) {
+                                    image = ((ImageView) cellData).getImage();
+                                    width = (int) ((ImageView) cellData).getFitWidth();
+                                } else if (cellData instanceof Image) {
+                                    image = (Image) cellData;
+                                    width = (int) image.getWidth();
+                                }
+                                if (image != null) {
+                                    String base64 = FxImageTools.base64(image, "png");
+                                    if (base64 != null) {
+                                        s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
+                                    }
+                                }
+                                if (s == null) {
+                                    s = cellData.toString();
+                                }
+                            } catch (Exception e) {
+                            }
+                            row.add(s);
+                        }
+                        table.add(row);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                table.editHtml();
+            }
+        };
+        start(htmlTask, false, message("LoadingTableData"));
     }
 
     /*

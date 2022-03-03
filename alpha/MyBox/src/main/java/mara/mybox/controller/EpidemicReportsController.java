@@ -50,6 +50,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -350,7 +351,9 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     sourceController.loadTree(datasets);
                     timeController.loadTree("time", times, false);
                     if (datasets == null || datasets.isEmpty()) {
-                        if (PopTools.askSure(myController, getBaseTitle(), Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
+                        if (!AppVariables.isTesting
+                                && PopTools.askSure(myController, getBaseTitle(),
+                                        Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
                             predefined();
                         }
 

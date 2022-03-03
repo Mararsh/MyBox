@@ -17,6 +17,7 @@ public class DataFileTextReader extends Data2DReader {
 
     public DataFileTextReader(DataFileText data) {
         this.readerText = data;
+        init(data);
     }
 
     @Override

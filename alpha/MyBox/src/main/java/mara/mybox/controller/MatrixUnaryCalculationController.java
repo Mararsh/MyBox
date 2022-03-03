@@ -255,16 +255,15 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     }
 
     protected boolean checkMatrix() {
-        if (dataMatrix == null || !dataMatrix.isValid()) {
-            return false;
-        }
         setBox.getChildren().clear();
         rowInput.setStyle(null);
         columnInput.setStyle(null);
         numberInput.setStyle(null);
         powerInput.setStyle(null);
         checkLabel.setText("");
-
+        if (dataMatrix == null || !dataMatrix.isValid()) {
+            return false;
+        }
         if (DeterminantByEliminationRadio.isSelected() || DeterminantByComplementMinorRadio.isSelected()
                 || InverseMatrixByEliminationRadio.isSelected() || InverseMatrixByAdjointRadio.isSelected()
                 || MatrixRankRadio.isSelected() || AdjointMatrixRadio.isSelected() || PowerRadio.isSelected()) {
@@ -272,6 +271,15 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 checkLabel.setText(message("MatricesCannotCalculateShouldSqure"));
                 calculateButton.setDisable(true);
                 return false;
+            }
+
+            if (PowerRadio.isSelected()) {
+                setBox.getChildren().add(powerBox);
+                if (!checkPower()) {
+                    checkLabel.setText(message("InvalidParameters"));
+                    calculateButton.setDisable(true);
+                    return false;
+                }
             }
 
         } else if (ComplementMinorRadio.isSelected()) {
@@ -285,14 +293,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         } else if (MultiplyNumberRadio.isSelected() || DivideNumberRadio.isSelected()) {
             setBox.getChildren().add(numberBox);
             if (!checkNumber()) {
-                checkLabel.setText(message("InvalidParameters"));
-                calculateButton.setDisable(true);
-                return false;
-            }
-
-        } else if (PowerRadio.isSelected()) {
-            setBox.getChildren().add(powerBox);
-            if (!checkPower()) {
                 checkLabel.setText(message("InvalidParameters"));
                 calculateButton.setDisable(true);
                 return false;
