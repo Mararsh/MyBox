@@ -229,6 +229,12 @@ public class BaseWebViewController extends BaseController {
 
     @FXML
     @Override
+    public void clearAction() {
+        loadContents("");
+    }
+
+    @FXML
+    @Override
     public void findAction() {
         if (webViewController == null) {
             return;

@@ -303,6 +303,16 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
+    protected void JShell(ActionEvent event) {
+        loadScene(Fxmls.JShellFxml);
+    }
+
+    @FXML
+    protected void RunJdkCommand(ActionEvent event) {
+        loadScene(Fxmls.RunJdkCommandFxml);
+    }
+
+    @FXML
     protected void openTTC2TTF(ActionEvent event) {
         loadScene(Fxmls.FileTTC2TTFFxml);
     }

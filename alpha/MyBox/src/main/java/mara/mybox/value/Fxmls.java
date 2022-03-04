@@ -337,12 +337,15 @@ public class Fxmls {
     public static final String MyBoxLogViewerFxml = "/fxml/MyBoxLogViewer.fxml";
     public static final String MyBoxTablesFxml = "/fxml/MyBoxTables.fxml";
     public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
-    public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
     public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
     public static final String AutoTestingCasesFxml = "/fxml/AutoTestingCases.fxml";
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
+    public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
+    public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
+    public static final String RunJdkCommandFxml = "/fxml/RunJdkCommand.fxml";
+    public static final String JShellFxml = "/fxml/JShell.fxml";
 
     /*
         common

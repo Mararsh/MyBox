@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.JShellController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+            <children>
+            <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+               <items>
+                  <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <children>
+                              <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                 <items>
+                                    <VBox spacing="2.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Label maxWidth="1.7976931348623157E308" text="%Codes" />
+                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconTips.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <Label layoutX="10.0" layoutY="17.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popCodesHistories">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconHistory.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconExamples.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="clearCodesButton" mnemonicParsing="false" onAction="#clearCodes">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconClear.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                      <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/Red/iconStart.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                             </children>
+                                          </HBox>
+                                          <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                    <VBox>
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Label maxWidth="1.7976931348623157E308" text="%CurrentSnippets" />
+                                                <Label layoutX="10.0" layoutY="17.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="clearCodesButton1" mnemonicParsing="false" onAction="#clearCodes">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconClear.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="examplesButton1" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconDelete.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                                   <graphic>
+                                                      <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                                   </graphic>
+                                                </TableColumn>
+                                              <TableColumn fx:id="idColumn" prefWidth="75.0" text="%ID" />
+                                              <TableColumn prefWidth="75.0" text="C2" />
+                                            </columns>
+                                          </TableView>
+                                       </children>
+                                    </VBox>
+                                 </items>
+                              </SplitPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                                 <children>
+                                          <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                              <graphic>
+                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                      <image>
+                                                          <Image url="@../buttons/Red/iconStyle.png" />
+                                                      </image>
+                                                  </ImageView>
+                                              </graphic>
+                                          </Button>
+                                    <Label maxWidth="1.7976931348623157E308" text="%Results" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="clearResultsButton" mnemonicParsing="false" onAction="#clearAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconClear.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                          <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                                              <graphic>
+                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                      <image>
+                                                          <Image url="@../buttons/Red/iconEdit.png" />
+                                                      </image>
+                                                  </ImageView>
+                                              </graphic>
+                                          </Button>
+                                 </children>
+                              </HBox>
+                              <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                           </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </items>
+            </SplitPane>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

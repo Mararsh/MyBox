@@ -467,7 +467,13 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxLogs" text="%MyBoxLogs" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#runSystemCommand" text="%RunSystemCommand" />
-                                <MenuItem mnemonicParsing="false" onAction="#JConsole" text="%JConsole" />
+                                <Menu mnemonicParsing="false" text="%JdkTools">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#JConsole" text="%JConsole" />
+                                        <MenuItem mnemonicParsing="false" onAction="#JShell" text="%JShell" />
+                                        <!--<MenuItem mnemonicParsing="false" onAction="#JRunscript" text="%JRunscript" />-->
+                                    </items>
+                                </Menu>                               
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />

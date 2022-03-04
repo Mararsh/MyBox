@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -37,7 +38,8 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     protected TestCase currentCase;
     protected List<TestCase> testCases;
     protected boolean canceled;
-    protected ChangeListener<Boolean> errorListener;
+    protected ChangeListener<Boolean> errorListener, caseListener;
+    protected final SimpleBooleanProperty caseNotify;
 
     @FXML
     protected TableColumn<TestCase, Integer> aidColumn;
@@ -46,6 +48,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
 
     public AutoTestingExecutionController() {
         baseTitle = Languages.message("TestExecution");
+        caseNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -117,9 +120,20 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                 }
             };
 
+            caseListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    goCurrentCase();
+                }
+            };
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void caseNotify() {
+        caseNotify.set(!caseNotify.get());
     }
 
     public void setParameters(AutoTestingCasesController parent, List<TestCase> testCases) {
@@ -139,32 +153,36 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     @Override
     public void startAction() {
         errorNotify.removeListener(errorListener);
+        caseNotify.removeListener(caseListener);
         if (startButton.getUserData() != null) {
             stopCases();
             return;
         }
-        AppVariables.isTesting = true;
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         startButton.setUserData("started");
-        canceled = false;
-        errorNotify.addListener(errorListener);
-
         Window window = getMyWindow();
         window.setX(0);
         window.setY(0);
-        currentIndex = 0;
+
         for (TestCase testCase : tableData) {
             testCase.setStatus(Status.NotTested);
         }
         tableView.refresh();
-        goCurrentCase();
+        canceled = false;
+        AppVariables.isTesting = true;
+        currentIndex = 0;
+        errorNotify.addListener(errorListener);
+        caseNotify.addListener(caseListener);
+        caseNotify();
     }
 
     public void stopCases() {
         canceled = true;
         errorNotify.removeListener(errorListener);
+        caseNotify.removeListener(caseListener);
         currentIndex = -1;
+        currentCase = null;
         StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
         startButton.applyCss();
         startButton.setUserData(null);
@@ -193,13 +211,14 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     public void runCurrentCase() {
         try {
             if (canceled || currentCase == null) {
+                stopCases();
                 return;
             }
             BaseController currentController = openStage(currentCase.getFxml());
-
             if (currentController == null) {
                 currentCase.setStatus(Status.Fail);
                 tableData.set(currentIndex, currentCase);
+
             } else {
                 new Timer().schedule(new TimerTask() {
                     @Override
@@ -212,14 +231,12 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                                 currentCase.setStatus(Status.Success);
                                 tableData.set(currentIndex, currentCase);
                             }
-                            if (canceled) {
-                                return;
-                            }
                             currentIndex++;
-                            goCurrentCase();
+                            caseNotify();
                         });
                     }
                 }, interval);
+                return;
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -228,14 +245,16 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                 tableData.set(currentIndex, currentCase);
             }
         }
-
+        currentIndex++;
+        caseNotify();
     }
 
     @Override
     public void cleanPane() {
         try {
-            errorNotify.removeListener(errorListener);
+            stopCases();
             errorListener = null;
+            caseListener = null;
             casesController = null;
         } catch (Exception e) {
         }
