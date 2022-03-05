@@ -167,6 +167,16 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 DatabaseTable, DatabaseSQL
         );
 
+        MenuItem jshell = new MenuItem(message("JShell"));
+        jshell.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JShellFxml);
+        });
+
+        Menu calculation = new Menu(message("Calculation"));
+        calculation.getItems().addAll(
+                jshell
+        );
+
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));
         barcodeCreator.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.BarcodeCreatorFxml);
@@ -204,6 +214,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu.getItems().addAll(
                 ManageData, new SeparatorMenuItem(),
                 DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
+                calculation, new SeparatorMenuItem(),
                 Location, new SeparatorMenuItem(),
                 miscellaneousMenu
         );

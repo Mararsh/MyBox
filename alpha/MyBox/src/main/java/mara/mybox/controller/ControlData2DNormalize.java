@@ -214,7 +214,10 @@ public class ControlData2DNormalize extends BaseController {
                 }
             }
             double k = max - min;
-            k = (to - from) / (k == 0 ? Double.MIN_VALUE : k);
+            if (k == 0) {
+                k = Float.MIN_VALUE;
+            }
+            k = (to - from) / k;
             double[] result = new double[len];
             for (int i = 0; i < len; i++) {
                 result[i] = from + k * (vector[i] - min);
@@ -240,7 +243,7 @@ public class ControlData2DNormalize extends BaseController {
                 sum += Math.abs(d);
             }
             if (sum == 0) {
-                sum = Double.MIN_VALUE;
+                sum = Float.MIN_VALUE;
             }
             double[] result = new double[len];
             for (int i = 0; i < len; i++) {
@@ -272,6 +275,9 @@ public class ControlData2DNormalize extends BaseController {
                 variance += Math.pow(d - mean, 2);
             }
             variance = Math.sqrt(variance / len);
+            if (variance == 0) {
+                variance = Float.MIN_VALUE;
+            }
             double[] result = new double[len];
             for (int i = 0; i < len; i++) {
                 result[i] = (vector[i] - mean) / variance;

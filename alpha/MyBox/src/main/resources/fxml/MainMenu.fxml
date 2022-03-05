@@ -236,6 +236,12 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <Menu mnemonicParsing="false" text="%Calculation">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#JShell" text="%JShell" />
+                                    </items>
+                                </Menu>   
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%Location">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openGeographyCode" text="%GeographyCode" />
@@ -470,7 +476,6 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%JdkTools">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#JConsole" text="%JConsole" />
-                                        <MenuItem mnemonicParsing="false" onAction="#JShell" text="%JShell" />
                                         <!--<MenuItem mnemonicParsing="false" onAction="#JRunscript" text="%JRunscript" />-->
                                     </items>
                                 </Menu>                               

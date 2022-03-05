@@ -1,5 +1,8 @@
 package mara.mybox.data2d;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +21,8 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -433,6 +438,142 @@ public class DataTable extends Data2D {
     @Override
     public long clearData() {
         return tableData2D.clearData();
+    }
+
+    public DataFileCSV sort(List<Integer> cols, String orderName, boolean desc, boolean showRowNumber) {
+        try {
+            if (cols == null || cols.isEmpty() || orderName == null || orderName.isBlank()) {
+                return null;
+            }
+            String sql = null;
+            for (int col : cols) {
+                if (sql != null) {
+                    sql += ",";
+                } else {
+                    sql = "";
+                }
+                sql += columns.get(col).getColumnName();
+            }
+            sql = "SELECT " + sql + " FROM " + sheet + " ORDER BY " + orderName
+                    + (desc ? " DESC" : "");
+            File csvFile = tmpCSV("sort");
+            CSVFormat targetFormat = CSVFormat.DEFAULT
+                    .withIgnoreEmptyLines().withTrim().withNullString("")
+                    .withDelimiter(',');
+            long count = 0;
+            int colsSize;
+            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat);
+                     Connection conn = DerbyBase.getConnection();
+                     PreparedStatement statement = conn.prepareStatement(sql);
+                     ResultSet results = statement.executeQuery()) {
+                List<String> names = new ArrayList<>();
+                if (showRowNumber) {
+                    names.add(message("SourceRowNumber"));
+                }
+                for (int col : cols) {
+                    names.add(columns.get(col).getColumnName());
+                }
+                csvPrinter.printRecord(names);
+                colsSize = names.size();
+                List<String> fileRow = new ArrayList<>();
+                while (results.next()) {
+                    Data2DRow dataRow = tableData2D.readData(results);
+                    if (showRowNumber) {
+                        fileRow.add(++count + "");
+                    }
+                    for (int col : cols) {
+                        Data2DColumn column = columns.get(col);
+                        Object v = dataRow.getValue(column.getColumnName());
+                        fileRow.add(column.toString(v));
+                    }
+                    csvPrinter.printRecord(fileRow);
+                    fileRow.clear();
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e.toString());
+                return null;
+            }
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(colsSize).setRowsNumber(count);
+            return targetData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public Object mode(Connection conn, String colName) {
+        if (colName == null || colName.isBlank()) {
+            return null;
+        }
+        Object mode = null;
+        String sql = "SELECT " + colName + ", count(" + colName + ") AS mybox99_mode FROM " + sheet
+                + " GROUP BY " + colName + " ORDER BY mybox99_mode DESC FETCH FIRST ROW ONLY";
+        try ( PreparedStatement statement = conn.prepareStatement(sql);
+                 ResultSet results = statement.executeQuery()) {
+            if (results.next()) {
+                mode = results.getObject(colName);
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+        }
+        return mode;
+    }
+
+    public Object median(Connection conn, Data2DColumn column) {
+        if (column == null) {
+            return null;
+        }
+        Object median = null;
+        int size = tableData2D.size(conn);
+        int offset, num;
+        if (size == 2) {
+            offset = 0;
+            num = 2;
+        } else if (size % 2 == 0) {
+            offset = size / 2;
+            num = 2;
+        } else {
+            offset = size / 2;
+            num = 1;
+        }
+        String colName = column.getColumnName();
+        if (!column.isNumberType()) {
+            num = 1;
+        }
+        String sql = "SELECT " + colName + " FROM " + sheet + " ORDER BY " + colName
+                + " OFFSET " + offset + " ROWS FETCH NEXT " + num + " ROWS ONLY";
+        try ( PreparedStatement statement = conn.prepareStatement(sql);
+                 ResultSet results = statement.executeQuery()) {
+            double plus = 0d;
+            while (results.next()) {
+                median = results.getObject(colName);
+                if (num == 1) {
+                    break;
+                }
+                plus += Double.valueOf(median + "");
+            }
+            if (num == 2) {
+                median = plus / 2;
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+        }
+        return median;
     }
 
     /*

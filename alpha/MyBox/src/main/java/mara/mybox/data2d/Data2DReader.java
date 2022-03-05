@@ -559,7 +559,11 @@ public abstract class Data2DReader {
                     row.add(null);
                 } else {
                     double v = data2D.doubleValue(record.get(col));
-                    v = (v - statisticData[c].mean) / statisticData[c].variance;
+                    double k = statisticData[c].variance;
+                    if (k == 0) {
+                        k = Float.MIN_VALUE;
+                    }
+                    v = (v - statisticData[c].mean) / k;
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
             }

@@ -1,7 +1,10 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -9,6 +12,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
+import mara.mybox.data2d.DataTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -125,12 +130,14 @@ public class Data2DStatisticController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
+        boolean ok = super.checkOptions();
         checkMemoryLabel();
-        return super.checkOptions();
+        return ok;
     }
 
     public void checkMemoryLabel() {
-        if (sourceController.allPages() && (modeCheck.isSelected() || medianCheck.isSelected())) {
+        if (!data2D.isTable() && sourceController.allPages()
+                && (modeCheck.isSelected() || medianCheck.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
             }
@@ -184,9 +191,13 @@ public class Data2DStatisticController extends Data2DHandleController {
                     data2D.setTask(task);
                     if (sourceController.allPages()) {
                         if (modeCheck.isSelected() || medianCheck.isSelected()) {
-                            return statisticRows(data2D.allRows(sourceController.checkedColsIndices(), false));
+                            if (data2D instanceof DataTable) {
+                                return statisticAllInTable();
+                            } else {
+                                return statisticRows(data2D.allRows(sourceController.checkedColsIndices(), false));
+                            }
                         } else {
-                            return statisticFile();
+                            return statisticAllWithoutModeMedian();
                         }
                     } else {
                         return statisticRows(sourceController.selectedData(false));
@@ -309,8 +320,6 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
     }
 
-    // All as double to make things simple. 
-    // To improve performance, this should be counting according to columns' types.
     public boolean statisticRows(List<List<String>> rows) {
         try {
             if (rows == null || rows.isEmpty()) {
@@ -350,7 +359,16 @@ public class Data2DStatisticController extends Data2DHandleController {
                     minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
                 }
                 if (modeRow != null) {
-                    modeRow.add(DoubleTools.format(statistic.getMode(), scale));
+                    if (statistic.getMode() == 0) {
+                        String[] colStrings = new String[rowsNumber];
+                        for (int r = 0; r < rowsNumber; r++) {
+                            colStrings[r] = rows.get(r).get(c);
+                        }
+                        Object mode = mode(colStrings);
+                        modeRow.add(mode + "");
+                    } else {
+                        modeRow.add(DoubleTools.format(statistic.getMode(), scale));
+                    }
                 }
                 if (medianRow != null) {
                     medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
@@ -366,7 +384,32 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
     }
 
-    public boolean statisticFile() {
+    public static Object mode(Object[] values) {
+        Object mode = null;
+        try {
+            if (values == null || values.length == 0) {
+                return mode;
+            }
+            Map<Object, Integer> number = new HashMap<>();
+            for (Object value : values) {
+                if (number.containsKey(value)) {
+                    number.put(value, number.get(value) + 1);
+                } else {
+                    number.put(value, 1);
+                }
+            }
+            double num = 0;
+            for (Object value : number.keySet()) {
+                if (num < number.get(value)) {
+                    mode = value;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return mode;
+    }
+
+    public boolean statisticAllWithoutModeMedian() {
         DoubleStatistic[] statisticData = data2D.statisticData(sourceController.checkedColsIndices);
         if (statisticData == null) {
             return false;
@@ -398,6 +441,42 @@ public class Data2DStatisticController extends Data2DHandleController {
         return true;
     }
 
+    public boolean statisticAllInTable() {
+        if (!statisticAllWithoutModeMedian()) {
+            return false;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            List<Integer> cols = sourceController.checkedColsIndices();
+            DataTable dataTable = (DataTable) data2D;
+            int scale = dataTable.getScale();
+            for (int c : cols) {
+                Data2DColumn column = data2D.getColumns().get(c);
+                if (modeRow != null) {
+                    Object mode = dataTable.mode(conn, column.getColumnName());
+                    if (column.isNumberType()) {
+                        modeRow.add(DoubleTools.format(Double.valueOf(mode + ""), scale));
+                    } else {
+                        modeRow.add(column.toString(mode));
+                    }
+                }
+                if (medianRow != null) {
+                    Object median = dataTable.median(conn, column);
+                    if (column.isNumberType()) {
+                        medianRow.add(DoubleTools.format(Double.valueOf(median + ""), scale));
+                    } else {
+                        medianRow.add(column.toString(median));
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
 
     /*
         static

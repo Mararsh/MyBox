@@ -27,7 +27,7 @@ public class Data2DTransposeController extends Data2DHandleController {
     }
 
     @Override
-    public void handleFileTask() {
+    public void handleAllTask() {
         popError(message("NotSupport"));
     }
 

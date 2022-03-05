@@ -35,6 +35,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -649,9 +650,34 @@ public class PopTools {
                 }
             });
             setButtons.add(maxButton);
+
+            setButtons.add(new Label(message("RightClickToDelete")));
             controller.addFlowPane(setButtons);
 
-            addButtonsPane(controller, input, TableStringValues.max(name, max));
+            List<String> values = TableStringValues.max(name, max);
+            List<Node> buttons = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.replaceText(input.getSelection(), value);
+                        input.requestFocus();
+                    }
+                });
+                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            TableStringValues.delete(name, value);
+                            controller.close();
+                            popStringValues(parent, input, mouseEvent, name);
+                        }
+                    }
+                });
+                buttons.add(button);
+            }
+            controller.addFlowPane(buttons);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -734,15 +760,15 @@ public class PopTools {
         }
     }
 
-    public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> names) {
+    public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> values) {
         try {
             List<Node> buttons = new ArrayList<>();
-            for (String name : names) {
-                Button button = new Button(name);
+            for (String value : values) {
+                Button button = new Button(value);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.replaceText(input.getSelection(), name);
+                        input.replaceText(input.getSelection(), value);
                         input.requestFocus();
                     }
                 });

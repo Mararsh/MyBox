@@ -622,10 +622,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
         if (deleteButton != null) {
-            deleteButton.setDisable(isEmpty);
+            deleteButton.setDisable(none);
         }
         if (deleteItemsButton != null) {
-            deleteItemsButton.setDisable(isEmpty);
+            deleteItemsButton.setDisable(none);
         }
         if (viewButton != null) {
             viewButton.setDisable(none);

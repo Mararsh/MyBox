@@ -150,7 +150,8 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
     public void afterSuccess() {
         try {
             SoundTools.miao3();
-            DataTablesController.open(attributesController.dataTable);
+            DataTablesController c = DataTablesController.open(attributesController.dataTable);
+            c.refreshAction();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

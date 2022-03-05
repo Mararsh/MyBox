@@ -177,7 +177,7 @@ public class Data2DSetValuesController extends Data2DHandleController {
     }
 
     @Override
-    public void handleFileTask() {
+    public void handleAllTask() {
         task = new SingletonTask<Void>(this) {
 
             @Override

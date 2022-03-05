@@ -64,7 +64,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = new ArrayList<>();
                 if (showRowNumber()) {
-                    row.add(checkedRowsIndices.get(r) + "");
+                    row.add((checkedRowsIndices.get(r) + 1) + "");
                 }
                 for (int c = 0; c < colsNumber; c++) {
                     row.add(DoubleTools.format(matrix[r][c], scale));

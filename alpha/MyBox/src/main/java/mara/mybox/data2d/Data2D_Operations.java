@@ -199,7 +199,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         for (int c = 0; c < colLen; c++) {
             double d = sData[c].maximum - sData[c].minimum;
-            sData[c].mean = (to - from) / (d == 0 ? Double.MIN_VALUE : d);
+            sData[c].mean = (to - from) / (d == 0 ? Float.MIN_VALUE : d);
         }
         File csvFile = tmpCSV("normalizeMinMax");
         CSVFormat targetFormat = CSVFormat.DEFAULT
@@ -258,7 +258,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         double[] colValues = reader.getColValues();
         for (int c = 0; c < colLen; c++) {
             if (colValues[c] == 0) {
-                colValues[c] = 1d / Double.MIN_VALUE;
+                colValues[c] = 1d / Float.MIN_VALUE;
             } else {
                 colValues[c] = 1d / colValues[c];
             }

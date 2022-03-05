@@ -107,6 +107,10 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     if (column.getColor() == null) {
                         column.setColor(FxColorTools.randomColor(random));
                     }
+                    if (!isTable()) {
+                        column.setAuto(false);
+                        column.setIsPrimaryKey(false);
+                    }
                     if (isMatrix()) {
                         column.setType(ColumnDefinition.ColumnType.Double);
                     }
@@ -224,7 +228,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public static boolean save(Connection conn, Data2D d, List<Data2DColumn> cols) {
+    public static boolean save(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
         }
@@ -252,23 +256,27 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 return false;
             }
             d.cloneAll(def);
-            if (cols != null && !cols.isEmpty()) {
+            if (inColumns != null && !inColumns.isEmpty()) {
                 try {
-                    List<Data2DColumn> columns = new ArrayList<>();
-                    for (int i = 0; i < cols.size(); i++) {
-                        Data2DColumn column = cols.get(i).cloneAll();
+                    List<Data2DColumn> savedColumns = new ArrayList<>();
+                    for (int i = 0; i < inColumns.size(); i++) {
+                        Data2DColumn column = inColumns.get(i).cloneAll();
                         if (column.getD2id() != did) {
                             column.setD2cid(-1);
                         }
                         column.setD2id(did);
                         column.setIndex(i);
+                        if (!d.isTable()) {
+                            column.setIsPrimaryKey(false);
+                            column.setAuto(false);
+                        }
                         if (d.isMatrix()) {
                             column.setType(ColumnDefinition.ColumnType.Double);
                         }
-                        columns.add(column);
+                        savedColumns.add(column);
                     }
-                    d.getTableData2DColumn().save(conn, did, columns);
-                    d.setColumns(columns);
+                    d.getTableData2DColumn().save(conn, did, savedColumns);
+                    d.setColumns(savedColumns);
                 } catch (Exception e) {
                     if (d.getTask() != null) {
                         d.getTask().setError(e.toString());

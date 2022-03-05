@@ -119,7 +119,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                 return;
             }
             if (sourceController.allPages()) {
-                handleFileTask();
+                handleAllTask();
             } else {
                 handleRowsTask();
             }

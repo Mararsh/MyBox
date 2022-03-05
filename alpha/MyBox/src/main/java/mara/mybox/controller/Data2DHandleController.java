@@ -15,6 +15,7 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -139,7 +140,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                 handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             if (sourceController.allPages()) {
-                handleFileTask();
+                handleAllTask();
             } else {
                 handleRowsTask();
             }
@@ -148,7 +149,7 @@ public abstract class Data2DHandleController extends BaseChildController {
         }
     }
 
-    public void handleFileTask() {
+    public void handleAllTask() {
         if (targetController == null) {
             return;
         }
@@ -162,15 +163,18 @@ public abstract class Data2DHandleController extends BaseChildController {
                     if (handledCSV == null) {
                         return false;
                     }
+                    recordFileWritten(handledCSV.getFile(), VisitHistory.FileType.CSV);
                     switch (targetController.target) {
                         case "csv":
                             handledFile = handledCSV;
                             break;
                         case "excel":
                             handledFile = DataFileExcel.toExcel(task, handledCSV);
+                            recordFileWritten(handledFile.getFile(), VisitHistory.FileType.Excel);
                             break;
                         case "texts":
                             handledFile = DataFileText.toText(handledCSV);
+                            recordFileWritten(handledFile.getFile(), VisitHistory.FileType.Text);
                             break;
                         case "systemClipboard":
                             handledFile = handledCSV;

@@ -100,7 +100,17 @@ License:    Apache License Version 2.0
                                              <children>
                                                 <Label maxWidth="1.7976931348623157E308" text="%CurrentSnippets" />
                                                 <Label layoutX="10.0" layoutY="17.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="clearCodesButton1" mnemonicParsing="false" onAction="#clearCodes">
+                                                <CheckBox fx:id="varCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OnlyShowVariables" wrapText="true" />
+                                                <Button fx:id="recoverButton" layoutX="454.0" layoutY="10.0" mnemonicParsing="false" onAction="#recoverAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconRecover.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="clearSnippetsButton" mnemonicParsing="false" onAction="#clearSnippets">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -109,7 +119,7 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
-                                                <Button fx:id="examplesButton1" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+                                                <Button fx:id="deleteSnippetsButton" mnemonicParsing="false" onAction="#deleteSnippets">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -118,17 +128,31 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
+                                                <Button fx:id="refreshSnippetsButton" layoutX="416.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshSnippets">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconRefresh.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                              </children>
                                           </HBox>
-                                          <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                          <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <columns>
                                                 <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
                                                    <graphic>
                                                       <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                                    </graphic>
                                                 </TableColumn>
-                                              <TableColumn fx:id="idColumn" prefWidth="75.0" text="%ID" />
-                                              <TableColumn prefWidth="75.0" text="C2" />
+                                              <TableColumn fx:id="sidColumn" prefWidth="60.0" text="%ID" />
+                                              <TableColumn fx:id="typeColumn" prefWidth="100.0" text="%Type" />
+                                                <TableColumn fx:id="nameColumn" prefWidth="100.0" text="%Name" />
+                                                <TableColumn fx:id="statusColumn" prefWidth="100.0" text="%Status" />
+                                                <TableColumn fx:id="valueColumn" prefWidth="100.0" text="%Value" />
+                                                <TableColumn fx:id="subTypeColumn" prefWidth="100.0" text="%SubType" />
+                                                <TableColumn fx:id="sourceColumn" prefWidth="150.0" text="%Source" />
                                             </columns>
                                           </TableView>
                                        </children>
@@ -158,7 +182,7 @@ License:    Apache License Version 2.0
                                               </graphic>
                                           </Button>
                                     <Label maxWidth="1.7976931348623157E308" text="%Results" HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="clearResultsButton" mnemonicParsing="false" onAction="#clearAction">
+                                    <Button fx:id="clearResultsButton" mnemonicParsing="false" onAction="#clearResults">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -167,7 +191,7 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </Button>
-                                          <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                                          <Button fx:id="editResultsButton" mnemonicParsing="false" onAction="#editResults">
                                               <graphic>
                                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                       <image>

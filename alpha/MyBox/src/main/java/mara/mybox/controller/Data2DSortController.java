@@ -13,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -30,6 +31,7 @@ public class Data2DSortController extends Data2DHandleController {
     protected int orderCol;
     protected List<Integer> colsIndices;
     protected List<String> colsNames;
+    protected String orderName;
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
@@ -88,30 +90,35 @@ public class Data2DSortController extends Data2DHandleController {
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(sourceController.allPages());
-        memoryNoticeLabel.setVisible(sourceController.allPages());
+        if (!data2D.isTable() && sourceController.allPages()) {
+            if (!thisPane.getChildren().contains(memoryNoticeLabel)) {
+                thisPane.getChildren().add(3, memoryNoticeLabel);
+            }
+        } else {
+            if (thisPane.getChildren().contains(memoryNoticeLabel)) {
+                thisPane.getChildren().remove(memoryNoticeLabel);
+            }
+        }
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
-        if (orderCol < 0) {
+        colsIndices = sourceController.checkedColsIndices();
+        if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {
             infoLabel.setText(message("SelectToHandle"));
             okButton.setDisable(true);
             return false;
         }
+        orderName = data2D.colName(orderCol);
         return ok;
     }
 
     public List<Integer> adjustedCols() {
         try {
             colsNames = sourceController.checkedColsNames();
-            String orderName = data2D.colName(orderCol);
-            if (colsNames.contains(orderName)) {
-                colsNames.remove(orderName);
+            if (!colsIndices.contains(orderCol)) {
+                colsIndices.add(orderCol);
+                colsNames.add(orderName);
             }
-            colsNames.add(0, orderName);
-
-            colsIndices = new ArrayList<>();
             handledColumns = new ArrayList<>();
-            for (String name : colsNames) {
-                int col = data2D.colOrder(name);
-                colsIndices.add(col);
+            for (int col : colsIndices) {
                 handledColumns.add(data2D.column(col));
             }
             if (showRowNumber()) {
@@ -153,7 +160,7 @@ public class Data2DSortController extends Data2DHandleController {
                 return false;
             }
             Data2DColumn column = data2D.getColumns().get(orderCol);
-            int index = showRowNumber() ? 1 : 0;
+            int index = colsNames.indexOf(orderName);
             boolean desc = descendCheck.isSelected();
             Collections.sort(data, new Comparator<List<String>>() {
                 @Override
@@ -175,25 +182,29 @@ public class Data2DSortController extends Data2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        try {
-            List<List<String>> rows = data2D.allRows(adjustedCols(), showRowNumber());
-            if (!sort(rows)) {
+        if (data2D instanceof DataTable) {
+            return ((DataTable) data2D).sort(colsIndices, orderName, descendCheck.isSelected(), showRowNumber());
+        } else {
+            try {
+                List<List<String>> rows = data2D.allRows(adjustedCols(), showRowNumber());
+                if (!sort(rows)) {
+                    return null;
+                }
+                DataFileCSV dataFileCSV = new DataFileCSV();
+                File file = dataFileCSV.tmpFile(colsNames, rows);
+
+                dataFileCSV.setFile(file).setCharset(Charset.forName("UTF-8"))
+                        .setDelimiter(",").setHasHeader(true)
+                        .setColsNumber(colsNames.size()).setRowsNumber(rows.size());
+                return dataFileCSV;
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e.toString());
                 return null;
             }
-            DataFileCSV dataFileCSV = new DataFileCSV();
-            File file = dataFileCSV.tmpFile(colsNames, rows);
-            dataFileCSV.setFile(file).setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(colsNames.size()).setRowsNumber(rows.size());
-            return dataFileCSV;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return null;
         }
-
     }
 
     @Override
