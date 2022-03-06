@@ -52,8 +52,8 @@ License:    Apache License Version 2.0
                                                         <Label fx:id="leftTimeLabel" layoutX="10.0" layoutY="10.0" text="%Time" />
                                                     </children>
                                                 </HBox>
-                                    <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
-                                       <children>
+                                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
+                                                    <children>
                                                         <Label text="%VoiceVolumn" />
                                                         <Slider fx:id="volumeSlider" prefWidth="100.0" value="100.0" />
                                                         <Label text="%Speed" />
@@ -122,22 +122,22 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </ToggleButton>
-                                          <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconPaneSize.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
+                                                        <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconPaneSize.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                         <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/Red/iconDoubleRight.png" />
                                                             </image>
                                                         </ImageView>
-                                       </children>
-                                    </FlowPane>
+                                                    </children>
+                                                </FlowPane>
                                             </children>
                                         </VBox>
                                     </children>
@@ -204,11 +204,11 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </children>
                                                                 </HBox>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                                   <children>
-                                                                      <fx:include fx:id="table" source="ControlMediaTable.fxml" />
-                                                   </children>
-                                                </VBox>
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                                    <children>
+                                                                        <fx:include fx:id="table" source="ControlMediaTable.fxml" /> 
+                                                                    </children>
+                                                                </VBox>
                                                             </children>
                                                         </VBox>
                                                     </content>

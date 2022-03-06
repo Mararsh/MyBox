@@ -27,7 +27,7 @@ import mara.mybox.db.data.QueryCondition.DataOperation;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -280,7 +280,7 @@ public class ControlDataQuery extends BaseController {
             List<Node> buttons = new ArrayList<>();
             List<ColumnDefinition> columns = dataController.viewDefinition.getColumns();
             for (ColumnDefinition column : columns) {
-                String name = column.getName();
+                String name = column.getColumnName();
                 Button button = new Button(name);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override

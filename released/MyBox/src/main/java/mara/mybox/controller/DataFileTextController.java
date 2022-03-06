@@ -5,8 +5,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
-import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFileText;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -33,10 +33,8 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     @Override
-    public void initValues() {
+    public void initData() {
         try {
-            super.initValues();
-
             setDataType(Data2D.Type.Texts);
             dataFileText = (DataFileText) dataController.data2D;
         } catch (Exception e) {

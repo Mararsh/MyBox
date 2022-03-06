@@ -38,8 +38,9 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -49,7 +50,6 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
@@ -597,7 +597,7 @@ public abstract class BaseMapController extends BaseController {
                 @Override
                 protected boolean handle() {
                     try {
-                        String format = FileNameTools.getFileSuffix(file);
+                        String format = FileNameTools.suffix(file.getName());
                         format = format == null || format.isBlank() ? "png" : format;
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
                         ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
@@ -646,7 +646,7 @@ public abstract class BaseMapController extends BaseController {
                 @Override
                 protected boolean handle() {
                     try {
-                        String subPath = FileNameTools.getFilePrefix(htmlFile.getName());
+                        String subPath = FileNameTools.prefix(htmlFile.getName());
                         String path = htmlFile.getParent() + "/" + subPath;
                         (new File(path)).mkdirs();
 

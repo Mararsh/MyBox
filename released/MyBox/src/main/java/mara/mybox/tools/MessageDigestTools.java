@@ -31,7 +31,7 @@ public class MessageDigestTools {
     }
 
     public static byte[] SHA256(BufferedImage image) {
-        return messageDigest(BufferedImageTools.bytes(image), "SHA-256");
+        return messageDigest(BufferedImageTools.bytes(image, "png"), "SHA-256");
     }
 
     public static byte[] SHA1(byte[] bytes) {
@@ -43,7 +43,7 @@ public class MessageDigestTools {
     }
 
     public static byte[] SHA1(BufferedImage image) {
-        return messageDigest(BufferedImageTools.bytes(image), "SHA-1");
+        return messageDigest(BufferedImageTools.bytes(image, "png"), "SHA-1");
     }
 
     public static void SignatureAlgorithms() {
@@ -69,7 +69,7 @@ public class MessageDigestTools {
     }
 
     public static byte[] MD5(BufferedImage image) {
-        return messageDigest(BufferedImageTools.bytes(image), "MD5");
+        return messageDigest(BufferedImageTools.bytes(image, "png"), "MD5");
     }
 
     // https://docs.oracle.com/javase/10/docs/specs/security/standard-names.html#messagedigest-algorithms

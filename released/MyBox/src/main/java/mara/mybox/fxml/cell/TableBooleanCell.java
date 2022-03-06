@@ -4,7 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 
 /**
  * @Author Mara

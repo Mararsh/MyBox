@@ -22,6 +22,7 @@ public class MenuImageViewController extends MenuImageBaseController {
 
     protected ImageView imageView;
     protected ImageViewerController imageViewerController;
+    protected ChangeListener<Boolean> selectListener;
 
     @FXML
     protected CheckBox handleSelectCheck;
@@ -56,7 +57,7 @@ public class MenuImageViewController extends MenuImageBaseController {
                             isSettingValues = false;
                         }
                     });
-                    imageController.handleSelectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    selectListener = new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                             if (isSettingValues) {
@@ -66,7 +67,8 @@ public class MenuImageViewController extends MenuImageBaseController {
                             handleSelectCheck.setSelected(newValue);
                             isSettingValues = false;
                         }
-                    });
+                    };
+                    imageController.handleSelectCheck.selectedProperty().addListener(selectListener);
                 }
             }
 
@@ -148,6 +150,20 @@ public class MenuImageViewController extends MenuImageBaseController {
     @Override
     public void nextAction() {
         imageViewerController.nextAction();
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (imageController != null) {
+                imageController.handleSelectCheck.selectedProperty().removeListener(selectListener);
+            }
+            selectListener = null;
+            imageViewerController = null;
+            imageView = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 

@@ -15,6 +15,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.FileBackup;
@@ -118,6 +119,9 @@ public class DataFactory {
         } else if (data instanceof BlobValue) {
             return new TableBlobValue();
 
+        } else if (data instanceof Data2DRow) {
+            return new TableData2D();
+
         }
         return null;
     }
@@ -201,6 +205,9 @@ public class DataFactory {
         } else if (data instanceof BlobValue) {
             return BlobValue.valid((BlobValue) data);
 
+        } else if (data instanceof Data2DRow) {
+            return Data2DRow.valid((Data2DRow) data);
+
         }
 
         return false;
@@ -281,6 +288,9 @@ public class DataFactory {
 
         } else if (data instanceof BlobValue) {
             return BlobValue.getValue((BlobValue) data, name);
+
+        } else if (data instanceof Data2DRow) {
+            return Data2DRow.getValue((Data2DRow) data, name);
 
         }
 
@@ -363,6 +373,9 @@ public class DataFactory {
         } else if (data instanceof BlobValue) {
             return BlobValue.setValue((BlobValue) data, name, value);
 
+        } else if (data instanceof Data2DRow) {
+            return Data2DRow.setValue((Data2DRow) data, name, value);
+
         }
         return false;
     }
@@ -382,10 +395,10 @@ public class DataFactory {
             String info = null;
             for (Object o : table.getColumns()) {
                 ColumnDefinition column = (ColumnDefinition) o;
-                if (columns != null && !columns.contains(column.getName())) {
+                if (columns != null && !columns.contains(column.getColumnName())) {
                     continue;
                 }
-                Object value = getColumnValue(data, column.getName());
+                Object value = getColumnValue(data, column.getColumnName());
                 String display = displayColumn(data, column, value);
                 if (display == null || display.isBlank()) {
                     continue;
@@ -495,7 +508,7 @@ public class DataFactory {
                     return DateTools.datetimeToString((Date) value);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, column.getName());
+            MyBoxLog.error(e, column.getColumnName());
         }
         return null;
     }
@@ -524,7 +537,7 @@ public class DataFactory {
             names.addAll(Arrays.asList(Languages.message("Name"), Languages.message("Value")));
             for (Object o : table.getColumns()) {
                 ColumnDefinition column = (ColumnDefinition) o;
-                Object value = getColumnValue(data, column.getName());
+                Object value = getColumnValue(data, column.getColumnName());
                 String html = htmlColumn(data, column, value);
                 if (html != null) {
                     List<String> row = new ArrayList<>();
@@ -561,7 +574,7 @@ public class DataFactory {
             List<String> names = new ArrayList<>();
             for (Object o : table.getColumns()) {
                 ColumnDefinition column = (ColumnDefinition) o;
-                if (columns != null && !columns.contains(column.getName())) {
+                if (columns != null && !columns.contains(column.getColumnName())) {
                     continue;
                 }
                 names.add(column.getLabel());
@@ -571,10 +584,10 @@ public class DataFactory {
                 List<String> row = new ArrayList<>();
                 for (Object o : table.getColumns()) {
                     ColumnDefinition column = (ColumnDefinition) o;
-                    if (columns != null && !columns.contains(column.getName())) {
+                    if (columns != null && !columns.contains(column.getColumnName())) {
                         continue;
                     }
-                    Object value = getColumnValue(data, column.getName());
+                    Object value = getColumnValue(data, column.getColumnName());
                     String display = displayColumn(data, column, value);
                     if (display == null || display.isBlank()) {
                         display = "";

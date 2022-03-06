@@ -12,11 +12,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import mara.mybox.data.FileInformation;
+import mara.mybox.data.FileInformation.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -31,7 +32,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
     protected RadioButton deleteRadio, trashRadio;
 
     public FilesRedundancyResultsController() {
-        baseTitle = Languages.message("HandleFilesRedundancy");
+        baseTitle = message("HandleFilesRedundancy");
     }
 
     public void checkSelection() {
@@ -80,7 +81,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
                 @Override
                 protected void whenSucceeded() {
-                    bottomLabel.setText(MessageFormat.format(Languages.message("RedundancyCheckValues"),
+                    bottomLabel.setText(MessageFormat.format(message("RedundancyCheckValues"),
                             filesTotal, FileTools.showFileSize(sizeTotal),
                             filesRundancy, FileTools.showFileSize(sizeRedundant),
                             filesSelected, FileTools.showFileSize(sizeSelected)));
@@ -95,7 +96,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
     public void loadRedundancy(Map<String, List<FileInformation>> data) {
         filesTreeView.setRoot(null);
         if (data == null || data.isEmpty()) {
-            popInformation(Languages.message("NoRedundancy"));
+            popInformation(message("NoRedundancy"));
             return;
         }
         synchronized (this) {
@@ -111,8 +112,8 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                     try {
                         redundancy = data;
                         FileInformation rootInfo = new FileInformation();
-                        rootInfo.setFileName(Languages.message("HandleFilesRedundancy"));
-                        rootInfo.setFileType("root");
+                        rootInfo.setData(message("HandleFilesRedundancy"));
+                        rootInfo.setFileType(FileType.Root);
                         rootItem = new TreeItem(rootInfo);
                         rootItem.setExpanded(true);
 
@@ -128,8 +129,8 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
                         for (String digest : redundancy.keySet()) {
                             FileInformation digestInfo = new FileInformation();
-                            digestInfo.setFileName(digest);
-                            digestInfo.setFileType("digest");
+                            digestInfo.setData(digest);
+                            digestInfo.setFileType(FileType.Digest);
                             TreeItem<FileInformation> digestItem = new TreeItem(digestInfo);
                             digestItem.setExpanded(true);
 
@@ -289,7 +290,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
                 @Override
                 protected void taskQuit() {
-                    bottomLabel.setText(Languages.message("TotalDeletedFiles") + ": " + deleted);
+                    bottomLabel.setText(message("TotalDeletedFiles") + ": " + deleted);
                     TreeItem rootItem = filesTreeView.getRoot();
                     List<TreeItem> digests = new ArrayList();
                     digests.addAll(rootItem.getChildren());

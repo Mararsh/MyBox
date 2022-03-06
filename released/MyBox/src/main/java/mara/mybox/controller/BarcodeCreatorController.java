@@ -21,10 +21,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.BarcodeTools;
 import mara.mybox.tools.BarcodeTools.BarcodeType;
@@ -812,7 +812,7 @@ public class BarcodeCreatorController extends ImageViewerController {
 
                     @Override
                     protected boolean handle() {
-                        String format = FileNameTools.getFileSuffix(file.getName());
+                        String format = FileNameTools.suffix(file.getName());
                         final BufferedImage bufferedImage
                                 = FxImageTools.toBufferedImage(imageView.getImage());
                         if (task == null || isCancelled()) {

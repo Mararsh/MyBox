@@ -32,7 +32,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.HtmlStyles;
+import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 

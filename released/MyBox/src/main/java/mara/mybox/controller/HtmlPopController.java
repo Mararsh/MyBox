@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
 public class HtmlPopController extends BaseWebViewController {
 
     protected WebView sourceWebView;
-    protected ChangeListener listener;
+    protected ChangeListener sourceListener;
 
     @FXML
     protected CheckBox refreshChangeCheck;
@@ -37,9 +37,23 @@ public class HtmlPopController extends BaseWebViewController {
     public void setStageStatus() {
     }
 
+    public void openWebView(String baseName, WebView sourceWebView, String address) {
+        try {
+            this.baseName = baseName;
+
+            this.sourceWebView = sourceWebView;
+            loadContents(address, WebViewTools.getHtml(sourceWebView));
+
+            setControls();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void setControls() {
         try {
-            listener = new ChangeListener<Worker.State>() {
+            sourceListener = new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
                     if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
@@ -59,29 +73,15 @@ public class HtmlPopController extends BaseWebViewController {
                         return;
                     }
                     if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
-                        sourceWebView.getEngine().getLoadWorker().stateProperty().addListener(listener);
+                        sourceWebView.getEngine().getLoadWorker().stateProperty().addListener(sourceListener);
                     } else {
-                        sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
+                        sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(sourceListener);
                     }
                 }
             });
             refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
 
             setAsPop(baseName);
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    public void openWebView(String baseName, WebView sourceWebView, String address) {
-        try {
-            this.baseName = baseName;
-
-            this.sourceWebView = sourceWebView;
-            loadContents(address, WebViewTools.getHtml(sourceWebView));
-
-            setControls();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -135,10 +135,10 @@ public class HtmlPopController extends BaseWebViewController {
     public void cleanPane() {
         try {
             if (sourceWebView != null) {
-                sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
-                sourceWebView = null;
+                sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(sourceListener);
             }
-            listener = null;
+            sourceListener = null;
+            sourceWebView = null;
         } catch (Exception e) {
         }
         super.cleanPane();
@@ -192,6 +192,21 @@ public class HtmlPopController extends BaseWebViewController {
             }
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
             controller.openAddress(parent.baseName, address);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static HtmlPopController openHtml(String html) {
+        try {
+            if (html == null) {
+                return null;
+            }
+            HtmlPopController controller = (HtmlPopController) WindowTools.openStage(Fxmls.HtmlPopFxml);
+            controller.openHtml("HtmlPop", html, null);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

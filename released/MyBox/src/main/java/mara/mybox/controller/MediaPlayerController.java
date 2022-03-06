@@ -45,9 +45,9 @@ import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -802,17 +802,21 @@ public class MediaPlayerController extends BaseController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                player.play();
-                StyleTools.setIconTooltips(playButton, "iconPause.png", message("Pause") + "\nF1 / s / S");
-                playButton.setUserData("Playing");
-                playButton.applyCss();
+                try {
+                    player.play();
+                    StyleTools.setIconTooltips(playButton, "iconPause.png", message("Pause") + "\nF1 / s / S");
+                    playButton.setUserData("Playing");
+                    playButton.applyCss();
 
-                duration = player.getMedia().getDuration();
-                updateStatus();
+                    duration = player.getMedia().getDuration();
+                    updateStatus();
 
-                currentMedia.readMediaInfo(player.getMedia());
-                NodeStyleTools.setTooltip(infoButton, currentMedia.getInfo());
-                tableController.tableData.set(currentIndex, currentMedia);
+                    currentMedia.readMediaInfo(player.getMedia());
+                    NodeStyleTools.setTooltip(infoButton, currentMedia.getInfo());
+                    tableController.tableData.set(currentIndex, currentMedia);
+                } catch (Exception e) {
+                    popMediaError(e.toString());
+                }
             }
         });
     }

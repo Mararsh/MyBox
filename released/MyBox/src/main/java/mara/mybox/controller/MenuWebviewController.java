@@ -17,12 +17,12 @@ import javafx.scene.web.WebView;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -39,6 +39,7 @@ public class MenuWebviewController extends MenuController {
     protected WebView webView;
     protected Element element;
     protected ControlWebView webViewController;
+    protected EventHandler<MouseEvent> mouseReleasedHandler;
 
     @FXML
     protected Button copyToMyBoxClipboardTextButton, copyToMyBoxClipboardHtmlButton,
@@ -70,12 +71,13 @@ public class MenuWebviewController extends MenuController {
                 return;
             }
 
-            webView.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            mouseReleasedHandler = new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     checkWebviewPane();
                 }
-            });
+            };
+            webView.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler);
 
             checkWebviewPane();
 
@@ -299,6 +301,20 @@ public class MenuWebviewController extends MenuController {
             return;
         }
         HtmlScriptController.open(webViewController);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (webView != null) {
+                webView.removeEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler);
+            }
+            mouseReleasedHandler = null;
+            webViewController = null;
+            webView = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

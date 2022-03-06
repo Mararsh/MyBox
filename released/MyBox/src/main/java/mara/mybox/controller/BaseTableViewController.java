@@ -23,6 +23,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -30,13 +32,14 @@ import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -435,6 +438,18 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
             items.add(menu);
 
+            menu = new MenuItem("Html", StyleTools.getIconImage("iconHtml.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                htmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Data"), StyleTools.getIconImage("iconData.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                dataAction();
+            });
+            items.add(menu);
+
             return items;
 
         } catch (Exception e) {
@@ -443,7 +458,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    public void resetView() {
+    public void resetView(boolean changed) {
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
@@ -451,7 +466,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         dataSize = 0;
         startRowOfCurrentPage = 0;
         dataSizeLoaded = false;
-        tableChanged(false);
+        tableChanged(changed);
         checkSelected();
         editNull();
         viewNull();
@@ -483,6 +498,14 @@ public abstract class BaseTableViewController<P> extends BaseController {
             if (rowsSelectionColumn != null) {
                 tableView.setEditable(true);
                 rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
+
+                rowsSelectionColumn.setPrefWidth(UserConfig.getInt("RowsSelectionColumnWidth", 100));
+                rowsSelectionColumn.widthProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
+                        UserConfig.setInt("RowsSelectionColumnWidth", nv.intValue());
+                    }
+                });
             }
 
         } catch (Exception e) {
@@ -599,10 +622,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
         if (deleteButton != null) {
-            deleteButton.setDisable(isEmpty);
+            deleteButton.setDisable(none);
         }
         if (deleteItemsButton != null) {
-            deleteItemsButton.setDisable(isEmpty);
+            deleteItemsButton.setDisable(none);
         }
         if (viewButton != null) {
             viewButton.setDisable(none);
@@ -808,10 +831,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        if (tableData == null || tableData.isEmpty()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearData"))) {
             return;
         }
         synchronized (this) {
@@ -819,7 +842,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 return;
             }
             task = new SingletonTask<Void>(this) {
-                int deletedCount = 0;
+                long deletedCount = 0;
 
                 @Override
                 protected boolean handle() {
@@ -839,7 +862,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    protected int clearData() {
+    protected long clearData() {
         int size = tableData.size();
         isSettingValues = true;
         tableData.clear();
@@ -848,19 +871,28 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     protected void afterClear() {
-        resetView();
-        afterDeletion();
+        resetView(false);
     }
 
     @FXML
     public void deleteRowsAction() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
-            clearAction();
+            deleteAllRows();
             return;
         }
         isSettingValues = true;
         tableData.removeAll(selected);
+        isSettingValues = false;
+        tableChanged(true);
+    }
+
+    public void deleteAllRows() {
+        isSettingValues = true;
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearTable"))) {
+            return;
+        }
+        tableData.clear();
         isSettingValues = false;
         tableChanged(true);
     }
@@ -930,82 +962,131 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void dataAction() {
-        try {
-            if (tableData.isEmpty()) {
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            int rowsSelectionColumnIndex = -1;
-            if (rowsSelectionColumn != null) {
-                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-            }
-            int colsNumber = tableView.getColumns().size();
-            for (int c = 0; c < colsNumber; c++) {
-                if (c == rowsSelectionColumnIndex) {
-                    continue;
-                }
-                names.add(tableView.getColumns().get(c).getText());
-            }
-            List<List<String>> data = new ArrayList<>();
-            for (int r = 0; r < tableData.size(); r++) {
-                List<String> row = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    if (c == rowsSelectionColumnIndex) {
-                        continue;
-                    }
-                    String s = null;
-                    try {
-                        s = tableView.getColumns().get(c).getCellData(r).toString();
-                    } catch (Exception e) {
-                    }
-                    row.add(s);
-                }
-                data.add(row);
-            }
-            DataFileCSVController.open(Data2DColumn.toColumns(names), data);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (tableData.isEmpty()) {
+            popError(message("NoData"));
+            return;
         }
+        SingletonTask dataTask = new SingletonTask<Void>(this) {
+            private List<String> names;
+            private List<List<String>> data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    names = new ArrayList<>();
+                    int rowsSelectionColumnIndex = -1;
+                    if (rowsSelectionColumn != null) {
+                        rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+                    }
+                    int colsNumber = tableView.getColumns().size();
+                    for (int c = 0; c < colsNumber; c++) {
+                        if (c == rowsSelectionColumnIndex) {
+                            continue;
+                        }
+                        names.add(tableView.getColumns().get(c).getText());
+                    }
+                    data = new ArrayList<>();
+                    for (int r = 0; r < tableData.size(); r++) {
+                        List<String> row = new ArrayList<>();
+                        for (int c = 0; c < colsNumber; c++) {
+                            if (c == rowsSelectionColumnIndex) {
+                                continue;
+                            }
+                            String s = null;
+                            try {
+                                s = tableView.getColumns().get(c).getCellData(r).toString();
+                            } catch (Exception e) {
+                            }
+                            row.add(s);
+                        }
+                        data.add(row);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                DataFileCSVController.open(Data2DColumn.toColumns(names), data);
+            }
+        };
+        start(dataTask, false, message("LoadingTableData"));
     }
 
     @FXML
     public void htmlAction() {
-        try {
-            if (tableData.isEmpty()) {
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            int rowsSelectionColumnIndex = -1;
-            if (rowsSelectionColumn != null) {
-                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-            }
-            int colsNumber = tableView.getColumns().size();
-            for (int c = 0; c < colsNumber; c++) {
-                if (c == rowsSelectionColumnIndex) {
-                    continue;
-                }
-                names.add(tableView.getColumns().get(c).getText());
-            }
-            StringTable table = new StringTable(names, baseTitle);
-            for (int r = 0; r < tableData.size(); r++) {
-                List<String> row = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    if (c == rowsSelectionColumnIndex) {
-                        continue;
-                    }
-                    String s = null;
-                    try {
-                        s = tableView.getColumns().get(c).getCellData(r).toString();
-                    } catch (Exception e) {
-                    }
-                    row.add(s);
-                }
-                table.add(row);
-            }
-            table.editHtml();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (tableData.isEmpty()) {
+            popError(message("NoData"));
+            return;
         }
+        SingletonTask htmlTask = new SingletonTask<Void>(this) {
+            private StringTable table;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    List<String> names = new ArrayList<>();
+                    int rowsSelectionColumnIndex = -1;
+                    if (rowsSelectionColumn != null) {
+                        rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+                    }
+                    int colsNumber = tableView.getColumns().size();
+                    for (int c = 0; c < colsNumber; c++) {
+                        if (c == rowsSelectionColumnIndex) {
+                            continue;
+                        }
+                        names.add(tableView.getColumns().get(c).getText());
+                    }
+                    table = new StringTable(names, baseTitle);
+                    for (int r = 0; r < tableData.size(); r++) {
+                        List<String> row = new ArrayList<>();
+                        for (int c = 0; c < colsNumber; c++) {
+                            if (c == rowsSelectionColumnIndex) {
+                                continue;
+                            }
+                            String s = null;
+                            try {
+                                Object cellData = tableView.getColumns().get(c).getCellData(r);
+                                Image image = null;
+                                int width = 20;
+                                if (cellData instanceof ImageView) {
+                                    image = ((ImageView) cellData).getImage();
+                                    width = (int) ((ImageView) cellData).getFitWidth();
+                                } else if (cellData instanceof Image) {
+                                    image = (Image) cellData;
+                                    width = (int) image.getWidth();
+                                }
+                                if (image != null) {
+                                    String base64 = FxImageTools.base64(image, "png");
+                                    if (base64 != null) {
+                                        s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
+                                    }
+                                }
+                                if (s == null) {
+                                    s = cellData.toString();
+                                }
+                            } catch (Exception e) {
+                            }
+                            row.add(s);
+                        }
+                        table.add(row);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                table.editHtml();
+            }
+        };
+        start(htmlTask, false, message("LoadingTableData"));
     }
 
     /*
@@ -1020,31 +1101,31 @@ public abstract class BaseTableViewController<P> extends BaseController {
             if (pageSelector == null) {
                 return;
             }
-            pageSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkPageSelector();
-                    });
+            pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> o, String ov, String nv) {
+                    checkPageSelector();
+                }
+            });
 
             pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
                     "500", "1000", "2000", "5000", "10000", "20000", "50000"));
-
             pageSizeSelector.setValue(pageSize + "");
-            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue.trim());
-                            if (v <= 0) {
-                                pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                            } else {
-                                pageSizeChanged(v);
-                            }
-                        } catch (Exception e) {
+            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> o, String ov, String nv) {
+                    try {
+                        int v = Integer.parseInt(nv.trim());
+                        if (v <= 0) {
                             pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                        } else {
+                            pageSizeChanged(v);
                         }
-                    });
+                    } catch (Exception e) {
+                        pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

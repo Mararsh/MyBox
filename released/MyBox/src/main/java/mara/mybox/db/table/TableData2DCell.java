@@ -24,9 +24,9 @@ public class TableData2DCell extends BaseTable<Data2DCell> {
     }
 
     public final TableData2DCell defineColumns() {
-        addColumn(new ColumnDefinition("dceid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("dceid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("dcdid", ColumnType.Long, true)
-                .setForeignName("Data2D_Cell_fk").setForeignTable("Data2D_Definition").setForeignColumn("d2did")
+                .setReferName("Data2D_Cell_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade));
         addColumn(new ColumnDefinition("row", ColumnType.Long, true).setMinValue(0));
         addColumn(new ColumnDefinition("col", ColumnType.Long, true).setMinValue(0));

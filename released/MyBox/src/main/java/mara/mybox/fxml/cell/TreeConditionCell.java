@@ -9,7 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import mara.mybox.fxml.ConditionNode;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 
 /**

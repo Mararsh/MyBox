@@ -322,4 +322,16 @@ public class ControlFileSelecter extends BaseController {
         }
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            notify = null;
+            valid = null;
+            file = null;
+            defaultFile = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
 }

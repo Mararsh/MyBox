@@ -16,8 +16,8 @@ import javafx.stage.Window;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -67,6 +67,8 @@ public class MenuBytesEditController extends MenuTextEditController {
                     @Override
                     public void handle(ActionEvent event) {
                         textInput.insertText(textInput.getSelection().getStart(), value);
+                        parentController.getMyWindow().requestFocus();
+                        textInput.requestFocus();
                     }
                 });
                 NodeStyleTools.setTooltip(button, value);
@@ -84,6 +86,8 @@ public class MenuBytesEditController extends MenuTextEditController {
                     @Override
                     public void handle(ActionEvent event) {
                         textInput.insertText(textInput.getSelection().getStart(), value);
+                        parentController.getMyWindow().requestFocus();
+                        textInput.requestFocus();
                     }
                 });
                 NodeStyleTools.setTooltip(button, value);
@@ -101,6 +105,8 @@ public class MenuBytesEditController extends MenuTextEditController {
                     @Override
                     public void handle(ActionEvent event) {
                         textInput.insertText(textInput.getSelection().getStart(), value);
+                        parentController.getMyWindow().requestFocus();
+                        textInput.requestFocus();
                     }
                 });
                 NodeStyleTools.setTooltip(button, value);
@@ -129,6 +135,8 @@ public class MenuBytesEditController extends MenuTextEditController {
                     @Override
                     public void handle(ActionEvent event) {
                         textInput.insertText(textInput.getSelection().getStart(), value);
+                        parentController.getMyWindow().requestFocus();
+                        textInput.requestFocus();
                     }
                 });
                 NodeStyleTools.setTooltip(button, value);

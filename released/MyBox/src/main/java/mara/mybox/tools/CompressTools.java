@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import mara.mybox.controller.BaseTaskController;
 import mara.mybox.data.FileInformation;
+import mara.mybox.data.FileInformation.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -126,11 +128,11 @@ public class CompressTools {
         return archiveExtension().keySet();
     }
 
-    public static String decompressedName(File srcFile) {
-        return decompressedName(srcFile, detectCompressor(srcFile));
+    public static String decompressedName(BaseTaskController taskController, File srcFile) {
+        return decompressedName(taskController, srcFile, detectCompressor(taskController, srcFile));
     }
 
-    public static String decompressedName(File srcFile, String compressor) {
+    public static String decompressedName(BaseTaskController taskController, File srcFile, String compressor) {
         try {
             if (srcFile == null || compressor == null) {
                 return null;
@@ -146,19 +148,20 @@ public class CompressTools {
                 return fname + "." + ext;
             }
         } catch (Exception e) {
+            taskController.updateLogs(e.toString());
             return null;
         }
     }
 
-    public static String detectCompressor(File srcFile) {
+    public static String detectCompressor(BaseTaskController taskController, File srcFile) {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
-        return detectCompressor(srcFile, compressorByExtension(ext));
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        return detectCompressor(taskController, srcFile, compressorByExtension(ext));
     }
 
-    public static String detectCompressor(File srcFile, String extIn) {
+    public static String detectCompressor(BaseTaskController taskController, File srcFile, String extIn) {
         if (srcFile == null || "none".equals(extIn)) {
             return null;
         }
@@ -170,18 +173,18 @@ public class CompressTools {
                 try ( CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
                     compressor = ext;
                 } catch (Exception e) {
-                    compressor = detectCompressor(fileIn, ext);
+                    compressor = detectCompressor(taskController, fileIn, ext);
                 }
             } else {
-                compressor = detectCompressor(fileIn, ext);
+                compressor = detectCompressor(taskController, fileIn, ext);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e, srcFile.getAbsolutePath());
+            taskController.updateLogs(e.toString());
         }
         return compressor;
     }
 
-    public static String detectCompressor(BufferedInputStream fileIn, String extIn) {
+    public static String detectCompressor(BaseTaskController taskController, BufferedInputStream fileIn, String extIn) {
         String compressor = null;
         try {
             compressor = CompressorStreamFactory.detect(fileIn);
@@ -190,19 +193,21 @@ public class CompressTools {
                 try ( CompressorInputStream in = new BlockLZ4CompressorInputStream(fileIn)) {
                     compressor = "lz4-block";
                 } catch (Exception e) {
-                    MyBoxLog.debug(e, extIn);
+                    taskController.updateLogs(message("NotCompressFormat"));
                 }
+            } else {
+                taskController.updateLogs(message("NotCompressFormat"));
             }
         }
         return compressor;
     }
 
-    public static Map<String, Object> decompress(File srcFile, File targetFile) {
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
-        return CompressTools.decompress(srcFile, CompressTools.compressorByExtension(ext), targetFile);
+    public static Map<String, Object> decompress(BaseTaskController taskController, File srcFile, File targetFile) {
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        return CompressTools.decompress(taskController, srcFile, CompressTools.compressorByExtension(ext), targetFile);
     }
 
-    public static Map<String, Object> decompress(File srcFile, String extIn, File targetFile) {
+    public static Map<String, Object> decompress(BaseTaskController taskController, File srcFile, String extIn, File targetFile) {
         Map<String, Object> decompress = null;
         try {
             File decompressedFile = null;
@@ -213,42 +218,42 @@ public class CompressTools {
                 CompressorStreamFactory cFactory = new CompressorStreamFactory();
                 if (ext != null && cFactory.getInputStreamCompressorNames().contains(ext)) {
                     try ( CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
-                        decompressedFile = decompress(in, targetFile);
+                        decompressedFile = decompress(taskController, in, targetFile);
                         if (decompressedFile != null) {
                             compressor = ext;
                             detect = false;
                         }
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+//                        taskController.updateLogs(e.toString());
                         try {
                             String defectValue = CompressorStreamFactory.detect(fileIn);
                             try ( CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
-                                decompressedFile = decompress(in, targetFile);
+                                decompressedFile = decompress(taskController, in, targetFile);
                                 if (decompressedFile != null) {
                                     compressor = defectValue;
                                     detect = true;
                                 }
                             } catch (Exception ex) {
-                                MyBoxLog.debug(ex.toString());
+//                                taskController.updateLogs(ex.toString());
                             }
                         } catch (Exception ex) {
-                            MyBoxLog.debug(ex.toString());
+//                            taskController.updateLogs(ex.toString());
                         }
                     }
                 } else {
                     try {
                         String defectValue = CompressorStreamFactory.detect(fileIn);
                         try ( CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
-                            decompressedFile = decompress(in, targetFile);
+                            decompressedFile = decompress(taskController, in, targetFile);
                             if (decompressedFile != null) {
                                 compressor = defectValue;
                                 detect = true;
                             }
                         } catch (Exception ex) {
-                            MyBoxLog.debug(ex.toString());
+//                            taskController.updateLogs(ex.toString());
                         }
                     } catch (Exception ex) {
-                        MyBoxLog.debug(ex.toString());
+//                        taskController.updateLogs(ex.toString());
                     }
                 }
             }
@@ -257,14 +262,16 @@ public class CompressTools {
                 decompress.put("compressor", compressor);
                 decompress.put("decompressedFile", decompressedFile);
                 decompress.put("detect", detect);
+            } else {
+                taskController.updateLogs(message("NotCompressFormat"));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            taskController.updateLogs(e.toString());
         }
         return decompress;
     }
 
-    public static File decompress(CompressorInputStream compressorInputStream, File targetFile) {
+    public static File decompress(BaseTaskController taskController, CompressorInputStream compressorInputStream, File targetFile) {
         if (compressorInputStream == null) {
             return null;
         }
@@ -272,6 +279,7 @@ public class CompressTools {
         try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             IOUtils.copy(compressorInputStream, out);
         } catch (Exception e) {
+            taskController.updateLogs(e.toString());
             return null;
         }
         if (targetFile == null) {
@@ -284,15 +292,15 @@ public class CompressTools {
 
     }
 
-    public static String detectArchiver(File srcFile) {
+    public static String detectArchiver(BaseTaskController taskController, File srcFile) {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
-        return detectArchiver(srcFile, ext);
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        return detectArchiver(taskController, srcFile, ext);
     }
 
-    public static String detectArchiver(File srcFile, String extIn) {
+    public static String detectArchiver(BaseTaskController taskController, File srcFile, String extIn) {
         if (srcFile == null || "none".equals(extIn)) {
             return null;
         }
@@ -307,31 +315,31 @@ public class CompressTools {
                     try {
                         archiver = ArchiveStreamFactory.detect(fileIn);
                     } catch (Exception ex) {
-                        MyBoxLog.debug(ex, extIn);
+                        taskController.updateLogs(ex.toString());
                     }
                 }
             } else {
                 try {
                     archiver = ArchiveStreamFactory.detect(fileIn);
                 } catch (Exception ex) {
-                    MyBoxLog.debug(ex, extIn);
+                    taskController.updateLogs(ex.toString());
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e, extIn);
+            taskController.updateLogs(e.toString());
         }
         return archiver;
     }
 
-    public static Map<String, Object> readEntries(File srcFile, String encoding) {
+    public static Map<String, Object> readEntries(BaseTaskController taskController, File srcFile, String encoding) {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.getFileSuffix(srcFile).toLowerCase();
-        return readEntries(srcFile, ext, encoding);
+        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        return readEntries(taskController, srcFile, ext, encoding);
     }
 
-    public static Map<String, Object> readEntries(File srcFile, String extIn, String encodingIn) {
+    public static Map<String, Object> readEntries(BaseTaskController taskController, File srcFile, String extIn, String encodingIn) {
         Map<String, Object> unarchive = new HashMap<>();
         try {
             String encoding = (encodingIn != null) ? encodingIn
@@ -341,9 +349,9 @@ public class CompressTools {
             }
             String ext = extIn;
             if (ArchiveStreamFactory.SEVEN_Z.equals(ext)) {
-                return readEntries7z(srcFile, encoding);
+                return readEntries7z(taskController, srcFile, encoding);
             } else if (ArchiveStreamFactory.ZIP.equals(ext)) {
-                return readEntriesZip(srcFile, encoding);
+                return readEntriesZip(taskController, srcFile, encoding);
             }
             try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile));) {
                 if (ext == null) {
@@ -354,33 +362,36 @@ public class CompressTools {
                     ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
                     if (aFactory.getInputStreamArchiveNames().contains(ext)) {
                         try ( ArchiveInputStream in = aFactory.createArchiveInputStream(ext, fileIn, encoding)) {
-                            List<FileInformation> entires = readEntries(in);
+                            List<FileInformation> entires = readEntries(taskController, in);
                             if (entires != null && !entires.isEmpty()) {
                                 unarchive.put("archiver", ext);
                                 unarchive.put("entries", entires);
                             }
                         } catch (Exception e) {
                             unarchive.put("error", e.toString());
+                            taskController.updateLogs(e.toString());
                         }
                     }
                 }
             } catch (Exception e) {
                 unarchive.put("error", e.toString());
+                taskController.updateLogs(e.toString());
             }
             if (ext != null && unarchive.get("entries") == null) {
                 if (ArchiveStreamFactory.SEVEN_Z.equals(ext)) {
-                    return readEntries7z(srcFile, encoding);
+                    return readEntries7z(taskController, srcFile, encoding);
                 } else if (ArchiveStreamFactory.ZIP.equals(ext)) {
-                    return readEntriesZip(srcFile, encoding);
+                    return readEntriesZip(taskController, srcFile, encoding);
                 }
             }
         } catch (Exception e) {
             unarchive.put("error", e.toString());
+            taskController.updateLogs(e.toString());
         }
         return unarchive;
     }
 
-    public static List<FileInformation> readEntries(ArchiveInputStream archiveInputStream) {
+    public static List<FileInformation> readEntries(BaseTaskController taskController, ArchiveInputStream archiveInputStream) {
         List<FileInformation> entries = new ArrayList();
         try {
             if (archiveInputStream == null) {
@@ -394,10 +405,10 @@ public class CompressTools {
                 }
                 try {
                     FileInformation file = new FileInformation();
-                    file.setFileName(entry.getName());
+                    file.setData(entry.getName());
                     file.setModifyTime(entry.getLastModifiedDate().getTime());
                     file.setFileSize(entry.getSize());
-                    file.setFileType(entry.isDirectory() ? "dir" : "file");
+                    file.setFileType(entry.isDirectory() ? FileType.Directory : FileType.File);
                     entries.add(file);
                 } catch (Exception e) {
                     MyBoxLog.debug(e.toString());
@@ -409,7 +420,7 @@ public class CompressTools {
         return entries;
     }
 
-    public static Map<String, Object> readEntriesZip(File srcFile, String encoding) {
+    public static Map<String, Object> readEntriesZip(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
         try ( ZipFile zipFile = new ZipFile(srcFile, encoding)) {
             List<FileInformation> fileEntries = new ArrayList();
@@ -417,10 +428,10 @@ public class CompressTools {
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
                 FileInformation file = new FileInformation();
-                file.setFileName(entry.getName());
+                file.setData(entry.getName());
                 file.setModifyTime(entry.getLastModifiedDate().getTime());
                 file.setFileSize(entry.getSize());
-                file.setFileType(entry.isDirectory() ? "dir" : "file");
+                file.setFileType(entry.isDirectory() ? FileType.Directory : FileType.File);
                 fileEntries.add(file);
             }
             unarchive.put("archiver", ArchiveStreamFactory.ZIP);
@@ -431,17 +442,17 @@ public class CompressTools {
         return unarchive;
     }
 
-    public static Map<String, Object> readEntries7z(File srcFile, String encoding) {
+    public static Map<String, Object> readEntries7z(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
         try ( SevenZFile sevenZFile = new SevenZFile(srcFile)) {
             SevenZArchiveEntry entry;
             List<FileInformation> entries = new ArrayList();
             while ((entry = sevenZFile.getNextEntry()) != null) {
                 FileInformation file = new FileInformation();
-                file.setFileName(entry.getName());
-//                file.setModifyTime(entry.getLastModifiedDate().getTime());
-//                file.setFileSize(entry.getSize());
-//                file.setFileType(entry.isDirectory() ? "dir" : "file");
+                file.setData(entry.getName());
+                file.setModifyTime(entry.getLastModifiedDate().getTime());
+                file.setFileSize(entry.getSize());
+                file.setFileType(entry.isDirectory() ? FileType.Directory : FileType.File);
                 entries.add(file);
             }
             unarchive.put("archiver", ArchiveStreamFactory.SEVEN_Z);

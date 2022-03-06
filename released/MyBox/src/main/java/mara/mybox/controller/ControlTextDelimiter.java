@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
 public class ControlTextDelimiter extends BaseController {
 
     protected String delimiterName;
-    protected final SimpleBooleanProperty changedNotify;
+    protected SimpleBooleanProperty changedNotify;
 
     @FXML
     protected ToggleGroup delimiterGroup;
@@ -257,6 +257,16 @@ public class ControlTextDelimiter extends BaseController {
     @FXML
     public void popRegexExample(MouseEvent mouseEvent) {
         PopTools.popRegexExample(this, delimiterInput, mouseEvent);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            changedNotify = null;
+            delimiterName = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

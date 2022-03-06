@@ -480,6 +480,8 @@ public class PopTools {
                 menu = new MenuItem(value);
                 menu.setOnAction((ActionEvent event) -> {
                     input.setText(value);
+                    popMenu.requestFocus();
+                    input.requestFocus();
                 });
                 popMenu.getItems().add(menu);
             }
@@ -509,6 +511,8 @@ public class PopTools {
                 @Override
                 public void handle(ActionEvent event) {
                     input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
                 }
             });
             controller.addNode(clearButton);
@@ -549,6 +553,7 @@ public class PopTools {
                     @Override
                     public void handle(ActionEvent event) {
                         input.replaceText(input.getSelection(), vv[0]);
+                        controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
                 });
@@ -606,6 +611,7 @@ public class PopTools {
                         } else {
                             input.setText(value);
                         }
+                        controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
                 });
@@ -629,6 +635,8 @@ public class PopTools {
                 @Override
                 public void handle(ActionEvent event) {
                     input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
                 }
             });
             setButtons.add(clearButton);
@@ -662,6 +670,7 @@ public class PopTools {
                     @Override
                     public void handle(ActionEvent event) {
                         input.replaceText(input.getSelection(), value);
+                        controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
                 });
@@ -697,6 +706,7 @@ public class PopTools {
                     @Override
                     public void handle(ActionEvent event) {
                         input.replaceText(input.getSelection(), "\n");
+                        controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
                 });
@@ -707,6 +717,8 @@ public class PopTools {
                 @Override
                 public void handle(ActionEvent event) {
                     input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
                 }
             });
             topButtons.add(clearButton);
@@ -769,6 +781,7 @@ public class PopTools {
                     @Override
                     public void handle(ActionEvent event) {
                         input.replaceText(input.getSelection(), value);
+                        controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
                 });
@@ -799,6 +812,7 @@ public class PopTools {
                     @Override
                     public void handle(ActionEvent event) {
                         input.replaceText(input.getSelection(), name);
+                        controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
                 });

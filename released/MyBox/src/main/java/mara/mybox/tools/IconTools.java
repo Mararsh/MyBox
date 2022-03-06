@@ -103,10 +103,10 @@ public class IconTools {
             if (iconFile == null || !iconFile.exists()) {
                 return null;
             }
-            String suffix = FileNameTools.getFileSuffix(address);
+            String suffix = FileNameTools.suffix(address);
             File actualTarget = targetFile;
             if (suffix != null && !suffix.isBlank()) {
-                actualTarget = new File(FileNameTools.replaceFileSuffix(targetFile.getAbsolutePath(), suffix));
+                actualTarget = new File(FileNameTools.replaceSuffix(targetFile.getAbsolutePath(), suffix));
             }
             FileTools.rename(iconFile, actualTarget);
             return actualTarget;

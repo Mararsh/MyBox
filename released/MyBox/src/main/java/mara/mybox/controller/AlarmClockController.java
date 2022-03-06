@@ -25,7 +25,7 @@ import javafx.stage.Window;
 import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
@@ -91,8 +91,7 @@ public class AlarmClockController extends BaseController {
 
             startInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
                     Date d = DateTools.stringToDatetime(startInput.getText());
                     if (d == null) {
                         startInput.setStyle(UserConfig.badStyle());

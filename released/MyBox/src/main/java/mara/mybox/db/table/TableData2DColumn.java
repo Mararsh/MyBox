@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
-import mara.mybox.data.Data2D;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -35,9 +35,9 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
     }
 
     public final TableData2DColumn defineColumns() {
-        addColumn(new Data2DColumn("d2cid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new Data2DColumn("d2cid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new Data2DColumn("d2id", ColumnType.Long, true)
-                .setForeignName("Data2D_Column_d2id_fk").setForeignTable("Data2D_Definition").setForeignColumn("d2did")
+                .setReferName("Data2D_Column_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(Data2DColumn.OnDelete.Cascade));
         addColumn(new Data2DColumn("column_type", ColumnType.Short, true));
         addColumn(new Data2DColumn("column_name", ColumnType.String, true).setLength(StringMaxLength));
@@ -46,8 +46,8 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("width", ColumnType.Integer));
         addColumn(new Data2DColumn("color", ColumnType.Color).setLength(16));
         addColumn(new Data2DColumn("is_primary", ColumnType.Boolean));
+        addColumn(new Data2DColumn("is_auto", ColumnType.Boolean));
         addColumn(new Data2DColumn("not_null", ColumnType.Boolean));
-        addColumn(new Data2DColumn("is_id", ColumnType.Boolean));
         addColumn(new Data2DColumn("editable", ColumnType.Boolean));
         addColumn(new Data2DColumn("on_delete", ColumnType.Short));
         addColumn(new Data2DColumn("on_update", ColumnType.Short));
@@ -234,7 +234,6 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
                 }
             }
             conn.commit();
-            existed = null;
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);
                 column.setD2id(d2id);

@@ -19,7 +19,7 @@ import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Notebook;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.value.Languages;
@@ -165,7 +165,7 @@ public abstract class NotesController_Notes extends NotesController_Tags {
     }
 
     @Override
-    protected int clearData() {
+    protected long clearData() {
         if (queryConditions != null) {
             return tableNote.deleteCondition(queryConditions);
 

@@ -32,12 +32,12 @@ public class TableWebFavorite extends BaseTable<WebFavorite> {
     }
 
     public final TableWebFavorite defineColumns() {
-        addColumn(new ColumnDefinition("faid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("faid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("address", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("icon", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("owner", ColumnType.Long)
-                .setForeignName("Web_Favorite_owner_fk").setForeignTable("Tree").setForeignColumn("nodeid")
+                .setReferName("Web_Favorite_owner_fk").setReferTable("Tree").setReferColumn("nodeid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;

@@ -15,8 +15,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
-import mara.mybox.fxml.StyleData;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleData;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.TextClipboardMonitor;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.Languages.getBundle;
@@ -45,7 +45,8 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
-            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs, isTesting;
+            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
+            isTesting, handlingExit;
     public static StyleData.StyleColor ControlColor;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
@@ -80,16 +81,12 @@ public class AppVariables {
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {
 
-                private boolean handling = false;
-
                 @Override
                 public void run() {
-                    if (handling) {
+                    if (handlingExit) {
                         return;
                     }
-                    handling = true;
                     WindowTools.checkExit();
-                    handling = false;
                 }
             }, 3000);
 

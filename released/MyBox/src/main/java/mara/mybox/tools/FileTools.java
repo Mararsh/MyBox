@@ -58,7 +58,7 @@ public class FileTools {
         if (file == null || !file.isFile()) {
             return false;
         }
-        String suffix = FileNameTools.getFileSuffix(file.getName()).toLowerCase();
+        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
         return FileExtensions.SupportedImages.contains(suffix);
     }
 

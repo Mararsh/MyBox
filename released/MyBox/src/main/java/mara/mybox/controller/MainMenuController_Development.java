@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import com.sun.management.OperatingSystemMXBean;
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,6 +19,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -278,13 +280,31 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
-    protected void MyBoxData(ActionEvent event) {
-        loadScene(Fxmls.MyBoxDataFxml);
+    protected void MyBoxTables(ActionEvent event) {
+        loadScene(Fxmls.MyBoxTablesFxml);
     }
 
     @FXML
     protected void runSystemCommand(ActionEvent event) {
         loadScene(Fxmls.RunSystemCommandFxml);
+    }
+
+    @FXML
+    protected void JConsole(ActionEvent event) {
+        try {
+            String cmd = System.getProperty("java.home") + File.separator + "bin" + File.separator + "jconsole";
+            if (SystemTools.isWindows()) {
+                cmd += ".exe";
+            }
+            new ProcessBuilder(cmd).start();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    protected void RunJdkCommand(ActionEvent event) {
+        loadScene(Fxmls.RunJdkCommandFxml);
     }
 
     @FXML
@@ -307,4 +327,5 @@ public abstract class MainMenuController_Development extends MainMenuController_
     protected void messageAuthor(ActionEvent event) {
         openStage(Fxmls.MessageAuthorFxml);
     }
+
 }

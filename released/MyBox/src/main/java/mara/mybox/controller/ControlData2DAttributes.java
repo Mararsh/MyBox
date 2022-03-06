@@ -9,8 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFileExcel;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -132,13 +132,6 @@ public class ControlData2DAttributes extends BaseController {
             tableData2DDefinition = dataController.tableData2DDefinition;
 
             dataController.tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    updateInfo();
-                }
-            });
-
-            dataController.tableController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     updateInfo();

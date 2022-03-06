@@ -8,10 +8,8 @@ import mara.mybox.data.ProcessParameters;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
@@ -119,7 +117,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.currentTargetPath = targetPath;
                 if (currentParameters.targetSubDir) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
-                            + FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName()));
+                            + FileNameTools.prefix(currentParameters.currentSourceFile.getName()));
                     if (!currentParameters.currentTargetPath.exists()) {
                         currentParameters.currentTargetPath.mkdirs();
                     }

@@ -200,7 +200,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             currentCase = tableData.get(currentIndex);
             currentCase.setStatus(Status.Testing);
             tableData.set(currentIndex, currentCase);
-            tableView.scrollTo(currentIndex);
+            tableView.scrollTo(currentCase);
             runCurrentCase();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -50,10 +50,10 @@ import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
@@ -64,6 +64,7 @@ import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
@@ -77,6 +78,7 @@ public class ControlWebView extends BaseController {
 
     protected WebEngine webEngine;
     protected double linkX, linkY, scrollTop, scrollLeft;
+    protected ScrollType scrollType;
     protected float zoomScale;
     protected String address, style, defaultStyle;
     protected Charset charset;
@@ -92,6 +94,10 @@ public class ControlWebView extends BaseController {
     protected WebView webView;
     @FXML
     protected Label webViewLabel;
+
+    public enum ScrollType {
+        Top, Bottom, Last
+    }
 
     public ControlWebView() {
         linkX = linkY = -1;
@@ -116,11 +122,16 @@ public class ControlWebView extends BaseController {
     }
 
     public void setParent(BaseController parent) {
+        setParent(parent, ScrollType.Last);
+    }
+
+    public void setParent(BaseController parent, ScrollType scrollType) {
         if (parent == null) {
             return;
         }
         this.parentController = parent;
         this.baseName = parent.baseName;
+        this.scrollType = scrollType;
     }
 
     @Override
@@ -212,13 +223,16 @@ public class ControlWebView extends BaseController {
                             return;
                         }
 //                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
-                        if (href != null && ("click".equals(domEventType) || "contextmenu".equals(domEventType))) {
+                        if (href != null) {
                             String target = element.getAttribute("target");
-                            if (target != null && !target.equalsIgnoreCase("_blank")) {
-                                webEngine.executeScript("if ( window.frames." + target + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
+                            if ("click".equals(domEventType) && target != null && !target.equalsIgnoreCase("_blank")) {
+                                webEngine.executeScript("if ( window.frames." + target
+                                        + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
                                 webEngine.executeScript("window.frames." + target + ".document.onreadystatechange = "
-                                        + "function(){ if ( window.frames." + target + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
-                            } else {
+                                        + "function(){ if ( window.frames." + target
+                                        + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
+                            } else if ("contextmenu".equals(domEventType)
+                                    || ("click".equals(domEventType) && UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true))) {
                                 ev.preventDefault();
                                 timer = new Timer();
                                 timer.schedule(new TimerTask() {
@@ -229,6 +243,8 @@ public class ControlWebView extends BaseController {
                                         });
                                     }
                                 }, 100);
+                            } else if ("click".equals(domEventType)) {
+                                WebBrowserController.oneOpen(finalAddress(element), true);
                             }
                         } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
                             ev.preventDefault();
@@ -462,18 +478,34 @@ public class ControlWebView extends BaseController {
         try {
             String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
             setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
-            pageLoadedNotify.set(!pageLoadedNotify.get());
             setWebViewLabel(message("Loaded"));
 
-            webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
-            if (!(this instanceof ControlHtmlEditor)) {
-                webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+            if (null == scrollType) {
+                webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+            } else {
+                switch (scrollType) {
+                    case Bottom:
+                        webEngine.executeScript("window.scrollTo(0, document.documentElement.scrollHeight || document.body.scrollHeight);");
+                        break;
+                    case Top:
+                        webEngine.executeScript("window.scrollTo(0, 0);");
+                        break;
+                    default:
+                        webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+                        break;
+                }
             }
-
+            if (!(this instanceof ControlHtmlEditor)) {
+                try {
+                    webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+                } catch (Exception e) {
+                }
+            }
             Document doc = webEngine.getDocument();
             charset = HtmlReadTools.charset(doc);
             framesDoc.clear();
             addDocListener(doc);
+            pageLoadedNotify.set(!pageLoadedNotify.get());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -543,6 +575,32 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public String finalAddress(Element element) {
+        if (element == null) {
+            return null;
+        }
+        String tag = element.getTagName();
+        if (tag == null) {
+            return null;
+        }
+        String href = null;
+        if (tag.equalsIgnoreCase("a")) {
+            href = element.getAttribute("href");
+        } else if (tag.equalsIgnoreCase("img")) {
+            href = element.getAttribute("src");
+        }
+        if (href == null) {
+            return null;
+        }
+        String linkAddress;
+        try {
+            linkAddress = new URL(new URL(element.getBaseURI()), href).toString();
+        } catch (Exception e) {
+            linkAddress = href;
+        }
+        return URLDecoder.decode(linkAddress, charset);
+    }
+
     public void popLinkMenu(Element element) {
         if (linkX < 0 || linkY < 0 || element == null) {
             return;
@@ -580,6 +638,16 @@ public class ControlWebView extends BaseController {
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
+
+        CheckMenuItem clickMenu = new CheckMenuItem(message("PopMenuWhenClickLink"), StyleTools.getIconImage("iconMenu.png"));
+        clickMenu.setSelected(UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true));
+        clickMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("WebViewPopMenuWhenClickLink", clickMenu.isSelected());
+            }
+        });
+        items.add(clickMenu);
 
         menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconQuery.png"));
         menu.setOnAction((ActionEvent event) -> {
@@ -817,11 +885,93 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public List<MenuItem> operationsMenu() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            int hisSize = (int) webEngine.executeScript("window.history.length;");
+            menu = new MenuItem(message("Backward"), StyleTools.getIconImage("iconPrevious.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                backAction();
+            });
+            menu.setDisable(hisSize < 2);
+            items.add(menu);
+
+            menu = new MenuItem(message("Forward"), StyleTools.getIconImage("iconNext.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                forwardAction();
+            });
+            menu.setDisable(hisSize < 2);
+            items.add(menu);
+
+            menu = new MenuItem(message("ZoomIn"), StyleTools.getIconImage("iconZoomIn.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                zoomIn();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ZoomOut"), StyleTools.getIconImage("iconZoomOut.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                zoomOut();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                refresh();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Cancel"), StyleTools.getIconImage("iconCancel.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                cancelAction();
+            });
+            items.add(menu);
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    @FXML
+    public void popOperationsMenu(MouseEvent mouseEvent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (address != null && !address.isBlank()) {
+                menu = new MenuItem(address);
+                menu.setStyle("-fx-text-fill: #2e598a;");
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            }
+
+            items.addAll(operationsMenu());
+            items.add(new SeparatorMenuItem());
+
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+            popMenu.getItems().addAll(items);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
             String html = loadedHtml();
             Document doc = webEngine.getDocument();
-            boolean isFrameset = framesDoc != null && framesDoc.size() > 0;
+            boolean isFrameset = framesDoc != null && !framesDoc.isEmpty();
 
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -832,6 +982,36 @@ public class ControlWebView extends BaseController {
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
             }
+
+            Menu opertionsMenu = new Menu(message("Operations"), StyleTools.getIconImage("iconAsterisk.png"));
+            opertionsMenu.getItems().setAll(operationsMenu());
+            items.add(opertionsMenu);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem clickMenu = new CheckMenuItem(message("PopMenuWhenClickLink"), StyleTools.getIconImage("iconMenu.png"));
+            clickMenu.setSelected(UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true));
+            clickMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WebViewPopMenuWhenClickLink", clickMenu.isSelected());
+                }
+            });
+            items.add(clickMenu);
+
+            if (!(this instanceof ControlHtmlEditor)) {
+                CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImage("iconEdit.png"));
+                editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+                editableMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("WebViewEditable", editableMenu.isSelected());
+                        webEngine.executeScript("document.body.contentEditable=" + editableMenu.isSelected());
+                    }
+                });
+                items.add(editableMenu);
+            }
+            items.add(new SeparatorMenuItem());
 
             if (address != null && !address.isBlank()) {
                 menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImage("iconStar.png"));
@@ -957,6 +1137,12 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
+                menu = new MenuItem(message("Script"), StyleTools.getIconImage("iconScript.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    HtmlScriptController.open(this);
+                });
+                items.add(menu);
+
                 Menu elementsMenu = new Menu(message("Extract"));
                 List<MenuItem> elementsItems = new ArrayList<>();
 
@@ -998,25 +1184,6 @@ public class ControlWebView extends BaseController {
                 elementsMenu.getItems().setAll(elementsItems);
                 items.add(elementsMenu);
 
-                if (!(this instanceof ControlHtmlEditor)) {
-                    CheckMenuItem checkMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImage("iconEdit.png"));
-                    checkMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-                    checkMenu.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            UserConfig.setBoolean("WebViewEditable", checkMenu.isSelected());
-                            webEngine.executeScript("document.body.contentEditable=" + checkMenu.isSelected());
-                        }
-                    });
-                    items.add(checkMenu);
-                }
-
-                menu = new MenuItem(message("Script"), StyleTools.getIconImage("iconScript.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    HtmlScriptController.open(this);
-                });
-                items.add(menu);
-
                 items.add(new SeparatorMenuItem());
             }
 
@@ -1039,48 +1206,7 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
-                items.add(new SeparatorMenuItem());
-
             }
-
-            menu = new MenuItem(message("ZoomIn"), StyleTools.getIconImage("iconZoomIn.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                zoomIn();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("ZoomOut"), StyleTools.getIconImage("iconZoomOut.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                zoomOut();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                refresh();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Cancel"), StyleTools.getIconImage("iconCancel.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                cancelAction();
-            });
-            items.add(menu);
-
-            int hisSize = (int) webEngine.executeScript("window.history.length;");
-            menu = new MenuItem(message("Backward"), StyleTools.getIconImage("iconPrevious.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                backAction();
-            });
-            menu.setDisable(hisSize < 2);
-            items.add(menu);
-
-            menu = new MenuItem(message("Forward"), StyleTools.getIconImage("iconNext.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                forwardAction();
-            });
-            menu.setDisable(hisSize < 2);
-            items.add(menu);
 
             items.add(new SeparatorMenuItem());
 
@@ -1114,7 +1240,11 @@ public class ControlWebView extends BaseController {
 
     public HtmlEditorController edit(String address, String html) {
         HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(address, html);
+        if (address != null) {
+            controller.loadAddress(address);
+        } else {
+            controller.loadContents(address, html);
+        }
         return controller;
     }
 
@@ -1124,71 +1254,78 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        synchronized (this) {
-            popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
+        popInformation(message("Handling..."));
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
 
-                private StringTable table;
+            private StringTable table;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        NodeList aList = doc.getElementsByTagName("a");
-                        if (aList == null || aList.getLength() < 1) {
-                            error = message("NoData");
-                            return false;
-                        }
-                        List<String> names = new ArrayList<>();
-                        names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
-                                message("Address"), message("FullAddress")
-                        ));
-                        table = new StringTable(names);
-                        int index = 1;
-                        for (int i = 0; i < aList.getLength(); i++) {
-                            org.w3c.dom.Node node = aList.item(i);
-                            if (node == null) {
-                                continue;
-                            }
-                            Element element = (Element) node;
-                            String href = element.getAttribute("href");
-                            if (href == null || href.isBlank()) {
-                                continue;
-                            }
-                            String linkAddress = href;
-                            try {
-                                URL url = new URL(new URL(element.getBaseURI()), href);
-                                linkAddress = url.toString();
-                            } catch (Exception e) {
-                            }
-                            String name = element.getTextContent();
-                            String title = element.getAttribute("title");
-                            List<String> row = new ArrayList<>();
-                            row.addAll(Arrays.asList(
-                                    index + "",
-                                    "<a href=\"" + linkAddress + "\">" + (name == null ? title : name) + "</a>",
-                                    name == null ? "" : name,
-                                    title == null ? "" : title,
-                                    URLDecoder.decode(href, charset),
-                                    URLDecoder.decode(linkAddress, charset)
-                            ));
-                            table.add(row);
-                            index++;
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try {
+                    NodeList aList = doc.getElementsByTagName("a");
+                    if (aList == null || aList.getLength() < 1) {
+                        error = message("NoData");
                         return false;
                     }
+                    List<String> names = new ArrayList<>();
+                    names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
+                            message("Address"), message("FullAddress")
+                    ));
+                    table = new StringTable(names);
+                    int index = 1;
+                    for (int i = 0; i < aList.getLength(); i++) {
+                        org.w3c.dom.Node node = aList.item(i);
+                        if (node == null) {
+                            continue;
+                        }
+                        Element nodeElement = (Element) node;
+                        NamedNodeMap m = nodeElement.getAttributes();
+                        String href = null, title = null;
+                        for (int k = 0; k < m.getLength(); k++) {
+                            if ("href".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                href = m.item(k).getNodeValue();
+                            } else if ("title".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                title = m.item(k).getNodeValue();
+                            }
+                        }
+//                            String href = nodeElement.getAttribute("href"); // do not konw why this does not work
+//                            String title = nodeElement.getAttribute("title");
+                        if (href == null || href.isBlank()) {
+                            continue;
+                        }
+                        String linkAddress = href;
+                        try {
+                            URL url = new URL(new URL(nodeElement.getBaseURI()), href);
+                            linkAddress = url.toString();
+                        } catch (Exception e) {
+                        }
+                        String name = nodeElement.getTextContent();
+                        List<String> row = new ArrayList<>();
+                        row.addAll(Arrays.asList(
+                                index + "",
+                                "<a href=\"" + linkAddress + "\">" + (name == null ? title : name) + "</a>",
+                                name == null ? "" : name,
+                                title == null ? "" : title,
+                                URLDecoder.decode(href, charset),
+                                URLDecoder.decode(linkAddress, charset)
+                        ));
+                        table.add(row);
+                        index++;
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    table.editHtml();
-                }
+            @Override
+            protected void whenSucceeded() {
+                table.editHtml();
+            }
 
-            };
-            start(bgTask, false);
-        }
+        };
+        start(bgTask, false);
     }
 
     protected void images() {
@@ -1197,70 +1334,78 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        synchronized (this) {
-            popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
+        popInformation(message("Handling..."));
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
 
-                private StringTable table;
+            private StringTable table;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        NodeList aList = doc.getElementsByTagName("img");
-                        if (aList == null || aList.getLength() < 1) {
-                            error = message("NoData");
-                            return false;
-                        }
-                        List<String> names = new ArrayList<>();
-                        names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
-                                message("Address"), message("FullAddress")
-                        ));
-                        table = new StringTable(names);
-                        int index = 1;
-                        for (int i = 0; i < aList.getLength(); i++) {
-                            org.w3c.dom.Node node = aList.item(i);
-                            if (node == null) {
-                                continue;
-                            }
-                            Element element = (Element) node;
-                            String href = element.getAttribute("src");
-                            if (href == null || href.isBlank()) {
-                                continue;
-                            }
-                            String linkAddress = href;
-                            try {
-                                URL url = new URL(new URL(element.getBaseURI()), href);
-                                linkAddress = url.toString();
-                            } catch (Exception e) {
-                            }
-                            String name = element.getAttribute("alt");
-                            List<String> row = new ArrayList<>();
-                            row.addAll(Arrays.asList(
-                                    index + "",
-                                    "<a href=\"" + linkAddress + "\">" + (name == null ? message("Link") : name) + "</a>",
-                                    "<img src=\"" + linkAddress + "\" " + (name == null ? "" : "alt=\"" + name + "\"") + " width=100/>",
-                                    name == null ? "" : name,
-                                    URLDecoder.decode(href, charset),
-                                    URLDecoder.decode(linkAddress, charset)
-                            ));
-                            table.add(row);
-                            index++;
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try {
+                    NodeList aList = doc.getElementsByTagName("img");
+                    if (aList == null || aList.getLength() < 1) {
+                        error = message("NoData");
                         return false;
                     }
+                    List<String> names = new ArrayList<>();
+                    names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
+                            message("Address"), message("FullAddress")
+                    ));
+                    table = new StringTable(names);
+                    int index = 1;
+                    for (int i = 0; i < aList.getLength(); i++) {
+                        org.w3c.dom.Node node = aList.item(i);
+                        if (node == null) {
+                            continue;
+                        }
+                        Element nodeElement = (Element) node;
+                        NamedNodeMap m = nodeElement.getAttributes();
+                        String href = null, name = null;
+                        for (int k = 0; k < m.getLength(); k++) {
+                            if ("src".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                href = m.item(k).getNodeValue();
+                            } else if ("alt".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                name = m.item(k).getNodeValue();
+                            }
+                        }
+//                        String href = nodeElement.getAttribute("src"); // do not konw why this does not work
+//                        String name = nodeElement.getAttribute("alt");
+                        if (href == null || href.isBlank()) {
+                            continue;
+                        }
+                        String linkAddress = href;
+                        try {
+                            URL url = new URL(new URL(nodeElement.getBaseURI()), href);
+                            linkAddress = url.toString();
+                        } catch (Exception e) {
+                        }
+                        List<String> row = new ArrayList<>();
+                        row.addAll(Arrays.asList(
+                                index + "",
+                                "<a href=\"" + linkAddress + "\">" + (name == null ? message("Link") : name) + "</a>",
+                                "<img src=\"" + linkAddress + "\" " + (name == null ? "" : "alt=\"" + name + "\"") + " width=100/>",
+                                name == null ? "" : name,
+                                URLDecoder.decode(href, charset),
+                                URLDecoder.decode(linkAddress, charset)
+                        ));
+                        table.add(row);
+                        index++;
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    table.editHtml();
-                }
+            @Override
+            protected void whenSucceeded() {
+                table.editHtml();
+            }
 
-            };
-            start(bgTask, false);
-        }
+        };
+        start(bgTask, false);
+
     }
 
     protected void toc(String html) {
@@ -1268,32 +1413,30 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        synchronized (this) {
-            popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
+        popInformation(message("Handling..."));
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
 
-                private String toc;
+            private String toc;
 
-                @Override
-                protected boolean handle() {
-                    toc = HtmlReadTools.toc(html, 8);
-                    if (toc == null || toc.isBlank()) {
-                        error = message("NoData");
-                        return false;
-                    }
-                    return true;
+            @Override
+            protected boolean handle() {
+                toc = HtmlReadTools.toc(html, 8);
+                if (toc == null || toc.isBlank()) {
+                    error = message("NoData");
+                    return false;
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                    c.loadContents(toc);
-                    c.toFront();
-                }
+            @Override
+            protected void whenSucceeded() {
+                TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+                c.loadContents(toc);
+                c.toFront();
+            }
 
-            };
-            start(bgTask, false);
-        }
+        };
+        start(bgTask, false);
     }
 
     protected void texts(String html) {
@@ -1301,32 +1444,30 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        synchronized (this) {
-            popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
+        popInformation(message("Handling..."));
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
 
-                private String texts;
+            private String texts;
 
-                @Override
-                protected boolean handle() {
-                    texts = HtmlWriteTools.htmlToText(html);
-                    if (texts == null || texts.isBlank()) {
-                        error = message("NoData");
-                        return false;
-                    }
-                    return true;
+            @Override
+            protected boolean handle() {
+                texts = HtmlWriteTools.htmlToText(html);
+                if (texts == null || texts.isBlank()) {
+                    error = message("NoData");
+                    return false;
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                    c.loadContents(texts);
-                    c.toFront();
-                }
+            @Override
+            protected void whenSucceeded() {
+                TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+                c.loadContents(texts);
+                c.toFront();
+            }
 
-            };
-            start(bgTask, false);
-        }
+        };
+        start(bgTask, false);
     }
 
     protected void tables(String html, String title) {
@@ -1334,32 +1475,30 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        synchronized (this) {
-            popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
+        popInformation(message("Handling..."));
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
 
-                private List<StringTable> tables;
+            private List<StringTable> tables;
 
-                @Override
-                protected boolean handle() {
-                    tables = HtmlReadTools.Tables(html, title);
-                    if (tables == null || tables.isEmpty()) {
-                        error = message("NoData");
-                        return false;
-                    }
-                    return true;
+            @Override
+            protected boolean handle() {
+                tables = HtmlReadTools.Tables(html, title);
+                if (tables == null || tables.isEmpty()) {
+                    error = message("NoData");
+                    return false;
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                    c.loadData(tables);
-                    c.toFront();
-                }
+            @Override
+            protected void whenSucceeded() {
+                DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+                c.loadData(tables);
+                c.toFront();
+            }
 
-            };
-            start(bgTask, false);
-        }
+        };
+        start(bgTask, false);
     }
 
     @FXML

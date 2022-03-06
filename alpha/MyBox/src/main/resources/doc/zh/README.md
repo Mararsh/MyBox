@@ -4,24 +4,22 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2022-2-1 版本6.5.2         
+2022-3-6 版本6.5.3         
 
-* 图像：可显示网格；范围可被所有图片共享；滤色；可在图片上添加多行文字并设置背景边框；保存或修改图片时可选渲染参数。       
-* 数据：选择数据和参数以生成条图/线图/饼图/散点图/气泡图。                      
-* 界面：选择数据时，若不选则处理所有。         
-* 代码：弹出菜单改为子窗口；图像内部处理均用ARGB；自动测试-打开界面；减少数据处理的冗余代码。                
-* 解决：对非透明图片（如jpg）批量添加文本时处理错误；恢复备份时图像未更新；处理多页数据的多个功能有错；包含特殊字符时菜单无法弹出；
-弹出菜单打开时输入文本可能触发快捷键。         
+* 数据：数据可转换为数据库表；管理和编辑数据库表；执行数据库SQL语句。                      
+* 计算：JShell（Java代码交互执行工具）的图形界面。         
+* 开发：编辑MyBox内部表的数据；启动JConsole（Java监视和管理控制台）。                
+* 解决："提取网页的图片和链接"失效；"文件解档"构建错误的文件路径；当目标目录是源目录的子目录时"目录同步"会无限循环；
+"矩阵的幂"缺少输入框。         
 
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.2)             
- 
-虎年吉祥！         
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3)             
+   
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.2-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-src.zip)   40M（大约值）       
+[MyBox-6.5.3-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-src.zip)   40M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -32,9 +30,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.2-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-win10-x64.zip)  | 220MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.2-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.2-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-mac.dmg)  | 232MB  |  MyBox-6.5.2.app   |
+| win10 x64 | [MyBox-6.5.3-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win10-x64.zip)  | 220MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.3-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.3-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac.dmg)  | 232MB  |  MyBox-6.5.3.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -46,14 +44,14 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.2-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-win-jar.zip)  | 156MB | Java 17或更高版本 |
-| linux | [MyBox-6.5.2-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
-| mac | [MyBox-6.5.2-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-mac-jar.zip)  |  159MB  | Java 16 |
+| win | [MyBox-6.5.3-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win-jar.zip)  | 156MB | Java 17或更高版本 |
+| linux | [MyBox-6.5.3-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
+| mac | [MyBox-6.5.3-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac-jar.zip)  |  159MB  | Java 16 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.5.2.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.3.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.5.2.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.3.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -71,9 +69,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.5.2.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.5.2.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.5.2.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.5.3.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.5.3.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.5.3.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -92,7 +90,7 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.2 | 2022-2-1 | [html](#devLog) |
+| 开发日志 | 6.5.3 | 2022-3-6 | [html](#devLog) |
 | 快捷键 | 6.4.7 |  2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -110,9 +108,11 @@ MyBox基于以下开放资源：
 | --- | --- | --- |
 | JDK | Java语言 | http://jdk.java.net/   |
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |
+|   |   | https://docs.oracle.com/en/java/javase/17/docs/api/index.html  |
 | JavaFx | 图形化界面 | https://gluonhq.com/products/javafx/  |
 |   |   |  https://docs.oracle.com/javafx/2/  |
 |   |   |  https://gluonhq.com/products/scene-builder/ |
+|   |   |  https://openjfx.io/javadoc/17/ |
 | NetBeans | 集成开发环境 | https://netbeans.org/ |
 | jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/16/docs/specs/man/jpackage.html |
 | maven | 代码构建 | https://maven.apache.org/ |
@@ -163,7 +163,7 @@ MyBox基于以下开放资源：
 
 
 # 当前版本       
-当前是版本6.5.2，已实现的特点概述如下:      
+当前是版本6.5.3，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
@@ -204,6 +204,9 @@ MyBox基于以下开放资源：
     - [系统粘贴板中数据](#dataInSystemClipboard)
     - [MyBox粘贴板中的数据](#dataInMyBoxClipboard)
     - [矩阵](#matrix)
+    - [数据库表](#dataTables)
+    - [数据库SQL](#dbSQL)
+    - [JShell（Java交互编程工具）](#JShell)
     - [通用的数据处理](#dataManufacture)
     - [地图数据](#mapData)
     - [地理编码](#geographyCode)
@@ -781,11 +784,15 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 在矩阵管理器中增删改矩阵。
 	- 数据保存在MyBox数据库中。
 	- 删除矩阵的记录将会同时删除矩阵包含的数据。           
+4. 数据库表
+	- 在数据库表管理器中增删改数据库表。
+	- 数据保存在MyBox数据库的表中。
+	- 删除数据库表的记录将会同时删除数据库表包含的数据。           
 
 ![截屏-manageData](https://mararsh.github.io/MyBox/snap-dataManage.jpg)        
 
 ### 编辑数据<a id="editData" />
-1. 以下对象可以以一致的方式来编辑：csv/excel/文本数据文件、数据粘贴板、矩阵。
+1. 以下对象可以以一致的方式来编辑：数据文件（csv/excel/文本）、数据粘贴板、矩阵、数据库表。
 2. 数据应当是等宽的，即所有行的列数相同。  
 3. 数据被分页。当页数大于1时，运行一些功能之前必须保存当前页的修改。
 4. 数据可以在两种模式下编辑：
@@ -812,7 +819,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	- “属性/列的修改被保存到数据库中。
 8. 点击按钮“恢复”以丢弃所有修改并从文件和数据库中加载数据。
 9. 处理数据：
-	- 对象：选择行、或文件中所有行，同时选择列。
+	- 对象：选择行、或所有数据行，同时选择列。
 	- 操作：赋值、复制、粘贴、排序、统计、百分比、归一化、转置、导出
 	- 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
 10. 数据图：
@@ -822,7 +829,7 @@ MyBox v5.3以前的版本均基于Java 8。
  		- 不同的数字序列显示为不同颜色或者形状。
  		- 当数据无法被解析为数字时，计为零。
  		- 忽略非法数据。
-	- 条图以条块的高度表示数据的大小。
+	- 条图/面积图以条块的高度表示数据的大小。
 	- 线图以连接点的线条表示数据的趋势。
 	- 饼图以分割的圆表示数据的比例。数值列必须是非负数。
 	- 气泡图以不同半径的多个圆表示数据的大小。
@@ -830,7 +837,11 @@ MyBox v5.3以前的版本均基于Java 8。
  		- “大小”列定义数据的大小。
  		- 所有列都必须是数字，大小列必须时非负数。
 	- 散点图以符号表示数据的分布。
-11. 同步显示数据的文本格式和网页格式。
+11. 转换为数据库表：
+	- 选择行、或所有数据行，同时选择列。
+	- 生成自增主键、或选择主键列。
+	- 可选是否导入数据。
+12. 同步显示数据的文本格式和网页格式。
 
 
 ![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataChart.jpg)         
@@ -867,13 +878,59 @@ MyBox v5.3以前的版本均基于Java 8。
 ![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-dataInMC.jpg)         
 
 
-
 ### 矩阵<a id="matrix" />
 1. 编辑矩阵。
 2. 矩阵可保存和取用。
 3. 矩阵的一元计算：转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解、逆矩阵-用消元法求解、逆矩阵-用伴随矩阵求解、矩阵的秩、
 伴随矩阵、余子式、归一化、乘以数值、除以数值、幂。        
 4. 矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。
+
+
+### 数据库表<a id="dataTables" />
+1. 表名和列名应当满足“SQL标识符的限制”：
+      - 最大长度为128。
+      - 忽略大小写。
+      - 普通标识符：
+ 		- 指未用双引号包围的标识符。
+ 		- 只能由字母、数字、和下划线(_)构成。
+ 		- 只能由字母开头。
+ 		- 字母和数字可以是Unicode（可以是中文）。
+ 		- 不能是SQL保留字。
+ 		- 非法字符将被转换为下划线。
+ 		- 若标识符开头不为字母，则字符"a"将被加到前面。
+      - 定界标识符：
+ 		- 指用双引号包围的标识符。
+ 		- 可以包含任何字符。
+2. 数据库表被创建以后：
+	- 不能修改和删除主键的定义。
+	- 可以添加和删除列定义，但是不能修改列定义。      
+
+![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-dataTables.jpg)         
+
+
+### 数据库SQL<a id="dbSQL" />
+1. 提供常用SQL语句的示例。
+2. 自动生成所有用户数据表名的列表。
+3. 查看所有用户数据表的定义。
+4. 显示执行输出和查询结果。       
+
+![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-dbSQL.jpg)         
+
+
+### JShell（Java交互编程工具）<a id="JShell" />
+1. JShell提供交互执行"snippets"的能力，即"读取-执行-输出"循环 (REPL)。 
+2. "Snippet"是Java编程语言的单个表达式、语句、或声明的代码：
+	- 语句结尾必须有分号，而表达式不需要。
+	- 除了基本类，在调用多数Java类之前需要把它们导入进来。  
+	- 可以定义变量和方法、然后调用它们。  
+3. 输入一个snippet，然后点击 "开始"按钮以执行它： 
+	- Snippets的结果会影响后续的snippets，即如"一个运行环境"。  
+	- 所有已执行过的snippets的属性被显示在一张表中。
+	- 点击按钮"删除"或"清除"以把一些或全部snippets从当前环境中移除出去。
+	- 点击按钮"恢复"以重置JShell，环境将变为空白。
+4. JShell可以用于科学计算、和调试Java代码。
+
+![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-JShell.jpg)         
 
 
 ### 通用的数据处理<a id="dataManufacture" />
@@ -1493,10 +1550,12 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 	-  “调用者”是调用链，每行是一个节点：文件名、类名、方法名、行号。调用链只记录MyBox自身的方法。
 	-  “错误”会导致查看日志的界面被弹出。
 5. 运行系统命令
-6. 管理语言
-7. 制作图标
-8. 自动测试-打开界面
-9. 给作者发消息
+6. 启动JConsole（Java监视和管理控制台）
+7. 管理语言
+8. 制作图标
+9. 编辑MyBox内部表的数据
+10. 自动测试-打开界面
+11. 给作者发消息
 
 ## 设置<a id="settings" />
 1. 界面：
@@ -1547,10 +1606,20 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 
 # 开发日志<a id="devLog" />            
+2022-3-6 版本6.5.3         
+
+* 数据：数据可转换为数据库表；管理和编辑数据库表；执行数据库SQL语句。                      
+* 计算：JShell（Java代码交互执行工具）的图形界面。         
+* 开发：编辑MyBox内部表的数据；启动JConsole（Java监视和管理控制台）。                
+* 解决："提取网页的图片和链接"失效；"文件解档"构建错误的文件路径；当目标目录是源目录的子目录时"目录同步"会无限循环；
+"矩阵的幂"缺少输入框。         
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3)             
+
 2022-2-1 版本6.5.2         
 
 * 图像：可显示网格；范围可被所有图片共享；滤色；可在图片上添加多行文字并设置背景边框；保存或修改图片时可选渲染参数。       
-* 数据：选择数据和参数以生成条图/线图/饼图/散点图/气泡图。                      
+* 数据：选择数据和参数以生成条图/线图/饼图/散点图/气泡/面积图。                      
 * 界面：选择数据时，若不选则处理所有。         
 * 代码：弹出菜单改为子窗口；图像内部处理均用ARGB；自动测试-打开界面；减少数据处理的冗余代码。                
 * 解决：对非透明图片（如jpg）批量添加文本时处理错误；恢复备份时图像未更新；处理多页数据的多个功能有错；包含特殊字符时菜单无法弹出；

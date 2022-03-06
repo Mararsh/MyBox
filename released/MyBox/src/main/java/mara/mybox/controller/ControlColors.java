@@ -57,7 +57,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -452,7 +452,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 popError(message("NoData"));
                 return;
             }
-            if (!PopTools.askSure(this,baseTitle, selected.getName(), message("DeletePalette"))) {
+            if (!PopTools.askSure(this, baseTitle, selected.getName(), message("DeletePalette"))) {
                 return;
             }
             task = new SingletonTask<Void>(this) {
@@ -914,7 +914,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    protected int clearData() {
+    protected long clearData() {
         if (isAllColors()) {
             return tableColor.clearData();
         } else {
@@ -923,8 +923,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public void resetView() {
-        super.resetView();
+    public void resetView(boolean changed) {
+        super.resetView(changed);
         colorsPane.getChildren().clear();
         colorArea.clear();
     }

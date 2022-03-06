@@ -22,7 +22,7 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -626,7 +626,7 @@ public class FilesArrangeController extends BaseBatchFileController {
         if (!file.exists()) {
             return file;
         }
-        String newName = FileNameTools.getFilePrefix(file.getName()) + renameAppdex + "." + FileNameTools.getFileSuffix(file.getName());
+        String newName = FileNameTools.prefix(file.getName()) + renameAppdex + "." + FileNameTools.suffix(file.getName());
         File newFile = new File(file.getParent() + File.separator + newName);
         if (!newFile.exists()) {
             return newFile;

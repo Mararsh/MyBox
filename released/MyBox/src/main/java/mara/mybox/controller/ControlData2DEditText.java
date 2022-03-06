@@ -9,7 +9,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import mara.mybox.data.Data2D;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextTools;
@@ -30,6 +30,7 @@ public class ControlData2DEditText extends BaseController {
     protected Data2D data2D;
     protected String delimiterName;
     protected Status status;
+    protected ChangeListener<Boolean> delimiterListener;
 
     public enum Status {
         Loaded, Modified, Applied
@@ -253,6 +254,20 @@ public class ControlData2DEditText extends BaseController {
         Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
         MenuTextEditController.open(myController, textArea, localToScreen.getX(), localToScreen.getY());
         return true;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            delimiterListener = null;
+            data2D = null;
+            delimiterName = null;
+            tableController = null;
+            editController = null;
+            dataController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

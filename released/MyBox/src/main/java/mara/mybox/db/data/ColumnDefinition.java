@@ -1,7 +1,11 @@
 package mara.mybox.db.data;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -9,6 +13,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.data.Era;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
@@ -24,15 +29,15 @@ import static mara.mybox.value.Languages.message;
  */
 public class ColumnDefinition extends BaseData {
 
-    protected String name, label, foreignName, foreignTable, foreignColumn;
+    protected String tableName, columnName, label, referName, referTable, referColumn, defaultValue;
     protected ColumnType type;
     protected int index, length, width;
     protected Color color;
-    protected boolean isPrimaryKey, notNull, isID, editable;
+    protected boolean isPrimaryKey, notNull, editable, auto;
     protected OnDelete onDelete;
     protected OnUpdate onUpdate;
     protected Era.Format timeFormat;
-    protected Object defaultValue, value;
+    protected Object value;
     protected Number maxValue, minValue;
     protected Map<Object, String> values;  // value, displayString
 
@@ -54,9 +59,11 @@ public class ColumnDefinition extends BaseData {
     }
 
     public final void initColumnDefinition() {
+        tableName = null;
+        columnName = null;
         type = ColumnType.String;
         index = -1;
-        isPrimaryKey = notNull = isID = false;
+        isPrimaryKey = notNull = auto = false;
         editable = true;
         length = StringMaxLength;
         width = 100; // px
@@ -65,7 +72,10 @@ public class ColumnDefinition extends BaseData {
         timeFormat = Era.Format.Datetime;
         maxValue = null;
         minValue = null;
-        color = null;
+        color = FxColorTools.randomColor();
+        referName = null;
+        referTable = null;
+        referColumn = null;
     }
 
     public ColumnDefinition() {
@@ -74,20 +84,20 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition(String name, ColumnType type) {
         initColumnDefinition();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull) {
         initColumnDefinition();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
         this.notNull = notNull;
     }
 
     public ColumnDefinition(String name, ColumnType type, boolean notNull, boolean isPrimaryKey) {
         initColumnDefinition();
-        this.name = name;
+        this.columnName = name;
         this.type = type;
         this.notNull = notNull;
         this.isPrimaryKey = isPrimaryKey;
@@ -109,11 +119,12 @@ public class ColumnDefinition extends BaseData {
             if (c == null) {
                 return;
             }
-            name = c.name;
+            tableName = c.tableName;
+            columnName = c.columnName;
             label = c.label;
-            foreignName = c.foreignName;
-            foreignTable = c.foreignTable;
-            foreignColumn = c.foreignColumn;
+            referName = c.referName;
+            referTable = c.referTable;
+            referColumn = c.referColumn;
             type = c.type;
             index = c.index;
             length = c.length;
@@ -121,7 +132,7 @@ public class ColumnDefinition extends BaseData {
             color = c.color;
             isPrimaryKey = c.isPrimaryKey;
             notNull = c.notNull;
-            isID = c.isID;
+            auto = c.auto;
             editable = c.editable;
             onDelete = c.onDelete;
             onUpdate = c.onUpdate;
@@ -137,15 +148,15 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isForeignKey() {
-        return foreignTable != null && foreignColumn != null;
+        return referTable != null && referColumn != null;
     }
 
     public String foreignText() {
         if (!isForeignKey()) {
             return null;
         }
-        String sql = (foreignName != null && !foreignName.isBlank() ? "CONSTRAINT  " + foreignName + " " : "")
-                + "FOREIGN KEY (" + name + ") REFERENCES " + foreignTable + " (" + foreignColumn + ") ON DELETE ";
+        String sql = (referName != null && !referName.isBlank() ? "CONSTRAINT  " + referName + " " : "")
+                + "FOREIGN KEY (" + columnName + ") REFERENCES " + referTable + " (" + referColumn + ") ON DELETE ";
         switch (onDelete) {
             case NoAction:
                 sql += "NO ACTION";
@@ -211,8 +222,8 @@ public class ColumnDefinition extends BaseData {
                     return "1".equals(v) || "0".equals(v)
                             || "true".equals(v) || "false".equals(v)
                             || "yes".equals(v) || "no".equals(v)
-                            || Languages.message("true").equals(v) || Languages.message("false").equals(v)
-                            || Languages.message("yes").equals(v) || Languages.message("no").equals(v);
+                            || message("true").equals(v) || message("false").equals(v)
+                            || message("yes").equals(v) || message("no").equals(v);
                 case Short:
                     Short.parseShort(value);
                     return true;
@@ -373,6 +384,198 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    public Object value(ResultSet results) {
+        try {
+            if (results == null || type == null || columnName == null) {
+                return null;
+            }
+            switch (type) {
+                case String:
+                case Text:
+                case Color:
+                case File:
+                case Image:
+                    return results.getString(columnName);
+                case Double:
+                    return results.getDouble(columnName);
+                case Float:
+                    return results.getFloat(columnName);
+                case Long:
+                case Era:
+                    return results.getLong(columnName);
+                case Integer:
+                    return results.getInt(columnName);
+                case Boolean:
+                    return results.getBoolean(columnName);
+                case Short:
+                    return results.getShort(columnName);
+                case Datetime:
+                    return results.getTimestamp(columnName);
+                case Date:
+                    return results.getDate(columnName);
+                case Blob:
+                    return results.getBlob(columnName);
+                case Clob:
+                    return results.getClob(columnName);
+                default:
+                    MyBoxLog.debug(columnName + " " + type);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString(), columnName + " " + type);
+        }
+        return null;
+    }
+
+    public Object fromString(String string) {
+        try {
+            if (string == null) {
+                return null;
+            }
+            switch (type) {
+                case Double:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+                case Float:
+                    return Float.parseFloat(string.replaceAll(",", ""));
+                case Long:
+                case Era:
+                    return Long.parseLong(string.replaceAll(",", ""));
+                case Integer:
+                    return Integer.parseInt(string.replaceAll(",", ""));
+                case Boolean:
+                    String v = string.toLowerCase();
+                    return "1".equals(v) || "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v)
+                            || message("true").equals(v) || message("yes").equals(v);
+                case Short:
+                    return Short.parseShort(string.replaceAll(",", ""));
+                case Datetime:
+                    return DateTools.stringToDatetime(string);
+                case Color:
+                    return DateTools.stringToDatetime(string);
+                default:
+                    return string;
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public String toString(Object value) {
+        try {
+            if (value == null) {
+                return null;
+            }
+            switch (type) {
+                case Datetime:
+                    return DateTools.datetimeToString((Date) value);
+                case Boolean:
+                    return value + "";
+                default:
+                    return value + "";
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean valueQuoted() {
+        return !isNumberType() && type != ColumnType.Boolean;
+    }
+
+    public String getDefValue() {
+        Object v = fromString(defaultValue);
+        switch (type) {
+            case String:
+            case Text:
+            case File:
+            case Image:
+            case Color:
+                if (v != null) {
+                    return "'" + defaultValue + "'";
+                } else {
+                    return "''";
+                }
+            case Double:
+            case Float:
+            case Long:
+            case Integer:
+            case Era:
+            case Short:
+                if (v != null) {
+                    return v + "";
+                } else {
+                    return "0";
+                }
+            case Boolean:
+                if (v != null) {
+                    return v + "";
+                } else {
+                    return "false";
+                }
+            case Datetime:
+                if (v != null) {
+                    return "'" + defaultValue + "'";
+                } else {
+                    return " CURRENT TIMESTAMP ";
+                }
+            case Date:
+                if (v != null) {
+                    return "'" + defaultValue + "'";
+                } else {
+                    return " CURRENT DATE ";
+                }
+            default:
+                return null;
+        }
+    }
+
+    public Object defaultValue() {
+        Object v = fromString(defaultValue);
+        switch (type) {
+            case String:
+            case Text:
+            case File:
+            case Image:
+            case Color:
+                if (v != null) {
+                    return defaultValue;
+                } else {
+                    return "";
+                }
+            case Double:
+            case Float:
+            case Long:
+            case Integer:
+            case Era:
+            case Short:
+                if (v != null) {
+                    return v;
+                } else {
+                    return 0;
+                }
+            case Boolean:
+                if (v != null) {
+                    return v;
+                } else {
+                    return false;
+                }
+            case Datetime:
+                if (v != null) {
+                    return v;
+                } else {
+                    return new Timestamp(new Date().getTime());
+                }
+            case Date:
+                if (v != null) {
+                    return v;
+                } else {
+                    return new java.sql.Date(new Date().getTime());
+                }
+            default:
+                return null;
+        }
+    }
+
+
     /*
         static methods
      */
@@ -383,7 +586,7 @@ public class ColumnDefinition extends BaseData {
     public static boolean valid(ColumnDefinition data) {
         return data != null
                 && data.getType() != null
-                && data.getName() != null && !data.getName().isBlank();
+                && data.getColumnName() != null && !data.getColumnName().isBlank();
     }
 
     public static short columnType(ColumnType type) {
@@ -396,10 +599,40 @@ public class ColumnDefinition extends BaseData {
     public static ColumnType columnType(short type) {
         ColumnType[] types = ColumnType.values();
         if (type < 0 || type > types.length) {
-            MyBoxLog.console(type);
             return ColumnType.String;
         }
         return types[type];
+    }
+
+    public static ColumnType sqlColumnType(int type) {
+        switch (type) {
+            case java.sql.Types.BOOLEAN:
+                return ColumnType.Boolean;
+            case java.sql.Types.DOUBLE:
+                return ColumnType.Double;
+            case java.sql.Types.FLOAT:
+                return ColumnType.Float;
+            case java.sql.Types.INTEGER:
+                return ColumnType.Integer;
+            case java.sql.Types.BIGINT:
+                return ColumnType.Long;
+            case java.sql.Types.SMALLINT:
+                return ColumnType.Short;
+            case java.sql.Types.TINYINT:
+                return ColumnType.Short;
+            case java.sql.Types.DATE:
+                return ColumnType.Date;
+            case java.sql.Types.TIMESTAMP:
+                return ColumnType.Datetime;
+            case java.sql.Types.VARCHAR:
+                return ColumnType.String;
+            case java.sql.Types.CLOB:
+                return ColumnType.Clob;
+            case java.sql.Types.BLOB:
+                return ColumnType.Blob;
+            default:
+                return ColumnType.String;
+        }
     }
 
     public static List<ColumnType> editTypes() {
@@ -436,25 +669,90 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
+    public static short onUpdate(OnUpdate type) {
+        if (type == null) {
+            return 0;
+        }
+        return (short) (type.ordinal());
+    }
+
+    public static OnUpdate onUpdate(short type) {
+        OnUpdate[] types = OnUpdate.values();
+        if (type < 0 || type > types.length) {
+            return OnUpdate.Restrict;
+        }
+        return types[type];
+    }
+
+    public static short onDelete(OnDelete type) {
+        if (type == null) {
+            return 0;
+        }
+        return (short) (type.ordinal());
+    }
+
+    public static OnDelete onDelete(short type) {
+        OnDelete[] types = OnDelete.values();
+        if (type < 0 || type > types.length) {
+            return OnDelete.Restrict;
+        }
+        return types[type];
+    }
+
+    public static OnUpdate updateRule(short type) {
+        switch (type) {
+            case DatabaseMetaData.importedKeyRestrict:
+                return OnUpdate.Restrict;
+            default:
+                return OnUpdate.NoAction;
+        }
+    }
+
+    public static OnDelete deleteRule(short type) {
+        switch (type) {
+            case DatabaseMetaData.importedKeyRestrict:
+                return OnDelete.Restrict;
+            case DatabaseMetaData.importedKeyCascade:
+                return OnDelete.Cascade;
+            case DatabaseMetaData.importedKeySetNull:
+                return OnDelete.SetNull;
+            default:
+                return OnDelete.NoAction;
+        }
+    }
+
     /*
         customized get/set
      */
     public String getLabel() {
-        if (label == null && name != null) {
-            label = Languages.tableMessage(name.toLowerCase());
+        if (label == null && columnName != null) {
+            label = Languages.tableMessage(columnName.toLowerCase());
         }
         return label;
+    }
+
+    public boolean isId() {
+        return isPrimaryKey && auto;
     }
 
     /*
         get/set
      */
-    public String getName() {
-        return name;
+    public String getTableName() {
+        return tableName;
     }
 
-    public ColumnDefinition setName(String name) {
-        this.name = name;
+    public ColumnDefinition setTableName(String tableName) {
+        this.tableName = tableName;
+        return this;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public ColumnDefinition setColumnName(String name) {
+        this.columnName = name;
         return this;
     }
 
@@ -503,30 +801,21 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public boolean isIsID() {
-        return isID;
+    public String getReferTable() {
+        return referTable;
     }
 
-    public ColumnDefinition setIsID(boolean isID) {
-        this.isID = isID;
+    public ColumnDefinition setReferTable(String primaryKeyTable) {
+        this.referTable = primaryKeyTable;
         return this;
     }
 
-    public String getForeignTable() {
-        return foreignTable;
+    public String getReferColumn() {
+        return referColumn;
     }
 
-    public ColumnDefinition setForeignTable(String foreignTable) {
-        this.foreignTable = foreignTable;
-        return this;
-    }
-
-    public String getForeignColumn() {
-        return foreignColumn;
-    }
-
-    public ColumnDefinition setForeignColumn(String foreignColumn) {
-        this.foreignColumn = foreignColumn;
+    public ColumnDefinition setReferColumn(String primaryKeyColumn) {
+        this.referColumn = primaryKeyColumn;
         return this;
     }
 
@@ -566,11 +855,11 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public Object getDefaultValue() {
+    public String getDefaultValue() {
         return defaultValue;
     }
 
-    public ColumnDefinition setDefaultValue(Object defaultValue) {
+    public ColumnDefinition setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
@@ -616,12 +905,21 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public String getForeignName() {
-        return foreignName;
+    public String getReferName() {
+        return referName;
     }
 
-    public ColumnDefinition setForeignName(String foreignName) {
-        this.foreignName = foreignName;
+    public ColumnDefinition setReferName(String foreignName) {
+        this.referName = foreignName;
+        return this;
+    }
+
+    public boolean isAuto() {
+        return auto;
+    }
+
+    public ColumnDefinition setAuto(boolean auto) {
+        this.auto = auto;
         return this;
     }
 

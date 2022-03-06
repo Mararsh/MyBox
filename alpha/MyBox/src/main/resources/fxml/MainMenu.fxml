@@ -272,6 +272,15 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
                                 <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <Menu mnemonicParsing="false" text="%FilesArchiveCompress">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openFileDecompressUnarchive" text="%FileDecompressUnarchive" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openFilesDecompressUnarchiveBatch" text="%FilesDecompressUnarchiveBatch" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openFilesArchiveCompress" text="%FilesArchiveCompress" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openFilesCompressBatch" text="%FilesCompressBatch" />
+                                    </items>
+                                </Menu>                                
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFileCut" text="%FileCut" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesMerge" text="%FilesMerge" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -289,15 +298,6 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteEmptyDirectories" text="%DeleteEmptyDirectories" />
                                         <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteNestedDirectories" text="%DeleteNestedDirectories" />
-                                    </items>
-                                </Menu>
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <Menu mnemonicParsing="false" text="%FilesArchiveCompress">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openFileDecompressUnarchive" text="%FileDecompressUnarchive" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openFilesDecompressUnarchiveBatch" text="%FilesDecompressUnarchiveBatch" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openFilesArchiveCompress" text="%FilesArchiveCompress" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openFilesCompressBatch" text="%FilesCompressBatch" />
                                     </items>
                                 </Menu>
                             </items>

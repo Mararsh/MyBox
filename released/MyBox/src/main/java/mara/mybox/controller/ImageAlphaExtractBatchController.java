@@ -58,7 +58,7 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
             if (targets == null) {
                 return Languages.message("Failed");
             }
-            String prefix = FileNameTools.getFilePrefix(target.getAbsolutePath());
+            String prefix = FileNameTools.prefix(target.getName());
             String alphaFileName = prefix + "_noAlpha." + targetFileSuffix;
             ImageFileWriters.writeImageFile(targets[0], attributes, alphaFileName);
             targetFileGenerated(new File(alphaFileName));

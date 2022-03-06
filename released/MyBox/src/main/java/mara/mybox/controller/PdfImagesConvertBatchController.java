@@ -90,7 +90,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
     @Override
     public boolean preHandlePages() {
         try {
-            File tFile = makeTargetFile(FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName()),
+            File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
                     ".pdf", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             tmpFile = TmpFileTools.getTempFile();

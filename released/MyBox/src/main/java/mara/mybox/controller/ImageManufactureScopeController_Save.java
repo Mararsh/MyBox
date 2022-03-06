@@ -10,7 +10,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;

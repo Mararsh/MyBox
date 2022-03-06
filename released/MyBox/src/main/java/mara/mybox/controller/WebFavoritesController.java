@@ -301,7 +301,7 @@ public class WebFavoritesController extends BaseSysTableController<WebFavorite> 
     }
 
     @Override
-    protected int clearData() {
+    protected long clearData() {
         if (queryConditions != null) {
             return tableWebFavorite.deleteCondition(queryConditions);
 

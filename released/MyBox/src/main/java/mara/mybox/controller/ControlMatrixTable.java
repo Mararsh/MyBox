@@ -6,17 +6,17 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import mara.mybox.data.DataMatrix;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -26,9 +26,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition> {
 
-    protected DataMatrix dataMatrix;
-    protected ControlData2D dataController;
-    protected Label matrixLabel;
+    protected ControlData2D dataAController, dataBController;
+    protected DataMatrix dataAMatrix, dataBMatrix;
 
     @FXML
     protected TableColumn<Data2DDefinition, Long> d2didColumn;
@@ -39,21 +38,21 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
     @FXML
     protected TableColumn<Data2DDefinition, Date> modifyColumn;
     @FXML
-    protected Button clearMatricesButton, deleteMatricesButton, editMatrixButton, renameMatrixButton;
+    protected Button matrixAButton, matrixBButton, renameMatrixButton, clearMatricesButton, deleteMatricesButton;
 
     public ControlMatrixTable() {
-        baseTitle = Languages.message("MatricesManage");
     }
 
-    public void setParameters(ControlData2D dataController) {
+    public void setParameters(ControlData2D dataAController, ControlData2D dataBController) {
         try {
-            this.dataController = dataController;
-            dataMatrix = (DataMatrix) dataController.data2D;
-            dataController.tableController.dataLabel = matrixLabel;
-            dataController.tableController.baseTitle = baseTitle;
+            this.dataAController = dataAController;
+            dataAMatrix = (DataMatrix) dataAController.data2D;
 
-            tableDefinition = dataController.tableData2DDefinition;
-            queryConditions = "data_type=" + dataMatrix.type();
+            this.dataBController = dataBController;
+            dataBMatrix = (DataMatrix) dataBController.data2D;
+
+            tableDefinition = dataAController.tableData2DDefinition;
+            queryConditions = "data_type=" + dataAMatrix.type();
 
             loadTableData();
 
@@ -79,45 +78,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
     }
 
     @Override
-    protected List<MenuItem> makeTableContextMenu() {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                editAction();
-            });
-            menu.setDisable(editMatrixButton.isDisable());
-            items.add(menu);
-
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                renameAction();
-            });
-            menu.setDisable(renameMatrixButton.isDisable());
-            items.add(menu);
-
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                deleteAction();
-            });
-            menu.setDisable(deleteMatricesButton.isDisable());
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            items.addAll(super.makeTableContextMenu());
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    @Override
     public void itemClicked() {
-        editAction();
     }
 
     @Override
@@ -134,18 +95,40 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
         clearMatricesButton.setDisable(isEmpty);
         deleteMatricesButton.setDisable(none);
-        editMatrixButton.setDisable(none);
         renameMatrixButton.setDisable(none);
+        matrixAButton.setDisable(none);
+        matrixBButton.setDisable(none);
+    }
+
+    @FXML
+    public void matrixAAction() {
+        try {
+            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                return;
+            }
+            dataAController.loadDef(selected);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void matrixBAction() {
+        try {
+            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                return;
+            }
+            dataBController.loadDef(selected);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML
     @Override
     public void editAction() {
-        try {
-            dataController.loadDef(tableView.getSelectionModel().getSelectedItem());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @FXML
@@ -155,17 +138,90 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         if (selected == null) {
             return;
         }
-        dataController.renameAction(this, index, selected);
+        String newName = PopTools.askValue(getBaseTitle(), message("CurrentName") + ":" + selected.getDataName(),
+                message("NewName"), selected.getDataName() + "m");
+        if (newName == null || newName.isBlank()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>(this) {
+                private Data2DDefinition def;
+
+                @Override
+                protected boolean handle() {
+                    selected.setDataName(newName);
+                    def = dataAController.tableData2DDefinition.updateData(selected);
+                    return def != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    tableData.set(index, def);
+                    if (def.getD2did() == dataAMatrix.getD2did()) {
+                        dataAMatrix.setDataName(newName);
+                        dataAController.attributesController.updateDataName();
+                    }
+                    if (def.getD2did() == dataBMatrix.getD2did()) {
+                        dataBMatrix.setDataName(newName);
+                        dataBController.attributesController.updateDataName();
+                    }
+                }
+
+            };
+            start(task);
+        }
     }
 
     @Override
-    public void cleanPane() {
+    protected List<MenuItem> makeTableContextMenu() {
         try {
-            dataController = null;
-            dataMatrix = null;
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("SetAsMatrixA"), StyleTools.getIconImage("iconA.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                matrixAAction();
+            });
+            menu.setDisable(matrixAButton.isDisable());
+            items.add(menu);
+
+            menu = new MenuItem(message("SetAsMatrixB"), StyleTools.getIconImage("iconB.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                matrixBAction();
+            });
+            menu.setDisable(matrixBButton.isDisable());
+            items.add(menu);
+
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                renameAction();
+            });
+            menu.setDisable(renameMatrixButton.isDisable());
+            items.add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteAction();
+            });
+            menu.setDisable(deleteMatricesButton.isDisable());
+            items.add(menu);
+
+            List<MenuItem> superItems = super.makeTableContextMenu();
+            if (!superItems.isEmpty()) {
+                items.add(new SeparatorMenuItem());
+                items.addAll(superItems);
+            }
+
+            return items;
+
         } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
-        super.cleanPane();
     }
 
 }

@@ -57,6 +57,15 @@ public class TextDelimiterController extends BaseController {
         close();
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            okNotify = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
     /*
         static
      */

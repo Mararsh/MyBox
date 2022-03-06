@@ -5,11 +5,13 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManageController;
-import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.DataInMyBoxClipboardController;
+import mara.mybox.controller.DataTablesController;
 import mara.mybox.controller.MatricesManageController;
+import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -32,7 +34,7 @@ public class Data2DDefinition extends BaseData {
     protected Date modifyTime;
 
     public static enum Type {
-        Texts, CSV, Excel, MyBoxClipboard, Matrix, Table
+        Texts, CSV, Excel, MyBoxClipboard, Matrix, DatabaseTable, InternalTable
     }
 
     public Data2DDefinition() {
@@ -112,6 +114,43 @@ public class Data2DDefinition extends BaseData {
             return null;
         }
     }
+
+    public boolean isDataFile() {
+        return type == Type.CSV || type == Type.Excel || type == Type.Texts;
+    }
+
+    public boolean isExcel() {
+        return type == Type.Excel;
+    }
+
+    public boolean isCSV() {
+        return type == Type.CSV;
+    }
+
+    public boolean isTexts() {
+        return type == Type.Texts;
+    }
+
+    public boolean isMatrix() {
+        return type == Type.Matrix;
+    }
+
+    public boolean isClipboard() {
+        return type == Type.MyBoxClipboard;
+    }
+
+    public boolean isTable() {
+        return type == Type.DatabaseTable || type == Type.InternalTable;
+    }
+
+    public boolean isUserTable() {
+        return type == Type.DatabaseTable;
+    }
+
+    public boolean isInternalTable() {
+        return type == Type.InternalTable;
+    }
+
 
     /*
         static methods
@@ -258,6 +297,10 @@ public class Data2DDefinition extends BaseData {
                 return DataInMyBoxClipboardController.open(def);
             case Matrix:
                 return MatricesManageController.open(def);
+            case DatabaseTable:
+                return DataTablesController.open(def);
+            case InternalTable:
+                return MyBoxTablesController.open(def);
             default:
                 return Data2DManageController.open(def);
         }

@@ -6,6 +6,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 
@@ -63,8 +64,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return false;
         }
         String t = keyEvent.getTarget().toString();
-        return t.contains("TextField") || t.contains("ComboBox")
-                || t.contains("TextArea") || t.contains("WebView");
+//        MyBoxLog.console(this.getClass() + "  " + keyEvent.getCode() + "  " + t);
+        if (t.contains("TextField") || t.contains("ComboBox")
+                || t.contains("TextArea") || t.contains("WebView")) {
+            return true;
+        }
+        // When popup is shown, event target is always popup pane even when focus is actually in text input
+        return NodeTools.textInputFocus(getMyScene()) != null;
     }
 
     public boolean altFilter(KeyEvent event) {
@@ -600,7 +606,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-
         if (!isPopup() && !targetIsTextInput()) {
             return controlAltFilter(event);
         }

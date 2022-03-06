@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SquareRootCoordinate;
 import mara.mybox.tools.DoubleTools;
 

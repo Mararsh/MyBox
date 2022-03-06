@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.Data2D;
-import mara.mybox.data.DataFileCSV;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -41,10 +41,8 @@ public class DataFileCSVController extends BaseData2DFileController {
     }
 
     @Override
-    public void initValues() {
+    public void initData() {
         try {
-            super.initValues();
-
             setDataType(Data2D.Type.CSV);
             dataFileCSV = (DataFileCSV) dataController.data2D;
         } catch (Exception e) {

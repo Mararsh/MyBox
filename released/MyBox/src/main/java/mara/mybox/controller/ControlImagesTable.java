@@ -196,11 +196,14 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     protected void checkButtons() {
         super.checkButtons();
         try {
+            editButton.setDisable(true);
+            infoButton.setDisable(true);
+            metaButton.setDisable(true);
             ImageInformation info = tableView.getSelectionModel().getSelectedItem();
-            if (info == null) {
+            if (info == null || info.getFile() == null) {
                 return;
             }
-            String suffix = FileNameTools.getFileSuffix(info.getFileName());
+            String suffix = FileNameTools.suffix(info.getFile().getName());
             if (suffix == null) {
                 return;
             }
@@ -305,10 +308,10 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void viewAction() {
         try {
             ImageInformation info = tableView.getSelectionModel().getSelectedItem();
-            if (info == null) {
+            if (info == null || info.getFile() == null) {
                 return;
             }
-            String suffix = FileNameTools.getFileSuffix(info.getFileName());
+            String suffix = FileNameTools.suffix(info.getFile().getName());
             if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                 PdfViewController controller = (PdfViewController) openStage(Fxmls.PdfViewFxml);
                 controller.loadFile(info.getFile(), null, info.getIndex());

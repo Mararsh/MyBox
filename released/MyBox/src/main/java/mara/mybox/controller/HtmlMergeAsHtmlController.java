@@ -60,7 +60,7 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
             targetFileController.notify.addListener(
                     (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                         if (targetFileController.file != null) {
-                            String prefix = FileNameTools.namePrefix(targetFileController.file.getAbsolutePath());
+                            String prefix = FileNameTools.prefix(targetFileController.file.getName());
                             if (prefix != null) {
                                 titleInput.setText(prefix);
                             }
@@ -84,7 +84,7 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
 
     @Override
     public boolean matchType(File file) {
-        String suffix = FileNameTools.getFileSuffix(file.getName());
+        String suffix = FileNameTools.suffix(file.getName());
         if (suffix == null) {
             return false;
         }

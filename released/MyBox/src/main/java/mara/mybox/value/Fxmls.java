@@ -187,6 +187,9 @@ public class Fxmls {
     public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";
     public static final String Data2DNormalizeFxml = "/fxml/Data2DNormalize.fxml";
     public static final String Data2DChartFxml = "/fxml/Data2DChart.fxml";
+    public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
+    public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";
+    public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -203,6 +206,9 @@ public class Fxmls {
     public static final String MatricesManageFxml = "/fxml/MatricesManage.fxml";
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
+
+    public static final String DatabaseSQLFxml = "/fxml/DatabaseSQL.fxml";
+    public static final String DataTablesFxml = "/fxml/DataTables.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
@@ -222,7 +228,6 @@ public class Fxmls {
     public static final String DatasetEditFxml = "/fxml/DatasetEdit.fxml";
 
     public static final String LocationDataFxml = "/fxml/LocationData.fxml";
-    public static final String LocationsDataInMapFxml = "/fxml/LocationsDataInMap.fxml";
     public static final String LocationDataEditFxml = "/fxml/LocationDataEdit.fxml";
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
     public static final String LocationDataImportCSVFxml = "/fxml/LocationDataImportCSV.fxml";
@@ -265,8 +270,6 @@ public class Fxmls {
     public static final String FilesArchiveCompressFxml = "/fxml/FilesArchiveCompress.fxml";
     public static final String FilesCompressBatchFxml = "/fxml/FilesCompressBatch.fxml";
     public static final String FileDecompressUnarchiveFxml = "/fxml/FileDecompressUnarchive.fxml";
-    public static final String FileDecompressFxml = "/fxml/FileDecompress.fxml";
-    public static final String FileUnarchiveFxml = "/fxml/FileUnarchive.fxml";
     public static final String FilesDecompressUnarchiveBatchFxml = "/fxml/FilesDecompressUnarchiveBatch.fxml";
 
     /*
@@ -332,14 +335,17 @@ public class Fxmls {
      */
     public static final String MyBoxLogsFxml = "/fxml/MyBoxLogs.fxml";
     public static final String MyBoxLogViewerFxml = "/fxml/MyBoxLogViewer.fxml";
-    public static final String MyBoxDataFxml = "/fxml/MyBoxData.fxml";
+    public static final String MyBoxTablesFxml = "/fxml/MyBoxTables.fxml";
     public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
-    public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
     public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
     public static final String AutoTestingCasesFxml = "/fxml/AutoTestingCases.fxml";
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
+    public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
+    public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
+    public static final String RunJdkCommandFxml = "/fxml/RunJdkCommand.fxml";
+    public static final String JShellFxml = "/fxml/JShell.fxml";
 
     /*
         common

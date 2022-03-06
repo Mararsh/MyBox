@@ -57,6 +57,17 @@ public class TextPopController extends BaseChildController {
         }
     }
 
+    public void setText(String text) {
+        try {
+            this.sourceInput = null;
+            refreshAction();
+            setControls();
+            textArea.setText(text);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void setControls() {
         try {
             editButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
@@ -161,6 +172,20 @@ public class TextPopController extends BaseChildController {
         }
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            if (sourceInput != null) {
+                sourceInput.textProperty().removeListener(listener);
+            }
+            listener = null;
+            sourceInput = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
+
     /*
         static methods
      */
@@ -171,6 +196,17 @@ public class TextPopController extends BaseChildController {
             }
             TextPopController controller = (TextPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.TextPopFxml, false);
             controller.setSourceInput(parent.baseName, textInput);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static TextPopController loadText(BaseController parent, String text) {
+        try {
+            TextPopController controller = (TextPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.TextPopFxml, false);
+            controller.setText(text);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

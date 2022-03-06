@@ -1,6 +1,6 @@
 # Unzip source package. Edit this script to change directories as your env.
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
-version=6.5.2
+version=6.5.3
 jpackagePath=/usr/java/jdk-17/bin
 jdkPath=/usr/java/jdk-17
 

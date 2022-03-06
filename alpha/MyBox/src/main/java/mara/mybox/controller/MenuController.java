@@ -135,6 +135,13 @@ public class MenuController extends BaseChildController {
         titleLabel.setText(message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
     }
 
+    public void setTitleLabel(String s) {
+        if (titleLabel == null || s == null || s.isBlank()) {
+            return;
+        }
+        titleLabel.setText(s);
+    }
+
     public void addNode(Node node) {
         nodesBox.getChildren().add(node);
     }
@@ -178,7 +185,6 @@ public class MenuController extends BaseChildController {
         }
         return true;
     }
-
 
     /*
         static methods

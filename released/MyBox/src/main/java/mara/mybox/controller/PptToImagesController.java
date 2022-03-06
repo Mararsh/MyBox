@@ -97,7 +97,7 @@ public class PptToImagesController extends BaseBatchFileController {
 
     public File makeTargetFile(File srcFile, int index, File targetPath) {
         try {
-            String filePrefix = FileNameTools.getFilePrefix(srcFile);
+            String filePrefix = FileNameTools.prefix(srcFile.getName());
             String slidePrefix = filePrefix + "_slide" + index;
             String slideSuffix = "." + formatController.attributes.getImageFormat();
 

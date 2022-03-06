@@ -40,17 +40,18 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.fxml.cell.TableTimeCell;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -119,7 +120,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         queryPrefix = TableEpidemicReport.StatisticViewSelect;
         sizePrefix = TableEpidemicReport.SizeSelectPrefix;
         clearPrefix = TableEpidemicReport.ClearPrefix;
-        String html = tableDefinition.columnsTable() + "</BR><HR>"
+        String html = tableDefinition.columnsHtml() + "</BR><HR>"
                 + new TableEpidemicReport().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + new TableGeographyCode().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + TableEpidemicReport.CreateStatisticView.replaceAll("\n", "</BR>");
@@ -350,7 +351,9 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     sourceController.loadTree(datasets);
                     timeController.loadTree("time", times, false);
                     if (datasets == null || datasets.isEmpty()) {
-                        if (PopTools.askSure(myController, getBaseTitle(), Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
+                        if (!AppVariables.isTesting
+                                && PopTools.askSure(myController, getBaseTitle(),
+                                        Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
                             predefined();
                         }
 

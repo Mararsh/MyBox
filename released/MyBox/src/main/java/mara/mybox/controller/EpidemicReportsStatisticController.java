@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
@@ -19,9 +18,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
@@ -30,7 +26,6 @@ import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -99,7 +94,7 @@ public class EpidemicReportsStatisticController extends BaseTaskController {
     }
 
     @Override
-    protected boolean doTask() {
+    public boolean doTask() {
         int count = 1;
         while (count++ < 5) {
             try ( Connection conn = DerbyBase.getConnection()) {
@@ -429,7 +424,7 @@ public class EpidemicReportsStatisticController extends BaseTaskController {
     }
 
     @Override
-    protected void afterSuccess() {
+    public void afterSuccess() {
         if (parent != null && parent.getMyStage().isShowing()) {
             if (closeWhenCompleteCheck != null && closeWhenCompleteCheck.isSelected()) {
                 closeStage();

@@ -41,10 +41,10 @@ public class ImageMetaDataController extends BaseController {
     public void loadImageFileMeta(ImageInformation info) {
         fileInput.setText("");
         metaDataInput.setText("");
-        if (info == null || info.getFileName() == null) {
+        if (info == null || info.getFile() == null) {
             return;
         }
-        fileInput.setText(info.getFileName());
+        fileInput.setText(info.getFile().getAbsolutePath());
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -58,7 +58,7 @@ public class ImageMetaDataController extends BaseController {
                     ImageFileInformation finfo = info.getImageFileInformation();
                     s = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                     s.append("<ImageMetadata file=\"").
-                            append(finfo.getFileName()).
+                            append(finfo.getFile().getAbsolutePath()).
                             append("\"  numberOfImages=\"").
                             append(finfo.getNumberOfImages()).
                             append("\">\n");

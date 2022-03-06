@@ -78,6 +78,7 @@ public class ControlWebView extends BaseController {
 
     protected WebEngine webEngine;
     protected double linkX, linkY, scrollTop, scrollLeft;
+    protected ScrollType scrollType;
     protected float zoomScale;
     protected String address, style, defaultStyle;
     protected Charset charset;
@@ -93,6 +94,10 @@ public class ControlWebView extends BaseController {
     protected WebView webView;
     @FXML
     protected Label webViewLabel;
+
+    public enum ScrollType {
+        Top, Bottom, Last
+    }
 
     public ControlWebView() {
         linkX = linkY = -1;
@@ -117,11 +122,16 @@ public class ControlWebView extends BaseController {
     }
 
     public void setParent(BaseController parent) {
+        setParent(parent, ScrollType.Last);
+    }
+
+    public void setParent(BaseController parent, ScrollType scrollType) {
         if (parent == null) {
             return;
         }
         this.parentController = parent;
         this.baseName = parent.baseName;
+        this.scrollType = scrollType;
     }
 
     @Override
@@ -470,7 +480,21 @@ public class ControlWebView extends BaseController {
             setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
             setWebViewLabel(message("Loaded"));
 
-            webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+            if (null == scrollType) {
+                webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+            } else {
+                switch (scrollType) {
+                    case Bottom:
+                        webEngine.executeScript("window.scrollTo(0, document.documentElement.scrollHeight || document.body.scrollHeight);");
+                        break;
+                    case Top:
+                        webEngine.executeScript("window.scrollTo(0, 0);");
+                        break;
+                    default:
+                        webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
+                        break;
+                }
+            }
             if (!(this instanceof ControlHtmlEditor)) {
                 try {
                     webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
@@ -614,6 +638,16 @@ public class ControlWebView extends BaseController {
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
+
+        CheckMenuItem clickMenu = new CheckMenuItem(message("PopMenuWhenClickLink"), StyleTools.getIconImage("iconMenu.png"));
+        clickMenu.setSelected(UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true));
+        clickMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("WebViewPopMenuWhenClickLink", clickMenu.isSelected());
+            }
+        });
+        items.add(clickMenu);
 
         menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconQuery.png"));
         menu.setOnAction((ActionEvent event) -> {

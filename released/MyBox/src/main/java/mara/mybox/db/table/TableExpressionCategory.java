@@ -32,11 +32,11 @@ public class TableExpressionCategory extends BaseTable<Notebook> {
     }
 
     public final TableExpressionCategory defineColumns() {
-        addColumn(new ColumnDefinition("nbid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("nbid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("name", ColumnType.String, true).setLength(256));
         addColumn(new ColumnDefinition("description", ColumnType.String).setLength(4096));
         addColumn(new ColumnDefinition("owner", ColumnType.Long)
-                .setForeignName("Notebook_owner_fk").setForeignTable("Notebook").setForeignColumn("nbid")
+                .setReferName("Notebook_owner_fk").setReferTable("Notebook").setReferColumn("nbid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
@@ -273,10 +273,9 @@ public class TableExpressionCategory extends BaseTable<Notebook> {
             sql = "DROP TABLE Notebook";
             update(conn, sql);
 
-            createTable(conn);
-            new TableNote().createTable(conn);
-            new TableNoteTag().createTable(conn);
-
+//            createTable(conn);
+//            new TableNote().createTable(conn);
+//            new TableNoteTag().createTable(conn);
             statement.executeUpdate(TableNote.Create_Time_Index);
             statement.executeUpdate(TableNoteTag.Create_Unique_Index);
 

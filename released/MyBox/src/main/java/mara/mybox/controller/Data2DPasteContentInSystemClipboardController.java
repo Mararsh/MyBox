@@ -2,12 +2,13 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
-import mara.mybox.data.Data2D;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -23,6 +24,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     protected ControlData2DLoad targetTableController;
     protected Data2D dataTarget;
     protected int row, col;
+    protected ChangeListener<Boolean> targetStatusListener;
 
     @FXML
     protected ControlData2DInput inputController;
@@ -45,15 +47,13 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
 
             inputController.load(text);
 
-            targetTableController.statusNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        makeControls(row, col);
-                    });
-
-            targetTableController.loadedNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        makeControls(row, col);
-                    });
+            targetStatusListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    makeControls(row, col);
+                }
+            };
+            targetTableController.statusNotify.addListener(targetStatusListener);
 
             inputController.statusNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -144,6 +144,18 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
         }
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            targetTableController.statusNotify.removeListener(targetStatusListener);
+            targetStatusListener = null;
+            targetTableController = null;
+            dataTarget = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
     /*
         static
      */
@@ -152,6 +164,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
             Data2DPasteContentInSystemClipboardController controller = (Data2DPasteContentInSystemClipboardController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.Data2DPasteContentInSystemClipboardFxml, false);
             controller.setParameters(parent, text);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

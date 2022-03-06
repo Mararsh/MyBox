@@ -4,22 +4,17 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 
-## What's New          
-2022-2-1 v6.5.2         
+## What's New        
+2022-3-6 v6.5.3         
 
-* Image. Option to show grid lines. Option to share scopes with all images. Filter color. Wirte multiple-lines texts in image with background and borders.
-Rendering paramters when save or modify image.                  
-* Data. Select data and paramters to generate Bar/Line/Pie/Scatter/Bubble Chart.                                    
-* Interface. Handle all data if select none.                     
-* Codes. Pop menus are changed as child windows. Images are always handled as ARGB internally. Automatical testing: Open interfaces.
-Reduce duplicated codes of editing data.                
-* Solved. Handle non-alpha images(like jpg) wrongly when add texts in batch. Image is not updated after restored from backup. 
-Several functions do wrongly when handle data in multiple pages. Menu fails to pop when name includes special characters.                 
-Shortcuts may be triggerred when input texts with pop menu being opened.                                    
- 
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.2)             
-   
-Best wishes in Chinese Tiger Year!                      
+* Data. Convert data to database table. Manage and edit database tables. Execute database SQL statements.                        
+* Calculation. GUI of JShell(Java interactive coding tool).            
+* Dev. Edit data in MyBox internal tables. Start JConsole(Java Monitoring and Management Console).              
+* Solved. "Extract images/links in html" fails. "File unarchive" makes wrong file-paths. 
+"Synchronize Directory" will loop endlessly when target path is included in source path. Missed input field for "Power of matrix".        
+
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3)             
+                   
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -27,7 +22,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.5.2-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-src.zip)   40M(approximation)        
+[MyBox-6.5.3-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-src.zip)   40M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -38,9 +33,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.5.2-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-win10-x64.zip)  | 219MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.2-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac | [MyBox-6.5.2-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-mac.dmg)  | 232MB  |  MyBox-6.5.2.app   |        
+| win10 x64 | [MyBox-6.5.3-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win10-x64.zip)  | 219MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.3-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac | [MyBox-6.5.3-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac.dmg)  | 232MB  |  MyBox-6.5.3.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -51,16 +46,16 @@ In my Mac env(OS X 10.11.6/Darwin 15.6.0), openJDK 17 fails to start, so MyBox o
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.5.2-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-win-jar.zip)  | 156MB | Java 17 or higher |
-| linux | [MyBox-6.5.2-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-linux-jar.zip)  | 186MB  | Java 17 or higher |
-| mac | [MyBox-6.5.2-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.2/MyBox-6.5.2-mac-jar.zip)  |  159MB  | Java 16 |        
+| win | [MyBox-6.5.3-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win-jar.zip)  | 156MB | Java 17 or higher |
+| linux | [MyBox-6.5.3-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-linux-jar.zip)  | 186MB  | Java 17 or higher |
+| mac | [MyBox-6.5.3-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac-jar.zip)  |  159MB  | Java 16 |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.5.2.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.3.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.5.2.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.3.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -77,9 +72,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.5.2.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.5.2.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.5.2.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.5.3.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.5.3.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.5.3.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -99,7 +94,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.5.2 | 2022-2-1 | [html](#devLog) |
+| Development Logs | 6.5.3 | 2022-3-6 | [html](#devLog) |
 | Shortcuts | 6.4.7 | 2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -117,9 +112,11 @@ MyBox is based on following open sources:
 | --- | --- | --- |
 | JDK | Java | http://jdk.java.net/   |
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |
+|   |   | https://docs.oracle.com/en/java/javase/17/docs/api/index.html  |
 |  JavaFx | GUI |  https://gluonhq.com/products/javafx/ |
 |   |   |  https://docs.oracle.com/javafx/2/  |
 |   |   |  https://gluonhq.com/products/scene-builder/  |
+|   |   |  https://openjfx.io/javadoc/17/ |
 | NetBeans | IDE| https://netbeans.org/ |
 | jpackage | pack | https://docs.oracle.com/en/java/javase/16/docs/specs/man/jpackage.html |
 | maven | build | https://maven.apache.org/ |
@@ -169,7 +166,7 @@ MyBox is based on following open sources:
 | jsoup | DOM | https://jsoup.org/ |        
 
 # Current Version        
-Current version is 6.5.2. Its features are mentioned below in summary:          
+Current version is 6.5.3. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
@@ -211,6 +208,9 @@ Current version is 6.5.2. Its features are mentioned below in summary:
     -  [Data in System Clipboard](#dataInSystemClipboard)
     -  [Data in MyBox Clipboard](#dataInMyBoxClipboard)      
     -  [Matrix](#matrix)         
+    -  [Database Tables](#dataTables)
+    -  [Database SQL](#dbSQL)
+    -  [JShell(Java interactive coding tool)](#JShell)
     -  [Common Data Management](#dataManage)         
     -  [Map Data](#mapData)         
     -  [Geography Codes](#geographyCode)         
@@ -797,15 +797,19 @@ This tool manages following objects:
 	- Data are saved in file under MyBox internal path.
 	- Deleting record of data clipboards will delete its internal file.
 3. Matrices
-      - Records are maintained by Matrices Manager.
-      - Data are saved in MyBox database.
-      - Deleting record of matrix will delete data of this matrix.           
+	- Records are maintained by Matrices Manager.
+	- Data are saved in MyBox database.
+	- Deleting record of matrix will delete data of this matrix.           
+4. Data Tables
+	- Records are maintained by Data Tables Manager.
+	- Data are saved in MyBox database tables.
+	- Deleting record of data table will delete data of this data table.           
     
 ![Snap-manageData](https://mararsh.github.io/MyBox/snap-dataManage-en.jpg)        
 
 
 ### Edit Data<a id="editData" />
-1. Following objects can be edited in consistent way: csv/excel/texts data files, data clipboard, and matrices.     
+1. Following objects can be edited in consistent way: data files(csv/excel/texts), data clipboard, matrices, and database tables.     
 2. Data should be in same width. That is all rows have equal number of columns.   
 3. Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
 4. Data can be edited in 2 modes: 
@@ -832,7 +836,7 @@ This tool manages following objects:
       - Changes of attributes and columns are saved in database. 
 8. Click button "Recover" to discard all modifications and load data from file and database.
 9. Handle data:    
-	- Object: Selected rows or all rows in file, and selected columns.           
+	- Object: Selected rows or all data rows, and selected columns.           
 	- Operation: Set values, Copy, Paste, Sort, Statistic, Percentage, Normalize, Transpose, Export.              
 	- Target: New csv/excel/texts data file, matrix, System Clipboard, MyBox Clipboard, or insert/append/replace in defined location in the table.                  
 10. Data Charts:        
@@ -842,7 +846,7 @@ This tool manages following objects:
  		- Different value series are shown in different colors or shapes. 
  		- When data can not be parsed as numbers, they are counted as zero. 
  		- Invalid data are ignored.
-	- Bar Chart represents data size with bars' heights.
+	- Bar/Area Chart represents data size with bars' heights.
 	- Line Chart represents data trend with lines connecting points.
 	- Pie Chart represents data percentages with a circle divided into segments.               
 	   Value column should be non-negative.
@@ -851,7 +855,11 @@ This tool manages following objects:
  		- "Size Column" defines data size.
  		- All columns should be numbers. Size columns should be non-negative.
 	- Scatter Chart represents data distribution with symbols.
-11. Text format and html are displayed synchronously:
+11. Convert data as database table:
+	- Selected rows or all data rows, and selected columns.           
+	- Generate auto-increment column as primary key, or select columns as primat keys.
+	- Option about whether import data.
+12. Text format and html are displayed synchronously:
 
 ![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChart-en.jpg)         
 
@@ -892,6 +900,53 @@ This tool manages following objects:
 3. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Multiply Number, Divide By Number, Power.
 4. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
 
+
+### Database Tables<a id="dataTables" />
+1. Table name and column names should satisfy "Limitations of SQL identifier":
+      - Maximum length is 128.
+      - Case-insensitive.
+      - Ordinary identifier:
+ 		- Not surrounded by double quotation marks.
+ 		- Must begin with a letter.
+ 		- Contains only letters, underscore characters (_), and digits.
+ 		- Permits Unicode letters and digits.
+ 		- Can not be reserved words.
+ 		- Invalid characters will be converted as underscore characters.
+ 		- If identifier does not start with a letter, character "a" will be added in front of it.
+      - Delimited identifier:
+ 		- Surrounded by double quotation marks.
+ 		- Can contain any characters.
+2. After database table is created:
+      - Definition of Primary keys can not be changed and deleted.
+      - Definition of  other columns can be added and deleted but can not be changed.
+
+![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dataTables-en.jpg)          
+
+
+### Database SQL<a id="dbSQL" />
+1. Provide examples of SQL statements.
+2. List names of all user tables automatically.
+3. View table definitions of all user tables.
+4. Display outputs of execution and results of query.       
+
+![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dbSQL-en.jpg)          
+
+
+### JShell(Java interactive coding tool)<a id="JShell" />
+1. JShell provides capability to interactively evaluate "snippets", as Read-Eval-Print Loop (REPL). 
+2. "Snippet" is a single expression, statement, or declaration of Java programming language code:
+	- Semicolons should be in the end of statements while expressions need not it.
+	- Except for base classes, most of Java classes should be imported before call them.  
+	- Variables and methods can be defined and called later.
+3. Input a snippet and click button "Start" to evaluate it: 
+	- Results of snippets will affect later snippets, like "an running environment".  
+	- Attributes of all evaluated snippets will be shown in a table.
+	- Click button "Delete" or "Clear" to drop some or all snippets from current environment.
+	- Click button "Recover" to reset JShell and environment becomes blank.
+4. JShell can be used for scientific computation and Java codes debug.
+
+![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-JShell-en.jpg)           
+   
 
 ### Common Data Management<a id="dataManage" />
 1. Define data.
@@ -1500,10 +1555,12 @@ Decoding does reverse conversion.
 	-  "Callers" is the calling chain. Each line is one node and records: file, class, method, line. Calling chains only include methods of MyBox itself.
 	-  "Error" will cause interface of MyBox Logs Viewer is popped.
 5. Run system commands.
-6. Manage languages.
-7. Make icons.
-8. Automatical testing: Open interfaces.  
-9. Send message to author
+6. Start JConsole(Java Monitoring and Management Console)
+7. Manage languages.
+8. Make icons.
+9. Edit data in MyBox internal tables.
+10. Automatical testing: Open interfaces.  
+11. Send message to author
 
 ## Settings <a id="settings"></a>
 1. Interface:
@@ -1552,17 +1609,27 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
+2022-3-6 v6.5.3         
+
+* Data. Convert data to database table. Manage and edit database tables. Execute database SQL statements.                        
+* Calculation. GUI of JShell(Java interactive coding tool).            
+* Dev. Edit data in MyBox internal tables. Start JConsole(Java Monitoring and Management Console).              
+* Solved. "Extract images/links in html" fails. "File unarchive" makes wrong file-paths. 
+"Synchronize Directory" will loop endlessly when target path is included in source path. Missed input field for "Power of matrix".        
+
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3)             
+
 2022-2-1 v6.5.2         
 
 * Image. Option to show grid lines. Option to share scopes with all images. Filter color. Wirte multiple-lines texts in image with background and borders.
-Rendering paramters when save or modify image.                  
-* Data. Select data and paramters to generate Bar/Line/Pie/Scatter/Bubble Chart.                                    
+Rendering parameters when save or modify image.                  
+* Data. Select data and parameters to generate Bar/Line/Pie/Scatter/Bubble/Area Chart.                                    
 * Interface. Handle all data if select none.                     
 * Codes. Pop menus are changed as child windows. Images are always handled as ARGB internally. Automatical testing: Open interfaces.
 Reduce duplicated codes of editing data.                
 * Solved. Handle non-alpha images(like jpg) wrongly when add texts in batch. Image is not updated after restored from backup. 
 Several functions do wrongly when handle data in multiple pages. Menu fails to pop when name includes special characters.                 
-Shortcuts may be triggerred when input texts with pop menu being opened.                                    
+Shortcuts may be triggered when input texts with pop menu being opened.                                    
  
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.2)             
    

@@ -59,7 +59,6 @@ public class Data2DExportController extends BaseTaskController {
             super.initControls();
 
             convertController.setControls(this);
-
             openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenGenerated", false));
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -163,7 +162,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected void beforeTask() {
+    public void beforeTask() {
         try {
             dataVBox.setDisable(true);
             formatVBox.setDisable(true);
@@ -175,7 +174,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected boolean doTask() {
+    public boolean doTask() {
         try {
             convertController.setExport(targetPath, selectedColumns, filePrefix, targetPathController.isSkip());
 
@@ -208,7 +207,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected void afterSuccess() {
+    public void afterSuccess() {
         try {
             SoundTools.miao3();
             if (openCheck.isSelected()) {
@@ -236,7 +235,7 @@ public class Data2DExportController extends BaseTaskController {
     }
 
     @Override
-    protected void afterTask() {
+    public void afterTask() {
         try {
             dataVBox.setDisable(false);
             formatVBox.setDisable(false);
@@ -269,6 +268,7 @@ public class Data2DExportController extends BaseTaskController {
             Data2DExportController controller = (Data2DExportController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DExportFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -131,7 +131,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                 updateFileProgress(0, total);
                 currentParameters.currentTargetPath = targetPath;
 
-                String filePrefix = FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName());
+                String filePrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName());
                 if (separatedHtml) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + File.separator + filePrefix);
                     if (!currentParameters.currentTargetPath.exists()) {

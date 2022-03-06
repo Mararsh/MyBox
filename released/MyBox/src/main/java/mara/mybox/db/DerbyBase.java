@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableBlobValue;
@@ -75,7 +76,7 @@ public class DerbyBase {
             + AppValues.AppDerbyPassword + ";create=false";
     public static DerbyStatus status;
     public static long lastRetry = 0;
-    public static long BatchSize = 500;
+    public static long BatchSize = 5;
 
     public enum DerbyStatus {
         Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed
@@ -359,7 +360,7 @@ public class DerbyBase {
     }
 
     // Upper case
-    public static List<String> tables(Connection conn) {
+    public static List<String> allTables(Connection conn) {
         List<String> tables = new ArrayList<>();
         String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
         try ( Statement statement = conn.createStatement();
@@ -407,27 +408,6 @@ public class DerbyBase {
         return columns;
     }
 
-    public static String tableDefinition(Connection conn, String tablename) {
-        String s = "";
-        for (String column : columns(conn, tablename)) {
-            s += column + "\n";
-        }
-        return s;
-    }
-
-    public static String tableDefinition(String tablename) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            String s = "";
-            for (String column : columns(conn, tablename)) {
-                s += column + "\n";
-            }
-            return s;
-        } catch (Exception e) {
-            MyBoxLog.console(e, tablename);
-            return null;
-        }
-    }
-
     public static List<String> indexes(Connection conn) {
         List<String> indexes = new ArrayList<>();
         String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
@@ -456,10 +436,10 @@ public class DerbyBase {
         return tables;
     }
 
-    public static boolean initTables() {
+    public static boolean initTables(MyBoxLoadingController loadingController) {
         MyBoxLog.console("Protocol: " + protocol + dbHome());
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
-            initTables(conn);
+            initTables(loadingController, conn);
             initIndexs(conn);
             initViews(conn);
             return true;
@@ -469,115 +449,151 @@ public class DerbyBase {
         }
     }
 
-    public static boolean initTables(Connection conn) {
+    public static boolean initTables(MyBoxLoadingController loadingController, Connection conn) {
         try {
-            List<String> tables = tables(conn);
+            List<String> tables = allTables(conn);
             MyBoxLog.console("Tables: " + tables.size());
 
-            if (!tables.contains("String_Values".toUpperCase())) {
-                new TableStringValues().init(conn);
-            }
-            if (!tables.contains("image_scope".toUpperCase())) {
-                new TableImageScope().createTable(conn);
+            if (!tables.contains("MyBox_Log".toUpperCase())) {
+                new TableMyBoxLog().createTable(conn);
+                loadingController.info("MyBox_Log");
             }
             if (!tables.contains("System_Conf".toUpperCase())) {
                 new TableSystemConf().init(conn);
+                loadingController.info("System_Conf");
             }
             if (!tables.contains("User_Conf".toUpperCase())) {
                 new TableUserConf().init(conn);
-            }
-            if (!tables.contains("Alarm_Clock".toUpperCase())) {
-                new TableAlarmClock().init(conn);
-            }
-            if (!tables.contains("Convolution_Kernel".toUpperCase())) {
-                new TableConvolutionKernel().init(conn);
-            }
-            if (!tables.contains("Float_Matrix".toUpperCase())) {
-                new TableFloatMatrix().init(conn);
-            }
-            if (!tables.contains("visit_history".toUpperCase())) {
-                new TableVisitHistory().init(conn);
-            }
-            if (!tables.contains("media_list".toUpperCase())) {
-                new TableMediaList().init(conn);
-            }
-            if (!tables.contains("media".toUpperCase())) {
-                new TableMedia().init(conn);
-            }
-            if (!tables.contains("Web_History".toUpperCase())) {
-                new TableWebHistory().createTable(conn);
-            }
-            if (!tables.contains("Geography_Code".toUpperCase())) {
-                new TableGeographyCode().createTable(conn);
-            }
-            if (!tables.contains("Dataset".toUpperCase())) {
-                new TableDataset().createTable(conn);
-            }
-            if (!tables.contains("Location_Data".toUpperCase())) {
-                new TableLocationData().createTable(conn);
-            }
-            if (!tables.contains("Epidemic_Report".toUpperCase())) {
-                new TableEpidemicReport().createTable(conn);
-            }
-            if (!tables.contains("Query_Condition".toUpperCase())) {
-                new TableQueryCondition().init(conn);
-            }
-            if (!tables.contains("String_Value".toUpperCase())) {
-                new TableStringValue().init(conn);
-            }
-            if (!tables.contains("MyBox_Log".toUpperCase())) {
-                new TableMyBoxLog().createTable(conn);
-            }
-            if (!tables.contains("Image_Edit_History".toUpperCase())) {
-                new TableImageEditHistory().createTable(conn);
-            }
-            if (!tables.contains("File_Backup".toUpperCase())) {
-                new TableFileBackup().createTable(conn);
-            }
-            if (!tables.contains("Notebook".toUpperCase())) {
-                new TableNotebook().createTable(conn);
-            }
-            if (!tables.contains("Note".toUpperCase())) {
-                new TableNote().createTable(conn);
-            }
-            if (!tables.contains("Tag".toUpperCase())) {
-                new TableTag().createTable(conn);
-            }
-            if (!tables.contains("Note_Tag".toUpperCase())) {
-                new TableNoteTag().createTable(conn);
-            }
-            if (!tables.contains("Color".toUpperCase())) {
-                new TableColor().createTable(conn);
-            }
-            if (!tables.contains("Color_Palette_Name".toUpperCase())) {
-                new TableColorPaletteName().createTable(conn);
-            }
-            if (!tables.contains("Color_Palette".toUpperCase())) {
-                new TableColorPalette().createTable(conn);
-            }
-            if (!tables.contains("Tree".toUpperCase())) {
-                new TableTree().createTable(conn);
-            }
-            if (!tables.contains("Web_Favorite".toUpperCase())) {
-                new TableWebFavorite().createTable(conn);
-            }
-            if (!tables.contains("Image_Clipboard".toUpperCase())) {
-                new TableImageClipboard().createTable(conn);
-            }
-            if (!tables.contains("Text_Clipboard".toUpperCase())) {
-                new TableTextClipboard().createTable(conn);
+                loadingController.info("User_Conf");
             }
             if (!tables.contains("Data2D_Definition".toUpperCase())) {
                 new TableData2DDefinition().createTable(conn);
+                loadingController.info("Data2D_Definition");
             }
             if (!tables.contains("Data2D_Column".toUpperCase())) {
                 new TableData2DColumn().createTable(conn);
+                loadingController.info("Data2D_Column");
+            }
+            if (!tables.contains("String_Values".toUpperCase())) {
+                new TableStringValues().init(conn);
+                loadingController.info("String_Values");
+            }
+            if (!tables.contains("image_scope".toUpperCase())) {
+                new TableImageScope().createTable(conn);
+                loadingController.info("image_scope");
+            }
+            if (!tables.contains("Alarm_Clock".toUpperCase())) {
+                new TableAlarmClock().init(conn);
+                loadingController.info("Alarm_Clock");
+            }
+            if (!tables.contains("Convolution_Kernel".toUpperCase())) {
+                new TableConvolutionKernel().init(conn);
+                loadingController.info("Convolution_Kernel");
+            }
+            if (!tables.contains("Float_Matrix".toUpperCase())) {
+                new TableFloatMatrix().init(conn);
+                loadingController.info("Float_Matrix");
+            }
+            if (!tables.contains("visit_history".toUpperCase())) {
+                new TableVisitHistory().init(conn);
+                loadingController.info("visit_history");
+            }
+            if (!tables.contains("media_list".toUpperCase())) {
+                new TableMediaList().init(conn);
+                loadingController.info("media_list");
+            }
+            if (!tables.contains("media".toUpperCase())) {
+                new TableMedia().init(conn);
+                loadingController.info("media");
+            }
+            if (!tables.contains("Web_History".toUpperCase())) {
+                new TableWebHistory().createTable(conn);
+                loadingController.info("Web_History");
+            }
+            if (!tables.contains("Geography_Code".toUpperCase())) {
+                new TableGeographyCode().createTable(conn);
+                loadingController.info("Geography_Code");
+            }
+            if (!tables.contains("Dataset".toUpperCase())) {
+                new TableDataset().createTable(conn);
+                loadingController.info("Dataset");
+            }
+            if (!tables.contains("Location_Data".toUpperCase())) {
+                new TableLocationData().createTable(conn);
+                loadingController.info("Location_Data");
+            }
+            if (!tables.contains("Epidemic_Report".toUpperCase())) {
+                new TableEpidemicReport().createTable(conn);
+                loadingController.info("Epidemic_Report");
+            }
+            if (!tables.contains("Query_Condition".toUpperCase())) {
+                new TableQueryCondition().init(conn);
+                loadingController.info("Query_Condition");
+            }
+            if (!tables.contains("String_Value".toUpperCase())) {
+                new TableStringValue().init(conn);
+                loadingController.info("String_Value");
+            }
+
+            if (!tables.contains("Image_Edit_History".toUpperCase())) {
+                new TableImageEditHistory().createTable(conn);
+                loadingController.info("Image_Edit_History");
+            }
+            if (!tables.contains("File_Backup".toUpperCase())) {
+                new TableFileBackup().createTable(conn);
+                loadingController.info("File_Backup");
+            }
+            if (!tables.contains("Notebook".toUpperCase())) {
+                new TableNotebook().createTable(conn);
+                loadingController.info("Notebook");
+            }
+            if (!tables.contains("Note".toUpperCase())) {
+                new TableNote().createTable(conn);
+                loadingController.info("Note");
+            }
+            if (!tables.contains("Tag".toUpperCase())) {
+                new TableTag().createTable(conn);
+                loadingController.info("Tag");
+            }
+            if (!tables.contains("Note_Tag".toUpperCase())) {
+                new TableNoteTag().createTable(conn);
+                loadingController.info("Note_Tag");
+            }
+            if (!tables.contains("Color".toUpperCase())) {
+                new TableColor().createTable(conn);
+                loadingController.info("Color");
+            }
+            if (!tables.contains("Color_Palette_Name".toUpperCase())) {
+                new TableColorPaletteName().createTable(conn);
+                loadingController.info("Color_Palette_Name");
+            }
+            if (!tables.contains("Color_Palette".toUpperCase())) {
+                new TableColorPalette().createTable(conn);
+                loadingController.info("Color_Palette");
+            }
+            if (!tables.contains("Tree".toUpperCase())) {
+                new TableTree().createTable(conn);
+                loadingController.info("Tree");
+            }
+            if (!tables.contains("Web_Favorite".toUpperCase())) {
+                new TableWebFavorite().createTable(conn);
+                loadingController.info("Web_Favorite");
+            }
+            if (!tables.contains("Image_Clipboard".toUpperCase())) {
+                new TableImageClipboard().createTable(conn);
+                loadingController.info("Image_Clipboard");
+            }
+            if (!tables.contains("Text_Clipboard".toUpperCase())) {
+                new TableTextClipboard().createTable(conn);
+                loadingController.info("Text_Clipboard");
             }
             if (!tables.contains("Data2D_Cell".toUpperCase())) {
                 new TableData2DCell().createTable(conn);
+                loadingController.info("Data2D_Cell");
             }
             if (!tables.contains("Blob_Value".toUpperCase())) {
                 new TableBlobValue().createTable(conn);
+                loadingController.info("Blob_Value");
             }
             return true;
         } catch (Exception e) {
@@ -900,6 +916,34 @@ public class DerbyBase {
             MyBoxLog.error(e, file);
 
         }
+    }
+
+    // https://db.apache.org/derby/docs/10.15/ref/crefsqlj1003454.html#crefsqlj1003454
+    // https://db.apache.org/derby/docs/10.15/ref/rrefkeywords29722.html
+    public static String fixedIdentifier(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.startsWith("\"") && name.endsWith("\"")) {
+            return name;
+        }
+        String s = "";
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if ((c > 64 && c < 91) || (c > 96 && c < 123) || c < 0 || c > 127) {
+                s += c;
+                continue;
+            }
+            if (i == 0) {
+                s += "a";
+            }
+            if (c == '_' || (c > 47 && c < 58)) {
+                s += c;
+            } else {
+                s += "_";
+            }
+        }
+        return s;
     }
 
 

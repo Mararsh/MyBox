@@ -198,7 +198,7 @@ public class Location extends BaseData implements Cloneable {
         if (data == null || column == null) {
             return null;
         }
-        switch (column.getName()) {
+        switch (column.getColumnName()) {
             case "datasetid":
                 return data.getDatasetName();
             case "start_time":

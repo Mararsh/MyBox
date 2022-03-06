@@ -102,7 +102,7 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
     }
 
     @Override
-    protected int clearData() {
+    protected long clearData() {
         if (tableDefinition != null) {
             return tableDefinition.deleteCondition(queryConditions);
         } else {

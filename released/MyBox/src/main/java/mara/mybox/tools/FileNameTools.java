@@ -22,7 +22,7 @@ public class FileNameTools {
         return pattern.matcher(name).replaceAll("_");
     }
 
-    public static String getName(final String filename) {
+    public static String name(String filename) {
         if (filename == null) {
             return null;
         }
@@ -34,22 +34,22 @@ public class FileNameTools {
         return fname;
     }
 
-    public static String appendName(String file, String append) {
-        if (file == null) {
+    public static String append(String filename, String append) {
+        if (filename == null) {
             return null;
         }
         if (append == null || append.isEmpty()) {
-            return file;
+            return filename;
         }
         String path;
         String name;
-        int pos = file.lastIndexOf(File.separator);
+        int pos = filename.lastIndexOf(File.separator);
         if (pos >= 0) {
-            path = file.substring(0, pos + 1);
-            name = pos < file.length() - 1 ? file.substring(pos + 1) : "";
+            path = filename.substring(0, pos + 1);
+            name = pos < filename.length() - 1 ? filename.substring(pos + 1) : "";
         } else {
             path = "";
-            name = file;
+            name = filename;
         }
         pos = name.lastIndexOf('.');
         if (pos >= 0) {
@@ -59,80 +59,29 @@ public class FileNameTools {
         }
     }
 
-    public static String namePrefix(final String file) {
-        if (file == null) {
+    public static String prefix(String filename) {
+        if (filename == null) {
             return null;
         }
-        String fname = getName(file);
-        int pos = fname.lastIndexOf('.');
+        String name = name(filename);
+        int pos = name.lastIndexOf('.');
         if (pos >= 0) {
-            fname = fname.substring(0, pos);
+            name = name.substring(0, pos);
         }
-        return fname;
-    }
-
-    public static String getFilePrefix(File file) {
-        try {
-            return getFilePrefix(file.getName());
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    // filename may include path or not, it is decided by caller
-    public static String getFilePrefix(String file) {
-        if (file == null) {
-            return null;
-        }
-        String path;
-        String name;
-        int pos = file.lastIndexOf(File.separator);
-        if (pos >= 0) {
-            path = file.substring(0, pos + 1);
-            name = (pos < file.length() - 1) ? file.substring(pos + 1) : "";
-        } else {
-            path = "";
-            name = file;
-        }
-        pos = name.lastIndexOf('.');
-        return pos >= 0 ? path + name.substring(0, pos) : path + name;
-    }
-
-    public static String prefixFilter(File file) {
-        try {
-            return prefixFilter(file.getName());
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public static String prefixFilter(String file) {
-        String prefix = getFilePrefix(file);
-        if (prefix == null || prefix.isBlank()) {
-            return prefix;
-        }
-        Pattern pattern = Pattern.compile(AppValues.FileNameSpecialChars);
-        return pattern.matcher(prefix).replaceAll("_");
-    }
-
-    public static String getFileSuffix(File file) {
-        if (file == null) {
-            return null;
-        }
-        return getFileSuffix(file.getName());
+        return name;
     }
 
     // not include "."
-    public static String getFileSuffix(String file) {
-        if (file == null || file.endsWith(File.separator)) {
+    public static String suffix(String filename) {
+        if (filename == null || filename.endsWith(File.separator)) {
             return null;
         }
-        String name = getName(file);
+        String name = name(filename);
         int pos = name.lastIndexOf('.');
         return (pos >= 0 && pos < name.length() - 1) ? name.substring(pos + 1) : "";
     }
 
-    public static String replaceFileSuffix(String file, String newSuffix) {
+    public static String replaceSuffix(String file, String newSuffix) {
         if (file == null || newSuffix == null) {
             return null;
         }
@@ -154,7 +103,7 @@ public class FileNameTools {
         }
     }
 
-    public static int compareFilename(File f1, File f2) {
+    public static int compareName(File f1, File f2) {
         try {
             if (f1 == null) {
                 return f2 == null ? 0 : -1;

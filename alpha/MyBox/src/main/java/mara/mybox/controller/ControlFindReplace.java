@@ -24,9 +24,9 @@ import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.data.LongRange;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -439,10 +439,10 @@ public class ControlFindReplace extends BaseController {
             }
         }
         if (!replaceString.isBlank()) {
-            TableStringValues.add(baseName + "ReplaceString", findString);
+            TableStringValues.add(baseName + "ReplaceString", replaceString);
         }
         if (operation == Operation.ReplaceAll && multiplePages) {
-            if (!PopTools.askSure(this,getMyStage().getTitle(), message("SureReplaceAll"))) {
+            if (!PopTools.askSure(this, getMyStage().getTitle(), message("SureReplaceAll"))) {
                 return false;
             }
         }

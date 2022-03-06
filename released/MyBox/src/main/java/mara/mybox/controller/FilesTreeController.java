@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -16,7 +15,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TreeTableEraCell;
 import mara.mybox.fxml.cell.TreeTableFileSizeCell;
 import mara.mybox.value.Languages;
@@ -26,7 +24,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-11-25
  * @License Apache License Version 2.0
  */
-public class FilesTreeController extends BaseController {
+public class FilesTreeController extends BaseTaskController {
 
     protected boolean listenDoubleClick;
 
@@ -63,7 +61,6 @@ public class FilesTreeController extends BaseController {
             fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
             fileColumn.setPrefWidth(400);
 
-//            selectedColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("selected"));
             selectedColumn.setCellValueFactory(
                     new Callback<TreeTableColumn.CellDataFeatures<FileInformation, Boolean>, ObservableValue<Boolean>>() {
                 @Override
@@ -76,7 +73,7 @@ public class FilesTreeController extends BaseController {
             });
             selectedColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectedColumn));
 
-            typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileSuffix"));
+            typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("suffix"));
 
             sizeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileSize"));
             sizeColumn.setCellFactory(new TreeTableFileSizeCell());
@@ -117,18 +114,17 @@ public class FilesTreeController extends BaseController {
             return null;
         }
         for (TreeItem<FileInformation> child : item.getChildren()) {
-            if (name.equals(child.getValue().getFileName())) {
+            if (name.equals(child.getValue().getData())) {
                 return child;
             }
         }
         FileInformation childInfo = new FileInformation();
-        childInfo.setFileName(name);
-        final TreeItem<FileInformation> childItem = new TreeItem(childInfo);
+        childInfo.setData(name);
+        TreeItem<FileInformation> childItem = new TreeItem(childInfo);
         childItem.setExpanded(true);
         childInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean oldItem, Boolean newItem) {
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldItem, Boolean newItem) {
                 if (!isSettingValues) {
                     treeItemSelected(childItem, newItem);
                 }
@@ -142,39 +138,10 @@ public class FilesTreeController extends BaseController {
         if (isSettingValues || item == null || item.getChildren() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                isSettingValues = true;
-                                selectChildren(item, select);
-                                isSettingValues = false;
-                                filesTreeView.refresh();
-                            }
-                        });
-                        return true;
-                    } catch (Exception e) {
-                        isSettingValues = false;
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    filesTreeView.refresh();
-                }
-            };
-            start(task);
-        }
+        isSettingValues = true;
+        selectChildren(item, select);
+        filesTreeView.refresh();
+        isSettingValues = false;
     }
 
     protected void selectChildren(TreeItem<FileInformation> item, boolean select) {
@@ -191,7 +158,7 @@ public class FilesTreeController extends BaseController {
         if (item == null || name == null || item.getValue() == null) {
             return null;
         }
-        if (name.equals(item.getValue().getFileName())) {
+        if (name.equals(item.getValue().getData())) {
             return item;
         }
         for (TreeItem<FileInformation> child : item.getChildren()) {

@@ -43,7 +43,7 @@ public class TableImageFileCell<T> extends TableCell<T, String>
                 if (!empty && item != null) {
                     try {
                         File file = new File(item);
-                        BufferedImage image = ImageFileReaders.readImage(file);
+                        BufferedImage image = ImageFileReaders.readImage(file, thumbWidth);
                         if (image != null) {
                             imageview.setImage(SwingFXUtils.toFXImage(image, null));
                             setGraphic(imageview);

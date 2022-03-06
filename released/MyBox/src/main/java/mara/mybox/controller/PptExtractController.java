@@ -107,7 +107,7 @@ public class PptExtractController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        String suffix = FileNameTools.getFileSuffix(srcFile);
+        String suffix = FileNameTools.suffix(srcFile.getName());
         if ("pptx".equalsIgnoreCase(suffix)) {
             return handlePPTX(srcFile, targetPath);
         }
@@ -305,7 +305,7 @@ public class PptExtractController extends BaseBatchFileController {
 
     public File makeObjectFile(File srcFile, String prefix, int slideIndex, int objIndex, String ext, File targetPath) {
         try {
-            String srcPrefix = FileNameTools.getFilePrefix(srcFile);
+            String srcPrefix = FileNameTools.prefix(srcFile.getName());
             String filePrefix = srcPrefix
                     + (prefix != null ? "_" + prefix : "")
                     + (slideIndex >= 0 ? "_slide" + slideIndex : "")

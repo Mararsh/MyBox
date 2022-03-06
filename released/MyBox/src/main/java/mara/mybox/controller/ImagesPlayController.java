@@ -29,8 +29,8 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
@@ -196,7 +196,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (file == null) {
                 return;
             }
-            String format = FileNameTools.getFileSuffix(file);
+            String format = FileNameTools.suffix(file.getName());
             if (format == null || format.isBlank()) {
                 popError(Languages.message("NotSupport"));
                 return;
@@ -240,7 +240,7 @@ public class ImagesPlayController extends BaseImagesListController {
             return false;
         }
         try ( ImageInputStream iis = ImageIO.createImageInputStream(sourceFile)) {
-            ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(sourceFile));
+            ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.suffix(sourceFile.getName()));
             if (reader == null) {
                 return false;
             }

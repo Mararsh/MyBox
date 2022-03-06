@@ -22,7 +22,7 @@ import mara.mybox.db.data.GeographyCode;
 import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;

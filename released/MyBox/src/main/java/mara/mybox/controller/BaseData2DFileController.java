@@ -9,12 +9,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.Data2D;
-import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.table.TableData2DColumn;
-import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -25,15 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DFileController extends BaseController {
-
-    protected Data2D data2D;
-    protected TableData2DDefinition tableData2DDefinition;
-    protected TableData2DColumn tableData2DColumn;
-    protected ControlData2DEditTable tableController;
-    protected ControlData2DEditText textController;
-    protected ControlData2DAttributes attributesController;
-    protected ControlData2DColumns columnsController;
+public abstract class BaseData2DFileController extends BaseData2DController {
 
     @FXML
     protected TitledPane infoPane, saveAsPane, backupPane, formatPane;
@@ -42,9 +30,7 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     protected ControlFileBackup backupController;
     @FXML
-    protected ControlData2D dataController;
-    @FXML
-    protected Label infoLabel, nameLabel;
+    protected Label infoLabel;
 
     public BaseData2DFileController() {
         TipsLabelKey = "DataFileTips";
@@ -60,43 +46,17 @@ public abstract class BaseData2DFileController extends BaseController {
     /*
         init
      */
-    // subclass should call this
-    public void setDataType(Data2D.Type type) {
-        try {
-            dataController.setDataType(this, type);
-            dataController.backupController = backupController;
-            data2D = dataController.data2D;
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            tableData2DColumn = dataController.tableData2DColumn;
-            tableController = dataController.editController.tableController;
-            textController = dataController.editController.textController;
-            attributesController = dataController.attributesController;
-            columnsController = dataController.columnsController;
-
-            tableController.dataLabel = nameLabel;
-            tableController.baseTitle = baseTitle;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     @Override
     public void initControls() {
         try {
-
             super.initControls();
+
+            initInfoTab();
             initFormatTab();
             initBackupsTab();
             initSaveAsTab();
 
-            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    checkStatus();
-                }
-            });
-
-            dataController.savedNotify.addListener(new ChangeListener<Boolean>() {
+            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     checkStatus();
@@ -104,8 +64,6 @@ public abstract class BaseData2DFileController extends BaseController {
             });
 
             checkStatus();
-
-            infoLabel.textProperty().bind(attributesController.infoArea.textProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -123,6 +81,8 @@ public abstract class BaseData2DFileController extends BaseController {
                     UserConfig.setBoolean(baseName + "InfoPane", infoPane.isExpanded());
                 }
             });
+
+            infoLabel.textProperty().bind(dataController.attributesController.infoArea.textProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -187,12 +147,8 @@ public abstract class BaseData2DFileController extends BaseController {
         dataController.sourceFileChanged(file);
     }
 
-    public void loadDef(Data2DDefinition def) {
-        dataController.loadDef(def);
-    }
-
     protected void checkStatus() {
-        leftPane.setDisable(data2D == null || data2D.isTmpData());
+        leftPane.setDisable(dataController.data2D == null || dataController.data2D.isTmpData());
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -201,30 +157,6 @@ public abstract class BaseData2DFileController extends BaseController {
                 });
             }
         }, 500);
-    }
-
-    @FXML
-    @Override
-    public void createAction() {
-        dataController.create();
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        dataController.recoverFile();
-    }
-
-    @FXML
-    @Override
-    public void loadContentInSystemClipboard() {
-        dataController.loadContentInSystemClipboard();
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        dataController.save();
     }
 
     @FXML
@@ -240,50 +172,19 @@ public abstract class BaseData2DFileController extends BaseController {
     @FXML
     public void refreshFile() {
         dataController.resetStatus();
-        data2D.initFile(data2D.getFile());
+        dataController.data2D.initFile(dataController.data2D.getFile());
         pickRefreshOptions();
         dataController.readDefinition();
     }
 
     @FXML
     public void editTextFile() {
-        if (data2D == null || data2D.getFile() == null) {
+        if (dataController.data2D == null || dataController.data2D.getFile() == null) {
             return;
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.sourceFileChanged(data2D.getFile());
+        controller.sourceFileChanged(dataController.data2D.getFile());
         controller.toFront();
-    }
-
-    @Override
-    public boolean checkBeforeNextAction() {
-        return dataController.checkBeforeNextAction();
-    }
-
-    @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            return dataController.keyEventsFilter(event);
-        }
-        return true;
-    }
-
-    @Override
-    public void myBoxClipBoard() {
-        dataController.myBoxClipBoard();
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            dataController = null;
-            tableController = null;
-            data2D = null;
-            tableData2DDefinition = null;
-            tableData2DColumn = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
 }

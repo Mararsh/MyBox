@@ -1127,7 +1127,7 @@ public class WeiboSnapRunController extends BaseController {
                         if (fname.isEmpty()) {
                             continue;
                         }
-                        suffix = FileNameTools.getFileSuffix(pix[i]);
+                        suffix = FileNameTools.suffix(pix[i]);
                         if (suffix.isEmpty()) {
                             suffix = "jpg";
                             fname += "." + suffix;

@@ -33,7 +33,7 @@ public class FilesMergeController extends BaseBatchFileController {
             if (targetFile == null) {
                 return false;
             }
-            targetFile = makeTargetFile(targetFile.getName(), targetFile.getParentFile());
+            targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
             if (targetFile == null) {
                 return false;
             }

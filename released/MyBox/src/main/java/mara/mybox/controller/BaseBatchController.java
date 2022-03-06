@@ -30,8 +30,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
@@ -106,7 +106,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (target == null) {
             return message("Skip");
         }
-        targetFileGenerated(target);
+        targetFileGenerated(target, true);
         return message("Successful");
     }
 
@@ -545,19 +545,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    protected void initLogs() {
+    public void initLogs() {
         if (logsTextArea != null) {
             logsTextArea.setText("");
             newLogs = new StringBuffer();
             logsNewlines = 0;
             logsTotalLines = 0;
-            if (maxLinesinput != null) {
-                try {
-                    logsMaxLines = Integer.parseInt(maxLinesinput.getText());
-                } catch (Exception e) {
-                    logsMaxLines = 5000;
-                }
-            }
         }
     }
 
@@ -735,7 +728,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             sourceFilesSelector = new String[0];
         }
         String fname = file.getName();
-        String suffix = FileNameTools.getFileSuffix(fname);
+        String suffix = FileNameTools.suffix(fname);
         switch (fileSelectorType) {
 
             case ExtensionEuqalAny:
@@ -992,7 +985,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    protected void updateLogs(final String line) {
+    public void updateLogs(final String line) {
         updateLogs(line, true, false);
     }
 
@@ -1035,21 +1028,21 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     @FXML
     @Override
-    protected void clearLogs() {
+    public void clearLogs() {
         logsTextArea.setText("");
     }
 
     @Override
-    public File makeTargetFile(String fileName, File targetPath) {
+    public File makeTargetFile(File srcFile, File targetPath) {
         File path = targetPath;
         if (targetSubdirCheck != null && targetSubdirCheck.isSelected()) {
-            path = new File(targetPath, FileNameTools.namePrefix(fileName));
+            path = new File(targetPath, FileNameTools.prefix(srcFile.getName()));
         }
-        return super.makeTargetFile(fileName, path);
+        return super.makeTargetFile(srcFile, path);
     }
 
     @Override
-    protected boolean targetFileGenerated(File target, int type) {
+    public boolean targetFileGenerated(File target, int type, boolean record) {
         if (target == null || !target.exists() || target.length() == 0) {
             return false;
         }
@@ -1060,7 +1053,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
-        recordFileWritten(target, type, type);
+        if (record) {
+            recordFileWritten(target, type, type);
+        }
         return true;
     }
 

@@ -8,8 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -130,11 +128,11 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 filesArrangement, dirSynchronize, new SeparatorMenuItem(),
+                archiveCompressMenu, new SeparatorMenuItem(),
                 fileCut, filesMerge, new SeparatorMenuItem(),
                 filesFind, filesRedundancy, filesCompare, new SeparatorMenuItem(),
                 filesRename, filesCopy, filesMove, new SeparatorMenuItem(),
-                fileDeleteMenu, new SeparatorMenuItem(),
-                archiveCompressMenu
+                fileDeleteMenu
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

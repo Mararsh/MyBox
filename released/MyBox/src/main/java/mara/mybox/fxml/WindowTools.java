@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -91,11 +92,24 @@ public class WindowTools {
                 stage.initStyle(stageStyle);
             }
             // External request to close
-            stage.setOnCloseRequest((WindowEvent event) -> {
-                if (!controller.leavingScene()) {
-                    event.consume();
-                } else {
-                    WindowTools.closeWindow(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.leavingScene()) {
+                        event.consume();
+                    } else {
+                        WindowTools.closeWindow(stage);
+                    }
+                }
+            });
+
+            stage.setOnHiding(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (controller != null) {
+                        controller.leaveScene();
+                    }
+                    WindowTools.closeWindow(stage);   // Close anyway
                 }
             });
 
@@ -106,14 +120,6 @@ public class WindowTools {
                         controller.closePopup();
                     }
                 }
-            });
-
-            // Close anyway
-            stage.setOnHiding((WindowEvent event) -> {
-                if (controller != null) {
-                    controller.leaveScene();
-                }
-                WindowTools.closeWindow(stage);
             });
 
             stage.setScene(scene);
@@ -382,6 +388,10 @@ public class WindowTools {
 
     public static void appExit() {
         try {
+            if (AppVariables.handlingExit) {
+                return;
+            }
+            AppVariables.handlingExit = true;
             if (Window.getWindows() != null) {
                 List<Window> windows = new ArrayList<>();
                 windows.addAll(Window.getWindows());
@@ -424,20 +434,23 @@ public class WindowTools {
             if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
                 MyBoxLog.info("Exit now. Bye!");
                 if (DerbyBase.status == DerbyStatus.Embedded) {
-                    MyBoxLog.debug("Shut down Derby...");
+                    MyBoxLog.info("Shut down Derby...");
                     DerbyBase.shutdownEmbeddedDerby();
                 }
+                AppVariables.handlingExit = false;
 
                 Platform.setImplicitExit(true);
                 System.gc();
                 Platform.exit(); // Some thread may still be alive after this
                 System.exit(0);  // Go
                 Runtime.getRuntime().halt(0);
+                return;
             }
 
         } catch (Exception e) {
 
         }
+        AppVariables.handlingExit = false;
 
     }
 
@@ -477,6 +490,30 @@ public class WindowTools {
             }
         } catch (Exception e) {
         }
+    }
+
+    public static BaseController find(String interfaceName) {
+        try {
+            if (interfaceName == null || interfaceName.isBlank()) {
+                return null;
+            }
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof BaseController) {
+                    try {
+                        BaseController controller = (BaseController) object;
+                        if (interfaceName.equals(controller.getInterfaceName())) {
+                            return controller;
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
 }

@@ -135,6 +135,13 @@ public class MenuController extends BaseChildController {
         titleLabel.setText(message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
     }
 
+    public void setTitleLabel(String s) {
+        if (titleLabel == null || s == null || s.isBlank()) {
+            return;
+        }
+        titleLabel.setText(s);
+    }
+
     public void addNode(Node node) {
         nodesBox.getChildren().add(node);
     }
@@ -179,25 +186,9 @@ public class MenuController extends BaseChildController {
         return true;
     }
 
-
     /*
         static methods
      */
-    public static void closeAll() {
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof MenuController) {
-                try {
-                    MenuController controller = (MenuController) object;
-                    controller.close();
-                } catch (Exception e) {
-                }
-            }
-        }
-    }
-
     public static MenuController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null) {
@@ -217,6 +208,21 @@ public class MenuController extends BaseChildController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
+        }
+    }
+
+    public static void closeAll() {
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof MenuController) {
+                try {
+                    MenuController controller = (MenuController) object;
+                    controller.close();
+                } catch (Exception e) {
+                }
+            }
         }
     }
 

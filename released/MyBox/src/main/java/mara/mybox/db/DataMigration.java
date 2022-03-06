@@ -124,7 +124,9 @@ public class DataMigration {
                 if (lastVersion < 6005002) {
                     updateIn652(conn);
                 }
-
+                if (lastVersion < 6005003) {
+                    updateIn653(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -132,6 +134,23 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn653(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.5.3...");
+
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN is_id");
+                statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN is_auto BOOLEAN");
+                conn.commit();
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn652(Connection conn) {
@@ -284,7 +303,7 @@ public class DataMigration {
                     while (cquery.next()) {
                         Data2DColumn column = Data2DColumn.create().setD2id(d2did);
                         column.setType(ColumnDefinition.columnType(cquery.getShort("column_type")));
-                        column.setName(cquery.getString("column_name"));
+                        column.setColumnName(cquery.getString("column_name"));
                         column.setIndex(cquery.getInt("index"));
                         column.setLength(cquery.getInt("length"));
                         column.setWidth(cquery.getInt("width"));

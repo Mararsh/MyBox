@@ -655,7 +655,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 return;
             }
 
-            String name = (sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) : "") + "_preprocessed";
+            String name = (sourceFile != null ? FileNameTools.prefix(sourceFile.getName()) : "") + "_preprocessed";
             final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
                     name, FileFilters.ImageExtensionFilter);
             if (file == null) {
@@ -667,7 +667,7 @@ public class ImageOCRProcessController extends ImageViewerController {
 
                 @Override
                 protected boolean handle() {
-                    String format = FileNameTools.getFileSuffix(file.getName());
+                    String format = FileNameTools.suffix(file.getName());
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
                     return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
                 }

@@ -7,8 +7,8 @@ package mara.mybox.value;
  */
 public class AppValues {
 
-    public static final String AppVersion = "6.5.2";
-    public static final String AppVersionDate = "2022-2-1";
+    public static final String AppVersion = "6.5.3";
+    public static final String AppVersionDate = "2022-3-6";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 
@@ -26,10 +26,11 @@ public class AppValues {
     public static final int IOBufferLength = 8024;
     public static final String HttpsProtocal = "TLSv1.2";
 
-    public static final short InvalidShort = Short.MIN_VALUE;
-    public static final long InvalidLong = Long.MIN_VALUE;
+    public static final short InvalidShort = Short.MAX_VALUE;
+    public static final long InvalidLong = Long.MAX_VALUE;
     public static final double InvalidDouble = Double.MAX_VALUE;
-    public static final int InvalidInteger = Integer.MIN_VALUE;
+    public static final float InvalidFloat = Float.MAX_VALUE;
+    public static final int InvalidInteger = Integer.MAX_VALUE;
 
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";

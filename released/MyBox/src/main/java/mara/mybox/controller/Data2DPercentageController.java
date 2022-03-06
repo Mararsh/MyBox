@@ -10,7 +10,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data.DataFileCSV;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -94,9 +94,9 @@ public class Data2DPercentageController extends Data2DHandleController {
             for (Data2DColumn column : cols) {
                 if (valuesCheck.isSelected()) {
                     handledColumns.add(column.cloneAll());
-                    handledNames.add(column.getName());
+                    handledNames.add(column.getColumnName());
                 }
-                cName = column.getName() + "%";
+                cName = column.getColumnName() + "%";
                 while (handledNames.contains(cName)) {
                     cName += "m";
                 }
@@ -119,7 +119,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                 return;
             }
             if (sourceController.allPages()) {
-                handleFileTask();
+                handleAllTask();
             } else {
                 handleRowsTask();
             }
@@ -140,7 +140,7 @@ public class Data2DPercentageController extends Data2DHandleController {
             int colsLen = sourceController.checkedColsIndices.size();
             double[] sum = new double[colsLen];
             for (int r : sourceController.checkedRowsIndices) {
-                List<String> tableRow = editController.tableData.get(r);
+                List<String> tableRow = tableController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
                     double d = data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
                     if (d < 0) {
@@ -164,7 +164,7 @@ public class Data2DPercentageController extends Data2DHandleController {
             }
             handledData.add(row);
             for (int r : sourceController.checkedRowsIndices) {
-                List<String> tableRow = editController.tableData.get(r);
+                List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add((r + 1) + "");
                 for (int c = 0; c < colsLen; c++) {
@@ -211,6 +211,7 @@ public class Data2DPercentageController extends Data2DHandleController {
             Data2DPercentageController controller = (Data2DPercentageController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DPercentageFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -198,6 +198,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
                             break;
                         }
                     }
+                    parentController.getMyWindow().requestFocus();
                     textInput.requestFocus();
                 }
             });
@@ -325,6 +326,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
         }
         IndexRange range = textInput.getSelection();
         textInput.insertText(range.getStart(), string);
+        parentController.getMyWindow().requestFocus();
         textInput.requestFocus();
     }
 
@@ -340,8 +342,9 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             }
             first--;
         }
-        textInput.requestFocus();
         textInput.insertText(first, string);
+        parentController.getMyWindow().requestFocus();
+        textInput.requestFocus();
     }
 
     public void addTextInFrontOfEachLine(String prefix) {
@@ -373,6 +376,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
                 break;
             }
         }
+        parentController.getMyWindow().requestFocus();
         textInput.requestFocus();
     }
 
@@ -394,6 +398,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             textInput.insertText(range.getStart(), prefix);
             textInput.insertText(range.getEnd() + prefix.length(), suffix);
         }
+        parentController.getMyWindow().requestFocus();
         textInput.requestFocus();
     }
 

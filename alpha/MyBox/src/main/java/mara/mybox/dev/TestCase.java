@@ -173,6 +173,8 @@ public class TestCase {
             cases.add(new TestCase(index++, message("MatricesManage"), Fxmls.MatricesManageFxml));
             cases.add(new TestCase(index++, message("MatrixUnaryCalculation"), Fxmls.MatrixUnaryCalculationFxml));
             cases.add(new TestCase(index++, message("MatricesBinaryCalculation"), Fxmls.MatricesBinaryCalculationFxml));
+            cases.add(new TestCase(index++, message("DatabaseTable"), Fxmls.DataTablesFxml));
+            cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DatabaseSQLFxml));
             cases.add(new TestCase(index++, message("GeographyCode"), Fxmls.GeographyCodeFxml));
             cases.add(new TestCase(index++, message("LocationInMap"), Fxmls.LocationInMapFxml));
             cases.add(new TestCase(index++, message("LocationData"), Fxmls.LocationDataFxml));
@@ -234,6 +236,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("MakeIcons"), Fxmls.MyBoxIconsFxml));
             cases.add(new TestCase(index++, message("AutoTesting"), Fxmls.AutoTestingCasesFxml));
             cases.add(new TestCase(index++, message("MessageAuthor"), Fxmls.MessageAuthorFxml));
+            cases.add(new TestCase(index++, message("JShell"), Fxmls.JShellFxml));
 
             cases.add(new TestCase(index++, message("Shortcuts"), Fxmls.ShortcutsFxml));
             cases.add(new TestCase(index++, message("FunctionsList"), Fxmls.FunctionsListFxml));

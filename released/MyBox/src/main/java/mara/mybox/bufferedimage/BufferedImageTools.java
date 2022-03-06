@@ -73,12 +73,13 @@ public class BufferedImageTools {
     }
 
     // https://stackoverflow.com/questions/24038524/how-to-get-byte-from-javafx-imageview
-    public static byte[] bytes(BufferedImage image) {
+    public static byte[] bytes(BufferedImage image, String format) {
         byte[] bytes = null;
         try ( ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
-            ImageIO.write(image, "png", stream);
+            ImageIO.write(image, format, stream);
             bytes = stream.toByteArray();
         } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
         }
         return bytes;
     }

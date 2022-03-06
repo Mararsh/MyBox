@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 
 /**
@@ -107,7 +107,7 @@ public class StringTable {
         Static methods
      */
     public static String tableHtml(StringTable table) {
-        if (table == null || table.getData() == null) {
+        if (table == null) {
             return "";
         }
         return HtmlWriteTools.html(table.getTitle(), "utf-8", table.style, body(table));
@@ -143,12 +143,15 @@ public class StringTable {
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return "";
         }
     }
 
     public static String tableRow(List<Integer> colorIndices, List<String> row) {
         try {
+            if (row == null) {
+                return "";
+            }
             StringBuilder s = new StringBuilder();
             s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
             for (int i = 0; i < row.size(); ++i) {
@@ -168,7 +171,7 @@ public class StringTable {
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return "";
         }
     }
 
@@ -185,7 +188,7 @@ public class StringTable {
             List<String> names = table.getNames();
             List<Integer> colorIndices = table.getColorIndices();
             if (names != null
-                    && (table.getData() == null || table.getData().size() > 15)) {
+                    && (table.getData() != null && table.getData().size() > 15)) {
                 s.append(indent).append(indent).append(indent).append(indent).
                         append("<TR  style=\"font-weight:bold; \">");
                 for (int i = 0; i < names.size(); ++i) {
@@ -203,25 +206,27 @@ public class StringTable {
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return "";
         }
     }
 
     public static String tableDiv(StringTable table) {
         try {
-            if (table == null || table.getData() == null) {
+            if (table == null) {
                 return "";
             }
             StringBuilder s = new StringBuilder();
             s.append(tablePrefix(table));
-            for (List<String> row : table.getData()) {
-                s.append(tableRow(table.getColorIndices(), row));
+            if (table.getData() != null) {
+                for (List<String> row : table.getData()) {
+                    s.append(tableRow(table.getColorIndices(), row));
+                }
             }
             s.append(tableSuffix(table));
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return "";
         }
     }
 
@@ -237,7 +242,7 @@ public class StringTable {
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return "";
         }
     }
 

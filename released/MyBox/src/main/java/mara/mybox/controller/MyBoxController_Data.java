@@ -118,20 +118,16 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.ConvertCoordinateFxml);
         });
 
-        MenuItem LocationsDataInMap = new MenuItem(message("LocationsDataInMap"));
-        LocationsDataInMap.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.LocationsDataInMapFxml);
-        });
-
-        Menu locationApplicationsMenu = new Menu(message("LocationApplications"));
-        locationApplicationsMenu.getItems().addAll(
-                LocationData, LocationsDataInMap
-        );
-
         MenuItem EpidemicReport = new MenuItem(message("EpidemicReport"));
         EpidemicReport.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.EpidemicReportsFxml);
         });
+
+        Menu Location = new Menu(message("Location"));
+        Location.getItems().addAll(
+                GeographyCode, LocationInMap, ConvertCoordinate, new SeparatorMenuItem(),
+                LocationData, EpidemicReport
+        );
 
         MenuItem MatricesManage = new MenuItem(message("MatricesManage"));
         MatricesManage.setOnAction((ActionEvent event1) -> {
@@ -150,6 +146,36 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             MatricesBinaryCalculationController c = (MatricesBinaryCalculationController) loadScene(Fxmls.MatricesBinaryCalculationFxml);
             c.createAction();
         });
+
+        Menu matrix = new Menu(message("Matrix"));
+        matrix.getItems().addAll(
+                MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation
+        );
+
+        MenuItem DatabaseSQL = new MenuItem(message("DatabaseSQL"));
+        DatabaseSQL.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DatabaseSQLFxml);
+        });
+
+        MenuItem DatabaseTable = new MenuItem(message("DatabaseTable"));
+        DatabaseTable.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DataTablesFxml);
+        });
+
+        Menu database = new Menu(message("Database"));
+        database.getItems().addAll(
+                DatabaseTable, DatabaseSQL
+        );
+
+        MenuItem jshell = new MenuItem(message("JShell"));
+        jshell.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JShellFxml);
+        });
+
+        Menu calculation = new Menu(message("Calculation"));
+        calculation.getItems().addAll(
+                jshell
+        );
 
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));
         barcodeCreator.setOnAction((ActionEvent event1) -> {
@@ -187,10 +213,9 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 ManageData, new SeparatorMenuItem(),
-                DataFile, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
-                MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation, new SeparatorMenuItem(),
-                GeographyCode, LocationInMap, LocationData, ConvertCoordinate, new SeparatorMenuItem(),
-                EpidemicReport, new SeparatorMenuItem(),
+                DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
+                calculation, new SeparatorMenuItem(),
+                Location, new SeparatorMenuItem(),
                 miscellaneousMenu
         );
 

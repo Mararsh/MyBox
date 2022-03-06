@@ -244,8 +244,8 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     @Override
     public boolean beforeHandleFiles() {
         try {
-            targetFile = makeTargetFile(FileNameTools.getFilePrefix(targetFile.getName()),
-                    "." + FileNameTools.getFileSuffix(targetFile.getName()),
+            targetFile = makeTargetFile(FileNameTools.prefix(targetFile.getName()),
+                    "." + FileNameTools.suffix(targetFile.getName()),
                     targetFile.getParentFile());
             if (targetFile == null) {
                 return false;

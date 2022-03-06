@@ -37,7 +37,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -52,13 +51,14 @@ import mara.mybox.fxml.chart.LabeledLineChart;
 import mara.mybox.fxml.chart.LabeledScatterChart;
 import mara.mybox.fxml.chart.LabeledStackedAreaChart;
 import mara.mybox.fxml.chart.LabeledStackedBarChart;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -69,6 +69,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DChartController extends Data2DHandleController {
 
+    protected ChangeListener<Boolean> tableStatusListener, tableLoadListener;
     protected String selectedCategory, selectedValue;
     protected LabelType labelType;
     protected LabelLocation labelLocation;
@@ -919,19 +920,21 @@ public class Data2DChartController extends Data2DHandleController {
         try {
             super.setParameters(tableController);
 
-            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     refreshSelectors();
                 }
-            });
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
-            tableController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     okAction();
                 }
-            });
+            };
+            tableController.loadedNotify.addListener(tableLoadListener);
 
             checkChartType();
             refreshSelectors();
@@ -946,7 +949,7 @@ public class Data2DChartController extends Data2DHandleController {
             categoryColumnSelector.getItems().clear();
             valueColumnSelector.getItems().clear();
 
-            List<String> names = editController.data2D.columnNames();
+            List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -1324,7 +1327,7 @@ public class Data2DChartController extends Data2DHandleController {
             for (int i = 0; i < checkedColsIndices.size(); i++) {
                 int colIndex = checkedColsIndices.get(i);
                 Data2DColumn column = data2D.column(colIndex);
-                String colName = column.getName();
+                String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);
 
@@ -1370,7 +1373,7 @@ public class Data2DChartController extends Data2DHandleController {
             for (int i = 0; i < sizeNum; i++) {
                 int colIndex = checkedColsIndices.get(i);
                 Data2DColumn column = data2D.column(colIndex);
-                String colName = column.getName();
+                String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);
                 seriesList.add(series);
@@ -1565,14 +1568,27 @@ public class Data2DChartController extends Data2DHandleController {
 
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableController.loadedNotify.removeListener(tableLoadListener);
+            tableStatusListener = null;
+            tableLoadListener = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
     /*
         static
      */
-    public static Data2DChartController open(ControlData2DEditTable editController) {
+    public static Data2DChartController open(ControlData2DEditTable tableController) {
         try {
             Data2DChartController controller = (Data2DChartController) WindowTools.openChildStage(
-                    editController.getMyWindow(), Fxmls.Data2DChartFxml, false);
-            controller.setParameters(editController);
+                    tableController.getMyWindow(), Fxmls.Data2DChartFxml, false);
+            controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

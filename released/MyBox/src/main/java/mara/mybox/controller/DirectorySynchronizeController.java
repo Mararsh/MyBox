@@ -26,13 +26,14 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -130,7 +131,20 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     protected boolean initAttributes() {
         try {
             sourcePath = new File(sourcePathInput.getText());
+            targetPath = targetPathInputController.file;
+            if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
+                popError(message("TargetPathShouldNotSourceSub"));
+                return false;
+            }
+
             if (!paused || lastFileName == null) {
+                if (!targetPath.exists()) {
+                    targetPath.mkdirs();
+                    updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
+                }
+                targetPath.setWritable(true);
+                targetPath.setExecutable(true);
+
                 copyAttr = new FileSynchronizeAttributes();
                 copyAttr.setContinueWhenError(continueCheck.isSelected());
                 copyAttr.setCopyAttrinutes(copyAttrCheck.isSelected());
@@ -170,14 +184,6 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                         }
                     }
                 }
-
-                targetPath = targetPathInputController.file;
-                if (!targetPath.exists()) {
-                    targetPath.mkdirs();
-                    updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
-                }
-                targetPath.setWritable(true);
-                targetPath.setExecutable(true);
 
                 initLogs();
                 logsTextArea.setText(Languages.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
@@ -452,6 +458,10 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
                 return false;
             }
+            if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
+                updateLogs(message("TargetPathShouldNotSourceSub") + ": " + targetPath);
+                return false;
+            }
             if (copyAttr.isDeleteNotExisteds()
                     && !deleteNonExisted(sourcePath, targetPath) && !copyAttr.isContinueWhenError()) {
                 return false;
@@ -578,6 +588,10 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     protected boolean copyWholeDirectory(File sourcePath, File targetPath) {
         try {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
+                return false;
+            }
+            if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
+                updateLogs(message("TargetPathShouldNotSourceSub") + ": " + targetPath);
                 return false;
             }
             File[] files = sourcePath.listFiles();

@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import mara.mybox.data.DataFileCSV;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -31,6 +31,7 @@ public class Data2DCopyController extends Data2DHandleController {
             Data2DCopyController controller = (Data2DCopyController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DCopyFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

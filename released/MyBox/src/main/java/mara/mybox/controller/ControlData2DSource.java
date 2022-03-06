@@ -20,8 +20,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DSource extends ControlData2DLoad {
 
-    protected ControlData2DEditTable editController;
+    protected ControlData2DEditTable tableController;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
+    protected boolean idExclude = false;
+    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected CheckBox columnsCheck, allPagesCheck;
@@ -76,22 +78,28 @@ public class ControlData2DSource extends ControlData2DLoad {
         }
     }
 
-    public void setParameters(BaseController parent, ControlData2DEditTable editController) {
+    public void idExclude(boolean idExclude) {
+        this.idExclude = idExclude;
+    }
+
+    public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
-            if (editController == null) {
+            if (tableController == null) {
                 return;
             }
             this.parentController = parent;
-            this.editController = editController;
-            data2D = editController.data2D;
+            this.tableController = tableController;
+            data2D = tableController.data2D;
 
             updateData();
-            editController.statusNotify.addListener(new ChangeListener<Boolean>() {
+
+            tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     updateData();
                 }
-            });
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -99,13 +107,13 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     public void updateData() {
-        if (editController == null) {
+        if (tableController == null) {
             return;
         }
-        data2D = editController.data2D.cloneAll();
+        data2D = tableController.data2D.cloneAll();
         makeColumns();
         isSettingValues = true;
-        tableData.setAll(editController.tableData);
+        tableData.setAll(tableController.tableData);
         isSettingValues = false;
         notifyLoaded();
         checkChanged();
@@ -254,11 +262,15 @@ public class ControlData2DSource extends ControlData2DLoad {
         try {
             checkedColsIndices = new ArrayList<>();
             List<Integer> all = new ArrayList<>();
+            int idOrder = -1;
+            if (idExclude) {
+                idOrder = data2D.idOrder();
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
                 int col = data2D.colOrder(cb.getText());
-                if (col >= 0) {
+                if (col >= 0 && col != idOrder) {
                     all.add(col);
                     if (cb.isSelected()) {
                         checkedColsIndices.add(col);
@@ -280,12 +292,19 @@ public class ControlData2DSource extends ControlData2DLoad {
         try {
             List<String> names = new ArrayList<>();
             List<String> all = new ArrayList<>();
+            int idOrder = -1;
+            if (idExclude) {
+                idOrder = data2D.idOrder();
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                all.add(cb.getText());
-                if (cb.isSelected()) {
-                    names.add(cb.getText());
+                int col = data2D.colOrder(cb.getText());
+                if (col >= 0 && col != idOrder) {
+                    all.add(cb.getText());
+                    if (cb.isSelected()) {
+                        names.add(cb.getText());
+                    }
                 }
             }
             if (names.isEmpty()) {
@@ -303,14 +322,19 @@ public class ControlData2DSource extends ControlData2DLoad {
         try {
             List<Data2DColumn> cols = new ArrayList<>();
             List<Data2DColumn> all = new ArrayList<>();
+            int idOrder = -1;
+            if (idExclude) {
+                idOrder = data2D.idOrder();
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                Data2DColumn col = data2D.col(cb.getText());
-                if (col != null) {
-                    all.add(col.cloneAll());
+                int col = data2D.colOrder(cb.getText());
+                if (col >= 0 && col != idOrder) {
+                    Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
+                    all.add(dcol);
                     if (cb.isSelected()) {
-                        cols.add(col.cloneAll());
+                        cols.add(dcol);
                     }
                 }
             }
@@ -412,6 +436,17 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void setLabel(String s) {
         titleLabel.setText(s);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+            tableController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

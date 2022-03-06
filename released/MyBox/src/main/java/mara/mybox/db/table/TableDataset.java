@@ -36,7 +36,7 @@ public class TableDataset extends BaseTable<Dataset> {
     }
 
     public final TableDataset defineColumns() {
-        addColumn(new ColumnDefinition("dsid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("dsid", ColumnType.Long, true, true).setAuto(true));
         Map<Object, String> lvalues = new LinkedHashMap<>();
         lvalues.put("Location_data", Languages.tableMessage("Location_data"));
         addColumn(new ColumnDefinition("data_category", ColumnType.String, true).setLength(StringMaxLength).setValues(lvalues));

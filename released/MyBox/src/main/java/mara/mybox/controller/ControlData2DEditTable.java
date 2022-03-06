@@ -1,9 +1,10 @@
 package mara.mybox.controller;
 
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.input.Clipboard;
-import mara.mybox.data.DataClipboard;
+import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -18,8 +19,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DEditTable extends ControlData2DLoad {
 
+    protected SimpleBooleanProperty columnChangedNotify;
+
     public ControlData2DEditTable() {
-        forEdit = true;
+        readOnly = false;
+        columnChangedNotify = new SimpleBooleanProperty(false);
     }
 
     protected void setParameters(ControlData2DEdit editController) {
@@ -39,8 +43,26 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             pageLastButton = dataController.pageLastButton;
             saveButton = dataController.saveButton;
 
+            initPagination();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void notifyColumnChanged() {
+        columnChangedNotify.set(!columnChangedNotify.get());
+    }
+
+    public void dataSaved() {
+        try {
+            popInformation(message("Saved"));
+            if (data2D.getFile() != null) {
+                recordFileWritten(data2D.getFile());
+            }
+            notifySaved();
+            readDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -62,6 +84,11 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
     @Override
     public boolean checkBeforeLoadingTableData() {
+        return checkBeforeNextAction();
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
         return dataController.checkBeforeNextAction();
     }
 
@@ -91,6 +118,21 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     @Override
     public void deleteAction() {
         deleteRowsAction();
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        if (data2D.isTmpData()) {
+            deleteAllRows();
+        } else {
+            super.clearAction();
+        }
+    }
+
+    @Override
+    protected long clearData() {
+        return data2D.clearData();
     }
 
     @FXML
@@ -146,7 +188,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
                 @Override
                 protected void whenSucceeded() {
                     DataInMyBoxClipboardController controller = DataInMyBoxClipboardController.oneOpen();
-                    controller.load(clip);
+                    controller.loadDef(clip);
                     popDone();
                 }
 
@@ -184,6 +226,15 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            columnChangedNotify = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

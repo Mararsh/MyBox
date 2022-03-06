@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
-import mara.mybox.data.DataFileCSV;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -31,7 +31,7 @@ public class HtmlExtractTablesController extends BaseBatchFileController {
 
     @Override
     public boolean matchType(File file) {
-        String suffix = FileNameTools.getFileSuffix(file.getName());
+        String suffix = FileNameTools.suffix(file.getName());
         if (suffix == null) {
             return false;
         }

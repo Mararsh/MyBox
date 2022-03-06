@@ -37,9 +37,9 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -50,7 +50,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-09-04
  * @License Apache License Version 2.0
  */
-public class ColorPalettePopupController extends BaseController {
+public class ColorPalettePopupController extends BaseChildController {
 
     protected Rectangle parentRect;
     protected TableColorPaletteName tableColorPaletteName;
@@ -61,7 +61,7 @@ public class ColorPalettePopupController extends BaseController {
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
     protected double rectSize;
-    protected final SimpleBooleanProperty setNotify;
+    protected SimpleBooleanProperty setNotify;
 
     @FXML
     protected HBox barBox;
@@ -81,11 +81,14 @@ public class ColorPalettePopupController extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (parentController != null) {
-            return parentController.keyEventsFilter(event);
-        } else {
-            return keyEventsFilter(event);
+        if (!super.keyEventsFilter(event)) {
+            if (parentController != null) {
+                return parentController.keyEventsFilter(event);
+            } else {
+                return false;
+            }
         }
+        return true;
     }
 
     @Override
@@ -380,6 +383,21 @@ public class ColorPalettePopupController extends BaseController {
 
     public SimpleBooleanProperty getSetNotify() {
         return setNotify;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            setNotify = null;
+            parentRect = null;
+            tableColorPaletteName = null;
+            tableColorPalette = null;
+            tableColor = null;
+            palettes = null;
+            currentPalette = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

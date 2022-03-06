@@ -4,6 +4,7 @@ import java.util.Date;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
+import mara.mybox.tools.DateTools;
 
 /**
  * @Author Mara
@@ -111,6 +112,10 @@ public class BaseTask<P> extends Task<P> {
         if (disbaleNode != null) {
             disbaleNode.setDisable(false);
         }
+    }
+
+    public String duration() {
+        return DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime());
     }
 
     /*

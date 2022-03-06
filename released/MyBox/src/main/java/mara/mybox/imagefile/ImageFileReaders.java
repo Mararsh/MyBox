@@ -305,11 +305,11 @@ public class ImageFileReaders {
     public static BufferedImage readBrokenImage(Exception e, ImageInformation imageInfo) {
         BufferedImage image = null;
         try {
-            String filename = imageInfo.getFileName();
-            if (e == null || filename == null) {
+            File file = imageInfo.getFile();
+            if (e == null || file == null) {
                 return null;
             }
-            String format = FileNameTools.getFileSuffix(filename).toLowerCase();
+            String format = FileNameTools.suffix(file.getName()).toLowerCase();
             switch (format) {
                 case "gif":
                     // Read Gif with JDK api normally. When broken, use DhyanB's API.
@@ -376,7 +376,7 @@ public class ImageFileReaders {
                 ImageInformation imageInfo = ImageInformation.create(targetFormat, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(targetFormat);
-                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setFile(file);
                 imageInfo.setCreateTime(fileInfo.getCreateTime());
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
                 imageInfo.setFileSize(fileInfo.getFileSize());
@@ -398,7 +398,7 @@ public class ImageFileReaders {
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);
-                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setFile(file);
                 imageInfo.setCreateTime(fileInfo.getCreateTime());
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
                 imageInfo.setFileSize(fileInfo.getFileSize());
@@ -900,7 +900,7 @@ public class ImageFileReaders {
     public static IIOMetadata getIIOMetadata(File file) {
         IIOMetadata iioMetaData = null;
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            ImageReader reader = getReader(iis, FileNameTools.getFileSuffix(file).toLowerCase());
+            ImageReader reader = getReader(iis, FileNameTools.suffix(file.getName()).toLowerCase());
             if (reader == null) {
                 return null;
             }

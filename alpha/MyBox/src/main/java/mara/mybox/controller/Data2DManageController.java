@@ -50,4 +50,20 @@ public class Data2DManageController extends BaseData2DController {
         return controller;
     }
 
+    public static void updateList() {
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof Data2DManageController) {
+                try {
+                    Data2DManageController controller = (Data2DManageController) object;
+                    controller.refreshAction();
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
 }

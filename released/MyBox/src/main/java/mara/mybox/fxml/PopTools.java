@@ -35,6 +35,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -43,14 +44,19 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlWebView;
+import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.MenuController;
 import mara.mybox.controller.TextInputController;
+import mara.mybox.data2d.DataInternalTable;
+import mara.mybox.data2d.DataTable;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
@@ -236,6 +242,9 @@ public class PopTools {
         }
     }
 
+    /*
+        style
+     */
     public static ContextMenu popHtmlStyle(MouseEvent mouseEvent, ControlWebView controller) {
         try {
             if (mouseEvent == null || controller == null) {
@@ -291,21 +300,25 @@ public class PopTools {
 
             rmenu = new RadioMenuItem(message("Input") + "...");
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
+                ChangeListener<Boolean> getListener;
+
                 @Override
                 public void handle(ActionEvent event) {
                     TextInputController inputController = TextInputController.open(controller,
                             message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
-                    inputController.getNotify().addListener(new ChangeListener<Boolean>() {
+                    getListener = new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                             String value = inputController.getText();
                             if (value == null || value.isBlank()) {
                                 value = null;
                             }
+                            inputController.getNotify().removeListener(getListener);
                             controller.setStyle(value);
                             inputController.closeStage();
                         }
-                    });
+                    };
+                    inputController.getNotify().addListener(getListener);
                 }
             });
             rmenu.setSelected(currentStyle != null && !predefinedValue);
@@ -341,219 +354,6 @@ public class PopTools {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
-        }
-    }
-
-    public static ContextMenu popEraExample(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
-        try {
-            if (inPopMenu != null && inPopMenu.isShowing()) {
-                inPopMenu.hide();
-            }
-            final ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            List<String> values = new ArrayList<>();
-            values.add(DateTools.nowString());
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs, TimeZone.getDefault()));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.TimeMs, TimeZone.getDefault()));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z", TimeZone.getDefault()));
-            values.addAll(Arrays.asList("2020-07-15T36:55:09", "960-01-23", "581", "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"));
-            if (Languages.isChinese()) {
-                values.addAll(Arrays.asList("\u516c\u5143960", "\u516c\u5143960-01-23", "\u516c\u51432020-07-10 10:10:10",
-                        "\u516c\u5143\u524d202", "\u516c\u5143\u524d770-12-11", "\u516c\u5143\u524d1046-03-10 10:10:10"));
-            }
-            values.addAll(Arrays.asList("202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC", "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"));
-            MenuItem menu;
-            for (String value : values) {
-                menu = new MenuItem(value);
-                menu.setOnAction((ActionEvent event) -> {
-                    input.setText(value);
-                });
-                popMenu.getItems().add(menu);
-            }
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-            LocateTools.locateMouse(mouseEvent, popMenu);
-            return popMenu;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
-        try {
-            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            Button clearButton = new Button(message("Clear"));
-            clearButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    input.clear();
-                }
-            });
-            controller.addNode(clearButton);
-            List<String> values = Arrays.asList("^      "
-                    + message("StartLocation"), "$      "
-                    + message("EndLocation"), "*      "
-                    + message("ZeroOrNTimes"), "+      "
-                    + message("OneOrNTimes"), "?      "
-                    + message("ZeroOrOneTimes"), "{n}      "
-                    + message("NTimes"), "{n,}      "
-                    + message("N+Times"), "{n,m}      "
-                    + message("NMTimes"), "|      "
-                    + message("Or"), "[abc]      "
-                    + message("MatchOneCharacters"), "[A-Z]      "
-                    + message("A-Z"), "\\x20      "
-                    + message("Blank"), "\\s      "
-                    + message("NonprintableCharacter"), "\\S      "
-                    + message("PrintableCharacter"), "\\n      "
-                    + message("LineBreak"), "\\r      "
-                    + message("CarriageReturn"), "\\t      "
-                    + message("Tab"), "[0-9]{n}      "
-                    + message("NNumber"), "[A-Z]{n}      "
-                    + message("NUppercase"), "[a-z]{n}      "
-                    + message("NLowercase"), "[\\u4e00-\\u9fa5]      "
-                    + message("Chinese"), "[^\\x00-\\xff]      "
-                    + message("DoubleByteCharacter"), "[A-Za-z0-9]+      "
-                    + message("EnglishAndNumber"), "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      "
-                    + message("Email"), "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      "
-                    + message("PhoneNumber"), "[a-zA-z]+://[^\\s]*       "
-                    + message("URL"), "^(\\s*)\\n       "
-                    + message("BlankLine"), "\\d+\\.\\d+\\.\\d+\\.\\d+      "
-                    + message("IP"));
-            List<Node> nodes = new ArrayList<>();
-            for (String value : values) {
-                String[] vv = value.split("      ");
-                Button button = new Button(vv[1].trim());
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        input.appendText(vv[0]);
-                    }
-                });
-                NodeStyleTools.setTooltip(button, new Tooltip(vv[0]));
-                nodes.add(button);
-            }
-            controller.addFlowPane(nodes);
-
-            Hyperlink link = new Hyperlink(message("AboutRegularExpression"));
-            link.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if (Languages.isChinese()) {
-                        parent.openLink("https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215");
-                    } else {
-                        parent.openLink("https://en.wikipedia.org/wiki/Regular_expression");
-                    }
-                }
-            });
-            controller.addNode(link);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public static void popColorExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
-        try {
-            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            Button clearButton = new Button(message("Clear"));
-            clearButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    input.clear();
-                }
-            });
-
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
-                    "orange", "pink", "lightblue", "wheat",
-                    "0xff668840", "0x5f86df", "#226688", "#68f",
-                    "rgb(255,102,136)", "rgb(100%,60%,50%)",
-                    "rgba(102,166,136,0.25)", "rgba(155,20%,70%,0.25)",
-                    "hsl(240,70%,80%)", "hsla(60,50%,60%,0.25)"
-            ));
-
-            boolean isTextArea = input instanceof TextArea;
-            List<Node> nodes = new ArrayList<>();
-            for (String value : values) {
-                Button button = new Button(value);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        if (isTextArea) {
-                            input.appendText(value + "\n");
-                        } else {
-                            input.setText(value);
-                        }
-                        input.requestFocus();
-                    }
-                });
-                nodes.add(button);
-            }
-            controller.addFlowPane(nodes);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name) {
-        try {
-            int max = UserConfig.getInt(name + "MaxSaved", 20);
-
-            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-
-            List<Node> setButtons = new ArrayList<>();
-            Button clearButton = new Button(message("Clear"));
-            clearButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    input.clear();
-                }
-            });
-            setButtons.add(clearButton);
-
-            Button maxButton = new Button(message("MaxSaved"));
-            maxButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    String value = PopTools.askValue(parent.getTitle(), null, message("MaxSaved"), max + "");
-                    if (value == null) {
-                        return;
-                    }
-                    try {
-                        int v = Integer.parseInt(value);
-                        UserConfig.setInt(name + "MaxSaved", v);
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                    }
-                }
-            });
-            setButtons.add(maxButton);
-            controller.addFlowPane(setButtons);
-
-            List<String> values = TableStringValues.max(name, max);
-            List<Node> valueButtons = new ArrayList<>();
-            for (String value : values) {
-                Button button = new Button(value);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        input.setText(value);
-                    }
-                });
-                valueButtons.add(button);
-            }
-            controller.addFlowPane(valueButtons);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 
@@ -644,6 +444,419 @@ public class PopTools {
         String style = UserConfig.getString(prefix + "WindowStyle", "");
         pane.setStyle(baseStyle + style);
         setMenuLabelsStyle(pane, baseStyle + style);
+    }
+
+    /*
+        examples
+     */
+    public static ContextMenu popEraExample(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+        try {
+            if (inPopMenu != null && inPopMenu.isShowing()) {
+                inPopMenu.hide();
+            }
+            final ContextMenu popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+            List<String> values = new ArrayList<>();
+            values.add(DateTools.nowString());
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs, TimeZone.getDefault()));
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.TimeMs, TimeZone.getDefault()));
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z", TimeZone.getDefault()));
+            values.addAll(Arrays.asList(
+                    "2020-07-15T36:55:09", "960-01-23", "581",
+                    "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"
+            ));
+            if (Languages.isChinese()) {
+                values.addAll(Arrays.asList(
+                        "公元960", "公元960-01-23", "公元2020-07-10 10:10:10",
+                        "公元前202", "公元前770-12-11", "公元前1046-03-10 10:10:10"
+                ));
+            }
+            values.addAll(Arrays.asList(
+                    "202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC",
+                    "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"
+            ));
+            MenuItem menu;
+            for (String value : values) {
+                menu = new MenuItem(value);
+                menu.setOnAction((ActionEvent event) -> {
+                    input.setText(value);
+                    popMenu.requestFocus();
+                    input.requestFocus();
+                });
+                popMenu.getItems().add(menu);
+            }
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+            LocateTools.locateMouse(mouseEvent, popMenu);
+            return popMenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+        try {
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
+                }
+            });
+            controller.addNode(clearButton);
+            List<String> values = Arrays.asList("^      "
+                    + message("StartLocation"), "$      "
+                    + message("EndLocation"), "*      "
+                    + message("ZeroOrNTimes"), "+      "
+                    + message("OneOrNTimes"), "?      "
+                    + message("ZeroOrOneTimes"), "{n}      "
+                    + message("NTimes"), "{n,}      "
+                    + message("N+Times"), "{n,m}      "
+                    + message("NMTimes"), "|      "
+                    + message("Or"), "[abc]      "
+                    + message("MatchOneCharacters"), "[A-Z]      "
+                    + message("A-Z"), "\\x20      "
+                    + message("Blank"), "\\s      "
+                    + message("NonprintableCharacter"), "\\S      "
+                    + message("PrintableCharacter"), "\\n      "
+                    + message("LineBreak"), "\\r      "
+                    + message("CarriageReturn"), "\\t      "
+                    + message("Tab"), "[0-9]{n}      "
+                    + message("NNumber"), "[A-Z]{n}      "
+                    + message("NUppercase"), "[a-z]{n}      "
+                    + message("NLowercase"), "[\\u4e00-\\u9fa5]      "
+                    + message("Chinese"), "[^\\x00-\\xff]      "
+                    + message("DoubleByteCharacter"), "[A-Za-z0-9]+      "
+                    + message("EnglishAndNumber"), "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      "
+                    + message("Email"), "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      "
+                    + message("PhoneNumber"), "[a-zA-z]+://[^\\s]*       "
+                    + message("URL"), "^(\\s*)\\n       "
+                    + message("BlankLine"), "\\d+\\.\\d+\\.\\d+\\.\\d+      "
+                    + message("IP"));
+            List<Node> nodes = new ArrayList<>();
+            for (String value : values) {
+                String[] vv = value.split("      ");
+                Button button = new Button(vv[1].trim());
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.replaceText(input.getSelection(), vv[0]);
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                NodeStyleTools.setTooltip(button, new Tooltip(vv[0]));
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+
+            Hyperlink link = new Hyperlink(message("AboutRegularExpression"));
+            link.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (Languages.isChinese()) {
+                        parent.openLink("https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215");
+                    } else {
+                        parent.openLink("https://en.wikipedia.org/wiki/Regular_expression");
+                    }
+                }
+            });
+            controller.addNode(link);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popColorExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+        try {
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                }
+            });
+            controller.addNode(clearButton);
+            List<String> values = new ArrayList<>();
+            values.addAll(Arrays.asList(
+                    "orange", "pink", "lightblue", "wheat",
+                    "0xff668840", "0x5f86df", "#226688", "#68f",
+                    "rgb(255,102,136)", "rgb(100%,60%,50%)",
+                    "rgba(102,166,136,0.25)", "rgba(155,20%,70%,0.25)",
+                    "hsl(240,70%,80%)", "hsla(60,50%,60%,0.25)"
+            ));
+
+            boolean isTextArea = input instanceof TextArea;
+            List<Node> nodes = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (isTextArea) {
+                            input.appendText(value + "\n");
+                        } else {
+                            input.setText(value);
+                        }
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name) {
+        try {
+            int max = UserConfig.getInt(name + "MaxSaved", 20);
+
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            List<Node> setButtons = new ArrayList<>();
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
+                }
+            });
+            setButtons.add(clearButton);
+
+            Button maxButton = new Button(message("MaxSaved"));
+            maxButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    String value = PopTools.askValue(parent.getTitle(), null, message("MaxSaved"), max + "");
+                    if (value == null) {
+                        return;
+                    }
+                    try {
+                        int v = Integer.parseInt(value);
+                        UserConfig.setInt(name + "MaxSaved", v);
+                    } catch (Exception e) {
+                        MyBoxLog.error(e);
+                    }
+                }
+            });
+            setButtons.add(maxButton);
+
+            setButtons.add(new Label(message("RightClickToDelete")));
+            controller.addFlowPane(setButtons);
+
+            List<String> values = TableStringValues.max(name, max);
+            List<Node> buttons = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.replaceText(input.getSelection(), value);
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            TableStringValues.delete(name, value);
+                            controller.close();
+                            popStringValues(parent, input, mouseEvent, name);
+                        }
+                    }
+                });
+                buttons.add(button);
+            }
+            controller.addFlowPane(buttons);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popSqlExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+        try {
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            boolean isTextArea = input instanceof TextArea;
+
+            List<Node> topButtons = new ArrayList<>();
+            if (isTextArea) {
+                Button newLineButton = new Button(message("Newline"));
+                newLineButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.replaceText(input.getSelection(), "\n");
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                topButtons.add(newLineButton);
+            }
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
+                }
+            });
+            topButtons.add(clearButton);
+            controller.addFlowPane(topButtons);
+
+            addButtonsPane(controller, input, Arrays.asList(
+                    "SELECT * FROM ", " WHERE ", " ORDER BY ", " DESC ", " ASC ",
+                    " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY"
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " , ", " (   ) ", " >= ", " > ", " <= ", " < ", " != "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " AND ", " OR ", " NOT ", " IS NULL ", " IS NOT NULL "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " LIKE 'a%' ", " LIKE 'a_' ", " BETWEEN <value1> AND <value2>"
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " IN ( <value1>, <value2> ) ", " IN (SELECT FROM <table> WHERE <condition>) "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " EXISTS (SELECT FROM <table> WHERE <condition>) "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " DATE('1998-02-26') ", " TIMESTAMP('1962-09-23 03:23:34.234') "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " COUNT ", " AVG ", " MAX ", " MIN ", " SUM ", " GROUP BY ", " HAVING "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    " JOIN ", " INNER JOIN ", " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " CROSS JOIN "
+            ));
+            addButtonsPane(controller, input, Arrays.asList(
+                    "INSERT INTO <table> (column1, column2) VALUES (value1, value2)",
+                    "UPDATE <table> SET <column1>=<value1>, <column2>=<value2> WHERE ",
+                    "DELETE FROM <table> WHERE ", "TRUNCATE TABLE "
+            ));
+
+            Hyperlink link = new Hyperlink("Derby Reference Manual");
+            link.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
+                }
+            });
+            controller.addNode(link);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> values) {
+        try {
+            List<Node> buttons = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.replaceText(input.getSelection(), value);
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                buttons.add(button);
+            }
+            controller.addFlowPane(buttons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popTableNames(BaseController parent, TextInputControl input,
+            MouseEvent mouseEvent, boolean internal) {
+        try {
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            controller.addNode(new Label(message("TableName")));
+
+            List<String> names;
+            if (internal) {
+                names = DataInternalTable.InternalTables;
+            } else {
+                names = DataTable.userTables();
+            }
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.replaceText(input.getSelection(), name);
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popTableDefinition(BaseController parent, Node node,
+            MouseEvent mouseEvent, boolean internal) {
+        try {
+            MenuController controller = MenuController.open(parent, node, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            controller.addNode(new Label(message("TableDefinition")));
+
+            List<String> names;
+            if (internal) {
+                names = DataInternalTable.InternalTables;
+            } else {
+                names = DataTable.userTables();
+            }
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        String html = TableData2D.tableDefinition(name);
+                        if (html != null) {
+                            HtmlPopController.openHtml(parent, html);
+                        } else {
+                            parent.popError(message("NotFound"));
+                        }
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

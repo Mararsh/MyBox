@@ -15,7 +15,7 @@ import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;

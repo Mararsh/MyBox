@@ -15,18 +15,19 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlTextDelimiter">
     <children>
         <Label text="%TextDelimiter" />
-        <FlowPane hgap="2.0" vgap="2.0">
-            <children>
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
                 <RadioButton fx:id="stringRadio" mnemonicParsing="false" text="%String">
                <toggleGroup>
                         <ToggleGroup fx:id="delimiterGroup" />
                </toggleGroup></RadioButton>
-                <TextField fx:id="delimiterInput" prefWidth="100.0" />
+                <TextField fx:id="delimiterInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -36,8 +37,8 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            </children>
-        </FlowPane>
+         </children>
+      </HBox>
         <FlowPane hgap="2.0" vgap="2.0">
             <children>
             <RadioButton fx:id="tabRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterGroup" />

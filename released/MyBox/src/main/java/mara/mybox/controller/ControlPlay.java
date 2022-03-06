@@ -15,8 +15,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 

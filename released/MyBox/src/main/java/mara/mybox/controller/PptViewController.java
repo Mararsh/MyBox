@@ -286,4 +286,13 @@ public class PptViewController extends BaseFileImagesViewController {
         return true;
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            textsDividerListener = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
 }

@@ -13,24 +13,24 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DTransposeController extends Data2DHandleController {
-    
+
     @Override
     public void setParameters(ControlData2DEditTable editController) {
         try {
             super.setParameters(editController);
-            
+
             sourceController.showAllPages(false);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
-    public void handleFileTask() {
+    public void handleAllTask() {
         popError(message("NotSupport"));
     }
-    
+
     @Override
     public boolean handleRows() {
         try {
@@ -67,11 +67,12 @@ public class Data2DTransposeController extends Data2DHandleController {
             Data2DTransposeController controller = (Data2DTransposeController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DTransposeFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
-    
+
 }

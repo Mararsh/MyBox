@@ -48,7 +48,7 @@ public class VisitHistoryTools {
         if (filters == null || filters.isEmpty()) {
             return null;
         }
-        return FileNameTools.getFileSuffix(filters.get(0).getExtensions().get(0));
+        return FileNameTools.suffix(filters.get(0).getExtensions().get(0));
     }
 
     public static List<FileChooser.ExtensionFilter> getExtensionFilter(int fileType) {
@@ -123,7 +123,7 @@ public class VisitHistoryTools {
         if (resourceType == ResourceType.Path) {
             return true;
         }
-        String suffix = FileNameTools.getFileSuffix(file.getName());
+        String suffix = FileNameTools.suffix(file.getName());
         if (fileType == FileType.PDF) {
             if (!suffix.equalsIgnoreCase("pdf")) {
                 return false;

@@ -72,7 +72,7 @@ public class ImageFileWriters {
 
     public static boolean writeImageFile(BufferedImage image, String targetFile) {
         try {
-            return writeImageFile(image, FileNameTools.getFileSuffix(targetFile), targetFile);
+            return writeImageFile(image, FileNameTools.suffix(targetFile), targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
@@ -85,7 +85,7 @@ public class ImageFileWriters {
         }
         try {
             if (format == null || !FileExtensions.SupportedImages.contains(format)) {
-                format = FileNameTools.getFileSuffix(targetFile);
+                format = FileNameTools.suffix(targetFile);
             }
             format = format.toLowerCase();
             ImageAttributes attributes = new ImageAttributes(image, format);
@@ -211,7 +211,7 @@ public class ImageFileWriters {
             String targetFormat;
             ImageAttributes targetAttributes = inAttributes;
             if (targetAttributes == null) {
-                targetFormat = FileNameTools.getFileSuffix(targetFile.getName()).toLowerCase();
+                targetFormat = FileNameTools.suffix(targetFile.getName()).toLowerCase();
                 targetAttributes = attributes(frameImage, targetFormat);
             } else {
                 targetFormat = inAttributes.getImageFormat().toLowerCase();
@@ -229,7 +229,7 @@ public class ImageFileWriters {
             }
             File tmpFile = TmpFileTools.getTempFile();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(sourcefile)))) {
-                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(sourcefile));
+                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.suffix(sourcefile.getName()));
                 if (reader == null) {
                     return "InvalidData";
                 }

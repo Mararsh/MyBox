@@ -7,7 +7,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.tools.ByteTools.bytesToHex;
 import static mara.mybox.tools.ByteTools.bytesToUInt;
@@ -229,7 +228,7 @@ public class TTC {
         if (ttfInfos == null || ttfInfos.isEmpty()) {
             return null;
         }
-        String namePrefix = FileNameTools.namePrefix(ttcFile.getName());
+        String namePrefix = FileNameTools.prefix(ttcFile.getName());
         try ( RandomAccessFile inputStream = new RandomAccessFile(ttcFile, "r")) {
             List<File> files = new ArrayList<>();
             for (int i = 0; i < ttfInfos.size(); i++) {

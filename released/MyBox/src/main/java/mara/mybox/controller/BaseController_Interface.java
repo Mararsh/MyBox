@@ -34,10 +34,10 @@ import javafx.util.Duration;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -236,45 +236,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         });
             }
 
-            if (splitPane != null && leftPane != null && leftPaneControl != null) {
-                leftPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-                            controlLeftPane();
-                        }
-                    }
-                });
-                leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        controlLeftPane();
-                    }
-                });
-                leftPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
-                leftPane.setHvalue(0);
-                leftPane.setVvalue(0);
-            }
-
-            if (splitPane != null && rightPane != null && rightPaneControl != null) {
-                rightPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-                            controlRightPane();
-                        }
-                    }
-                });
-                rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        controlRightPane();
-                    }
-                });
-                rightPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
-                rightPane.setHvalue(0);
-                rightPane.setVvalue(0);
-            }
+            initLeftPaneControl();
+            initRightPaneControl();
 
             initNodes(thisPane);
             initSplitPanes();
@@ -282,6 +245,50 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void initLeftPaneControl() {
+        if (splitPane != null && leftPane != null && leftPaneControl != null) {
+            leftPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (UserConfig.getBoolean("MousePassControlPanes", true)) {
+                        controlLeftPane();
+                    }
+                }
+            });
+            leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    controlLeftPane();
+                }
+            });
+            leftPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
+            leftPane.setHvalue(0);
+            leftPane.setVvalue(0);
+        }
+    }
+
+    public void initRightPaneControl() {
+        if (splitPane != null && rightPane != null && rightPaneControl != null) {
+            rightPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (UserConfig.getBoolean("MousePassControlPanes", true)) {
+                        controlRightPane();
+                    }
+                }
+            });
+            rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    controlRightPane();
+                }
+            });
+            rightPaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
+            rightPane.setHvalue(0);
+            rightPane.setVvalue(0);
         }
     }
 
@@ -570,6 +577,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 myStage.toFront();
                 myStage.requestFocus();
                 LocateTools.mouseCenter(myStage);
+                closePopup();
             });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -914,7 +922,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public boolean closeStage() {
         return close();
     }
-
 
     /*
         split panes

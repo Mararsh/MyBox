@@ -477,7 +477,7 @@ public class ImageViewerController extends BaseImageController {
     public void saveAllFramesSelected() {
         if (imageFile() != null && framesNumber > 1) {
             formatController.formatPane.getChildren().setAll(formatController.tifRadio, formatController.gifRadio);
-            if ("gif".equalsIgnoreCase(FileNameTools.getFileSuffix(imageFile()))) {
+            if ("gif".equalsIgnoreCase(FileNameTools.suffix(imageFile().getName()))) {
                 formatController.gifRadio.fire();
             } else {
                 formatController.tifRadio.fire();
@@ -645,7 +645,7 @@ public class ImageViewerController extends BaseImageController {
                         if (backupController != null && backupController.isBack() && srcFile != null) {
                             backupController.addBackup(task, srcFile);
                         }
-                        String format = FileNameTools.getFileSuffix(targetFile.getName());
+                        String format = FileNameTools.suffix(targetFile.getName());
                         if (framesNumber > 1) {
                             error = ImageFileWriters.writeFrame(targetFile, frameIndex, bufferedImage, targetFile, null);
                             ok = error == null;
@@ -699,7 +699,7 @@ public class ImageViewerController extends BaseImageController {
         File srcFile = imageFile();
         String fname;
         if (srcFile != null) {
-            fname = FileNameTools.prefixFilter(srcFile)
+            fname = FileNameTools.filter(FileNameTools.prefix(srcFile.getName()))
                     + (framesNumber > 1 && (saveAllFramesRadio == null || !saveAllFramesRadio.isSelected())
                     ? "-" + message("Frame") + (frameIndex + 1) : "")
                     + "_" + DateTools.nowFileString();
@@ -825,9 +825,7 @@ public class ImageViewerController extends BaseImageController {
         ImageFileInformation finfo = info.getImageFileInformation();
         if (finfo != null) {
             finfo.setFile(file);
-            finfo.setFileName(file.getAbsolutePath());
         }
-        info.setFileName(file.getAbsolutePath());
         info.setFile(file);
     }
 

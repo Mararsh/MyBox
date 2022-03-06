@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
 public class ImagePopController extends BaseImageController {
 
     protected ImageView sourceImageView;
-    protected ChangeListener listener;
+    protected ChangeListener sourceListener;
 
     @FXML
     protected CheckBox refreshChangeCheck;
@@ -37,7 +37,7 @@ public class ImagePopController extends BaseImageController {
 
             saveAsType = SaveAsType.Open;
 
-            listener = new ChangeListener<Image>() {
+            sourceListener = new ChangeListener<Image>() {
                 @Override
                 public void changed(ObservableValue ov, Image oldv, Image newv) {
                     if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
@@ -70,9 +70,9 @@ public class ImagePopController extends BaseImageController {
             return;
         }
         if (refreshChangeCheck.isVisible() && refreshChangeCheck.isSelected()) {
-            sourceImageView.imageProperty().addListener(listener);
+            sourceImageView.imageProperty().addListener(sourceListener);
         } else {
-            sourceImageView.imageProperty().removeListener(listener);
+            sourceImageView.imageProperty().removeListener(sourceListener);
         }
     }
 
@@ -119,10 +119,10 @@ public class ImagePopController extends BaseImageController {
     public void cleanPane() {
         try {
             if (sourceImageView != null) {
-                sourceImageView.imageProperty().removeListener(listener);
-                sourceImageView = null;
+                sourceImageView.imageProperty().removeListener(sourceListener);
             }
-            listener = null;
+            sourceListener = null;
+            sourceImageView = null;
         } catch (Exception e) {
         }
         super.cleanPane();

@@ -53,7 +53,7 @@ public class ImageJpgFile {
         if (imageInfo == null) {
             return null;
         }
-        File file = new File(imageInfo.getFileName());
+        File file = imageInfo.getFile();
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
             ImageReader reader = null;

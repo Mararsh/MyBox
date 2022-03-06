@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Date;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 
 /**
@@ -68,11 +69,11 @@ public class AppPaths {
             String pathname = TableStringValue.read(key);
             if (pathname == null) {
                 String fname = file.getName();
-                String subPath = FileNameTools.getFilePrefix(fname);
+                String subPath = FileNameTools.prefix(fname);
                 if (frame >= 0) {
                     subPath += "-frame" + frame;
                 }
-                subPath += FileNameTools.getFileSuffix(fname);
+                subPath += FileNameTools.suffix(fname);
                 pathname = getImageHisPath() + File.separator + subPath
                         + (new Date()).getTime() + File.separator;
                 TableStringValue.write(key, pathname);
@@ -110,8 +111,8 @@ public class AppPaths {
             if (fileBackupsPath == null) {
                 String fname = file.getName();
                 fileBackupsPath = getBackupsPath() + File.separator
-                        + FileNameTools.getFilePrefix(fname) + FileNameTools.getFileSuffix(fname)
-                        + (new Date()).getTime() + File.separator;
+                        + FileNameTools.prefix(fname) + FileNameTools.suffix(fname)
+                        + DateTools.nowFileString() + File.separator;
                 TableStringValue.write(key, fileBackupsPath);
             }
             File path = new File(fileBackupsPath);

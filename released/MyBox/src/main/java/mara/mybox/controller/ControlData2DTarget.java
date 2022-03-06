@@ -12,6 +12,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
 
@@ -25,6 +26,7 @@ public class ControlData2DTarget extends BaseController {
     protected ControlData2DEditTable tableController;
     protected String target;
     protected boolean notInTable;
+    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -51,12 +53,13 @@ public class ControlData2DTarget extends BaseController {
                 }
             });
 
-            tableController.statusNotify.addListener(new ChangeListener<Boolean>() {
+            tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     refreshControls();
                 }
-            });
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
             refreshControls();
 
@@ -216,16 +219,21 @@ public class ControlData2DTarget extends BaseController {
             rowSelector.getSelectionModel().select(thisSelect >= 0 ? thisSelect : 0);
 
             String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            List<String> names = tableController.data2D.columnNames();
-            if (names == null) {
-                colSelector.getItems().clear();
-            } else {
+            if (tableController.data2D.getColumns() != null) {
+                List<String> names = tableController.data2D.columnNames();
+                for (Data2DColumn column : tableController.data2D.getColumns()) {
+                    if (!column.isId()) {
+                        names.add(column.getColumnName());
+                    }
+                }
                 colSelector.getItems().setAll(names);
                 if (selectedCol != null) {
                     colSelector.setValue(selectedCol);
                 } else {
                     colSelector.getSelectionModel().select(0);
                 }
+            } else {
+                colSelector.getItems().clear();
             }
 
         } catch (Exception e) {
@@ -255,6 +263,17 @@ public class ControlData2DTarget extends BaseController {
             return -1;
         }
         return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+            tableController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

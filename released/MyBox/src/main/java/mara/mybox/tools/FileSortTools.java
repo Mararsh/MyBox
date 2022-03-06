@@ -70,7 +70,7 @@ public class FileSortTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return FileNameTools.compareFilename(f2, f1);
+                            return FileNameTools.compareName(f2, f1);
                         }
                     });
                     break;
@@ -78,7 +78,7 @@ public class FileSortTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return FileNameTools.compareFilename(f1, f2);
+                            return FileNameTools.compareName(f1, f2);
                         }
                     });
                     break;
@@ -150,7 +150,7 @@ public class FileSortTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return FileNameTools.getFileSuffix(f2).compareTo(FileNameTools.getFileSuffix(f1));
+                            return FileNameTools.suffix(f2.getName()).compareTo(FileNameTools.suffix(f1.getName()));
                         }
                     });
                     break;
@@ -158,7 +158,7 @@ public class FileSortTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return FileNameTools.getFileSuffix(f1).compareTo(FileNameTools.getFileSuffix(f2));
+                            return FileNameTools.suffix(f1.getName()).compareTo(FileNameTools.suffix(f2.getName()));
                         }
                     });
                     break;
@@ -214,7 +214,7 @@ public class FileSortTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return FileNameTools.compareFilename(f2.getFile(), f1.getFile());
+                        return FileNameTools.compareName(f2.getFile(), f1.getFile());
                     }
                 });
                 break;
@@ -222,7 +222,7 @@ public class FileSortTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return FileNameTools.compareFilename(f1.getFile(), f2.getFile());
+                        return FileNameTools.compareName(f1.getFile(), f2.getFile());
                     }
                 });
                 break;
@@ -266,7 +266,7 @@ public class FileSortTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return FileNameTools.getFileSuffix(f2.getFile()).compareTo(FileNameTools.getFileSuffix(f1.getFile()));
+                        return FileNameTools.suffix(f2.getFile().getName()).compareTo(FileNameTools.suffix(f1.getFile().getName()));
                     }
                 });
                 break;
@@ -274,7 +274,7 @@ public class FileSortTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return FileNameTools.getFileSuffix(f1.getFile()).compareTo(FileNameTools.getFileSuffix(f2.getFile()));
+                        return FileNameTools.suffix(f1.getFile().getName()).compareTo(FileNameTools.suffix(f2.getFile().getName()));
                     }
                 });
                 break;

@@ -36,7 +36,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
     }
 
     public final TableFileBackup defineColumns() {
-        addColumn(new ColumnDefinition("fbid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("fbid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("file", ColumnType.String, true).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("backup", ColumnType.String, true).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("record_time", ColumnType.Datetime, true));

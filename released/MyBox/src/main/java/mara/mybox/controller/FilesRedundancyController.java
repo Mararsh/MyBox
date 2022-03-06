@@ -21,19 +21,14 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.MessageDigestTools;
-import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -56,7 +51,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
     protected Button goButton;
 
     public FilesRedundancyController() {
-        baseTitle = Languages.message("FilesRedundancy");
+        baseTitle = message("FilesRedundancy");
     }
 
     @Override
@@ -71,7 +66,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             redundancy = new ConcurrentHashMap();
 
             currentBox.setVisible(false);
-            done = Languages.message("Done");
+            done = message("Done");
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -138,7 +133,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             if (filesList == null || filesList.isEmpty()) {
                 return;
             }
-            showStatus(Languages.message("SortingFilesSize"));
+            showStatus(message("SortingFilesSize"));
             Collections.sort(filesList, new Comparator<FileInformation>() {
                 @Override
                 public int compare(FileInformation f1, FileInformation f2) {
@@ -152,7 +147,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                     }
                 }
             });
-            showStatus(Languages.message("FindingFilesRedundancy"));
+            showStatus(message("FindingFilesRedundancy"));
             updateTaskProgress(0, filesList.size());
             FileInformation f = filesList.get(0);
             long size = f.getFileSize(), big = 50 * 1024 * 1024L;
@@ -165,7 +160,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                 }
                 f = filesList.get(i);
                 if (i % 200 == 0 || size > big) {
-                    showStatus(MessageFormat.format(Languages.message("RedundancyCurrentValues"),
+                    showStatus(MessageFormat.format(message("RedundancyCurrentValues"),
                             redundancy.size(), totalRedundancy.get()), f);
                     updateTaskProgress(i, filesList.size());
                 }
@@ -197,8 +192,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                 return;
             }
             if (f.getFileSize() > big) {
-                showStatus(MessageFormat.format(Languages.message("CalculatingDigest"),
-                        f.getFileName()), f);
+                showStatus(MessageFormat.format(message("CalculatingDigest"), f.getFile().getAbsolutePath()), f);
             }
             f.setData(ByteTools.bytesToHex(MessageDigestTools.MD5(f.getFile())));
         }
@@ -223,7 +217,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                 if (sameFiles.size() > 1) {
                     redundancy.put(digest, sameFiles);
                     totalRedundancy.set(totalRedundancy.get() + sameFiles.size() - 1);
-                    showStatus(MessageFormat.format(Languages.message("RedundancyCurrentValues"),
+                    showStatus(MessageFormat.format(message("RedundancyCurrentValues"),
                             redundancy.size(), totalRedundancy.get()), f);
                 }
                 sameFiles = new ArrayList();
@@ -242,10 +236,10 @@ public class FilesRedundancyController extends BaseBatchFileController {
             @Override
             public void run() {
                 currentLabel.setText(info);
-                String s = Languages.message("FindingFilesRedundancy") + "   "
-                        + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ".   "
-                        + MessageFormat.format(Languages.message("HandlingObject"),
-                                file.getFileName() + "   " + FileTools.showFileSize(file.getFileSize()));
+                String s = message("FindingFilesRedundancy") + "   "
+                        + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ".   "
+                        + MessageFormat.format(message("HandlingObject"),
+                                file.getFile().getAbsolutePath() + "   " + FileTools.showFileSize(file.getFileSize()));
                 statusLabel.setText(s);
             }
         });
@@ -262,7 +256,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             }
 
         } else {
-            popInformation(Languages.message("NoRedundancy"));
+            popInformation(message("NoRedundancy"));
         }
 
     }
@@ -281,16 +275,16 @@ public class FilesRedundancyController extends BaseBatchFileController {
     public void showCost() {
         String s;
         if (paused) {
-            s = Languages.message("Paused");
+            s = message("Paused");
         } else {
-            s = Languages.message(currentParameters.status);
+            s = message(currentParameters.status);
         }
         s += ".  "
-                + Languages.message("TotalCheckedFiles") + ": " + totalChecked + "   "
-                + Languages.message("TotalRedundancyFiles") + ": " + totalRedundancy.get() + "   "
-                + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
-                + Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
-                + Languages.message("EndTime") + ": " + DateTools.datetimeToString(new Date());
+                + message("TotalCheckedFiles") + ": " + totalChecked + "   "
+                + message("TotalRedundancyFiles") + ": " + totalRedundancy.get() + "   "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
+                + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
+                + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         statusLabel.setText(s);
         currentLabel.setText("");
     }

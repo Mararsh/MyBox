@@ -17,7 +17,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;

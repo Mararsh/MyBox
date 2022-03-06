@@ -14,10 +14,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Window;
-import mara.mybox.data.Data2D;
-import mara.mybox.data.DataMatrix;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
@@ -36,7 +36,7 @@ public class MatricesBinaryCalculationController extends BaseController {
     protected double[][] result;
 
     @FXML
-    protected ControlMatrixTable2 listController;
+    protected ControlMatrixTable listController;
     @FXML
     protected ControlData2D dataAController, dataBController, resultController;
     @FXML
