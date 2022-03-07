@@ -26,9 +26,11 @@ import mara.mybox.db.data.Location;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.NoteTag;
 import mara.mybox.db.data.Notebook;
+import mara.mybox.db.data.StringValues;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TextClipboard;
 import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.WebFavorite;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -47,7 +49,16 @@ public class DataFactory {
         if (data == null) {
             return null;
         }
-        if (data instanceof GeographyCode) {
+        if (data instanceof StringValues) {
+            return new TableStringValues();
+
+        } else if (data instanceof MyBoxLog) {
+            return new TableMyBoxLog();
+
+        } else if (data instanceof VisitHistory) {
+            return new TableVisitHistory();
+
+        } else if (data instanceof GeographyCode) {
             return new TableGeographyCode();
 
         } else if (data instanceof Dataset) {
@@ -58,9 +69,6 @@ public class DataFactory {
 
         } else if (data instanceof Location) {
             return new TableLocationData();
-
-        } else if (data instanceof MyBoxLog) {
-            return new TableMyBoxLog();
 
         } else if (data instanceof ImageEditHistory) {
             return new TableImageEditHistory();
@@ -130,7 +138,16 @@ public class DataFactory {
         if (data == null) {
             return false;
         }
-        if (data instanceof GeographyCode) {
+        if (data instanceof MyBoxLog) {
+            return MyBoxLog.valid((MyBoxLog) data);
+
+        } else if (data instanceof StringValues) {
+            return StringValues.valid((StringValues) data);
+
+        } else if (data instanceof VisitHistory) {
+            return VisitHistory.valid((VisitHistory) data);
+
+        } else if (data instanceof GeographyCode) {
             return GeographyCode.valid((GeographyCode) data);
 
         } else if (data instanceof Dataset) {
@@ -141,9 +158,6 @@ public class DataFactory {
 
         } else if (data instanceof Location) {
             return Location.valid((Location) data);
-
-        } else if (data instanceof MyBoxLog) {
-            return MyBoxLog.valid((MyBoxLog) data);
 
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.valid((ColumnDefinition) data);
@@ -217,7 +231,16 @@ public class DataFactory {
         if (data == null || name == null) {
             return null;
         }
-        if (data instanceof GeographyCode) {
+        if (data instanceof MyBoxLog) {
+            return MyBoxLog.getValue((MyBoxLog) data, name);
+
+        } else if (data instanceof StringValues) {
+            return StringValues.getValue((StringValues) data, name);
+
+        } else if (data instanceof VisitHistory) {
+            return VisitHistory.getValue((VisitHistory) data, name);
+
+        } else if (data instanceof GeographyCode) {
             return GeographyCode.getValue((GeographyCode) data, name);
 
         } else if (data instanceof Dataset) {
@@ -228,9 +251,6 @@ public class DataFactory {
 
         } else if (data instanceof Location) {
             return Location.getValue((Location) data, name);
-
-        } else if (data instanceof MyBoxLog) {
-            return MyBoxLog.getValue((MyBoxLog) data, name);
 
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.getValue((ImageEditHistory) data, name);

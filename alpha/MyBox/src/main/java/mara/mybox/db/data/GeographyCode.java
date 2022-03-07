@@ -13,7 +13,7 @@ import mara.mybox.value.Languages;
  */
 public class GeographyCode extends BaseData {
 
-    protected long owner, continent, country, province, city, county, town, village, building,
+    protected long id, owner, continent, country, province, city, county, town, village, building,
             area, population;
     protected short level;
     protected GeographyCodeLevel levelCode;
@@ -795,10 +795,17 @@ public class GeographyCode extends BaseData {
         return source(source);
     }
 
+    public long getId() {
+        return id;
+    }
 
     /*
-        get/set
+    get/set
      */
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getChineseName() {
         return chineseName;
     }

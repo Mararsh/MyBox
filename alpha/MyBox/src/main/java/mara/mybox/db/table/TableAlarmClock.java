@@ -1,12 +1,14 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.AlarmClock;
+import mara.mybox.db.data.ColumnDefinition;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -15,45 +17,45 @@ import mara.mybox.value.AppVariables;
 /**
  * @Author Mara
  * @CreateDate 2018-10-15 9:31:28
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
-public class TableAlarmClock extends DerbyBase {
+public class TableAlarmClock extends BaseTable<AlarmClock> {
 
     public TableAlarmClock() {
-        Table_Name = "Alarm_Clock";
-        Keys = new ArrayList<>() {
-            {
-                add("key_value");
-            }
-        };
-
-        Create_Table_Statement
-                = " CREATE TABLE Alarm_Clock ( "
-                + "  key_value  BIGINT NOT NULL PRIMARY KEY, "
-                + "  description VARCHAR(32672), "
-                + "  alarm_type INT  NOT NULL, "
-                + "  start_time TIMESTAMP, "
-                + "  is_active SMALLINT, "
-                + "  sound VARCHAR(32672), "
-                + "  every_value INT, "
-                + "  last_time TIMESTAMP, "
-                + "  next_time TIMESTAMP, "
-                + "  is_sound_loop SMALLINT, "
-                + "  is_sound_continully SMALLINT, "
-                + "  sound_loop_times INT, "
-                + "  volume FLOAT "
-                + " )";
+        tableName = "Alarm_Clock";
+        defineColumns();
     }
 
-    @Override
+    public TableAlarmClock(boolean defineColumns) {
+        tableName = "Alarm_Clock";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableAlarmClock defineColumns() {
+        addColumn(new ColumnDefinition("key_value", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("description", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("alarm_type", ColumnDefinition.ColumnType.Integer, true));
+        addColumn(new ColumnDefinition("start_time", ColumnDefinition.ColumnType.Datetime));
+        addColumn(new ColumnDefinition("is_active", ColumnDefinition.ColumnType.Short));
+        addColumn(new ColumnDefinition("sound", ColumnDefinition.ColumnType.String));
+        addColumn(new ColumnDefinition("every_value", ColumnDefinition.ColumnType.Integer));
+        addColumn(new ColumnDefinition("last_time", ColumnDefinition.ColumnType.Integer));
+        addColumn(new ColumnDefinition("next_time", ColumnDefinition.ColumnType.Datetime));
+        addColumn(new ColumnDefinition("is_sound_loop", ColumnDefinition.ColumnType.Short));
+        addColumn(new ColumnDefinition("is_sound_continully", ColumnDefinition.ColumnType.Short));
+        addColumn(new ColumnDefinition("sound_loop_times", ColumnDefinition.ColumnType.Integer));
+        addColumn(new ColumnDefinition("volume", ColumnDefinition.ColumnType.Float));
+        return this;
+    }
+
     public boolean init(Connection conn) {
         try {
             if (conn == null) {
                 return false;
             }
-            conn.createStatement().executeUpdate(Create_Table_Statement);
+            conn.createStatement().executeUpdate(createTableStatement());
             List<AlarmClock> values = AlarmClock.readAlarmClocksFromFile();
             if (values == null || values.isEmpty()) {
                 return false;

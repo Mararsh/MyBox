@@ -13,19 +13,18 @@ import java.util.concurrent.TimeUnit;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import mara.mybox.fxml.AlarmClockTask;
 import mara.mybox.db.table.TableAlarmClock;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.AlarmClockTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.executorService;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
  * @CreateDate 2018-7-13
- * @Version 1.0
  * @License Apache License Version 2.0
  */
 public final class AlarmClock {
@@ -309,7 +308,7 @@ public final class AlarmClock {
 
     public static boolean clearAllAlarmClocks() {
         try {
-            new TableAlarmClock().clear();
+            new TableAlarmClock().clearData();
             for (Long key : scheduledTasks.keySet()) {
                 ScheduledFuture future = scheduledTasks.get(key);
                 future.cancel(true);

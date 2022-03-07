@@ -8,12 +8,12 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2020-10-4
  * @License Apache License Version 2.0
  */
-public class StringValues extends BaseData {
+public class StringValue extends BaseData {
 
     protected String key, value;
     protected Date time;
 
-    public StringValues() {
+    public StringValue() {
         init();
     }
 
@@ -23,7 +23,7 @@ public class StringValues extends BaseData {
         time = new Date();
     }
 
-    public StringValues(String key, String value, Date time) {
+    public StringValue(String key, String value, Date time) {
         this.key = key;
         this.value = value;
         this.time = time;
@@ -32,11 +32,11 @@ public class StringValues extends BaseData {
     /*
         Static methods
      */
-    public static StringValues create() {
-        return new StringValues();
+    public static StringValue create() {
+        return new StringValue();
     }
 
-    public static boolean setValue(StringValues data, String column, Object value) {
+    public static boolean setValue(StringValue data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -58,7 +58,7 @@ public class StringValues extends BaseData {
         return false;
     }
 
-    public static Object getValue(StringValues data, String column) {
+    public static Object getValue(StringValue data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -73,7 +73,7 @@ public class StringValues extends BaseData {
         return null;
     }
 
-    public static boolean valid(StringValues data) {
+    public static boolean valid(StringValue data) {
         return data != null
                 && data.getKey() != null && data.getValue() != null;
     }

@@ -1,8 +1,6 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -11,6 +9,9 @@ import java.util.List;
 import static mara.mybox.controller.MediaPlayerController.MiaoGuaiGuaiBenBen;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 
@@ -19,25 +20,26 @@ import mara.mybox.tools.DateTools;
  * @CreateDate 2019-8-21
  * @License Apache License Version 2.0
  */
-public class TableMediaList extends DerbyBase {
+public class TableMediaList extends BaseTable<MediaList> {
 
     public TableMediaList() {
-        Table_Name = "media_list";
-        Keys = new ArrayList<>() {
-            {
-                add("list_name");
-                add("address_index");
-                add("address");
-            }
-        };
-        Create_Table_Statement
-                = " CREATE TABLE media_list ( "
-                + "  list_name  VARCHAR(32672) NOT NULL, "
-                + "  address_index INTEGER, "
-                + "  address VARCHAR(32672)  NOT NULL, "
-                + "  modify_time TIMESTAMP NOT NULL, "
-                + "  PRIMARY KEY (list_name, address_index, address)"
-                + " )";
+        tableName = "media_list";
+        defineColumns();
+    }
+
+    public TableMediaList(boolean defineColumns) {
+        tableName = "media_list";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableMediaList defineColumns() {
+        addColumn(new ColumnDefinition("list_name", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("address_index", ColumnDefinition.ColumnType.Integer, true, true));
+        addColumn(new ColumnDefinition("address", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("modify_time", ColumnDefinition.ColumnType.Datetime, true));
+        return this;
     }
 
     public static List<MediaList> read() {
@@ -54,7 +56,7 @@ public class TableMediaList extends DerbyBase {
             names.remove(MiaoGuaiGuaiBenBen);
             List<MediaList> mediaLists = new ArrayList();
             for (String name : names) {
-                sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "' ORDER BY address_index";
+                sql = " SELECT * FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "' ORDER BY address_index";
                 List<String> addresses;
                 try ( ResultSet results = statement.executeQuery(sql)) {
                     addresses = new ArrayList();
@@ -103,7 +105,7 @@ public class TableMediaList extends DerbyBase {
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
-            String sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "' ORDER BY address_index";
+            String sql = " SELECT * FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "' ORDER BY address_index";
             List<String> addresses = new ArrayList();
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
@@ -131,13 +133,13 @@ public class TableMediaList extends DerbyBase {
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
 //            TableMedia.write(statement, medias);
-            String sql = "DELETE FROM media_list WHERE list_name='" + stringValue(name) + "'";
+            String sql = "DELETE FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "'";
             statement.executeUpdate(sql);
             int index = 0;
             for (MediaInformation media : medias) {
                 try {
                     sql = "INSERT INTO media_list(list_name, address_index , address, modify_time) VALUES('"
-                            + stringValue(name) + "', " + index + ", '" + stringValue(media.getAddress()) + "', '"
+                            + DerbyBase.stringValue(name) + "', " + index + ", '" + DerbyBase.stringValue(media.getAddress()) + "', '"
                             + DateTools.datetimeToString(new Date()) + "')";
                     statement.executeUpdate(sql);
                     index++;
@@ -158,14 +160,14 @@ public class TableMediaList extends DerbyBase {
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             List<String> addresses = new ArrayList();
-            String sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "'";
+            String sql = " SELECT * FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "'";
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     addresses.add(results.getString("address"));
                 }
             }
             TableMedia.delete(conn, addresses);
-            sql = "DELETE FROM media_list WHERE list_name='" + stringValue(name) + "'";
+            sql = "DELETE FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {

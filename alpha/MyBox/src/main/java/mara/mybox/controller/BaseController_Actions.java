@@ -17,7 +17,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.GeographyCode;
-import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
@@ -26,6 +25,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -327,8 +327,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                 @Override
                 protected boolean handle() {
                     try {
-                        new TableUserConf().clear();
-                        AppVariables.initAppVaribles();
+                        UserConfig.clear();
                         return true;
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());

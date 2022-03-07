@@ -32,6 +32,15 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                     <children>
                         <Label fx:id="tableLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                   <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popSqlHistories">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -73,15 +82,6 @@ License:    Apache License Version 2.0
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../buttons/Red/iconClear.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconStart.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

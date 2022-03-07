@@ -39,7 +39,7 @@ public class ColumnDefinition extends BaseData {
     protected Era.Format timeFormat;
     protected Object value;
     protected Number maxValue, minValue;
-    protected Map<Object, String> values;  // value, displayString
+    protected Map<Object, String> data;  // value, displayString
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -389,36 +389,38 @@ public class ColumnDefinition extends BaseData {
             if (results == null || type == null || columnName == null) {
                 return null;
             }
+            String name = columnName.startsWith("\"") && columnName.endsWith("\"")
+                    ? columnName.substring(1, columnName.length() - 1) : columnName;
             switch (type) {
                 case String:
                 case Text:
                 case Color:
                 case File:
                 case Image:
-                    return results.getString(columnName);
+                    return results.getString(name);
                 case Double:
-                    return results.getDouble(columnName);
+                    return results.getDouble(name);
                 case Float:
-                    return results.getFloat(columnName);
+                    return results.getFloat(name);
                 case Long:
                 case Era:
-                    return results.getLong(columnName);
+                    return results.getLong(name);
                 case Integer:
-                    return results.getInt(columnName);
+                    return results.getInt(name);
                 case Boolean:
-                    return results.getBoolean(columnName);
+                    return results.getBoolean(name);
                 case Short:
-                    return results.getShort(columnName);
+                    return results.getShort(name);
                 case Datetime:
-                    return results.getTimestamp(columnName);
+                    return results.getTimestamp(name);
                 case Date:
-                    return results.getDate(columnName);
+                    return results.getDate(name);
                 case Blob:
-                    return results.getBlob(columnName);
+                    return results.getBlob(name);
                 case Clob:
-                    return results.getClob(columnName);
+                    return results.getClob(name);
                 default:
-                    MyBoxLog.debug(columnName + " " + type);
+                    MyBoxLog.debug(name + " " + type);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString(), columnName + " " + type);
@@ -574,7 +576,6 @@ public class ColumnDefinition extends BaseData {
                 return null;
         }
     }
-
 
     /*
         static methods
@@ -747,13 +748,13 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public String getColumnName() {
-        return columnName;
-    }
-
     public ColumnDefinition setColumnName(String name) {
         this.columnName = name;
         return this;
+    }
+
+    public String getColumnName() {
+        return columnName;
     }
 
     public ColumnType getType() {
@@ -891,12 +892,12 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public Map<Object, String> getValues() {
-        return values;
+    public Map<Object, String> getData() {
+        return data;
     }
 
-    public ColumnDefinition setValues(Map<Object, String> values) {
-        this.values = values;
+    public ColumnDefinition setData(Map<Object, String> data) {
+        this.data = data;
         return this;
     }
 

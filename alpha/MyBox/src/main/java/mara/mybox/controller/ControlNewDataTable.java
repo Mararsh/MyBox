@@ -106,8 +106,12 @@ public class ControlNewDataTable extends BaseController {
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
             tableData2D.setTableName(tableName);
             List<String> keys = new ArrayList<>();
+            String idname = null;
             if (autoRadio.isSelected()) {
-                tableData2D.addColumn(dataTable.idColumn());
+                idname = tableName.replace("\"", "") + "_id";
+                Data2DColumn idcolumn = new Data2DColumn(idname, ColumnDefinition.ColumnType.Long);
+                idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
+                tableData2D.addColumn(idcolumn);
             } else {
                 keys = columnsController.checkedValues();
             }
@@ -115,7 +119,11 @@ public class ControlNewDataTable extends BaseController {
                 Data2DColumn dataColumn = tableController.data2D.getColumns().get(index);
                 ColumnDefinition dbColumn = new ColumnDefinition();
                 dbColumn.cloneFrom(dataColumn);
-                dbColumn.setColumnName(DerbyBase.fixedIdentifier(dataColumn.getColumnName()));
+                String columeName = DerbyBase.fixedIdentifier(dataColumn.getColumnName());
+                if (columeName.equalsIgnoreCase(idname)) {
+                    columeName += index;
+                }
+                dbColumn.setColumnName(columeName);
                 dbColumn.setIsPrimaryKey(keys.contains(dataColumn.getColumnName()));
                 tableData2D.addColumn(dbColumn);
             }

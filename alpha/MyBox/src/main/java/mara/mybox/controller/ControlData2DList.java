@@ -165,7 +165,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                         List<String> tables = DerbyBase.allTables(conn);
                         DataTable dataTable = new DataTable();
                         for (String name : tables) {
-                            if (DataInternalTable.InternalTables.contains(name)) {
+                            if (DataInternalTable.InternalTables.contains(name.toUpperCase())) {
                                 continue;
                             }
                             if (tableData2DDefinition.queryTable(conn, name, Data2DDefinition.Type.DatabaseTable) == null) {

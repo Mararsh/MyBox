@@ -149,15 +149,19 @@ public class ControlData2D extends BaseController {
                 case CSV:
                 case MyBoxClipboard:
                     setFileType(VisitHistory.FileType.CSV);
+                    tableController.setFileType(VisitHistory.FileType.CSV);
                     break;
                 case Excel:
                     setFileType(VisitHistory.FileType.Excel);
+                    tableController.setFileType(VisitHistory.FileType.Excel);
                     break;
                 case Texts:
                     setFileType(VisitHistory.FileType.Text);
+                    tableController.setFileType(VisitHistory.FileType.Text);
                     break;
                 default:
                     setFileType(VisitHistory.FileType.CSV);
+                    tableController.setFileType(VisitHistory.FileType.CSV);
             }
 
         } catch (Exception e) {

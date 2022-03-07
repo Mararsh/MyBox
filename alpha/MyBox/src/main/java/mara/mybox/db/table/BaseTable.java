@@ -555,29 +555,6 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public long clearData() {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            return clearData(conn);
-        } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
-            return -1;
-        }
-    }
-
-    public int clearData(Connection conn) {
-        if (conn == null) {
-            return -1;
-        }
-        String sql = null;
-        try {
-            sql = "TRUNCATE TABLE " + tableName;
-            return conn.createStatement().executeUpdate(sql);
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return -1;
-        }
-    }
-
     public boolean setValue(D data, String column, Object value) {
         if (column == null) {
             return false;
@@ -735,7 +712,6 @@ public abstract class BaseTable<D> {
         String sql = null;
         String v = null;
         for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
             if (column.isAuto()) {
                 continue;
             }
@@ -746,7 +722,7 @@ public abstract class BaseTable<D> {
                 sql += ", ";
                 v += ", ?";
             }
-            sql += name;
+            sql += column.getColumnName();
         }
         sql += " ) VALUES ( " + v + ") ";
         return sql;
@@ -758,7 +734,7 @@ public abstract class BaseTable<D> {
         }
         List<ColumnDefinition> columnsList = new ArrayList<>();
         for (ColumnDefinition column : columns) {
-            if (primaryColumns.contains(column)) {
+            if (column.isIsPrimaryKey() || column.isAuto()) {
                 continue;
             }
             columnsList.add(column);
@@ -772,8 +748,7 @@ public abstract class BaseTable<D> {
         }
         String update = null;
         for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
-            if (primaryColumns.contains(column)) {
+            if (column.isIsPrimaryKey() || column.isAuto()) {
                 continue;
             }
             if (update == null) {
@@ -781,10 +756,13 @@ public abstract class BaseTable<D> {
             } else {
                 update += ", ";
             }
-            update += name + "=? ";
+            update += column.getColumnName() + "=? ";
         }
         String where = null;
-        for (ColumnDefinition column : primaryColumns) {
+        for (ColumnDefinition column : columns) {
+            if (!column.isIsPrimaryKey()) {
+                continue;
+            }
             if (where == null) {
                 where = " WHERE ";
             } else {
@@ -818,7 +796,7 @@ public abstract class BaseTable<D> {
         }
         for (int i = 0; i < columns.size() - 1; i++) {
             ColumnDefinition column = columns.get(i);
-            if (columnName.equals(column.getColumnName())) {
+            if (columnName.equalsIgnoreCase(column.getColumnName())) {
                 return i;
             }
         }
@@ -842,7 +820,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         for (ColumnDefinition column : columns) {
-            if (column.getColumnName().equals(columnName)) {
+            if (column.getColumnName().equalsIgnoreCase(columnName)) {
                 return column;
             }
         }
@@ -1281,16 +1259,19 @@ public abstract class BaseTable<D> {
             return updateData(conn, statement, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
+            MyBoxLog.console(updateStatement());
             return null;
         }
     }
 
     public D updateData(Connection conn, PreparedStatement statement, D data) {
         if (conn == null || !valid(data)) {
+            MyBoxLog.console(tableName);
             return null;
         }
         try {
             if (!setUpdateStatement(conn, statement, data)) {
+                MyBoxLog.console(tableName);
                 return null;
             }
             int ret = statement.executeUpdate();
@@ -1448,6 +1429,29 @@ public abstract class BaseTable<D> {
         return DerbyBase.update(sql);
     }
 
+    public long clearData() {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return clearData(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+            return -1;
+        }
+    }
+
+    public int clearData(Connection conn) {
+        if (conn == null) {
+            return -1;
+        }
+        String sql = null;
+        try {
+            sql = "TRUNCATE TABLE " + tableName;
+            return conn.createStatement().executeUpdate(sql);
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+            return -1;
+        }
+    }
+
     public BaseTable readDefinitionFromDB(String tableName) {
         try ( Connection conn = DerbyBase.getConnection()) {
             return readDefinitionFromDB(conn, tableName);
@@ -1463,12 +1467,13 @@ public abstract class BaseTable<D> {
         }
         try {
             init();
-            tableName = tname.toLowerCase();
-            String tuname = tname.toUpperCase();
+            tableName = tname;
+            String uname = tname.startsWith("\"") && tname.endsWith("\"") ? tname : tname.toUpperCase();
             DatabaseMetaData dbMeta = conn.getMetaData();
-            try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", tuname, "%")) {
+            try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", uname, "%")) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("COLUMN_NAME").toLowerCase();
+                    String name = resultSet.getString("COLUMN_NAME");
+                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
                     String defaultValue = resultSet.getString("COLUMN_DEF");
                     if (defaultValue != null && defaultValue.startsWith("'") && defaultValue.endsWith("'")) {
                         defaultValue = defaultValue.substring(1, defaultValue.length() - 1);
@@ -1487,14 +1492,16 @@ public abstract class BaseTable<D> {
                 MyBoxLog.error(e, tableName);
             }
             primaryColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", tuname)) {
+            try ( ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", uname)) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("COLUMN_NAME").toLowerCase();
+                    String name = resultSet.getString("COLUMN_NAME");
+                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
                     for (ColumnDefinition column : columns) {
                         if (name.equals(column.getColumnName())) {
                             column.setIsPrimaryKey(true);
                             if (column.isAuto()) {
                                 column.setAuto(true);
+                                idColumn = name;
                             }
                             primaryColumns.add(column);
                             break;
@@ -1502,16 +1509,18 @@ public abstract class BaseTable<D> {
                     }
                 }
             } catch (Exception e) {
+//                MyBoxLog.console(e);
             }
             foreignColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", tuname)) {
+            try ( ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", uname)) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("FKCOLUMN_NAME").toLowerCase();
+                    String name = resultSet.getString("FKCOLUMN_NAME");
+                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
                     for (ColumnDefinition column : columns) {
                         if (name.equals(column.getColumnName())) {
                             column.setReferName(resultSet.getString("FK_NAME"))
-                                    .setReferTable(resultSet.getString("PKTABLE_NAME").toLowerCase())
-                                    .setReferColumn(resultSet.getString("PKCOLUMN_NAME").toLowerCase())
+                                    .setReferTable(resultSet.getString("PKTABLE_NAME"))
+                                    .setReferColumn(resultSet.getString("PKCOLUMN_NAME"))
                                     .setOnDelete(ColumnDefinition.deleteRule(resultSet.getShort("DELETE_RULE")))
                                     .setOnUpdate(ColumnDefinition.updateRule(resultSet.getShort("UPDATE_RULE")));
                             foreignColumns.add(column);
@@ -1522,15 +1531,16 @@ public abstract class BaseTable<D> {
             } catch (Exception e) {
             }
             referredColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", tuname)) {
+            try ( ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", uname)) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("PKCOLUMN_NAME").toLowerCase();
+                    String name = resultSet.getString("PKCOLUMN_NAME");
+                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
                     for (ColumnDefinition column : columns) {
                         if (name.equals(column.getColumnName())) {
                             ColumnDefinition rcolumn = column.cloneAll();
                             rcolumn.setReferName(resultSet.getString("FK_NAME"))
-                                    .setReferTable(resultSet.getString("FKTABLE_NAME").toLowerCase())
-                                    .setReferColumn(resultSet.getString("FKCOLUMN_NAME").toLowerCase())
+                                    .setReferTable(resultSet.getString("FKTABLE_NAME"))
+                                    .setReferColumn(resultSet.getString("FKCOLUMN_NAME"))
                                     .setOnDelete(ColumnDefinition.deleteRule(resultSet.getShort("DELETE_RULE")))
                                     .setOnUpdate(ColumnDefinition.updateRule(resultSet.getShort("UPDATE_RULE")));
                             referredColumns.add(rcolumn);
@@ -1572,6 +1582,10 @@ public abstract class BaseTable<D> {
             MyBoxLog.error(e, tableName);
         }
         return false;
+    }
+
+    public String string(String value) {
+        return DerbyBase.stringValue(value);
     }
 
     /*

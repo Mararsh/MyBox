@@ -13,7 +13,7 @@ import mara.mybox.fximage.FxColorTools;
  */
 public class Dataset extends BaseData {
 
-    protected long dsid;
+    protected long id, dsid;
     protected String dataCategory, dataSet, comments;
     protected Color textColor, bgColor, chartColor;
     protected File image;
@@ -136,6 +136,14 @@ public class Dataset extends BaseData {
     /*
         get/set
      */
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getDsid() {
         return dsid;
     }

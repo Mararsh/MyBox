@@ -8,7 +8,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.db.DerbyBase;
+import static mara.mybox.db.DerbyBase.stringValue;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.StringValues;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 
@@ -17,23 +20,26 @@ import mara.mybox.tools.DateTools;
  * @CreateDate 2019-8-21
  * @License Apache License Version 2.0
  */
-public class TableStringValues extends DerbyBase {
+public class TableStringValues extends BaseTable<StringValues> {
 
     public TableStringValues() {
-        Table_Name = "String_Values";
-        Keys = new ArrayList<>() {
-            {
-                add("key_name");
-                add("string_value");
-            }
-        };
-        Create_Table_Statement
-                = " CREATE TABLE String_Values ( "
-                + "  key_name  VARCHAR(32672) NOT NULL, "
-                + "  string_value VARCHAR(32672)  NOT NULL, "
-                + "  create_time TIMESTAMP NOT NULL, "
-                + "  PRIMARY KEY (key_name, string_value)"
-                + " )";
+        tableName = "String_Values";
+        defineColumns();
+    }
+
+    public TableStringValues(boolean defineColumns) {
+        tableName = "String_Values";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableStringValues defineColumns() {
+        addColumn(new ColumnDefinition("key_name", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("string_value", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("create_time", ColumnDefinition.ColumnType.Datetime, true));
+        orderColumns = "create_time DESC";
+        return this;
     }
 
     public static List<String> read(String name) {

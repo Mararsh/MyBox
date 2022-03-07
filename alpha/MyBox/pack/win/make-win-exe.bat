@@ -1,5 +1,5 @@
 rem Unzip source package. Edit this script to change directories as your env.
-set version=6.5.3
+set version=6.5.4
 set jpackagePath=D:\Programs\Java\openjdk-17\bin
 set jdkPath=D:\Programs\Java\openjdk-17
 

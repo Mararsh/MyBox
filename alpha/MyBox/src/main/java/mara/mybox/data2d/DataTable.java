@@ -215,7 +215,6 @@ public class DataTable extends Data2D {
                 ColumnDefinition column = dbColumns.get(i);
                 column.setIndex(i);
             }
-            tableData2D.setColumns(dbColumns);
             for (ColumnDefinition dbColumn : dbColumns) {
                 Data2DColumn column = new Data2DColumn();
                 column.cloneFrom(dbColumn);
@@ -246,7 +245,7 @@ public class DataTable extends Data2D {
                 return null;
             }
             Data2DRow data2DRow = tableData2D.newRow();
-            data2DRow.setIndex(Integer.valueOf(values.get(0)));
+            data2DRow.setRowIndex(Integer.valueOf(values.get(0)));
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
@@ -584,7 +583,7 @@ public class DataTable extends Data2D {
         try ( Connection conn = DerbyBase.getConnection()) {
             List<String> allTables = DerbyBase.allTables(conn);
             for (String name : allTables) {
-                if (!DataInternalTable.InternalTables.contains(name)) {
+                if (!DataInternalTable.InternalTables.contains(name.toUpperCase())) {
                     userTables.add(name);
                 }
             }
