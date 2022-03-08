@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.data.Era;
+import mara.mybox.db.table.BaseTable;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -389,41 +390,40 @@ public class ColumnDefinition extends BaseData {
             if (results == null || type == null || columnName == null) {
                 return null;
             }
-            String name = columnName.startsWith("\"") && columnName.endsWith("\"")
-                    ? columnName.substring(1, columnName.length() - 1) : columnName;
+            String savedName = BaseTable.savedName(columnName);
             switch (type) {
                 case String:
                 case Text:
                 case Color:
                 case File:
                 case Image:
-                    return results.getString(name);
+                    return results.getString(savedName);
                 case Double:
-                    return results.getDouble(name);
+                    return results.getDouble(savedName);
                 case Float:
-                    return results.getFloat(name);
+                    return results.getFloat(savedName);
                 case Long:
                 case Era:
-                    return results.getLong(name);
+                    return results.getLong(savedName);
                 case Integer:
-                    return results.getInt(name);
+                    return results.getInt(savedName);
                 case Boolean:
-                    return results.getBoolean(name);
+                    return results.getBoolean(savedName);
                 case Short:
-                    return results.getShort(name);
+                    return results.getShort(savedName);
                 case Datetime:
-                    return results.getTimestamp(name);
+                    return results.getTimestamp(savedName);
                 case Date:
-                    return results.getDate(name);
+                    return results.getDate(savedName);
                 case Blob:
-                    return results.getBlob(name);
+                    return results.getBlob(savedName);
                 case Clob:
-                    return results.getClob(name);
+                    return results.getClob(savedName);
                 default:
-                    MyBoxLog.debug(name + " " + type);
+                    MyBoxLog.debug(savedName + " " + type);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), columnName + " " + type);
+            MyBoxLog.error(e.toString(), tableName + " " + columnName + " " + type);
         }
         return null;
     }

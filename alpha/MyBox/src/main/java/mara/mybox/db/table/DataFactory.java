@@ -23,6 +23,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
+import mara.mybox.db.data.NamedValues;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.NoteTag;
 import mara.mybox.db.data.Notebook;
@@ -130,6 +131,9 @@ public class DataFactory {
         } else if (data instanceof Data2DRow) {
             return new TableData2D();
 
+        } else if (data instanceof NamedValues) {
+            return new TableNamedValues();
+
         }
         return null;
     }
@@ -222,6 +226,9 @@ public class DataFactory {
         } else if (data instanceof Data2DRow) {
             return Data2DRow.valid((Data2DRow) data);
 
+        } else if (data instanceof NamedValues) {
+            return NamedValues.valid((NamedValues) data);
+
         }
 
         return false;
@@ -312,6 +319,9 @@ public class DataFactory {
         } else if (data instanceof Data2DRow) {
             return Data2DRow.getValue((Data2DRow) data, name);
 
+        } else if (data instanceof NamedValues) {
+            return NamedValues.getValue((NamedValues) data, name);
+
         }
 
         return null;
@@ -395,6 +405,9 @@ public class DataFactory {
 
         } else if (data instanceof Data2DRow) {
             return Data2DRow.setValue((Data2DRow) data, name, value);
+
+        } else if (data instanceof NamedValues) {
+            return NamedValues.setValue((NamedValues) data, name, value);
 
         }
         return false;

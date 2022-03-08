@@ -19,43 +19,47 @@ public class HtmlStyles {
             + "th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}\n"
             + "th { font-weight:bold;  text-align:center;}\n"
             + "tr { height: 1.2em;  }\n"
+            + ".valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}\n"
             + ".boldText { font-weight:bold;  }\n";
     public static final String DefaultStyle
             = BaseStyle
             + ".valueText { color:#2e598a;  }\n";
     public static final String ConsoleStyle
-            = "body { background-color:black; color:#CCFF99; }\n"
+            = BaseStyle
+            + "body { background-color:black; color:#CCFF99; }\n"
             + "table, th, td { border: #CCFF99; }\n"
             + "a:link {color: #FFFFFF}\n"
             + "a:visited  {color: #DDDDDD}\n"
-            + ".valueText { color:skyblue;  }\n"
-            + BaseStyle;
+            + ".valueBox { border-color:#CCFF99;}\n"
+            + ".valueText { color:skyblue;  }\n";
     public static final String BlackboardStyle
-            = "body { background-color:#336633; color:white; }\n"
+            = BaseStyle
+            + "body { background-color:#336633; color:white; }\n"
             + "table, th, td { border: white; }\n"
             + "a:link {color: #FFFFFF}\n"
             + "a:visited  {color: #DDDDDD}\n"
-            + ".valueText { color:wheat;  }\n"
-            + BaseStyle;
+            + ".valueBox { border-color:white; }\n"
+            + ".valueText { color:wheat;  }\n";
+    public static final String AgoStyle
+            = BaseStyle
+            + "body { background-color:darkblue; color:white;  }\n"
+            + "table, th, td { border: white; }\n"
+            + "a:link {color: #FFFFFF}\n"
+            + "a:visited  {color: #DDDDDD}\n"
+            + ".valueBox {  border-color:white;}\n"
+            + ".valueText { color:yellow;  }\n";
+    public static final String BookStyle
+            = BaseStyle
+            + "body { background-color:#F6F1EB; color:black;  }\n";
+    public static final String GreyStyle
+            = BaseStyle
+            + "body { background-color:#ececec; color:black;  }\n";
     public static final String LinkStyle
-            = "body { background-color:transparent;  }\n"
+            = BaseStyle
+            + "body { background-color:transparent;  }\n"
             + "table { border-collapse:collapse; max-width:95%; }\n"
             + "table, th, td { border: 0px solid; }\n"
-            + "td { padding:20px;  }\n"
-            + BaseStyle;
-    public static final String AgoStyle
-            = "body { background-color:darkblue; color:white;  }\n"
-            + "table, th, td { border: white; }\n"
-            + "a:link {color: #FFFFFF}\n"
-            + "a:visited  {color: #DDDDDD}\n"
-            + ".valueText { color:wheat;  }\n"
-            + BaseStyle;
-    public static final String BookStyle
-            = "body { background-color:#F6F1EB; color:black;  }\n"
-            + BaseStyle;
-    public static final String GreyStyle
-            = "body { background-color:#ececec; color:black;  }\n"
-            + BaseStyle;
+            + "td { padding:20px;  }\n";
 
     public static HtmlStyles.HtmlStyle styleName(String styleName) {
         for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {

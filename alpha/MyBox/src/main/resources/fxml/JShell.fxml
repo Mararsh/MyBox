@@ -35,9 +35,18 @@ License:    Apache License Version 2.0
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
             <children>
-            <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.75" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                <items>
-                  <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                  <ScrollPane fx:id="leftPane1" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <children>
+                              <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlNamedValues.fxml" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                      <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                            <children>
@@ -56,49 +65,30 @@ License:    Apache License Version 2.0
                                                               </ImageView>
                                                           </graphic>
                                                       </Button>
-                                                <Label maxWidth="1.7976931348623157E308" text="%Codes" />
-                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                <Button fx:id="examplePopExpressionsButton" mnemonicParsing="false" onMouseEntered="#popExpressionsMenu">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconExamples.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="examplePopSyntaxButton" layoutX="377.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popSyntaxMenu">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconExamples.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Label layoutX="10.0" layoutY="17.0" maxWidth="1.7976931348623157E308" text="%Codes" HBox.hgrow="ALWAYS" />
+                                                <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../buttons/Red/iconTips.png" />
+                                                      <Image url="@../buttons/Red/iconTipsRight.png" />
                                                    </image>
                                                 </ImageView>
-                                                <Label layoutX="10.0" layoutY="17.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popCodesHistories">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconHistory.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="examplesExpressionsButton" mnemonicParsing="false" onMouseEntered="#popExpressionsMenu">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconExamples.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="examplesSyntaxButton" layoutX="377.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popSyntaxMenu">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconExamples.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="examplesMethodsButton" layoutX="454.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popMethodsMenu">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconExamples.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
                                                 <Button fx:id="clearCodesButton" mnemonicParsing="false" onAction="#clearCodes">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -108,26 +98,43 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
+                                                <Button fx:id="saveButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconSave.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/buttons/iconSaveAs.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconOpen.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                              </children>
                                           </HBox>
-                                          <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                          <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%Codes" VBox.vgrow="ALWAYS" />
                                        </children>
                                     </VBox>
                                     <VBox>
                                        <children>
                                           <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                              <children>
-                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="600.0" vgap="2.0" HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <CheckBox fx:id="variablesCheck" mnemonicParsing="false" selected="true" text="%Variables" />
-                                                      <CheckBox fx:id="expressionsCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="%Expressions" />
-                                                      <CheckBox fx:id="declarationsCheck" mnemonicParsing="false" selected="true" text="%Declarations" />
-                                                      <CheckBox fx:id="statementsCheck" mnemonicParsing="false" selected="true" text="%Statements" />
-                                                      <CheckBox fx:id="methodsCheck" layoutX="163.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Methods" />
-                                                      <CheckBox fx:id="importsCheck" layoutX="239.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Imports" />
-                                                      <CheckBox fx:id="errorsCheck" layoutX="154.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="%Errors" />
-                                                   </children>
-                                                </FlowPane>
+                                                <Label maxWidth="1.7976931348623157E308" text="Snippets" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="recoverButton" layoutX="454.0" layoutY="10.0" mnemonicParsing="false" onAction="#recoverAction">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -184,6 +191,17 @@ License:    Apache License Version 2.0
                                                 <TableColumn fx:id="some2Column" prefWidth="150.0" text="some2" />
                                             </columns>
                                           </TableView>
+                                          <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="600.0" vgap="2.0">
+                                             <children>
+                                                <CheckBox fx:id="variablesCheck" mnemonicParsing="false" selected="true" text="%Variables" />
+                                                <CheckBox fx:id="expressionsCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="%Expressions" />
+                                                <CheckBox fx:id="declarationsCheck" mnemonicParsing="false" selected="true" text="%Declarations" />
+                                                <CheckBox fx:id="statementsCheck" mnemonicParsing="false" selected="true" text="%Statements" />
+                                                <CheckBox fx:id="methodsCheck" layoutX="163.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Methods" />
+                                                <CheckBox fx:id="importsCheck" layoutX="239.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Imports" />
+                                                <CheckBox fx:id="errorsCheck" layoutX="154.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="%Errors" />
+                                             </children>
+                                          </FlowPane>
                                        </children>
                                     </VBox>
                                  </items>

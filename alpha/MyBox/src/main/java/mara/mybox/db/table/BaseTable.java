@@ -547,7 +547,6 @@ public abstract class BaseTable<D> {
         String sql = null;
         try {
             sql = "ALTER TABLE " + tableName + " ADD COLUMN  " + createColumnDefiniton(column);
-            MyBoxLog.debug(sql);
             return conn.createStatement().executeUpdate(sql) >= 0;
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -1461,26 +1460,42 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public BaseTable readDefinitionFromDB(Connection conn, String tname) {
-        if (tname == null || tname.isBlank()) {
+    public static String savedName(String referedName) {
+        if (referedName == null) {
+            return null;
+        }
+        return referedName.startsWith("\"") && referedName.endsWith("\"")
+                ? referedName.substring(1, referedName.length() - 1) : referedName.toUpperCase();
+    }
+
+    public static String referredName(String nameFromDB) {
+        if (nameFromDB == null) {
+            return null;
+        }
+        return nameFromDB.equals(nameFromDB.toUpperCase())
+                ? nameFromDB.toLowerCase() : "\"" + nameFromDB + "\"";
+    }
+
+    public BaseTable readDefinitionFromDB(Connection conn, String referredTableName) {
+        if (referredTableName == null || referredTableName.isBlank()) {
             return null;
         }
         try {
             init();
-            tableName = tname;
-            String uname = tname.startsWith("\"") && tname.endsWith("\"") ? tname : tname.toUpperCase();
+            tableName = referredTableName;
+            String savedTableName = savedName(referredTableName);
             DatabaseMetaData dbMeta = conn.getMetaData();
-            try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", uname, "%")) {
+            try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", savedTableName, "%")) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("COLUMN_NAME");
-                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
+                    String savedColumnName = resultSet.getString("COLUMN_NAME");
+                    String referredColumnName = referredName(savedColumnName);
                     String defaultValue = resultSet.getString("COLUMN_DEF");
                     if (defaultValue != null && defaultValue.startsWith("'") && defaultValue.endsWith("'")) {
                         defaultValue = defaultValue.substring(1, defaultValue.length() - 1);
                     }
                     ColumnDefinition column = ColumnDefinition.create()
                             .setTableName(tableName)
-                            .setColumnName(name)
+                            .setColumnName(referredColumnName)
                             .setType(ColumnDefinition.sqlColumnType(resultSet.getInt("DATA_TYPE")))
                             .setLength(resultSet.getInt("COLUMN_SIZE"))
                             .setNotNull("NO".equalsIgnoreCase(resultSet.getString("IS_NULLABLE")))
@@ -1492,16 +1507,16 @@ public abstract class BaseTable<D> {
                 MyBoxLog.error(e, tableName);
             }
             primaryColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", uname)) {
+            try ( ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("COLUMN_NAME");
-                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
+                    String savedColumnName = resultSet.getString("COLUMN_NAME");
+                    String referredName = referredName(savedColumnName);
                     for (ColumnDefinition column : columns) {
-                        if (name.equals(column.getColumnName())) {
+                        if (referredName.equals(column.getColumnName())) {
                             column.setIsPrimaryKey(true);
                             if (column.isAuto()) {
                                 column.setAuto(true);
-                                idColumn = name;
+                                idColumn = referredName;
                             }
                             primaryColumns.add(column);
                             break;
@@ -1512,12 +1527,12 @@ public abstract class BaseTable<D> {
 //                MyBoxLog.console(e);
             }
             foreignColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", uname)) {
+            try ( ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("FKCOLUMN_NAME");
-                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
+                    String savedColumnName = resultSet.getString("FKCOLUMN_NAME");
+                    String referredName = referredName(savedColumnName);
                     for (ColumnDefinition column : columns) {
-                        if (name.equals(column.getColumnName())) {
+                        if (referredName.equals(column.getColumnName())) {
                             column.setReferName(resultSet.getString("FK_NAME"))
                                     .setReferTable(resultSet.getString("PKTABLE_NAME"))
                                     .setReferColumn(resultSet.getString("PKCOLUMN_NAME"))
@@ -1531,12 +1546,12 @@ public abstract class BaseTable<D> {
             } catch (Exception e) {
             }
             referredColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", uname)) {
+            try ( ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
-                    String name = resultSet.getString("PKCOLUMN_NAME");
-                    name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
+                    String savedColumnName = resultSet.getString("PKCOLUMN_NAME");
+                    String referredName = referredName(savedColumnName);
                     for (ColumnDefinition column : columns) {
-                        if (name.equals(column.getColumnName())) {
+                        if (referredName.equals(column.getColumnName())) {
                             ColumnDefinition rcolumn = column.cloneAll();
                             rcolumn.setReferName(resultSet.getString("FK_NAME"))
                                     .setReferTable(resultSet.getString("FKTABLE_NAME"))
@@ -1572,14 +1587,14 @@ public abstract class BaseTable<D> {
         return true;
     }
 
-    public boolean exist(Connection conn, String tableName) {
-        if (conn == null || tableName == null) {
+    public boolean exist(Connection conn, String referredName) {
+        if (conn == null || referredName == null) {
             return false;
         }
-        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA", tableName.toUpperCase(), "%")) {
+        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA", savedName(referredName), "%")) {
             return resultSet.next();
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.error(e, referredName);
         }
         return false;
     }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableBlobValue;
 import mara.mybox.db.table.TableColor;
@@ -34,6 +35,7 @@ import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
+import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
@@ -366,9 +368,9 @@ public class DerbyBase {
         try ( Statement statement = conn.createStatement();
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
-                String name = resultSet.getString("TABLENAME");
-                name = name.equals(name.toUpperCase()) ? name.toLowerCase() : "\"" + name + "\"";
-                tables.add(name);
+                String savedName = resultSet.getString("TABLENAME");
+                String referredName = BaseTable.referredName(savedName);
+                tables.add(referredName);
             }
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -384,8 +386,9 @@ public class DerbyBase {
         try ( Statement statement = conn.createStatement();
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
-                columns.add(resultSet.getString("columnname").toLowerCase()
-                        + ", " + resultSet.getString("columndatatype"));
+                String savedName = resultSet.getString("columnname");
+                String referredName = BaseTable.referredName(savedName);
+                columns.add(referredName + ", " + resultSet.getString("columndatatype"));
             }
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -402,7 +405,9 @@ public class DerbyBase {
         try ( Statement statement = conn.createStatement();
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
-                columns.add(resultSet.getString("columnname").toLowerCase());
+                String savedName = resultSet.getString("columnname");
+                String referredName = BaseTable.referredName(savedName);
+                columns.add(referredName);
             }
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -596,6 +601,10 @@ public class DerbyBase {
             if (!tables.contains("Blob_Value".toLowerCase())) {
                 new TableBlobValue().createTable(conn);
                 loadingController.info("Blob_Value");
+            }
+            if (!tables.contains("Named_Values".toLowerCase())) {
+                new TableNamedValues().createTable(conn);
+                loadingController.info("Named_Values");
             }
             return true;
         } catch (Exception e) {

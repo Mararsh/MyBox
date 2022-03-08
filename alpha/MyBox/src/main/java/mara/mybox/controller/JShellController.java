@@ -1,8 +1,12 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,14 +24,19 @@ import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.Snippet;
 import jdk.jshell.SnippetEvent;
+import jdk.jshell.SourceCodeAnalysis.CompletionInfo;
 import mara.mybox.data.JShellSnippet;
+import mara.mybox.db.data.NamedValues;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -40,6 +49,8 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
     protected JShell jShell;
     protected String outputs = "";
 
+    @FXML
+    protected ControlNamedValues listController;
     @FXML
     protected TextArea codesArea;
     @FXML
@@ -59,9 +70,25 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
+
+            listController.loadList("JShellSnippets");
+            listController.uesNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    NamedValues selected = listController.tableView.getSelectionModel().getSelectedItem();
+                    if (selected != null) {
+                        codesArea.setText(selected.getValue());
+                    }
+                }
+            });
 
             webViewController.setParent(this, ControlWebView.ScrollType.Bottom);
 
@@ -195,47 +222,7 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
         task = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
-                try {
-                    TableStringValues.add("JShellHistories", codes);
-                    List<SnippetEvent> events = jShell.eval(codes);
-                    String outputs = DateTools.nowString()
-                            + "<div  style=\"color: blue;\">"
-                            + HtmlWriteTools.stringToHtml(codes)
-                            + "</div><hr>";
-                    String results = "";
-
-                    for (int i = 0; i < events.size(); i++) {
-                        if (this.isCancelled()) {
-                            output(message("Canceled"));
-                            return true;
-                        }
-                        SnippetEvent e = events.get(i);
-                        JShellSnippet jShellSnippet = new JShellSnippet(jShell, e.snippet());
-                        if (i > 0) {
-                            results += "\n";
-                        }
-                        results += "id: " + jShellSnippet.getId() + "\n";
-                        if (jShellSnippet.getStatus() != null) {
-                            results += "status: " + jShellSnippet.getStatus() + "\n";
-                        }
-                        if (jShellSnippet.getType() != null) {
-                            results += "type: " + jShellSnippet.getType() + "\n";
-                        }
-                        if (jShellSnippet.getName() != null) {
-                            results += "name: " + jShellSnippet.getName() + "\n";
-                        }
-                        if (jShellSnippet.getValue() != null) {
-                            results += "value: " + jShellSnippet.getValue() + "\n";
-                        }
-                    }
-                    outputs += "<div style=\"background:#EEEEEE; border-radius:5px\">"
-                            + HtmlWriteTools.stringToHtml(results) + "</div>";
-                    output(outputs);
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+                return runCodes(codes);
             }
 
             @Override
@@ -244,6 +231,71 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
             }
         };
         start(task);
+    }
+
+    protected boolean runCodes(String codes) {
+        try {
+            TableStringValues.add("JShellHistories", codes);
+            String leftCodes = codes;
+            while (leftCodes != null && !leftCodes.isBlank()) {
+                CompletionInfo info = jShell.sourceCodeAnalysis().analyzeCompletion(leftCodes);
+                if (!runSnippet(info.source())) {
+                    return false;
+                }
+                leftCodes = info.remaining();
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+    protected boolean runSnippet(String source) {
+        try {
+            if (source == null || source.isBlank()) {
+                return false;
+            }
+            List<SnippetEvent> events = jShell.eval(source);
+            String snippetOutputs = DateTools.nowString()
+                    + "<div class=\"valueText\" >"
+                    + HtmlWriteTools.stringToHtml(source)
+                    + "</div>";
+            String results = "";
+            for (int i = 0; i < events.size(); i++) {
+                if (task == null || task.isCancelled()) {
+                    output(message("Canceled"));
+                    return true;
+                }
+                SnippetEvent e = events.get(i);
+                JShellSnippet jShellSnippet = new JShellSnippet(jShell, e.snippet());
+                if (i > 0) {
+                    results += "\n";
+                }
+                results += "id: " + jShellSnippet.getId() + "\n";
+                if (jShellSnippet.getStatus() != null) {
+                    results += "status: " + jShellSnippet.getStatus() + "\n";
+                }
+                if (jShellSnippet.getType() != null) {
+                    results += "type: " + jShellSnippet.getType() + "\n";
+                }
+                if (jShellSnippet.getName() != null) {
+                    results += "name: " + jShellSnippet.getName() + "\n";
+                }
+                if (jShellSnippet.getValue() != null) {
+                    results += "value: " + jShellSnippet.getValue() + "\n";
+                }
+            }
+            snippetOutputs += "<div class=\"valueBox\">"
+                    + HtmlWriteTools.stringToHtml(results) + "</div>";
+            output(snippetOutputs);
+
+        } catch (Exception e) {
+            output(e.toString());
+        }
+        return true;
     }
 
     @Override
@@ -260,8 +312,8 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
 
     protected void output(String msg) {
         Platform.runLater(() -> {
-            outputs += msg + "<br>";
-            String html = HtmlWriteTools.html(null, "<body>" + outputs + "</body>");
+            outputs += msg + "<br><br>";
+            String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             webViewController.loadContents(html);
         });
 
@@ -270,6 +322,81 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
     @FXML
     protected void clearCodes() {
         codesArea.clear();
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        String codes = codesArea.getText();
+        if (codes == null || codes.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        String name = PopTools.askValue(getTitle(), null, message("Name"), "");
+        listController.save(name, codes);
+
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        String codes = codesArea.getText();
+        if (codes == null || codes.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        File file = chooseSaveFile("JShellSnippets-" + DateTools.nowFileString() + ".java");
+        if (file == null) {
+            return;
+        }
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                File tfile = TextFileTools.writeFile(file, codes, Charset.forName("UTF-8"));
+                return tfile != null && tfile.exists();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Saved"));
+                recordFileWritten(file);
+            }
+
+        };
+        start(task);
+    }
+
+    @Override
+    public void sourceFileChanged(File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        codesArea.clear();
+        task = new SingletonTask<Void>(this) {
+
+            String codes;
+
+            @Override
+            protected boolean handle() {
+                codes = TextFileTools.readTexts(file);
+                return codes != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                codesArea.setText(codes);
+                recordFileOpened(file);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -358,14 +485,14 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
                 }
             });
             topButtons.add(newLineButton);
-            Button cButton = new Button(message("Clear"));
-            cButton.setOnAction(new EventHandler<ActionEvent>() {
+            Button clearInputButton = new Button(message("ClearInputArea"));
+            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     codesArea.clear();
                 }
             });
-            topButtons.add(cButton);
+            topButtons.add(clearInputButton);
             controller.addFlowPane(topButtons);
 
             PopTools.addButtonsPane(controller, codesArea, Arrays.asList(
@@ -418,14 +545,14 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
                 }
             });
             topButtons.add(newLineButton);
-            Button cButton = new Button(message("Clear"));
-            cButton.setOnAction(new EventHandler<ActionEvent>() {
+            Button clearInputButton = new Button(message("ClearInputArea"));
+            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     codesArea.clear();
                 }
             });
-            topButtons.add(cButton);
+            topButtons.add(clearInputButton);
             controller.addFlowPane(topButtons);
 
             PopTools.addButtonsPane(controller, codesArea, Arrays.asList(
@@ -433,7 +560,7 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
                     " == ", " != ", " >= ", " > ", " <= ", " < "
             ));
             PopTools.addButtonsPane(controller, codesArea, Arrays.asList(
-                    " int ", "double ", "float ", "String "
+                    " int ", "double ", "float ", "long ", "short ", "String "
             ));
             PopTools.addButtonsPane(controller, codesArea, Arrays.asList(
                     "if (3 > 2) {\n"
@@ -449,6 +576,52 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
                     "float[] fArray = new float[3]; "
             ));
 
+            Map<String, String> examples = new HashMap<>();
+            examples.put(message("CircleArea"),
+                    "double circleAreaByDiameter(double diameter) {\n"
+                    + "         double radius = diameter / 2;\n"
+                    + "         return   Math.PI *  radius * radius ;\n"
+                    + "}\n"
+                    + "\n"
+                    + "circleAreaByDiameter(120) + circleAreaByDiameter(30);\n");
+            examples.put(message("RoundDouble"),
+                    "import java.math.BigDecimal;\n"
+                    + "import java.math.RoundingMode;\n"
+                    + "double scale(double v, int scale) {\n"
+                    + "          BigDecimal b = new BigDecimal(v);\n"
+                    + "          return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();\n"
+                    + "}"
+                    + "\n"
+                    + "scale(Math.PI, 3)");
+            examples.put(message("FormatDouble"),
+                    "import java.math.BigDecimal;\n"
+                    + "import java.math.RoundingMode;\n"
+                    + "double scale(double v, int scale) {\n"
+                    + "          BigDecimal b = new BigDecimal(v);\n"
+                    + "          return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();\n"
+                    + "}\n"
+                    + "\n"
+                    + "import java.text.DecimalFormat;\n"
+                    + "String formatDouble(double data, int scale) {\n"
+                    + "        try {\n"
+                    + "               String format = \"#,###\";\n"
+                    + "                if (scale > 0) {\n"
+                    + "                    format += \".\" + \"#\".repeat(scale);\n"
+                    + "                }\n"
+                    + "                DecimalFormat df = new DecimalFormat(format);\n"
+                    + "                return df.format(scale(data, scale));\n"
+                    + "         } catch (Exception e) {\n"
+                    + "                return e.toString();\n"
+                    + "         }\n"
+                    + "}\n"
+                    + "\n"
+                    + "double circleAreaByRadius(double radius) {\n"
+                    + "         return   Math.PI *  radius * radius ;\n"
+                    + "}\n"
+                    + "\n"
+                    + "formatDouble(circleAreaByRadius(273.4), 4)");
+            PopTools.addButtonsPane(controller, codesArea, examples);
+
             Hyperlink alink = new Hyperlink("Learning the Java Language");
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -458,82 +631,18 @@ public class JShellController extends BaseTableViewController<JShellSnippet> {
             });
             controller.addNode(alink);
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void popMethodsMenu(MouseEvent mouseEvent) {
-        try {
-            MenuController controller = MenuController.open(this, codesArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            controller.setTitleLabel(message("Methods"));
-
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button(message("Newline"));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    codesArea.replaceText(codesArea.getSelection(), "\n");
-                    codesArea.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-            Button cButton = new Button(message("Clear"));
-            cButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    codesArea.clear();
-                }
-            });
-            topButtons.add(cButton);
-            controller.addFlowPane(topButtons);
-
-            PopTools.addButtonsPane(controller, codesArea, Arrays.asList(
-                    "double circleAreaByDiameter(double diameter) {\n"
-                    + "	double radius = diameter / 2;\n"
-                    + "	return   Math.PI *  radius * radius ;\n"
-                    + "}",
-                    "double addedArea = circleAreaByDiameter(120) + circleAreaByDiameter(30);",
-                    "import java.math.BigDecimal;",
-                    "import java.math.RoundingMode;",
-                    "double scale(double v, int scale) {\n"
-                    + "        BigDecimal b = new BigDecimal(v);\n"
-                    + "        return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();\n"
-                    + "}",
-                    "import java.text.DecimalFormat;",
-                    "String format(double data, int scale) {\n"
-                    + "     try {\n"
-                    + "            String format = \"#,###\";\n"
-                    + "            if (scale > 0) {\n"
-                    + "                format += \".\" + \"#\".repeat(scale);\n"
-                    + "            }\n"
-                    + "            DecimalFormat df = new DecimalFormat(format);\n"
-                    + "            return df.format(scale(data, scale));\n"
-                    + "     } catch (Exception e) {\n"
-                    + "           return e.toString();\n"
-                    + "     }\n"
-                    + "}",
-                    "format(addedArea, 3)"
-            ));
-
-            Hyperlink alink = new Hyperlink("Java Development Kit (JDK) APIs");
-            alink.setOnAction(new EventHandler<ActionEvent>() {
+            Hyperlink jlink = new Hyperlink("Java Development Kit (JDK) APIs");
+            jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
                 }
             });
-            controller.addNode(alink);
+            controller.addNode(jlink);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @FXML
-    protected void popCodesHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, codesArea, mouseEvent, "JShellHistories");
     }
 
     @FXML

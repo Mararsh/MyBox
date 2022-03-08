@@ -63,7 +63,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             tableData.clear();
             srcRoot = sourceCodesPathController.file;
             if (srcRoot == null) {
-                popError(message("MissSourceCodesPath"));
+                popError(message("InvalidSourceCodesPath"));
                 return false;
             }
             resourcePath = srcRoot + "/src/main/resources/";

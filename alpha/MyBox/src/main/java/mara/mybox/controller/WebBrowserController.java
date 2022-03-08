@@ -95,6 +95,7 @@ public class WebBrowserController extends BaseController {
             tab.setContent(pane);
             tabPane.getTabs().add(tabPane.getTabs().size() - 1, tab);
             if (focus) {
+                getMyStage().setIconified(false);
                 tabPane.getSelectionModel().select(tab);
             }
             refreshStyle(pane);

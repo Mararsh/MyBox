@@ -64,14 +64,15 @@ public class DataTable extends Data2D {
         tableData2D.reset();
     }
 
-    public boolean readDefinitionFromDB(Connection conn, String tableName) {
+    public boolean readDefinitionFromDB(Connection conn, String referredName) {
         try {
-            if (conn == null || tableName == null) {
+            if (conn == null || referredName == null) {
                 return false;
             }
+            MyBoxLog.debug(referredName);
             resetData();
-            tableData2D.setTableName(tableName);
-            tableData2D.readDefinitionFromDB(conn, tableName);
+            tableData2D.setTableName(referredName);
+            tableData2D.readDefinitionFromDB(conn, referredName);
             List<ColumnDefinition> dbColumns = tableData2D.getColumns();
             List<Data2DColumn> dataColumns = new ArrayList<>();
             if (dbColumns != null) {
@@ -81,7 +82,7 @@ public class DataTable extends Data2D {
                     dataColumns.add(dataColumn);
                 }
             }
-            return recordTable(conn, tableName, dataColumns);
+            return recordTable(conn, referredName, dataColumns);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -90,7 +91,7 @@ public class DataTable extends Data2D {
 
     public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns) {
         try {
-            sheet = tableName.toLowerCase();
+            sheet = tableName;
             dataName = tableName;
             colsNumber = dataColumns.size();
             tableData2DDefinition.insertData(conn, this);
@@ -401,6 +402,7 @@ public class DataTable extends Data2D {
             try ( Connection conn = DerbyBase.getConnection();
                      PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
                      ResultSet results = query.executeQuery()) {
+
                 Random random = new Random();
                 conn.setAutoCommit(false);
                 int count = 0;
