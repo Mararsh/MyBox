@@ -8,7 +8,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -19,15 +18,13 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.value.Languages;
+import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @param <P>
@@ -48,10 +45,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected TreeView<P> treeView;
     @FXML
     protected Label titleLabel;
-    @FXML
-    protected FlowPane buttonsPane;
-    @FXML
-    protected Button importButton, deleteNodeButton, addNodeButton, moveDataNodeButton, copyNodeButton, renameNodeButton;
 
     public BaseNodeSelector() {
     }
@@ -96,16 +89,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         methods may need changed
      */
     protected void itemSelected(TreeItem<P> item) {
-        if (isSettingValues) {
-            return;
-        }
         loadNode(item != null ? item.getValue() : null);
-        if (moveDataNodeButton != null) {
-            boolean isRoot = item == null || isRoot(item.getValue());
-            moveDataNodeButton.setDisable(isRoot);
-            copyNodeButton.setDisable(isRoot);
-            renameNodeButton.setDisable(isRoot);
-        }
     }
 
     protected void nodeChanged(P node) {
@@ -119,37 +103,17 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     }
 
     @FXML
-    protected void popImportMenu(MouseEvent mouseEvent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
+    protected void exportNode() {
 
-            items.add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
-
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @FXML
-    protected void exportNode() {
+    protected void importAction() {
+
+    }
+
+    @FXML
+    protected void importExamples() {
 
     }
 
@@ -174,11 +138,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
             initTree();
 
-            if (moveDataNodeButton != null) {
-                moveDataNodeButton.setDisable(true);
-                copyNodeButton.setDisable(true);
-                renameNodeButton.setDisable(true);
-            }
             if (okButton != null) {
                 okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
             }
@@ -221,16 +180,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         });
     }
 
-    public void setParent(BaseController parent, boolean manageMode) {
+    public void setManager(BaseController parent, boolean manageMode) {
         this.parentController = parent;
         if (parent != null) {
             this.baseName = parent.baseName;
         }
         this.ignoreNode = getIgnoreNode();
         this.manageMode = manageMode;
-        if (!manageMode && buttonsPane != null) {
-            thisPane.getChildren().remove(buttonsPane);
-        }
     }
 
     public void loadTree() {
@@ -312,91 +268,32 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         return chainName;
     }
 
-    protected void popNodeMenu(MouseEvent event, TreeItem<P> selected) {
+    public String chainName(TreeItem<P> node) {
+        if (node == null) {
+            return null;
+        }
+        String chainName = "";
+        List<TreeItem<P>> ancestor = ancestor(node);
+        if (ancestor != null) {
+            for (TreeItem<P> a : ancestor) {
+                chainName += name(a.getValue()) + nodeSeparator;
+            }
+        }
+        chainName += name(node.getValue());
+        return chainName;
+    }
+
+    public void popNodeMenu(MouseEvent event, TreeItem<P> selected) {
         if (isSettingValues) {
             return;
         }
         TreeItem<P> node = selected == null ? treeView.getRoot() : selected;
 
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(display(node.getValue()));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(Languages.message("Add"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addNode();
-        });
-        items.add(menu);
-
-        if (manageMode) {
-            menu = new MenuItem(Languages.message("Delete"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                deleteNode();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("Move"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                moveNode();
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("CopyNodeAndContents"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                copyNode(false);
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("CopyNodeContents"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                copyNode(true);
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("Rename"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                renameNode();
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("Export"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                exportNode();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-        }
-
-        menu = new MenuItem(Languages.message("Unfold"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodes();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(Languages.message("Fold"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodes();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(Languages.message("Refresh"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        items.add(menu);
+        List<MenuItem> items = makeNodeMenu(event, node);
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(Languages.message("PopupClose"));
+        MenuItem menu = new MenuItem(message("PopupClose"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
@@ -413,7 +310,101 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
         popMenu.show(treeView, event.getScreenX(), event.getScreenY());
+    }
 
+    protected List<MenuItem> makeNodeMenu(MouseEvent event, TreeItem<P> selected) {
+        TreeItem<P> node = selected == null ? treeView.getRoot() : selected;
+        boolean isRoot = selected == null || isRoot(selected.getValue());
+
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu = new MenuItem(chainName(node));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            addNode();
+        });
+        items.add(menu);
+
+        if (manageMode) {
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteNode();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                renameNode();
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            menu = new MenuItem(message("CopyNodeAndContents"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                copyNode(false);
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            menu = new MenuItem(message("CopyNodeContents"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                copyNode(true);
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                moveNode();
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                exportNode();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Import"), StyleTools.getIconImage("iconImport.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                importAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                importExamples();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+        }
+
+        menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconTree.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            unfoldNodes();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNodes();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
+        });
+        items.add(menu);
+
+        return items;
     }
 
     @FXML
@@ -435,12 +426,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 return;
             }
             String chainName = chainName(targetItem);
-            String name = PopTools.askValue(getBaseTitle(), chainName, Languages.message("Add"), Languages.message("Node") + "m");
+            String name = PopTools.askValue(getBaseTitle(), chainName, message("Add"), message("Node") + "m");
             if (name == null || name.isBlank()) {
                 return;
             }
             if (name.contains(nodeSeparator)) {
-                popError(Languages.message("NameShouldNotInclude") + " \"" + nodeSeparator + "\"");
+                popError(message("NameShouldNotInclude") + " \"" + nodeSeparator + "\"");
                 return;
             }
             task = new SingletonTask<Void>(this) {
@@ -486,12 +477,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             }
             boolean isRoot = isRoot(node);
             if (isRoot) {
-                if (!PopTools.askSure(this, getBaseTitle(), Languages.message("Delete"), Languages.message("SureDeleteAll"))) {
+                if (!PopTools.askSure(this, getBaseTitle(), message("Delete"), message("SureDeleteAll"))) {
                     return;
                 }
             } else {
                 String chainName = chainName(targetItem);
-                if (!PopTools.askSure(this, getBaseTitle(), chainName, Languages.message("Delete"))) {
+                if (!PopTools.askSure(this, getBaseTitle(), chainName, message("Delete"))) {
                     return;
                 }
             }
@@ -553,12 +544,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 return;
             }
             String chainName = chainName(node);
-            String name = PopTools.askValue(getBaseTitle(), chainName, Languages.message("RenameNode"), name(book) + "m");
+            String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), name(book) + "m");
             if (name == null || name.isBlank()) {
                 return;
             }
             if (name.contains(nodeSeparator)) {
-                popError(Languages.message("NodeNameNotInclude") + " \"" + nodeSeparator + "\"");
+                popError(message("NodeNameNotInclude") + " \"" + nodeSeparator + "\"");
                 return;
             }
             task = new SingletonTask<Void>(this) {
@@ -774,21 +765,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         return ancestor;
     }
 
-    public String chainName(TreeItem<P> node) {
-        if (node == null) {
-            return null;
-        }
-        String chainName = "";
-        List<TreeItem<P>> ancestor = ancestor(node);
-        if (ancestor != null) {
-            for (TreeItem<P> a : ancestor) {
-                chainName += name(a.getValue()) + nodeSeparator;
-            }
-        }
-        chainName += name(node.getValue());
-        return chainName;
-    }
-
     public void cloneTree(TreeView<P> sourceTreeView, TreeView<P> targetTreeView, P ignore) {
         if (sourceTreeView == null || targetTreeView == null) {
             return;
@@ -831,6 +807,14 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     public void select(P node) {
         select(treeView, node);
+    }
+
+    public TreeItem<P> currectSelected() {
+        TreeItem<P> selecteItem = treeView.getSelectionModel().getSelectedItem();
+        if (selecteItem == null) {
+            selecteItem = treeView.getRoot();
+        }
+        return selecteItem;
     }
 
     public void select(TreeView<P> treeView, P node) {

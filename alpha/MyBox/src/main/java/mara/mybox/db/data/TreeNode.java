@@ -11,13 +11,14 @@ public class TreeNode extends BaseData {
 
     public static final String NodeSeparater = " > ";
     protected long nodeid, parent;
-    protected String title, attribute;
+    protected String category, title, attribute, more;
 
     private void init() {
         nodeid = -1;
         parent = -2;
         title = null;
         attribute = null;
+        more = null;
     }
 
     public TreeNode() {
@@ -66,6 +67,9 @@ public class TreeNode extends BaseData {
                 case "attribute":
                     data.setAttribute(value == null ? null : (String) value);
                     return true;
+                case "category":
+                    data.setCategory(value == null ? null : (String) value);
+                    return true;
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -86,6 +90,8 @@ public class TreeNode extends BaseData {
                 return data.getTitle();
             case "attribute":
                 return data.getAttribute();
+            case "category":
+                return data.getCategory();
         }
         return null;
     }
@@ -132,6 +138,24 @@ public class TreeNode extends BaseData {
 
     public TreeNode setAttribute(String attribute) {
         this.attribute = attribute;
+        return this;
+    }
+
+    public String getMore() {
+        return more;
+    }
+
+    public TreeNode setMore(String more) {
+        this.more = more;
+        return this;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public TreeNode setCategory(String category) {
+        this.category = category;
         return this;
     }
 

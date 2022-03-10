@@ -306,11 +306,6 @@ public class Fxmls {
 
     public static final String WebFavoritesFxml = "/fxml/WebFavorites.fxml";
     public static final String WebFavoriteAddFxml = "/fxml/WebFavoriteAdd.fxml";
-    public static final String WebFavoriteNodeCopyFxml = "/fxml/WebFavoriteNodeCopy.fxml";
-    public static final String WebFavoritesCopyFxml = "/fxml/WebFavoritesCopy.fxml";
-    public static final String WebFavoritesMoveFxml = "/fxml/WebFavoritesMove.fxml";
-    public static final String WebFavoritesExportFxml = "/fxml/WebFavoritesExport.fxml";
-    public static final String WebFavoritesImportFxml = "/fxml/WebFavoritesImport.fxml";
 
     public static final String NetworkConvertUrlFxml = "/fxml/NetworkConvertUrl.fxml";
     public static final String NetworkQueryAddressFxml = "/fxml/NetworkQueryAddress.fxml";
@@ -375,6 +370,10 @@ public class Fxmls {
 
     public static final String TreeNodeMoveFxml = "/fxml/TreeNodeMove.fxml";
     public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
+    public static final String TreeNodeExportFxml = "/fxml/TreeNodeExport.fxml";
+    public static final String TreeNodeImportFxml = "/fxml/TreeNodeImport.fxml";
+    public static final String TreeLeavesCopyFxml = "/fxml/TreeLeavesCopy.fxml";
+    public static final String TreeLeavesMoveFxml = "/fxml/TreeLeavesMove.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
 

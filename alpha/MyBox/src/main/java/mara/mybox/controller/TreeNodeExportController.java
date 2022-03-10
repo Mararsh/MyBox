@@ -21,19 +21,20 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.WebFavorite;
 import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableWebFavorite;
+import mara.mybox.db.table.TableTreeLeaf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -41,12 +42,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class WebFavoritesExportController extends BaseTaskController {
+public class TreeNodeExportController extends BaseTaskController {
 
-    protected TreeView<TreeNode> treeView;
-    protected WebFavoritesController favoriteController;
+    protected TreeManageController treeController;
     protected TableTree tableTree;
-    protected TableWebFavorite tableFavoriteAddress;
+    protected TableTreeLeaf tableTreeLeaf;
+    protected TreeView<TreeNode> treeView;
     protected TreeItem<TreeNode> selectedNode;
     protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
     protected FileWriter textsWriter, htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
@@ -56,31 +57,23 @@ public class WebFavoritesExportController extends BaseTaskController {
     protected boolean firstRow;
 
     @FXML
-    protected ControlWebFavoriateNodes treeController;
+    protected TreeNodesController nodesController;
     @FXML
-    protected CheckBox iconCheck, textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
+    protected CheckBox timeCheck, iconCheck, textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
     @FXML
     protected ComboBox<String> charsetSelector;
     @FXML
     protected TextArea styleInput;
 
-    public WebFavoritesExportController() {
-        baseTitle = Languages.message("FavoritesExport");
+    public TreeNodeExportController() {
+        baseTitle = message("Export");
     }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
-            treeView = treeController.treeView;
-
-            iconCheck.setSelected(UserConfig.getBoolean(baseName + "Icon", false));
-            iconCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setBoolean(baseName + "Icon", iconCheck.isSelected());
-                }
-            });
+            treeView = nodesController.treeView;
 
             textsCheck.setSelected(UserConfig.getBoolean(baseName + "Texts", true));
             textsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -150,12 +143,25 @@ public class WebFavoritesExportController extends BaseTaskController {
         }
     }
 
-    public void setController(WebFavoritesController favoriteController) {
-        this.favoriteController = favoriteController;
-        this.tableTree = favoriteController.tableTree;
-        this.tableFavoriteAddress = favoriteController.tableWebFavorite;
+    public void setController(TreeManageController treeController) {
+        this.treeController = treeController;
+        this.tableTree = treeController.tableTree;
+        this.tableTreeLeaf = treeController.tableTreeLeaf;
+        if (treeController instanceof WebFavoritesController) {
+            iconCheck.setVisible(true);
+            iconCheck.setSelected(UserConfig.getBoolean(baseName + "Icon", false));
+            iconCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "Icon", iconCheck.isSelected());
+                }
+            });
+        } else {
+            iconCheck.setSelected(false);
+            iconCheck.setVisible(false);
+        }
 
-        treeController.setCaller(favoriteController.treeController);
+        nodesController.setCaller(treeController.nodesController);
         if (treeView.getSelectionModel().getSelectedItem() == null) {
             treeView.getSelectionModel().select(treeView.getRoot());
         }
@@ -174,20 +180,20 @@ public class WebFavoritesExportController extends BaseTaskController {
         level = count = 0;
         if (!textsCheck.isSelected() && !htmlCheck.isSelected()
                 && !framesetCheck.isSelected() && !xmlCheck.isSelected()) {
-            popError(Languages.message("NothingSave"));
+            popError(message("NothingSave"));
             return false;
         }
         selectedNode = treeView.getSelectionModel().getSelectedItem();
         if (selectedNode == null) {
             selectedNode = treeView.getRoot();
             if (selectedNode == null) {
-                popError(Languages.message("NoData"));
+                popError(message("NoData"));
                 return false;
             }
         }
         TreeItem<TreeNode> node = selectedNode;
         if (node.getValue() == null) {
-            popError(Languages.message("NoData"));
+            popError(message("NoData"));
             return false;
         }
         return true;
@@ -204,7 +210,7 @@ public class WebFavoritesExportController extends BaseTaskController {
 
             MenuItem menu;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
-                menu = new MenuItem(Languages.message(style.name()));
+                menu = new MenuItem(message(style.name()));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -216,7 +222,7 @@ public class WebFavoritesExportController extends BaseTaskController {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -249,7 +255,7 @@ public class WebFavoritesExportController extends BaseTaskController {
         count = level = 0;
         firstRow = true;
         try ( Connection conn = DerbyBase.getConnection()) {
-            exportNode(conn, selectedNode.getValue(), treeController.chainName(selectedNode.getParent()));
+            exportNode(conn, selectedNode.getValue(), nodesController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -261,33 +267,33 @@ public class WebFavoritesExportController extends BaseTaskController {
             return false;
         }
         try {
-            String nodeName = treeController.chainName(selectedNode);
+            String nodeName = nodesController.chainName(selectedNode);
             String prefix = nodeName.replaceAll(TreeNode.NodeSeparater, "-") + "_" + DateTools.nowFileString();
 
             if (textsCheck.isSelected()) {
                 textsFile = makeTargetFile(prefix, ".txt", targetPath);
                 if (textsFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + textsFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + textsFile.getAbsolutePath());
                     textsWriter = new FileWriter(textsFile, charset);
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(Languages.message("Skipped"));
+                    updateLogs(message("Skipped"));
                 }
             }
             if (htmlCheck.isSelected()) {
                 htmlFile = makeTargetFile(prefix, ".html", targetPath);
                 if (htmlFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + htmlFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
                     htmlWriter = new FileWriter(htmlFile, charset);
                     writeHtmlHead(htmlWriter, nodeName);
                     htmlWriter.write(indent + "<BODY>\n" + indent + indent + "<H2>" + nodeName + "</H2>\n");
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(Languages.message("Skipped"));
+                    updateLogs(message("Skipped"));
                 }
             }
             if (framesetCheck.isSelected()) {
                 framesetFile = makeTargetFile(prefix, "-frameset.html", targetPath);
                 if (framesetFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + framesetFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + framesetFile.getAbsolutePath());
                     StringBuilder s;
                     String subPath = FileNameTools.filter(prefix) + "-frameset";
                     File path = new File(targetPath + File.separator + subPath + File.separator);
@@ -296,7 +302,7 @@ public class WebFavoritesExportController extends BaseTaskController {
                     File coverFile = new File(path.getAbsolutePath() + File.separator + "cover.html");
                     try ( FileWriter coverWriter = new FileWriter(coverFile, charset)) {
                         writeHtmlHead(coverWriter, nodeName);
-                        coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + Languages.message("Notes") + "</H1>\n</BODY></HTML>");
+                        coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + message("Notes") + "</H1>\n</BODY></HTML>");
                         coverWriter.flush();
                     }
                     try ( FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
@@ -316,32 +322,33 @@ public class WebFavoritesExportController extends BaseTaskController {
                     s.append(indent).append(indent).append("<H2>").append(nodeName).append("</H2>\n");
                     framesetNavWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(Languages.message("Skipped"));
+                    updateLogs(message("Skipped"));
                 }
             }
             if (xmlCheck.isSelected()) {
                 xmlFile = makeTargetFile(prefix, ".xml", targetPath);
                 if (xmlFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + xmlFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + xmlFile.getAbsolutePath());
                     xmlWriter = new FileWriter(xmlFile, charset);
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
-                            .append(charset.name()).append("\"?>\n").append("<favorites>\n");
+                            .append(charset.name()).append("\"?>\n")
+                            .append("<").append(treeController.category).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(Languages.message("Skipped"));
+                    updateLogs(message("Skipped"));
                 }
             }
             if (jsonCheck.isSelected()) {
                 jsonFile = makeTargetFile(prefix, ".json", targetPath);
                 if (jsonFile != null) {
-                    updateLogs(Languages.message("Writing") + " " + jsonFile.getAbsolutePath());
+                    updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
-                    s.append("{\"Favorites\": [\n");
+                    s.append("{\"").append(treeController.category).append("\": [\n");
                     jsonWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(Languages.message("Skipped"));
+                    updateLogs(message("Skipped"));
                 }
             }
         } catch (Exception e) {
@@ -411,7 +418,7 @@ public class WebFavoritesExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</favorites>\n");
+                xmlWriter.write("</" + treeController.category + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 targetFileGenerated(xmlFile);
@@ -465,28 +472,28 @@ public class WebFavoritesExportController extends BaseTaskController {
             } else {
                 title = node.getTitle();
             }
-            List<WebFavorite> favorites = tableFavoriteAddress.addresses(conn, node.getNodeid());
-            if (favorites != null) {
-                for (WebFavorite favorite : favorites) {
+            List<TreeLeaf> leaves = tableTreeLeaf.leaves(conn, node.getNodeid());
+            if (leaves != null) {
+                for (TreeLeaf leaf : leaves) {
                     count++;
                     if (textsWriter != null) {
-                        writeTexts(conn, title, favorite);
+                        writeTexts(conn, title, leaf);
                     }
                     if (htmlWriter != null) {
-                        writeHtml(conn, title, favorite, htmlWriter);
+                        writeHtml(conn, title, leaf, htmlWriter);
                     }
                     if (xmlWriter != null) {
-                        writeXml(conn, title, favorite);
+                        writeXml(conn, title, leaf);
                     }
                     if (jsonWriter != null) {
-                        writeJson(conn, title, favorite);
+                        writeJson(conn, title, leaf);
                     }
                     if (bookNavWriter != null && nodeFile != null) {
                         bookNavWriter.write("<A href=\"" + nodeFile.getName()
-                                + "#" + favorite.getFaid() + "\"  target=main>" + favorite.getTitle() + "</A><BR>\n");
+                                + "#" + leaf.getLeafid() + "\"  target=main>" + leaf.getName() + "</A><BR>\n");
                     }
                     if (bookWriter != null) {
-                        writeHtml(conn, title, favorite, bookWriter);
+                        writeHtml(conn, title, leaf, bookWriter);
                     }
                 }
             }
@@ -520,50 +527,83 @@ public class WebFavoritesExportController extends BaseTaskController {
         level--;
     }
 
-    protected void writeTexts(Connection conn, String bookName, WebFavorite favorite) {
+    protected void writeTexts(Connection conn, String nodeName, TreeLeaf leaf) {
         try {
-            textsWriter.write(bookName + "\n");
-            textsWriter.write(favorite.getTitle() + "\n");
-            textsWriter.write(favorite.getAddress() + "\n");
-            if (iconCheck.isSelected()) {
-                textsWriter.write(favorite.getIcon() + "\n\n");
+            if (!(treeController instanceof WebFavoritesController)) {
+                textsWriter.write(AppValues.MyBoxSeparator + "\n");
             }
+            textsWriter.write(nodeName + "\n");
+            textsWriter.write(leaf.getName() + "\n");
+            if (timeCheck.isSelected() && leaf.getTime() != null) {
+                textsWriter.write(TreeLeaf.TimePrefix + DateTools.datetimeToString(leaf.getTime()) + "\n");
+            }
+            if (leaf.getValue() != null) {
+                textsWriter.write(leaf.getValue() + "\n");
+            }
+            if ((treeController instanceof WebFavoritesController)
+                    && iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
+                textsWriter.write(leaf.getMore() + "\n");
+            }
+            textsWriter.write("\n");
         } catch (Exception e) {
             updateLogs(e.toString());
         }
     }
 
-    protected void writeHtml(Connection conn, String bookName, WebFavorite favorite, FileWriter writer) {
+    protected void writeHtml(Connection conn, String nodeName, TreeLeaf leaf, FileWriter writer) {
         try {
-            writer.write(indent + indent + "<div id=\"" + favorite.getFaid() + "\">\n"
-                    + indent + indent + indent + "<H3><PRE><CODE>" + bookName + "</CODE></PRE></H3>\n");
-            writer.write(indent + indent + indent + "<H4>");
-            if (iconCheck.isSelected() && favorite.getIcon() != null && !favorite.getIcon().isBlank()) {
-                writer.write("<IMG src=\"" + new File(favorite.getIcon()).toURI().toString() + "\">");
+            writer.write(indent + indent + "<div id=\"" + leaf.getLeafid() + "\">\n"
+                    + indent + indent + indent + "<H3><PRE><CODE>" + nodeName + "</CODE></PRE></H3>\n");
+            if (treeController instanceof WebFavoritesController) {
+                writer.write(indent + indent + indent + "<H4>");
+                if (iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
+                    writer.write("<IMG src=\"" + new File(leaf.getMore()).toURI().toString() + "\">");
+                }
+                writer.write("<A href=\"" + leaf.getValue() + "\">" + leaf.getName() + "</A></H4>\n");
+            } else {
+
+//                writer.write(indent + indent + indent + "<H4><PRE><CODE>" + note.getTitle() + "</CODE></PRE></H4>\n");
+//                if (timeCheck.isSelected()) {
+//                    writer.write(indent + indent + indent + "<H5>" + DateTools.datetimeToString(note.getUpdateTime()) + "</H5>\n");
+//                }
+//                writer.write(indent + indent + indent + note.getHtml() + "\n"
+//                        + indent + indent + "</div><HR>\n\n");
             }
-            writer.write("<A href=\"" + favorite.getAddress() + "\">" + favorite.getTitle() + "</A></H4>\n");
             writer.write(indent + indent + "</div><HR>\n\n");
         } catch (Exception e) {
             updateLogs(e.toString());
         }
     }
 
-    protected void writeXml(Connection conn, String bookName, WebFavorite favorite) {
+    protected void writeXml(Connection conn, String nodeName, TreeLeaf leaf) {
         try {
-            xmlWriter.write(indent + indent + "<favorite>\n"
-                    + indent + indent + indent + "<node><![CDATA[" + bookName + "]]></node>\n");
-            xmlWriter.write(indent + indent + indent + "<title><![CDATA[" + favorite.getTitle() + "]]></title>\n");
-            xmlWriter.write(indent + indent + indent + "<address><![CDATA[" + favorite.getAddress() + "]]></address>\n");
-            if (iconCheck.isSelected() && favorite.getIcon() != null && !favorite.getIcon().isBlank()) {
-                xmlWriter.write(indent + indent + indent + "<icon><![CDATA[" + favorite.getIcon() + "]]></icon>\n");
+            xmlWriter.write(indent + indent + "<" + treeController.category + ">\n"
+                    + indent + indent + indent + "<node><![CDATA[" + nodeName + "]]></node>\n");
+            xmlWriter.write(indent + indent + indent + "<name><![CDATA[" + leaf.getName() + "]]></name>\n");
+            if (timeCheck.isSelected() && leaf.getTime() != null) {
+                xmlWriter.write(indent + indent + indent + "<time>" + DateTools.datetimeToString(leaf.getTime()) + "</time>\n");
             }
-            xmlWriter.write(indent + indent + "</favorite>\n\n");
+            if (treeController instanceof WebFavoritesController) {
+                if (iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
+                    xmlWriter.write(indent + indent + indent + "<icon><![CDATA[" + leaf.getMore() + "]]></icon>\n");
+                }
+
+            } else {
+
+            }
+            if (leaf.getValue() != null) {
+                xmlWriter.write(indent + indent + indent + "<value>\n"
+                        + "<![CDATA[" + leaf.getValue() + "]]>\n"
+                        + indent + indent + indent + "</value>\n");
+            }
+            xmlWriter.write(indent + indent + "</" + treeController.category + ">\n\n");
+
         } catch (Exception e) {
             updateLogs(e.toString());
         }
     }
 
-    protected void writeJson(Connection conn, String bookName, WebFavorite favorite) {
+    protected void writeJson(Connection conn, String bookName, TreeLeaf leaf) {
         try {
             StringBuilder s = new StringBuilder();
             if (!firstRow) {
@@ -576,19 +616,28 @@ public class WebFavoritesExportController extends BaseTaskController {
                     .append("\"node\": \"")
                     .append(bookName).append("\",\n");
             s.append(indent).append(indent)
-                    .append("\"title\": \"")
-                    .append(favorite.getTitle()).append("\",\n");
-            s.append(indent).append(indent)
-                    .append("\"address\": \"")
-                    .append(favorite.getAddress()).append("\"");
-            if (iconCheck.isSelected() && favorite.getIcon() != null && !favorite.getIcon().isBlank()) {
-                s.append(",\n")
-                        .append(indent).append(indent)
-                        .append("\"icon\": \"")
-                        .append(new File(favorite.getIcon()).toURI().toString()).append("\"\n");
-            } else {
-                s.append("\n");
+                    .append("\"name\": \"")
+                    .append(leaf.getName()).append("\"");
+            if (timeCheck.isSelected() && leaf.getTime() != null) {
+                s.append(",\n");
+                s.append(indent).append(indent)
+                        .append("\"time\": \"")
+                        .append(leaf.getTime()).append("\"");
             }
+            if (leaf.getValue() != null) {
+                s.append(",\n");
+                s.append(indent).append(indent)
+                        .append("\"value\": \"")
+                        .append(leaf.getValue()).append("\"");
+            }
+            if ((treeController instanceof WebFavoritesController)
+                    && iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
+                s.append(",\n");
+                s.append(indent).append(indent)
+                        .append("\"icon\": \"")
+                        .append(leaf.getValue()).append("\"");
+            }
+            s.append("\n");
             s.append(indent).append("}").append("\n");
             jsonWriter.write(s.toString());
         } catch (Exception e) {
@@ -619,7 +668,12 @@ public class WebFavoritesExportController extends BaseTaskController {
             TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
             controller.sourceFileChanged(textsFile);
         }
-        popInformation(Languages.message("Count") + ": " + count);
+        popInformation(message("Count") + ": " + count);
+    }
+
+    @Override
+    public void openTarget(ActionEvent event) {
+        browseURI(targetPath.toURI());
     }
 
 }

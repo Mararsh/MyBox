@@ -10,6 +10,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -32,12 +33,14 @@ public class TableTree extends BaseTable<TreeNode> {
 
     public final TableTree defineColumns() {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
+        addColumn(new ColumnDefinition("category", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("attribute", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("parent", ColumnType.Long)
                 .setReferName("Tree_parent_fk").setReferTable("Tree").setReferColumn("nodeid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
+        addColumn(new ColumnDefinition("more", ColumnType.String).setLength(StringMaxLength));
         return this;
     }
 
@@ -51,7 +54,7 @@ public class TableTree extends BaseTable<TreeNode> {
             = "SELECT * FROM Tree WHERE nodeid=?";
 
     public static final String QueryRoot
-            = "SELECT * FROM Tree WHERE title=? AND nodeid=parent";
+            = "SELECT * FROM Tree WHERE category=? AND nodeid=parent ORDER BY nodeid ASC";
 
     public static final String QueryChildren
             = "SELECT * FROM Tree WHERE parent=? AND nodeid<>parent";
@@ -221,7 +224,9 @@ public class TableTree extends BaseTable<TreeNode> {
         try {
             TreeNode node = find(conn, parent, title);
             if (node == null) {
+                TreeNode parentNode = find(conn, parent);
                 node = new TreeNode(parent, title);
+                node.setCategory(parentNode.getCategory());
                 node = insertData(conn, node);
                 conn.commit();
             }
@@ -236,7 +241,7 @@ public class TableTree extends BaseTable<TreeNode> {
         TreeNode base = find(conn, 1);
         if (base == null) {
             try {
-                String sql = "INSERT INTO Tree(nodeid,title,parent) VALUES(1,'base',1)";
+                String sql = "INSERT INTO Tree(nodeid,title,parent,category) VALUES(1,'base',1, 'Root')";
                 update(conn, sql);
                 conn.commit();
                 sql = "ALTER TABLE Tree ALTER COLUMN nodeid RESTART WITH 2";
@@ -285,7 +290,8 @@ public class TableTree extends BaseTable<TreeNode> {
         if (roots == null || roots.isEmpty()) {
             try {
                 TreeNode base = checkBase(conn);
-                TreeNode root = TreeNode.create().setTitle(category).setParent(base.getNodeid());
+                TreeNode root = TreeNode.create().setCategory(category)
+                        .setTitle(message(category)).setParent(base.getNodeid());
                 insertData(conn, root);
                 conn.commit();
                 root.setParent(root.getNodeid());

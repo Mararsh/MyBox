@@ -46,9 +46,9 @@ import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableTreeLeaf;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
-import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
@@ -582,10 +582,6 @@ public class DerbyBase {
                 new TableTree().createTable(conn);
                 loadingController.info("Tree");
             }
-            if (!tables.contains("Web_Favorite".toLowerCase())) {
-                new TableWebFavorite().createTable(conn);
-                loadingController.info("Web_Favorite");
-            }
             if (!tables.contains("Image_Clipboard".toLowerCase())) {
                 new TableImageClipboard().createTable(conn);
                 loadingController.info("Image_Clipboard");
@@ -605,6 +601,10 @@ public class DerbyBase {
             if (!tables.contains("Named_Values".toLowerCase())) {
                 new TableNamedValues().createTable(conn);
                 loadingController.info("Named_Values");
+            }
+            if (!tables.contains("Tree_Leaf".toLowerCase())) {
+                new TableTreeLeaf().createTable(conn);
+                loadingController.info("Tree_Leaf");
             }
             return true;
         } catch (Exception e) {
@@ -743,9 +743,9 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Web_Favorite_owner_index".toLowerCase())) {
+            if (!indexes.contains("Tree_leaf_parent_index".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableWebFavorite.Create_Owner_Index);
+                    statement.executeUpdate(TableTreeLeaf.Create_Parent_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

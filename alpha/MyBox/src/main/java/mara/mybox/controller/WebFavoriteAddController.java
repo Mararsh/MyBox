@@ -3,33 +3,40 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
+import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.WebFavorite;
-import mara.mybox.db.table.TableWebFavorite;
+import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableTreeLeaf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.IconTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-3-29
  * @License Apache License Version 2.0
  */
-public class WebFavoriteAddController extends BaseTreeNodeSelector {
+public class WebFavoriteAddController extends TreeNodesController {
 
-    protected TableWebFavorite tableFavoriteAddress;
     protected String title, address;
 
     public WebFavoriteAddController() {
-        baseTitle = Languages.message("AddAsFavorite");
+        baseTitle = message("AddAsFavorite");
     }
 
     @Override
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            setParent(null, Languages.message("WebFavorites"));
+
+            super.setManager(null, false);
+            treeController = null;
+            tableTree = new TableTree();
+            tableTreeLeaf = new TableTreeLeaf();
+            category = "WebFavorites";
+
             loadTree();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -39,7 +46,6 @@ public class WebFavoriteAddController extends BaseTreeNodeSelector {
     public void setValues(String title, String address) {
         this.title = title;
         this.address = address;
-        tableFavoriteAddress = new TableWebFavorite();
     }
 
     @FXML
@@ -57,20 +63,20 @@ public class WebFavoriteAddController extends BaseTreeNodeSelector {
             TreeNode node = selectedItem.getValue();
             task = new SingletonTask<Void>(this) {
 
-                private WebFavorite data;
+                private TreeLeaf data;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        data = new WebFavorite();
-                        data.setTitle(title);
-                        data.setAddress(address);
+                        data = new TreeLeaf();
+                        data.setName(title);
+                        data.setValue(address);
                         File icon = IconTools.readIcon(address, true);
                         if (icon != null) {
-                            data.setIcon(icon.getAbsolutePath());
+                            data.setMore(icon.getAbsolutePath());
                         }
-                        data.setOwner(node.getNodeid());
-                        data = tableFavoriteAddress.insertData(data);
+                        data.setParentid(node.getNodeid());
+                        data = tableTreeLeaf.insertData(data);
                         return data != null;
                     } catch (Exception e) {
                         error = e.toString();

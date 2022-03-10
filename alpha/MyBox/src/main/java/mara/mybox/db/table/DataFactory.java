@@ -30,9 +30,9 @@ import mara.mybox.db.data.Notebook;
 import mara.mybox.db.data.StringValues;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TextClipboard;
+import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.WebFavorite;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -101,8 +101,8 @@ public class DataFactory {
         } else if (data instanceof TreeNode) {
             return new TableTree();
 
-        } else if (data instanceof WebFavorite) {
-            return new TableWebFavorite();
+        } else if (data instanceof TreeLeaf) {
+            return new TableTreeLeaf();
 
         } else if (data instanceof WebHistory) {
             return new TableWebHistory();
@@ -196,8 +196,8 @@ public class DataFactory {
         } else if (data instanceof TreeNode) {
             return TreeNode.valid((TreeNode) data);
 
-        } else if (data instanceof WebFavorite) {
-            return WebFavorite.valid((WebFavorite) data);
+        } else if (data instanceof TreeLeaf) {
+            return TreeLeaf.valid((TreeLeaf) data);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.valid((WebHistory) data);
@@ -289,8 +289,8 @@ public class DataFactory {
         } else if (data instanceof TreeNode) {
             return TreeNode.getValue((TreeNode) data, name);
 
-        } else if (data instanceof WebFavorite) {
-            return WebFavorite.getValue((WebFavorite) data, name);
+        } else if (data instanceof TreeLeaf) {
+            return TreeLeaf.getValue((TreeLeaf) data, name);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.getValue((WebHistory) data, name);
@@ -376,8 +376,8 @@ public class DataFactory {
         } else if (data instanceof TreeNode) {
             return TreeNode.setValue((TreeNode) data, name, value);
 
-        } else if (data instanceof WebFavorite) {
-            return WebFavorite.setValue((WebFavorite) data, name, value);
+        } else if (data instanceof TreeLeaf) {
+            return TreeLeaf.setValue((TreeLeaf) data, name, value);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.setValue((WebHistory) data, name, value);

@@ -1603,6 +1603,15 @@ public abstract class BaseTable<D> {
         return DerbyBase.stringValue(value);
     }
 
+    public void print(D data) {
+        if (data == null) {
+            return;
+        }
+        for (ColumnDefinition column : columns) {
+            MyBoxLog.console(column.getColumnName() + ": " + getValue(data, column.getColumnName()));
+        }
+    }
+
     /*
         get/set
      */

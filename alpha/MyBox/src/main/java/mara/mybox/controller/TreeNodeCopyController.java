@@ -6,35 +6,36 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.value.Languages;
+import mara.mybox.db.table.TableTreeLeaf;
 import mara.mybox.fxml.SingletonTask;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-4-27
  * @License Apache License Version 2.0
  */
-public abstract class BaseTreeNodeCopyController extends BaseTreeNodeSelector {
+public class TreeNodeCopyController extends TreeNodesController {
 
+    protected TableTreeLeaf tableTreeLeaf;
     protected TreeNode sourceNode;
     protected boolean onlyContents;
 
     @FXML
     protected Label sourceLabel;
 
-    public BaseTreeNodeCopyController() {
-        baseTitle = Languages.message("CopyNode");
+    public TreeNodeCopyController() {
+        baseTitle = message("CopyNode");
     }
 
-    protected abstract String copyMembers(Connection conn, TreeNode sourceNode, TreeNode targetNode);
-
-    public void setCaller(BaseTreeNodeSelector treeController, TreeNode sourceNode, String name, boolean onlyContents) {
+    public void setCaller(TreeNodesController nodesController, TreeNode sourceNode, String name, boolean onlyContents) {
         this.sourceNode = sourceNode;
         this.onlyContents = onlyContents;
-        sourceLabel.setText(Languages.message("NodeCopyed") + ":\n" + name);
+        sourceLabel.setText(message("NodeCopyed") + ":\n" + name);
         ignoreNode = sourceNode;
-        setCaller(treeController);
+        setCaller(nodesController);
     }
 
     @Override
@@ -54,7 +55,7 @@ public abstract class BaseTreeNodeCopyController extends BaseTreeNodeSelector {
             }
             TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
             if (targetItem == null) {
-                alertError(Languages.message("SelectNodeCopyInto"));
+                alertError(message("SelectNodeCopyInto"));
                 return;
             }
             TreeNode targetNode = targetItem.getValue();
@@ -115,17 +116,42 @@ public abstract class BaseTreeNodeCopyController extends BaseTreeNodeSelector {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (treeController == null || !treeController.getMyStage().isShowing()) {
-                        treeController = treeController.oneOpen();
+                    if (caller == null || !caller.getMyStage().isShowing()) {
+                        caller = caller.oneOpen();
                     } else {
-                        treeController.nodeChanged(targetNode);
+                        caller.nodeChanged(targetNode);
                     }
-                    treeController.loadTree(targetNode);
-                    treeController.popSuccessful();
+                    caller.loadTree(targetNode);
+                    caller.popSuccessful();
                     closeStage();
                 }
             };
             start(task);
+        }
+    }
+
+    protected String copyMembers(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+        if (conn == null || sourceNode == null || targetNode == null) {
+            return "InvalidData";
+        }
+        try {
+            if (tableTreeLeaf == null) {
+                tableTreeLeaf = new TableTreeLeaf();
+            }
+            long sourceid = sourceNode.getNodeid();
+            long targetid = targetNode.getNodeid();
+            List<TreeLeaf> leaves = tableTreeLeaf.leaves(conn, sourceid);
+            if (leaves != null) {
+                conn.setAutoCommit(false);
+                for (TreeLeaf leaf : leaves) {
+                    TreeLeaf newLeaf = new TreeLeaf(targetid, leaf.getName(), leaf.getValue(), leaf.getMore());
+                    tableTreeLeaf.insertData(conn, newLeaf);
+                }
+                conn.commit();
+            }
+            return null;
+        } catch (Exception e) {
+            return e.toString();
         }
     }
 

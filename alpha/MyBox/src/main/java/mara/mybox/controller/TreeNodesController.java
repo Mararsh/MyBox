@@ -3,40 +3,53 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableTreeLeaf;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
+public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
-    protected BaseTreeNodeSelector treeController;
+    protected TreeManageController treeController;
+    protected TreeNodesController caller;
     protected TableTree tableTree;
+    protected TableTreeLeaf tableTreeLeaf;
     protected String category;
 
-    public BaseTreeNodeSelector() {
+    public TreeNodesController() {
     }
 
-    public void setParent(BaseController parent, String category) {
-        super.setParent(parent, true);
-        tableTree = new TableTree();
-        this.category = category;
+    public void setParameters(TreeManageController parent, boolean manageMode) {
+        super.setManager(parent, manageMode);
+        treeController = parent;
+        tableTree = parent.tableTree;
+        tableTreeLeaf = parent.tableTreeLeaf;
+        category = treeController.category;
+        baseTitle = category;
     }
 
-    public void setCaller(BaseTreeNodeSelector treeController) {
-        setParent(null, false);
-        this.treeController = treeController;
-        this.tableTree = treeController.tableTree;
-        this.category = treeController.category;
-        cloneTree(treeController.treeView, treeView, getIgnoreNode());
+    public void setCaller(TreeNodesController caller) {
+        super.setManager(null, false);
+        this.caller = caller;
+        tableTree = caller.tableTree;
+        tableTreeLeaf = caller.tableTreeLeaf;
+        category = caller.category;
+        cloneTree(caller.treeView, treeView, getIgnoreNode());
     }
 
     @Override
@@ -63,8 +76,8 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
-    public int size(Connection conn, TreeNode root) {
-        return TableTree.size(conn, root.getNodeid());
+    public int size(Connection conn, TreeNode node) {
+        return TableTree.size(conn, node.getNodeid());
     }
 
     @Override
@@ -115,7 +128,9 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
     @FXML
     @Override
     protected void exportNode() {
-
+        TreeNodeExportController exportController
+                = (TreeNodeExportController) WindowTools.openStage(Fxmls.TreeNodeExportFxml);
+        exportController.setController(treeController);
     }
 
     @Override
@@ -136,6 +151,15 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
 
     @Override
     protected void copyNode(Boolean onlyContents) {
+        TreeItem<TreeNode> selectedItem = treeView.getSelectionModel().getSelectedItem();
+        if (selectedItem == null || isRoot(selectedItem.getValue())) {
+            return;
+        }
+        String chainName = chainName(selectedItem);
+        TreeNodeCopyController controller
+                = (TreeNodeCopyController) WindowTools.openStage(Fxmls.TreeNodeCopyFxml);
+        controller.tableTreeLeaf = treeController.tableTreeLeaf;
+        controller.setCaller(this, selectedItem.getValue(), chainName, onlyContents);
     }
 
     @FXML
@@ -150,27 +174,66 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
         controller.setCaller(this, selectedItem.getValue(), chainName);
     }
 
-    public BaseTreeNodeSelector oneOpen() {
-        BaseTreeNodeSelector controller = null;
+    public TreeNodesController oneOpen() {
+        TreeNodesController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
             if (object != null && object.getClass().equals(myController.getClass())) {
                 try {
-                    controller = (BaseTreeNodeSelector) object;
+                    controller = (TreeNodesController) object;
                     break;
                 } catch (Exception e) {
                 }
             }
         }
         if (controller == null) {
-            controller = (BaseTreeNodeSelector) WindowTools.openStage(myFxml);
+            controller = (TreeNodesController) WindowTools.openStage(myFxml);
         }
         if (controller != null) {
             controller.requestMouse();
         }
         return controller;
+    }
+
+    @FXML
+    @Override
+    protected void importExamples() {
+        TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
+        controller.importExamples(treeController);
+    }
+
+    @FXML
+    @Override
+    protected void importAction() {
+        TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
+        controller.setManage(treeController);
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent event) {
+        List<MenuItem> items = makeNodeMenu(event, currectSelected());
+
+        items.add(new SeparatorMenuItem());
+
+        MenuItem menu = new MenuItem(message("PopupClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menu);
+
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+        popMenu.show(treeView, event.getScreenX(), event.getScreenY());
     }
 
 }

@@ -30,14 +30,14 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
         this.notesController = notesController;
         this.tableNotebook = notesController.tableNotebook;
         this.tableNote = notesController.tableNote;
-        super.setParent(notesController, true);
+        super.setManager(notesController, true);
     }
 
     public void setCaller(NotesController notesController) {
         this.notesController = notesController;
         this.tableNotebook = notesController.tableNotebook;
         this.tableNote = notesController.tableNote;
-        super.setParent(null, false);
+        super.setManager(null, false);
         cloneTree(notesController.notebooksController.treeView, treeView, getIgnoreNode());
     }
 

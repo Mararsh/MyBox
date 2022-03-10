@@ -9,64 +9,60 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.WebFavorite;
-import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class WebFavoritesMoveController extends BaseTreeNodeSelector {
+public class TreeLeavesMoveController extends TreeNodesController {
 
-    protected WebFavoritesController favoriteController;
-    protected TableWebFavorite tableFavoriteAddress;
-
-    public WebFavoritesMoveController() {
-        baseTitle = Languages.message("MoveFavorites");
+    public TreeLeavesMoveController() {
+        baseTitle = message("Move");
     }
 
-    public void setController(WebFavoritesController favoriteController) {
-        this.favoriteController = favoriteController;
-        tableFavoriteAddress = favoriteController.tableWebFavorite;
-        setCaller(favoriteController.treeController);
+    public void setParameters(TreeManageController treeController) {
+        this.treeController = treeController;
+        tableTreeLeaf = treeController.tableTreeLeaf;
+        setCaller(treeController.nodesController);
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (favoriteController == null || !favoriteController.getMyStage().isShowing()) {
-            favoriteController = WebFavoritesController.oneOpen();
+        if (treeController == null || !treeController.getMyStage().isShowing()) {
+            return;
         }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            List<WebFavorite> addresses = favoriteController.tableView.getSelectionModel().getSelectedItems();
-            if (addresses == null || addresses.isEmpty()) {
-                alertError(Languages.message("NoData"));
-                favoriteController.getMyStage().requestFocus();
+            List<TreeLeaf> leaves = treeController.tableView.getSelectionModel().getSelectedItems();
+            if (leaves == null || leaves.isEmpty()) {
+                alertError(message("NoData"));
+                treeController.getMyStage().requestFocus();
                 return;
             }
             TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
             if (targetItem == null) {
-                alertError(Languages.message("SelectNodeMoveInto"));
+                alertError(message("SelectNodeMoveInto"));
                 return;
             }
             TreeNode targetNode = targetItem.getValue();
             if (targetNode == null) {
                 return;
             }
-            if (equal(targetNode, favoriteController.treeController.selectedNode)) {
-                alertError(Languages.message("TargetShouldDifferentWithSource"));
+            if (equal(targetNode, treeController.nodesController.selectedNode)) {
+                alertError(message("TargetShouldDifferentWithSource"));
                 return;
             }
-            long owner = targetNode.getNodeid();
+            long parentid = targetNode.getNodeid();
             task = new SingletonTask<Void>(this) {
 
                 private int count;
@@ -76,16 +72,16 @@ public class WebFavoritesMoveController extends BaseTreeNodeSelector {
                 protected boolean handle() {
                     try {
                         long currentid = -1;
-                        if (favoriteController.currentAddress != null) {
-                            currentid = favoriteController.currentAddress.getFaid();
+                        if (treeController.currentLeaf != null) {
+                            currentid = treeController.currentLeaf.getLeafid();
                         }
-                        for (WebFavorite address : addresses) {
-                            address.setOwner(owner);
-                            if (address.getFaid() == currentid) {
+                        for (TreeLeaf leaf : leaves) {
+                            leaf.setParentid(parentid);
+                            if (leaf.getLeafid() == currentid) {
                                 updateAddress = true;
                             }
                         }
-                        count = tableFavoriteAddress.updateList(addresses);
+                        count = tableTreeLeaf.updateList(leaves);
                         return count > 0;
                     } catch (Exception e) {
                         error = e.toString();
@@ -95,13 +91,13 @@ public class WebFavoritesMoveController extends BaseTreeNodeSelector {
 
                 @Override
                 protected void whenSucceeded() {
-                    favoriteController.treeController.nodeChanged(targetNode);
-                    favoriteController.treeController.loadTree(targetNode);
-                    favoriteController.popInformation(Languages.message("Moved") + ": " + count);
+                    treeController.nodesController.nodeChanged(targetNode);
+                    treeController.nodesController.loadTree(targetNode);
+                    treeController.popInformation(message("Moved") + ": " + count);
                     if (updateAddress) {
-                        favoriteController.currentAddress.setOwner(owner);
-                        favoriteController.nodeOfCurrentAddress = targetNode;
-                        favoriteController.updateNodeOfCurrentAddress();
+                        treeController.currentLeaf.setParentid(parentid);
+                        treeController.nodeOfCurrentLeaf = targetNode;
+                        treeController.updateNodeOfCurrentLeaf();
                     }
                     closeStage();
                 }
@@ -113,15 +109,15 @@ public class WebFavoritesMoveController extends BaseTreeNodeSelector {
     /*
         static methods
      */
-    public static WebFavoritesMoveController oneOpen(WebFavoritesController favoriteController) {
-        WebFavoritesMoveController controller = null;
+    public static TreeLeavesMoveController oneOpen(TreeManageController treeController) {
+        TreeLeavesMoveController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof WebFavoritesMoveController) {
+            if (object != null && object instanceof TreeLeavesMoveController) {
                 try {
-                    controller = (WebFavoritesMoveController) object;
+                    controller = (TreeLeavesMoveController) object;
                     controller.toFront();
                     break;
                 } catch (Exception e) {
@@ -129,10 +125,10 @@ public class WebFavoritesMoveController extends BaseTreeNodeSelector {
             }
         }
         if (controller == null) {
-            controller = (WebFavoritesMoveController) WindowTools.openStage(Fxmls.WebFavoritesMoveFxml);
+            controller = (TreeLeavesMoveController) WindowTools.openStage(Fxmls.TreeLeavesMoveFxml);
         }
         if (controller != null) {
-            controller.setController(favoriteController);
+            controller.setParameters(treeController);
             Stage cstage = controller.getMyStage();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {

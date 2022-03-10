@@ -213,10 +213,6 @@ public class NotesImportController extends BaseBatchFileController {
                     break;
                 }
                 title = line;
-                Note exist = null;
-                if (!createRadio.isSelected()) {
-                    exist = tableNote.find(conn, notebookid, title);
-                }
                 while ((line = reader.readLine()) != null && line.isBlank()) {
                 }
                 time = null;
@@ -236,6 +232,10 @@ public class NotesImportController extends BaseBatchFileController {
                 }
                 if (time == null) {
                     time = new Date(baseTime - count * 1000); // to keep the order of id
+                }
+                Note exist = null;
+                if (!createRadio.isSelected()) {
+                    exist = tableNote.find(conn, notebookid, title);
                 }
                 if (exist != null) {
                     if (overrideRadio.isSelected()) {
