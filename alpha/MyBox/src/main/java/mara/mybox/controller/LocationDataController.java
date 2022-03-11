@@ -25,7 +25,7 @@ import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
@@ -419,7 +419,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(Languages.message("LocationData"), DataFactory.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(Languages.message("LocationData"), BaseDataAdaptor.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

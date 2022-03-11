@@ -5,7 +5,7 @@ import javafx.application.Platform;
 import mara.mybox.controller.MyBoxLogViewerController;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
@@ -126,7 +126,7 @@ public class MyBoxLog extends BaseData {
         if ("log_type".equals(column.getColumnName())) {
             return Languages.message(data.getLogType().name());
         }
-        return DataFactory.displayColumnBase(data, column, value);
+        return BaseDataAdaptor.displayColumnBase(data, column, value);
     }
 
     public static short logType(LogType logType) {

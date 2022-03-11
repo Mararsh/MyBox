@@ -578,23 +578,29 @@ public class TreeNodeExportController extends BaseTaskController {
     protected void writeXml(Connection conn, String nodeName, TreeLeaf leaf) {
         try {
             xmlWriter.write(indent + indent + "<" + treeController.category + ">\n"
-                    + indent + indent + indent + "<node><![CDATA[" + nodeName + "]]></node>\n");
-            xmlWriter.write(indent + indent + indent + "<name><![CDATA[" + leaf.getName() + "]]></name>\n");
+                    + indent + indent + indent + "<" + message("Node")
+                    + "><![CDATA[" + nodeName + "]]></" + message("Node") + ">\n");
+            xmlWriter.write(indent + indent + indent + "<" + treeController.nameMsg
+                    + "><![CDATA[" + leaf.getName() + "]]></" + treeController.nameMsg + ">\n");
             if (timeCheck.isSelected() && leaf.getTime() != null) {
-                xmlWriter.write(indent + indent + indent + "<time>" + DateTools.datetimeToString(leaf.getTime()) + "</time>\n");
+                xmlWriter.write(indent + indent + indent + "<" + treeController.timeMsg + ">"
+                        + DateTools.datetimeToString(leaf.getTime())
+                        + "</" + treeController.timeMsg + ">\n");
             }
             if (treeController instanceof WebFavoritesController) {
                 if (iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
-                    xmlWriter.write(indent + indent + indent + "<icon><![CDATA[" + leaf.getMore() + "]]></icon>\n");
+                    xmlWriter.write(indent + indent + indent + "<" + treeController.moreMsg
+                            + "><![CDATA[" + leaf.getMore()
+                            + "]]></" + treeController.moreMsg + ">\n");
                 }
 
             } else {
 
             }
             if (leaf.getValue() != null) {
-                xmlWriter.write(indent + indent + indent + "<value>\n"
+                xmlWriter.write(indent + indent + indent + "<" + treeController.valueMsg + ">\n"
                         + "<![CDATA[" + leaf.getValue() + "]]>\n"
-                        + indent + indent + indent + "</value>\n");
+                        + indent + indent + indent + "</" + treeController.valueMsg + ">\n");
             }
             xmlWriter.write(indent + indent + "</" + treeController.category + ">\n\n");
 
@@ -616,25 +622,25 @@ public class TreeNodeExportController extends BaseTaskController {
                     .append("\"node\": \"")
                     .append(bookName).append("\",\n");
             s.append(indent).append(indent)
-                    .append("\"name\": \"")
+                    .append("\"").append(treeController.nameMsg).append("\": \"")
                     .append(leaf.getName()).append("\"");
             if (timeCheck.isSelected() && leaf.getTime() != null) {
                 s.append(",\n");
                 s.append(indent).append(indent)
-                        .append("\"time\": \"")
+                        .append("\"").append(treeController.timeMsg).append("\": \"")
                         .append(leaf.getTime()).append("\"");
             }
             if (leaf.getValue() != null) {
                 s.append(",\n");
                 s.append(indent).append(indent)
-                        .append("\"value\": \"")
+                        .append("\"").append(treeController.valueMsg).append("\": \"")
                         .append(leaf.getValue()).append("\"");
             }
             if ((treeController instanceof WebFavoritesController)
                     && iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
                 s.append(",\n");
                 s.append(indent).append(indent)
-                        .append("\"icon\": \"")
+                        .append("\"").append(treeController.moreMsg).append("\": \"")
                         .append(leaf.getValue()).append("\"");
             }
             s.append("\n");

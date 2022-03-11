@@ -1,9 +1,9 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.util.List;
-import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Tag;
 
 /**
  * @Author Mara
@@ -27,6 +27,7 @@ public class TableTag extends BaseTable<Tag> {
     public final TableTag defineColumns() {
         addColumn(new ColumnDefinition("tgid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("tag", ColumnType.String, true).setLength(2048));
+        orderColumns = "tgid ASC";
         return this;
     }
 

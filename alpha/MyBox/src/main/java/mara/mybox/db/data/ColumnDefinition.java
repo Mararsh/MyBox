@@ -142,7 +142,7 @@ public class ColumnDefinition extends BaseData {
             value = c.value;
             maxValue = c.maxValue;
             minValue = c.minValue;
-            values = c.values;
+            columnValues = c.columnValues;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

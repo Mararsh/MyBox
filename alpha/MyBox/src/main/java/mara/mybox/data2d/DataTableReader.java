@@ -108,7 +108,7 @@ public class DataTableReader extends Data2DReader {
             record = new ArrayList<>();
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = readerTable.getColumns().get(i);
-                Object value = row.getValue(column.getColumnName());
+                Object value = row.getColumnValue(column.getColumnName());
                 record.add(column.toString(value));
             }
         } catch (Exception e) {

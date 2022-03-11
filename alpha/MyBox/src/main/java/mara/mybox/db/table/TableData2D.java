@@ -16,7 +16,7 @@ public class TableData2D extends BaseTable<Data2DRow> {
         for (ColumnDefinition column : columns) {
             Object v = column.fromString(column.getDefaultValue());
             if (v != null) {
-                data2DRow.setValue(column.getColumnName(), v);
+                data2DRow.setColumnValue(column.getColumnName(), v);
             }
         }
         return data2DRow;

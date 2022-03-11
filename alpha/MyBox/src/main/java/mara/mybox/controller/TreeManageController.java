@@ -1,23 +1,21 @@
 package mara.mybox.controller;
 
-import java.net.URL;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
@@ -26,12 +24,13 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeLeaf;
+import mara.mybox.db.table.TableTreeLeafTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -47,6 +46,8 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     protected TableTree tableTree;
     protected TreeNode treeNode, nodeOfCurrentLeaf;
     protected TableTreeLeaf tableTreeLeaf;
+    protected TableTag tableTag;
+    protected TableTreeLeafTag tableTreeLeafTag;
     protected String queryLabel;
     protected TreeLeaf currentLeaf;
     protected String nameMsg, valueMsg, moreMsg, timeMsg;
@@ -64,15 +65,19 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     @FXML
     protected CheckBox subCheck;
     @FXML
-    protected FlowPane namesPane;
+    protected FlowPane tagsPane, namesPane;
     @FXML
-    protected TextField idInput, nameInput, valueInput, moreInput, timeInput;
+    protected Label conditionLabel, chainLabel;
     @FXML
-    protected Label nameLabel, valueLabel, moreLabel, timeLabel, conditionLabel, chainLabel;
+    protected TreeLeafEditor leafController;
+    @FXML
+    protected Button refreshTimesButton, queryTimesButton;
+    @FXML
+    protected TreeTagsController tagsController;
 
     public TreeManageController() {
         baseTitle = message("Tree");
-        category = "Root";
+        category = TreeNode.Root;
         nameMsg = message("Name");
         valueMsg = message("Value");
         moreMsg = message("More");
@@ -88,7 +93,23 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     public void setTableDefinition() {
         tableTree = new TableTree();
         tableTreeLeaf = new TableTreeLeaf();
+        tableTag = new TableTag();
+        tableTreeLeafTag = new TableTreeLeafTag();
         tableDefinition = tableTreeLeaf;
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
+//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
+//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
+//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -115,15 +136,11 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     @Override
     public void initControls() {
         try {
-            nodesController.setParameters(this, true);
             super.initControls();
 
-            nameLabel.setText(nameMsg);
-            valueLabel.setText(valueMsg);
-            if (moreLabel != null) {
-                moreLabel.setText(moreMsg);
-            }
-            timeLabel.setText(timeMsg);
+            leafController.setParameters(this);
+            tagsController.setParameters(this);
+            nodesController.setParameters(this, true);
 
             nodesController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -149,22 +166,6 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
                 }
             });
 
-            goButton.disableProperty().bind(Bindings.isEmpty(nameInput.textProperty()));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -182,7 +183,7 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     }
 
     /*
-        tree
+        nodes
      */
     protected void loadTree(TreeNode node) {
         if (!AppVariables.isTesting && tableTreeLeaf.size() < 1
@@ -229,7 +230,7 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
 
 
     /*
-        addresses list
+        leaves
      */
     @Override
     public void postLoadedTableData() {
@@ -380,13 +381,13 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     @Override
     public void addAction() {
         nodeOfCurrentLeaf = nodesController.selectedNode;
-        editLeaf(null);
+        leafController.editLeaf(null);
     }
 
     @FXML
     @Override
     public void editAction() {
-        editLeaf(tableView.getSelectionModel().getSelectedItem());
+        leafController.editLeaf(tableView.getSelectionModel().getSelectedItem());
     }
 
     @FXML
@@ -401,38 +402,8 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     }
 
     /*
-        edit address
+        leaf
      */
-    @FXML
-    protected void addLeaf() {
-        editLeaf(null);
-    }
-
-    protected void editLeaf(TreeLeaf leaf) {
-        synchronized (this) {
-            currentLeaf = leaf;
-            if (leaf != null) {
-                idInput.setText(leaf.getLeafid() + "");
-                nameInput.setText(leaf.getName());
-                valueInput.setText(leaf.getValue());
-                if (moreInput != null) {
-                    moreInput.setText(leaf.getMore());
-                }
-                timeInput.setText(DateTools.datetimeToString(leaf.getTime()));
-            } else {
-                idInput.setText("");
-                nameInput.setText("");
-                valueInput.setText("");
-                if (moreInput != null) {
-                    moreInput.setText("");
-                }
-                timeInput.setText("");
-            }
-            updateNodeOfCurrentLeaf();
-            showRightPane();
-        }
-    }
-
     protected void updateNodeOfCurrentLeaf() {
         synchronized (this) {
             SingletonTask updateTask = new SingletonTask<Void>(this) {
@@ -470,95 +441,24 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     }
 
     @FXML
+    protected void addLeaf() {
+        leafController.editLeaf(null);
+    }
+
+    @FXML
     protected void copyLeaf() {
-        idInput.setText("");
-        nameInput.appendText(" " + message("Copy"));
-        currentLeaf = null;
+        leafController.copyLeaf();
     }
 
     @FXML
     protected void recoverLeaf() {
-        editLeaf(currentLeaf);
+        leafController.editLeaf(currentLeaf);
     }
 
     @FXML
     @Override
     public void saveAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            String name = nameInput.getText();
-            if (name == null || name.isBlank()) {
-                popError(message("InvalidData") + ": " + message("Title"));
-                return;
-            }
-            String value = valueInput.getText();
-            if ("WebFavorites".equals(category)) {
-                try {
-                    URL url = new URL(value);
-                } catch (Exception e) {
-                    popError(message("InvalidData") + ": " + message("Address"));
-                    return;
-                }
-            }
-            String more = moreInput != null ? moreInput.getText() : null;
-            task = new SingletonTask<Void>(this) {
-                private TreeLeaf data;
-                private boolean notExist = false;
-
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        data = new TreeLeaf();
-                        data.setName(name);
-                        data.setValue(value);
-                        data.setMore(more);
-                        data.setTime(new Date());
-                        if (currentLeaf != null) {
-                            currentLeaf = tableTreeLeaf.readData(conn, currentLeaf);
-                            nodeOfCurrentLeaf = tableTree.readData(conn, nodeOfCurrentLeaf);
-                            if (currentLeaf == null || nodeOfCurrentLeaf == null) {
-                                notExist = true;
-                                currentLeaf = null;
-                                return true;
-                            } else {
-                                data.setLeafid(currentLeaf.getLeafid());
-                                data.setParentid(currentLeaf.getParentid());
-                                currentLeaf = tableTreeLeaf.updateData(conn, data);
-                            }
-                        } else {
-                            if (nodeOfCurrentLeaf == null) {
-                                nodeOfCurrentLeaf = nodesController.root(conn);
-                            }
-                            data.setParentid(nodeOfCurrentLeaf.getNodeid());
-                            currentLeaf = tableTreeLeaf.insertData(conn, data);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return currentLeaf != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (notExist) {
-                        copyLeaf();
-                        popError(message("NotExist"));
-                    } else {
-                        popSaved();
-                        editLeaf(currentLeaf);
-                        if (nodesController.selectedNode != null
-                                && currentLeaf.getParentid() == nodesController.selectedNode.getNodeid()) {
-                            refreshAction();
-                        }
-                    }
-                }
-
-            };
-            start(task, false);
-        }
+        leafController.saveLeaf();
     }
 
 }

@@ -267,7 +267,9 @@ public class TableTree extends BaseTable<TreeNode> {
     public TreeNode findAndCreateRoot(Connection conn, String category) {
         List<TreeNode> roots = findAndCreateRoots(conn, category);
         if (roots != null && !roots.isEmpty()) {
-            return roots.get(0);
+            TreeNode root = roots.get(0);
+//            root.setTitle(message(category));
+            return root;
         } else {
             return null;
         }

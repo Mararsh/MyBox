@@ -199,7 +199,7 @@ public class ControlNewDataTable extends BaseController {
                 String name = column.getColumnName();
                 Object value = column.fromString(pageRow.get(col + 1));
                 if (value != null) {
-                    data2DRow.setValue(name, value);
+                    data2DRow.setColumnValue(name, value);
                 }
             }
             tableData2D.insertData(conn, data2DRow);

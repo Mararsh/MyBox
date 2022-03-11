@@ -126,7 +126,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             String line;
             while ((line = reader.readLine()) != null && line.isBlank()) {
             }
-            if (!"WebFavorites".equals(category) && line.startsWith(AppValues.MyBoxSeparator)) {
+            if (!TreeNode.WebFavorite.equals(category) && line.startsWith(AppValues.MyBoxSeparator)) {
                 return importByMyBoxSeparator(conn, reader);
             } else {
                 return importByBlankLine(conn, reader, line);
@@ -179,7 +179,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                         value = reader.readLine();
                     }
                     if (value != null) {
-                        if ("WebFavorites".equals(category)) {
+                        if (TreeNode.WebFavorite.equals(category)) {
                             more = reader.readLine();
                             if (more != null) {
                                 line = reader.readLine();

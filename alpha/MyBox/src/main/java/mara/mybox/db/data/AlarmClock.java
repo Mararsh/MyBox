@@ -27,7 +27,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2018-7-13
  * @License Apache License Version 2.0
  */
-public final class AlarmClock {
+public class AlarmClock extends BaseData {
 
     public static final String AlarmValueSeprator = "_FG-FG_";
     public static final int offset = 1;

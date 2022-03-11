@@ -35,7 +35,7 @@ public class WebFavoriteAddController extends TreeNodesController {
             treeController = null;
             tableTree = new TableTree();
             tableTreeLeaf = new TableTreeLeaf();
-            category = "WebFavorites";
+            category = TreeNode.WebFavorite;
 
             loadTree();
         } catch (Exception e) {

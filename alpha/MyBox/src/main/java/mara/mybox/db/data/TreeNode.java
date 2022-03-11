@@ -10,6 +10,11 @@ import mara.mybox.dev.MyBoxLog;
 public class TreeNode extends BaseData {
 
     public static final String NodeSeparater = " > ";
+    public static final String Root = "Root";
+    public static final String WebFavorite = "WebFavorite";
+    public static final String Notebook = "Notebook";
+    public static final String JShellCode = "JShellCode";
+
     protected long nodeid, parent;
     protected String category, title, attribute, more;
 

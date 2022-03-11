@@ -34,7 +34,7 @@ import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.EpidemicReportTools;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
@@ -719,7 +719,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(baseTitle, DataFactory.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(baseTitle, BaseDataAdaptor.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

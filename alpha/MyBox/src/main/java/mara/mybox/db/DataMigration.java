@@ -29,7 +29,6 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
-import mara.mybox.db.data.Notebook;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -45,9 +44,7 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
-import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableStringValues;
-import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
@@ -144,56 +141,36 @@ public class DataMigration {
     }
 
     private static void updateIn654(Connection conn) {
-        try {
+        try ( Statement statement = conn.createStatement()) {
             MyBoxLog.info("Updating tables in 6.5.4...");
 
             conn.setAutoCommit(true);
-            try ( Statement statement = conn.createStatement()) {
-                statement.executeUpdate("ALTER TABLE Tree ADD COLUMN category VARCHAR(" + StringMaxLength + ")");
-                statement.executeUpdate("ALTER TABLE Tree ADD COLUMN more VARCHAR(" + StringMaxLength + ")");
-                statement.executeUpdate("UPDATE Tree SET category='Root' where nodeid=1");
-                statement.executeUpdate("UPDATE Tree SET category='WebFavorites' where nodeid > 1");
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-            TableNotebook tableNotebook = new TableNotebook();
-            TableTree tableTree = new TableTree();
-            Map<Long, Long> idMap = new HashMap<>();
-            try ( PreparedStatement statement = conn.prepareStatement("SELECT * FROM Notebook");
-                     ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    Notebook notebook = tableNotebook.readData(results);
-                    long oid = notebook.getNbid();
-                    TreeNode node = new TreeNode();
-                    node.setTitle(notebook.getName());
-                    node.setParent(notebook.getOwner());
-                    node.setAttribute(notebook.getDescription());
-                    node.setCategory("Notebooks");
-                    node = tableTree.insertData(conn, node);
-                    idMap.put(oid, node.getNodeid());
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-            try ( Statement statement = conn.createStatement()) {
-                statement.executeUpdate("INSERT INTO tree_leaf ( name, value, parentid, update_time) "
-                        + " SELECT title, html, notebook, update_time FROM note");
-                for (long oid : idMap.keySet()) {
-                    String sql = "UPDATE Tree SET parent=" + idMap.get(oid)
-                            + " WHERE category='Notebooks' AND parent=" + oid;
-                    statement.executeUpdate(sql);
-                    sql = "UPDATE tree_leaf SET parentid=" + idMap.get(oid) + " WHERE parentid=" + oid;
-                    statement.executeUpdate(sql);
-                    conn.commit();
-                }
-                statement.executeUpdate("INSERT INTO tree_leaf ( name, value, more, parentid) "
-                        + " SELECT  title, address, icon, owner FROM Web_Favorite");
-                statement.executeUpdate("DROP TABLE Web_Favorite");
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
+            statement.executeUpdate("ALTER TABLE Tree ADD COLUMN category VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Tree ADD COLUMN more VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("UPDATE Tree SET category='" + TreeNode.Root + "' where nodeid=1");
+            statement.executeUpdate("UPDATE Tree SET category='" + TreeNode.WebFavorite + "' where nodeid > 1");
+            statement.executeUpdate("INSERT INTO tree ( title, attribute, category, more) "
+                    + " SELECT name, CAST(owner AS CHAR(36)), '" + TreeNode.Notebook
+                    + "', CAST(nbid AS CHAR(36)) FROM notebook");
+            statement.executeUpdate("Update tree AS A set parent="
+                    + "(select B.nodeid from tree AS B WHERE A.attribute=B.more AND "
+                    + " B.category='" + TreeNode.Notebook + "') "
+                    + " WHERE A.category='" + TreeNode.Notebook + "'");
+            statement.executeUpdate("INSERT INTO tree_leaf ( name, value, update_time, more) "
+                    + " SELECT title, html, update_time, CAST(ntid AS CHAR(36)) FROM note");
+            statement.executeUpdate("Update tree_leaf AS A set parentid="
+                    + "(select B.nodeid from tree AS B, note AS C WHERE "
+                    + "A.more=CAST(C.ntid AS CHAR(36)) AND B.category='" + TreeNode.Notebook + "' "
+                    + "AND B.more=CAST(C.notebook AS CHAR(36)))");
+            statement.executeUpdate("INSERT INTO tree_leaf_tag ( leaffid, tagid) "
+                    + " SELECT tree_leaf.leafid, note_tag.tagid FROM tree_leaf, note_tag "
+                    + " where tree_leaf.more=CAST(note_tag.noteid AS CHAR(36))");
+            statement.executeUpdate("UPDATE tree SET more=null, attribute=null");
+            statement.executeUpdate("UPDATE tree_leaf SET more=null");
+            statement.executeUpdate("INSERT INTO tree_leaf ( name, value, more, parentid) "
+                    + " SELECT  title, address, icon, owner FROM Web_Favorite");
+            statement.executeUpdate("DROP TABLE Web_Favorite");
 
-            conn.setAutoCommit(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

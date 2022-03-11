@@ -19,7 +19,7 @@ public class DataInternalTable extends DataTable {
                     "IMAGE_EDIT_HISTORY", "IMAGE_SCOPE", "LOCATION_DATA", "MEDIA", "MEDIA_LIST", "MYBOX_LOG",
                     "NOTE", "NOTEBOOK", "NOTE_TAG", "QUERY_CONDITION", "STRING_VALUE", "STRING_VALUES", "SYSTEM_CONF",
                     "TAG", "TEXT_CLIPBOARD", "TREE", "USER_CONF", "VISIT_HISTORY", "WEB_FAVORITE", "WEB_HISTORY",
-                    "TREE_LEAF", "NAMED_VALUES"
+                    "TREE_LEAF", "TREE_LEAF_TAG", "NAMED_VALUES"
             ));
         }
     };

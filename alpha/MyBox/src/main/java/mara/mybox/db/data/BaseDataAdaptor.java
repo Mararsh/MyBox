@@ -1,4 +1,4 @@
-package mara.mybox.db.table;
+package mara.mybox.db.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,34 +6,36 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BlobValue;
-import mara.mybox.db.data.ColorData;
-import mara.mybox.db.data.ColorPalette;
-import mara.mybox.db.data.ColorPaletteName;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DCell;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.data.Data2DRow;
-import mara.mybox.db.data.Dataset;
-import mara.mybox.db.data.EpidemicReport;
-import mara.mybox.db.data.FileBackup;
-import mara.mybox.db.data.GeographyCode;
-import mara.mybox.db.data.ImageClipboard;
-import mara.mybox.db.data.ImageEditHistory;
-import mara.mybox.db.data.Location;
-import mara.mybox.db.data.NamedValues;
-import mara.mybox.db.data.Note;
-import mara.mybox.db.data.NoteTag;
-import mara.mybox.db.data.Notebook;
-import mara.mybox.db.data.StringValues;
-import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TextClipboard;
-import mara.mybox.db.data.TreeLeaf;
-import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.WebHistory;
+import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.TableBlobValue;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
+import mara.mybox.db.table.TableColorPaletteName;
+import mara.mybox.db.table.TableData2D;
+import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.table.TableData2DColumn;
+import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.db.table.TableDataset;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableFileBackup;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableImageClipboard;
+import mara.mybox.db.table.TableImageEditHistory;
+import mara.mybox.db.table.TableImageScope;
+import mara.mybox.db.table.TableLocationData;
+import mara.mybox.db.table.TableMyBoxLog;
+import mara.mybox.db.table.TableNamedValues;
+import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNoteTag;
+import mara.mybox.db.table.TableNotebook;
+import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.table.TableTag;
+import mara.mybox.db.table.TableTextClipboard;
+import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableTreeLeaf;
+import mara.mybox.db.table.TableTreeLeafTag;
+import mara.mybox.db.table.TableVisitHistory;
+import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppValues;
@@ -44,9 +46,9 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-12-11
  * @License Apache License Version 2.0
  */
-public class DataFactory {
+public class BaseDataAdaptor {
 
-    public static BaseTable create(BaseData data) {
+    public static BaseTable dataTable(BaseData data) {
         if (data == null) {
             return null;
         }
@@ -103,6 +105,9 @@ public class DataFactory {
 
         } else if (data instanceof TreeLeaf) {
             return new TableTreeLeaf();
+
+        } else if (data instanceof TreeLeafTag) {
+            return new TableTreeLeafTag();
 
         } else if (data instanceof WebHistory) {
             return new TableWebHistory();
@@ -199,6 +204,9 @@ public class DataFactory {
         } else if (data instanceof TreeLeaf) {
             return TreeLeaf.valid((TreeLeaf) data);
 
+        } else if (data instanceof TreeLeafTag) {
+            return TreeLeafTag.valid((TreeLeafTag) data);
+
         } else if (data instanceof WebHistory) {
             return WebHistory.valid((WebHistory) data);
 
@@ -292,6 +300,9 @@ public class DataFactory {
         } else if (data instanceof TreeLeaf) {
             return TreeLeaf.getValue((TreeLeaf) data, name);
 
+        } else if (data instanceof TreeLeafTag) {
+            return TreeLeafTag.getValue((TreeLeafTag) data, name);
+
         } else if (data instanceof WebHistory) {
             return WebHistory.getValue((WebHistory) data, name);
 
@@ -379,6 +390,9 @@ public class DataFactory {
         } else if (data instanceof TreeLeaf) {
             return TreeLeaf.setValue((TreeLeaf) data, name, value);
 
+        } else if (data instanceof TreeLeafTag) {
+            return TreeLeafTag.setValue((TreeLeafTag) data, name, value);
+
         } else if (data instanceof WebHistory) {
             return WebHistory.setValue((WebHistory) data, name, value);
 
@@ -419,7 +433,7 @@ public class DataFactory {
         }
         try {
             if (table == null) {
-                table = create(data);
+                table = dataTable(data);
             }
             if (table == null) {
                 return null;
@@ -560,7 +574,7 @@ public class DataFactory {
     public static String htmlData(BaseTable table, BaseData data) {
         try {
             if (table == null) {
-                table = create(data);
+                table = dataTable(data);
             }
             if (table == null) {
                 return null;
@@ -599,7 +613,7 @@ public class DataFactory {
                 return null;
             }
             if (table == null) {
-                table = create(dataList.get(0));
+                table = dataTable(dataList.get(0));
             }
             if (table == null) {
                 return null;

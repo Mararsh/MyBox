@@ -9,8 +9,9 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Note;
-import mara.mybox.db.data.NoteTag;
 import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.TreeLeaf;
+import mara.mybox.db.data.TreeLeafTag;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -18,44 +19,44 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-3-3
  * @License Apache License Version 2.0
  */
-public class TableNoteTag extends BaseTable<NoteTag> {
+public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
 
-    protected TableNote tableNote;
+    protected TableTreeLeaf tableTreeLeaf;
     protected TableTag tableTag;
 
-    public TableNoteTag() {
-        tableName = "Note_Tag";
+    public TableTreeLeafTag() {
+        tableName = "Tree_Leaf_Tag";
         defineColumns();
     }
 
-    public TableNoteTag(boolean defineColumns) {
-        tableName = "Note_Tag";
+    public TableTreeLeafTag(boolean defineColumns) {
+        tableName = "Tree_Leaf_Tag";
         if (defineColumns) {
             defineColumns();
         }
     }
 
-    public final TableNoteTag defineColumns() {
-        addColumn(new ColumnDefinition("ngid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("noteid", ColumnType.Long)
-                .setReferName("Note_Tag_note_fk").setReferTable("Note").setReferColumn("ntid")
+    public final TableTreeLeafTag defineColumns() {
+        addColumn(new ColumnDefinition("ttid", ColumnType.Long, true, true).setAuto(true));
+        addColumn(new ColumnDefinition("leaffid", ColumnType.Long)
+                .setReferName("Tree_Leaf_Tag_Leaf_fk").setReferTable("Tree_leaf").setReferColumn("leafid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("tagid", ColumnType.Long)
-                .setReferName("Note_Tag_tag_fk").setReferTable("Tag").setReferColumn("tgid")
+                .setReferName("Tree_Leaf_Tag_Tag_fk").setReferTable("Tag").setReferColumn("tgid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
     }
 
     public static final String Create_Unique_Index
-            = "CREATE UNIQUE INDEX Note_Tag_unique_index on Note_Tag (  noteid , tagid  )";
+            = "CREATE UNIQUE INDEX Tree_Leaf_Tag_unique_index on Tree_Leaf_Tag ( leaffid , tagid  )";
 
-    public static final String QueryNoteTags
-            = "SELECT * FROM Note_Tag WHERE noteid=?";
+    public static final String QueryLeafTags
+            = "SELECT * FROM Tree_Leaf_Tag WHERE leaffid=?";
 
-    public static final String DeleteNoteTags
-            = "DELETE FROM Note_Tag WHERE noteid=?";
+    public static final String DeleteLeafTags
+            = "DELETE FROM Tree_Leaf_Tag WHERE leaffid=?";
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
@@ -63,8 +64,8 @@ public class TableNoteTag extends BaseTable<NoteTag> {
             return null;
         }
         try {
-            if ("noteid".equals(column) && results.findColumn("ntid") > 0) {
-                return getTableNote().readData(results);
+            if ("leaffid".equals(column) && results.findColumn("leafid") > 0) {
+                return getTableTreeLeaf().readData(results);
             }
             if ("tagid".equals(column) && results.findColumn("tgid") > 0) {
                 return getTableTag().readData(results);
@@ -75,12 +76,12 @@ public class TableNoteTag extends BaseTable<NoteTag> {
     }
 
     @Override
-    public boolean setForeignValue(NoteTag data, String column, Object value) {
+    public boolean setForeignValue(TreeLeafTag data, String column, Object value) {
         if (data == null || column == null || value == null) {
             return true;
         }
-        if ("noteid".equals(column) && value instanceof Note) {
-            data.setNote((Note) value);
+        if ("leaffid".equals(column) && value instanceof Note) {
+            data.setLeaf((TreeLeaf) value);
         }
         if ("tagid".equals(column) && value instanceof Tag) {
             data.setTag((Tag) value);
@@ -88,22 +89,22 @@ public class TableNoteTag extends BaseTable<NoteTag> {
         return true;
     }
 
-    public List<Long> readTags(long noteid) {
+    public List<Long> readTags(long leafid) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            return readTags(conn, noteid);
+            return readTags(conn, leafid);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public List<Long> readTags(Connection conn, long noteid) {
+    public List<Long> readTags(Connection conn, long leafid) {
         List<Long> tags = new ArrayList();
-        try ( PreparedStatement statement = conn.prepareStatement(QueryNoteTags)) {
-            statement.setLong(1, noteid);
+        try ( PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
+            statement.setLong(1, leafid);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
-                    NoteTag data = readData(results);
+                    TreeLeafTag data = readData(results);
                     tags.add(data.getTagid());
                 }
             }
@@ -116,15 +117,15 @@ public class TableNoteTag extends BaseTable<NoteTag> {
     /*
         get/set
      */
-    public TableNote getTableNote() {
-        if (tableNote == null) {
-            tableNote = new TableNote();
+    public TableTreeLeaf getTableTreeLeaf() {
+        if (tableTreeLeaf == null) {
+            tableTreeLeaf = new TableTreeLeaf();
         }
-        return tableNote;
+        return tableTreeLeaf;
     }
 
-    public void setTableNote(TableNote tableNote) {
-        this.tableNote = tableNote;
+    public void setTableTreeLeaf(TableTreeLeaf tableTreeLeaf) {
+        this.tableTreeLeaf = tableTreeLeaf;
     }
 
     public TableTag getTableTag() {

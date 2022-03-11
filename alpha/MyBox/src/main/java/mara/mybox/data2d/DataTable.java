@@ -69,7 +69,6 @@ public class DataTable extends Data2D {
             if (conn == null || referredName == null) {
                 return false;
             }
-            MyBoxLog.debug(referredName);
             resetData();
             tableData2D.setTableName(referredName);
             tableData2D.readDefinitionFromDB(conn, referredName);
@@ -252,7 +251,7 @@ public class DataTable extends Data2D {
                 String name = column.getColumnName();
                 Object value = column.fromString(values.get(i + 1));
                 if (value != null) {
-                    data2DRow.setValue(name, value);
+                    data2DRow.setColumnValue(name, value);
                 }
             }
             return data2DRow;
@@ -417,7 +416,7 @@ public class DataTable extends Data2D {
                         } else if (isRandomNn) {
                             v = random(random, col, true);
                         }
-                        row.setValue(name, column.fromString(v));
+                        row.setColumnValue(name, column.fromString(v));
                     }
                     tableData2D.updateData(conn, row);
                     if (++count % DerbyBase.BatchSize == 0) {
@@ -484,7 +483,7 @@ public class DataTable extends Data2D {
                     }
                     for (int col : cols) {
                         Data2DColumn column = columns.get(col);
-                        Object v = dataRow.getValue(column.getColumnName());
+                        Object v = dataRow.getColumnValue(column.getColumnName());
                         fileRow.add(column.toString(v));
                     }
                     csvPrinter.printRecord(fileRow);

@@ -17,7 +17,7 @@ public class TreeLeaf extends BaseData {
 
     private void init() {
         leafid = -1;
-        parentid = -1;
+        parentid = -2;
         name = null;
         value = null;
         more = null;

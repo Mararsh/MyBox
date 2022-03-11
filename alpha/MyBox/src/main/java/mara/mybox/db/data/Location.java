@@ -5,7 +5,6 @@ import java.util.Date;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.tools.DateTools;
@@ -215,7 +214,7 @@ public class Location extends BaseData implements Cloneable {
                     return data.getDataset().getImage().getAbsolutePath();
                 }
         }
-        return DataFactory.displayColumnBase(data, column, value);
+        return BaseDataAdaptor.displayColumnBase(data, column, value);
     }
 
 

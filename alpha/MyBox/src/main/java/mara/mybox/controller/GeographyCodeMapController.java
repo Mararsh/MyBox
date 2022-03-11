@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -129,7 +129,7 @@ public class GeographyCodeMapController extends BaseMapController {
                                         GeographyCode geographyCode = points.get(index);
                                         drawPoint(geographyCode.getLongitude(), geographyCode.getLatitude(),
                                                 markerLabel(geographyCode), markerImage(),
-                                                DataFactory.displayData(geoTable, geographyCode, null, true),
+                                                BaseDataAdaptor.displayData(geoTable, geographyCode, null, true),
                                                 textColor());
                                         if (!centered) {
                                             webEngine.executeScript("setCenter(" + geographyCode.getLongitude()
@@ -182,7 +182,7 @@ public class GeographyCodeMapController extends BaseMapController {
             }
             list.add(geographyCode);
         }
-        return DataFactory.htmlDataList(geoTable, list, displayNames());
+        return BaseDataAdaptor.htmlDataList(geoTable, list, displayNames());
     }
 
     public String markerLabel(GeographyCode geographyCode) {

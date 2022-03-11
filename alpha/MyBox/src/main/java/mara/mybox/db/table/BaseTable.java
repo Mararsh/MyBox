@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.BaseDataAdaptor;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -559,7 +560,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         if (data instanceof BaseData) {
-            return DataFactory.setColumnValue((BaseData) data, column, value);
+            return BaseDataAdaptor.setColumnValue((BaseData) data, column, value);
         }
         return false;
     }
@@ -569,7 +570,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         if (data instanceof BaseData) {
-            return DataFactory.getColumnValue((BaseData) data, column);
+            return BaseDataAdaptor.getColumnValue((BaseData) data, column);
         }
         return null;
     }
@@ -599,7 +600,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         if (data instanceof BaseData) {
-            return DataFactory.valid((BaseData) data);
+            return BaseDataAdaptor.valid((BaseData) data);
         }
         return false;
     }
