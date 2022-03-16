@@ -1,9 +1,12 @@
 package mara.mybox.controller;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
 import javafx.stage.Window;
+import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -49,6 +52,37 @@ public class WebFavoritesController extends TreeManageController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    @Override
+    public void itemDoubleClicked() {
+        goAction();
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        String address = leafController.valueInput.getText();
+        if (address == null || address.isBlank()) {
+            popError(message("InvalidData") + ": " + message("Address"));
+            return;
+        }
+        WebBrowserController.oneOpen(address, true);
+    }
+
+    @Override
+    public TreeLeaf pickCurrentLeaf() {
+        TreeLeaf leaf = super.pickCurrentLeaf();
+        if (leaf == null) {
+            return null;
+        }
+        try {
+            URL url = new URL(leaf.getValue());
+        } catch (Exception e) {
+            popError(message("InvalidParemeters") + ": " + valueMsg);
+            return null;
+        }
+        return leaf;
     }
 
     /*

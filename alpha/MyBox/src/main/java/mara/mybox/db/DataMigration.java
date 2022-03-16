@@ -145,6 +145,11 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.5.4...");
 
             conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Tag ADD COLUMN category VARCHAR(" + StringMaxLength + ") NOT NULL DEFAULT 'Root'");
+            statement.executeUpdate("ALTER TABLE Tag ADD COLUMN color VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("DROP INDEX Tag_unique_index");
+            statement.executeUpdate("CREATE UNIQUE INDEX Tag_unique_index on Tag (  category, tag )");
+            statement.executeUpdate("UPDATE Tag SET category='" + TreeNode.Notebook + "'");
             statement.executeUpdate("ALTER TABLE Tree ADD COLUMN category VARCHAR(" + StringMaxLength + ")");
             statement.executeUpdate("ALTER TABLE Tree ADD COLUMN more VARCHAR(" + StringMaxLength + ")");
             statement.executeUpdate("UPDATE Tree SET category='" + TreeNode.Root + "' where nodeid=1");
@@ -156,8 +161,8 @@ public class DataMigration {
                     + "(select B.nodeid from tree AS B WHERE A.attribute=B.more AND "
                     + " B.category='" + TreeNode.Notebook + "') "
                     + " WHERE A.category='" + TreeNode.Notebook + "'");
-            statement.executeUpdate("INSERT INTO tree_leaf ( name, value, update_time, more) "
-                    + " SELECT title, html, update_time, CAST(ntid AS CHAR(36)) FROM note");
+            statement.executeUpdate("INSERT INTO tree_leaf ( category, name, value, update_time, more) "
+                    + " SELECT '" + TreeNode.Notebook + "', title, html, update_time, CAST(ntid AS CHAR(36)) FROM note");
             statement.executeUpdate("Update tree_leaf AS A set parentid="
                     + "(select B.nodeid from tree AS B, note AS C WHERE "
                     + "A.more=CAST(C.ntid AS CHAR(36)) AND B.category='" + TreeNode.Notebook + "' "
@@ -167,10 +172,12 @@ public class DataMigration {
                     + " where tree_leaf.more=CAST(note_tag.noteid AS CHAR(36))");
             statement.executeUpdate("UPDATE tree SET more=null, attribute=null");
             statement.executeUpdate("UPDATE tree_leaf SET more=null");
-            statement.executeUpdate("INSERT INTO tree_leaf ( name, value, more, parentid) "
-                    + " SELECT  title, address, icon, owner FROM Web_Favorite");
+            statement.executeUpdate("INSERT INTO tree_leaf ( category, name, value, more, parentid) "
+                    + " SELECT '" + TreeNode.WebFavorite + "', title, address, icon, owner FROM Web_Favorite");
             statement.executeUpdate("DROP TABLE Web_Favorite");
-
+            statement.executeUpdate("DROP TABLE Note_tag");
+            statement.executeUpdate("DROP TABLE Note");
+            statement.executeUpdate("DROP TABLE Notebook");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -990,7 +997,7 @@ public class DataMigration {
                     if (exist == null) {
                         MyBoxLog.debug(code.getLevelName() + " " + code.getCountryName()
                                 + " " + code.getProvinceName() + " " + code.getCityName()
-                                + " " + code.getId() + " " + code.getOwner());
+                                + " " + code.getGcid() + " " + code.getOwner());
                         continue;
                     }
                     EpidemicReport report = new EpidemicReport();
@@ -1007,7 +1014,7 @@ public class DataMigration {
                     }
                     report.setSource("Filled".equals(results.getString("comments")) ? (short) 3 : (short) 2);
                     report.setLocation(exist);
-                    report.setLocationid(exist.getId());
+                    report.setLocationid(exist.getGcid());
                     reports.add(report);
                 } catch (Exception e) {
                     MyBoxLog.debug(e.toString());

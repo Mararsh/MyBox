@@ -25,9 +25,6 @@ import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
-import mara.mybox.db.table.TableNote;
-import mara.mybox.db.table.TableNoteTag;
-import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
@@ -79,17 +76,8 @@ public class BaseDataAdaptor {
         } else if (data instanceof FileBackup) {
             return new TableFileBackup();
 
-        } else if (data instanceof Note) {
-            return new TableNote();
-
-        } else if (data instanceof Notebook) {
-            return new TableNotebook();
-
         } else if (data instanceof Tag) {
             return new TableTag();
-
-        } else if (data instanceof NoteTag) {
-            return new TableNoteTag();
 
         } else if (data instanceof ColorPaletteName) {
             return new TableColorPaletteName();
@@ -177,17 +165,8 @@ public class BaseDataAdaptor {
         } else if (data instanceof FileBackup) {
             return FileBackup.valid((FileBackup) data);
 
-        } else if (data instanceof Note) {
-            return Note.valid((Note) data);
-
-        } else if (data instanceof Notebook) {
-            return Notebook.valid((Notebook) data);
-
         } else if (data instanceof Tag) {
             return Tag.valid((Tag) data);
-
-        } else if (data instanceof NoteTag) {
-            return NoteTag.valid((NoteTag) data);
 
         } else if (data instanceof ColorPaletteName) {
             return ColorPaletteName.valid((ColorPaletteName) data);
@@ -273,17 +252,8 @@ public class BaseDataAdaptor {
         } else if (data instanceof FileBackup) {
             return FileBackup.getValue((FileBackup) data, name);
 
-        } else if (data instanceof Note) {
-            return Note.getValue((Note) data, name);
-
-        } else if (data instanceof Notebook) {
-            return Notebook.getValue((Notebook) data, name);
-
         } else if (data instanceof Tag) {
             return Tag.getValue((Tag) data, name);
-
-        } else if (data instanceof NoteTag) {
-            return NoteTag.getValue((NoteTag) data, name);
 
         } else if (data instanceof ColorPaletteName) {
             return ColorPaletteName.getValue((ColorPaletteName) data, name);
@@ -363,17 +333,8 @@ public class BaseDataAdaptor {
         } else if (data instanceof FileBackup) {
             return FileBackup.setValue((FileBackup) data, name, value);
 
-        } else if (data instanceof Note) {
-            return Note.setValue((Note) data, name, value);
-
-        } else if (data instanceof Notebook) {
-            return Notebook.setValue((Notebook) data, name, value);
-
         } else if (data instanceof Tag) {
             return Tag.setValue((Tag) data, name, value);
-
-        } else if (data instanceof NoteTag) {
-            return NoteTag.setValue((NoteTag) data, name, value);
 
         } else if (data instanceof ColorPaletteName) {
             return ColorPaletteName.setValue((ColorPaletteName) data, name, value);

@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
+import mara.mybox.value.TimeFormats;
 
 /**
  * @Author Mara
@@ -43,7 +43,7 @@ public class ControlTimeTree extends ControlConditionTree {
             super.initControls();
 
             List<String> s = new ArrayList();
-            s.add(Languages.message("AllTime"));
+            s.add(message("AllTime"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -68,8 +68,8 @@ public class ControlTimeTree extends ControlConditionTree {
     @Override
     public void loadTree() {
         CheckBoxTreeItem<ConditionNode> allItem = new CheckBoxTreeItem(
-                ConditionNode.create(Languages.message("AllTime"))
-                        .setTitle(Languages.message("AllTime"))
+                ConditionNode.create(message("AllTime"))
+                        .setTitle(message("AllTime"))
                         .setCondition("")
         );
         allItem.setExpanded(true);
@@ -336,9 +336,9 @@ public class ControlTimeTree extends ControlConditionTree {
             parentTime = parent.substring(0, 10);
         }
         String timeEra;
-        boolean isBC = false;
+        boolean isBC;
         for (Date time : times) {
-            String timeString = DateTools.datetimeToString(time);
+            String timeString = DateTools.datetimeToString(time, TimeFormats.DatetimeMs);
             if (!timeString.startsWith(parentTime)) {
                 continue;
             }
@@ -365,7 +365,7 @@ public class ControlTimeTree extends ControlConditionTree {
                 timeItem = new CheckBoxTreeItem(
                         ConditionNode.create(timeEra)
                                 .setTitle(timeEra)
-                                .setCondition(condition(timeString + (isBC ? " BC" : "")))
+                                .setCondition(condition(time))
                 );
                 parentItem.getChildren().add(timeItem);
             }
@@ -390,12 +390,11 @@ public class ControlTimeTree extends ControlConditionTree {
         }
     }
 
-    protected String condition(String time) {
-        if (!isEra) {
-            return " " + fieldName + "= '" + time + "'";
+    protected String condition(Date time) {
+        if (isEra) {
+            return " " + fieldName + "=" + time.getTime();
         } else {
-            long timeValue = DateTools.encodeEra(time).getTime();
-            return " " + fieldName + "=" + timeValue;
+            return " " + fieldName + "='" + time + "'";
         }
     }
 

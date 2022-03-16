@@ -235,8 +235,8 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static String codeEqual(GeographyCode code) {
-        if (code.getId() > 0) {
-            return "gcid=" + code.getId();
+        if (code.getGcid() > 0) {
+            return "gcid=" + code.getGcid();
         }
         int level = code.getLevel();
         String s = "level=" + level;
@@ -538,9 +538,9 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             return null;
         }
         try {
-            if (code.getId() > 0) {
+            if (code.getGcid() > 0) {
                 try ( PreparedStatement statement = conn.prepareStatement(GCidQeury)) {
-                    statement.setLong(1, code.getId());
+                    statement.setLong(1, code.getGcid());
                     return readCode(conn, statement, decodeAncestors);
                 }
             } else {
@@ -808,7 +808,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         }
         try {
             GeographyCode code = new GeographyCode();
-            code.setId(results.getLong("gcid"));
+            code.setGcid(results.getLong("gcid"));
             code.setSource(results.getShort("gcsource"));
             code.setLevel(results.getShort("level"));
             code.setLevelCode(new GeographyCodeLevel(code.getLevel()));
@@ -989,7 +989,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         try {
             GeographyCode exist = readCode(conn, code, false);
             if (exist != null) {
-                code.setId(exist.getId());
+                code.setGcid(exist.getGcid());
                 update(conn, code);
             } else {
                 insert(conn, code);
@@ -1023,7 +1023,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             for (GeographyCode code : codes) {
                 GeographyCode exist = readCode(conn, code, false);
                 if (exist != null) {
-                    code.setId(exist.getId());
+                    code.setGcid(exist.getGcid());
                     update(conn, update, code);
                 } else {
                     insert(conn, insert, code);
@@ -1067,8 +1067,8 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                     code.setBuilding(-1);
                     break;
                 case 2:
-                    if (code.getId() > 0) {
-                        code.setContinent(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setContinent(code.getGcid());
                     }
                     code.setCountry(-1);
                     code.setProvince(-1);
@@ -1079,8 +1079,8 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                     code.setBuilding(-1);
                     break;
                 case 3:
-                    if (code.getId() > 0) {
-                        code.setCountry(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setCountry(code.getGcid());
                     }
                     code.setProvince(-1);
                     code.setCity(-1);
@@ -1090,8 +1090,8 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                     code.setBuilding(-1);
                     break;
                 case 4:
-                    if (code.getId() > 0) {
-                        code.setProvince(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setProvince(code.getGcid());
                     }
                     code.setCity(-1);
                     code.setCounty(-1);
@@ -1100,8 +1100,8 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                     code.setBuilding(-1);
                     break;
                 case 5:
-                    if (code.getId() > 0) {
-                        code.setCity(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setCity(code.getGcid());
                     }
                     code.setCounty(-1);
                     code.setTown(-1);
@@ -1109,29 +1109,29 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                     code.setBuilding(-1);
                     break;
                 case 6:
-                    if (code.getId() > 0) {
-                        code.setCounty(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setCounty(code.getGcid());
                     }
                     code.setTown(-1);
                     code.setVillage(-1);
                     code.setBuilding(-1);
                     break;
                 case 7:
-                    if (code.getId() > 0) {
-                        code.setTown(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setTown(code.getGcid());
                     }
                     code.setVillage(-1);
                     code.setBuilding(-1);
                     break;
                 case 8:
-                    if (code.getId() > 0) {
-                        code.setVillage(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setVillage(code.getGcid());
                     }
                     code.setBuilding(-1);
                     break;
                 case 9:
-                    if (code.getId() > 0) {
-                        code.setBuilding(code.getId());
+                    if (code.getGcid() > 0) {
+                        code.setBuilding(code.getGcid());
                     }
                     break;
             }
@@ -1245,7 +1245,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             }
         } catch (Exception e) {
 //            MyBoxLog.error(e);
-            MyBoxLog.debug(code.getLevelName() + " " + code.getName() + " " + code.getId() + " " + code.getOwner());
+            MyBoxLog.debug(code.getLevelName() + " " + code.getName() + " " + code.getGcid() + " " + code.getOwner());
         }
         return false;
     }
@@ -1255,12 +1255,12 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             return false;
         }
         try {
-            if (code.getId() <= 0) {
+            if (code.getGcid() <= 0) {
                 long gcid = generateID(conn);
-                code.setId(gcid);
+                code.setGcid(gcid);
             }
             fixValues(code);
-            statement.setLong(1, code.getId());
+            statement.setLong(1, code.getGcid());
             statement.setShort(2, (short) code.getLevel());
             statement.setShort(3, code.getSourceValue());
             statement.setDouble(4, code.getLongitude());
@@ -1368,12 +1368,12 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             return false;
         }
         try {
-            if (code.getId() <= 0) {
+            if (code.getGcid() <= 0) {
                 GeographyCode exist = readCode(conn, code, false);
                 if (exist == null) {
                     return insert(conn, code);
                 }
-                code.setId(exist.getId());
+                code.setGcid(exist.getGcid());
             }
             setUpdate(conn, statement, code);
             return statement.executeUpdate() > 0;
@@ -1384,7 +1384,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static boolean setUpdate(Connection conn, PreparedStatement statement, GeographyCode code) {
-        if (conn == null || statement == null || code == null || !GeographyCode.valid(code) || code.getId() <= 0) {
+        if (conn == null || statement == null || code == null || !GeographyCode.valid(code) || code.getGcid() <= 0) {
             return false;
         }
         try {
@@ -1472,7 +1472,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             statement.setDouble(29, code.getAltitude());
             statement.setDouble(30, code.getPrecision());
             statement.setShort(31, code.getCoordinateSystem().shortValue());
-            statement.setLong(32, code.getId());
+            statement.setLong(32, code.getGcid());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1504,7 +1504,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             if (exist == null || GeographyCode.isPredefined(exist)) {
                 return false;
             }
-            statement.setLong(1, exist.getId());
+            statement.setLong(1, exist.getGcid());
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1523,10 +1523,10 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
                 for (int i = 0; i < codes.size(); ++i) {
                     GeographyCode code = codes.get(i);
-                    if (code.getId() <= 0 || GeographyCode.isPredefined(code)) {
+                    if (code.getGcid() <= 0 || GeographyCode.isPredefined(code)) {
                         continue;
                     }
-                    statement.setLong(1, code.getId());
+                    statement.setLong(1, code.getGcid());
                     statement.addBatch();
                     if (i > 0 && (i % BatchSize == 0)) {
                         int[] res = statement.executeBatch();
@@ -1570,7 +1570,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         try ( PreparedStatement query = conn.prepareStatement(FirstChildQuery)) {
             query.setMaxRows(1);
             for (GeographyCode code : nodes) {
-                long gcid = code.getId();
+                long gcid = code.getGcid();
                 query.setLong(1, gcid);
                 try ( ResultSet results = query.executeQuery()) {
                     if (results.next()) {

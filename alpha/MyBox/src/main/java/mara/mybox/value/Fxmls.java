@@ -16,13 +16,6 @@ public class Fxmls {
         document
      */
     public static final String NotesFxml = "/fxml/Notes.fxml";
-    public static final String NotesImportFxml = "/fxml/NotesImport.fxml";
-    public static final String NotesExportFxml = "/fxml/NotesExport.fxml";
-    public static final String NotesMoveNotebookFxml = "/fxml/NotesMoveNotebook.fxml";
-    public static final String NotesCopyNotebookFxml = "/fxml/NotesCopyNotebook.fxml";
-    public static final String NotesCopyNotesFxml = "/fxml/NotesCopyNotes.fxml";
-    public static final String NotesMoveNotesFxml = "/fxml/NotesMoveNotes.fxml";
-
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
     public static final String PdfAttributesBatchFxml = "/fxml/PdfAttributesBatch.fxml";
@@ -374,6 +367,7 @@ public class Fxmls {
     public static final String TreeNodeImportFxml = "/fxml/TreeNodeImport.fxml";
     public static final String TreeLeavesCopyFxml = "/fxml/TreeLeavesCopy.fxml";
     public static final String TreeLeavesMoveFxml = "/fxml/TreeLeavesMove.fxml";
+    public static final String TreeLeafParentFxml = "/fxml/TreeLeafParent.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
 

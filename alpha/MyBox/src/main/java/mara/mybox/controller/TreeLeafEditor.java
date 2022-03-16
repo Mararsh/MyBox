@@ -1,24 +1,17 @@
 package mara.mybox.controller;
 
-import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeLeaf;
-import mara.mybox.db.data.TreeLeafTag;
-import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
-import mara.mybox.db.table.TableTreeLeafTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
@@ -29,286 +22,245 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class TreeLeafEditor extends BaseController {
+public class TreeLeafEditor extends TreeTagsController {
 
-    protected TreeManageController treeController;
-    protected TreeNode treeNode, nodeOfCurrentLeaf;
-    protected TableTree tableTree;
-    protected TableTreeLeaf tableTreeLeaf;
-    protected TableTag tableTag;
-    protected TableTreeLeafTag tableTreeLeafTag;
-    protected boolean tagsChanged;
+    protected boolean leafChanged;
+    protected SimpleBooleanProperty changeNotify;
 
     @FXML
-    protected TextField idInput, nameInput, valueInput, moreInput, timeInput;
+    protected TextField idInput, nameInput, timeInput;
     @FXML
-    protected Label nameLabel, valueLabel, moreLabel, timeLabel;
+    protected TextInputControl valueInput, moreInput;
     @FXML
-    protected Button addTreeLeafTagButton;
-    @FXML
-    protected ControlCheckBoxList tagsController;
+    protected Label chainLabel, nameLabel, valueLabel, moreLabel, timeLabel;
 
-    public void setParameters(TreeManageController treeController) {
+    public TreeLeafEditor() {
+        changeNotify = new SimpleBooleanProperty(false);
+    }
+
+    @Override
+    public void initControls() {
         try {
-            this.treeController = treeController;
-            this.baseName = treeController.baseName;
-            tableTree = treeController.tableTree;
-            tableTag = new TableTag();
-            tableTreeLeafTag = new TableTreeLeafTag();
-            saveButton = treeController.saveButton;
+            super.initControls();
 
-            nameLabel.setText(treeController.nameMsg);
-            valueLabel.setText(treeController.valueMsg);
-            if (moreLabel != null) {
-                moreLabel.setText(treeController.moreMsg);
+            nameInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    leafChanged(true);
+                }
+            });
+
+            if (valueInput != null) {
+                valueInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue v, String ov, String nv) {
+                        leafChanged(true);
+                    }
+                });
             }
-            timeLabel.setText(treeController.timeMsg);
 
-            tagsController.setParent(treeController);
-            refreshTags();
+            if (moreInput != null) {
+                moreInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue v, String ov, String nv) {
+                        leafChanged(true);
+                    }
+                });
+            }
+
+            if (valueInput != null) {
+                valueInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue v, String ov, String nv) {
+                        leafChanged(true);
+                    }
+                });
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    protected void editLeaf(TreeLeaf leaf) {
-        synchronized (this) {
-            treeController.currentLeaf = leaf;
-            if (leaf != null) {
-                idInput.setText(leaf.getLeafid() + "");
-                nameInput.setText(leaf.getName());
-                valueInput.setText(leaf.getValue());
-                if (moreInput != null) {
-                    moreInput.setText(leaf.getMore());
-                }
-                timeInput.setText(DateTools.datetimeToString(leaf.getTime()));
-            } else {
-                idInput.setText("");
-                nameInput.setText("");
-                valueInput.setText("");
-                if (moreInput != null) {
-                    moreInput.setText("");
-                }
-                timeInput.setText("");
+    @Override
+    public void setParameters(TreeManageController treeController) {
+        try {
+            super.setParameters(treeController);
+
+            nameLabel.setText(treeController.nameMsg);
+            if (valueLabel != null) {
+                valueLabel.setText(treeController.valueMsg);
             }
-            refreshTags();
-            treeController.updateNodeOfCurrentLeaf();
-            treeController.showRightPane();
+            if (moreLabel != null) {
+                moreLabel.setText(treeController.moreMsg);
+            }
+            timeLabel.setText(treeController.timeMsg);
+
+            treeController.tagsController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
+                    isSettingValues = true;
+                    tableData.setAll(treeController.tagsController.tableData);
+                    isSettingValues = false;
+                    markTags();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
-    @FXML
-    protected void copyLeaf() {
-        idInput.setText("");
+    public void leafChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        leafChanged = changed;
+        changeNotify.set(!changeNotify.get());
+    }
+
+    @Override
+    public void notifySelected() {
+        if (isSettingValues) {
+            return;
+        }
+        leafChanged(true);
+        selectedNotify.set(!selectedNotify.get());
+    }
+
+    protected synchronized void editLeaf(TreeLeaf leaf) {
+        isSettingValues = true;
+        treeController.currentLeaf = leaf;
+        if (leaf != null) {
+            idInput.setText(leaf.getLeafid() + "");
+            nameInput.setText(leaf.getName());
+            if (valueInput != null) {
+                valueInput.setText(leaf.getValue());
+            }
+            if (moreInput != null) {
+                moreInput.setText(leaf.getMore());
+            }
+            timeInput.setText(DateTools.datetimeToString(leaf.getTime()));
+            selectButton.setVisible(leaf.getLeafid() < 0);
+        } else {
+            idInput.setText(message("NewData"));
+            nameInput.setText("");
+            if (valueInput != null) {
+                valueInput.setText("");
+            }
+            if (moreInput != null) {
+                moreInput.setText("");
+            }
+            timeInput.setText("");
+            selectButton.setVisible(true);
+        }
+        isSettingValues = false;
+        leafChanged(false);
+        updateNodeOfCurrentLeaf();
+        refreshAction();
+        showEditorPane();
+    }
+
+    protected void showEditorPane() {
+        treeController.showRightPane();
+    }
+
+    protected void updateNodeOfCurrentLeaf() {
+        SingletonTask updateTask = new SingletonTask<Void>(this) {
+            private String chainName;
+
+            @Override
+            protected boolean handle() {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    if (treeController.currentLeaf != null) {
+                        if (treeController.nodeOfCurrentLeaf == null
+                                || treeController.nodeOfCurrentLeaf.getNodeid() != treeController.currentLeaf.getParentid()) {
+                            treeController.nodeOfCurrentLeaf = tableTree.find(conn, treeController.currentLeaf.getParentid());
+                        }
+                    }
+                    if (treeController.nodeOfCurrentLeaf == null) {
+                        treeController.nodeOfCurrentLeaf = treeController.nodesController.root(conn);
+                    }
+                    if (treeController.nodeOfCurrentLeaf == null) {
+                        return false;
+                    }
+                    chainName = treeController.nodesController.chainName(conn, treeController.nodeOfCurrentLeaf);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                chainLabel.setText(chainName);
+            }
+        };
+        start(updateTask, false);
+    }
+
+    protected synchronized void copyLeaf() {
+        isSettingValues = true;
+        idInput.setText(message("NewData"));
         nameInput.appendText(" " + message("Copy"));
         treeController.currentLeaf = null;
+        selectButton.setVisible(true);
+        isSettingValues = false;
+        leafChanged(true);
     }
 
-    public void saveLeaf() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            String name = nameInput.getText();
-            if (name == null || name.isBlank()) {
-                popError(message("InvalidData") + ": " + message("Title"));
-                return;
-            }
-            String value = valueInput.getText();
-            if (TreeNode.WebFavorite.equals(treeController.category)) {
-                try {
-                    URL url = new URL(value);
-                } catch (Exception e) {
-                    popError(message("InvalidData") + ": " + message("Address"));
-                    return;
-                }
-            }
-            String more = moreInput != null ? moreInput.getText() : null;
-            task = new SingletonTask<Void>(this) {
-                private TreeLeaf data;
-                private boolean notExist = false;
-
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        data = new TreeLeaf();
-                        data.setName(name);
-                        data.setValue(value);
-                        data.setMore(more);
-                        data.setTime(new Date());
-                        if (treeController.currentLeaf != null) {
-                            treeController.currentLeaf = tableTreeLeaf.readData(conn, treeController.currentLeaf);
-                            nodeOfCurrentLeaf = tableTree.readData(conn, nodeOfCurrentLeaf);
-                            if (treeController.currentLeaf == null || nodeOfCurrentLeaf == null) {
-                                notExist = true;
-                                treeController.currentLeaf = null;
-                                return true;
-                            } else {
-                                data.setLeafid(treeController.currentLeaf.getLeafid());
-                                data.setParentid(treeController.currentLeaf.getParentid());
-                                treeController.currentLeaf = tableTreeLeaf.updateData(conn, data);
-                            }
-                        } else {
-                            if (nodeOfCurrentLeaf == null) {
-                                nodeOfCurrentLeaf = treeController.nodesController.root(conn);
-                            }
-                            data.setParentid(nodeOfCurrentLeaf.getNodeid());
-                            treeController.currentLeaf = tableTreeLeaf.insertData(conn, data);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return treeController.currentLeaf != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (notExist) {
-                        copyLeaf();
-                        popError(message("NotExist"));
-                    } else {
-                        popSaved();
-                        editLeaf(treeController.currentLeaf);
-                        if (treeController.nodesController.selectedNode != null
-                                && treeController.currentLeaf.getParentid() == treeController.nodesController.selectedNode.getNodeid()) {
-                            treeController.refreshAction();
-                        }
-                    }
-                }
-
-            };
-            start(task, false);
+    public void markTags() {
+        if (task != null) {
+            task.cancel();
         }
-    }
-
-    @FXML
-    public void refreshTags() {
-        synchronized (this) {
-            tagsController.clear();
-            thisPane.setDisable(true);
-            SingletonTask noteTagsTask = new SingletonTask<Void>(this) {
-                private List<String> tagsString;
-                private List<Integer> selected;
-
-                @Override
-                protected boolean handle() {
-                    tagsString = new ArrayList<>();
-                    selected = new ArrayList<>();
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        List<Tag> tags = tableTag.readAll(conn);
-                        if (tags != null && !tags.isEmpty()) {
-                            for (Tag tag : tags) {
-                                tagsString.add(tag.getTag());
-                            }
-                            if (treeController.currentLeaf != null) {
-                                List<Long> tagIDs = tableTreeLeafTag.readTags(conn, treeController.currentLeaf.getLeafid());
-                                if (tagIDs != null && !tagIDs.isEmpty()) {
-                                    for (int i = 0; i < tags.size(); i++) {
-                                        Tag tag = tags.get(i);
-                                        if (tagIDs.contains(tag.getTgid())) {
-                                            selected.add(i);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    tagsController.setValues(tagsString);
-                    tagsController.setCheckIndices(selected);
-                    tagsChanged(false);
-                }
-
-                @Override
-                protected void finalAction() {
-                    thisPane.setDisable(false);
-                }
-
-            };
-            start(noteTagsTask, false);
+        if (tableData.isEmpty() || treeController.currentLeaf == null) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+            private List<String> leafTags;
+
+            @Override
+            protected boolean handle() {
+                leafTags = tableTreeLeafTag.leafTagNames(treeController.currentLeaf.getLeafid());
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (leafTags != null && !leafTags.isEmpty()) {
+                    isSettingValues = true;
+                    for (Tag tag : tableData) {
+                        if (leafTags.contains(tag.getTag())) {
+                            tableView.getSelectionModel().select(tag);
+                        }
+                    }
+                    isSettingValues = false;
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                thisPane.setDisable(false);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
-    public void selectAllTags() {
-        tagsController.checkAll();
-        tagsChanged(true);
-    }
-
-    @FXML
-    public void selectNoneTags() {
-        tagsController.checkNone();
-        tagsChanged(true);
-    }
-
-    @FXML
+    @Override
     public void addTag() {
         treeController.tagsController.addTag(true);
     }
 
     @FXML
-    public void okTags() {
-        if (treeController.currentLeaf == null) {
+    public void selectParent() {
+        if (treeController.currentLeaf != null && treeController.currentLeaf.getLeafid() >= 0) {
+            selectButton.setVisible(false);
             return;
         }
-        synchronized (this) {
-            treeController.rightPane.setDisable(true);
-            SingletonTask noteTagsTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    List<String> selected = tagsController.checkedValues();
-                    long leafid = treeController.currentLeaf.getLeafid();
-                    try ( Connection conn = DerbyBase.getConnection();
-                             PreparedStatement query = conn.prepareStatement(TableTag.QueryTag);
-                             PreparedStatement delete = conn.prepareStatement(TableTreeLeafTag.DeleteLeafTags)) {
-                        delete.setLong(1, leafid);
-                        delete.executeUpdate();
-                        conn.commit();
-                        if (selected != null) {
-                            List<TreeLeafTag> tags = new ArrayList<>();
-                            for (String value : selected) {
-                                Tag tag = tableTag.query(conn, query, value);
-                                if (tag == null) {
-                                    continue;
-                                }
-                                tags.add(new TreeLeafTag(leafid, tag.getTgid()));
-                            }
-                            tableTreeLeafTag.insertList(conn, tags);
-                        }
-                        conn.commit();
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    tagsChanged(false);
-                }
-
-                @Override
-                protected void finalAction() {
-                    treeController.rightPane.setDisable(false);
-                }
-
-            };
-            start(noteTagsTask, false);
-        }
-    }
-
-    public void tagsChanged(boolean changed) {
-        tagsChanged = changed;
+        TreeLeafParentController.open(treeController);
     }
 
 }

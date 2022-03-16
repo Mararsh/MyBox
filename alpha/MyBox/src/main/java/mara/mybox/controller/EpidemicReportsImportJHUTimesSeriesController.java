@@ -157,7 +157,7 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                             }
                             continue;
                         }
-                        long locationid = locationCode.getId();
+                        long locationid = locationCode.getGcid();
                         String dateSting = DateTools.datetimeToString(date.getTime());
                         equalQuery.setString(1, EpidemicReport.COVID19JHU);
                         equalQuery.setString(2, dateSting);

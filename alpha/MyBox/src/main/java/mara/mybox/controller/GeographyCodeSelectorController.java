@@ -143,7 +143,7 @@ public class GeographyCodeSelectorController extends BaseController {
             return;
         }
         for (GeographyCode code : codes) {
-            long codeid = code.getId();
+            long codeid = code.getGcid();
             Text codeNode = new Text(code.getName());
             codeNode.setOnMouseClicked((MouseEvent event) -> {
                 userController.codeSelected(code);
@@ -219,7 +219,7 @@ public class GeographyCodeSelectorController extends BaseController {
                         }
                         String sql = "SELECT * FROM Geography_Code WHERE "
                                 + " ( " + condition + " ) AND "
-                                + level.getKey() + "=" + code.getId()
+                                + level.getKey() + "=" + code.getGcid()
                                 + " ORDER BY gcid ";
                         children = TableGeographyCode.queryCodes(conn, sql, true);
                         if (children == null || children.isEmpty()) {
@@ -260,12 +260,12 @@ public class GeographyCodeSelectorController extends BaseController {
         }
         if (node.getValue().getUserData() != null) {
             long current = (long) (node.getValue().getUserData());
-            if (current == parent.getId()) {
+            if (current == parent.getGcid()) {
                 Text childNode = new Text(child.getName());
                 childNode.setOnMouseClicked((MouseEvent event) -> {
                     userController.codeSelected(child);
                 });
-                childNode.setUserData(child.getId());
+                childNode.setUserData(child.getGcid());
                 TreeItem<Text> codeItem = new TreeItem(childNode);
                 node.getChildren().add(codeItem);
                 node.setExpanded(true);
@@ -294,7 +294,7 @@ public class GeographyCodeSelectorController extends BaseController {
         for (TreeItem<Text> subNode : node.getChildren()) {
             if (subNode.getValue().getUserData() != null) {
                 long subCode = (long) (subNode.getValue().getUserData());
-                if (subCode == code.getId()) {
+                if (subCode == code.getGcid()) {
                     node.getChildren().remove(subNode);
                     return;
                 }

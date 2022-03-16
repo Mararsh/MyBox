@@ -85,7 +85,7 @@ public class Data2DExportController extends BaseTaskController {
                     checkOptions();
                 }
             });
-            sourceController.selectNotify.addListener(new ChangeListener<Boolean>() {
+            sourceController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();

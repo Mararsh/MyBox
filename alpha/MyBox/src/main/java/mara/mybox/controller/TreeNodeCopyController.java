@@ -144,7 +144,8 @@ public class TreeNodeCopyController extends TreeNodesController {
             if (leaves != null) {
                 conn.setAutoCommit(false);
                 for (TreeLeaf leaf : leaves) {
-                    TreeLeaf newLeaf = new TreeLeaf(targetid, leaf.getName(), leaf.getValue(), leaf.getMore());
+                    TreeLeaf newLeaf = TreeLeaf.create().setParentid(targetid).setCategory(category)
+                            .setName(leaf.getName()).setValue(leaf.getValue()).setMore(leaf.getMore());
                     tableTreeLeaf.insertData(conn, newLeaf);
                 }
                 conn.commit();

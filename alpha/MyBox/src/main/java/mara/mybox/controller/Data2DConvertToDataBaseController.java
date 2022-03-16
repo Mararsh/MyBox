@@ -56,7 +56,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
                     checkSource();
                 }
             });
-            sourceController.selectNotify.addListener(new ChangeListener<Boolean>() {
+            sourceController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkSource();

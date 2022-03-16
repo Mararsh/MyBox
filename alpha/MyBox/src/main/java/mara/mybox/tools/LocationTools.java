@@ -322,6 +322,7 @@ public class LocationTools {
                     return location;
             }
             Location newCode = (Location) location.clone();
+            newCode.setLdid(-1);
             newCode.setLongitude(coordinate[0]);
             newCode.setLatitude(coordinate[1]);
             newCode.setCoordinateSystem(CoordinateSystem.WGS84());
@@ -373,6 +374,7 @@ public class LocationTools {
                     return location;
             }
             Location newLocation = (Location) location.clone();
+            newLocation.setLdid(-1);
             newLocation.setLongitude(coordinate[0]);
             newLocation.setLatitude(coordinate[1]);
             newLocation.setCoordinateSystem(CoordinateSystem.GCJ02());
@@ -427,6 +429,7 @@ public class LocationTools {
                     double longitudeC = Double.parseDouble(values[0]);
                     double latitudeC = Double.parseDouble(values[1]);
                     Location newCode = (Location) codes.get(i).clone();
+                    newCode.setLdid(-1);
                     newCode.setLongitude(longitudeC);
                     newCode.setLatitude(latitudeC);
                     newCode.setCoordinateSystem(GCJ02);

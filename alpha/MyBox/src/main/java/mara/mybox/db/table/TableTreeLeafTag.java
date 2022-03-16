@@ -8,7 +8,6 @@ import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeLeafTag;
@@ -53,10 +52,13 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
             = "CREATE UNIQUE INDEX Tree_Leaf_Tag_unique_index on Tree_Leaf_Tag ( leaffid , tagid  )";
 
     public static final String QueryLeafTags
-            = "SELECT * FROM Tree_Leaf_Tag WHERE leaffid=?";
+            = "SELECT * FROM Tree_Leaf_Tag, Tag WHERE leaffid=? AND tagid=tgid";
 
     public static final String DeleteLeafTags
             = "DELETE FROM Tree_Leaf_Tag WHERE leaffid=?";
+
+    public static final String DeleteLeafTag
+            = "DELETE FROM Tree_Leaf_Tag WHERE leaffid=? AND tagid=?";
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
@@ -80,7 +82,7 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         if (data == null || column == null || value == null) {
             return true;
         }
-        if ("leaffid".equals(column) && value instanceof Note) {
+        if ("leaffid".equals(column) && value instanceof TreeLeaf) {
             data.setLeaf((TreeLeaf) value);
         }
         if ("tagid".equals(column) && value instanceof Tag) {
@@ -89,29 +91,105 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         return true;
     }
 
-    public List<Long> readTags(long leafid) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            return readTags(conn, leafid);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+    public List<TreeLeafTag> leafTags(long leafid) {
+        List<TreeLeafTag> tags = new ArrayList<>();
+        if (leafid < 0) {
+            return tags;
         }
-    }
-
-    public List<Long> readTags(Connection conn, long leafid) {
-        List<Long> tags = new ArrayList();
-        try ( PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
             statement.setLong(1, leafid);
-            try ( ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    TreeLeafTag data = readData(results);
-                    tags.add(data.getTagid());
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                TreeLeafTag tag = readData(results);
+                if (tag != null) {
+                    tags.add(tag);
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         return tags;
+    }
+
+    public List<String> leafTagNames(long leafid) {
+        List<String> tags = new ArrayList<>();
+        if (leafid < 0) {
+            return tags;
+        }
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
+            statement.setLong(1, leafid);
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                TreeLeafTag leafTag = readData(results);
+                if (leafTag != null) {
+                    tags.add(leafTag.getTag().getTag());
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return tags;
+    }
+
+    public int addTags(Connection conn, long leafid, String category, List<String> tags) {
+        if (conn == null || leafid < 0 || category == null || category.isBlank()
+                || tags == null || tags.isEmpty()) {
+            return -1;
+        }
+        String sql = "INSERT INTO Tree_Leaf_Tag (leaffid, tagid) "
+                + "SELECT " + leafid + ", tgid FROM Tag "
+                + "WHERE category='" + category + "' AND tag IN (";
+        for (int i = 0; i < tags.size(); i++) {
+            if (i > 0) {
+                sql += ",";
+            }
+            sql += "'" + tags.get(i) + "'";
+        }
+        sql += ")";
+        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public int removeTags(Connection conn, long leafid, String category, List<String> tags) {
+        if (conn == null || leafid < 0 || category == null || category.isBlank()
+                || tags == null || tags.isEmpty()) {
+            return -1;
+        }
+        String sql = "DELETE FROM Tree_Leaf_Tag WHERE leaffid=" + leafid + " AND "
+                + "tagid IN (SELECT tgid FROM Tag "
+                + "WHERE category='" + category + "' AND tag IN (";
+        for (int i = 0; i < tags.size(); i++) {
+            if (i > 0) {
+                sql += ",";
+            }
+            sql += "'" + tags.get(i) + "'";
+        }
+        sql += " ) )";
+        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public int removeTags(Connection conn, long leafid) {
+        if (conn == null || leafid < 0) {
+            return -1;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(DeleteLeafTags)) {
+            statement.setLong(1, leafid);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
     }
 
     /*

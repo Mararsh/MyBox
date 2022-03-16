@@ -966,15 +966,19 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void checkLeftPane() {
         try {
             if (isSettingValues || splitPane == null || leftPane == null
-                    || leftPaneCheck == null || leftPaneControl == null) {
+                    || leftPaneCheck == null) {
                 return;
             }
             if (leftPaneCheck.isSelected()) {
-                leftPaneControl.setVisible(true);
+                if (leftPaneControl != null) {
+                    leftPaneControl.setVisible(true);
+                }
                 showLeftPane();
             } else {
                 hideLeftPane();
-                leftPaneControl.setVisible(false);
+                if (leftPaneControl != null) {
+                    leftPaneControl.setVisible(false);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -984,15 +988,19 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void checkRightPane() {
         try {
             if (isSettingValues || splitPane == null || rightPane == null
-                    || rightPaneCheck == null || rightPaneControl == null) {
+                    || rightPaneCheck == null) {
                 return;
             }
             if (rightPaneCheck.isSelected()) {
-                rightPaneControl.setVisible(true);
+                if (rightPaneControl != null) {
+                    rightPaneControl.setVisible(true);
+                }
                 showRightPane();
             } else {
                 hideRightPane();
-                rightPaneControl.setVisible(false);
+                if (rightPaneControl != null) {
+                    rightPaneControl.setVisible(false);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1002,7 +1010,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public boolean checkRightPaneHide() {
         try {
             if (isSettingValues || splitPane == null || rightPane == null
-                    || rightPaneControl == null || !rightPaneControl.isVisible()
+                    || (rightPaneControl != null && !rightPaneControl.isVisible())
                     || !splitPane.getItems().contains(rightPane)
                     || splitPane.getItems().size() == 1) {
                 return false;
@@ -1079,7 +1087,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     @FXML
     public void controlLeftPane() {
         if (isSettingValues || splitPane == null || leftPane == null
-                || leftPaneControl == null || !leftPaneControl.isVisible()) {
+                || (leftPaneControl != null && !leftPaneControl.isVisible())) {
             return;
         }
         if (splitPane.getItems().contains(leftPane)) {
@@ -1091,7 +1099,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void hideLeftPane() {
         if (isSettingValues || splitPane == null || leftPane == null
-                || leftPaneControl == null || !leftPaneControl.isVisible()
+                || (leftPaneControl != null && !leftPaneControl.isVisible())
                 || !splitPane.getItems().contains(leftPane)
                 || splitPane.getItems().size() == 1) {
             return;
@@ -1102,12 +1110,14 @@ public abstract class BaseController_Interface extends BaseController_Files {
         setSplitDividerPositions();
         refreshStyle(splitPane);
         UserConfig.setBoolean(baseName + "ShowLeftControl", false);
-        StyleTools.setIconName(leftPaneControl, "iconDoubleRight.png");
+        if (leftPaneControl != null) {
+            StyleTools.setIconName(leftPaneControl, "iconDoubleRight.png");
+        }
     }
 
     public void showLeftPane() {
         if (isSettingValues || splitPane == null || leftPane == null
-                || leftPaneControl == null || !leftPaneControl.isVisible()
+                || (leftPaneControl != null && !leftPaneControl.isVisible())
                 || splitPane.getItems().contains(leftPane)) {
             return;
         }
@@ -1117,7 +1127,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
         setSplitDividerPositions();
         refreshStyle(splitPane);
         UserConfig.setBoolean(baseName + "ShowLeftControl", true);
-        StyleTools.setIconName(leftPaneControl, "iconDoubleLeft.png");
+        if (leftPaneControl != null) {
+            StyleTools.setIconName(leftPaneControl, "iconDoubleLeft.png");
+        }
         leftPane.setHvalue(0);
         leftPane.setVvalue(0);
     }
@@ -1125,7 +1137,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     @FXML
     public void controlRightPane() {
         if (isSettingValues || splitPane == null || rightPane == null
-                || rightPaneControl == null || !rightPaneControl.isVisible()) {
+                || (rightPaneControl != null && !rightPaneControl.isVisible())) {
             return;
         }
         if (splitPane.getItems().contains(rightPane)) {
@@ -1137,7 +1149,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void hideRightPane() {
         if (isSettingValues || splitPane == null || rightPane == null
-                || rightPaneControl == null || !rightPaneControl.isVisible()
+                || (rightPaneControl != null && !rightPaneControl.isVisible())
                 || !splitPane.getItems().contains(rightPane)
                 || splitPane.getItems().size() == 1) {
             return;
@@ -1148,13 +1160,15 @@ public abstract class BaseController_Interface extends BaseController_Files {
         setSplitDividerPositions();
         refreshStyle(splitPane);
         UserConfig.setBoolean(baseName + "ShowRightControl", false);
-        StyleTools.setIconName(rightPaneControl, "iconDoubleLeft.png");
+        if (rightPaneControl != null) {
+            StyleTools.setIconName(rightPaneControl, "iconDoubleLeft.png");
+        }
     }
 
     public void showRightPane() {
         try {
             if (isSettingValues || splitPane == null || rightPane == null
-                    || rightPaneControl == null || !rightPaneControl.isVisible()
+                    || (rightPaneControl != null && !rightPaneControl.isVisible())
                     || splitPane.getItems().contains(rightPane)) {
                 return;
             }
@@ -1164,7 +1178,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
             setSplitDividerPositions();
             refreshStyle(splitPane);
             UserConfig.setBoolean(baseName + "ShowRightControl", true);
-            StyleTools.setIconName(rightPaneControl, "iconDoubleRight.png");
+            if (rightPaneControl != null) {
+                StyleTools.setIconName(rightPaneControl, "iconDoubleRight.png");
+            }
             rightPane.setHvalue(0);
             rightPane.setVvalue(0);
         } catch (Exception e) {

@@ -87,7 +87,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                     checkOptions();
                 }
             });
-            sourceController.selectNotify.addListener(new ChangeListener<Boolean>() {
+            sourceController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();

@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
@@ -33,6 +35,7 @@ public class TableTreeLeaf extends BaseTable<TreeLeaf> {
 
     public final TableTreeLeaf defineColumns() {
         addColumn(new ColumnDefinition("leafid", ColumnType.Long, true, true).setAuto(true));
+        addColumn(new ColumnDefinition("category", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("name", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("more", ColumnType.String).setLength(StringMaxLength));
@@ -61,6 +64,9 @@ public class TableTreeLeaf extends BaseTable<TreeLeaf> {
 
     public static final String ChildrenCount
             = "SELECT COUNT(leafid) FROM Tree_leaf WHERE parentid=?";
+
+    public static final String Times
+            = "SELECT DISTINCT update_time FROM Tree_leaf WHERE category=? ORDER BY update_time DESC";
 
     public TreeLeaf find(long id) {
         try ( Connection conn = DerbyBase.getConnection()) {
@@ -192,6 +198,10 @@ public class TableTreeLeaf extends BaseTable<TreeLeaf> {
         return thisIndex;
     }
 
+    public long size(String category) {
+        return conditionSize("category='" + category + "'");
+    }
+
     /*
         static methods
      */
@@ -241,6 +251,48 @@ public class TableTreeLeaf extends BaseTable<TreeLeaf> {
             }
         }
         return count;
+    }
+
+    public static String tagsCondition(List<Tag> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return null;
+        }
+        String condition = " leafid IN ( SELECT leaffid FROM Tree_leaf_Tag WHERE tagid IN ( " + tags.get(0).getTgid();
+        for (int i = 1; i < tags.size(); ++i) {
+            condition += ", " + tags.get(i).getTgid();
+        }
+        condition += " ) ) ";
+        return condition;
+    }
+
+    public static List<Date> times(String category) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setReadOnly(true);
+            return times(conn, category);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<Date> times(Connection conn, String category) {
+        List<Date> times = new ArrayList();
+        if (conn == null) {
+            return times;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(Times)) {
+            statement.setString(1, category);
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                Date time = results.getTimestamp("update_time");
+                if (time != null) {
+                    times.add(time);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return times;
     }
 
 }

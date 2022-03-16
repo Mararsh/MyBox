@@ -29,7 +29,6 @@ public class TreeLeavesCopyController extends TreeNodesController {
 
     public void setParamters(TreeManageController treeController) {
         this.treeController = treeController;
-        tableTreeLeaf = treeController.tableTreeLeaf;
         setCaller(treeController.nodesController);
     }
 
@@ -72,7 +71,8 @@ public class TreeLeavesCopyController extends TreeNodesController {
                         long parentid = targetNode.getNodeid();
                         List<TreeLeaf> newLeaves = new ArrayList<>();
                         for (TreeLeaf leaf : leaves) {
-                            TreeLeaf newLeaf = new TreeLeaf(parentid, leaf.getName(), leaf.getValue(), leaf.getMore());
+                            TreeLeaf newLeaf = TreeLeaf.create().setParentid(parentid).setCategory(category)
+                                    .setName(leaf.getName()).setValue(leaf.getValue()).setMore(leaf.getMore());
                             newLeaves.add(newLeaf);
                         }
                         count = tableTreeLeaf.insertList(newLeaves);

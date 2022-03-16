@@ -270,7 +270,7 @@ public class EpidemicReport extends BaseData {
 
     public long getLocationid() {
         if (locationid <= 0 && location != null) {
-            locationid = location.getId();
+            locationid = location.getGcid();
         }
         return locationid;
     }

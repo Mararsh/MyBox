@@ -46,7 +46,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
     protected boolean readOnly;
-    protected SimpleBooleanProperty statusNotify, loadedNotify;
+    protected SimpleBooleanProperty statusNotify;
     protected Label dataLabel;
 
     @FXML
@@ -54,7 +54,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
-        loadedNotify = new SimpleBooleanProperty(false);
         readOnly = true;
     }
 
@@ -427,6 +426,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
+    @Override
     public void notifyLoaded() {
         notifyStatus();
         loadedNotify.set(!loadedNotify.get());
@@ -833,7 +833,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public void cleanPane() {
         try {
             statusNotify = null;
-            loadedNotify = null;
             dataController = null;
             data2D = null;
         } catch (Exception e) {

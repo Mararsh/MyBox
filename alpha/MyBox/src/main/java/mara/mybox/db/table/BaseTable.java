@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.BaseDataAdaptor;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -18,6 +17,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
@@ -1097,7 +1097,6 @@ public abstract class BaseTable<D> {
         }
         String sql = "SELECT * FROM " + tableName + c
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
-//        MyBoxLog.debug(sql);
         return query(conn, sql);
     }
 

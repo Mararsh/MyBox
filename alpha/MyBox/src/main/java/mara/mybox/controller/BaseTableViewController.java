@@ -57,7 +57,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected long pagesNumber, dataSize;
     protected long currentPage, startRowOfCurrentPage;  // 0-based
     protected boolean dataSizeLoaded, loadInBackground;
-    protected final SimpleBooleanProperty selectNotify;
+    protected SimpleBooleanProperty loadedNotify, selectedNotify;
 
     @FXML
     protected TableView<P> tableView;
@@ -77,7 +77,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public BaseTableViewController() {
         tableName = "";
         TipsLabelKey = "TableTips";
-        selectNotify = new SimpleBooleanProperty(false);
+        selectedNotify = new SimpleBooleanProperty(false);
+        loadedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -144,7 +145,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 @Override
                 public void onChanged(ListChangeListener.Change c) {
                     checkSelected();
-                    notifySelect();
+                    notifySelected();
                 }
             });
 
@@ -180,11 +181,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    public void notifySelect() {
+    public void notifySelected() {
         if (isSettingValues) {
             return;
         }
-        selectNotify.set(!selectNotify.get());
+        selectedNotify.set(!selectedNotify.get());
     }
 
     public boolean checkBeforeLoadingTableData() {
@@ -258,10 +259,15 @@ public abstract class BaseTableViewController<P> extends BaseController {
         editNull();
         viewNull();
         tableChanged(false);
+        notifyLoaded();
         if (!dataSizeLoaded) {
             loadDataSize();
         }
         setPagination();
+    }
+
+    public void notifyLoaded() {
+        loadedNotify.set(!loadedNotify.get());
     }
 
     public long readDataSize() {
@@ -1237,6 +1243,17 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @Override
     public void pageLastAction() {
         loadPage(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            selectedNotify = null;
+            loadedNotify = null;
+            tableData = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

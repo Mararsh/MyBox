@@ -17,7 +17,7 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class Location extends BaseData implements Cloneable {
-    
+
     protected long ldid, datasetid, startTime, endTime, duration;
     protected String datasetName, address, comments, label,
             startTimeText, endTimeText, periodText, durationText;
@@ -27,7 +27,7 @@ public class Location extends BaseData implements Cloneable {
     protected CoordinateSystem coordinateSystem;
     protected Dataset dataset;
     protected Era startEra, endEra;
-    
+
     public Location() {
         ldid = datasetid = -1;
         longitude = latitude = altitude = precision = speed = dataValue = dataSize = AppValues.InvalidDouble;
@@ -35,12 +35,11 @@ public class Location extends BaseData implements Cloneable {
         direction = AppValues.InvalidShort;
         coordinateSystem = CoordinateSystem.defaultCode();
     }
-    
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
             Location newCode = (Location) super.clone();
-            newCode.setLdid(-1);
             if (coordinateSystem != null) {
                 newCode.setCoordinateSystem((CoordinateSystem) coordinateSystem.clone());
             }
@@ -60,11 +59,11 @@ public class Location extends BaseData implements Cloneable {
     public static Location create() {
         return new Location();
     }
-    
+
     public static Location create(double longitude, double latitude) {
         return new Location().setLongitude(longitude).setLatitude(latitude);
     }
-    
+
     public static Location create(GeographyCode code) {
         return new Location()
                 .setLongitude(code.getLongitude())
@@ -76,7 +75,7 @@ public class Location extends BaseData implements Cloneable {
                 .setAddress(code.getFullName())
                 .setComments(code.getComments());
     }
-    
+
     public static boolean setValue(Location data, String column, Object value) {
         if (data == null || column == null) {
             return false;
@@ -141,7 +140,7 @@ public class Location extends BaseData implements Cloneable {
         }
         return false;
     }
-    
+
     public static Object getValue(Location data, String column) {
         if (data == null || column == null) {
             return null;
@@ -186,13 +185,13 @@ public class Location extends BaseData implements Cloneable {
         }
         return null;
     }
-    
+
     public static boolean valid(Location data) {
         return data != null
                 && data.getLongitude() >= -180 && data.getLongitude() <= 180
                 && data.getLatitude() >= -90 && data.getLatitude() <= 90;
     }
-    
+
     public static String displayColumn(Location data, ColumnDefinition column, Object value) {
         if (data == null || column == null) {
             return null;
@@ -236,40 +235,40 @@ public class Location extends BaseData implements Cloneable {
      */
     public long getDatasetid() {
         if (dataset != null) {
-            datasetid = dataset.getId();
+            datasetid = dataset.getDsid();
         }
         return datasetid;
     }
-    
+
     public Location setDataset(Dataset dataset) {
         this.dataset = dataset;
         if (dataset != null) {
-            datasetid = dataset.getId();
+            datasetid = dataset.getDsid();
         }
         return this;
     }
-    
+
     public String getDatasetName() {
         if (dataset != null) {
             datasetName = dataset.getDataSet();
         }
         return datasetName;
     }
-    
+
     public long getStartTime() {
 //        if (startTime == CommonValues.InvalidLong && endTime != CommonValues.InvalidLong) {
 //            startTime = endTime;
 //        }
         return startTime;
     }
-    
+
     public long getEndTime() {
 //        if (endTime == CommonValues.InvalidLong && startTime != CommonValues.InvalidLong) {
 //            endTime = startTime;
 //        }
         return endTime;
     }
-    
+
     public String getStartTimeText() {
         if (getStartTime() == AppValues.InvalidLong) {
             startTimeText = null;
@@ -280,7 +279,7 @@ public class Location extends BaseData implements Cloneable {
         }
         return startTimeText;
     }
-    
+
     public String getEndTimeText() {
         if (getEndTime() == AppValues.InvalidLong) {
             endTimeText = null;
@@ -291,7 +290,7 @@ public class Location extends BaseData implements Cloneable {
         }
         return endTimeText;
     }
-    
+
     public String getPeriodText() {
         String startText = getStartTimeText();
         String endText = getEndTimeText();
@@ -313,7 +312,7 @@ public class Location extends BaseData implements Cloneable {
             }
         }
     }
-    
+
     public Era getStartEra() {
         if (getStartTime() == AppValues.InvalidLong) {
             startEra = null;
@@ -324,7 +323,7 @@ public class Location extends BaseData implements Cloneable {
         }
         return startEra;
     }
-    
+
     public Era getEndEra() {
         if (getEndTime() == AppValues.InvalidLong) {
             endEra = null;
@@ -335,7 +334,7 @@ public class Location extends BaseData implements Cloneable {
         }
         return endEra;
     }
-    
+
     public long getDuration() {
         if (startTime != endTime && startTime != AppValues.InvalidLong && endTime != AppValues.InvalidLong) {
             duration = endTime - startTime;
@@ -344,7 +343,7 @@ public class Location extends BaseData implements Cloneable {
         }
         return duration;
     }
-    
+
     public String getDurationText() {
         if (startTime == endTime || startTime == AppValues.InvalidLong || endTime == AppValues.InvalidLong) {
             return null;
@@ -355,7 +354,7 @@ public class Location extends BaseData implements Cloneable {
             return DateTools.duration(new Date(startTime), new Date(endTime), null);
         }
     }
-    
+
     public Location setImageName(String string) {
         this.image = null;
         if (string != null) {
@@ -373,180 +372,180 @@ public class Location extends BaseData implements Cloneable {
     public long getLdid() {
         return ldid;
     }
-    
+
     public void setLdid(long ldid) {
         this.ldid = ldid;
     }
-    
+
     public double getLongitude() {
         return longitude;
     }
-    
+
     public Location setLongitude(double longitude) {
         this.longitude = longitude;
         return this;
     }
-    
+
     public double getLatitude() {
         return latitude;
     }
-    
+
     public Location setLatitude(double latitude) {
         this.latitude = latitude;
         return this;
     }
-    
+
     public double getAltitude() {
         return altitude;
     }
-    
+
     public Location setAltitude(double altitude) {
         this.altitude = altitude;
         return this;
     }
-    
+
     public double getPrecision() {
         return precision;
     }
-    
+
     public Location setPrecision(double precision) {
         this.precision = precision;
         return this;
     }
-    
+
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
-    
+
     public Location setCoordinateSystem(CoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
         return this;
     }
-    
+
     public Dataset getDataset() {
         return dataset;
     }
-    
+
     public Location setDatasetid(long datasetid) {
         this.datasetid = datasetid;
         return this;
     }
-    
+
     public Location setDatasetName(String datasetName) {
         this.datasetName = datasetName;
         return this;
     }
-    
+
     public String getAddress() {
         return address;
     }
-    
+
     public Location setAddress(String address) {
         this.address = address;
         return this;
     }
-    
+
     public String getComments() {
         return comments;
     }
-    
+
     public Location setComments(String comments) {
         this.comments = comments;
         return this;
     }
-    
+
     public File getImage() {
         return image;
     }
-    
+
     public Location setImage(File image) {
         this.image = image;
         return this;
     }
-    
+
     public String getLabel() {
         return label;
     }
-    
+
     public Location setLabel(String label) {
         this.label = label;
         return this;
     }
-    
+
     public double getSpeed() {
         return speed;
     }
-    
+
     public Location setSpeed(double speed) {
         this.speed = speed;
         return this;
     }
-    
+
     public double getDataValue() {
         return dataValue;
     }
-    
+
     public Location setDataValue(double dataValue) {
         this.dataValue = dataValue;
         return this;
     }
-    
+
     public double getDataSize() {
         return dataSize;
     }
-    
+
     public Location setDataSize(double dataSize) {
         this.dataSize = dataSize;
         return this;
     }
-    
+
     public short getDirection() {
         return direction;
     }
-    
+
     public Location setDirection(short direction) {
         this.direction = direction;
         return this;
     }
-    
+
     public Location setStartTime(long startTime) {
         this.startTime = startTime;
         return this;
     }
-    
+
     public Location setEndTime(long endTime) {
         this.endTime = endTime;
         return this;
     }
-    
+
     public Location setStartEra(Era startEra) {
         this.startEra = startEra;
         return this;
     }
-    
+
     public Location setEndEra(Era endEra) {
         this.endEra = endEra;
         return this;
     }
-    
+
     public void setDuration(long duration) {
         this.duration = duration;
     }
-    
+
     public void setStartTimeText(String startTimeText) {
         this.startTimeText = startTimeText;
     }
-    
+
     public void setEndTimeText(String endTimeText) {
         this.endTimeText = endTimeText;
     }
-    
+
     public void setPeriodText(String periodText) {
         this.periodText = periodText;
     }
-    
+
     public void setDurationText(String durationText) {
         this.durationText = durationText;
     }
-    
+
 }

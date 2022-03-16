@@ -29,7 +29,6 @@ public class TreeLeavesMoveController extends TreeNodesController {
 
     public void setParameters(TreeManageController treeController) {
         this.treeController = treeController;
-        tableTreeLeaf = treeController.tableTreeLeaf;
         setCaller(treeController.nodesController);
     }
 
@@ -97,7 +96,7 @@ public class TreeLeavesMoveController extends TreeNodesController {
                     if (updateAddress) {
                         treeController.currentLeaf.setParentid(parentid);
                         treeController.nodeOfCurrentLeaf = targetNode;
-                        treeController.updateNodeOfCurrentLeaf();
+                        treeController.leafController.updateNodeOfCurrentLeaf();
                     }
                     closeStage();
                 }

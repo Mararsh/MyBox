@@ -7,7 +7,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.fxml.ConditionTreeView;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -56,8 +55,8 @@ public class ControlConditionTree extends BaseController {
         clearTree();
         try {
             CheckBoxTreeItem<ConditionNode> allItem = new CheckBoxTreeItem(
-                    ConditionNode.create(Languages.message("AllData"))
-                            .setTitle(Languages.message("AllData"))
+                    ConditionNode.create(message("AllData"))
+                            .setTitle(message("AllData"))
                             .setCondition("")
             );
             allItem.setExpanded(true);

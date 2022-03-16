@@ -236,7 +236,7 @@ public class EpidemicReportsStatisticController extends BaseTaskController {
             }
             updateLogs(Languages.message("AccumulateData") + " " + code.getName());
             conn.setAutoCommit(false);
-            long locationid = code.getId();
+            long locationid = code.getGcid();
             int confirmed = 0, healed = 0, dead = 0, skipped = 0;
             String level = code.getLevelName();
             for (Date d : times) {
@@ -374,8 +374,8 @@ public class EpidemicReportsStatisticController extends BaseTaskController {
                     }
                     todayReport = TableEpidemicReport.statisticViewQuery(conn, results, false);
                     GeographyCode location = todayReport.getLocation();
-                    yesterdayReport = yesterdayReports.get(location.getId());
-                    yesterdayReports.put(location.getId(), todayReport);
+                    yesterdayReport = yesterdayReports.get(location.getGcid());
+                    yesterdayReports.put(location.getGcid(), todayReport);
                     if (yesterdayReport != null) {
                         long IncreasedConfirmed = todayReport.getConfirmed() - yesterdayReport.getConfirmed();
                         long IncreasedHealed = todayReport.getHealed() - yesterdayReport.getHealed();

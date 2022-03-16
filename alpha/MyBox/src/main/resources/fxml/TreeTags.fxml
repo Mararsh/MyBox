@@ -7,6 +7,9 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -16,7 +19,7 @@ License:    Apache License Version 2.0
                     <children>
                         <FlowPane fx:id="tagsPane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0" VBox.vgrow="NEVER">
                             <children>
-                                <Button fx:id="refreshTagsButton" mnemonicParsing="false" onAction="#refreshTags">
+                                <Button fx:id="refreshTagsButton" mnemonicParsing="false" onAction="#refreshAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -25,25 +28,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="selectAllTagsButton" mnemonicParsing="false" onAction="#selectAllTags">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="selectNoneTagsButton" mnemonicParsing="false" onAction="#selectNoneTags">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconSelectNone.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="clearTagsButton" mnemonicParsing="false" onAction="#clearTags">
+                                <Button fx:id="clearTagsButton" mnemonicParsing="false" onAction="#clearAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -52,7 +37,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="deleteTagsButton" disable="true" mnemonicParsing="false" onAction="#deleteTags">
+                                <Button fx:id="deleteTagsButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -61,15 +46,15 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="renameTagButton" disable="true" mnemonicParsing="false" onAction="#renameTag">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconRename.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
+            <Button fx:id="colorButton" mnemonicParsing="false" onAction="#randomColors">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconColor.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                                 <Button fx:id="addTagButton" mnemonicParsing="false" onAction="#addTag">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -90,6 +75,16 @@ License:    Apache License Version 2.0
                                 </Button>
                             </children>
                         </FlowPane>
-                        <fx:include fx:id="tags" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlCheckBoxList.fxml" VBox.vgrow="ALWAYS" />
+      <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+               <graphic>
+                  <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+               </graphic>
+            </TableColumn>
+            <TableColumn fx:id="tagColumn" prefWidth="200.0" text="%Tag" />
+            <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
+         </columns>
+      </TableView>
                     </children>
                 </VBox>

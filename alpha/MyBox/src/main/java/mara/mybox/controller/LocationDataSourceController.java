@@ -6,7 +6,6 @@ import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -57,7 +56,7 @@ public class LocationDataSourceController extends ControlConditionTree {
                 CheckBoxTreeItem<ConditionNode> datasetItem = new CheckBoxTreeItem(
                         ConditionNode.create(name)
                                 .setTitle(name)
-                                .setCondition(" datasetid=" + dataset.getId())
+                                .setCondition(" datasetid=" + dataset.getDsid())
                 );
                 datasetItem.setExpanded(true);
                 allItem.getChildren().add(datasetItem);

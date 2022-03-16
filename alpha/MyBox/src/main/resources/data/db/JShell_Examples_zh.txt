@@ -1,0 +1,17 @@
+##MyBox#
+示例 > 表达式 > Math
+e
+Math.E
+
+##MyBox#
+示例 > 表达式 > Math
+pi
+Math.PI
+
+##MyBox#
+示例 > 表达式 > Math
+abs()
+Math.abs( )
+
+
+

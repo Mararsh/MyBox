@@ -36,9 +36,6 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
-import mara.mybox.db.table.TableNote;
-import mara.mybox.db.table.TableNoteTag;
-import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
@@ -422,7 +419,9 @@ public class DerbyBase {
         try ( Statement statement = conn.createStatement();
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
-                indexes.add(resultSet.getString("CONGLOMERATENAME"));
+                String savedName = resultSet.getString("CONGLOMERATENAME");
+                String referredName = BaseTable.referredName(savedName);
+                indexes.add(referredName);
             }
         } catch (Exception e) {
             MyBoxLog.console(e, sql);
@@ -436,7 +435,9 @@ public class DerbyBase {
         try ( Statement statement = conn.createStatement();
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
-                tables.add(resultSet.getString("TABLENAME"));
+                String savedName = resultSet.getString("TABLENAME");
+                String referredName = BaseTable.referredName(savedName);
+                tables.add(referredName);
             }
         } catch (Exception e) {
             MyBoxLog.console(e, sql);
@@ -551,21 +552,9 @@ public class DerbyBase {
                 new TableFileBackup().createTable(conn);
                 loadingController.info("File_Backup");
             }
-            if (!tables.contains("Notebook".toLowerCase())) {
-                new TableNotebook().createTable(conn);
-                loadingController.info("Notebook");
-            }
-            if (!tables.contains("Note".toLowerCase())) {
-                new TableNote().createTable(conn);
-                loadingController.info("Note");
-            }
             if (!tables.contains("Tag".toLowerCase())) {
                 new TableTag().createTable(conn);
                 loadingController.info("Tag");
-            }
-            if (!tables.contains("Note_Tag".toLowerCase())) {
-                new TableNoteTag().createTable(conn);
-                loadingController.info("Note_Tag");
             }
             if (!tables.contains("Color".toLowerCase())) {
                 new TableColor().createTable(conn);
@@ -685,30 +674,9 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Note_time_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableNote.Create_Time_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Notebook_owner_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableNotebook.Create_Owner_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("Tag_unique_index".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTag.Create_Unique_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Note_Tag_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableNoteTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
@@ -751,6 +719,13 @@ public class DerbyBase {
             if (!indexes.contains("Tree_leaf_parent_index".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTreeLeaf.Create_Parent_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Tree_Leaf_Tag_unique_index".toLowerCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTreeLeafTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

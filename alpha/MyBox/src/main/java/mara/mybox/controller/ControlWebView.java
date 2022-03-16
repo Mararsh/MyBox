@@ -30,7 +30,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -225,6 +227,7 @@ public class ControlWebView extends BaseController {
 //                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
                         if (href != null) {
                             String target = element.getAttribute("target");
+                            String clickAction = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
                             if ("click".equals(domEventType) && target != null && !target.equalsIgnoreCase("_blank")) {
                                 webEngine.executeScript("if ( window.frames." + target
                                         + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
@@ -232,7 +235,7 @@ public class ControlWebView extends BaseController {
                                         + "function(){ if ( window.frames." + target
                                         + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
                             } else if ("contextmenu".equals(domEventType)
-                                    || ("click".equals(domEventType) && UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true))) {
+                                    || ("click".equals(domEventType) && (clickAction == null || "PopMenu".equals(clickAction)))) {
                                 ev.preventDefault();
                                 timer = new Timer();
                                 timer.schedule(new TimerTask() {
@@ -244,7 +247,11 @@ public class ControlWebView extends BaseController {
                                     }
                                 }, 100);
                             } else if ("click".equals(domEventType)) {
-                                WebBrowserController.oneOpen(finalAddress(element), true);
+                                if ("load".equals(clickAction)) {
+                                    loadAddress(finalAddress(element));
+                                } else {
+                                    WebBrowserController.oneOpen(finalAddress(element), "OpenSwitch".equals(clickAction));
+                                }
                             }
                         } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
                             ev.preventDefault();
@@ -639,14 +646,51 @@ public class ControlWebView extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem clickMenu = new CheckMenuItem(message("PopMenuWhenClickLink"), StyleTools.getIconImage("iconMenu.png"));
-        clickMenu.setSelected(UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true));
-        clickMenu.setOnAction(new EventHandler<ActionEvent>() {
+        Menu clickMenu = new Menu(message("WhenClickImageLink"));
+        ToggleGroup clickGroup = new ToggleGroup();
+        String currentClick = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
+
+        RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
+        clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setBoolean("WebViewPopMenuWhenClickLink", clickMenu.isSelected());
+                UserConfig.setString("WebViewWhenClickImageLink", "PopMenu");
             }
         });
+        clickPopMenu.setToggleGroup(clickGroup);
+        clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
+
+        RadioMenuItem clickOpenSwitchMenu = new RadioMenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
+        clickOpenSwitchMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString("WebViewWhenClickImageLink", "OpenSwitch");
+            }
+        });
+        clickOpenSwitchMenu.setToggleGroup(clickGroup);
+        clickOpenSwitchMenu.setSelected("OpenSwitch".equals(currentClick));
+
+        RadioMenuItem clickOpenMenu = new RadioMenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
+        clickOpenMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString("WebViewWhenClickImageLink", "Open");
+            }
+        });
+        clickOpenMenu.setToggleGroup(clickGroup);
+        clickOpenMenu.setSelected("Open".equals(currentClick));
+
+        RadioMenuItem clickLoadMenu = new RadioMenuItem(message("OpenLinkByCurrent"), StyleTools.getIconImage("iconWindow.png"));
+        clickLoadMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString("WebViewWhenClickImageLink", "Load");
+            }
+        });
+        clickLoadMenu.setToggleGroup(clickGroup);
+        clickLoadMenu.setSelected("Load".equals(currentClick));
+
+        clickMenu.getItems().addAll(clickPopMenu, clickOpenSwitchMenu, clickOpenMenu, clickLoadMenu);
         items.add(clickMenu);
 
         menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconQuery.png"));
@@ -987,16 +1031,51 @@ public class ControlWebView extends BaseController {
             opertionsMenu.getItems().setAll(operationsMenu());
             items.add(opertionsMenu);
 
-            items.add(new SeparatorMenuItem());
+            Menu clickMenu = new Menu(message("WhenClickImageLink"));
+            ToggleGroup clickGroup = new ToggleGroup();
+            String currentClick = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
 
-            CheckMenuItem clickMenu = new CheckMenuItem(message("PopMenuWhenClickLink"), StyleTools.getIconImage("iconMenu.png"));
-            clickMenu.setSelected(UserConfig.getBoolean("WebViewPopMenuWhenClickLink", true));
-            clickMenu.setOnAction(new EventHandler<ActionEvent>() {
+            RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
+            clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("WebViewPopMenuWhenClickLink", clickMenu.isSelected());
+                    UserConfig.setString("WebViewWhenClickImageLink", "PopMenu");
                 }
             });
+            clickPopMenu.setToggleGroup(clickGroup);
+            clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
+
+            RadioMenuItem clickOpenSwitchMenu = new RadioMenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
+            clickOpenSwitchMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("WebViewWhenClickImageLink", "OpenSwitch");
+                }
+            });
+            clickOpenSwitchMenu.setToggleGroup(clickGroup);
+            clickOpenSwitchMenu.setSelected("OpenSwitch".equals(currentClick));
+
+            RadioMenuItem clickOpenMenu = new RadioMenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
+            clickOpenMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("WebViewWhenClickImageLink", "Open");
+                }
+            });
+            clickOpenMenu.setToggleGroup(clickGroup);
+            clickOpenMenu.setSelected("Open".equals(currentClick));
+
+            RadioMenuItem clickLoadMenu = new RadioMenuItem(message("OpenLinkByCurrent"), StyleTools.getIconImage("iconWindow.png"));
+            clickLoadMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("WebViewWhenClickImageLink", "Load");
+                }
+            });
+            clickLoadMenu.setToggleGroup(clickGroup);
+            clickLoadMenu.setSelected("Load".equals(currentClick));
+
+            clickMenu.getItems().addAll(clickPopMenu, clickOpenSwitchMenu, clickOpenMenu, clickLoadMenu);
             items.add(clickMenu);
 
             if (!(this instanceof ControlHtmlEditor)) {

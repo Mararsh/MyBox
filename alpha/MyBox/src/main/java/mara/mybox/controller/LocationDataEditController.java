@@ -23,10 +23,10 @@ import mara.mybox.db.data.Location;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListDatasetCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
@@ -578,7 +578,7 @@ public class LocationDataEditController extends BaseController {
                 location.setLdid(Long.valueOf(dataidInput.getText()));
             }
             location.setDataset(dataset);
-            location.setDatasetid(dataset.getId());
+            location.setDatasetid(dataset.getDsid());
             location.setLabel(labelInput.getText().trim());
             location.setAddress(addressInput.getText().trim());
             location.setLongitude(longitude);

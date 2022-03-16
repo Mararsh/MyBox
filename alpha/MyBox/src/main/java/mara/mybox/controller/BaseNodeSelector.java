@@ -38,16 +38,14 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected static final String nodeSeparator = " > ";
 
     protected P ignoreNode = null, selectedNode = null, changedNode = null;
-    protected SimpleBooleanProperty selectedNotify, changedNotify;
+    protected SimpleBooleanProperty selectedNotify = new SimpleBooleanProperty(false),
+            changedNotify = new SimpleBooleanProperty(false);
     protected boolean expandAll, manageMode;
 
     @FXML
     protected TreeView<P> treeView;
     @FXML
     protected Label titleLabel;
-
-    public BaseNodeSelector() {
-    }
 
     /*
         abstract methods
@@ -92,6 +90,10 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         loadNode(item != null ? item.getValue() : null);
     }
 
+    protected void doubleClicked(TreeItem<P> item) {
+        okAction();
+    }
+
     protected void nodeChanged(P node) {
         changedNode = node;
         changedNotify.set(!changedNotify.get());
@@ -120,17 +122,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     /*
         Common methods may need not changed
      */
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            selectedNotify = new SimpleBooleanProperty(false);
-            changedNotify = new SimpleBooleanProperty(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     @Override
     public void initControls() {
         try {
@@ -174,6 +165,10 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 if (event.getButton() == MouseButton.SECONDARY) {
                     popNodeMenu(event, item);
                 } else {
+
+                    if (event.getClickCount() > 1) {
+                        doubleClicked(item);
+                    }
                     itemSelected(item);
                 }
             }
@@ -386,7 +381,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             items.add(new SeparatorMenuItem());
         }
 
-        menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconTree.png"));
+        menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             unfoldNodes();
         });

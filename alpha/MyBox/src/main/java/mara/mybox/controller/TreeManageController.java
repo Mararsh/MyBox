@@ -4,26 +4,35 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeLeaf;
@@ -31,6 +40,8 @@ import mara.mybox.db.table.TableTreeLeafTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -61,19 +72,25 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     @FXML
     protected TableColumn<TreeLeaf, Date> timeColumn;
     @FXML
-    protected VBox conditionBox;
+    protected VBox conditionBox, timesBox;
     @FXML
     protected CheckBox subCheck;
     @FXML
     protected FlowPane tagsPane, namesPane;
     @FXML
-    protected Label conditionLabel, chainLabel;
+    protected Label conditionLabel;
     @FXML
     protected TreeLeafEditor leafController;
     @FXML
     protected Button refreshTimesButton, queryTimesButton;
     @FXML
     protected TreeTagsController tagsController;
+    @FXML
+    protected ControlTimeTree timeController;
+    @FXML
+    protected TextField findInput;
+    @FXML
+    protected RadioButton findNameRadio, findValueRadio;
 
     public TreeManageController() {
         baseTitle = message("Tree");
@@ -99,28 +116,16 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     }
 
     @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-//            NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
     protected void initColumns() {
         try {
             super.initColumns();
             leafidColumn.setCellValueFactory(new PropertyValueFactory<>("leafid"));
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             nameColumn.setText(nameMsg);
-            valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-            valueColumn.setText(valueMsg);
+            if (valueColumn != null) {
+                valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
+                valueColumn.setText(valueMsg);
+            }
             if (moreColumn != null) {
                 moreColumn.setCellValueFactory(new PropertyValueFactory<>("more"));
                 moreColumn.setText(moreMsg);
@@ -138,17 +143,13 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         try {
             super.initControls();
 
-            leafController.setParameters(this);
-            tagsController.setParameters(this);
             nodesController.setParameters(this, true);
-
             nodesController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
                     loadLeaves(nodesController.selectedNode);
                 }
             });
-
             nodesController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
@@ -165,6 +166,13 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
                     }
                 }
             });
+
+            leafController.setParameters(this);
+            tagsController.setParameters(this);
+            tagsController.loadTableData();
+
+            initTimes();
+            initFind();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -186,7 +194,7 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         nodes
      */
     protected void loadTree(TreeNode node) {
-        if (!AppVariables.isTesting && tableTreeLeaf.size() < 1
+        if (!AppVariables.isTesting && tableTreeLeaf.size(category) < 1
                 && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
             nodesController.importExamples();
         } else {
@@ -220,7 +228,7 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         makeConditionPane();
         if (nodeOfCurrentLeaf != null && node.getNodeid() == nodeOfCurrentLeaf.getNodeid()) {
             nodeOfCurrentLeaf = node;
-            updateNodeOfCurrentLeaf();
+            leafController.updateNodeOfCurrentLeaf();
         }
         if (nodesController.selectedNode != null && nodesController.selectedNode.getNodeid() == node.getNodeid()) {
             nodesController.selectedNode = node;
@@ -242,7 +250,8 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         conditionBox.getChildren().clear();
         if (nodesController.selectedNode == null) {
             if (queryConditionsString != null) {
-                conditionLabel.setText(queryConditionsString);
+                conditionLabel.setText(queryConditionsString.length() > 300
+                        ? queryConditionsString.substring(0, 300) : queryConditionsString);
                 conditionBox.getChildren().add(conditionLabel);
             }
             conditionBox.applyCss();
@@ -333,7 +342,7 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("Move"));
+            menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveAction();
             });
@@ -356,14 +365,6 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     }
 
     @Override
-    public void itemDoubleClicked() {
-        currentLeaf = tableView.getSelectionModel().getSelectedItem();
-        if (currentLeaf != null) {
-
-        }
-    }
-
-    @Override
     protected void checkButtons() {
         if (isSettingValues) {
             return;
@@ -380,13 +381,15 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     @FXML
     @Override
     public void addAction() {
-        nodeOfCurrentLeaf = nodesController.selectedNode;
-        leafController.editLeaf(null);
+        addLeaf();
     }
 
     @FXML
     @Override
     public void editAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
         leafController.editLeaf(tableView.getSelectionModel().getSelectedItem());
     }
 
@@ -404,44 +407,11 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     /*
         leaf
      */
-    protected void updateNodeOfCurrentLeaf() {
-        synchronized (this) {
-            SingletonTask updateTask = new SingletonTask<Void>(this) {
-                private String chainName;
-
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        if (currentLeaf != null) {
-                            if (nodeOfCurrentLeaf == null || nodeOfCurrentLeaf.getNodeid() != currentLeaf.getParentid()) {
-                                nodeOfCurrentLeaf = tableTree.find(conn, currentLeaf.getParentid());
-                            }
-                        }
-                        if (nodeOfCurrentLeaf == null) {
-                            nodeOfCurrentLeaf = nodesController.root(conn);
-                        }
-                        if (nodeOfCurrentLeaf == null) {
-                            return false;
-                        }
-                        chainName = nodesController.chainName(conn, nodeOfCurrentLeaf);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    chainLabel.setText(chainName);
-                }
-            };
-            start(updateTask, false);
-        }
-    }
-
     @FXML
     protected void addLeaf() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
         leafController.editLeaf(null);
     }
 
@@ -455,10 +425,290 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         leafController.editLeaf(currentLeaf);
     }
 
+    public TreeLeaf pickCurrentLeaf() {
+        String name = leafController.nameInput.getText();
+        if (name == null || name.isBlank()) {
+            popError(message("InvalidParameters") + ": " + nameMsg);
+            return null;
+        }
+        TreeLeaf leaf = TreeLeaf.create()
+                .setCategory(category).setName(name);
+        if (leafController.valueInput != null) {
+            String value = leafController.valueInput.getText();
+            if (value == null || value.isBlank()) {
+                popError(message("InvalidParameters") + ": " + valueMsg);
+                return null;
+            }
+            leaf.setValue(value);
+        }
+        if (leafController.moreInput != null) {
+            leaf.setMore(leafController.moreInput.getText());
+        }
+        return leaf;
+    }
+
     @FXML
     @Override
     public void saveAction() {
-        leafController.saveLeaf();
+        TreeLeaf leaf = pickCurrentLeaf();
+        if (leaf == null) {
+            return;
+        }
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        rightPane.setDisable(true);
+        task = new SingletonTask<Void>(this) {
+            private boolean notExist = false;
+
+            @Override
+            protected boolean handle() {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    leaf.setTime(new Date());
+                    if (currentLeaf != null) {
+                        currentLeaf = tableTreeLeaf.readData(conn, currentLeaf);
+                        nodeOfCurrentLeaf = tableTree.readData(conn, nodeOfCurrentLeaf);
+                        if (currentLeaf == null || nodeOfCurrentLeaf == null) {
+                            notExist = true;
+                            currentLeaf = null;
+                            return true;
+                        } else {
+                            leaf.setLeafid(currentLeaf.getLeafid());
+                            leaf.setParentid(currentLeaf.getParentid());
+                            currentLeaf = tableTreeLeaf.updateData(conn, leaf);
+                        }
+                    } else {
+                        if (nodeOfCurrentLeaf == null) {
+                            nodeOfCurrentLeaf = nodesController.root(conn);
+                        }
+                        leaf.setParentid(nodeOfCurrentLeaf.getNodeid());
+                        currentLeaf = tableTreeLeaf.insertData(conn, leaf);
+                    }
+                    if (currentLeaf == null) {
+                        return false;
+                    }
+                    long leafid = currentLeaf.getLeafid();
+                    List<String> leafTags = tableTreeLeafTag.leafTagNames(leafid);
+                    List<Tag> selected = leafController.tableView.getSelectionModel().getSelectedItems();
+                    if (selected == null || selected.isEmpty()) {
+                        tableTreeLeafTag.removeTags(conn, leafid);
+                    } else {
+                        List<String> selectedNames = new ArrayList<>();
+                        for (Tag tag : selected) {
+                            selectedNames.add(tag.getTag());
+                        }
+                        List<String> items = new ArrayList<>();
+                        for (String tagName : selectedNames) {
+                            if (!leafTags.contains(tagName)) {
+                                items.add(tagName);
+                            }
+                        }
+                        tableTreeLeafTag.addTags(conn, leafid, category, items);
+                        items.clear();
+                        for (String tagName : leafTags) {
+                            if (!selectedNames.contains(tagName)) {
+                                items.add(tagName);
+                            }
+                        }
+                        tableTreeLeafTag.removeTags(conn, leafid, category, items);
+                    }
+                    conn.commit();
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.error(e);
+                    return false;
+                }
+                return currentLeaf != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (notExist) {
+                    copyLeaf();
+                    popError(message("NotExist"));
+                } else {
+                    popSaved();
+                    afterSaved();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                rightPane.setDisable(false);
+            }
+
+        };
+        start(task, false);
+    }
+
+    public void afterSaved() {
+        leafController.editLeaf(currentLeaf);
+        if (nodesController.selectedNode != null
+                && currentLeaf.getParentid() == nodesController.selectedNode.getNodeid()) {
+            refreshAction();
+        }
+    }
+
+    public boolean leafChanged() {
+        return leafController.leafChanged;
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (!leafChanged()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("DataChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
+            if (result.get() == buttonSave) {
+                saveAction();
+                return false;
+            } else {
+                return result.get() == buttonNotSave;
+            }
+        }
+    }
+
+    /*
+        Times
+     */
+    public void initTimes() {
+        try {
+            timeController.setParent(this, false);
+
+            timeController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    queryTimes();
+                }
+            });
+            timeController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    refreshTimes();
+                }
+            });
+
+            refreshTimes();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void refreshTimes() {
+        synchronized (this) {
+            timeController.clearTree();
+            timesBox.setDisable(true);
+            SingletonTask timesTask = new SingletonTask<Void>(this) {
+                private List<Date> times;
+
+                @Override
+                protected boolean handle() {
+                    times = TableTreeLeaf.times(category);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    timeController.loadTree("update_time", times, false);
+                }
+
+                @Override
+                protected void finalAction() {
+                    timesBox.setDisable(false);
+                }
+
+            };
+            start(timesTask, false);
+        }
+    }
+
+    @FXML
+    protected void queryTimes() {
+        String c = timeController.check();
+        if (c == null) {
+            popError(message("MissTime"));
+            return;
+        }
+        clearQuery();
+        queryConditions = c;
+        queryConditionsString = timeController.getFinalTitle();
+        loadTableData();
+    }
+
+    /*
+        find
+     */
+    public void initFind() {
+        try {
+            findNameRadio.setText(nameMsg);
+            findValueRadio.setText(valueMsg);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void find() {
+        String s = findInput.getText();
+        if (s == null || s.isBlank()) {
+            popError(message("InvalidParameters"));
+            return;
+        }
+        String[] values = StringTools.splitBySpace(s);
+        if (values == null || values.length == 0) {
+            popError(message("InvalidParameters"));
+            return;
+        }
+        TableStringValues.add(baseName + category + "Histories", s);
+        clearQuery();
+        if (findNameRadio.isSelected()) {
+            queryConditions = null;
+            queryConditionsString = message("Title") + ":";
+            for (String v : values) {
+                if (queryConditions != null) {
+                    queryConditions += " OR ";
+                } else {
+                    queryConditions = " ";
+                }
+                queryConditions += " ( name like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryConditionsString += " " + v;
+            }
+
+        } else {
+            queryConditions = null;
+            queryConditionsString = message("Contents") + ":";
+            for (String v : values) {
+                if (queryConditions != null) {
+                    queryConditions += " OR ";
+                } else {
+                    queryConditions = " ";
+                }
+                queryConditions += " ( value like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryConditionsString += " " + v;
+            }
+        }
+        loadTableData();
+    }
+
+    @FXML
+    protected void popFindHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, findInput, mouseEvent, baseName + category + "Histories");
     }
 
 }

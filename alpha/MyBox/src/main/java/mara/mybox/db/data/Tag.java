@@ -1,6 +1,8 @@
 package mara.mybox.db.data;
 
+import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 
 /**
  * @Author Mara
@@ -10,19 +12,23 @@ import mara.mybox.dev.MyBoxLog;
 public class Tag extends BaseData {
 
     protected long tgid;
-    protected String tag;
+    protected String category, tag;
+    protected Color color;
 
     private void init() {
         tgid = -1;
+        category = null;
         tag = null;
+        color = FxColorTools.randomColor();
     }
 
     public Tag() {
         init();
     }
 
-    public Tag(String tag) {
+    public Tag(String category, String tag) {
         init();
+        this.category = category;
         this.tag = tag;
     }
 
@@ -42,9 +48,16 @@ public class Tag extends BaseData {
                 case "tgid":
                     data.setTgid(value == null ? -1 : (long) value);
                     return true;
+                case "category":
+                    data.setCategory(value == null ? null : (String) value);
+                    return true;
                 case "tag":
                     data.setTag(value == null ? null : (String) value);
                     return true;
+                case "color":
+                    data.setColor(value == null ? null : Color.web((String) value));
+                    return true;
+
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -59,8 +72,12 @@ public class Tag extends BaseData {
         switch (column) {
             case "tgid":
                 return data.getTgid();
+            case "category":
+                return data.getCategory();
             case "tag":
                 return data.getTag();
+            case "color":
+                return data.getColor() == null ? null : data.getColor().toString();
         }
         return null;
     }
@@ -89,6 +106,22 @@ public class Tag extends BaseData {
     public Tag setTag(String tag) {
         this.tag = tag;
         return this;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
 }

@@ -17,6 +17,7 @@ import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeLeaf;
+import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IconTools;
@@ -46,7 +47,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
     protected Label formatLabel;
 
     public TreeNodeImportController() {
-        baseTitle = message("ImportWebFavorites");
+        baseTitle = message("Import");
     }
 
     @Override
@@ -59,11 +60,6 @@ public class TreeNodeImportController extends BaseBatchFileController {
         tableTree = treeController.tableTree;
         tableTreeLeaf = treeController.tableTreeLeaf;
         category = treeController.category;
-        if (treeController instanceof WebFavoritesController) {
-            formatLabel.setText(message("ImportNotesComments"));
-        } else {
-            formatLabel.setText(message("ImportNotesComments"));
-        }
         iconCheck.setVisible(treeController instanceof WebFavoritesController);
     }
 
@@ -72,8 +68,14 @@ public class TreeNodeImportController extends BaseBatchFileController {
         String lang = Languages.isChinese() ? "zh" : "en";
         File file;
         if (treeController instanceof WebFavoritesController) {
-            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
+            file = getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
                     "data", "WebFavorites_Examples_" + lang + ".txt");
+        } else if (treeController instanceof NotesController) {
+            file = getInternalFile("/data/db/Notes_Examples_" + lang + ".txt",
+                    "data", "Notes_Examples_" + lang + ".txt");
+        } else if (treeController instanceof JShellController) {
+            file = getInternalFile("/data/db/JShell_Examples_" + lang + ".txt",
+                    "data", "JShell_Examples_" + lang + ".txt", true);
         } else {
             return;
         }
@@ -126,7 +128,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             String line;
             while ((line = reader.readLine()) != null && line.isBlank()) {
             }
-            if (!TreeNode.WebFavorite.equals(category) && line.startsWith(AppValues.MyBoxSeparator)) {
+            if (line.startsWith(AppValues.MyBoxSeparator)) {
                 return importByMyBoxSeparator(conn, reader);
             } else {
                 return importByBlankLine(conn, reader, line);
@@ -150,6 +152,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
             TreeNode treeNode;
             Map<String, TreeNode> owners = new HashMap<>();
             long rootid = rootNode.getNodeid();
+            boolean isWebFavorite = TreeNode.WebFavorite.equals(category);
+            boolean downIcon = iconCheck.isSelected();
             while (line != null) {
                 if (owners.containsKey(line)) {
                     treeNode = owners.get(line);
@@ -178,24 +182,24 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     } else {
                         value = reader.readLine();
                     }
-                    if (value != null) {
-                        if (TreeNode.WebFavorite.equals(category)) {
-                            more = reader.readLine();
-                            if (more != null) {
-                                line = reader.readLine();
+                    if (value != null && !line.isBlank()) {
+                        while ((line = reader.readLine()) != null && !line.isBlank()) {
+                            value += System.lineSeparator() + line;
+                        }
+                        if (isWebFavorite) {
+                            String[] lines = value.split("\n");
+                            if (lines.length > 1) {
+                                value = lines[0];
+                                more = lines[0];
                             }
                             if (more == null || more.isBlank()) {
                                 try {
-                                    File iconFile = IconTools.readIcon(value, iconCheck.isSelected());
+                                    File iconFile = IconTools.readIcon(value, downIcon);
                                     if (iconFile != null && iconFile.exists()) {
                                         more = iconFile.getAbsolutePath();
                                     }
                                 } catch (Exception e) {
                                 }
-                            }
-                        } else {
-                            while ((line = reader.readLine()) != null && !line.isBlank()) {
-                                value += System.lineSeparator() + line;
                             }
                         }
                     }
@@ -209,19 +213,24 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 }
                 if (exist != null) {
                     if (overrideRadio.isSelected()) {
-                        exist.setValue(value);
-                        exist.setTime(time);
-                        exist.setMore(more == null || more.isBlank() ? null : more);
+                        exist.setValue(value == null ? null : value.trim())
+                                .setMore(more == null || more.isBlank() ? null : more)
+                                .setTime(time);
                         if (tableTreeLeaf.updateData(conn, exist) != null) {
                             count++;
                         }
                     }
-                } else if (tableTreeLeaf.insertData(conn, new TreeLeaf(nodeid, name, value, more, time)) != null) {
-                    count++;
-                }
-                if (line == null) {
-                    while ((line = reader.readLine()) != null && line.isBlank()) {
+                } else {
+                    TreeLeaf leaf = TreeLeaf.create().setParentid(nodeid).setCategory(category)
+                            .setName(name)
+                            .setValue(value == null ? null : value.trim())
+                            .setMore(more == null || more.isBlank() ? null : more)
+                            .setTime(time);
+                    if (tableTreeLeaf.insertData(conn, leaf) != null) {
+                        count++;
                     }
+                }
+                while ((line = reader.readLine()) != null && line.isBlank()) {
                 }
             }
             conn.commit();
@@ -238,7 +247,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
         long count = 0;
         try {
             conn.setAutoCommit(false);
-            String line, name, value;
+            String line, name, value, more;
             Date time;
             long baseTime = new Date().getTime();
             TreeNode treeNode;
@@ -257,6 +266,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 long nodeid = treeNode.getNodeid();
                 value = null;
                 time = null;
+                more = null;
                 while ((line = reader.readLine()) != null && line.isBlank()) {
                 }
                 if (line == null) {
@@ -281,6 +291,22 @@ public class TreeNodeImportController extends BaseBatchFileController {
                             value += System.lineSeparator() + line;
                         }
                     }
+                    if (value != null && !value.isBlank() && TreeNode.WebFavorite.equals(category)) {
+                        String[] lines = value.split("\n");
+                        if (lines.length > 1) {
+                            value = lines[0];
+                            more = lines[0];
+                        }
+                        if (more == null || more.isBlank()) {
+                            try {
+                                File iconFile = IconTools.readIcon(value, iconCheck.isSelected());
+                                if (iconFile != null && iconFile.exists()) {
+                                    more = iconFile.getAbsolutePath();
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
                 }
                 if (time == null) {
                     time = new Date(baseTime - count * 1000); // to keep the order of id
@@ -291,17 +317,22 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 }
                 if (exist != null) {
                     if (overrideRadio.isSelected()) {
-                        exist.setValue(value);
-                        exist.setTime(time);
+                        exist.setValue(value == null ? null : value.trim())
+                                .setMore(more == null || more.isBlank() ? null : more)
+                                .setTime(time);
                         if (tableTreeLeaf.updateData(conn, exist) != null) {
                             count++;
                         }
                     }
-                } else if (tableTreeLeaf.insertData(conn, new TreeLeaf(nodeid, name, value, time)) != null) {
-                    count++;
-                }
-                if (line == null) {
-                    break;
+                } else {
+                    TreeLeaf leaf = TreeLeaf.create().setParentid(nodeid).setCategory(category)
+                            .setName(name)
+                            .setValue(value == null ? null : value.trim())
+                            .setMore(more == null || more.isBlank() ? null : more)
+                            .setTime(time);
+                    if (tableTreeLeaf.insertData(conn, leaf) != null) {
+                        count++;
+                    }
                 }
             }
             conn.commit();
@@ -315,6 +346,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
     public void donePost() {
         if (treeController != null) {
             treeController.nodesController.loadTree();
+            treeController.refreshTimes();
             treeController.alertInformation(message("Imported") + ": " + totalItemsHandled);
             closeStage();
         } else {

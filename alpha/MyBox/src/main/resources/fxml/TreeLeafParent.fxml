@@ -6,19 +6,21 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NotesCopyNotebookController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" 
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeLeafParentController">
     <children>
-        <Label fx:id="sourceLabel" minHeight="-Infinity" text="%NotebookCopyed" wrapText="true" />
-        <Separator prefWidth="200.0" />
         <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="537.0" spacing="5.0">
             <children>
-                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectNotebookCopyInto" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectNodeAsParent" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -28,11 +30,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="addNodeButton" mnemonicParsing="false" onAction="#addNode">
+                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconAdd.png" />
+                                <Image url="@../buttons/Red/iconFunction.png" />
                             </image>
                         </ImageView>
                     </graphic>

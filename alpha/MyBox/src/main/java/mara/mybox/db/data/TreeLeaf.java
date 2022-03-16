@@ -12,7 +12,7 @@ public class TreeLeaf extends BaseData {
 
     public static final String TimePrefix = "Time:";
     protected long leafid, parentid;
-    protected String name, value, more;
+    protected String category, name, value, more;
     protected Date time;
 
     private void init() {
@@ -26,38 +26,6 @@ public class TreeLeaf extends BaseData {
 
     public TreeLeaf() {
         init();
-    }
-
-    public TreeLeaf(long parentid, String name, String value) {
-        init();
-        this.parentid = parentid;
-        this.name = name;
-        this.value = value;
-    }
-
-    public TreeLeaf(long parentid, String name, String value, String more, Date time) {
-        init();
-        this.parentid = parentid;
-        this.name = name;
-        this.value = value;
-        this.more = more;
-        this.time = time;
-    }
-
-    public TreeLeaf(long parentid, String name, String value, String more) {
-        init();
-        this.parentid = parentid;
-        this.name = name;
-        this.value = value;
-        this.more = more;
-    }
-
-    public TreeLeaf(long parentid, String name, String value, Date time) {
-        init();
-        this.parentid = parentid;
-        this.name = name;
-        this.value = value;
-        this.time = time;
     }
 
 
@@ -79,6 +47,9 @@ public class TreeLeaf extends BaseData {
                     return true;
                 case "parentid":
                     data.setParentid(value == null ? -1 : (long) value);
+                    return true;
+                case "category":
+                    data.setCategory(value == null ? null : (String) value);
                     return true;
                 case "name":
                     data.setName(value == null ? null : (String) value);
@@ -108,6 +79,8 @@ public class TreeLeaf extends BaseData {
                 return data.getLeafid();
             case "parentid":
                 return data.getParentid();
+            case "category":
+                return data.getCategory();
             case "name":
                 return data.getName();
             case "value":
@@ -131,48 +104,63 @@ public class TreeLeaf extends BaseData {
         return leafid;
     }
 
-    public void setLeafid(long leafid) {
+    public TreeLeaf setLeafid(long leafid) {
         this.leafid = leafid;
+        return this;
     }
 
     public long getParentid() {
         return parentid;
     }
 
-    public void setParentid(long parentid) {
+    public TreeLeaf setParentid(long parentid) {
         this.parentid = parentid;
+        return this;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public TreeLeaf setCategory(String category) {
+        this.category = category;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public TreeLeaf setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public TreeLeaf setValue(String value) {
         this.value = value;
+        return this;
     }
 
     public Date getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public TreeLeaf setTime(Date time) {
         this.time = time;
+        return this;
     }
 
     public String getMore() {
         return more;
     }
 
-    public void setMore(String more) {
+    public TreeLeaf setMore(String more) {
         this.more = more;
+        return this;
     }
 
 }

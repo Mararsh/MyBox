@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.JShellSnippets">
+   <children>
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+         <children>
+            <Button fx:id="resetButton" mnemonicParsing="false" onAction="#resetAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconRecover.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="deleteSnippetsButton" mnemonicParsing="false" onAction="#deleteSnippets">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconDelete.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="refreshSnippetsButton" layoutX="416.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshSnippets">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconRefresh.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+               <graphic>
+                  <CheckBox fx:id="allRowsCheck1" mnemonicParsing="false" text="%TableRow" />
+               </graphic>
+            </TableColumn>
+            <TableColumn fx:id="sidColumn" prefWidth="60.0" text="%ID" />
+            <TableColumn fx:id="typeColumn" prefWidth="100.0" text="%Type" />
+            <TableColumn fx:id="nameColumn" prefWidth="100.0" text="%Name" />
+            <TableColumn fx:id="statusColumn" prefWidth="100.0" text="%Status" />
+            <TableColumn fx:id="valueColumn" prefWidth="100.0" text="%Value" />
+            <TableColumn fx:id="subTypeColumn" prefWidth="100.0" text="%SubType" />
+            <TableColumn fx:id="sourceColumn" prefWidth="150.0" text="%Source" />
+            <TableColumn fx:id="some1Column" prefWidth="150.0" text="some1" />
+            <TableColumn fx:id="some2Column" prefWidth="150.0" text="some2" />
+         </columns>
+      </TableView>
+      <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="600.0" vgap="2.0">
+         <children>
+            <CheckBox fx:id="variablesCheck" mnemonicParsing="false" selected="true" text="%Variables" />
+            <CheckBox fx:id="expressionsCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="%Expressions" />
+            <CheckBox fx:id="declarationsCheck" mnemonicParsing="false" selected="true" text="%Declarations" />
+            <CheckBox fx:id="statementsCheck" mnemonicParsing="false" selected="true" text="%Statements" />
+            <CheckBox fx:id="methodsCheck" layoutX="163.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Methods" />
+            <CheckBox fx:id="importsCheck" layoutX="239.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Imports" />
+            <CheckBox fx:id="errorsCheck" layoutX="154.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="%Errors" />
+         </children>
+      </FlowPane>
+   </children>
+</VBox>
