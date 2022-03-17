@@ -48,7 +48,16 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%WebPageAddress" />
-                                                <ComboBox fx:id="urlSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popAddressHistories">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconHistory.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <TextField fx:id="addressInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="goButton" defaultButton="true" mnemonicParsing="false" onAction="#goAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -144,11 +153,11 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                             <columns>
-                                    <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308"  prefWidth="-1.0">
-                                       <graphic>
-                                          <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
-                                       </graphic>
-                                    </TableColumn>
+                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308"  prefWidth="-1.0">
+                                                    <graphic>
+                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                                    </graphic>
+                                                </TableColumn>
                                                 <TableColumn fx:id="addressPathColumn" editable="false" prefWidth="250.0" text="%AddressPath" />
                                                 <TableColumn fx:id="addressFileColumn" editable="false" prefWidth="150.0" text="%AddressFile" />
                                                 <TableColumn fx:id="indexColumn" editable="false" text="%Index" />

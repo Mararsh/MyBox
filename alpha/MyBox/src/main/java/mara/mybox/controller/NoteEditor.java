@@ -24,7 +24,7 @@ public class NoteEditor extends HtmlEditorController {
     @FXML
     protected Tab attributesTab;
     @FXML
-    protected TreeLeafEditor attributesController;
+    protected NoteAttributes attributesController;
 
     public void setParameters(NotesController notesController) {
         try {
@@ -34,6 +34,7 @@ public class NoteEditor extends HtmlEditorController {
             webViewController.defaultStyle = HtmlStyles.styleValue("Default");
             editorController.defaultStyle = HtmlStyles.styleValue("Default");
 
+            attributesController.setEditor(this);
             notesController.leafController = attributesController;
             attributesController.changeNotify.addListener(new ChangeListener<Boolean>() {
                 @Override

@@ -40,7 +40,6 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     protected TableTreeLeaf tableTreeLeaf;
     protected TableTag tableTag;
     protected TableTreeLeafTag tableTreeLeafTag;
-
     protected String category;
 
     @FXML

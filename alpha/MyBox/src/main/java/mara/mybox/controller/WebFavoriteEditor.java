@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -101,6 +102,21 @@ public class WebFavoriteEditor extends TreeLeafEditor {
             };
             start(updateTask);
         }
+    }
+
+    @Override
+    public TreeLeaf pickCurrentLeaf() {
+        TreeLeaf leaf = super.pickCurrentLeaf();
+        if (leaf == null) {
+            return null;
+        }
+        try {
+            URL url = new URL(leaf.getValue());
+        } catch (Exception e) {
+            popError(message("InvalidParemeters") + ": " + treeController.valueMsg);
+            return null;
+        }
+        return leaf;
     }
 
     @FXML

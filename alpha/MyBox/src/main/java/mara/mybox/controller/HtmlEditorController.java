@@ -38,18 +38,17 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -76,8 +75,6 @@ public class HtmlEditorController extends WebAddressController {
     protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
     protected final ButtonType buttonCancel = new ButtonType(message("Cancel"));
 
-    @FXML
-    protected HBox addressBox;
     @FXML
     protected Tab viewTab, codesTab, editorTab, markdownTab, textsTab, backupTab;
     @FXML
@@ -479,7 +476,7 @@ public class HtmlEditorController extends WebAddressController {
                 return;
             }
             addressChanged = false;
-            urlSelector.getEditor().setText("");
+            addressInput.setText("");
             loadContents(HtmlWriteTools.emptyHmtl());
 //            loadRichEditor("", false);
 //            loadHtmlCodes("", false);

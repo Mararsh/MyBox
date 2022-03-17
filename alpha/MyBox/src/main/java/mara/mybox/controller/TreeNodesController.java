@@ -211,6 +211,12 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         controller.setManage(treeController);
     }
 
+    // https://www.jb51.net/article/116957.htm
+    @FXML
+    protected void html() {
+
+    }
+
     @FXML
     public void popFunctionsMenu(MouseEvent event) {
         List<MenuItem> items = makeNodeMenu(event, currectSelected());

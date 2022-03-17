@@ -2,18 +2,23 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.WebHistory;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -33,7 +38,7 @@ public class WebAddressController extends BaseWebViewController {
     protected List<String> failedAddress;
 
     @FXML
-    protected ComboBox<String> urlSelector;
+    protected TextField addressInput;
 
     public WebAddressController() {
         baseTitle = message("WebBrowser");
@@ -43,24 +48,8 @@ public class WebAddressController extends BaseWebViewController {
     public void initValues() {
         try {
             super.initValues();
-            if (urlSelector != null) {
+            if (addressInput != null) {
                 tableWebHistory = new TableWebHistory();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            if (urlSelector != null) {
-                List<String> his = tableWebHistory.recent(20);
-                if (!his.isEmpty()) {
-                    urlSelector.getItems().addAll(his);
-                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -74,10 +63,10 @@ public class WebAddressController extends BaseWebViewController {
 
     @Override
     public void goAction() {
-        if (!checkBeforeNextAction() || urlSelector == null) {
+        if (!checkBeforeNextAction() || addressInput == null) {
             return;
         }
-        boolean ret = webViewController.loadAddress(urlSelector.getEditor().getText());
+        boolean ret = webViewController.loadAddress(addressInput.getText());
         if (ret) {
             sourceFile = webViewController.sourceFile;
         }
@@ -85,21 +74,16 @@ public class WebAddressController extends BaseWebViewController {
 
     @Override
     public void addressChanged() {
-        if (urlSelector != null) {
+        if (addressInput != null) {
             Platform.runLater(() -> {
-                urlSelector.getEditor().setStyle(null);
+                addressInput.setStyle(null);
                 String address;
                 if (webViewController != null) {
                     address = webViewController.address;
+                    addressInput.setText(address);
                 } else {
-                    address = urlSelector.getValue();
+                    address = addressInput.getText();
                 }
-                urlSelector.getItems().clear();
-                List<String> urls = tableWebHistory.recent(20);
-                if (!urls.isEmpty()) {
-                    urlSelector.getItems().addAll(urls);
-                }
-                urlSelector.getEditor().setText(address);
                 writeHis(address);
             });
         }
@@ -112,7 +96,9 @@ public class WebAddressController extends BaseWebViewController {
 
             @Override
             protected boolean handle() {
-                try {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    TableStringValues.add(conn, "WebAddressHistories", address);
+
                     WebHistory his = new WebHistory();
                     his.setAddress(address);
                     his.setVisitTime(new Date());
@@ -140,7 +126,7 @@ public class WebAddressController extends BaseWebViewController {
                         }
                         failedAddress.add(address);
                     }
-                    tableWebHistory.insertData(his);
+                    tableWebHistory.insertData(conn, his);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -167,9 +153,9 @@ public class WebAddressController extends BaseWebViewController {
     @Override
     public void addressInvalid() {
         super.addressInvalid();
-        if (urlSelector != null) {
+        if (addressInput != null) {
             Platform.runLater(() -> {
-                urlSelector.getEditor().setStyle(UserConfig.badStyle());
+                addressInput.setStyle(UserConfig.badStyle());
             });
         }
     }
@@ -187,9 +173,14 @@ public class WebAddressController extends BaseWebViewController {
         }
     }
 
+    @FXML
+    protected void popAddressHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, addressInput, mouseEvent, "WebAddressHistories");
+    }
+
     @Override
     public boolean keyEnter() {
-        if (urlSelector != null && urlSelector.isFocused()) {
+        if (addressInput != null && addressInput.isFocused()) {
             goAction();
             return true;
         }

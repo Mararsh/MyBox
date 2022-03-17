@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,7 +96,7 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     public TreeManageController() {
         baseTitle = message("Tree");
         category = TreeNode.Root;
-        nameMsg = message("Name");
+        nameMsg = message("Title");
         valueMsg = message("Value");
         moreMsg = message("More");
         timeMsg = message("UpdateTime");
@@ -188,6 +189,16 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    @Override
+    public boolean controlAltG() {
+        if (leafController.valueInput.isFocused()) {
+            leafController.clearValue();
+        } else {
+            clearAction();
+        }
+        return true;
     }
 
     /*
@@ -342,6 +353,15 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
+            if (pasteButton != null) {
+                menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    pasteAction();
+                });
+                menu.setDisable(pasteButton.isDisabled());
+                items.add(menu);
+            }
+
             menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveAction();
@@ -376,6 +396,9 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         deleteButton.setDisable(none);
         copyButton.setDisable(none);
         moveDataButton.setDisable(none);
+        if (pasteButton != null) {
+            pasteButton.setDisable(none);
+        }
     }
 
     @FXML
@@ -404,6 +427,16 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         TreeLeavesMoveController.oneOpen(this);
     }
 
+    @FXML
+    @Override
+    public void pasteAction() {
+        TreeLeaf selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        leafController.pasteText(selected.getValue());
+    }
+
     /*
         leaf
      */
@@ -425,39 +458,16 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         leafController.editLeaf(currentLeaf);
     }
 
-    public TreeLeaf pickCurrentLeaf() {
-        String name = leafController.nameInput.getText();
-        if (name == null || name.isBlank()) {
-            popError(message("InvalidParameters") + ": " + nameMsg);
-            return null;
-        }
-        TreeLeaf leaf = TreeLeaf.create()
-                .setCategory(category).setName(name);
-        if (leafController.valueInput != null) {
-            String value = leafController.valueInput.getText();
-            if (value == null || value.isBlank()) {
-                popError(message("InvalidParameters") + ": " + valueMsg);
-                return null;
-            }
-            leaf.setValue(value);
-        }
-        if (leafController.moreInput != null) {
-            leaf.setMore(leafController.moreInput.getText());
-        }
-        return leaf;
-    }
-
     @FXML
     @Override
     public void saveAction() {
-        TreeLeaf leaf = pickCurrentLeaf();
+        TreeLeaf leaf = leafController.pickCurrentLeaf();
         if (leaf == null) {
             return;
         }
         if (task != null && !task.isQuit()) {
             return;
         }
-        rightPane.setDisable(true);
         task = new SingletonTask<Void>(this) {
             private boolean notExist = false;
 
@@ -532,11 +542,6 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                rightPane.setDisable(false);
-            }
-
         };
         start(task, false);
     }
@@ -581,6 +586,14 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
                 return result.get() == buttonNotSave;
             }
         }
+    }
+
+    @Override
+    public void sourceFileChanged(File file) {
+        if (file == null || !file.exists() || !checkBeforeNextAction()) {
+            return;
+        }
+        leafController.loadFile(file);
     }
 
     /*

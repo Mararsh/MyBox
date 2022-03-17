@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
-import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -76,16 +75,6 @@ public class NotesController extends TreeManageController {
     @Override
     protected void recoverLeaf() {
         editorController.recoverNote();
-    }
-
-    @Override
-    public TreeLeaf pickCurrentLeaf() {
-        TreeLeaf leaf = super.pickCurrentLeaf();
-        if (leaf == null) {
-            return null;
-        }
-        leaf.setValue(editorController.currentHtml(true));
-        return leaf;
     }
 
     @Override

@@ -1,21 +1,29 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeLeaf;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -28,14 +36,23 @@ public class TreeLeafEditor extends TreeTagsController {
     protected SimpleBooleanProperty changeNotify;
 
     @FXML
+    protected Tab valueTab, attributesTab;
+    @FXML
     protected TextField idInput, nameInput, timeInput;
     @FXML
     protected TextInputControl valueInput, moreInput;
     @FXML
     protected Label chainLabel, nameLabel, valueLabel, moreLabel, timeLabel;
+    @FXML
+    protected CheckBox wrapCheck;
 
     public TreeLeafEditor() {
         changeNotify = new SimpleBooleanProperty(false);
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override
@@ -47,6 +64,9 @@ public class TreeLeafEditor extends TreeTagsController {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
                     leafChanged(true);
+                    if (attributesTab != null) {
+                        attributesTab.setText(message("Attributes") + "*");
+                    }
                 }
             });
 
@@ -55,6 +75,9 @@ public class TreeLeafEditor extends TreeTagsController {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
                         leafChanged(true);
+                        if (valueTab != null) {
+                            valueTab.setText(treeController.valueMsg + "*");
+                        }
                     }
                 });
             }
@@ -64,15 +87,9 @@ public class TreeLeafEditor extends TreeTagsController {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
                         leafChanged(true);
-                    }
-                });
-            }
-
-            if (valueInput != null) {
-                valueInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue v, String ov, String nv) {
-                        leafChanged(true);
+                        if (attributesTab != null) {
+                            attributesTab.setText(message("Attributes") + "*");
+                        }
                     }
                 });
             }
@@ -106,6 +123,18 @@ public class TreeLeafEditor extends TreeTagsController {
                 }
             });
 
+            if (wrapCheck != null && (valueInput instanceof TextArea)) {
+                wrapCheck.setSelected(UserConfig.getBoolean(category + "ValueWrap", false));
+                wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(category + "ValueWrap", newValue);
+                        ((TextArea) valueInput).setWrapText(newValue);
+                    }
+                });
+                ((TextArea) valueInput).setWrapText(wrapCheck.isSelected());
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -117,6 +146,15 @@ public class TreeLeafEditor extends TreeTagsController {
         }
         leafChanged = changed;
         changeNotify.set(!changeNotify.get());
+        if (changed) {
+            if (!treeController.getTitle().endsWith(" *")) {
+                treeController.setTitle(treeController.getTitle() + " *");
+            }
+        } else {
+            if (treeController.getTitle().endsWith(" *")) {
+                treeController.setTitle(treeController.getTitle().substring(0, treeController.getTitle().length() - 2));
+            }
+        }
     }
 
     @Override
@@ -132,6 +170,7 @@ public class TreeLeafEditor extends TreeTagsController {
         isSettingValues = true;
         treeController.currentLeaf = leaf;
         if (leaf != null) {
+            treeController.setTitle(treeController.baseTitle + ": " + leaf.getLeafid() + " - " + leaf.getName());
             idInput.setText(leaf.getLeafid() + "");
             nameInput.setText(leaf.getName());
             if (valueInput != null) {
@@ -143,6 +182,7 @@ public class TreeLeafEditor extends TreeTagsController {
             timeInput.setText(DateTools.datetimeToString(leaf.getTime()));
             selectButton.setVisible(leaf.getLeafid() < 0);
         } else {
+            treeController.setTitle(treeController.baseTitle);
             idInput.setText(message("NewData"));
             nameInput.setText("");
             if (valueInput != null) {
@@ -159,6 +199,12 @@ public class TreeLeafEditor extends TreeTagsController {
         updateNodeOfCurrentLeaf();
         refreshAction();
         showEditorPane();
+        if (attributesTab != null) {
+            attributesTab.setText(message("Attributes"));
+        }
+        if (valueTab != null) {
+            valueTab.setText(treeController.valueMsg);
+        }
     }
 
     protected void showEditorPane() {
@@ -208,6 +254,110 @@ public class TreeLeafEditor extends TreeTagsController {
         selectButton.setVisible(true);
         isSettingValues = false;
         leafChanged(true);
+    }
+
+    public TreeLeaf pickCurrentLeaf() {
+        String name = nameInput.getText();
+        if (name == null || name.isBlank()) {
+            popError(message("InvalidParameters") + ": " + treeController.nameMsg);
+            if (tabPane != null && attributesTab != null) {
+                tabPane.getSelectionModel().select(attributesTab);
+            }
+            return null;
+        }
+        TreeLeaf leaf = TreeLeaf.create()
+                .setCategory(category).setName(name);
+        if (valueInput != null) {
+            String value = valueInput.getText();
+            if (value == null || value.isBlank()) {
+                popError(message("InvalidParameters") + ": " + treeController.valueMsg);
+                return null;
+            }
+            leaf.setValue(value);
+        }
+        if (moreInput != null) {
+            leaf.setMore(moreInput.getText());
+        }
+        return leaf;
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        String codes = valueInput.getText();
+        if (codes == null || codes.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        File file = chooseSaveFile(message(category) + "-" + DateTools.nowFileString() + ".java");
+        if (file == null) {
+            return;
+        }
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                File tfile = TextFileTools.writeFile(file, codes, Charset.forName("UTF-8"));
+                return tfile != null && tfile.exists();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Saved"));
+                recordFileWritten(file);
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    public void clearValue() {
+        valueInput.clear();
+    }
+
+    @FXML
+    @Override
+    public void postLoadedTableData() {
+        super.postLoadedTableData();
+        markTags();
+    }
+
+    public void loadFile(File file) {
+        if (file == null || !file.exists() || !checkBeforeNextAction()) {
+            return;
+        }
+        editLeaf(null);
+        if (task != null) {
+            task.cancel();
+        }
+        valueInput.clear();
+        task = new SingletonTask<Void>(this) {
+
+            String codes;
+
+            @Override
+            protected boolean handle() {
+                codes = TextFileTools.readTexts(file);
+                return codes != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                valueInput.setText(codes);
+                recordFileOpened(file);
+            }
+
+        };
+        start(task);
+    }
+
+    public void pasteText(String text) {
+        valueInput.replaceText(valueInput.getSelection(), text);
+        valueInput.requestFocus();
     }
 
     public void markTags() {

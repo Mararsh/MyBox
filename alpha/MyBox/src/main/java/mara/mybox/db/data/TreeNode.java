@@ -14,6 +14,7 @@ public class TreeNode extends BaseData {
     public static final String WebFavorite = "WebFavorite";
     public static final String Notebook = "Notebook";
     public static final String JShellCode = "JShellCode";
+    public static final String SQL = "SQL";
 
     protected long nodeid, parent;
     protected String category, title, attribute, more;

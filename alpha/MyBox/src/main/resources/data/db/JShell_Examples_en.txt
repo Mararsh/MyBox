@@ -1,7 +1,335 @@
-Examples > Expression > Math
+##MyBox#
+Examples > Expressions > Numeric operations
 e
 Math.E
 
-Examples > Expression > Math
+##MyBox#
+Examples > Expressions > Numeric operations
 pi
 Math.PI
+
+##MyBox#
+Examples > Expressions > Numeric operations
+abs()
+Math.abs( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+exp()
+Math.exp( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+sqrt()
+Math.sqrt( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+cbrt()
+Math.cbrt( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+pow()
+Math.pow( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+cos()
+Math.cos( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+sin()
+Math.sin( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+tan()
+Math.tan( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+atan()
+Math.atan( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+cosh()
+Math.cosh( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+acos()
+Math.acos( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+sinh()
+Math.sinh( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+asin()
+Math.asin( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+tanh()
+Math.tanh( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+atan2()
+Math.atan2( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+log()
+Math.log( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+log10()
+Math.log10( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+log1p()
+Math.log1p( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+ceil()
+Math.ceil( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+floor()
+MMath.floor( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+round()
+Math.round( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+rint()
+Math.rint( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+scalb()
+Math.scalb( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+signum()
+Math.signum( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+random()
+Math.random( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+max()
+Math.max( , )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+min()
+Math.min( , )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+toDegrees()
+Math.toDegrees( )
+
+##MyBox#
+Examples > Expressions > Numeric operations
+toRadians()
+Math.toRadians( )
+
+##MyBox#
+Examples > Expressions > Strings operations
+equalsIgnoreCase()
+.equalsIgnoreCase()
+
+##MyBox#
+Examples > Expressions > Strings operations
+equals()
+.equals()
+
+##MyBox#
+Examples > Expressions > Strings operations
+startsWith()
+.startsWith()
+
+##MyBox#
+Examples > Expressions > Strings operations
+endsWith()
+.endsWith()
+
+##MyBox#
+Examples > Expressions > Strings operations
+split()
+.split()
+
+##MyBox#
+Examples > Expressions > Strings operations
+substring()
+.substring()
+
+##MyBox#
+Examples > Expressions > Strings operations
+charAt()
+.charAt()
+
+##MyBox#
+Examples > Expressions > Strings operations
+concat()
+.concat()
+
+##MyBox#
+Examples > Expressions > Strings operations
+contains()
+.contains()
+
+##MyBox#
+Examples > Expressions > Strings operations
+indexOf()
+.indexOf()
+
+##MyBox#
+Examples > Expressions > Strings operations
+lastIndexOf()
+.lastIndexOf()
+
+##MyBox#
+Examples > Expressions > Strings operations
+length()
+.length()
+
+##MyBox#
+Examples > Expressions > Strings operations
+replace()
+.replace(,)
+
+##MyBox#
+Examples > Expressions > Strings operations
+replaceAll()
+.replaceAll(,)
+
+##MyBox#
+Examples > Expressions > Strings operations
+replaceFirst()
+.replaceFirst()
+
+##MyBox#
+Examples > Expressions > Strings operations
+substring()
+.substring()
+
+##MyBox#
+Examples > Expressions > Strings operations
+toLowerCase()
+.toLowerCase()
+
+##MyBox#
+Examples > Expressions > Strings operations
+toUpperCase()
+.toUpperCase()
+
+##MyBox#
+Examples > Expressions > Strings operations
+trim()
+.trim()
+
+##MyBox#
+Examples > Expressions > Strings operations
+strip()
+.strip()
+
+##MyBox#
+Examples > Expressions > Strings operations
+isBlank()
+.isBlank()
+
+##MyBox#
+Examples > Expressions > Strings operations
+isEmpty()
+.isEmpty()
+
+##MyBox#
+Examples > Methods
+Area of circle
+double circleAreaByDiameter(double diameter) {        
+    double radius = diameter / 2;        
+    return   Math.PI *  radius * radius ;        
+}
+circleAreaByDiameter(120) + circleAreaByDiameter(30)  
+
+##MyBox#
+Examples > Methods
+Round value
+import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}    
+scale(Math.PI, 3) 
+
+##MyBox#
+Examples > Methods
+Format number
+import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}        
+                                     
+import java.text.DecimalFormat;        
+String formatDouble(double data, int scale) {        
+    try {        
+        String format = "#,###";        
+        if (scale > 0) {        
+            format = "." + "#".repeat(scale);        
+        }        
+        DecimalFormat df = new DecimalFormat(format);        
+        return df.format(scale(data, scale));        
+    } catch (Exception e) {        
+        return e.toString();        
+    }        
+}        
+                                     
+double circleAreaByRadius(double radius) {        
+    return   Math.PI *  radius * radius ;        
+}        
+                                     
+formatDouble(circleAreaByRadius(273.4), 4)    
+
+##MyBox#
+Examples > Methods
+Format date
+import java.util.Date;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+
+String DatetimeFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
+String datetimeToString(Date theDate, String format, TimeZone theZone) {
+    if (theDate == null || theZone == null) {
+            return null;
+    }
+    SimpleDateFormat formatter = new SimpleDateFormat(format);
+    formatter.setTimeZone(theZone);
+    String dateString = formatter.format(theDate);
+    return dateString;
+}
+
+datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());
