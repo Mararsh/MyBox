@@ -8,18 +8,17 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TextField?>
 
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlElementsController">
     <top>
@@ -98,10 +97,23 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="nameRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Name" toggleGroup="$elementGroup" wrapText="true" />
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="elementInput" maxHeight="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                 <children>
+                                    <Button fx:id="historyElementButton" mnemonicParsing="false" onMouseEntered="#popElementHistories">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconHistory.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <TextField fx:id="elementInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
                                         <HBox fx:id="elementsBox" alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
-                                                <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamples">
+                                                <Button fx:id="examplePopButton" mnemonicParsing="false" onMouseEntered="#popExamples">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>

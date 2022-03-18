@@ -18,6 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -172,7 +173,16 @@ License:    Apache License Version 2.0
                                                                         </HBox>
                                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                                             <children>
-                                                                                <fx:include fx:id="search" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
+                                                            <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconHistory.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
+                                                            <TextField fx:id="findInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                                 <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#search">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -184,7 +194,7 @@ License:    Apache License Version 2.0
                                                                                 </Button>
                                                                             </children>
                                                                         </HBox>
-                                                                        <Label minHeight="-Infinity" text="%NotesSearchComments" wrapText="true" />
+                                                                        <Label minHeight="-Infinity" text="%SearchComments" wrapText="true" />
                                                                     </children>
                                                                     <padding>
                                                                         <Insets bottom="5.0" left="2.0" right="2.0" top="5.0" />

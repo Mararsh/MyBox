@@ -27,6 +27,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -68,7 +69,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class PopTools {
-    
+
     public static void browseURI(BaseController controller, URI uri) {
         if (uri == null) {
             return;
@@ -124,7 +125,7 @@ public class PopTools {
             alertError(controller, message("DesktopNotSupportBrowse"));
         }
     }
-    
+
     public static Alert alert(BaseController controller, Alert.AlertType type, String information) {
         try {
             Alert alert = new Alert(type);
@@ -148,19 +149,19 @@ public class PopTools {
             return null;
         }
     }
-    
+
     public static Alert alertInformation(BaseController controller, String information) {
         return alert(controller, Alert.AlertType.INFORMATION, information);
     }
-    
+
     public static Alert alertWarning(BaseController controller, String information) {
         return alert(controller, Alert.AlertType.WARNING, information);
     }
-    
+
     public static Alert alertError(BaseController controller, String information) {
         return alert(controller, Alert.AlertType.ERROR, information);
     }
-    
+
     public static String askValue(String title, String header, String name, String initValue) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle(title);
@@ -178,7 +179,7 @@ public class PopTools {
         String value = result.get();
         return value;
     }
-    
+
     public static boolean askSure(BaseController controller, String title, String sureString) {
         return askSure(controller, title, null, sureString);
     }
@@ -201,7 +202,7 @@ public class PopTools {
         Optional<ButtonType> result = alert.showAndWait();
         return result != null && result.isPresent() && result.get() == buttonSure;
     }
-    
+
     public static Popup makePopWindow(BaseController parent, String fxml) {
         try {
             BaseController controller = WindowTools.loadFxml(fxml);
@@ -227,7 +228,7 @@ public class PopTools {
             return null;
         }
     }
-    
+
     public static Popup popWindow(BaseController parent, String fxml, Node owner, double x, double y) {
         try {
             Popup popup = makePopWindow(parent, fxml);
@@ -256,18 +257,18 @@ public class PopTools {
             }
             final ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-            
+
             String baseName = controller.getBaseName();
-            
+
             MenuItem menu = new MenuItem(message("HtmlStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
-            
+
             ToggleGroup sgroup = new ToggleGroup();
             String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
             String currentStyle = UserConfig.getString(prefix + "HtmlStyle", null);
-            
+
             RadioMenuItem rmenu = new RadioMenuItem(message("None"));
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -278,7 +279,7 @@ public class PopTools {
             rmenu.setSelected(currentStyle == null);
             rmenu.setToggleGroup(sgroup);
             popMenu.getItems().add(rmenu);
-            
+
             boolean predefinedValue = false;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
                 rmenu = new RadioMenuItem(message(style.name()));
@@ -297,11 +298,11 @@ public class PopTools {
                     predefinedValue = true;
                 }
             }
-            
+
             rmenu = new RadioMenuItem(message("Input") + "...");
             rmenu.setOnAction(new EventHandler<ActionEvent>() {
                 ChangeListener<Boolean> getListener;
-                
+
                 @Override
                 public void handle(ActionEvent event) {
                     TextInputController inputController = TextInputController.open(controller,
@@ -324,9 +325,9 @@ public class PopTools {
             rmenu.setSelected(currentStyle != null && !predefinedValue);
             rmenu.setToggleGroup(sgroup);
             popMenu.getItems().add(rmenu);
-            
+
             popMenu.getItems().add(new SeparatorMenuItem());
-            
+
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareHtmlStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -336,9 +337,9 @@ public class PopTools {
                 }
             });
             popMenu.getItems().add(checkMenu);
-            
+
             popMenu.getItems().add(new SeparatorMenuItem());
-            
+
             menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -356,18 +357,18 @@ public class PopTools {
             return null;
         }
     }
-    
+
     public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
         try {
             ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-            
+
             String baseName = parent.getBaseName();
             MenuItem menu = new MenuItem(message("WindowStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
-            
+
             Map<String, String> styles = new LinkedHashMap<>();
             styles.put("None", "");
             styles.put("Transparent", "; -fx-text-fill: black; -fx-background-color: transparent;");
@@ -378,7 +379,7 @@ public class PopTools {
             ToggleGroup sgroup = new ToggleGroup();
             String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
             String currentStyle = UserConfig.getString(prefix + "WindowStyle", "");
-            
+
             for (String name : styles.keySet()) {
                 RadioMenuItem rmenu = new RadioMenuItem(message(name));
                 String style = styles.get(name);
@@ -395,7 +396,7 @@ public class PopTools {
                 popMenu.getItems().add(rmenu);
             }
             popMenu.getItems().add(new SeparatorMenuItem());
-            
+
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -405,9 +406,9 @@ public class PopTools {
                 }
             });
             popMenu.getItems().add(checkMenu);
-            
+
             popMenu.getItems().add(new SeparatorMenuItem());
-            
+
             menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -417,10 +418,10 @@ public class PopTools {
                 }
             });
             popMenu.getItems().add(menu);
-            
+
             parent.closePopup();
             parent.setPopMenu(popMenu);
-            
+
             LocateTools.locateMouse(mouseEvent, popMenu);
             return popMenu;
         } catch (Exception e) {
@@ -428,7 +429,7 @@ public class PopTools {
             return null;
         }
     }
-    
+
     public static void setMenuLabelsStyle(Node node, String style) {
         if (node instanceof Label) {
             node.setStyle(style);
@@ -438,7 +439,7 @@ public class PopTools {
             }
         }
     }
-    
+
     public static void setWindowStyle(Pane pane, String baseName, String baseStyle) {
         String prefix = UserConfig.getBoolean(baseName + "ShareWindowStyle", true) ? "AllInterface" : baseName;
         String style = UserConfig.getString(prefix + "WindowStyle", "");
@@ -502,7 +503,7 @@ public class PopTools {
             return null;
         }
     }
-    
+
     public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -561,7 +562,7 @@ public class PopTools {
                 nodes.add(button);
             }
             controller.addFlowPane(nodes);
-            
+
             Hyperlink link = new Hyperlink(message("AboutRegularExpression"));
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -578,7 +579,7 @@ public class PopTools {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static void popColorExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -598,7 +599,7 @@ public class PopTools {
                     "rgba(102,166,136,0.25)", "rgba(155,20%,70%,0.25)",
                     "hsl(240,70%,80%)", "hsla(60,50%,60%,0.25)"
             ));
-            
+
             boolean isTextArea = input instanceof TextArea;
             List<Node> nodes = new ArrayList<>();
             for (String value : values) {
@@ -622,13 +623,17 @@ public class PopTools {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name) {
+        popStringValues(parent, input, mouseEvent, name, false);
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name, boolean clearAndSet) {
         try {
             int max = UserConfig.getInt(name + "MaxSaved", 20);
-            
+
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            
+
             List<Node> setButtons = new ArrayList<>();
             Button clearInputButton = new Button(message("ClearInputArea"));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -638,18 +643,18 @@ public class PopTools {
                 }
             });
             setButtons.add(clearInputButton);
-            
+
             Button clearValuesButton = new Button(message("ClearValues"));
             clearValuesButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     TableStringValues.clear(name);
                     controller.close();
-                    popStringValues(parent, input, mouseEvent, name);
+                    popStringValues(parent, input, mouseEvent, name, clearAndSet);
                 }
             });
             setButtons.add(clearValuesButton);
-            
+
             Button maxButton = new Button(message("MaxSaved"));
             maxButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -667,10 +672,11 @@ public class PopTools {
                 }
             });
             setButtons.add(maxButton);
-            
+
             setButtons.add(new Label(message("RightClickToDelete")));
             controller.addFlowPane(setButtons);
-            
+            controller.addNode(new Separator());
+
             List<String> values = TableStringValues.max(name, max);
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
@@ -678,7 +684,11 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.replaceText(input.getSelection(), value);
+                        if (clearAndSet) {
+                            input.setText(value);
+                        } else {
+                            input.replaceText(input.getSelection(), value);
+                        }
                         controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
@@ -689,25 +699,25 @@ public class PopTools {
                         if (event.getButton() == MouseButton.SECONDARY) {
                             TableStringValues.delete(name, value);
                             controller.close();
-                            popStringValues(parent, input, mouseEvent, name);
+                            popStringValues(parent, input, mouseEvent, name, clearAndSet);
                         }
                     }
                 });
                 buttons.add(button);
             }
             controller.addFlowPane(buttons);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static void popSqlExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            
+
             boolean isTextArea = input instanceof TextArea;
-            
+
             List<Node> topButtons = new ArrayList<>();
             if (isTextArea) {
                 Button newLineButton = new Button(message("Newline"));
@@ -721,7 +731,7 @@ public class PopTools {
                 });
                 topButtons.add(newLineButton);
             }
-            Button clearButton = new Button(message("Clear"));
+            Button clearButton = new Button(message("ClearInputArea"));
             clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -732,9 +742,11 @@ public class PopTools {
             });
             topButtons.add(clearButton);
             controller.addFlowPane(topButtons);
-            
+            controller.addNode(new Separator());
+
             addButtonsPane(controller, input, Arrays.asList(
                     "SELECT * FROM ", " WHERE ", " ORDER BY ", " DESC ", " ASC ",
+                    " FETCH FIRST ROW ONLY", " FETCH FIRST <size> ROWS ONLY",
                     " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY"
             ));
             addButtonsPane(controller, input, Arrays.asList(
@@ -756,17 +768,17 @@ public class PopTools {
                     " DATE('1998-02-26') ", " TIMESTAMP('1962-09-23 03:23:34.234') "
             ));
             addButtonsPane(controller, input, Arrays.asList(
-                    " COUNT ", " AVG ", " MAX ", " MIN ", " SUM ", " GROUP BY ", " HAVING "
+                    " COUNT() ", " AVG() ", " MAX() ", " MIN() ", " SUM() ", " GROUP BY ", " HAVING "
             ));
             addButtonsPane(controller, input, Arrays.asList(
                     " JOIN ", " INNER JOIN ", " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " CROSS JOIN "
             ));
             addButtonsPane(controller, input, Arrays.asList(
                     "INSERT INTO <table> (column1, column2) VALUES (value1, value2)",
-                    "UPDATE <table> SET <column1>=<value1>, <column2>=<value2> WHERE ",
-                    "DELETE FROM <table> WHERE ", "TRUNCATE TABLE "
+                    "UPDATE <table> SET <column1>=<value1>, <column2>=<value2> WHERE <condition>",
+                    "DELETE FROM <table> WHERE <condition>", "TRUNCATE TABLE <table>"
             ));
-            
+
             Hyperlink link = new Hyperlink("Derby Reference Manual");
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -775,12 +787,12 @@ public class PopTools {
                 }
             });
             controller.addNode(link);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> values) {
         try {
             List<Node> buttons = new ArrayList<>();
@@ -801,7 +813,7 @@ public class PopTools {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static void addButtonsPane(MenuController controller, TextInputControl input, Map<String, String> values) {
         try {
             List<Node> buttons = new ArrayList<>();
@@ -822,13 +834,13 @@ public class PopTools {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static void popTableNames(BaseController parent, TextInputControl input,
             MouseEvent mouseEvent, boolean internal) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addNode(new Label(message("TableName")));
-            
+
             List<String> names;
             if (internal) {
                 names = DataInternalTable.InternalTables;
@@ -853,14 +865,14 @@ public class PopTools {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static void popTableDefinition(BaseController parent, Node node,
             MouseEvent mouseEvent, boolean internal) {
         try {
             MenuController controller = MenuController.open(parent, node, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            
+
             controller.addNode(new Label(message("TableDefinition")));
-            
+
             List<String> names;
             if (internal) {
                 names = DataInternalTable.InternalTables;
@@ -888,5 +900,5 @@ public class PopTools {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
 }

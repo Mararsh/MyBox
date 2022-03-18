@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,18 +11,18 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -39,18 +38,18 @@ public class HtmlElementsController extends WebAddressController {
 
     protected int foundCount;
     protected HTMLDocument loadedDoc;
-    protected String sourceAddress, sourceHtml;
+    protected String key, sourceAddress, sourceHtml;
 
     @FXML
     protected HBox elementsBox;
     @FXML
     protected RadioButton tagRadio, idRadio, nameRadio;
     @FXML
-    protected ControlStringSelector elementInputController;
+    protected TextField elementInput;
     @FXML
     protected ToggleGroup elementGroup;
     @FXML
-    protected Button queryElementButton, examplesButton;
+    protected Button queryElementButton;
 
     public HtmlElementsController() {
         baseTitle = message("WebElements");
@@ -61,20 +60,8 @@ public class HtmlElementsController extends WebAddressController {
         try {
             super.initControls();
 
-            String keyName = baseName + "WebTag";
-            try ( Connection conn = DerbyBase.getConnection()) {
-                if (TableStringValues.size(conn, keyName) <= 0) {
-                    List<String> values = Arrays.asList(
-                            "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3",
-                            "button", "input", "label", "form", "table", "tr", "th", "td",
-                            "script", "style", "font", "span", "b", "hr", "br", "frame", "pre");
-                    TableStringValues.add(conn, keyName, values);
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-            }
-
-            elementInputController.init(this, keyName, null, 40);
+            key = baseName + "TagHistories";
+            elementInput.setText("table");
 
             elementGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -83,16 +70,17 @@ public class HtmlElementsController extends WebAddressController {
                         return;
                     }
                     if (tagRadio.isSelected()) {
-                        elementInputController.refreshList(keyName, "table");
+                        key = baseName + "TagHistories";
+                        elementInput.setText("table");
                     } else if (idRadio.isSelected()) {
-                        elementInputController.refreshList(baseName + "ID", "id");
+                        key = baseName + "IdHistories";
+                        elementInput.setText("id");
                     } else if (nameRadio.isSelected()) {
-                        elementInputController.refreshList(baseName + "Name", "name");
+                        key = baseName + "NameHistories";
+                        elementInput.setText("name");
                     }
                 }
             });
-
-            NodeStyleTools.removeTooltip(examplesButton);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -130,12 +118,12 @@ public class HtmlElementsController extends WebAddressController {
     protected void queryElement() {
         try {
             foundCount = 0;
-            String value = elementInputController.value();
+            String value = elementInput.getText();
             if (value == null || value.isBlank()) {
                 popError(message("InvalidData"));
                 return;
             }
-            elementInputController.refreshList();
+            TableStringValues.add(key, value);
             if (loadedDoc == null) {
                 popInformation(message("NoData"));
                 return;
@@ -219,19 +207,24 @@ public class HtmlElementsController extends WebAddressController {
                     @Override
                     public void handle(ActionEvent event) {
                         tagRadio.fire();
-                        elementInputController.set(value);
+                        elementInput.setText(value);
                         queryElement();
                     }
                 });
                 buttons.add(button);
             }
 
-            MenuController controller = MenuController.open(this, elementInputController.selector, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(this, elementInput, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addFlowPane(buttons);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    protected void popElementHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, elementInput, mouseEvent, key, true);
     }
 
 }

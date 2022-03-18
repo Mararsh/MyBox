@@ -24,6 +24,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -52,11 +53,11 @@ public abstract class BaseNodeSelector<P> extends BaseController {
      */
     protected abstract String name(P node);
 
+    protected abstract long id(P node);
+
     protected abstract String display(P node);
 
     protected abstract String tooltip(P node);
-
-    protected abstract long id(P node);
 
     protected abstract P dummy();
 
@@ -82,6 +83,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     @FXML
     protected abstract void moveNode();
+
+    protected abstract void treeView(Connection conn, P node, int indent, StringBuilder s);
 
     /*
         methods may need changed
@@ -163,7 +166,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 }
                 TreeItem<P> item = treeView.getSelectionModel().getSelectedItem();
                 if (event.getButton() == MouseButton.SECONDARY) {
-                    popNodeMenu(event, item);
+                    popFunctionsMenu(event, item);
                 } else {
 
                     if (event.getClickCount() > 1) {
@@ -278,14 +281,16 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         return chainName;
     }
 
-    public void popNodeMenu(MouseEvent event, TreeItem<P> selected) {
+    @FXML
+    public void popFunctionsMenu(MouseEvent event) {
         if (isSettingValues) {
             return;
         }
-        TreeItem<P> node = selected == null ? treeView.getRoot() : selected;
+        popFunctionsMenu(event, currectSelected());
+    }
 
-        List<MenuItem> items = makeNodeMenu(event, node);
-
+    public void popFunctionsMenu(MouseEvent event, TreeItem<P> node) {
+        List<MenuItem> items = makeNodeMenu(node);
         items.add(new SeparatorMenuItem());
 
         MenuItem menu = new MenuItem(message("PopupClose"));
@@ -307,7 +312,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         popMenu.show(treeView, event.getScreenX(), event.getScreenY());
     }
 
-    protected List<MenuItem> makeNodeMenu(MouseEvent event, TreeItem<P> selected) {
+    protected List<MenuItem> makeNodeMenu(TreeItem<P> selected) {
         TreeItem<P> node = selected == null ? treeView.getRoot() : selected;
         boolean isRoot = selected == null || isRoot(selected.getValue());
 
@@ -366,6 +371,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("TreeView"), StyleTools.getIconImage("iconTree.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                treeView();
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("Import"), StyleTools.getIconImage("iconImport.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 importAction();
@@ -408,12 +419,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            TreeItem<P> selectedItem = treeView.getSelectionModel().getSelectedItem();
+            TreeItem<P> selectedItem = currectSelected();
             if (selectedItem == null) {
-                selectedItem = treeView.getRoot();
-                if (selectedItem == null) {
-                    return;
-                }
+                return;
             }
             TreeItem<P> targetItem = selectedItem;
             P targetNode = targetItem.getValue();
@@ -458,12 +466,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            TreeItem<P> selectedItem = treeView.getSelectionModel().getSelectedItem();
+            TreeItem<P> selectedItem = currectSelected();
             if (selectedItem == null) {
-                selectedItem = treeView.getRoot();
-                if (selectedItem == null) {
-                    return;
-                }
+                return;
             }
             TreeItem<P> targetItem = selectedItem;
             P node = targetItem.getValue();
@@ -534,12 +539,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 return;
             }
             TreeItem<P> node = selectedItem;
-            P book = node.getValue();
-            if (book == null || isRoot(book)) {
+            P nodeValue = node.getValue();
+            if (nodeValue == null || isRoot(nodeValue)) {
                 return;
             }
             String chainName = chainName(node);
-            String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), name(book) + "m");
+            String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), name(nodeValue) + "m");
             if (name == null || name.isBlank()) {
                 return;
             }
@@ -552,7 +557,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    updatedNode = rename(book, name);
+                    updatedNode = rename(nodeValue, name);
                     return updatedNode != null;
                 }
 
@@ -574,20 +579,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     @FXML
     protected void foldNodes() {
-        TreeItem<P> selecteItem = treeView.getSelectionModel().getSelectedItem();
-        if (selecteItem == null) {
-            selecteItem = treeView.getRoot();
-        }
-        fold(selecteItem);
+        fold(currectSelected());
     }
 
     @FXML
     protected void unfoldNodes() {
-        TreeItem<P> selecteItem = treeView.getSelectionModel().getSelectedItem();
-        if (selecteItem == null) {
-            selecteItem = treeView.getRoot();
-        }
-        expandChildren(selecteItem);
+        expandChildren(currectSelected());
     }
 
     protected void expandChildren(Connection conn, TreeItem<P> item) {
@@ -742,6 +739,60 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     @FXML
     public void refreshAction() {
         loadTree();
+    }
+
+    // https://www.jb51.net/article/116957.htm
+    @FXML
+    public void treeView() {
+        TreeItem<P> item = currectSelected();
+        if (item != null) {
+            treeView(item.getValue());
+        }
+    }
+
+    public void treeView(P node) {
+        if (node == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>(this) {
+                private StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    s = new StringBuilder();
+                    s.append(" <script>\n"
+                            + "    function nodeClicked(id) {\n"
+                            + "      var ul = document.getElementById(id);\n"
+                            + "      var objv = ul.style.display;\n"
+                            + "      if (objv == 'none') {\n"
+                            + "        ul.style.display = 'block'\n"
+                            + "      } else {\n"
+                            + "        ul.style.display = 'none';\n"
+                            + "      }\n"
+                            + "    }\n"
+                            + " \n"
+                            + " \n"
+                            + "  </script>\n\n");
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        treeView(conn, node, 4, s);
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    WebBrowserController.oneLoad(HtmlWriteTools.html(null, s.toString()), true);
+                }
+            };
+            start(task);
+        }
     }
 
     public List<TreeItem<P>> ancestor(TreeItem<P> node) {

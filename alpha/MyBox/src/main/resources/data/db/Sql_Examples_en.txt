@@ -1,0 +1,79 @@
+##MyBox#
+Examples > Query meta of database
+Names of user tables
+SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'
+
+##MyBox#
+Examples > Query meta of database
+Information of user tables
+SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='T'
+
+##MyBox#
+Examples > Query meta of database
+Names of system tables
+SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='S'
+
+##MyBox#
+Examples > Query meta of database
+Information of system tables
+SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='S'
+
+##MyBox#
+Examples > Query meta of database
+Names of views
+SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'
+
+##MyBox#
+Examples > Query meta of database
+Information of views
+SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='V'
+
+##MyBox#
+Examples > Query meta of database
+Names and types of table columns
+SELECT columnname, columndatatype FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber
+
+##MyBox#
+Examples > Query meta of database
+Information of table columns
+SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber
+
+##MyBox#
+Examples > Query meta of database
+Names of table indices
+SELECT CONGLOMERATENAME FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE'
+
+##MyBox#
+Examples > Query meta of database
+Information of table indices
+SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE'
+
+##MyBox#
+Examples > Query tables of database
+Range of rows
+SELECT * FROM visit_history OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY
+
+##MyBox#
+Examples > Query tables of database
+Maximum rows
+SELECT * FROM visit_history FETCH FIRST 3000 ROWS ONLY
+
+##MyBox#
+Examples > Query tables of database
+First row
+SELECT * FROM visit_history FETCH FIRST ROW ONLY
+
+##MyBox#
+Examples > Query tables of database
+Conditions of query
+SELECT * FROM visit_history WHERE file_type > 1 OR data_more like '%fxml%'
+
+##MyBox#
+Examples > Query tables of database
+Count
+SELECT count(file_type) as count FROM visit_history WHERE file_type > 0 AND last_visit_time BETWEEN '2022-03-11 00:00:00.000' AND '2022-03-18 13:09:41.000' 
+
+##MyBox#
+Examples > Query tables of database
+Mode
+SELECT file_type, count(file_type) AS mode FROM visit_history GROUP BY file_type ORDER BY mode DESC FETCH FIRST ROW ONLY

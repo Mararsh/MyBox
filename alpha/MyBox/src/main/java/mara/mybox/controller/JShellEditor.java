@@ -44,6 +44,10 @@ public class JShellEditor extends TreeLeafEditor {
     @FXML
     protected Button clearCodesButton;
 
+    public JShellEditor() {
+        defaultExt = "java";
+    }
+
     @Override
     public void setControlsStyle() {
         try {
@@ -216,7 +220,7 @@ public class JShellEditor extends TreeLeafEditor {
     protected void popSyntaxMenu(MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(jShellController, valueInput,
-                    mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    mouseEvent.getScreenX(), mouseEvent.getScreenY() + 20);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();

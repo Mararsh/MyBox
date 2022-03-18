@@ -235,7 +235,8 @@ public class ControlWebView extends BaseController {
                                         + "function(){ if ( window.frames." + target
                                         + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
                             } else if ("contextmenu".equals(domEventType)
-                                    || ("click".equals(domEventType) && (clickAction == null || "PopMenu".equals(clickAction)))) {
+                                    || ("click".equals(domEventType) && !href.startsWith("javascript:")
+                                    && (clickAction == null || "PopMenu".equals(clickAction)))) {
                                 ev.preventDefault();
                                 timer = new Timer();
                                 timer.schedule(new TimerTask() {
@@ -246,13 +247,14 @@ public class ControlWebView extends BaseController {
                                         });
                                     }
                                 }, 100);
-                            } else if ("click".equals(domEventType)) {
+                            } else if ("click".equals(domEventType) && !href.startsWith("javascript:")) {
                                 if ("load".equals(clickAction)) {
                                     loadAddress(finalAddress(element));
                                 } else {
                                     WebBrowserController.oneOpen(finalAddress(element), "OpenSwitch".equals(clickAction));
                                 }
                             }
+
                         } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
                             ev.preventDefault();
                             timer = new Timer();

@@ -55,10 +55,23 @@ License:    Apache License Version 2.0
                                     <VBox spacing="5.0">
                                        <children>
                                                 <Label minHeight="-Infinity" text="%Color" wrapText="true" />
-                                                <fx:include fx:id="value" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popColorHistories">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconHistory.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <TextField fx:id="colorInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
                                               <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                   <children>
-                                                      <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popExamples">
+                                                      <Button fx:id="examplePopButton" mnemonicParsing="false" onMouseEntered="#popExamples">
                                                           <graphic>
                                                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                   <image>

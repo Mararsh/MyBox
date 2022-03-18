@@ -117,7 +117,7 @@ License:    Apache License Version 2.0
                                                             </Button>
                                                          </children>
                                                       </HBox>
-                                                      <Label minHeight="-Infinity" text="%TreeSearchComments" wrapText="true" />
+                                                      <Label minHeight="-Infinity" text="%SearchComments" wrapText="true" />
                                                    </children>
                                                    <padding>
                                                       <Insets bottom="5.0" left="2.0" right="2.0" top="5.0" />

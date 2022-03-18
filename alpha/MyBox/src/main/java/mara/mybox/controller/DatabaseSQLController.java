@@ -12,12 +12,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-14
  * @License Apache License Version 2.0
  */
-public class DatabaseSQLController extends TreeManageController {
+public class DatabaseSqlController extends TreeManageController {
 
     @FXML
     protected DatabaseSqlEditor editorController;
 
-    public DatabaseSQLController() {
+    public DatabaseSqlController() {
         baseTitle = message("DatabaseSQL");
         category = TreeNode.SQL;
         nameMsg = message("Title");
@@ -51,8 +51,8 @@ public class DatabaseSQLController extends TreeManageController {
     /*
         static
      */
-    public static DatabaseSQLController open(boolean internal) {
-        DatabaseSQLController controller = (DatabaseSQLController) WindowTools.openStage(Fxmls.DatabaseSQLFxml);
+    public static DatabaseSqlController open(boolean internal) {
+        DatabaseSqlController controller = (DatabaseSqlController) WindowTools.openStage(Fxmls.DatabaseSqlFxml);
         controller.setInternal(internal);
         controller.requestMouse();
         return controller;

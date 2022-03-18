@@ -134,42 +134,46 @@ public class JShellSnippets extends BaseTableViewController<JShellSnippet> {
     @FXML
     protected synchronized void refreshSnippets() {
         tableData.clear();
-        for (Snippet snippet : jShell().snippets().toList()) {
+        JShell jShell = jShell();
+        if (jShell == null) {
+            return;
+        }
+        for (Snippet snippet : jShell.snippets().toList()) {
             try {
                 switch (snippet.kind()) {
                     case VAR:
                         if (variablesCheck.isSelected()) {
-                            tableData.add(new JShellSnippet(jShell(), snippet));
+                            tableData.add(new JShellSnippet(jShell, snippet));
                         }
                         break;
                     case TYPE_DECL:
                         if (declarationsCheck.isSelected()) {
-                            tableData.add(new JShellSnippet(jShell(), snippet));
+                            tableData.add(new JShellSnippet(jShell, snippet));
                         }
                         break;
                     case STATEMENT:
                         if (statementsCheck.isSelected()) {
-                            tableData.add(new JShellSnippet(jShell(), snippet));
+                            tableData.add(new JShellSnippet(jShell, snippet));
                         }
                         break;
                     case METHOD:
                         if (methodsCheck.isSelected()) {
-                            tableData.add(new JShellSnippet(jShell(), snippet));
+                            tableData.add(new JShellSnippet(jShell, snippet));
                         }
                         break;
                     case IMPORT:
                         if (importsCheck.isSelected()) {
-                            tableData.add(new JShellSnippet(jShell(), snippet));
+                            tableData.add(new JShellSnippet(jShell, snippet));
                         }
                         break;
                     case EXPRESSION:
                         if (expressionsCheck.isSelected()) {
-                            tableData.add(new JShellSnippet(jShell(), snippet));
+                            tableData.add(new JShellSnippet(jShell, snippet));
                         }
                         break;
                     default:
                         if (errorsCheck.isSelected()) {
-                            tableData.add(new JShellSnippet(jShell(), snippet));
+                            tableData.add(new JShellSnippet(jShell, snippet));
                         }
                         break;
                 }

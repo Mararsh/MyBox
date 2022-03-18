@@ -1,6 +1,9 @@
 package mara.mybox.db.data;
 
+import java.io.File;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.FxFileTools.getInternalFile;
+import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -106,6 +109,29 @@ public class TreeNode extends BaseData {
         return data != null
                 && data.getTitle() != null && !data.getTitle().isBlank()
                 && !data.getTitle().contains(NodeSeparater);
+    }
+
+    public static File exampleFile(String category) {
+        String lang = Languages.isChinese() ? "zh" : "en";
+        if (WebFavorite.equals(category)) {
+            return getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
+                    "data", "WebFavorites_Examples_" + lang + ".txt");
+
+        } else if (Notebook.equals(category)) {
+            return getInternalFile("/data/db/Notes_Examples_" + lang + ".txt",
+                    "data", "Notes_Examples_" + lang + ".txt");
+
+        } else if (JShellCode.equals(category)) {
+            return getInternalFile("/data/db/JShell_Examples_" + lang + ".txt",
+                    "data", "JShell_Examples_" + lang + ".txt", true);
+
+        } else if (SQL.equals(category)) {
+            return getInternalFile("/data/db/Sql_Examples_" + lang + ".txt",
+                    "data", "Sql_Examples_" + lang + ".txt", true);
+
+        } else {
+            return null;
+        }
     }
 
     /*

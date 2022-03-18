@@ -1250,7 +1250,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         try {
             selectedNotify = null;
             loadedNotify = null;
-            tableData = null;
         } catch (Exception e) {
         }
         super.cleanPane();

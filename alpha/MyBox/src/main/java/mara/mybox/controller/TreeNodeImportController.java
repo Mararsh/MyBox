@@ -17,13 +17,11 @@ import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeLeaf;
-import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IconTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -65,18 +63,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
 
     public void importExamples(TreeManageController treeController) {
         setManage(treeController);
-        String lang = Languages.isChinese() ? "zh" : "en";
-        File file;
-        if (treeController instanceof WebFavoritesController) {
-            file = getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
-                    "data", "WebFavorites_Examples_" + lang + ".txt");
-        } else if (treeController instanceof NotesController) {
-            file = getInternalFile("/data/db/Notes_Examples_" + lang + ".txt",
-                    "data", "Notes_Examples_" + lang + ".txt");
-        } else if (treeController instanceof JShellController) {
-            file = getInternalFile("/data/db/JShell_Examples_" + lang + ".txt",
-                    "data", "JShell_Examples_" + lang + ".txt", true);
-        } else {
+        File file = TreeNode.exampleFile(category);
+        if (file == null) {
             return;
         }
         isSettingValues = true;

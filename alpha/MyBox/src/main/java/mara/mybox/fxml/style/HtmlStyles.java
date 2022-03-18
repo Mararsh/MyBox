@@ -28,7 +28,7 @@ public class HtmlStyles {
             = BaseStyle
             + "body { background-color:black; color:#CCFF99; }\n"
             + "table, th, td { border: #CCFF99; }\n"
-            + "a:link {color: #FFFFFF}\n"
+            + "a:link {color: dodgerblue}\n"
             + "a:visited  {color: #DDDDDD}\n"
             + ".valueBox { border-color:#CCFF99;}\n"
             + ".valueText { color:skyblue;  }\n";
@@ -36,7 +36,7 @@ public class HtmlStyles {
             = BaseStyle
             + "body { background-color:#336633; color:white; }\n"
             + "table, th, td { border: white; }\n"
-            + "a:link {color: #FFFFFF}\n"
+            + "a:link {color: aqua}\n"
             + "a:visited  {color: #DDDDDD}\n"
             + ".valueBox { border-color:white; }\n"
             + ".valueText { color:wheat;  }\n";
@@ -44,7 +44,7 @@ public class HtmlStyles {
             = BaseStyle
             + "body { background-color:darkblue; color:white;  }\n"
             + "table, th, td { border: white; }\n"
-            + "a:link {color: #FFFFFF}\n"
+            + "a:link {color: springgreen}\n"
             + "a:visited  {color: #DDDDDD}\n"
             + ".valueBox {  border-color:white;}\n"
             + ".valueText { color:yellow;  }\n";

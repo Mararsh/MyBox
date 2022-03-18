@@ -7,13 +7,16 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.WebHistory;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
@@ -21,6 +24,7 @@ import mara.mybox.fxml.cell.TableImageFileCell;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -34,7 +38,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
     @FXML
     protected ControlTimeTree timeController;
     @FXML
-    protected ControlStringSelector searchController;
+    protected TextField findInput;
     @FXML
     protected RadioButton titleRadio, addressRadio;
     @FXML
@@ -85,8 +89,6 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
                     refreshTimes();
                 }
             });
-
-            searchController.init(this, baseName + "Saved", null, 20);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -163,21 +165,21 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
     }
 
     /*
-        Search
+        Find
      */
     @FXML
-    protected void search() {
-        String s = searchController.value();
+    protected void find() {
+        String s = findInput.getText();
         if (s == null || s.isBlank()) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidParameters") + ": " + message("Find"));
             return;
         }
         String[] values = StringTools.splitBySpace(s);
         if (values == null || values.length == 0) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidParameters") + ": " + message("Find"));
             return;
         }
-        searchController.refreshList();
+        TableStringValues.add("WebHistoriesFindHistories", s);
         clearQuery();
         if (titleRadio.isSelected()) {
             queryConditions = null;
@@ -206,6 +208,11 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
             }
         }
         loadTableData();
+    }
+
+    @FXML
+    protected void popFindHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, findInput, mouseEvent, "WebHistoriesFindHistories", true);
     }
 
     /*

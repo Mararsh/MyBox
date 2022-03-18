@@ -23,10 +23,8 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -54,7 +52,7 @@ public class DatabaseSqlEditor extends TreeLeafEditor {
     protected CheckBox wrapOutputsCheck;
 
     public DatabaseSqlEditor() {
-        baseTitle = message("DatabaseSQL");
+        defaultExt = "sql";
     }
 
     @Override
@@ -252,16 +250,6 @@ public class DatabaseSqlEditor extends TreeLeafEditor {
 
     public void setInternal(boolean internal) {
         this.internal = internal;
-    }
-
-    /*
-        static
-     */
-    public static DatabaseSqlEditor open(boolean internal) {
-        DatabaseSqlEditor controller = (DatabaseSqlEditor) WindowTools.openStage(Fxmls.DatabaseSQLFxml);
-        controller.setInternal(internal);
-        controller.requestMouse();
-        return controller;
     }
 
 }

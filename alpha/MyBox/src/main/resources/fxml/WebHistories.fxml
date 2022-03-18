@@ -18,6 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -66,23 +67,31 @@ License:    Apache License Version 2.0
                                                                         </RadioButton>
                                                                         <RadioButton fx:id="addressRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Address" toggleGroup="$searchGroup" />
                                                                     </children>
-                                                                </HBox> 
-                                                                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="56.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                    <children>
-                                                                        <Label minHeight="-Infinity" text="%Include" wrapText="true" />
-                                                                        <fx:include fx:id="search" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#search">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconQuery.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
                                                                 </HBox>
-                                                                <Label minHeight="-Infinity" text="%SeparateBySpace" wrapText="true" />
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                   <children>
+                                                      <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconHistory.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                      <TextField fx:id="findInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                      <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#find">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconQuery.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                                <Label minHeight="-Infinity" text="%SearchComments" wrapText="true" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -146,7 +155,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308"  prefWidth="-1.0">
+                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
                                                     <graphic>
                                                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                                     </graphic>

@@ -200,7 +200,7 @@ public class Fxmls {
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
 
-    public static final String DatabaseSQLFxml = "/fxml/DatabaseSQL.fxml";
+    public static final String DatabaseSqlFxml = "/fxml/DatabaseSql.fxml";
     public static final String DataTablesFxml = "/fxml/DataTables.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
@@ -332,7 +332,6 @@ public class Fxmls {
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
     public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
-    public static final String RunJdkCommandFxml = "/fxml/RunJdkCommand.fxml";
     public static final String JShellFxml = "/fxml/JShell.fxml";
 
     /*

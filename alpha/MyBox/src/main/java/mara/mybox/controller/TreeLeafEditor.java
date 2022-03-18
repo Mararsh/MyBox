@@ -34,6 +34,7 @@ public class TreeLeafEditor extends TreeTagsController {
 
     protected boolean leafChanged;
     protected SimpleBooleanProperty changeNotify;
+    protected String defaultExt;
 
     @FXML
     protected Tab valueTab, attributesTab;
@@ -48,6 +49,7 @@ public class TreeLeafEditor extends TreeTagsController {
 
     public TreeLeafEditor() {
         changeNotify = new SimpleBooleanProperty(false);
+        defaultExt = "txt";
     }
 
     @Override
@@ -289,7 +291,7 @@ public class TreeLeafEditor extends TreeTagsController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(message(category) + "-" + DateTools.nowFileString() + ".java");
+        File file = chooseSaveFile(message(category) + "-" + DateTools.nowFileString() + "." + defaultExt);
         if (file == null) {
             return;
         }

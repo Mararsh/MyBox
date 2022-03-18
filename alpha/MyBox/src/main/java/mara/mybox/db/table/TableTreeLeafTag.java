@@ -96,8 +96,20 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         if (leafid < 0) {
             return tags;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            tags = leafTags(conn, leafid);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return tags;
+    }
+
+    public List<TreeLeafTag> leafTags(Connection conn, long leafid) {
+        List<TreeLeafTag> tags = new ArrayList<>();
+        if (conn == null || leafid < 0) {
+            return tags;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
             statement.setLong(1, leafid);
             ResultSet results = statement.executeQuery();
             while (results.next()) {

@@ -3,20 +3,18 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
+import mara.mybox.db.data.TreeLeaf;
+import mara.mybox.db.data.TreeLeafTag;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeLeaf;
+import mara.mybox.db.table.TableTreeLeafTag;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -29,6 +27,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     protected TreeNodesController caller;
     protected TableTree tableTree;
     protected TableTreeLeaf tableTreeLeaf;
+    protected TableTreeLeafTag tableTreeLeafTag;
     protected String category;
 
     public TreeNodesController() {
@@ -39,6 +38,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         treeController = parent;
         tableTree = parent.tableTree;
         tableTreeLeaf = parent.tableTreeLeaf;
+        tableTreeLeafTag = parent.tableTreeLeafTag;
         category = treeController.category;
         baseTitle = category;
     }
@@ -48,6 +48,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         this.caller = caller;
         tableTree = caller.tableTree;
         tableTreeLeaf = caller.tableTreeLeaf;
+        tableTreeLeafTag = caller.tableTreeLeafTag;
         category = caller.category;
         cloneTree(caller.treeView, treeView, getIgnoreNode());
     }
@@ -93,11 +94,6 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     @Override
     public List<TreeNode> ancestor(Connection conn, TreeNode node) {
         return tableTree.ancestor(conn, id(node));
-    }
-
-    @Override
-    public boolean equal(TreeNode node1, TreeNode node2) {
-        return node1.getNodeid() == node2.getNodeid();
     }
 
     @Override
@@ -174,6 +170,65 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         controller.setCaller(this, selectedItem.getValue(), chainName);
     }
 
+    @Override
+    protected void treeView(Connection conn, TreeNode node, int indent, StringBuilder s) {
+        if (conn == null || node == null) {
+            return;
+        }
+        List<TreeLeaf> leaves = tableTreeLeaf.leaves(conn, node.getNodeid());
+        List<TreeNode> children = children(conn, node);
+        if ((leaves == null || leaves.isEmpty()) && (children == null || children.isEmpty())) {
+            s.append(" ".repeat(indent)).append("&nbsp;".repeat(indent))
+                    .append(display(node)).append("<BR>\n");
+        } else {
+            String id = "item" + id(node);
+            s.append(" ".repeat(indent)).append("&nbsp;".repeat(indent))
+                    .append("<a href=\"javascript:nodeClicked('").append(id).append("')\">")
+                    .append(display(node)).append("</a><BR>\n");
+            s.append("<DIV id='").append(id).append("'>\n");
+            if (leaves != null) {
+                for (TreeLeaf leaf : leaves) {
+                    s.append(" ".repeat(indent + 4)).append("&nbsp;".repeat(indent + 4))
+                            .append(nameWithTags(conn, leaf)).append("<BR>\n");
+                }
+            }
+            if (children != null) {
+                for (TreeNode child : children) {
+                    treeView(conn, child, indent + 4, s);
+                }
+            }
+            s.append("</DIV>\n");
+        }
+    }
+
+    public String nameWithTags(Connection conn, TreeLeaf leaf) {
+        String s = leaf.getName();
+        List<TreeLeafTag> tags = tableTreeLeafTag.leafTags(conn, leaf.getLeafid());
+        if (tags != null && !tags.isEmpty()) {
+            for (TreeLeafTag leafTag : tags) {
+                s += "&nbsp;&nbsp;<SPAN style=\"border-radius:3px; "
+                        + " background-color: " + FxColorTools.color2rgb(leafTag.getTag().getColor()) + ";"
+                        + " color: " + FxColorTools.color2rgb(FxColorTools.invert(leafTag.getTag().getColor()))
+                        + ";\">" + leafTag.getTag().getTag() + "</SPAN>";
+            }
+        }
+        return s;
+    }
+
+    @FXML
+    @Override
+    protected void importExamples() {
+        TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
+        controller.importExamples(treeController);
+    }
+
+    @FXML
+    @Override
+    protected void importAction() {
+        TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
+        controller.setManage(treeController);
+    }
+
     public TreeNodesController oneOpen() {
         TreeNodesController controller = null;
         List<Window> windows = new ArrayList<>();
@@ -195,51 +250,6 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             controller.requestMouse();
         }
         return controller;
-    }
-
-    @FXML
-    @Override
-    protected void importExamples() {
-        TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
-        controller.importExamples(treeController);
-    }
-
-    @FXML
-    @Override
-    protected void importAction() {
-        TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
-        controller.setManage(treeController);
-    }
-
-    // https://www.jb51.net/article/116957.htm
-    @FXML
-    protected void html() {
-
-    }
-
-    @FXML
-    public void popFunctionsMenu(MouseEvent event) {
-        List<MenuItem> items = makeNodeMenu(event, currectSelected());
-
-        items.add(new SeparatorMenuItem());
-
-        MenuItem menu = new MenuItem(message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(treeView, event.getScreenX(), event.getScreenY());
     }
 
 }

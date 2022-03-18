@@ -90,6 +90,9 @@ public class WebAddressController extends BaseWebViewController {
     }
 
     public void writeHis(String address) {
+        if (address == null || address.isBlank()) {
+            return;
+        }
         SingletonTask bgTask = new SingletonTask<Void>(this) {
 
             private ImageView tabImage = null;
@@ -175,7 +178,7 @@ public class WebAddressController extends BaseWebViewController {
 
     @FXML
     protected void popAddressHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, addressInput, mouseEvent, "WebAddressHistories");
+        PopTools.popStringValues(this, addressInput, mouseEvent, "WebAddressHistories", true);
     }
 
     @Override

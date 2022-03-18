@@ -102,6 +102,10 @@ public class FxColorTools {
         return ColorConvertTools.converColor(new java.awt.Color(value, true));
     }
 
+    public static Color invert(Color color) {
+        return new Color(1 - color.getRed(), 1 - color.getGreen(), 1 - color.getBlue(), color.getOpacity());
+    }
+
     public static int color2Value(Color color) {
         return color == null ? AppValues.InvalidInteger : ColorConvertTools.converColor(color).getRGB();
     }

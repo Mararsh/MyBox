@@ -205,12 +205,15 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
         nodes
      */
     protected void loadTree(TreeNode node) {
-        if (!AppVariables.isTesting && tableTreeLeaf.size(category) < 1
-                && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
-            nodesController.importExamples();
-        } else {
-            nodesController.loadTree(node);
+        if (!AppVariables.isTesting) {
+            File file = TreeNode.exampleFile(category);
+            if (file != null && tableTreeLeaf.size(category) < 1
+                    && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
+                nodesController.importExamples();
+                return;
+            }
         }
+        nodesController.loadTree(node);
     }
 
     protected void clearQuery() {
@@ -680,12 +683,12 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     protected void find() {
         String s = findInput.getText();
         if (s == null || s.isBlank()) {
-            popError(message("InvalidParameters"));
+            popError(message("InvalidParameters") + ": " + message("Find"));
             return;
         }
         String[] values = StringTools.splitBySpace(s);
         if (values == null || values.length == 0) {
-            popError(message("InvalidParameters"));
+            popError(message("InvalidParameters") + ": " + message("Find"));
             return;
         }
         TableStringValues.add(baseName + category + "Histories", s);

@@ -316,6 +316,7 @@ public class HtmlEditorController extends WebAddressController {
             if (task != null && !task.isQuit()) {
                 return;
             }
+            MyBoxLog.console(sourceFile);
             if (sourceFile == null) {
                 targetFile = chooseSaveFile();
                 if (targetFile == null) {
@@ -324,6 +325,7 @@ public class HtmlEditorController extends WebAddressController {
             } else {
                 targetFile = sourceFile;
             }
+            MyBoxLog.console(targetFile);
             String html = currentHtml(true);
             if (html == null || html.isBlank()) {
                 popError(message("NoData"));
@@ -350,10 +352,9 @@ public class HtmlEditorController extends WebAddressController {
                 @Override
                 protected void whenSucceeded() {
                     popSaved();
-                    if (sourceFile == null) {
-                        setSourceFile(sourceFile);
-                    }
-                    recordFileWritten(sourceFile);
+                    recordFileWritten(targetFile);
+                    setSourceFile(targetFile);
+                    addressChanged();
                     updateFileStatus(false);
                 }
             };

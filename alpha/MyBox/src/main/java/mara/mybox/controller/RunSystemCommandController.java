@@ -5,7 +5,11 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -17,7 +21,7 @@ import static mara.mybox.value.Languages.message;
 public class RunSystemCommandController extends RunCommandController {
 
     @FXML
-    protected ControlStringSelector cmdController;
+    protected TextField cmdInput;
     @FXML
     protected Button plusButton;
 
@@ -30,7 +34,7 @@ public class RunSystemCommandController extends RunCommandController {
         try {
             super.initControls();
 
-            cmdController.init(this, baseName + "Saved", example(), 20);
+            cmdInput.setText(example());
 
             outputs = "";
             if (plusButton != null) {
@@ -50,10 +54,6 @@ public class RunSystemCommandController extends RunCommandController {
         return "ping github.com";
     }
 
-    public String makeCmd() {
-        return cmdController.value();
-    }
-
     @FXML
     @Override
     public void startAction() {
@@ -61,12 +61,17 @@ public class RunSystemCommandController extends RunCommandController {
             cancelCommand();
             return;
         }
-        run(makeCmd());
+        String cmd = cmdInput.getText();
+        if (cmd == null || cmd.isBlank()) {
+            popError(message("InvalidParameters") + ": " + message("Command"));
+            return;
+        }
+        TableStringValues.add("RunSystemCommandHistories", cmd);
+        run(cmd);
     }
 
     @Override
     public boolean beforeRun() {
-        cmdController.refreshList();
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         if (plusButton != null) {
@@ -81,8 +86,7 @@ public class RunSystemCommandController extends RunCommandController {
             if (process != null && process.isAlive()) {
                 try ( BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(process.getOutputStream(), Charset.defaultCharset()));) {
-                    MyBoxLog.console(cmdController.value());
-                    writer.append(cmdController.value());
+                    writer.append(cmdInput.getText());
                 } catch (Exception e) {
                     popError(e.toString());
                 }
@@ -102,6 +106,11 @@ public class RunSystemCommandController extends RunCommandController {
         if (plusButton != null) {
             plusButton.setDisable(true);
         }
+    }
+
+    @FXML
+    protected void popCmdHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, cmdInput, mouseEvent, "RunSystemCommandHistories", true);
     }
 
 }

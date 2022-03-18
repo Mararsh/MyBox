@@ -14,17 +14,21 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.NetworkTools;
@@ -32,7 +36,6 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -43,11 +46,11 @@ import mara.mybox.value.UserConfig;
  */
 public class NetworkQueryAddressController extends HtmlTableController {
 
-    protected String host;
+    protected String host, key;
     protected Certificate[] chain;
 
     @FXML
-    protected ControlStringSelector addressController;
+    protected TextField addressInput;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
@@ -70,7 +73,8 @@ public class NetworkQueryAddressController extends HtmlTableController {
         try {
             super.initControls();
 
-            addressController.init(this, baseName + "URL", "https://sourceforge.net", 20);
+            key = "NetworkQueryURLHistories";
+            addressInput.setText("https://sourceforge.net");
 
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -84,31 +88,39 @@ public class NetworkQueryAddressController extends HtmlTableController {
         }
     }
 
+    @FXML
+    protected void popAddressHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, addressInput, mouseEvent, key, true);
+    }
+
     protected void checkType() {
         if (isSettingValues) {
             return;
         }
         if (urlRadio.isSelected()) {
-            addressController.refreshList(baseName + "URL", "https://sourceforge.net");
+            addressInput.setText("https://sourceforge.net");
+            key = "NetworkQueryURLHistories";
         } else if (hostRadio.isSelected()) {
-            addressController.refreshList(baseName + "Host", "github.com");
+            addressInput.setText("github.com");
+            key = "NetworkQueryHostHistories";
         } else if (ipRadio.isSelected()) {
-            addressController.refreshList(baseName + "IP", "210.75.225.254");
+            addressInput.setText("210.75.225.254");
+            key = "NetworkQueryIPHistories";
         }
     }
 
     public void queryUrl(String address) {
         isSettingValues = true;
         urlRadio.fire();
-        addressController.setName(baseName + "URL");
-        addressController.set(address);
+        key = "NetworkQueryURLHistories";
+        addressInput.setText(address);
         isSettingValues = false;
         query(address);
     }
 
     @FXML
     public void queryAction() {
-        query(addressController.value());
+        query(addressInput.getText());
     }
 
     public void query(String address) {
@@ -124,7 +136,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
             certArea.clear();
             host = null;
             chain = null;
-            addressController.refreshList();
+            TableStringValues.add(key, address);
             headerController.loadContents(null);
             task = new SingletonTask<Void>(this) {
 
@@ -207,7 +219,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
     public void pasteAction() {
         String string = TextClipboardTools.getSystemClipboardString();
         if (string != null && !string.isBlank()) {
-            addressController.set(string);
+            addressInput.setText(string);
             queryAction();
         }
     }
