@@ -110,10 +110,15 @@ public class WebFavoriteEditor extends TreeLeafEditor {
         if (leaf == null) {
             return null;
         }
+        String address = leaf.getValue();
+        if (address == null || address.isBlank()) {
+            popError(message("InvalidParameters") + ": " + message("Address"));
+            return null;
+        }
         try {
-            URL url = new URL(leaf.getValue());
+            URL url = new URL(address);
         } catch (Exception e) {
-            popError(message("InvalidParemeters") + ": " + treeController.valueMsg);
+            popError(message("InvalidParemeters") + ": " + message("Address"));
             return null;
         }
         return leaf;

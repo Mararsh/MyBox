@@ -152,10 +152,14 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     }
                     owners.put(line, treeNode);
                 }
-                while ((line = reader.readLine()) != null && line.isBlank()) {
-                }
+                line = reader.readLine();
                 if (line == null) {
                     break;
+                }
+                if (line.isBlank()) {
+                    while ((line = reader.readLine()) != null && line.isBlank()) {
+                    }
+                    continue;
                 }
                 long nodeid = treeNode.getNodeid();
                 name = line;
@@ -163,7 +167,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 value = null;
                 time = null;
                 more = null;
-                if (line != null) {
+                if (line != null && !line.isBlank()) {
                     time = DateTools.stringToDatetime(line);
                     if (time == null) {
                         value = line;
@@ -260,10 +264,13 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 if (line == null) {
                     break;
                 }
+                if (line.startsWith(AppValues.MyBoxSeparator)) {
+                    continue;
+                }
                 name = line;
                 while ((line = reader.readLine()) != null && line.isBlank()) {
                 }
-                if (line != null) {
+                if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
                     if (line.startsWith(TreeLeaf.TimePrefix)) {
                         time = DateTools.stringToDatetime(line.substring(TreeLeaf.TimePrefix.length()));
                     } else {

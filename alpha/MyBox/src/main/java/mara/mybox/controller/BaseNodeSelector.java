@@ -741,7 +741,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         loadTree();
     }
 
-    // https://www.jb51.net/article/116957.htm
     @FXML
     public void treeView() {
         TreeItem<P> item = currectSelected();
@@ -764,19 +763,36 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 @Override
                 protected boolean handle() {
                     s = new StringBuilder();
+                    // https://www.jb51.net/article/116957.htm
                     s.append(" <script>\n"
                             + "    function nodeClicked(id) {\n"
-                            + "      var ul = document.getElementById(id);\n"
-                            + "      var objv = ul.style.display;\n"
+                            + "      var obj = document.getElementById(id);\n"
+                            + "      var objv = obj.style.display;\n"
                             + "      if (objv == 'none') {\n"
-                            + "        ul.style.display = 'block'\n"
+                            + "        obj.style.display = 'block'\n"
                             + "      } else {\n"
-                            + "        ul.style.display = 'none';\n"
+                            + "        obj.style.display = 'none';\n"
                             + "      }\n"
                             + "    }\n"
-                            + " \n"
+                            + "    function unfold() {\n"
+                            + "      var nodes = document.getElementsByClassName(\"TreeNode\")  　\n"
+                            + "      for(var i = 0 ; i < nodes.length; i++){\n"
+                            + "          nodes[i].style.display = 'block'\n"
+                            + "      }"
+                            + "    }\n"
+                            + "    function fold() {\n"
+                            + "      var nodes = document.getElementsByClassName(\"TreeNode\")  　\n"
+                            + "      for(var i = 0 ; i < nodes.length; i++){\n"
+                            + "          nodes[i].style.display = 'none'\n"
+                            + "      }"
+                            + "    }\n"
                             + " \n"
                             + "  </script>\n\n");
+                    s.append("<DIV>\n")
+                            .append("<BUTTON onclick=\"unfold()\">").append(message("Unfold")).append("</BUTTON>").append("\n")
+                            .append("&nbsp;")
+                            .append("<BUTTON onclick=\"fold()\">").append(message("Fold")).append("</BUTTON>").append("\n")
+                            .append("</DIV>\n");
                     try ( Connection conn = DerbyBase.getConnection()) {
                         treeView(conn, node, 4, s);
                     } catch (Exception e) {

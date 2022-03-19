@@ -52,7 +52,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public abstract class TreeManageController extends BaseSysTableController<TreeLeaf> {
+public class TreeManageController extends BaseSysTableController<TreeLeaf> {
 
     protected String category;
     protected TableTree tableTree;
@@ -94,8 +94,8 @@ public abstract class TreeManageController extends BaseSysTableController<TreeLe
     protected RadioButton findNameRadio, findValueRadio;
 
     public TreeManageController() {
-        baseTitle = message("Tree");
-        category = TreeNode.Root;
+        baseTitle = message("InformationInTree");
+        category = TreeNode.InformationInTree;
         nameMsg = message("Title");
         valueMsg = message("Value");
         moreMsg = message("More");

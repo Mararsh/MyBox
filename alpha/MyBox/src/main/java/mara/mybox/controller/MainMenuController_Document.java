@@ -17,6 +17,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void InformationInTree(ActionEvent event) {
+        loadScene(Fxmls.TreeManageFxml);
+    }
+
+    @FXML
     protected void openPdfView(ActionEvent event) {
         loadScene(Fxmls.PdfViewFxml);
     }

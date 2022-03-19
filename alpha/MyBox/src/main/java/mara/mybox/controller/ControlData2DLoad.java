@@ -587,7 +587,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     tableColumn.widthProperty().addListener(new ChangeListener<Number>() {
                         @Override
                         public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
-                            dataController.columnsController.setWidth(col - 1, nv.intValue());
+                            int w = nv.intValue();
+                            dataColumn.setWidth(w);
+                            dataController.columnsController.setWidth(col - 1, w);
                         }
                     });
                 }

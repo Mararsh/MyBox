@@ -41,6 +41,7 @@ License:    Apache License Version 2.0
                         <Menu fx:id="documentMenu" mnemonicParsing="false" text="%Document">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openNotes" text="%Notes" />
+                                <MenuItem mnemonicParsing="false" onAction="#InformationInTree" text="%InformationInTree" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="PDF">
                                     <items>

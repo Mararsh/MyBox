@@ -561,13 +561,14 @@ public class TreeNodeExportController extends BaseTaskController {
                 }
                 writer.write("<A href=\"" + leaf.getValue() + "\">" + leaf.getName() + "</A></H4>\n");
             } else {
-
-//                writer.write(indent + indent + indent + "<H4><PRE><CODE>" + note.getTitle() + "</CODE></PRE></H4>\n");
-//                if (timeCheck.isSelected()) {
-//                    writer.write(indent + indent + indent + "<H5>" + DateTools.datetimeToString(note.getUpdateTime()) + "</H5>\n");
-//                }
-//                writer.write(indent + indent + indent + note.getHtml() + "\n"
-//                        + indent + indent + "</div><HR>\n\n");
+                writer.write(indent + indent + indent + "<H4><PRE><CODE>" + leaf.getName() + "</CODE></PRE></H4>\n");
+                if (timeCheck.isSelected()) {
+                    writer.write(indent + indent + indent + "<H5>" + DateTools.datetimeToString(leaf.getTime()) + "</H5>\n");
+                }
+                if (leaf.getValue() != null) {
+                    writer.write(indent + indent + indent + leaf.getValue() + "\n"
+                            + indent + indent + "</div><HR>\n\n");
+                }
             }
             writer.write(indent + indent + "</div><HR>\n\n");
         } catch (Exception e) {
@@ -593,8 +594,6 @@ public class TreeNodeExportController extends BaseTaskController {
                             + "><![CDATA[" + leaf.getMore()
                             + "]]></" + treeController.moreMsg + ">\n");
                 }
-
-            } else {
 
             }
             if (leaf.getValue() != null) {

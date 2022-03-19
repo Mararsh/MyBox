@@ -182,14 +182,16 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                     .append(display(node)).append("<BR>\n");
         } else {
             String id = "item" + id(node);
-            s.append(" ".repeat(indent)).append("&nbsp;".repeat(indent))
+            s.append("<DIV style=\"padding: 2px;\">")
+                    .append(" ".repeat(indent)).append("&nbsp;".repeat(indent))
                     .append("<a href=\"javascript:nodeClicked('").append(id).append("')\">")
-                    .append(display(node)).append("</a><BR>\n");
-            s.append("<DIV id='").append(id).append("'>\n");
+                    .append(display(node)).append("</a></DIV>\n");
+            s.append("<DIV class=\"TreeNode\" id='").append(id).append("'>\n");
             if (leaves != null) {
                 for (TreeLeaf leaf : leaves) {
-                    s.append(" ".repeat(indent + 4)).append("&nbsp;".repeat(indent + 4))
-                            .append(nameWithTags(conn, leaf)).append("<BR>\n");
+                    s.append("<DIV style=\"padding: 2px;\">")
+                            .append(" ".repeat(indent + 4)).append("&nbsp;".repeat(indent + 4))
+                            .append(nameWithTags(conn, leaf)).append("</DIV>\n");
                 }
             }
             if (children != null) {
@@ -206,7 +208,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         List<TreeLeafTag> tags = tableTreeLeafTag.leafTags(conn, leaf.getLeafid());
         if (tags != null && !tags.isEmpty()) {
             for (TreeLeafTag leafTag : tags) {
-                s += "&nbsp;&nbsp;<SPAN style=\"border-radius:3px; "
+                s += "&nbsp;&nbsp;<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em; "
                         + " background-color: " + FxColorTools.color2rgb(leafTag.getTag().getColor()) + ";"
                         + " color: " + FxColorTools.color2rgb(FxColorTools.invert(leafTag.getTag().getColor()))
                         + ";\">" + leafTag.getTag().getTag() + "</SPAN>";

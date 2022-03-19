@@ -18,6 +18,7 @@ public class TreeNode extends BaseData {
     public static final String Notebook = "Notebook";
     public static final String JShellCode = "JShellCode";
     public static final String SQL = "SQL";
+    public static final String InformationInTree = "InformationInTree";
 
     protected long nodeid, parent;
     protected String category, title, attribute, more;
@@ -128,6 +129,10 @@ public class TreeNode extends BaseData {
         } else if (SQL.equals(category)) {
             return getInternalFile("/data/db/Sql_Examples_" + lang + ".txt",
                     "data", "Sql_Examples_" + lang + ".txt", true);
+
+        } else if (InformationInTree.equals(category)) {
+            return getInternalFile("/data/db/Tree_Examples_" + lang + ".txt",
+                    "data", "Tree_Examples_" + lang + ".txt", true);
 
         } else {
             return null;

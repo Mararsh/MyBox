@@ -270,12 +270,7 @@ public class TreeLeafEditor extends TreeTagsController {
         TreeLeaf leaf = TreeLeaf.create()
                 .setCategory(category).setName(name);
         if (valueInput != null) {
-            String value = valueInput.getText();
-            if (value == null || value.isBlank()) {
-                popError(message("InvalidParameters") + ": " + treeController.valueMsg);
-                return null;
-            }
-            leaf.setValue(value);
+            leaf.setValue(valueInput.getText());
         }
         if (moreInput != null) {
             leaf.setMore(moreInput.getText());

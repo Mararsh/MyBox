@@ -494,6 +494,10 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     @Override
     public void tableChanged(boolean changed) {
+        MyBoxLog.console(isSettingValues);
+        if (isSettingValues) {
+            return;
+        }
         if (changed) {
             status(Status.Modified);
         } else {
@@ -690,7 +694,15 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         }
         Data2DColumn column = tableData.get(index);
         column.setWidth(width);
+        MyBoxLog.console(width);
+        isSettingValues = true;
         tableData.set(index, column);
+        isSettingValues = false;
+        MyBoxLog.console(status);
+        if (status == null || status == Status.Loaded) {
+            status(Status.Applied);
+        }
+
     }
 
     @FXML

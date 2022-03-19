@@ -290,6 +290,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
         updateStatus();
     }
 

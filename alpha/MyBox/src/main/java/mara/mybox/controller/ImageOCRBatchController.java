@@ -52,7 +52,7 @@ import net.sourceforge.tess4j.util.ImageHelper;
 public class ImageOCRBatchController extends BaseBatchImageController {
 
     protected float scale;
-    protected int threshold, rotate, regionLevel, wordLevel, tesseractVersion;
+    protected int threshold, rotate, tesseractVersion;
     protected ImageContrast.ContrastAlgorithm contrastAlgorithm;
     protected BufferedImage lastImage;
     protected ITesseract OCRinstance;
@@ -458,8 +458,8 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             }
 
-            if (wordLevel >= 0) {
-                List<Word> words = OCRinstance.getWords(lastImage, wordLevel);
+            if (ocrOptionsController.wordLevel >= 0) {
+                List<Word> words = OCRinstance.getWords(lastImage, ocrOptionsController.wordLevel);
                 List<String> names = new ArrayList<>();
                 names.addAll(Arrays.asList(Languages.message("Index"),
                         Languages.message("Contents"), Languages.message("Confidence"),
@@ -485,8 +485,8 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             }
 
-            if (regionLevel >= 0) {
-                List<Rectangle> rectangles = OCRinstance.getSegmentedRegions(lastImage, regionLevel);
+            if (ocrOptionsController.regionLevel >= 0) {
+                List<Rectangle> rectangles = OCRinstance.getSegmentedRegions(lastImage, ocrOptionsController.regionLevel);
                 List<String> names = new ArrayList<>();
                 names.addAll(Arrays.asList(Languages.message("Index"),
                         Languages.message("CoordinateX"), Languages.message("CoordinateY"),
