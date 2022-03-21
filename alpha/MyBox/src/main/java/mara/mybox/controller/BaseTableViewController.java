@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -208,8 +210,13 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected boolean handle() {
-                countPagination(page);
-                data = readPageData();
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    countPagination(conn, page);
+                    data = readPageData(conn);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
                 return true;
             }
 
@@ -234,8 +241,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
         start(task, !loadInBackground, message("LoadingTableData"));
     }
 
-    protected void countPagination(long page) {
-        dataSize = readDataSize();
+    protected void countPagination(Connection conn, long page) {
+        dataSize = readDataSize(conn);
         if (dataSize < 0 || dataSize <= pageSize) {
             pagesNumber = 1;
         } else {
@@ -270,7 +277,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         loadedNotify.set(!loadedNotify.get());
     }
 
-    public long readDataSize() {
+    public long readDataSize(Connection conn) {
         return 0;
     }
 
@@ -278,7 +285,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         dataSizeLoaded = true;
     }
 
-    public List<P> readPageData() {
+    public List<P> readPageData(Connection conn) {
         return null;
     }
 

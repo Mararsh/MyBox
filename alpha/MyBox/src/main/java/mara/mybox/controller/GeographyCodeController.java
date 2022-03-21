@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,9 +17,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mara.mybox.data.CoordinateSystem;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -165,10 +166,10 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     @Override
-    public List<GeographyCode> readPageData() {
+    public List<GeographyCode> readPageData(Connection conn) {
         setPageSQL();
 //        MyBoxLog.debug(dataQuerySQL);
-        return TableGeographyCode.queryCodes(pageQuerySQL, true);
+        return TableGeographyCode.queryCodes(conn, pageQuerySQL, true);
     }
 
     @Override

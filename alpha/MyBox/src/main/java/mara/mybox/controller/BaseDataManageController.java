@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -22,9 +23,9 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -229,9 +230,9 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     }
 
     @Override
-    public List<P> readPageData() {
+    public List<P> readPageData(Connection conn) {
         setPageSQL();
-        return tableDefinition.readData(pageQuerySQL);
+        return tableDefinition.query(conn, pageQuerySQL);
     }
 
     @Override
@@ -448,9 +449,9 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     }
 
     @Override
-    public long readDataSize() {
+    public long readDataSize(Connection conn) {
 //        MyBoxLog.debug(sizeQuerySQL);
-        return DerbyBase.size(sizeQuerySQL);
+        return DerbyBase.size(conn, sizeQuerySQL);
     }
 
     @FXML

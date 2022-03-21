@@ -848,17 +848,6 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         }
     }
 
-    public static List<GeographyCode> queryCodes(String sql, boolean decodeAncestors) {
-        List<GeographyCode> codes = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection()) {
-            conn.setReadOnly(true);
-            codes = queryCodes(conn, sql, decodeAncestors);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return codes;
-    }
-
     public static List<GeographyCode> queryCodes(String sql, int max, boolean decodeAncestors) {
         List<GeographyCode> codes = new ArrayList<>();
         try ( Connection conn = DerbyBase.getConnection()) {

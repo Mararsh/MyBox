@@ -1,0 +1,106 @@
+##MyBox#
+Examples > Selection
+Select all
+window.getSelection().removeAllRanges();     
+var selection = window.getSelection();        
+var range = document.createRange();        
+range.selectNode(document.documentElement);        
+selection.addRange(range);
+
+##MyBox#
+Examples > Selection
+Select none
+window.getSelection().removeAllRanges();
+
+##MyBox#
+Examples > Selection
+Select node
+function selectNode(id) {
+    window.getSelection().removeAllRanges();     
+    var selection = window.getSelection();        
+    var range = document.createRange();        
+    range.selectNode(document.getElementById(id));        
+    selection.addRange(range);
+};
+selectNode("someid");
+
+##MyBox#
+Examples > Selection
+Current selected string
+window.getSelection().toString();
+
+
+##MyBox#
+Examples > Selection
+Current selected html codes
+var selectionObj = window.getSelection();        
+var rangeObj = selectionObj.getRangeAt(0);        
+var docFragment = rangeObj.cloneContents();        
+var div = document.createElement("div");        
+div.appendChild(docFragment);        
+div.innerHTML;
+
+##MyBox#
+Examples > Function
+Add style
+function addStyle(style) {
+    var node = document.createElement("style");        
+    node.id = "mystyleid";        
+    node.type = "text/css";        
+    node.innerHTML = style.replace(/\n/g,"  ");        
+    document.getElementsByTagName("HEAD").item(0).appendChild(node);
+};
+addStyle("body { background-color:black; color:#CCFF99; }");
+    
+##MyBox#
+Examples > Function
+Remove node
+function removeNode(id) {
+    var node = document.getElementById(id);
+    if ( node != null ) 
+        node.parentNode.removeChild(node);
+};
+removeNode("mystyleid");
+    
+##MyBox#
+Examples > Value
+Read Cookie
+document.cookie;
+    
+##MyBox#
+Examples > Value
+Page height
+document.documentElement.scrollHeight || document.body.scrollHeight;
+    
+##MyBox#
+Examples > Value
+Page width
+document.documentElement.scrollWidth || document.body.scrollWidth;
+   
+##MyBox#
+Examples > Value
+Replace first
+"Hello World! World is yourself.".replace("World", "Feeling");
+    
+##MyBox#
+Examples > Value
+Replace all
+"Hello World! World is yourself.".replace(/World/g, "Feeling");
+   
+##MyBox#
+Examples > Operation
+Scroll page
+window.scrollTo(50,70 );
+   
+##MyBox#
+Examples > Operation
+Set page as editable
+document.body.contentEditable=true;
+   
+##MyBox#
+Examples > Operation
+Pop information
+alert("Hello");
+
+
+

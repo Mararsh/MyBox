@@ -16,9 +16,9 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableDateCell;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -177,10 +177,14 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
     }
 
     public void checkQueryConditions() {
-        if (sourceFile == null || shareCheck.isSelected()) {
+        if (shareCheck.isSelected()) {
             queryConditions = null;
         } else {
-            queryConditions = " image_location='" + sourceFile.getAbsolutePath() + "' ";
+            if (sourceFile == null) {
+                queryConditions = " image_location='Unknown' ";
+            } else {
+                queryConditions = " image_location='" + sourceFile.getAbsolutePath() + "' ";
+            }
         }
     }
 

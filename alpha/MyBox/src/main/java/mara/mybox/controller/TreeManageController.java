@@ -314,12 +314,12 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     }
 
     @Override
-    public long readDataSize() {
+    public long readDataSize(Connection conn) {
         if (nodesController.selectedNode != null && subCheck.isSelected()) {
-            return TableTreeLeaf.withSubSize(tableTree, nodesController.selectedNode.getNodeid());
+            return TableTreeLeaf.withSubSize(conn, tableTree, nodesController.selectedNode.getNodeid());
 
         } else if (queryConditions != null) {
-            return tableTreeLeaf.conditionSize(queryConditions);
+            return tableTreeLeaf.conditionSize(conn, queryConditions);
 
         } else {
             return 0;
@@ -328,12 +328,12 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     }
 
     @Override
-    public List<TreeLeaf> readPageData() {
+    public List<TreeLeaf> readPageData(Connection conn) {
         if (nodesController.selectedNode != null && subCheck.isSelected()) {
-            return tableTreeLeaf.withSub(tableTree, nodesController.selectedNode.getNodeid(), startRowOfCurrentPage, pageSize);
+            return tableTreeLeaf.withSub(conn, tableTree, nodesController.selectedNode.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
-            return tableTreeLeaf.queryConditions(queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
+            return tableTreeLeaf.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
 
         } else {
             return null;

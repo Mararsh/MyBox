@@ -14,6 +14,7 @@ import mara.mybox.db.table.TableTreeLeaf;
 import mara.mybox.db.table.TableTreeLeafTag;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 
 /**
@@ -177,21 +178,43 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         }
         List<TreeLeaf> leaves = tableTreeLeaf.leaves(conn, node.getNodeid());
         List<TreeNode> children = children(conn, node);
+        String indentNode = " ".repeat(indent);
+        String spaceNode = "&nbsp;".repeat(indent);
         if ((leaves == null || leaves.isEmpty()) && (children == null || children.isEmpty())) {
-            s.append(" ".repeat(indent)).append("&nbsp;".repeat(indent))
-                    .append(display(node)).append("<BR>\n");
+            s.append(indentNode).append(spaceNode).append(display(node)).append("<BR>\n");
         } else {
             String id = "item" + id(node);
-            s.append("<DIV style=\"padding: 2px;\">")
-                    .append(" ".repeat(indent)).append("&nbsp;".repeat(indent))
+            s.append(indentNode).append("<DIV style=\"padding: 2px;\">\n")
+                    .append(spaceNode)
                     .append("<a href=\"javascript:nodeClicked('").append(id).append("')\">")
                     .append(display(node)).append("</a></DIV>\n");
-            s.append("<DIV class=\"TreeNode\" id='").append(id).append("'>\n");
+            s.append(indentNode).append("<DIV class=\"TreeNode\" id='").append(id).append("'>\n");
             if (leaves != null) {
+                String indentLeaf = " ".repeat(indent + 4);
+                String spaceLeaf = "&nbsp;".repeat(indent + 4);
                 for (TreeLeaf leaf : leaves) {
-                    s.append("<DIV style=\"padding: 2px;\">")
-                            .append(" ".repeat(indent + 4)).append("&nbsp;".repeat(indent + 4))
-                            .append(nameWithTags(conn, leaf)).append("</DIV>\n");
+                    s.append(indentLeaf).append("<DIV style=\"padding: 2px;\">")
+                            .append(spaceLeaf).append(leaf.getName()).append("\n");
+                    List<TreeLeafTag> tags = tableTreeLeafTag.leafTags(conn, leaf.getLeafid());
+                    if (tags != null && !tags.isEmpty()) {
+                        String indentTag = " ".repeat(indent + 8);
+                        String spaceTag = "&nbsp;".repeat(2);
+                        s.append(indentTag).append("<SPAN class=\"LeafTag\">\n");
+                        for (TreeLeafTag leafTag : tags) {
+                            s.append(indentTag).append(spaceTag)
+                                    .append("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: ")
+                                    .append(FxColorTools.color2rgb(leafTag.getTag().getColor()))
+                                    .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.invert(leafTag.getTag().getColor()))).append(";\">")
+                                    .append(leafTag.getTag().getTag()).append("</SPAN>\n");
+                        }
+                        s.append(indentTag).append("</SPAN>\n");
+                    }
+                    s.append(indentLeaf).append("</DIV>\n");
+                    if (leaf.getValue() != null) {
+                        s.append(indentLeaf).append(spaceLeaf).append("<DIV class=\"valueBox\">\n");
+                        s.append(indentLeaf).append(HtmlWriteTools.stringToHtml(leaf.getValue())).append("\n");
+                        s.append(indentLeaf).append("</DIV>\n");
+                    }
                 }
             }
             if (children != null) {
@@ -199,7 +222,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                     treeView(conn, child, indent + 4, s);
                 }
             }
-            s.append("</DIV>\n");
+            s.append(indentNode).append("</DIV>\n");
         }
     }
 

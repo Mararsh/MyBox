@@ -138,10 +138,9 @@ public class TableTreeLeaf extends BaseTable<TreeLeaf> {
         return allLeaves;
     }
 
-    public List<TreeLeaf> withSub(TableTree tableTree, long parentid, long start, long size) {
+    public List<TreeLeaf> withSub(Connection conn, TableTree tableTree, long parentid, long start, long size) {
         List<TreeLeaf> leaves = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement query = conn.prepareStatement(QueryChildren)) {
+        try ( PreparedStatement query = conn.prepareStatement(QueryChildren)) {
             if (tableTree == null) {
                 tableTree = new TableTree();
             }

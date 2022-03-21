@@ -769,29 +769,32 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             + "      var obj = document.getElementById(id);\n"
                             + "      var objv = obj.style.display;\n"
                             + "      if (objv == 'none') {\n"
-                            + "        obj.style.display = 'block'\n"
+                            + "        obj.style.display = 'block';\n"
                             + "      } else {\n"
                             + "        obj.style.display = 'none';\n"
                             + "      }\n"
                             + "    }\n"
-                            + "    function unfold() {\n"
-                            + "      var nodes = document.getElementsByClassName(\"TreeNode\")  　\n"
-                            + "      for(var i = 0 ; i < nodes.length; i++){\n"
-                            + "          nodes[i].style.display = 'block'\n"
-                            + "      }"
+                            + "    function showClass(className, show) {\n"
+                            + "      var nodes = document.getElementsByClassName(className);  　\n"
+                            + "      if ( show) {\n"
+                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                            + "              nodes[i].style.display = 'block';\n"
+                            + "           }\n"
+                            + "       } else {\n"
+                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                            + "              nodes[i].style.display = 'none';\n"
+                            + "           }\n"
+                            + "       }\n"
                             + "    }\n"
-                            + "    function fold() {\n"
-                            + "      var nodes = document.getElementsByClassName(\"TreeNode\")  　\n"
-                            + "      for(var i = 0 ; i < nodes.length; i++){\n"
-                            + "          nodes[i].style.display = 'none'\n"
-                            + "      }"
-                            + "    }\n"
-                            + " \n"
                             + "  </script>\n\n");
                     s.append("<DIV>\n")
-                            .append("<BUTTON onclick=\"unfold()\">").append(message("Unfold")).append("</BUTTON>").append("\n")
-                            .append("&nbsp;")
-                            .append("<BUTTON onclick=\"fold()\">").append(message("Fold")).append("</BUTTON>").append("\n")
+                            .append("<DIV>\n")
+                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
+                            .append(message("Unfold")).append("</INPUT>\n")
+                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('LeafTag', this.checked);\">")
+                            .append(message("Tags")).append("</INPUT>\n")
+                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('valueBox', this.checked);\">")
+                            .append(message("Values")).append("</INPUT>\n")
                             .append("</DIV>\n");
                     try ( Connection conn = DerbyBase.getConnection()) {
                         treeView(conn, node, 4, s);

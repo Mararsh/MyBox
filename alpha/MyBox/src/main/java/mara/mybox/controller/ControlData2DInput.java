@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -13,6 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -182,12 +184,17 @@ public class ControlData2DInput extends BaseController {
                             dataFileText.setColumns(columns);
                             validateTable = Data2DColumn.validate(columns);
                         }
-                        data = dataFileText.readPageData();
-                        return true;
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
                     }
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        data = dataFileText.readPageData(conn);
+                    } catch (Exception e) {
+                        MyBoxLog.error(e);
+                        return false;
+                    }
+                    return true;
                 }
 
                 @Override

@@ -4,8 +4,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -97,11 +97,12 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             scopeSavedController.setParameters(this);
             operationsController.resetOperationPanes();
 
-            hisController.recordImageHistory(ImageOperation.Load, image);
-            updateLabelString(Languages.message("Loaded"));
-
 //            autoSize();
+            hisTab.setDisable(sourceFile == null);
+            backupTab.setDisable(sourceFile == null);
+            hisController.recordImageHistory(ImageOperation.Load, image);
             backupController.loadBackups(sourceFile);
+            updateLabelString(Languages.message("Loaded"));
 
             return true;
         } catch (Exception e) {

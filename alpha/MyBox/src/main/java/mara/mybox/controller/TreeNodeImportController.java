@@ -150,6 +150,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     if (treeNode == null) {
                         break;
                     }
+                    count++;
                     owners.put(line, treeNode);
                 }
                 line = reader.readLine();

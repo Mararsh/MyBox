@@ -494,7 +494,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     @Override
     public void tableChanged(boolean changed) {
-        MyBoxLog.console(isSettingValues);
         if (isSettingValues) {
             return;
         }

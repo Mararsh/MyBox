@@ -27,15 +27,19 @@ public class DataTableReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        try ( Connection dconn = DerbyBase.getConnection()) {
-            conn = dconn;
-            handleData();
-            conn.close();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+        if (conn == null) {
+            try ( Connection dconn = DerbyBase.getConnection()) {
+                conn = dconn;
+                handleData();
+                conn.close();
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+                if (readerTask != null) {
+                    readerTask.setError(e.toString());
+                }
             }
+        } else {
+            handleData();
         }
     }
 

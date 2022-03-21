@@ -349,7 +349,7 @@ public class Fxmls {
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
     public static final String TextInputFxml = "/fxml/TextInput.fxml";
     public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
-    public static final String HtmlScriptFxml = "/fxml/HtmlScript.fxml";
+    public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

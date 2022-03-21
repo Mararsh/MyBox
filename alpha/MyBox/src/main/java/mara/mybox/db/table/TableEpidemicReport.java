@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,9 +10,10 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.stringValue;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -179,10 +179,9 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         }
     }
 
-    public static List<EpidemicReport> dataQuery(String sql, boolean decodeAncestors) {
+    public static List<EpidemicReport> dataQuery(Connection conn, String sql, boolean decodeAncestors) {
         List<EpidemicReport> reports = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try ( Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
