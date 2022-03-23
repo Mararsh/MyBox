@@ -218,7 +218,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             if (currentController == null) {
                 currentCase.setStatus(Status.Fail);
                 tableData.set(currentIndex, currentCase);
-
+                tableView.scrollTo(currentCase);
             } else {
                 new Timer().schedule(new TimerTask() {
                     @Override
@@ -230,6 +230,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                             if (currentCase != null && currentCase.getStatus() != Status.Fail) {
                                 currentCase.setStatus(Status.Success);
                                 tableData.set(currentIndex, currentCase);
+                                tableView.scrollTo(currentCase);
                             }
                             currentIndex++;
                             caseNotify();
@@ -243,6 +244,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             if (currentCase != null) {
                 currentCase.setStatus(Status.Fail);
                 tableData.set(currentIndex, currentCase);
+                tableView.scrollTo(currentCase);
             }
         }
         currentIndex++;

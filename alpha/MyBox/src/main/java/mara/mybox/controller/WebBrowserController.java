@@ -240,12 +240,12 @@ public class WebBrowserController extends BaseController {
         return controller;
     }
 
-    public static WebBrowserController oneLoad(String contents, boolean focus) {
+    public static WebAddressController oneLoad(String contents, boolean focus) {
         WebBrowserController controller = oneOpen();
         if (controller != null && contents != null) {
-            controller.loadContents(contents, focus);
+            return controller.loadContents(contents, focus);
         }
-        return controller;
+        return null;
     }
 
 }

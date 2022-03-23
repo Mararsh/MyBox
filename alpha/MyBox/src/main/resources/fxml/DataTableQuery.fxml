@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlDataQuery">
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <children>
+      <HBox alignment="CENTER">
+         <children>
+            <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Query" textAlignment="CENTER" VBox.vgrow="NEVER" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0">
+         <children>
+            <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+            <Button fx:id="tableDefinitionButton" mnemonicParsing="false" onMouseEntered="#popTableDefinition">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconInfo.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+         <children>
+            <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/red/iconWrap.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Label fx:id="tableLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="historyButton2" mnemonicParsing="false" onMouseEntered="#popHistories">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconHistory.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="examplesButton2" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconExamples.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="listButton2" layoutX="845.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popTableNames">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconList.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="clearCommandButton" mnemonicParsing="false" onAction="#clearValue">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconClear.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <TextArea fx:id="queryInput" prefHeight="100.0" />
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+                            <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#derbyHelp" text="%DerbyReferenceManual" wrapText="true" HBox.hgrow="ALWAYS" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+    </children>
+</VBox>

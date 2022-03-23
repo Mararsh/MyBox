@@ -42,7 +42,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
@@ -316,7 +315,6 @@ public class HtmlEditorController extends WebAddressController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            MyBoxLog.console(sourceFile);
             if (sourceFile == null) {
                 targetFile = chooseSaveFile();
                 if (targetFile == null) {
@@ -325,7 +323,6 @@ public class HtmlEditorController extends WebAddressController {
             } else {
                 targetFile = sourceFile;
             }
-            MyBoxLog.console(targetFile);
             String html = currentHtml(true);
             if (html == null || html.isBlank()) {
                 popError(message("NoData"));
@@ -365,43 +362,7 @@ public class HtmlEditorController extends WebAddressController {
     @FXML
     @Override
     public void saveAsAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            File file = chooseSaveFile();
-            if (file == null) {
-                return;
-            }
-            String html = currentHtml(true);
-            if (html == null || html.isBlank()) {
-                popError(message("NoData"));
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    try {
-                        File tmpFile = HtmlWriteTools.writeHtml(html);
-                        if (tmpFile == null || !tmpFile.exists()) {
-                            return false;
-                        }
-                        return FileTools.rename(tmpFile, file);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(file);
-                    ControllerTools.openHtmlEditor(null, file);
-                }
-            };
-            start(task);
-        }
+        webViewController.saveAs(currentHtml(true));
     }
 
     public String currentHtml() {

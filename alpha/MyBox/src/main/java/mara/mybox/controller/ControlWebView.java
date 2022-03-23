@@ -251,7 +251,7 @@ public class ControlWebView extends BaseController {
                                 switch (clickAction) {
                                     case "AsPage":
                                         break;
-                                    case "load":
+                                    case "Load":
                                         ev.preventDefault();
                                         loadAddress(finalAddress(element));
                                         break;
@@ -658,62 +658,7 @@ public class ControlWebView extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        Menu clickMenu = new Menu(message("WhenClickImageLink"));
-        ToggleGroup clickGroup = new ToggleGroup();
-        String currentClick = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
-
-        RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
-        clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString("WebViewWhenClickImageLink", "PopMenu");
-            }
-        });
-        clickPopMenu.setToggleGroup(clickGroup);
-        clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
-
-        RadioMenuItem clickAsPageMenu = new RadioMenuItem(message("HandleAsPage"), StyleTools.getIconImage("iconHtml.png"));
-        clickAsPageMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString("WebViewWhenClickImageLink", "AsPage");
-            }
-        });
-        clickAsPageMenu.setToggleGroup(clickGroup);
-        clickAsPageMenu.setSelected("AsPage".equals(currentClick));
-
-        RadioMenuItem clickOpenSwitchMenu = new RadioMenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
-        clickOpenSwitchMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString("WebViewWhenClickImageLink", "OpenSwitch");
-            }
-        });
-        clickOpenSwitchMenu.setToggleGroup(clickGroup);
-        clickOpenSwitchMenu.setSelected("OpenSwitch".equals(currentClick));
-
-        RadioMenuItem clickOpenMenu = new RadioMenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
-        clickOpenMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString("WebViewWhenClickImageLink", "Open");
-            }
-        });
-        clickOpenMenu.setToggleGroup(clickGroup);
-        clickOpenMenu.setSelected("Open".equals(currentClick));
-
-        RadioMenuItem clickLoadMenu = new RadioMenuItem(message("OpenLinkByCurrent"), StyleTools.getIconImage("iconWindow.png"));
-        clickLoadMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString("WebViewWhenClickImageLink", "Load");
-            }
-        });
-        clickLoadMenu.setToggleGroup(clickGroup);
-        clickLoadMenu.setSelected("Load".equals(currentClick));
-
-        clickMenu.getItems().addAll(clickPopMenu, clickAsPageMenu, clickOpenSwitchMenu, clickOpenMenu, clickLoadMenu);
-        items.add(clickMenu);
+        items.add(clickMenu());
 
         menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconQuery.png"));
         menu.setOnAction((ActionEvent event) -> {
@@ -961,14 +906,14 @@ public class ControlWebView extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 backAction();
             });
-            menu.setDisable(hisSize < 2);
+//            menu.setDisable(hisSize < 2);
             items.add(menu);
 
             menu = new MenuItem(message("Forward"), StyleTools.getIconImage("iconNext.png"));
             menu.setOnAction((ActionEvent event) -> {
                 forwardAction();
             });
-            menu.setDisable(hisSize < 2);
+//            menu.setDisable(hisSize < 2);
             items.add(menu);
 
             menu = new MenuItem(message("ZoomIn"), StyleTools.getIconImage("iconZoomIn.png"));
@@ -1032,27 +977,8 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
+    public Menu clickMenu() {
         try {
-            String html = loadedHtml();
-            Document doc = webEngine.getDocument();
-            boolean isFrameset = framesDoc != null && !framesDoc.isEmpty();
-
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            if (address != null && !address.isBlank()) {
-                menu = new MenuItem(address);
-                menu.setStyle("-fx-text-fill: #2e598a;");
-                items.add(menu);
-                items.add(new SeparatorMenuItem());
-            }
-
-            Menu opertionsMenu = new Menu(message("Operations"), StyleTools.getIconImage("iconAsterisk.png"));
-            opertionsMenu.getItems().setAll(operationsMenu());
-            items.add(opertionsMenu);
-
             Menu clickMenu = new Menu(message("WhenClickImageLink"));
             ToggleGroup clickGroup = new ToggleGroup();
             String currentClick = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
@@ -1108,7 +1034,37 @@ public class ControlWebView extends BaseController {
             clickLoadMenu.setSelected("Load".equals(currentClick));
 
             clickMenu.getItems().addAll(clickPopMenu, clickAsPageMenu, clickOpenSwitchMenu, clickOpenMenu, clickLoadMenu);
-            items.add(clickMenu);
+
+            return clickMenu;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent mouseEvent) {
+        try {
+            String html = loadedHtml();
+            Document doc = webEngine.getDocument();
+            boolean isFrameset = framesDoc != null && !framesDoc.isEmpty();
+
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (address != null && !address.isBlank()) {
+                menu = new MenuItem(address);
+                menu.setStyle("-fx-text-fill: #2e598a;");
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            }
+
+            Menu operationsMenu = new Menu(message("Operations"), StyleTools.getIconImage("iconAsterisk.png"));
+            operationsMenu.getItems().setAll(operationsMenu());
+            items.add(operationsMenu);
+
+            items.add(clickMenu());
 
             if (!(this instanceof ControlHtmlEditor)) {
                 CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImage("iconEdit.png"));
@@ -1158,9 +1114,8 @@ public class ControlWebView extends BaseController {
 
             items.add(new SeparatorMenuItem());
 
-            List<MenuItem> editItems = new ArrayList<>();
-
             if (html != null && !html.isBlank()) {
+                List<MenuItem> editItems = new ArrayList<>();
                 menu = new MenuItem(message("HtmlEditor"), StyleTools.getIconImage("iconEdit.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     edit(address, html);
@@ -1221,9 +1176,6 @@ public class ControlWebView extends BaseController {
                 editItems.add(new SeparatorMenuItem());
                 items.addAll(editItems);
 
-            }
-
-            if (html != null && !html.isBlank()) {
                 menu = new MenuItem(message("HtmlCodes"), StyleTools.getIconImage("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlCodesPopController.openWebView(myController, webView);
@@ -1317,9 +1269,18 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
+                items.add(new SeparatorMenuItem());
+
             }
 
-            items.add(new SeparatorMenuItem());
+            if (html != null && !html.isBlank()) {
+                menu = new MenuItem(message("SaveAs"), StyleTools.getIconImage("iconSaveAs.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    saveAsAction();
+                });
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            }
 
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -1627,6 +1588,14 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
+        saveAs(loadedHtml());
+    }
+
+    public void saveAs(String html) {
+        if (html == null || html.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -1635,15 +1604,13 @@ public class ControlWebView extends BaseController {
             if (file == null) {
                 return;
             }
-            String html = loadedHtml();
-            if (html == null || html.isBlank()) {
-                popError(message("NoData"));
-                return;
-            }
             task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
                     File tmpFile = HtmlWriteTools.writeHtml(html);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
                     return FileTools.rename(tmpFile, file);
                 }
 
@@ -1651,9 +1618,7 @@ public class ControlWebView extends BaseController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    if (saveAsType == BaseController_Attributes.SaveAsType.Open) {
-                        ControllerTools.openHtmlEditor(null, file);
-                    }
+                    ControllerTools.openHtmlEditor(null, file);
                 }
             };
             start(task);

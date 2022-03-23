@@ -53,7 +53,7 @@ License:    Apache License Version 2.0
          <columns>
             <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
                <graphic>
-                  <CheckBox fx:id="allRowsCheck1" mnemonicParsing="false" text="%TableRow" />
+                  <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                </graphic>
             </TableColumn>
             <TableColumn fx:id="sidColumn" prefWidth="60.0" text="%ID" />

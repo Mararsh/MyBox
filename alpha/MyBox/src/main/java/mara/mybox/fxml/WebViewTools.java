@@ -304,4 +304,27 @@ public class WebViewTools {
         return null;
     }
 
+    // https://bbs.csdn.net/topics/310020841
+    public static int px(WebEngine webEngine, String s) {
+        try {
+            String js = "function stringPX(s){"
+                    + "    var span = document.createElement(\"span\");\n"
+                    + "    span.innerHTML = s;\n"
+                    + "    document.body.appendChild(span);\n"
+                    + "    var width = span.offsetWidth;\n"
+                    + "    document.body.removeChild(span); "
+                    + "    return width; "
+                    + "}"
+                    + "stringPX(\"" + s + "\");";
+            Object c = webEngine.executeScript(js);
+            if (c == null) {
+                return -1;
+            }
+            return ((int) c);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return -1;
+        }
+    }
+
 }

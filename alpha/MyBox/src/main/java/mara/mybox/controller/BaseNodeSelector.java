@@ -22,6 +22,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -743,14 +744,15 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     @FXML
     public void treeView() {
-        TreeItem<P> item = currectSelected();
-        if (item != null) {
-            treeView(item.getValue());
-        }
+        treeView(currectSelected());
     }
 
-    public void treeView(P node) {
+    public void treeView(TreeItem<P> node) {
         if (node == null) {
+            return;
+        }
+        P nodeValue = node.getValue();
+        if (nodeValue == null) {
             return;
         }
         synchronized (this) {
@@ -778,26 +780,26 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             + "      var nodes = document.getElementsByClassName(className);  　\n"
                             + "      if ( show) {\n"
                             + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = 'block';\n"
+                            + "              nodes[i].style.display = '';\n"
                             + "           }\n"
                             + "       } else {\n"
                             + "           for (var i = 0 ; i < nodes.length; i++) {\n"
                             + "              nodes[i].style.display = 'none';\n"
                             + "           }\n"
                             + "       }\n"
-                            + "    }\n"
-                            + "  </script>\n\n");
+                            + "    }\n" + "  </script>\n\n");
                     s.append("<DIV>\n")
                             .append("<DIV>\n")
                             .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
                             .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('LeafTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")
-                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('valueBox', this.checked);\">")
+                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('LeafValue', this.checked);\">")
                             .append(message("Values")).append("</INPUT>\n")
                             .append("</DIV>\n");
+                    s.append("<SPAN id='Space_PX'>&nbsp;</SPAN>\n");
                     try ( Connection conn = DerbyBase.getConnection()) {
-                        treeView(conn, node, 4, s);
+                        treeView(conn, nodeValue, 4, s);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -807,7 +809,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    WebBrowserController.oneLoad(HtmlWriteTools.html(null, s.toString()), true);
+                    WebAddressController c = WebBrowserController.oneLoad(
+                            HtmlWriteTools.html(chainName(node), HtmlStyles.styleValue("Default"), s.toString()), true);
                 }
             };
             start(task);

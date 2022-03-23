@@ -11,6 +11,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -40,6 +42,10 @@ public class DatabaseSqlEditor extends TreeLeafEditor {
     protected boolean internal;
     protected int maxLines;
 
+    @FXML
+    protected TabPane sqlPane;
+    @FXML
+    protected Tab resultsTab, dataTab;
     @FXML
     protected TextArea outputArea;
     @FXML
@@ -198,9 +204,11 @@ public class DatabaseSqlEditor extends TreeLeafEditor {
 
             @Override
             protected void whenSucceeded() {
-
                 if (html != null) {
+                    sqlPane.getSelectionModel().select(dataTab);
                     dataController.loadContents(html);
+                } else {
+                    sqlPane.getSelectionModel().select(resultsTab);
                 }
             }
 

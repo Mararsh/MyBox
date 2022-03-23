@@ -578,7 +578,7 @@ public class TreeNodeExportController extends BaseTaskController {
             if (treeController instanceof WebFavoritesController) {
                 writer.write(indent + indent + indent + "<H4>");
                 if (iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
-                    writer.write("<IMG src=\"" + new File(leaf.getMore()).toURI().toString() + "\">");
+                    writer.write("<IMG src=\"" + new File(leaf.getMore()).toURI().toString() + "\" />");
                 }
                 writer.write("<A href=\"" + leaf.getValue() + "\">" + leaf.getName() + "</A></H4>\n");
             } else {

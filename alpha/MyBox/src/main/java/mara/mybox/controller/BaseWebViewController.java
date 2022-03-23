@@ -284,6 +284,15 @@ public class BaseWebViewController extends BaseController {
 
     @FXML
     @Override
+    public void saveAsAction() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.saveAsAction();
+    }
+
+    @FXML
+    @Override
     public void cancelAction() {
         if (webViewController == null) {
             return;

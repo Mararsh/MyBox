@@ -111,7 +111,6 @@ public class JShellEditor extends TreeLeafEditor {
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         startButton.setUserData("started");
-        valueInput.clear();
         jShellController.rightPaneCheck.setSelected(true);
         task = new SingletonTask<Void>(this) {
             @Override
@@ -122,6 +121,7 @@ public class JShellEditor extends TreeLeafEditor {
             @Override
             protected void finalAction() {
                 cancelAction();
+                editLeaf(null);
             }
         };
         start(task);
@@ -151,11 +151,12 @@ public class JShellEditor extends TreeLeafEditor {
             if (source == null || source.isBlank()) {
                 return false;
             }
-            TableStringValues.add(conn, "JShellHistories", source.trim());
-            List<SnippetEvent> events = jShell.eval(source);
+            String snippet = source.trim();
+            TableStringValues.add(conn, "JShellHistories", snippet);
+            List<SnippetEvent> events = jShell.eval(snippet);
             String snippetOutputs = DateTools.nowString()
                     + "<div class=\"valueText\" >"
-                    + HtmlWriteTools.stringToHtml(source)
+                    + HtmlWriteTools.stringToHtml(snippet)
                     + "</div>";
             String results = "";
             for (int i = 0; i < events.size(); i++) {
@@ -170,16 +171,16 @@ public class JShellEditor extends TreeLeafEditor {
                 }
                 results += "id: " + jShellSnippet.getId() + "\n";
                 if (jShellSnippet.getStatus() != null) {
-                    results += "status: " + jShellSnippet.getStatus() + "\n";
+                    results += message("Status") + ": " + jShellSnippet.getStatus() + "\n";
                 }
                 if (jShellSnippet.getType() != null) {
-                    results += "type: " + jShellSnippet.getType() + "\n";
+                    results += message("Type") + ": " + jShellSnippet.getType() + "\n";
                 }
                 if (jShellSnippet.getName() != null) {
-                    results += "name: " + jShellSnippet.getName() + "\n";
+                    results += message("Name") + ": " + jShellSnippet.getName() + "\n";
                 }
                 if (jShellSnippet.getValue() != null) {
-                    results += "value: " + jShellSnippet.getValue() + "\n";
+                    results += message("Value") + ": " + jShellSnippet.getValue() + "\n";
                 }
             }
             snippetOutputs += "<div class=\"valueBox\">"
