@@ -66,7 +66,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract P root(Connection conn);
 
-    protected abstract int size(Connection conn, P root);
+    protected abstract int totalCount(Connection conn);
 
     protected abstract List<P> children(Connection conn, P node);
 
@@ -153,8 +153,10 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 }
                 setText(display(item));
                 String tips = tooltip(item);
-                if (tips != null) {
+                if (tips != null && !tips.isBlank()) {
                     NodeStyleTools.setTooltip(this, tips);
+                } else {
+                    NodeStyleTools.removeTooltip(this);
                 }
             }
         });
@@ -208,7 +210,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         P rootNode = root(conn);
                         rootItem = new TreeItem(rootNode);
                         ignoreNode = getIgnoreNode();
-                        int size = size(conn, rootNode);
+                        int size = totalCount(conn);
                         if (size < 1) {
                             return true;
                         }
@@ -792,9 +794,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append("<DIV>\n")
                             .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
-                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('LeafTag', this.checked);\">")
+                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('NodeTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")
-                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('LeafValue', this.checked);\">")
+                            .append("<INPUT type=\"checkbox\" checked=true onclick=\"showClass('nodeValue', this.checked);\">")
                             .append(message("Values")).append("</INPUT>\n")
                             .append("</DIV>\n");
                     s.append("<SPAN id='Space_PX'>&nbsp;</SPAN>\n");

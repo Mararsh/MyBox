@@ -18,8 +18,8 @@ public class DataInternalTable extends DataTable {
                     "EPIDEMIC_REPORT", "FILE_BACKUP", "FLOAT_MATRIX", "GEOGRAPHY_CODE", "IMAGE_CLIPBOARD",
                     "IMAGE_EDIT_HISTORY", "IMAGE_SCOPE", "LOCATION_DATA", "MEDIA", "MEDIA_LIST", "MYBOX_LOG",
                     "QUERY_CONDITION", "STRING_VALUE", "STRING_VALUES", "SYSTEM_CONF",
-                    "TAG", "TEXT_CLIPBOARD", "TREE", "USER_CONF", "VISIT_HISTORY", "WEB_HISTORY",
-                    "TREE_LEAF", "TREE_LEAF_TAG", "NAMED_VALUES"
+                    "TEXT_CLIPBOARD", "TREE", "USER_CONF", "VISIT_HISTORY", "WEB_HISTORY",
+                    "TREE_NODE", "TAG", "TREE_NODE_TAG", "NAMED_VALUES"
             ));
         }
     };

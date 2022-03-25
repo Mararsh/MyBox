@@ -27,7 +27,7 @@ public class DatabaseSqlController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            leafController = editorController;
+            nodeController = editorController;
             super.initControls();
 
         } catch (Exception e) {

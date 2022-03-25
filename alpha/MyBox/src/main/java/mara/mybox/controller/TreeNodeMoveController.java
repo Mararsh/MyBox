@@ -67,8 +67,8 @@ public class TreeNodeMoveController extends TreeNodesController {
 
                 @Override
                 protected boolean handle() {
-                    sourceNode.setParent(targetNode.getNodeid());
-                    tableTree.updateData(sourceNode);
+                    sourceNode.setParentid(targetNode.getNodeid());
+                    tableTreeNode.updateData(sourceNode);
                     return true;
                 }
 

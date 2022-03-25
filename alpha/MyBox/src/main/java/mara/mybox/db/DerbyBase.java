@@ -42,9 +42,8 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
-import mara.mybox.db.table.TableTreeLeafTag;
+import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
@@ -568,10 +567,6 @@ public class DerbyBase {
                 new TableColorPalette().createTable(conn);
                 loadingController.info("Color_Palette");
             }
-            if (!tables.contains("Tree".toLowerCase())) {
-                new TableTree().createTable(conn);
-                loadingController.info("Tree");
-            }
             if (!tables.contains("Image_Clipboard".toLowerCase())) {
                 new TableImageClipboard().createTable(conn);
                 loadingController.info("Image_Clipboard");
@@ -592,13 +587,13 @@ public class DerbyBase {
                 new TableNamedValues().createTable(conn);
                 loadingController.info("Named_Values");
             }
-            if (!tables.contains("Tree_Leaf".toLowerCase())) {
-                new TableTreeLeaf().createTable(conn);
-                loadingController.info("Tree_Leaf");
+            if (!tables.contains("Tree_Node".toLowerCase())) {
+                new TableTreeNode().createTable(conn);
+                loadingController.info("Tree_Node");
             }
-            if (!tables.contains("Tree_Leaf_Tag".toLowerCase())) {
-                new TableTreeLeafTag().createTable(conn);
-                loadingController.info("Tree_Leaf_Tag");
+            if (!tables.contains("Tree_Node_Tag".toLowerCase())) {
+                new TableTreeNodeTag().createTable(conn);
+                loadingController.info("Tree_Node_Tag");
             }
             return true;
         } catch (Exception e) {
@@ -702,37 +697,30 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Tree_parent_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTree.Create_Parent_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_title_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTree.Create_Title_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_leaf_parent_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeLeaf.Create_Parent_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_Leaf_Tag_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeLeafTag.Create_Unique_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("Web_History_time_index".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableWebHistory.Create_Time_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Tree_Node_parent_index".toLowerCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTreeNode.Create_Parent_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Tree_Node_title_index".toLowerCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTreeNode.Create_Title_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Tree_Node_Tag_unique_index".toLowerCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTreeNodeTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

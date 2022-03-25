@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-20
  * @License Apache License Version 2.0
  */
-public class JavaScriptEditor extends TreeLeafEditor {
+public class JavaScriptEditor extends TreeNodeEditor {
 
     protected JavaScriptController jsController;
     protected String outputs = "";

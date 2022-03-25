@@ -58,7 +58,7 @@ public class NotesController extends TreeManageController {
 
     @FXML
     @Override
-    protected void addLeaf() {
+    protected void addNode() {
         if (!checkBeforeNextAction()) {
             return;
         }
@@ -67,19 +67,19 @@ public class NotesController extends TreeManageController {
 
     @FXML
     @Override
-    protected void copyLeaf() {
+    protected void copyNode() {
         editorController.copyNote();
     }
 
     @FXML
     @Override
-    protected void recoverLeaf() {
+    protected void recoverNode() {
         editorController.recoverNote();
     }
 
     @Override
-    public boolean leafChanged() {
-        return editorController.fileChanged || leafController.leafChanged;
+    public boolean nodeChanged() {
+        return editorController.fileChanged || nodeController.nodeChanged;
     }
 
     @Override

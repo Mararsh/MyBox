@@ -6,9 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.table.TableTreeLeaf;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
@@ -19,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class TreeNodeCopyController extends TreeNodesController {
 
-    protected TableTreeLeaf tableTreeLeaf;
+    protected TableTreeNode tableTreeNode;
     protected TreeNode sourceNode;
     protected boolean onlyContents;
 
@@ -68,8 +67,8 @@ public class TreeNodeCopyController extends TreeNodesController {
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         if (!onlyContents) {
-                            TreeNode newNode = new TreeNode(targetNode.getNodeid(), sourceNode.getTitle(), sourceNode.getAttribute());
-                            newNode = tableTree.insertData(conn, newNode);
+                            TreeNode newNode = new TreeNode(targetNode.getNodeid(), sourceNode.getTitle(), sourceNode.getValue());
+                            newNode = tableTreeNode.insertData(conn, newNode);
                             if (newNode == null) {
                                 return false;
                             }
@@ -96,11 +95,11 @@ public class TreeNodeCopyController extends TreeNodesController {
                             return false;
                         }
                         conn.setAutoCommit(true);
-                        List<TreeNode> children = tableTree.children(conn, sourceid);
+                        List<TreeNode> children = tableTreeNode.children(conn, sourceid);
                         if (children != null) {
                             for (TreeNode child : children) {
-                                TreeNode newBook = new TreeNode(targetid, child.getTitle(), child.getAttribute());
-                                newBook = tableTree.insertData(conn, newBook);
+                                TreeNode newBook = new TreeNode(targetid, child.getTitle(), child.getValue());
+                                newBook = tableTreeNode.insertData(conn, newBook);
                                 if (newBook == null) {
                                     continue;
                                 }
@@ -135,18 +134,18 @@ public class TreeNodeCopyController extends TreeNodesController {
             return "InvalidData";
         }
         try {
-            if (tableTreeLeaf == null) {
-                tableTreeLeaf = new TableTreeLeaf();
+            if (tableTreeNode == null) {
+                tableTreeNode = new TableTreeNode();
             }
             long sourceid = sourceNode.getNodeid();
             long targetid = targetNode.getNodeid();
-            List<TreeLeaf> leaves = tableTreeLeaf.leaves(conn, sourceid);
+            List<TreeNode> leaves = tableTreeNode.children(conn, sourceid);
             if (leaves != null) {
                 conn.setAutoCommit(false);
-                for (TreeLeaf leaf : leaves) {
-                    TreeLeaf newLeaf = TreeLeaf.create().setParentid(targetid).setCategory(category)
-                            .setName(leaf.getName()).setValue(leaf.getValue()).setMore(leaf.getMore());
-                    tableTreeLeaf.insertData(conn, newLeaf);
+                for (TreeNode node : leaves) {
+                    TreeNode newNode = TreeNode.create().setParentid(targetid).setCategory(category)
+                            .setTitle(node.getTitle()).setValue(node.getValue()).setMore(node.getMore());
+                    tableTreeNode.insertData(conn, newNode);
                 }
                 conn.commit();
             }

@@ -12,9 +12,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-14
  * @License Apache License Version 2.0
  */
-public class TreeLeafParentController extends TreeNodesController {
+public class TreeNodeParentController extends TreeNodesController {
 
-    public TreeLeafParentController() {
+    public TreeNodeParentController() {
         baseTitle = message("Owner");
     }
 
@@ -34,17 +34,17 @@ public class TreeLeafParentController extends TreeNodesController {
             alertError(message("SelectNodeAsParent"));
             return;
         }
-        treeController.nodeOfCurrentLeaf = targetItem.getValue();
-        treeController.leafController.updateNodeOfCurrentLeaf();
+        treeController.parentNode = targetItem.getValue();
+        treeController.nodeController.updateParentNode();
         close();
     }
 
     /*
         static methods
      */
-    public static TreeLeafParentController open(TreeManageController treeController) {
-        TreeLeafParentController controller = (TreeLeafParentController) WindowTools.openChildStage(
-                treeController.getMyWindow(), Fxmls.TreeLeafParentFxml, false);
+    public static TreeNodeParentController open(TreeManageController treeController) {
+        TreeNodeParentController controller = (TreeNodeParentController) WindowTools.openChildStage(
+                treeController.getMyWindow(), Fxmls.TreeNodeParentFxml, false);
         controller.setParamters(treeController);
         controller.requestMouse();
         return controller;

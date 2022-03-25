@@ -14,12 +14,11 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeLeafTag;
+import mara.mybox.db.data.TreeNodeTag;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
-import mara.mybox.db.table.TableTreeLeafTag;
+import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
@@ -36,10 +35,9 @@ import static mara.mybox.value.Languages.message;
 public class TreeTagsController extends BaseSysTableController<Tag> {
 
     protected TreeManageController treeController;
-    protected TableTree tableTree;
-    protected TableTreeLeaf tableTreeLeaf;
+    protected TableTreeNode tableTreeNode;
     protected TableTag tableTag;
-    protected TableTreeLeafTag tableTreeLeafTag;
+    protected TableTreeNodeTag tableTreeNodeTag;
     protected String category;
 
     @FXML
@@ -142,10 +140,9 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             this.treeController = treeController;
             this.baseName = treeController.baseName;
             category = treeController.category;
-            tableTree = treeController.tableTree;
-            tableTreeLeaf = treeController.tableTreeLeaf;
+            tableTreeNode = treeController.tableTreeNode;
             tableTag = treeController.tableTag;
-            tableTreeLeafTag = treeController.tableTreeLeafTag;
+            tableTreeNodeTag = treeController.tableTreeNodeTag;
             setTableDefinition(tableTag);
 
             queryConditions = "category='" + treeController.category + "'";
@@ -175,7 +172,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
         addTag(false);
     }
 
-    public void addTag(boolean forCurrentLeaf) {
+    public void addTag(boolean forCurrentNode) {
         synchronized (this) {
             String name = PopTools.askValue(getBaseTitle(),
                     message("Add"), message("Tag"), message("Tag") + new Date().getTime());
@@ -196,9 +193,9 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         tag = tableTag.insertData(conn, new Tag(category, name));
-                        if (forCurrentLeaf && tag != null && treeController.currentLeaf != null) {
-                            tableTreeLeafTag.insertData(conn,
-                                    new TreeLeafTag(treeController.currentLeaf.getLeafid(), tag.getTgid()));
+                        if (forCurrentNode && tag != null && treeController.currentNode != null) {
+                            tableTreeNodeTag.insertData(conn,
+                                    new TreeNodeTag(treeController.currentNode.getNodeid(), tag.getTgid()));
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -210,11 +207,11 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                 @Override
                 protected void whenSucceeded() {
                     tableData.add(0, tag);
-                    treeController.leafController.tableData.add(0, tag);
-                    if (forCurrentLeaf) {
-                        treeController.leafController.tableView.getSelectionModel().select(tag);
+                    treeController.nodeController.tableData.add(0, tag);
+                    if (forCurrentNode) {
+                        treeController.nodeController.tableView.getSelectionModel().select(tag);
                     }
-                    treeController.leafController.leafChanged(true);
+                    treeController.nodeController.nodeChanged(true);
                     popSuccessful();
                 }
 
@@ -256,7 +253,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             return;
         }
         treeController.clearQuery();
-        treeController.queryConditions = TableTreeLeaf.tagsCondition(selected);
+        treeController.queryConditions = tableTreeNode.tagsCondition(selected);
         treeController.queryConditionsString = message("Tag") + ": ";
         for (Tag tag : selected) {
             treeController.queryConditionsString += " " + tag.getTag();
@@ -303,15 +300,15 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     }
 
     public void synchronizedTables() {
-        if (this.equals(treeController.leafController)) {
+        if (this.equals(treeController.nodeController)) {
             treeController.tagsController.isSettingValues = true;
             treeController.tagsController.tableData.setAll(tableData);
             treeController.tagsController.isSettingValues = false;
         } else {
-            treeController.leafController.isSettingValues = true;
-            treeController.leafController.tableData.setAll(tableData);
-            treeController.leafController.isSettingValues = false;
-            treeController.leafController.markTags();
+            treeController.nodeController.isSettingValues = true;
+            treeController.nodeController.tableData.setAll(tableData);
+            treeController.nodeController.isSettingValues = false;
+            treeController.nodeController.markTags();
         }
     }
 

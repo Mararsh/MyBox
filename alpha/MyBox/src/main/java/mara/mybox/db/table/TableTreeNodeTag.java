@@ -9,8 +9,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeLeaf;
-import mara.mybox.db.data.TreeLeafTag;
+import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.TreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -18,47 +18,47 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-3-3
  * @License Apache License Version 2.0
  */
-public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
+public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
 
-    protected TableTreeLeaf tableTreeLeaf;
+    protected TableTreeNode tableTreeNode;
     protected TableTag tableTag;
 
-    public TableTreeLeafTag() {
-        tableName = "Tree_Leaf_Tag";
+    public TableTreeNodeTag() {
+        tableName = "Tree_Node_Tag";
         defineColumns();
     }
 
-    public TableTreeLeafTag(boolean defineColumns) {
-        tableName = "Tree_Leaf_Tag";
+    public TableTreeNodeTag(boolean defineColumns) {
+        tableName = "Tree_Node_Tag";
         if (defineColumns) {
             defineColumns();
         }
     }
 
-    public final TableTreeLeafTag defineColumns() {
+    public final TableTreeNodeTag defineColumns() {
         addColumn(new ColumnDefinition("ttid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("leaffid", ColumnType.Long)
-                .setReferName("Tree_Leaf_Tag_Leaf_fk").setReferTable("Tree_leaf").setReferColumn("leafid")
+        addColumn(new ColumnDefinition("tnodeid", ColumnType.Long)
+                .setReferName("Tree_Node_Tag_Node_fk").setReferTable("Tree_Node").setReferColumn("nodeid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("tagid", ColumnType.Long)
-                .setReferName("Tree_Leaf_Tag_Tag_fk").setReferTable("Tag").setReferColumn("tgid")
+                .setReferName("Tree_Node_Tag_Tag_fk").setReferTable("Tag").setReferColumn("tgid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
     }
 
     public static final String Create_Unique_Index
-            = "CREATE UNIQUE INDEX Tree_Leaf_Tag_unique_index on Tree_Leaf_Tag ( leaffid , tagid  )";
+            = "CREATE UNIQUE INDEX Tree_Node_Tag_unique_index on Tree_Node_Tag ( tnodeid , tagid  )";
 
-    public static final String QueryLeafTags
-            = "SELECT * FROM Tree_Leaf_Tag, Tag WHERE leaffid=? AND tagid=tgid";
+    public static final String QueryNodeTags
+            = "SELECT * FROM Tree_Node_Tag, Tag WHERE tnodeid=? AND tagid=tgid";
 
-    public static final String DeleteLeafTags
-            = "DELETE FROM Tree_Leaf_Tag WHERE leaffid=?";
+    public static final String DeleteNodeTags
+            = "DELETE FROM Tree_Node_Tag WHERE tnodeid=?";
 
-    public static final String DeleteLeafTag
-            = "DELETE FROM Tree_Leaf_Tag WHERE leaffid=? AND tagid=?";
+    public static final String DeleteNodeTag
+            = "DELETE FROM Tree_Node_Tag WHERE tnodeid=? AND tagid=?";
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
@@ -66,8 +66,8 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
             return null;
         }
         try {
-            if ("leaffid".equals(column) && results.findColumn("leafid") > 0) {
-                return getTableTreeLeaf().readData(results);
+            if ("tnodeid".equals(column) && results.findColumn("nodeid") > 0) {
+                return getTableTreeNode().readData(results);
             }
             if ("tagid".equals(column) && results.findColumn("tgid") > 0) {
                 return getTableTag().readData(results);
@@ -78,12 +78,12 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
     }
 
     @Override
-    public boolean setForeignValue(TreeLeafTag data, String column, Object value) {
+    public boolean setForeignValue(TreeNodeTag data, String column, Object value) {
         if (data == null || column == null || value == null) {
             return true;
         }
-        if ("leaffid".equals(column) && value instanceof TreeLeaf) {
-            data.setLeaf((TreeLeaf) value);
+        if ("tnodeid".equals(column) && value instanceof TreeNode) {
+            data.setNode((TreeNode) value);
         }
         if ("tagid".equals(column) && value instanceof Tag) {
             data.setTag((Tag) value);
@@ -91,29 +91,29 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         return true;
     }
 
-    public List<TreeLeafTag> leafTags(long leafid) {
-        List<TreeLeafTag> tags = new ArrayList<>();
-        if (leafid < 0) {
+    public List<TreeNodeTag> nodeTags(long nodeid) {
+        List<TreeNodeTag> tags = new ArrayList<>();
+        if (nodeid < 0) {
             return tags;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            tags = leafTags(conn, leafid);
+            tags = nodeTags(conn, nodeid);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         return tags;
     }
 
-    public List<TreeLeafTag> leafTags(Connection conn, long leafid) {
-        List<TreeLeafTag> tags = new ArrayList<>();
-        if (conn == null || leafid < 0) {
+    public List<TreeNodeTag> nodeTags(Connection conn, long nodeid) {
+        List<TreeNodeTag> tags = new ArrayList<>();
+        if (conn == null || nodeid < 0) {
             return tags;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
-            statement.setLong(1, leafid);
+        try ( PreparedStatement statement = conn.prepareStatement(QueryNodeTags)) {
+            statement.setLong(1, nodeid);
             ResultSet results = statement.executeQuery();
             while (results.next()) {
-                TreeLeafTag tag = readData(results);
+                TreeNodeTag tag = readData(results);
                 if (tag != null) {
                     tags.add(tag);
                 }
@@ -124,19 +124,19 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         return tags;
     }
 
-    public List<String> leafTagNames(long leafid) {
+    public List<String> nodeTagNames(long nodeid) {
         List<String> tags = new ArrayList<>();
-        if (leafid < 0) {
+        if (nodeid < 0) {
             return tags;
         }
         try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(QueryLeafTags)) {
-            statement.setLong(1, leafid);
+                 PreparedStatement statement = conn.prepareStatement(QueryNodeTags)) {
+            statement.setLong(1, nodeid);
             ResultSet results = statement.executeQuery();
             while (results.next()) {
-                TreeLeafTag leafTag = readData(results);
-                if (leafTag != null) {
-                    tags.add(leafTag.getTag().getTag());
+                TreeNodeTag nodeTag = readData(results);
+                if (nodeTag != null) {
+                    tags.add(nodeTag.getTag().getTag());
                 }
             }
         } catch (Exception e) {
@@ -145,13 +145,13 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         return tags;
     }
 
-    public int addTags(Connection conn, long leafid, String category, List<String> tags) {
-        if (conn == null || leafid < 0 || category == null || category.isBlank()
+    public int addTags(Connection conn, long nodeid, String category, List<String> tags) {
+        if (conn == null || nodeid < 0 || category == null || category.isBlank()
                 || tags == null || tags.isEmpty()) {
             return -1;
         }
-        String sql = "INSERT INTO Tree_Leaf_Tag (leaffid, tagid) "
-                + "SELECT " + leafid + ", tgid FROM Tag "
+        String sql = "INSERT INTO Tree_Node_Tag (tnodeid, tagid) "
+                + "SELECT " + nodeid + ", tgid FROM Tag "
                 + "WHERE category='" + category + "' AND tag IN (";
         for (int i = 0; i < tags.size(); i++) {
             if (i > 0) {
@@ -168,12 +168,12 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         }
     }
 
-    public int removeTags(Connection conn, long leafid, String category, List<String> tags) {
-        if (conn == null || leafid < 0 || category == null || category.isBlank()
+    public int removeTags(Connection conn, long nodeid, String category, List<String> tags) {
+        if (conn == null || nodeid < 0 || category == null || category.isBlank()
                 || tags == null || tags.isEmpty()) {
             return -1;
         }
-        String sql = "DELETE FROM Tree_Leaf_Tag WHERE leaffid=" + leafid + " AND "
+        String sql = "DELETE FROM Tree_Node_Tag WHERE tnodeid=" + nodeid + " AND "
                 + "tagid IN (SELECT tgid FROM Tag "
                 + "WHERE category='" + category + "' AND tag IN (";
         for (int i = 0; i < tags.size(); i++) {
@@ -191,12 +191,12 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
         }
     }
 
-    public int removeTags(Connection conn, long leafid) {
-        if (conn == null || leafid < 0) {
+    public int removeTags(Connection conn, long nodeid) {
+        if (conn == null || nodeid < 0) {
             return -1;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(DeleteLeafTags)) {
-            statement.setLong(1, leafid);
+        try ( PreparedStatement statement = conn.prepareStatement(DeleteNodeTags)) {
+            statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -207,15 +207,15 @@ public class TableTreeLeafTag extends BaseTable<TreeLeafTag> {
     /*
         get/set
      */
-    public TableTreeLeaf getTableTreeLeaf() {
-        if (tableTreeLeaf == null) {
-            tableTreeLeaf = new TableTreeLeaf();
+    public TableTreeNode getTableTreeNode() {
+        if (tableTreeNode == null) {
+            tableTreeNode = new TableTreeNode();
         }
-        return tableTreeLeaf;
+        return tableTreeNode;
     }
 
-    public void setTableTreeLeaf(TableTreeLeaf tableTreeLeaf) {
-        this.tableTreeLeaf = tableTreeLeaf;
+    public void setTableTreeNode(TableTreeNode tableTreeNode) {
+        this.tableTreeNode = tableTreeNode;
     }
 
     public TableTag getTableTag() {

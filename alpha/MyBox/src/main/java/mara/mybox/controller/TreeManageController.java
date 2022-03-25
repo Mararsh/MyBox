@@ -30,14 +30,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
-import mara.mybox.db.table.TableTreeLeafTag;
+import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
@@ -52,26 +50,25 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class TreeManageController extends BaseSysTableController<TreeLeaf> {
+public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     protected String category;
-    protected TableTree tableTree;
-    protected TreeNode treeNode, nodeOfCurrentLeaf;
-    protected TableTreeLeaf tableTreeLeaf;
+    protected TreeNode treeNode, parentNode;
+    protected TableTreeNode tableTreeNode;
     protected TableTag tableTag;
-    protected TableTreeLeafTag tableTreeLeafTag;
+    protected TableTreeNodeTag tableTreeNodeTag;
     protected String queryLabel;
-    protected TreeLeaf currentLeaf;
+    protected TreeNode currentNode;
     protected String nameMsg, valueMsg, moreMsg, timeMsg;
 
     @FXML
     protected TreeNodesController nodesController;
     @FXML
-    protected TableColumn<TreeLeaf, Long> leafidColumn;
+    protected TableColumn<TreeNode, Long> nodeidColumn;
     @FXML
-    protected TableColumn<TreeLeaf, String> nameColumn, valueColumn, moreColumn;
+    protected TableColumn<TreeNode, String> nameColumn, valueColumn, moreColumn;
     @FXML
-    protected TableColumn<TreeLeaf, Date> timeColumn;
+    protected TableColumn<TreeNode, Date> timeColumn;
     @FXML
     protected VBox conditionBox, timesBox;
     @FXML
@@ -81,7 +78,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     @FXML
     protected Label conditionLabel;
     @FXML
-    protected TreeLeafEditor leafController;
+    protected TreeNodeEditor nodeController;
     @FXML
     protected Button refreshTimesButton, queryTimesButton;
     @FXML
@@ -109,19 +106,18 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
 
     @Override
     public void setTableDefinition() {
-        tableTree = new TableTree();
-        tableTreeLeaf = new TableTreeLeaf();
+        tableTreeNode = new TableTreeNode();
         tableTag = new TableTag();
-        tableTreeLeafTag = new TableTreeLeafTag();
-        tableDefinition = tableTreeLeaf;
+        tableTreeNodeTag = new TableTreeNodeTag();
+        tableDefinition = tableTreeNode;
     }
 
     @Override
     protected void initColumns() {
         try {
             super.initColumns();
-            leafidColumn.setCellValueFactory(new PropertyValueFactory<>("leafid"));
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            nodeidColumn.setCellValueFactory(new PropertyValueFactory<>("nodeid"));
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             nameColumn.setText(nameMsg);
             if (valueColumn != null) {
                 valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
@@ -131,7 +127,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
                 moreColumn.setCellValueFactory(new PropertyValueFactory<>("more"));
                 moreColumn.setText(moreMsg);
             }
-            timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
+            timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
             timeColumn.setText(timeMsg);
 
         } catch (Exception e) {
@@ -154,7 +150,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
             nodesController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    leafChanged(nodesController.changedNode);
+                    nodeChanged(nodesController.changedNode);
                 }
             });
 
@@ -168,7 +164,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
                 }
             });
 
-            leafController.setParameters(this);
+            nodeController.setParameters(this);
             tagsController.setParameters(this);
             tagsController.loadTableData();
 
@@ -193,8 +189,8 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
 
     @Override
     public boolean controlAltG() {
-        if (leafController.valueInput.isFocused()) {
-            leafController.clearValue();
+        if (nodeController.valueInput.isFocused()) {
+            nodeController.clearValue();
         } else {
             clearAction();
         }
@@ -207,7 +203,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     protected void loadTree(TreeNode node) {
         if (!AppVariables.isTesting) {
             File file = TreeNode.exampleFile(category);
-            if (file != null && tableTreeLeaf.size(category) < 1
+            if (file != null && tableTreeNode.size(category) < 1
                     && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
                 nodesController.importExamples();
                 return;
@@ -235,14 +231,14 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
         }
     }
 
-    protected void leafChanged(TreeNode node) {
+    protected void nodeChanged(TreeNode node) {
         if (node == null) {
             return;
         }
         makeConditionPane();
-        if (nodeOfCurrentLeaf != null && node.getNodeid() == nodeOfCurrentLeaf.getNodeid()) {
-            nodeOfCurrentLeaf = node;
-            leafController.updateNodeOfCurrentLeaf();
+        if (parentNode != null && node.getNodeid() == parentNode.getNodeid()) {
+            parentNode = node;
+            nodeController.updateParentNode();
         }
         if (nodesController.selectedNode != null && nodesController.selectedNode.getNodeid() == node.getNodeid()) {
             nodesController.selectedNode = node;
@@ -277,7 +273,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
 
                 @Override
                 protected boolean handle() {
-                    ancestor = tableTree.ancestor(nodesController.selectedNode.getNodeid());
+                    ancestor = tableTreeNode.ancestor(nodesController.selectedNode.getNodeid());
                     return true;
                 }
 
@@ -316,10 +312,10 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     @Override
     public long readDataSize(Connection conn) {
         if (nodesController.selectedNode != null && subCheck.isSelected()) {
-            return TableTreeLeaf.withSubSize(conn, tableTree, nodesController.selectedNode.getNodeid());
+            return tableTreeNode.withSubSize(conn, nodesController.selectedNode.getNodeid());
 
         } else if (queryConditions != null) {
-            return tableTreeLeaf.conditionSize(conn, queryConditions);
+            return tableTreeNode.conditionSize(conn, queryConditions);
 
         } else {
             return 0;
@@ -328,12 +324,12 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     }
 
     @Override
-    public List<TreeLeaf> readPageData(Connection conn) {
+    public List<TreeNode> readPageData(Connection conn) {
         if (nodesController.selectedNode != null && subCheck.isSelected()) {
-            return tableTreeLeaf.withSub(conn, tableTree, nodesController.selectedNode.getNodeid(), startRowOfCurrentPage, pageSize);
+            return tableTreeNode.withSub(conn, nodesController.selectedNode.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
-            return tableTreeLeaf.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
+            return tableTreeNode.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
 
         } else {
             return null;
@@ -343,7 +339,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     @Override
     protected long clearData() {
         if (queryConditions != null) {
-            return tableTreeLeaf.deleteCondition(queryConditions);
+            return tableTreeNode.deleteCondition(queryConditions);
 
         } else {
             return -1;
@@ -407,7 +403,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     @FXML
     @Override
     public void addAction() {
-        addLeaf();
+        addNode();
     }
 
     @FXML
@@ -416,56 +412,56 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
         if (!checkBeforeNextAction()) {
             return;
         }
-        leafController.editLeaf(tableView.getSelectionModel().getSelectedItem());
+        nodeController.editNode(tableView.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     @Override
     public void copyAction() {
-        TreeLeavesCopyController.oneOpen(this);
+        TreeNodesCopyController.oneOpen(this);
     }
 
     @FXML
     protected void moveAction() {
-        TreeLeavesMoveController.oneOpen(this);
+        TreeNodesMoveController.oneOpen(this);
     }
 
     @FXML
     @Override
     public void pasteAction() {
-        TreeLeaf selected = tableView.getSelectionModel().getSelectedItem();
+        TreeNode selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
-        leafController.pasteText(selected.getValue());
+        nodeController.pasteText(selected.getValue());
     }
 
     /*
-        leaf
+        node
      */
     @FXML
-    protected void addLeaf() {
+    protected void addNode() {
         if (!checkBeforeNextAction()) {
             return;
         }
-        leafController.editLeaf(null);
+        nodeController.editNode(null);
     }
 
     @FXML
-    protected void copyLeaf() {
-        leafController.copyLeaf();
+    protected void copyNode() {
+        nodeController.copyNode();
     }
 
     @FXML
-    protected void recoverLeaf() {
-        leafController.editLeaf(currentLeaf);
+    protected void recoverNode() {
+        nodeController.editNode(currentNode);
     }
 
     @FXML
     @Override
     public void saveAction() {
-        TreeLeaf leaf = leafController.pickCurrentLeaf();
-        if (leaf == null) {
+        TreeNode node = nodeController.pickNodeData();
+        if (node == null) {
             return;
         }
         if (task != null && !task.isQuit()) {
@@ -477,34 +473,34 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
             @Override
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
-                    leaf.setTime(new Date());
-                    if (currentLeaf != null) {
-                        currentLeaf = tableTreeLeaf.readData(conn, currentLeaf);
-                        nodeOfCurrentLeaf = tableTree.readData(conn, nodeOfCurrentLeaf);
-                        if (currentLeaf == null || nodeOfCurrentLeaf == null) {
+                    node.setUpdateTime(new Date());
+                    if (currentNode != null) {
+                        currentNode = tableTreeNode.readData(conn, currentNode);
+                        parentNode = tableTreeNode.readData(conn, parentNode);
+                        if (currentNode == null || parentNode == null) {
                             notExist = true;
-                            currentLeaf = null;
+                            currentNode = null;
                             return true;
                         } else {
-                            leaf.setLeafid(currentLeaf.getLeafid());
-                            leaf.setParentid(currentLeaf.getParentid());
-                            currentLeaf = tableTreeLeaf.updateData(conn, leaf);
+                            node.setNodeid(currentNode.getNodeid());
+                            node.setParentid(currentNode.getParentid());
+                            currentNode = tableTreeNode.updateData(conn, node);
                         }
                     } else {
-                        if (nodeOfCurrentLeaf == null) {
-                            nodeOfCurrentLeaf = nodesController.root(conn);
+                        if (parentNode == null) {
+                            parentNode = nodesController.root(conn);
                         }
-                        leaf.setParentid(nodeOfCurrentLeaf.getNodeid());
-                        currentLeaf = tableTreeLeaf.insertData(conn, leaf);
+                        node.setParentid(parentNode.getNodeid());
+                        currentNode = tableTreeNode.insertData(conn, node);
                     }
-                    if (currentLeaf == null) {
+                    if (currentNode == null) {
                         return false;
                     }
-                    long leafid = currentLeaf.getLeafid();
-                    List<String> leafTags = tableTreeLeafTag.leafTagNames(leafid);
-                    List<Tag> selected = leafController.tableView.getSelectionModel().getSelectedItems();
+                    long nodeid = currentNode.getNodeid();
+                    List<String> nodeTags = tableTreeNodeTag.nodeTagNames(nodeid);
+                    List<Tag> selected = nodeController.tableView.getSelectionModel().getSelectedItems();
                     if (selected == null || selected.isEmpty()) {
-                        tableTreeLeafTag.removeTags(conn, leafid);
+                        tableTreeNodeTag.removeTags(conn, nodeid);
                     } else {
                         List<String> selectedNames = new ArrayList<>();
                         for (Tag tag : selected) {
@@ -512,18 +508,18 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
                         }
                         List<String> items = new ArrayList<>();
                         for (String tagName : selectedNames) {
-                            if (!leafTags.contains(tagName)) {
+                            if (!nodeTags.contains(tagName)) {
                                 items.add(tagName);
                             }
                         }
-                        tableTreeLeafTag.addTags(conn, leafid, category, items);
+                        tableTreeNodeTag.addTags(conn, nodeid, category, items);
                         items.clear();
-                        for (String tagName : leafTags) {
+                        for (String tagName : nodeTags) {
                             if (!selectedNames.contains(tagName)) {
                                 items.add(tagName);
                             }
                         }
-                        tableTreeLeafTag.removeTags(conn, leafid, category, items);
+                        tableTreeNodeTag.removeTags(conn, nodeid, category, items);
                     }
                     conn.commit();
                 } catch (Exception e) {
@@ -531,13 +527,13 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
                     MyBoxLog.error(e);
                     return false;
                 }
-                return currentLeaf != null;
+                return currentNode != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 if (notExist) {
-                    copyLeaf();
+                    copyNode();
                     popError(message("NotExist"));
                 } else {
                     popSaved();
@@ -550,20 +546,20 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
     }
 
     public void afterSaved() {
-        leafController.editLeaf(currentLeaf);
+        nodeController.editNode(currentNode);
         if (nodesController.selectedNode != null
-                && currentLeaf.getParentid() == nodesController.selectedNode.getNodeid()) {
+                && currentNode.getParentid() == nodesController.selectedNode.getNodeid()) {
             refreshAction();
         }
     }
 
-    public boolean leafChanged() {
-        return leafController.leafChanged;
+    public boolean nodeChanged() {
+        return nodeController.nodeChanged;
     }
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (!leafChanged()) {
+        if (!nodeChanged()) {
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -596,7 +592,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
         if (file == null || !file.exists() || !checkBeforeNextAction()) {
             return;
         }
-        leafController.loadFile(file);
+        nodeController.loadFile(file);
     }
 
     /*
@@ -635,7 +631,7 @@ public class TreeManageController extends BaseSysTableController<TreeLeaf> {
 
                 @Override
                 protected boolean handle() {
-                    times = TableTreeLeaf.times(category);
+                    times = tableTreeNode.times(category);
                     return true;
                 }
 

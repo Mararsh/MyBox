@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -17,62 +19,69 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableTree extends BaseTable<TreeNode> {
+public class TableTreeNode extends BaseTable<TreeNode> {
 
-    public TableTree() {
-        tableName = "Tree";
+    public TableTreeNode() {
+        tableName = "Tree_Node";
         defineColumns();
     }
 
-    public TableTree(boolean defineColumns) {
-        tableName = "Tree";
+    public TableTreeNode(boolean defineColumns) {
+        tableName = "Tree_Node";
         if (defineColumns) {
             defineColumns();
         }
     }
 
-    public final TableTree defineColumns() {
+    public final TableTreeNode defineColumns() {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("category", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("category", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("attribute", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("parent", ColumnType.Long)
-                .setReferName("Tree_parent_fk").setReferTable("Tree").setReferColumn("nodeid")
+        addColumn(new ColumnDefinition("value", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("more", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
+        addColumn(new ColumnDefinition("parentid", ColumnType.Long)
+                .setReferName("Tree_Node_parent_fk").setReferTable("Tree_Node").setReferColumn("nodeid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
-        addColumn(new ColumnDefinition("more", ColumnType.String).setLength(StringMaxLength));
         return this;
     }
 
     public static final String Create_Parent_Index
-            = "CREATE INDEX Tree_parent_index on Tree ( parent )";
+            = "CREATE INDEX Tree_Node_parent_index on Tree_Node ( parentid )";
 
     public static final String Create_Title_Index
-            = "CREATE INDEX Tree_title_index on Tree ( title )";
+            = "CREATE INDEX Tree_Node_title_index on Tree_Node ( title )";
 
     public static final String QueryID
-            = "SELECT * FROM Tree WHERE nodeid=?";
+            = "SELECT * FROM Tree_Node WHERE nodeid=?";
 
     public static final String QueryRoot
-            = "SELECT * FROM Tree WHERE category=? AND nodeid=parent ORDER BY nodeid ASC";
+            = "SELECT * FROM Tree_Node WHERE category=? AND nodeid=parentid ORDER BY nodeid ASC";
 
     public static final String QueryChildren
-            = "SELECT * FROM Tree WHERE parent=? AND nodeid<>parent";
+            = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
 
-    public static final String QueryAttribute
-            = "SELECT * FROM Tree WHERE parent=? AND title=?";
+    public static final String QueryTitle
+            = "SELECT * FROM Tree_Node WHERE parentid=? AND title=?";
 
     public static final String DeleteID
-            = "DELETE FROM Tree WHERE nodeid=?";
+            = "DELETE FROM Tree_Node WHERE nodeid=?";
 
-    public static final String ParentSize
-            = "SELECT count(nodeid) FROM Tree WHERE parent=? AND nodeid<>parent";
+    public static final String ChildrenCount
+            = "SELECT count(nodeid) FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
+
+    public static final String CategoryCount
+            = "SELECT count(nodeid) FROM Tree_Node WHERE category=? AND nodeid<>parentid";
 
     public static final String DeleteParent
-            = "DELETE FROM Tree WHERE parent=?";
+            = "DELETE FROM Tree_Node WHERE parentid=?";
 
     public static final String DeleteChildren
-            = "DELETE FROM Tree WHERE parent=? AND nodeid<>parent";
+            = "DELETE FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
+
+    public static final String Times
+            = "SELECT DISTINCT update_time FROM Tree_Node WHERE category=? ORDER BY update_time DESC";
 
     public TreeNode find(long id) {
         if (id < 0) {
@@ -167,7 +176,7 @@ public class TableTree extends BaseTable<TreeNode> {
         if (node == null || node.isRoot()) {
             return ancestor;
         }
-        long parentid = node.getParent();
+        long parentid = node.getParentid();
         TreeNode parent = find(conn, parentid);
         if (parent != null) {
             ancestor = ancestor(conn, parentid);
@@ -195,7 +204,7 @@ public class TableTree extends BaseTable<TreeNode> {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryAttribute)) {
+        try ( PreparedStatement statement = conn.prepareStatement(QueryTitle)) {
             statement.setLong(1, parent);
             statement.setString(2, title);
             return query(conn, statement);
@@ -241,10 +250,10 @@ public class TableTree extends BaseTable<TreeNode> {
         TreeNode base = find(conn, 1);
         if (base == null) {
             try {
-                String sql = "INSERT INTO Tree(nodeid,title,parent,category) VALUES(1,'base',1, 'Root')";
+                String sql = "INSERT INTO Tree_Node (nodeid,title,parentid,category) VALUES(1,'base',1, 'Root')";
                 update(conn, sql);
                 conn.commit();
-                sql = "ALTER TABLE Tree ALTER COLUMN nodeid RESTART WITH 2";
+                sql = "ALTER TABLE Tree_Node ALTER COLUMN nodeid RESTART WITH 2";
                 update(conn, sql);
                 conn.commit();
                 base = find(conn, 1);
@@ -293,10 +302,10 @@ public class TableTree extends BaseTable<TreeNode> {
             try {
                 TreeNode base = checkBase(conn);
                 TreeNode root = TreeNode.create().setCategory(category)
-                        .setTitle(message(category)).setParent(base.getNodeid());
+                        .setTitle(message(category)).setParentid(base.getNodeid());
                 insertData(conn, root);
                 conn.commit();
-                root.setParent(root.getNodeid());
+                root.setParentid(root.getNodeid());
                 updateData(conn, root);
                 conn.commit();
                 roots = new ArrayList<>();
@@ -330,10 +339,99 @@ public class TableTree extends BaseTable<TreeNode> {
         }
     }
 
-    /*
-        static methods
-     */
-    public static int size(long parent) {
+    public List<TreeNode> withSub(Connection conn, long parentid) {
+        List<TreeNode> allChildren = new ArrayList<>();
+        List<TreeNode> children = children(conn, parentid);
+        if (children != null && !children.isEmpty()) {
+            allChildren.addAll(allChildren);
+            for (TreeNode child : children) {
+                children = withSub(conn, child.getNodeid());
+                if (children != null && !children.isEmpty()) {
+                    allChildren.addAll(allChildren);
+                }
+            }
+        }
+        return allChildren;
+    }
+
+    public List<TreeNode> withSub(Connection conn, long parentid, long start, long size) {
+        List<TreeNode> children = new ArrayList<>();
+        try ( PreparedStatement query = conn.prepareStatement(QueryChildren)) {
+            withSub(conn, query, parentid, start, size, children, 0);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return children;
+    }
+
+    public long withSub(Connection conn, PreparedStatement query,
+            long parentid, long start, long size, List<TreeNode> nodes, long index) {
+        if (conn == null || parentid < 1 || nodes == null
+                || query == null || start < 0 || size <= 0 || nodes.size() >= size) {
+            return index;
+        }
+        long thisIndex = index;
+        try {
+            int thisSize = nodes.size();
+            boolean ok = false;
+            query.setLong(1, parentid);
+            try ( ResultSet nresults = query.executeQuery()) {
+                while (nresults.next()) {
+                    TreeNode data = readData(nresults);
+                    if (data != null) {
+                        if (thisIndex >= start) {
+                            nodes.add(data);
+                            thisSize++;
+                        }
+                        thisIndex++;
+                        if (thisSize >= size) {
+                            ok = true;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, tableName);
+            }
+            if (!ok) {
+                List<TreeNode> children = children(conn, parentid);
+                if (children != null) {
+                    for (TreeNode child : children) {
+                        thisIndex = withSub(conn, query, child.getNodeid(), start, size, nodes, thisIndex);
+                        if (nodes.size() >= size) {
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return thisIndex;
+    }
+
+    public int withSubSize(long parentid) {
+        int count = 0;
+        try ( Connection conn = DerbyBase.getConnection()) {
+            count = withSubSize(conn, parentid);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return count;
+    }
+
+    public int withSubSize(Connection conn, long parentid) {
+        int count = size(conn, parentid);
+        List<TreeNode> children = children(conn, parentid);
+        if (children != null) {
+            for (TreeNode child : children) {
+                count += withSubSize(conn, child.getNodeid());
+            }
+        }
+        return count;
+    }
+
+    public int size(long parent) {
         try ( Connection conn = DerbyBase.getConnection()) {
             return size(conn, parent);
         } catch (Exception e) {
@@ -342,12 +440,12 @@ public class TableTree extends BaseTable<TreeNode> {
         }
     }
 
-    public static int size(Connection conn, long parent) {
+    public int size(Connection conn, long parent) {
         if (conn == null) {
             return 0;
         }
         int size = 0;
-        try ( PreparedStatement statement = conn.prepareStatement(ParentSize)) {
+        try ( PreparedStatement statement = conn.prepareStatement(ChildrenCount)) {
             statement.setLong(1, parent);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
@@ -360,7 +458,34 @@ public class TableTree extends BaseTable<TreeNode> {
         return size;
     }
 
-    public static int deleteChildren(long parent) {
+    public int size(String category) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return size(conn, category);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public int size(Connection conn, String category) {
+        if (conn == null) {
+            return 0;
+        }
+        int size = 0;
+        try ( PreparedStatement statement = conn.prepareStatement(CategoryCount)) {
+            statement.setString(1, category);
+            try ( ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    size = results.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return size;
+    }
+
+    public int deleteChildren(long parent) {
         try ( Connection conn = DerbyBase.getConnection()) {
             return deleteChildren(conn, parent);
         } catch (Exception e) {
@@ -369,7 +494,7 @@ public class TableTree extends BaseTable<TreeNode> {
         }
     }
 
-    public static int deleteChildren(Connection conn, long parent) {
+    public int deleteChildren(Connection conn, long parent) {
         try ( PreparedStatement statement = conn.prepareStatement(DeleteChildren)) {
             statement.setLong(1, parent);
             return statement.executeUpdate();
@@ -377,6 +502,48 @@ public class TableTree extends BaseTable<TreeNode> {
             MyBoxLog.error(e);
             return -1;
         }
+    }
+
+    public String tagsCondition(List<Tag> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return null;
+        }
+        String condition = " nodeid IN ( SELECT tnodeid FROM Tree_Node_Tag WHERE tagid IN ( " + tags.get(0).getTgid();
+        for (int i = 1; i < tags.size(); ++i) {
+            condition += ", " + tags.get(i).getTgid();
+        }
+        condition += " ) ) ";
+        return condition;
+    }
+
+    public List<Date> times(String category) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setReadOnly(true);
+            return times(conn, category);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public List<Date> times(Connection conn, String category) {
+        List<Date> times = new ArrayList();
+        if (conn == null) {
+            return times;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(Times)) {
+            statement.setString(1, category);
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                Date time = results.getTimestamp("update_time");
+                if (time != null) {
+                    times.add(time);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return times;
     }
 
 }

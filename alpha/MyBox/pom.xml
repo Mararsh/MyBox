@@ -22,43 +22,43 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>17.0.0.1</version>
+            <version>18</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.0.1</version>
+            <version>18</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>17.0.0.1</version>
+            <version>18</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>17.0.0.1</version>
+            <version>18</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>17.0.0.1</version>
+            <version>18</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>17.0.0.1</version>
+            <version>18</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>17.0.0.1</version>
+            <version>18</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -303,7 +303,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javaVersion>17</javaVersion>
+                <javaVersion>18</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -313,7 +313,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javaVersion>17</javaVersion>
+                <javaVersion>18</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -323,7 +323,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javaVersion>16</javaVersion>
+                <javaVersion>18</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

@@ -55,7 +55,7 @@ public class Tag extends BaseData {
                     data.setTag(value == null ? null : (String) value);
                     return true;
                 case "color":
-                    data.setColor(value == null ? null : Color.web((String) value));
+                    data.setColor(value == null ? FxColorTools.randomColor() : Color.web((String) value));
                     return true;
 
             }
@@ -77,7 +77,7 @@ public class Tag extends BaseData {
             case "tag":
                 return data.getTag();
             case "color":
-                return data.getColor() == null ? null : data.getColor().toString();
+                return data.getColor() == null ? FxColorTools.randomColor().toString() : data.getColor().toString();
         }
         return null;
     }

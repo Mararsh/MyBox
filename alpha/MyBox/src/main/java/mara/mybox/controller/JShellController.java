@@ -32,7 +32,7 @@ public class JShellController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            leafController = editorController;
+            nodeController = editorController;
             super.initControls();
 
             editorController.setParameters(this);
@@ -69,17 +69,4 @@ public class JShellController extends TreeManageController {
         webViewController.loadContents("");
     }
 
-//    @Override
-//    public boolean controlAltG() {
-//        if (leafController.valueInput.isFocused()) {
-//            leafController.clearValue();
-//        } else if (webViewController.webView.isFocused()) {
-//            clearResults();
-//        } else if (snippetsController.tableView.isFocused()) {
-//            snippetsController.clearAction();
-//        } else {
-//            clearAction();
-//        }
-//        return true;
-//    }
 }

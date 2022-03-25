@@ -60,7 +60,7 @@ License:    Apache License Version 2.0
                                                             <content>
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                     <children>
-                                                      <fx:include fx:id="tags" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="TreeTags.fxml" VBox.vgrow="ALWAYS" />
+                                                                        <fx:include fx:id="tags" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="TreeTags.fxml" VBox.vgrow="ALWAYS" />
                                                                     </children>
                                                                     <padding>
                                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -68,63 +68,63 @@ License:    Apache License Version 2.0
                                                                 </VBox>
                                                             </content>
                                                         </Tab>
-                                          <Tab text="%Time">
-                                             <content>
-                                                <VBox fx:id="timesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                   <children>
-                                                      <fx:include fx:id="time" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTimeTree.fxml" VBox.vgrow="ALWAYS" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                   </padding>
-                                                </VBox>
-                                             </content>
-                                          </Tab>
-                                          <Tab text="%Find">
-                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                   <children>
-                                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <RadioButton fx:id="findNameRadio" mnemonicParsing="false" selected="true" text="%Name">
-                                                               <toggleGroup>
-                                                                  <ToggleGroup fx:id="findGroup" />
-                                                               </toggleGroup>
-                                                            </RadioButton>
-                                                            <RadioButton fx:id="findValueRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Value" toggleGroup="$findGroup" />
-                                                         </children>
-                                                      </HBox>
-                                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
-                                                               <graphic>
-                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@../buttons/Red/iconHistory.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                               </graphic>
-                                                            </Button>
-                                                            <TextField fx:id="findInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                            <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#find">
-                                                               <graphic>
-                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@../buttons/Red/iconQuery.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                               </graphic>
-                                                            </Button>
-                                                         </children>
-                                                      </HBox>
-                                                      <Label minHeight="-Infinity" text="%SearchComments" wrapText="true" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets bottom="5.0" left="2.0" right="2.0" top="5.0" />
-                                                   </padding>
-                                                </VBox>
-                                             </content>
-                                          </Tab>
+                                                        <Tab text="%Time">
+                                                            <content>
+                                                                <VBox fx:id="timesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                    <children>
+                                                                        <fx:include fx:id="time" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTimeTree.fxml" VBox.vgrow="ALWAYS" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </Tab>
+                                                        <Tab text="%Find">
+                                                            <content>
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <RadioButton fx:id="findNameRadio" mnemonicParsing="false" selected="true" text="%Name">
+                                                                                    <toggleGroup>
+                                                                                        <ToggleGroup fx:id="findGroup" />
+                                                                                    </toggleGroup>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="findValueRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Value" toggleGroup="$findGroup" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconHistory.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <TextField fx:id="findInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                                <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#find">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconQuery.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <Label minHeight="-Infinity" text="%SearchComments" wrapText="true" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="5.0" left="2.0" right="2.0" top="5.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </Tab>
                                                     </tabs>
                                                 </TabPane>
                                             </children>
@@ -216,7 +216,7 @@ License:    Apache License Version 2.0
                                                         <TableColumn fx:id="nameColumn" prefWidth="200.0" text="%Title" />
                                                         <TableColumn fx:id="valueColumn" prefWidth="200.0" text="%Address" />
                                                         <TableColumn fx:id="timeColumn" prefWidth="200.0" text="%UpdateTime" />
-                                                        <TableColumn fx:id="leafidColumn" text="%ID" />
+                                                        <TableColumn fx:id="nodeidColumn" text="%ID" />
                                                     </columns>
                                                 </TableView>
                                                 <FlowPane fx:id="paginationPane" hgap="2.0" vgap="2.0">
@@ -296,7 +296,7 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="recoverLeafButton" mnemonicParsing="false" onAction="#recoverLeaf">
+                                                <Button fx:id="recoverNodeButton" mnemonicParsing="false" onAction="#recoverNode">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -305,7 +305,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="copyLeafButton" mnemonicParsing="false" onAction="#copyLeaf">
+                                                <Button fx:id="copyNodeButton" mnemonicParsing="false" onAction="#copyNode">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -314,7 +314,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="addLeafButton" mnemonicParsing="false" onAction="#addLeaf">
+                                                <Button fx:id="addNodeButton" mnemonicParsing="false" onAction="#addNode">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -334,7 +334,7 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                              <fx:include fx:id="leaf" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="TreeLeafEditor.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="node" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="TreeNodeEditor.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

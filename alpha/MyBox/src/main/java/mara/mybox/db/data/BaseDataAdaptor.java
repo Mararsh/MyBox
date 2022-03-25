@@ -28,9 +28,8 @@ import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
-import mara.mybox.db.table.TableTreeLeafTag;
+import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -89,13 +88,10 @@ public class BaseDataAdaptor {
             return new TableColorPalette();
 
         } else if (data instanceof TreeNode) {
-            return new TableTree();
+            return new TableTreeNode();
 
-        } else if (data instanceof TreeLeaf) {
-            return new TableTreeLeaf();
-
-        } else if (data instanceof TreeLeafTag) {
-            return new TableTreeLeafTag();
+        } else if (data instanceof TreeNodeTag) {
+            return new TableTreeNodeTag();
 
         } else if (data instanceof WebHistory) {
             return new TableWebHistory();
@@ -180,11 +176,8 @@ public class BaseDataAdaptor {
         } else if (data instanceof TreeNode) {
             return TreeNode.valid((TreeNode) data);
 
-        } else if (data instanceof TreeLeaf) {
-            return TreeLeaf.valid((TreeLeaf) data);
-
-        } else if (data instanceof TreeLeafTag) {
-            return TreeLeafTag.valid((TreeLeafTag) data);
+        } else if (data instanceof TreeNodeTag) {
+            return TreeNodeTag.valid((TreeNodeTag) data);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.valid((WebHistory) data);
@@ -267,11 +260,8 @@ public class BaseDataAdaptor {
         } else if (data instanceof TreeNode) {
             return TreeNode.getValue((TreeNode) data, name);
 
-        } else if (data instanceof TreeLeaf) {
-            return TreeLeaf.getValue((TreeLeaf) data, name);
-
-        } else if (data instanceof TreeLeafTag) {
-            return TreeLeafTag.getValue((TreeLeafTag) data, name);
+        } else if (data instanceof TreeNodeTag) {
+            return TreeNodeTag.getValue((TreeNodeTag) data, name);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.getValue((WebHistory) data, name);
@@ -348,11 +338,8 @@ public class BaseDataAdaptor {
         } else if (data instanceof TreeNode) {
             return TreeNode.setValue((TreeNode) data, name, value);
 
-        } else if (data instanceof TreeLeaf) {
-            return TreeLeaf.setValue((TreeLeaf) data, name, value);
-
-        } else if (data instanceof TreeLeafTag) {
-            return TreeLeafTag.setValue((TreeLeafTag) data, name, value);
+        } else if (data instanceof TreeNodeTag) {
+            return TreeNodeTag.setValue((TreeNodeTag) data, name, value);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.setValue((WebHistory) data, name, value);

@@ -21,9 +21,10 @@ public class Fxmls {
     public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
     public static final String TreeNodeExportFxml = "/fxml/TreeNodeExport.fxml";
     public static final String TreeNodeImportFxml = "/fxml/TreeNodeImport.fxml";
-    public static final String TreeLeavesCopyFxml = "/fxml/TreeLeavesCopy.fxml";
-    public static final String TreeLeavesMoveFxml = "/fxml/TreeLeavesMove.fxml";
-    public static final String TreeLeafParentFxml = "/fxml/TreeLeafParent.fxml";
+    public static final String TreeNodesCopyFxml = "/fxml/TreeNodesCopy.fxml";
+    public static final String TreeNodesMoveFxml = "/fxml/TreeNodesMove.fxml";
+    public static final String TreeNodeParentFxml = "/fxml/TreeNodeParent.fxml";
+
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
     public static final String PdfAttributesBatchFxml = "/fxml/PdfAttributesBatch.fxml";

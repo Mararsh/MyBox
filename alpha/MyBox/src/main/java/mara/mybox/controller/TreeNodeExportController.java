@@ -21,10 +21,8 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -45,8 +43,7 @@ import mara.mybox.value.UserConfig;
 public class TreeNodeExportController extends BaseTaskController {
 
     protected TreeManageController treeController;
-    protected TableTree tableTree;
-    protected TableTreeLeaf tableTreeLeaf;
+    protected TableTreeNode tableTreeNode;
     protected TreeView<TreeNode> treeView;
     protected TreeItem<TreeNode> selectedNode;
     protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
@@ -145,8 +142,7 @@ public class TreeNodeExportController extends BaseTaskController {
 
     public void setController(TreeManageController treeController) {
         this.treeController = treeController;
-        this.tableTree = treeController.tableTree;
-        this.tableTreeLeaf = treeController.tableTreeLeaf;
+        this.tableTreeNode = treeController.tableTreeNode;
         if (treeController instanceof WebFavoritesController) {
             iconCheck.setVisible(true);
             iconCheck.setSelected(UserConfig.getBoolean(baseName + "Icon", false));
@@ -441,7 +437,7 @@ public class TreeNodeExportController extends BaseTaskController {
         return well;
     }
 
-    public void exportNode(Connection conn, TreeNode node, String baseName) {
+    public void exportNode(Connection conn, TreeNode node, String parentName) {
         level++;
         if (conn == null || node == null) {
             return;
@@ -467,49 +463,32 @@ public class TreeNodeExportController extends BaseTaskController {
                 }
                 framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
             }
-            if (baseName != null) {
-                title = baseName + TreeNode.NodeSeparater + node.getTitle();
+            count++;
+            if (textsWriter != null) {
+                writeTexts(conn, parentName, node);
+            }
+            if (htmlWriter != null) {
+                writeHtml(conn, parentName, node, htmlWriter);
+            }
+            if (xmlWriter != null) {
+                writeXml(conn, parentName, node);
+            }
+            if (jsonWriter != null) {
+                writeJson(conn, parentName, node);
+            }
+
+            if (parentName != null) {
+                title = parentName + TreeNode.NodeSeparater + node.getTitle();
             } else {
                 title = node.getTitle();
             }
-            List<TreeLeaf> leaves = tableTreeLeaf.leaves(conn, node.getNodeid());
-            if (leaves != null && !leaves.isEmpty()) {
-                for (TreeLeaf leaf : leaves) {
-                    count++;
-                    if (textsWriter != null) {
-                        writeTexts(conn, title, leaf);
-                    }
-                    if (htmlWriter != null) {
-                        writeHtml(conn, title, leaf, htmlWriter);
-                    }
-                    if (xmlWriter != null) {
-                        writeXml(conn, title, leaf);
-                    }
-                    if (jsonWriter != null) {
-                        writeJson(conn, title, leaf);
-                    }
-                    if (bookNavWriter != null && nodeFile != null) {
-                        bookNavWriter.write("<A href=\"" + nodeFile.getName()
-                                + "#" + leaf.getLeafid() + "\"  target=main>" + leaf.getName() + "</A><BR>\n");
-                    }
-                    if (bookWriter != null) {
-                        writeHtml(conn, title, leaf, bookWriter);
-                    }
-                }
-            } else {
-                count++;
-                if (textsWriter != null) {
-                    writeTexts(conn, title, null);
-                }
-                if (htmlWriter != null) {
-                    writeHtml(conn, title, null, htmlWriter);
-                }
-                if (xmlWriter != null) {
-                    writeXml(conn, title, null);
-                }
-                if (jsonWriter != null) {
-                    writeJson(conn, title, null);
-                }
+            if (bookNavWriter != null && nodeFile != null) {
+                bookNavWriter.write("<A href=\"" + nodeFile.getName()
+                        + "#" + node.getNodeid() + "\"  target=main>" + node.getTitle() + "</A><BR>\n");
+            }
+
+            if (bookWriter != null) {
+                writeHtml(conn, title, node, bookWriter);
             }
             if (bookNavWriter != null) {
                 try {
@@ -529,7 +508,8 @@ public class TreeNodeExportController extends BaseTaskController {
                     updateLogs(e.toString());
                 }
             }
-            List<TreeNode> children = tableTree.children(conn, node.getNodeid());
+
+            List<TreeNode> children = tableTreeNode.children(conn, node.getNodeid());
             if (children != null) {
                 for (TreeNode child : children) {
                     exportNode(conn, child, title);
@@ -541,23 +521,23 @@ public class TreeNodeExportController extends BaseTaskController {
         level--;
     }
 
-    protected void writeTexts(Connection conn, String nodeName, TreeLeaf leaf) {
+    protected void writeTexts(Connection conn, String parentName, TreeNode node) {
         try {
             if (!(treeController instanceof WebFavoritesController)) {
                 textsWriter.write(AppValues.MyBoxSeparator + "\n");
             }
-            textsWriter.write(nodeName + "\n");
-            if (leaf != null) {
-                textsWriter.write(leaf.getName() + "\n");
-                if (timeCheck.isSelected() && leaf.getTime() != null) {
-                    textsWriter.write(TreeLeaf.TimePrefix + DateTools.datetimeToString(leaf.getTime()) + "\n");
+            textsWriter.write(parentName + "\n");
+            if (node != null) {
+                textsWriter.write(node.getTitle() + "\n");
+                if (timeCheck.isSelected() && node.getUpdateTime() != null) {
+                    textsWriter.write(TreeNode.TimePrefix + DateTools.datetimeToString(node.getUpdateTime()) + "\n");
                 }
-                if (leaf.getValue() != null) {
-                    textsWriter.write(leaf.getValue() + "\n");
+                if (node.getValue() != null) {
+                    textsWriter.write(node.getValue() + "\n");
                 }
                 if ((treeController instanceof WebFavoritesController)
-                        && iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
-                    textsWriter.write(leaf.getMore() + "\n");
+                        && iconCheck.isSelected() && node.getMore() != null && !node.getMore().isBlank()) {
+                    textsWriter.write(node.getMore() + "\n");
                 }
             }
             textsWriter.write("\n");
@@ -566,32 +546,32 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeHtml(Connection conn, String nodeName, TreeLeaf leaf, FileWriter writer) {
+    protected void writeHtml(Connection conn, String parentName, TreeNode node, FileWriter writer) {
         try {
-            if (leaf == null) {
+            if (node == null) {
                 writer.write(indent + indent + "<div>\n"
-                        + indent + indent + indent + "<H3><PRE><CODE>" + nodeName + "</CODE></PRE></H3>\n");
+                        + indent + indent + indent + "<H3><PRE><CODE>" + parentName + "</CODE></PRE></H3>\n");
                 return;
             }
-            writer.write(indent + indent + "<div id=\"" + leaf.getLeafid() + "\">\n"
-                    + indent + indent + indent + "<H3><PRE><CODE>" + nodeName + "</CODE></PRE></H3>\n");
+            writer.write(indent + indent + "<div id=\"" + node.getNodeid() + "\">\n"
+                    + indent + indent + indent + "<H3><PRE><CODE>" + parentName + "</CODE></PRE></H3>\n");
             if (treeController instanceof WebFavoritesController) {
                 writer.write(indent + indent + indent + "<H4>");
-                if (iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
-                    writer.write("<IMG src=\"" + new File(leaf.getMore()).toURI().toString() + "\" />");
+                if (iconCheck.isSelected() && node.getMore() != null && !node.getMore().isBlank()) {
+                    writer.write("<IMG src=\"" + new File(node.getMore()).toURI().toString() + "\" width=40/>");
                 }
-                writer.write("<A href=\"" + leaf.getValue() + "\">" + leaf.getName() + "</A></H4>\n");
+                writer.write("<A href=\"" + node.getValue() + "\">" + node.getTitle() + "</A></H4>\n");
             } else {
-                writer.write(indent + indent + indent + "<H4><PRE><CODE>" + leaf.getName() + "</CODE></PRE></H4>\n");
+                writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
                 if (timeCheck.isSelected()) {
-                    writer.write(indent + indent + indent + "<H5>" + DateTools.datetimeToString(leaf.getTime()) + "</H5>\n");
+                    writer.write(indent + indent + indent + "<H5>" + DateTools.datetimeToString(node.getUpdateTime()) + "</H5>\n");
                 }
-                if (leaf.getValue() != null) {
+                if (node.getValue() != null) {
                     if (treeController instanceof NotesController) {
-                        writer.write(indent + indent + indent + leaf.getValue() + "\n"
+                        writer.write(indent + indent + indent + node.getValue() + "\n"
                                 + indent + indent + "</div><HR>\n\n");
                     } else {
-                        writer.write(indent + indent + indent + "<PRE><CODE>" + leaf.getValue() + "</CODE></PRE>\n"
+                        writer.write(indent + indent + indent + "<PRE><CODE>" + node.getValue() + "</CODE></PRE>\n"
                                 + indent + indent + "</div><HR>\n\n");
                     }
                 }
@@ -602,30 +582,30 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeXml(Connection conn, String nodeName, TreeLeaf leaf) {
+    protected void writeXml(Connection conn, String parentName, TreeNode node) {
         try {
             xmlWriter.write(indent + indent + "<" + treeController.category + ">\n"
                     + indent + indent + indent + "<" + message("Node")
-                    + "><![CDATA[" + nodeName + "]]></" + message("Node") + ">\n");
-            if (leaf != null) {
+                    + "><![CDATA[" + parentName + "]]></" + message("Node") + ">\n");
+            if (node != null) {
                 xmlWriter.write(indent + indent + indent + "<" + treeController.nameMsg
-                        + "><![CDATA[" + leaf.getName() + "]]></" + treeController.nameMsg + ">\n");
-                if (timeCheck.isSelected() && leaf.getTime() != null) {
+                        + "><![CDATA[" + node.getTitle() + "]]></" + treeController.nameMsg + ">\n");
+                if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                     xmlWriter.write(indent + indent + indent + "<" + treeController.timeMsg + ">"
-                            + DateTools.datetimeToString(leaf.getTime())
+                            + DateTools.datetimeToString(node.getUpdateTime())
                             + "</" + treeController.timeMsg + ">\n");
                 }
                 if (treeController instanceof WebFavoritesController) {
-                    if (iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
+                    if (iconCheck.isSelected() && node.getMore() != null && !node.getMore().isBlank()) {
                         xmlWriter.write(indent + indent + indent + "<" + treeController.moreMsg
-                                + "><![CDATA[" + leaf.getMore()
+                                + "><![CDATA[" + node.getMore()
                                 + "]]></" + treeController.moreMsg + ">\n");
                     }
 
                 }
-                if (leaf.getValue() != null) {
+                if (node.getValue() != null) {
                     xmlWriter.write(indent + indent + indent + "<" + treeController.valueMsg + ">\n"
-                            + "<![CDATA[" + leaf.getValue() + "]]>\n"
+                            + "<![CDATA[" + node.getValue() + "]]>\n"
                             + indent + indent + indent + "</" + treeController.valueMsg + ">\n");
                 }
             }
@@ -636,7 +616,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeJson(Connection conn, String bookName, TreeLeaf leaf) {
+    protected void writeJson(Connection conn, String parentName, TreeNode node) {
         try {
             StringBuilder s = new StringBuilder();
             if (!firstRow) {
@@ -647,31 +627,31 @@ public class TreeNodeExportController extends BaseTaskController {
             s.append(indent).append("{").append("\n");
             s.append(indent).append(indent)
                     .append("\"node\": \"")
-                    .append(bookName).append("\"");
-            if (leaf == null) {
+                    .append(parentName).append("\"");
+            if (node == null) {
             } else {
                 s.append(",\n");
                 s.append(indent).append(indent)
                         .append("\"").append(treeController.nameMsg).append("\": \"")
-                        .append(leaf.getName()).append("\"");
-                if (timeCheck.isSelected() && leaf.getTime() != null) {
+                        .append(node.getTitle()).append("\"");
+                if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                     s.append(",\n");
                     s.append(indent).append(indent)
                             .append("\"").append(treeController.timeMsg).append("\": \"")
-                            .append(leaf.getTime()).append("\"");
+                            .append(node.getUpdateTime()).append("\"");
                 }
-                if (leaf.getValue() != null) {
+                if (node.getValue() != null) {
                     s.append(",\n");
                     s.append(indent).append(indent)
                             .append("\"").append(treeController.valueMsg).append("\": \"")
-                            .append(leaf.getValue()).append("\"");
+                            .append(node.getValue()).append("\"");
                 }
                 if ((treeController instanceof WebFavoritesController)
-                        && iconCheck.isSelected() && leaf.getMore() != null && !leaf.getMore().isBlank()) {
+                        && iconCheck.isSelected() && node.getMore() != null && !node.getMore().isBlank()) {
                     s.append(",\n");
                     s.append(indent).append(indent)
                             .append("\"").append(treeController.moreMsg).append("\": \"")
-                            .append(leaf.getValue()).append("\"");
+                            .append(node.getValue()).append("\"");
                 }
                 s.append("\n");
             }

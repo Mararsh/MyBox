@@ -1,6 +1,7 @@
 package mara.mybox.db.data;
 
 import java.io.File;
+import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.value.Languages;
@@ -13,6 +14,7 @@ import mara.mybox.value.Languages;
 public class TreeNode extends BaseData {
 
     public static final String NodeSeparater = " > ";
+    public static final String TimePrefix = "Time:";
     public static final String Root = "Root";
     public static final String WebFavorite = "WebFavorite";
     public static final String Notebook = "Notebook";
@@ -21,36 +23,38 @@ public class TreeNode extends BaseData {
     public static final String JavaScript = "JavaScript";
     public static final String InformationInTree = "InformationInTree";
 
-    protected long nodeid, parent;
-    protected String category, title, attribute, more;
+    protected long nodeid, parentid;
+    protected String category, title, value, more;
+    protected Date updateTime;
 
     private void init() {
         nodeid = -1;
-        parent = -2;
+        parentid = -2;
         title = null;
-        attribute = null;
+        value = null;
         more = null;
+        updateTime = new Date();
     }
 
     public TreeNode() {
         init();
     }
 
-    public TreeNode(long parent, String title) {
+    public TreeNode(long parentid, String title) {
         init();
-        this.parent = parent;
+        this.parentid = parentid;
         this.title = title;
     }
 
-    public TreeNode(long parent, String title, String attribute) {
+    public TreeNode(long parentid, String title, String value) {
         init();
-        this.parent = parent;
+        this.parentid = parentid;
         this.title = title;
-        this.attribute = attribute;
+        this.value = value;
     }
 
     public boolean isRoot() {
-        return parent == nodeid;
+        return parentid == nodeid;
     }
 
     /*
@@ -69,17 +73,23 @@ public class TreeNode extends BaseData {
                 case "nodeid":
                     data.setNodeid(value == null ? -1 : (long) value);
                     return true;
-                case "parent":
-                    data.setParent(value == null ? -1 : (long) value);
+                case "parentid":
+                    data.setParentid(value == null ? -1 : (long) value);
                     return true;
                 case "title":
                     data.setTitle(value == null ? null : (String) value);
                     return true;
-                case "attribute":
-                    data.setAttribute(value == null ? null : (String) value);
+                case "value":
+                    data.setValue(value == null ? null : (String) value);
                     return true;
                 case "category":
                     data.setCategory(value == null ? null : (String) value);
+                    return true;
+                case "more":
+                    data.setMore(value == null ? null : (String) value);
+                    return true;
+                case "update_time":
+                    data.setUpdateTime(value == null ? null : (Date) value);
                     return true;
             }
         } catch (Exception e) {
@@ -95,20 +105,24 @@ public class TreeNode extends BaseData {
         switch (column) {
             case "nodeid":
                 return data.getNodeid();
-            case "parent":
-                return data.getParent();
+            case "parentid":
+                return data.getParentid();
             case "title":
                 return data.getTitle();
-            case "attribute":
-                return data.getAttribute();
+            case "value":
+                return data.getValue();
             case "category":
                 return data.getCategory();
+            case "more":
+                return data.getMore();
+            case "update_time":
+                return data.getUpdateTime();
         }
         return null;
     }
 
     public static boolean valid(TreeNode data) {
-        return data != null
+        return data != null && data.getCategory() != null
                 && data.getTitle() != null && !data.getTitle().isBlank()
                 && !data.getTitle().contains(NodeSeparater);
     }
@@ -156,12 +170,12 @@ public class TreeNode extends BaseData {
         return this;
     }
 
-    public long getParent() {
-        return parent;
+    public long getParentid() {
+        return parentid;
     }
 
-    public TreeNode setParent(long parent) {
-        this.parent = parent;
+    public TreeNode setParentid(long parentid) {
+        this.parentid = parentid;
         return this;
     }
 
@@ -174,12 +188,12 @@ public class TreeNode extends BaseData {
         return this;
     }
 
-    public String getAttribute() {
-        return attribute;
+    public String getValue() {
+        return value;
     }
 
-    public TreeNode setAttribute(String attribute) {
-        this.attribute = attribute;
+    public TreeNode setValue(String value) {
+        this.value = value;
         return this;
     }
 
@@ -198,6 +212,15 @@ public class TreeNode extends BaseData {
 
     public TreeNode setCategory(String category) {
         this.category = category;
+        return this;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public TreeNode setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
         return this;
     }
 

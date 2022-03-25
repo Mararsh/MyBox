@@ -231,7 +231,7 @@ License:    Apache License Version 2.0
                                                         </TableColumn>
                                                         <TableColumn fx:id="nameColumn" prefWidth="200.0" text="%Title" />
                                                         <TableColumn fx:id="timeColumn" prefWidth="200.0" text="%UpdateTime" />
-                                                        <TableColumn fx:id="leafidColumn" text="%ID" />
+                                                        <TableColumn fx:id="nodeidColumn" text="%ID" />
                                                     </columns>
                                                 </TableView>
                                                 <FlowPane fx:id="paginationPane" hgap="2.0" vgap="2.0">
@@ -316,7 +316,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </CheckBox>
-                                                        <Button fx:id="recoverLeafButton" mnemonicParsing="false" onAction="#recoverLeaf">
+                                                        <Button fx:id="recoverNodeButton" mnemonicParsing="false" onAction="#recoverNode">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -325,7 +325,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="copyLeafButton" mnemonicParsing="false" onAction="#copyLeaf">
+                                                        <Button fx:id="copyNodeButton" mnemonicParsing="false" onAction="#copyNode">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -334,7 +334,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="addLeafButton" mnemonicParsing="false" onAction="#addLeaf">
+                                                        <Button fx:id="addNodeButton" mnemonicParsing="false" onAction="#addNode">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>

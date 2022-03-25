@@ -34,7 +34,7 @@ public class WebFavoritesController extends TreeManageController {
 
             moreColumn.setCellFactory(new TableImageFileCell(20));
 
-            goButton.disableProperty().bind(Bindings.isEmpty(leafController.nameInput.textProperty()));
+            goButton.disableProperty().bind(Bindings.isEmpty(nodeController.nameInput.textProperty()));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -60,7 +60,7 @@ public class WebFavoritesController extends TreeManageController {
     @FXML
     @Override
     public void goAction() {
-        String address = leafController.valueInput.getText();
+        String address = nodeController.valueInput.getText();
         if (address == null || address.isBlank()) {
             popError(message("InvalidData") + ": " + message("Address"));
             return;

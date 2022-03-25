@@ -33,7 +33,7 @@ public class JavaScriptController extends TreeManageController {
     @Override
     public void initControls() {
         try {
-            leafController = editorController;
+            nodeController = editorController;
             super.initControls();
 
             editorController.setParameters(this);

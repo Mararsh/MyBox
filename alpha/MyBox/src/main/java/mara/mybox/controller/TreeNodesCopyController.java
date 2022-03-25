@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -18,16 +17,16 @@ import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2021-4-30
+ * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class TreeLeavesMoveController extends TreeNodesController {
+public class TreeNodesCopyController extends TreeNodesController {
 
-    public TreeLeavesMoveController() {
-        baseTitle = message("Move");
+    public TreeNodesCopyController() {
+        baseTitle = message("Copy");
     }
 
-    public void setParameters(TreeManageController treeController) {
+    public void setParamters(TreeManageController treeController) {
         this.treeController = treeController;
         setCaller(treeController.nodesController);
     }
@@ -42,7 +41,7 @@ public class TreeLeavesMoveController extends TreeNodesController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            List<TreeLeaf> leaves = treeController.tableView.getSelectionModel().getSelectedItems();
+            List<TreeNode> leaves = treeController.tableView.getSelectionModel().getSelectedItems();
             if (leaves == null || leaves.isEmpty()) {
                 alertError(message("NoData"));
                 treeController.getMyStage().requestFocus();
@@ -50,7 +49,7 @@ public class TreeLeavesMoveController extends TreeNodesController {
             }
             TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
             if (targetItem == null) {
-                alertError(message("SelectNodeMoveInto"));
+                alertError(message("SelectNodeCopyInto"));
                 return;
             }
             TreeNode targetNode = targetItem.getValue();
@@ -61,26 +60,21 @@ public class TreeLeavesMoveController extends TreeNodesController {
                 alertError(message("TargetShouldDifferentWithSource"));
                 return;
             }
-            long parentid = targetNode.getNodeid();
             task = new SingletonTask<Void>(this) {
 
                 private int count;
-                private boolean updateAddress = false;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        long currentid = -1;
-                        if (treeController.currentLeaf != null) {
-                            currentid = treeController.currentLeaf.getLeafid();
+                        long parentid = targetNode.getNodeid();
+                        List<TreeNode> newNodes = new ArrayList<>();
+                        for (TreeNode node : leaves) {
+                            TreeNode newNode = TreeNode.create().setParentid(parentid).setCategory(category)
+                                    .setTitle(node.getTitle()).setValue(node.getValue()).setMore(node.getMore());
+                            newNodes.add(newNode);
                         }
-                        for (TreeLeaf leaf : leaves) {
-                            leaf.setParentid(parentid);
-                            if (leaf.getLeafid() == currentid) {
-                                updateAddress = true;
-                            }
-                        }
-                        count = tableTreeLeaf.updateList(leaves);
+                        count = tableTreeNode.insertList(newNodes);
                         return count > 0;
                     } catch (Exception e) {
                         error = e.toString();
@@ -92,12 +86,7 @@ public class TreeLeavesMoveController extends TreeNodesController {
                 protected void whenSucceeded() {
                     treeController.nodesController.nodeChanged(targetNode);
                     treeController.nodesController.loadTree(targetNode);
-                    treeController.popInformation(message("Moved") + ": " + count);
-                    if (updateAddress) {
-                        treeController.currentLeaf.setParentid(parentid);
-                        treeController.nodeOfCurrentLeaf = targetNode;
-                        treeController.leafController.updateNodeOfCurrentLeaf();
-                    }
+                    treeController.popInformation(message("Copied") + ": " + count);
                     closeStage();
                 }
             };
@@ -108,15 +97,15 @@ public class TreeLeavesMoveController extends TreeNodesController {
     /*
         static methods
      */
-    public static TreeLeavesMoveController oneOpen(TreeManageController treeController) {
-        TreeLeavesMoveController controller = null;
+    public static TreeNodesCopyController oneOpen(TreeManageController treeController) {
+        TreeNodesCopyController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof TreeLeavesMoveController) {
+            if (object != null && object instanceof TreeNodesCopyController) {
                 try {
-                    controller = (TreeLeavesMoveController) object;
+                    controller = (TreeNodesCopyController) object;
                     controller.toFront();
                     break;
                 } catch (Exception e) {
@@ -124,10 +113,10 @@ public class TreeLeavesMoveController extends TreeNodesController {
             }
         }
         if (controller == null) {
-            controller = (TreeLeavesMoveController) WindowTools.openStage(Fxmls.TreeLeavesMoveFxml);
+            controller = (TreeNodesCopyController) WindowTools.openStage(Fxmls.TreeNodesCopyFxml);
         }
         if (controller != null) {
-            controller.setParameters(treeController);
+            controller.setParamters(treeController);
             Stage cstage = controller.getMyStage();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {

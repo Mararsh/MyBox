@@ -7,44 +7,44 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class TreeLeafTag extends BaseData {
+public class TreeNodeTag extends BaseData {
 
-    protected long ttid, leaffid, tagid;
-    protected TreeLeaf leaf;
+    protected long ttid, tnodeid, tagid;
+    protected TreeNode node;
     protected Tag tag;
 
     private void init() {
-        ttid = leaffid = tagid = -1;
-        leaf = null;
+        ttid = tnodeid = tagid = -1;
+        node = null;
         tag = null;
     }
 
-    public TreeLeafTag() {
+    public TreeNodeTag() {
         init();
     }
 
-    public TreeLeafTag(long leaffid, long tagid) {
+    public TreeNodeTag(long tnodeid, long tagid) {
         init();
-        this.leaffid = leaffid;
+        this.tnodeid = tnodeid;
         this.tagid = tagid;
     }
 
-    public TreeLeafTag(TreeLeaf leaf, Tag tag) {
+    public TreeNodeTag(TreeNode node, Tag tag) {
         init();
-        this.leaf = leaf;
+        this.node = node;
         this.tag = tag;
-        this.leaffid = leaf == null ? -1 : leaf.getLeafid();
+        this.tnodeid = node == null ? -1 : node.getNodeid();
         this.tagid = tag == null ? -1 : tag.getTgid();
     }
 
     /*
         Static methods
      */
-    public static TreeLeafTag create() {
-        return new TreeLeafTag();
+    public static TreeNodeTag create() {
+        return new TreeNodeTag();
     }
 
-    public static boolean setValue(TreeLeafTag data, String column, Object value) {
+    public static boolean setValue(TreeNodeTag data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -53,8 +53,8 @@ public class TreeLeafTag extends BaseData {
                 case "ttid":
                     data.setTtid(value == null ? -1 : (long) value);
                     return true;
-                case "leaffid":
-                    data.setLeaffid(value == null ? -1 : (long) value);
+                case "tnodeid":
+                    data.setTnodeid(value == null ? -1 : (long) value);
                     return true;
                 case "tagid":
                     data.setTagid(value == null ? -1 : (long) value);
@@ -66,24 +66,24 @@ public class TreeLeafTag extends BaseData {
         return false;
     }
 
-    public static Object getValue(TreeLeafTag data, String column) {
+    public static Object getValue(TreeNodeTag data, String column) {
         if (data == null || column == null) {
             return null;
         }
         switch (column) {
             case "ttid":
                 return data.getTtid();
-            case "leaffid":
-                return data.getLeaffid();
+            case "tnodeid":
+                return data.getTnodeid();
             case "tagid":
                 return data.getTagid();
         }
         return null;
     }
 
-    public static boolean valid(TreeLeafTag data) {
+    public static boolean valid(TreeNodeTag data) {
         return data != null
-                && data.getLeaffid() > 0 && data.getTagid() > 0;
+                && data.getTnodeid() > 0 && data.getTagid() > 0;
     }
 
     /*
@@ -97,12 +97,12 @@ public class TreeLeafTag extends BaseData {
         this.ttid = ttid;
     }
 
-    public long getLeaffid() {
-        return leaffid;
+    public long getTnodeid() {
+        return tnodeid;
     }
 
-    public void setLeaffid(long leaffid) {
-        this.leaffid = leaffid;
+    public void setTnodeid(long tnodeid) {
+        this.tnodeid = tnodeid;
     }
 
     public long getTagid() {
@@ -113,12 +113,12 @@ public class TreeLeafTag extends BaseData {
         this.tagid = tagid;
     }
 
-    public TreeLeaf getLeaf() {
-        return leaf;
+    public TreeNode getNode() {
+        return node;
     }
 
-    public void setLeaf(TreeLeaf leaf) {
-        this.leaf = leaf;
+    public void setNode(TreeNode node) {
+        this.node = node;
     }
 
     public Tag getTag() {

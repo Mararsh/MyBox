@@ -3,10 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.IconTools;
@@ -33,8 +31,7 @@ public class WebFavoriteAddController extends TreeNodesController {
 
             super.setManager(null, false);
             treeController = null;
-            tableTree = new TableTree();
-            tableTreeLeaf = new TableTreeLeaf();
+            tableTreeNode = new TableTreeNode();
             category = TreeNode.WebFavorite;
 
             loadTree();
@@ -63,20 +60,20 @@ public class WebFavoriteAddController extends TreeNodesController {
             TreeNode node = selectedItem.getValue();
             task = new SingletonTask<Void>(this) {
 
-                private TreeLeaf data;
+                private TreeNode data;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        data = new TreeLeaf();
-                        data.setName(title);
+                        data = new TreeNode();
+                        data.setTitle(title);
                         data.setValue(address);
                         File icon = IconTools.readIcon(address, true);
                         if (icon != null) {
                             data.setMore(icon.getAbsolutePath());
                         }
                         data.setParentid(node.getNodeid());
-                        data = tableTreeLeaf.insertData(data);
+                        data = tableTreeNode.insertData(data);
                         return data != null;
                     } catch (Exception e) {
                         error = e.toString();

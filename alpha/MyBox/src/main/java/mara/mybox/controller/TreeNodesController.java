@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
+import javafx.scene.paint.Color;
 import javafx.stage.Window;
-import mara.mybox.db.data.TreeLeaf;
-import mara.mybox.db.data.TreeLeafTag;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
-import mara.mybox.db.table.TableTreeLeafTag;
+import mara.mybox.db.data.TreeNodeTag;
+import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -27,9 +27,8 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     protected TreeManageController treeController;
     protected TreeNodesController caller;
-    protected TableTree tableTree;
-    protected TableTreeLeaf tableTreeLeaf;
-    protected TableTreeLeafTag tableTreeLeafTag;
+    protected TableTreeNode tableTreeNode;
+    protected TableTreeNodeTag tableTreeNodeTag;
     protected String category;
 
     public TreeNodesController() {
@@ -38,9 +37,8 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     public void setParameters(TreeManageController parent, boolean manageMode) {
         super.setManager(parent, manageMode);
         treeController = parent;
-        tableTree = parent.tableTree;
-        tableTreeLeaf = parent.tableTreeLeaf;
-        tableTreeLeafTag = parent.tableTreeLeafTag;
+        tableTreeNode = parent.tableTreeNode;
+        tableTreeNodeTag = parent.tableTreeNodeTag;
         category = treeController.category;
         baseTitle = category;
     }
@@ -48,9 +46,8 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     public void setCaller(TreeNodesController caller) {
         super.setManager(null, false);
         this.caller = caller;
-        tableTree = caller.tableTree;
-        tableTreeLeaf = caller.tableTreeLeaf;
-        tableTreeLeafTag = caller.tableTreeLeafTag;
+        tableTreeNode = caller.tableTreeNode;
+        tableTreeNodeTag = caller.tableTreeNodeTag;
         category = caller.category;
         cloneTree(caller.treeView, treeView, getIgnoreNode());
     }
@@ -62,25 +59,29 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     public String tooltip(TreeNode node) {
-        if (node.getAttribute() != null && !node.getAttribute().isBlank()) {
-            return node.getTitle() + "\n" + node.getAttribute();
+        String v = node.getValue();
+        if (v != null && !v.isBlank()) {
+            if (v.length() > 300) {
+                v = v.substring(0, 300);
+            }
+            return v;
         } else {
             return null;
         }
     }
 
     public TreeNode root() {
-        return tableTree.findAndCreateRoot(category);
+        return tableTreeNode.findAndCreateRoot(category);
     }
 
     @Override
     public TreeNode root(Connection conn) {
-        return tableTree.findAndCreateRoot(conn, category);
+        return tableTreeNode.findAndCreateRoot(conn, category);
     }
 
     @Override
-    public int size(Connection conn, TreeNode node) {
-        return TableTree.size(conn, node.getNodeid());
+    public int totalCount(Connection conn) {
+        return tableTreeNode.size(conn, category);
     }
 
     @Override
@@ -90,12 +91,12 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     public List<TreeNode> children(Connection conn, TreeNode node) {
-        return tableTree.children(conn, id(node));
+        return tableTreeNode.children(conn, id(node));
     }
 
     @Override
     public List<TreeNode> ancestor(Connection conn, TreeNode node) {
-        return tableTree.ancestor(conn, id(node));
+        return tableTreeNode.ancestor(conn, id(node));
     }
 
     @Override
@@ -114,7 +115,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             return null;
         }
         TreeNode newNode = new TreeNode(targetNode.getNodeid(), name);
-        newNode = tableTree.insertData(newNode);
+        newNode = tableTreeNode.insertData(newNode);
         return newNode;
     }
 
@@ -133,18 +134,18 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     protected void clearTree(Connection conn, TreeNode node) {
-        TableTree.deleteChildren(conn, node.getNodeid());
+        tableTreeNode.deleteChildren(conn, node.getNodeid());
     }
 
     @Override
     protected TreeNode rename(TreeNode node, String name) {
         node.setTitle(name);
-        return tableTree.updateData(node);
+        return tableTreeNode.updateData(node);
     }
 
     @Override
     protected void delete(Connection conn, TreeNode node) {
-        tableTree.deleteData(conn, node);
+        tableTreeNode.deleteData(conn, node);
     }
 
     @Override
@@ -156,7 +157,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         String chainName = chainName(selectedItem);
         TreeNodeCopyController controller
                 = (TreeNodeCopyController) WindowTools.openStage(Fxmls.TreeNodeCopyFxml);
-        controller.tableTreeLeaf = treeController.tableTreeLeaf;
+        controller.tableTreeNode = treeController.tableTreeNode;
         controller.setCaller(this, selectedItem.getValue(), chainName, onlyContents);
     }
 
@@ -174,76 +175,70 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     protected void treeView(Connection conn, TreeNode node, int indent, StringBuilder s) {
-        if (conn == null || node == null) {
-            return;
-        }
-        List<TreeLeaf> leaves = tableTreeLeaf.leaves(conn, node.getNodeid());
-        List<TreeNode> children = children(conn, node);
-        String indentNode = " ".repeat(indent);
-        String spaceNode = "&nbsp;".repeat(indent);
-        if ((leaves == null || leaves.isEmpty()) && (children == null || children.isEmpty())) {
-            s.append(indentNode).append(spaceNode).append(display(node)).append("<BR>\n");
-        } else {
-            String nodeid = "item" + id(node);
-            s.append(indentNode).append("<DIV style=\"padding: 2px;\">\n")
-                    .append(spaceNode)
-                    .append("<a href=\"javascript:nodeClicked('").append(nodeid).append("')\">")
-                    .append(display(node)).append("</a></DIV>\n");
-            s.append(indentNode).append("<DIV class=\"TreeNode\" id='").append(nodeid).append("'>\n");
-            if (leaves != null) {
-                String indentLeaf = " ".repeat(indent + 4);
-                String spaceLeaf = "&nbsp;".repeat(indent + 4);
-//                int spaceLeafPX = WebViewTools.px(webEngine, id)
-                for (TreeLeaf leaf : leaves) {
-                    String leafid = "leaf" + leaf.getLeafid();
-                    s.append(indentLeaf).append("<DIV style=\"padding: 2px;\">")
-                            .append(spaceLeaf).append(leaf.getName()).append("\n");
-                    List<TreeLeafTag> tags = tableTreeLeafTag.leafTags(conn, leaf.getLeafid());
-                    if (tags != null && !tags.isEmpty()) {
-                        String indentTag = " ".repeat(indent + 8);
-                        String spaceTag = "&nbsp;".repeat(2);
-
-                        s.append(indentTag).append("<SPAN class=\"LeafTag\">\n");
-                        for (TreeLeafTag leafTag : tags) {
-                            s.append(indentTag).append(spaceTag)
-                                    .append("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: ")
-                                    .append(FxColorTools.color2rgb(leafTag.getTag().getColor()))
-                                    .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.invert(leafTag.getTag().getColor()))).append(";\">")
-                                    .append(leafTag.getTag().getTag()).append("</SPAN>\n");
-                        }
-                        s.append(indentTag).append("</SPAN>\n");
-                    }
-                    s.append(indentLeaf).append("</DIV>\n");
-                    if (leaf.getValue() != null) {
-                        s.append(indentLeaf).append("<DIV class=\"LeafValue\">")
-                                .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
-                                .append("<DIV class=\"valueBox\">\n");
-                        String v;
-                        if (category.equals(TreeNode.WebFavorite)) {
-                            v = "<A href=\"" + leaf.getValue() + "\">";
-                            if (leaf.getMore() != null && !leaf.getMore().isBlank()) {
-                                try {
-                                    v += "<IMG src=\"" + new File(leaf.getMore()).toURI().toString() + "\"/>";
-                                } catch (Exception e) {
-                                }
-                            }
-                            v += leaf.getValue() + "</A>";
-                        } else if (category.equals(TreeNode.Notebook)) {
-                            v = leaf.getValue();
-                        } else {
-                            v = HtmlWriteTools.stringToHtml(leaf.getValue());
-                        }
-                        s.append(indentLeaf).append(v).append("\n");
-                        s.append(indentLeaf).append("</DIV></DIV></DIV>\n");
-                    }
-                }
+        try {
+            if (conn == null || node == null) {
+                return;
             }
-            if (children != null) {
+            List<TreeNode> children = children(conn, node);
+            String indentNode = " ".repeat(indent);
+            String spaceNode = "&nbsp;".repeat(indent);
+            String nodePageid = "item" + node.getNodeid();
+            String nodeName = node.getTitle();
+            if (children != null && !children.isEmpty()) {
+                nodeName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + nodeName + "</a>";
+            }
+            s.append(indentNode).append("<DIV style=\"padding: 2px;\">").append(spaceNode).append(nodeName).append("\n");
+            List<TreeNodeTag> tags = tableTreeNodeTag.nodeTags(conn, node.getNodeid());
+            if (tags != null && !tags.isEmpty()) {
+                String indentTag = " ".repeat(indent + 8);
+                String spaceTag = "&nbsp;".repeat(2);
+                s.append(indentTag).append("<SPAN class=\"NodeTag\">\n");
+                for (TreeNodeTag nodeTag : tags) {
+                    Color color = nodeTag.getTag().getColor();
+                    if (color == null) {
+                        color = FxColorTools.randomColor();
+                    }
+                    s.append(indentTag).append(spaceTag)
+                            .append("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: ")
+                            .append(FxColorTools.color2rgb(color))
+                            .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.invert(color))).append(";\">")
+                            .append(nodeTag.getTag().getTag()).append("</SPAN>\n");
+                }
+                s.append(indentTag).append("</SPAN>\n");
+            }
+            s.append(indentNode).append("</DIV>\n");
+            String nodeValue = node.getValue();
+            if (nodeValue != null && !nodeValue.isBlank()) {
+                s.append(indentNode).append("<DIV class=\"nodeValue\">")
+                        .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
+                        .append("<DIV class=\"valueBox\">\n");
+                String nodeDisplay;
+                if (category.equals(TreeNode.WebFavorite)) {
+                    nodeDisplay = "<A href=\"" + nodeValue + "\">";
+                    if (node.getMore() != null && !node.getMore().isBlank()) {
+                        try {
+                            nodeDisplay += "<IMG src=\"" + new File(node.getMore()).toURI().toString() + "\" width=40/>";
+                        } catch (Exception e) {
+                        }
+                    }
+                    nodeDisplay += nodeValue + "</A>";
+                } else if (category.equals(TreeNode.Notebook)) {
+                    nodeDisplay = nodeValue;
+                } else {
+                    nodeDisplay = HtmlWriteTools.stringToHtml(nodeValue);
+                }
+                s.append(indentNode).append(nodeDisplay).append("\n");
+                s.append(indentNode).append("</DIV></DIV></DIV>\n");
+            }
+            if (children != null && !children.isEmpty()) {
+                s.append(indentNode).append("<DIV class=\"TreeNode\" id='").append(nodePageid).append("'>\n");
                 for (TreeNode child : children) {
                     treeView(conn, child, indent + 4, s);
                 }
+                s.append(indentNode).append("</DIV>\n");
             }
-            s.append(indentNode).append("</DIV>\n");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

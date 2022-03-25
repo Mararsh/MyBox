@@ -4,7 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
-import mara.mybox.db.data.TreeLeaf;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -35,11 +35,11 @@ public class NoteEditor extends HtmlEditorController {
             editorController.defaultStyle = HtmlStyles.styleValue("Default");
 
             attributesController.setEditor(this);
-            notesController.leafController = attributesController;
+            notesController.nodeController = attributesController;
             attributesController.changeNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    attributesTab.setText(message("Attributes") + (attributesController.leafChanged ? " *" : ""));;
+                    attributesTab.setText(message("Attributes") + (attributesController.nodeChanged ? " *" : ""));;
                 }
             });
         } catch (Exception e) {
@@ -47,9 +47,9 @@ public class NoteEditor extends HtmlEditorController {
         }
     }
 
-    protected void editNote(TreeLeaf note) {
+    protected void editNote(TreeNode note) {
         updateFileStatus(false);
-        attributesController.editLeaf(note);
+        attributesController.editNode(note);
         if (note != null) {
             loadContents(note.getValue());
         } else {
@@ -62,12 +62,12 @@ public class NoteEditor extends HtmlEditorController {
     }
 
     protected void copyNote() {
-        attributesController.copyLeaf();
+        attributesController.copyNode();
         updateFileStatus(true);
     }
 
     protected void recoverNote() {
-        editNote(notesController.currentLeaf);
+        editNote(notesController.currentNode);
     }
 
     /*

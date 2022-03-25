@@ -34,7 +34,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class JShellEditor extends TreeLeafEditor {
+public class JShellEditor extends TreeNodeEditor {
 
     protected JShellController jShellController;
     protected JShellSnippets snippetsController;
@@ -121,7 +121,7 @@ public class JShellEditor extends TreeLeafEditor {
             @Override
             protected void finalAction() {
                 cancelAction();
-                editLeaf(null);
+                editNode(null);
             }
         };
         start(task);

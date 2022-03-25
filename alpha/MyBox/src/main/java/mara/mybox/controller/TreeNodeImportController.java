@@ -12,11 +12,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeLeaf;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableTreeLeaf;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IconTools;
@@ -32,8 +30,7 @@ import static mara.mybox.value.Languages.message;
 public class TreeNodeImportController extends BaseBatchFileController {
 
     protected TreeManageController treeController;
-    protected TableTree tableTree;
-    protected TableTreeLeaf tableTreeLeaf;
+    protected TableTreeNode tableTreeNode;
     protected TreeNode rootNode;
     protected String category;
 
@@ -55,8 +52,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
 
     public void setManage(TreeManageController treeController) {
         this.treeController = treeController;
-        tableTree = treeController.tableTree;
-        tableTreeLeaf = treeController.tableTreeLeaf;
+        tableTreeNode = treeController.tableTreeNode;
         category = treeController.category;
         iconCheck.setVisible(treeController instanceof WebFavoritesController);
     }
@@ -78,11 +74,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
         if (category == null) {
             return false;
         }
-        if (tableTree == null) {
-            tableTree = new TableTree();
-        }
-        if (tableTreeLeaf == null) {
-            tableTreeLeaf = new TableTreeLeaf();
+        if (tableTreeNode == null) {
+            tableTreeNode = new TableTreeNode();
         }
         return super.makeMoreParameters();
     }
@@ -109,7 +102,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
         try ( Connection conn = DerbyBase.getConnection();
                  BufferedReader reader = new BufferedReader(new FileReader(file, TextFileTools.charset(file)))) {
             conn.setAutoCommit(false);
-            rootNode = tableTree.findAndCreateRoot(conn, category);
+            rootNode = tableTreeNode.findAndCreateRoot(conn, category);
             if (rootNode == null) {
                 return -1;
             }
@@ -146,7 +139,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 if (owners.containsKey(line)) {
                     treeNode = owners.get(line);
                 } else {
-                    treeNode = tableTree.findAndCreateChain(conn, rootid, line);
+                    treeNode = tableTreeNode.findAndCreateChain(conn, rootid, line);
                     if (treeNode == null) {
                         break;
                     }
@@ -200,26 +193,26 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 if (time == null) {
                     time = new Date(baseTime - count * 1000); // to keep the order of id
                 }
-                TreeLeaf exist = null;
+                TreeNode exist = null;
                 if (!createRadio.isSelected()) {
-                    exist = tableTreeLeaf.find(conn, nodeid, name);
+                    exist = tableTreeNode.find(conn, nodeid, name);
                 }
                 if (exist != null) {
                     if (overrideRadio.isSelected()) {
                         exist.setValue(value == null ? null : value.trim())
                                 .setMore(more == null || more.isBlank() ? null : more)
-                                .setTime(time);
-                        if (tableTreeLeaf.updateData(conn, exist) != null) {
+                                .setUpdateTime(time);
+                        if (tableTreeNode.updateData(conn, exist) != null) {
                             count++;
                         }
                     }
                 } else {
-                    TreeLeaf leaf = TreeLeaf.create().setParentid(nodeid).setCategory(category)
-                            .setName(name)
+                    TreeNode node = TreeNode.create().setParentid(nodeid).setCategory(category)
+                            .setTitle(name)
                             .setValue(value == null ? null : value.trim())
                             .setMore(more == null || more.isBlank() ? null : more)
-                            .setTime(time);
-                    if (tableTreeLeaf.insertData(conn, leaf) != null) {
+                            .setUpdateTime(time);
+                    if (tableTreeNode.insertData(conn, node) != null) {
                         count++;
                     }
                 }
@@ -250,7 +243,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 if (owners.containsKey(line)) {
                     treeNode = owners.get(line);
                 } else {
-                    treeNode = tableTree.findAndCreateChain(conn, rootid, line);
+                    treeNode = tableTreeNode.findAndCreateChain(conn, rootid, line);
                     if (treeNode == null) {
                         break;
                     }
@@ -272,8 +265,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 while ((line = reader.readLine()) != null && line.isBlank()) {
                 }
                 if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
-                    if (line.startsWith(TreeLeaf.TimePrefix)) {
-                        time = DateTools.stringToDatetime(line.substring(TreeLeaf.TimePrefix.length()));
+                    if (line.startsWith(TreeNode.TimePrefix)) {
+                        time = DateTools.stringToDatetime(line.substring(TreeNode.TimePrefix.length()));
                     } else {
                         time = DateTools.stringToDatetime(line);
                     }
@@ -307,26 +300,26 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 if (time == null) {
                     time = new Date(baseTime - count * 1000); // to keep the order of id
                 }
-                TreeLeaf exist = null;
+                TreeNode exist = null;
                 if (!createRadio.isSelected()) {
-                    exist = tableTreeLeaf.find(conn, nodeid, name);
+                    exist = tableTreeNode.find(conn, nodeid, name);
                 }
                 if (exist != null) {
                     if (overrideRadio.isSelected()) {
                         exist.setValue(value == null ? null : value.trim())
                                 .setMore(more == null || more.isBlank() ? null : more)
-                                .setTime(time);
-                        if (tableTreeLeaf.updateData(conn, exist) != null) {
+                                .setUpdateTime(time);
+                        if (tableTreeNode.updateData(conn, exist) != null) {
                             count++;
                         }
                     }
                 } else {
-                    TreeLeaf leaf = TreeLeaf.create().setParentid(nodeid).setCategory(category)
-                            .setName(name)
+                    TreeNode node = TreeNode.create().setParentid(nodeid).setCategory(category)
+                            .setTitle(name)
                             .setValue(value == null ? null : value.trim())
                             .setMore(more == null || more.isBlank() ? null : more)
-                            .setTime(time);
-                    if (tableTreeLeaf.insertData(conn, leaf) != null) {
+                            .setUpdateTime(time);
+                    if (tableTreeNode.insertData(conn, node) != null) {
                         count++;
                     }
                 }

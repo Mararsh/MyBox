@@ -8,7 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
-import mara.mybox.db.data.TreeLeaf;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class WebFavoriteEditor extends TreeLeafEditor {
+public class WebFavoriteEditor extends TreeNodeEditor {
 
     @FXML
     protected ControlFileSelecter iconController;
@@ -105,12 +105,12 @@ public class WebFavoriteEditor extends TreeLeafEditor {
     }
 
     @Override
-    public TreeLeaf pickCurrentLeaf() {
-        TreeLeaf leaf = super.pickCurrentLeaf();
-        if (leaf == null) {
+    public TreeNode pickNodeData() {
+        TreeNode node = super.pickNodeData();
+        if (node == null) {
             return null;
         }
-        String address = leaf.getValue();
+        String address = node.getValue();
         if (address == null || address.isBlank()) {
             popError(message("InvalidParameters") + ": " + message("Address"));
             return null;
@@ -121,7 +121,7 @@ public class WebFavoriteEditor extends TreeLeafEditor {
             popError(message("InvalidParemeters") + ": " + message("Address"));
             return null;
         }
-        return leaf;
+        return node;
     }
 
     @FXML

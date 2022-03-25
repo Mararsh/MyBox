@@ -436,7 +436,11 @@ public class ControlWebView extends BaseController {
 
     public void writeContents(String contents) {
         webEngine.getLoadWorker().cancel();
-        webEngine.loadContent(contents);
+        if (contents == null) {
+            webEngine.loadContent("");
+        } else {
+            webEngine.loadContent(contents);
+        }
     }
 
     private boolean setAddress(String value) {

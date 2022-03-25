@@ -45,6 +45,7 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
@@ -150,34 +151,41 @@ public class DataMigration {
             statement.executeUpdate("DROP INDEX Tag_unique_index");
             statement.executeUpdate("CREATE UNIQUE INDEX Tag_unique_index on Tag (  category, tag )");
             statement.executeUpdate("UPDATE Tag SET category='" + TreeNode.Notebook + "'");
-            statement.executeUpdate("ALTER TABLE Tree ADD COLUMN category VARCHAR(" + StringMaxLength + ")");
-            statement.executeUpdate("ALTER TABLE Tree ADD COLUMN more VARCHAR(" + StringMaxLength + ")");
-            statement.executeUpdate("UPDATE Tree SET category='" + TreeNode.Root + "' where nodeid=1");
-            statement.executeUpdate("UPDATE Tree SET category='" + TreeNode.WebFavorite + "' where nodeid > 1");
-            statement.executeUpdate("INSERT INTO tree ( title, attribute, category, more) "
-                    + " SELECT name, CAST(owner AS CHAR(36)), '" + TreeNode.Notebook
-                    + "', CAST(nbid AS CHAR(36)) FROM notebook");
-            statement.executeUpdate("Update tree AS A set parent="
-                    + "(select B.nodeid from tree AS B WHERE A.attribute=B.more AND "
-                    + " B.category='" + TreeNode.Notebook + "') "
+
+            TableTreeNode tableTreeNode = new TableTreeNode();
+            tableTreeNode.checkBase(conn);
+            statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldNodeid BIGINT");
+            statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldParentid BIGINT");
+            statement.executeUpdate("INSERT INTO tree_node (category, title, value, oldNodeid, oldParentid) "
+                    + "SELECT '" + TreeNode.WebFavorite + "', title, attribute, nodeid, parent FROM tree WHERE nodeid > 1");
+            statement.executeUpdate("INSERT INTO tree_node ( category, title, value, more, oldParentid) "
+                    + "SELECT '" + TreeNode.WebFavorite + "', title, address, icon, owner FROM Web_Favorite");
+            statement.executeUpdate("Update tree_node AS A set parentid="
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='" + TreeNode.WebFavorite + "')  "
+                    + "WHERE A.category='" + TreeNode.WebFavorite + "'");
+
+            statement.executeUpdate("INSERT INTO tree_node (category, title, value, oldNodeid, oldParentid)  "
+                    + "SELECT '" + TreeNode.Notebook + "', name , description, nbid, owner FROM notebook");
+            statement.executeUpdate("Update tree_node AS A set parentid="
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='" + TreeNode.Notebook + "' AND A.category='" + TreeNode.Notebook + "') "
                     + " WHERE A.category='" + TreeNode.Notebook + "'");
-            statement.executeUpdate("INSERT INTO tree_leaf ( category, name, value, update_time, more) "
-                    + " SELECT '" + TreeNode.Notebook + "', title, html, update_time, CAST(ntid AS CHAR(36)) FROM note");
-            statement.executeUpdate("Update tree_leaf AS A set parentid="
-                    + "(select B.nodeid from tree AS B, note AS C WHERE "
-                    + "A.more=CAST(C.ntid AS CHAR(36)) AND B.category='" + TreeNode.Notebook + "' "
-                    + "AND B.more=CAST(C.notebook AS CHAR(36)))");
-            statement.executeUpdate("INSERT INTO tree_leaf_tag ( leaffid, tagid) "
-                    + " SELECT tree_leaf.leafid, note_tag.tagid FROM tree_leaf, note_tag "
-                    + " where tree_leaf.more=CAST(note_tag.noteid AS CHAR(36))");
-            statement.executeUpdate("UPDATE tree SET more=null, attribute=null");
-            statement.executeUpdate("UPDATE tree_leaf SET more=null");
-            statement.executeUpdate("INSERT INTO tree_leaf ( category, name, value, more, parentid) "
-                    + " SELECT '" + TreeNode.WebFavorite + "', title, address, icon, owner FROM Web_Favorite");
+            statement.executeUpdate("INSERT INTO tree_node (category, title, value, update_time, oldNodeid, oldParentid) "
+                    + "SELECT 'Note', title, html, update_time, ntid, notebook FROM note");
+            statement.executeUpdate("Update tree_node AS A set parentid="
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='Notebook' AND A.category='Note')  "
+                    + "WHERE A.category='Note'");
+            statement.executeUpdate("INSERT INTO tree_node_tag (tnodeid, tagid)  "
+                    + "SELECT tree_node.nodeid, note_tag.tagid FROM tree_node, note_tag where tree_node.oldNodeid=note_tag.noteid AND tree_node.category='Note'");
+            statement.executeUpdate("Update tree_node set category='" + TreeNode.Notebook + "' WHERE category='Note'");
+
+            statement.executeUpdate("ALTER TABLE tree_node DROP COLUMN oldNodeid");
+            statement.executeUpdate("ALTER TABLE tree_node DROP COLUMN oldParentid");
             statement.executeUpdate("DROP TABLE Web_Favorite");
             statement.executeUpdate("DROP TABLE Note_tag");
             statement.executeUpdate("DROP TABLE Note");
             statement.executeUpdate("DROP TABLE Notebook");
+            statement.executeUpdate("DROP TABLE tree");
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
