@@ -53,6 +53,48 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
+    public void itemSelected(TreeItem<TreeNode> item) {
+        if (item == null || caller != null || treeController == null) {
+            return;
+        }
+        treeController.loadChildren(item.getValue());
+    }
+
+    @Override
+    protected void nodeAdded(TreeNode parent, TreeNode newNode) {
+        if (caller != null) {
+            caller.addNode(caller.find(parent), newNode);
+        }
+        if (treeController != null) {
+            treeController.nodeAdded(parent, newNode);
+        }
+    }
+
+    @Override
+    protected void nodeDeleted(TreeNode node) {
+        if (treeController == null) {
+            return;
+        }
+        treeController.nodeDeleted(node);
+    }
+
+    @Override
+    protected void nodeRenamed(TreeNode node) {
+        if (treeController == null) {
+            return;
+        }
+        treeController.nodeRenamed(node);
+    }
+
+    @Override
+    public void nodeMoved(TreeNode parent, TreeNode node) {
+        if (treeController == null) {
+            return;
+        }
+        treeController.nodeMoved(parent, node);
+    }
+
+    @Override
     public String display(TreeNode node) {
         return node.getTitle();
     }
@@ -86,6 +128,9 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     public long id(TreeNode node) {
+        if (node == null) {
+            return -1;
+        }
         return node.getNodeid();
     }
 
@@ -106,6 +151,9 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     public boolean isDummy(TreeNode node) {
+        if (node == null) {
+            return false;
+        }
         return node.getTitle() != null;
     }
 
@@ -114,13 +162,16 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         if (targetNode == null) {
             return null;
         }
-        TreeNode newNode = new TreeNode(targetNode.getNodeid(), name);
+        TreeNode newNode = new TreeNode(targetNode, name, null);
         newNode = tableTreeNode.insertData(newNode);
         return newNode;
     }
 
     @Override
     public String name(TreeNode node) {
+        if (node == null) {
+            return null;
+        }
         return node.getTitle();
     }
 
@@ -134,11 +185,17 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     protected void clearTree(Connection conn, TreeNode node) {
+        if (node == null || conn == null) {
+            return;
+        }
         tableTreeNode.deleteChildren(conn, node.getNodeid());
     }
 
     @Override
     protected TreeNode rename(TreeNode node, String name) {
+        if (node == null || name == null) {
+            return null;
+        }
         node.setTitle(name);
         return tableTreeNode.updateData(node);
     }

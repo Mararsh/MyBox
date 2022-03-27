@@ -14,12 +14,15 @@ import static mara.mybox.value.Languages.message;
  */
 public class TreeNodeParentController extends TreeNodesController {
 
+    protected TreeNodeEditor nodeController;
+
     public TreeNodeParentController() {
         baseTitle = message("Owner");
     }
 
-    public void setParamters(TreeManageController treeController) {
-        this.treeController = treeController;
+    public void setParamters(TreeNodeEditor nodeController) {
+        this.nodeController = nodeController;
+        this.treeController = nodeController.treeController;
         setCaller(treeController.nodesController);
     }
 
@@ -27,6 +30,7 @@ public class TreeNodeParentController extends TreeNodesController {
     @Override
     public void okAction() {
         if (treeController == null || !treeController.getMyStage().isShowing()) {
+            close();
             return;
         }
         TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
@@ -34,18 +38,17 @@ public class TreeNodeParentController extends TreeNodesController {
             alertError(message("SelectNodeAsParent"));
             return;
         }
-        treeController.parentNode = targetItem.getValue();
-        treeController.nodeController.updateParentNode();
+        nodeController.setParentNode(targetItem.getValue());
         close();
     }
 
     /*
         static methods
      */
-    public static TreeNodeParentController open(TreeManageController treeController) {
+    public static TreeNodeParentController open(TreeNodeEditor nodeController) {
         TreeNodeParentController controller = (TreeNodeParentController) WindowTools.openChildStage(
-                treeController.getMyWindow(), Fxmls.TreeNodeParentFxml, false);
-        controller.setParamters(treeController);
+                nodeController.getMyWindow(), Fxmls.TreeNodeParentFxml, false);
+        controller.setParamters(nodeController);
         controller.requestMouse();
         return controller;
     }

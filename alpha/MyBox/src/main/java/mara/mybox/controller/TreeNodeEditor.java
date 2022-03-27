@@ -3,8 +3,9 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -33,8 +34,9 @@ import mara.mybox.value.UserConfig;
 public class TreeNodeEditor extends TreeTagsController {
 
     protected boolean nodeChanged;
-    protected SimpleBooleanProperty changeNotify;
+//    protected SimpleBooleanProperty changeNotify, savedNotify;
     protected String defaultExt;
+    protected TreeNode parentNode;
 
     @FXML
     protected Tab valueTab, attributesTab;
@@ -48,7 +50,8 @@ public class TreeNodeEditor extends TreeTagsController {
     protected CheckBox wrapCheck;
 
     public TreeNodeEditor() {
-        changeNotify = new SimpleBooleanProperty(false);
+//        changeNotify = new SimpleBooleanProperty(false);
+//        savedNotify = new SimpleBooleanProperty(false);
         defaultExt = "txt";
     }
 
@@ -66,9 +69,6 @@ public class TreeNodeEditor extends TreeTagsController {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
                     nodeChanged(true);
-                    if (attributesTab != null) {
-                        attributesTab.setText(message("Attributes") + "*");
-                    }
                 }
             });
 
@@ -77,9 +77,6 @@ public class TreeNodeEditor extends TreeTagsController {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
                         nodeChanged(true);
-                        if (valueTab != null) {
-                            valueTab.setText(treeController.valueMsg + "*");
-                        }
                     }
                 });
             }
@@ -89,9 +86,6 @@ public class TreeNodeEditor extends TreeTagsController {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
                         nodeChanged(true);
-                        if (attributesTab != null) {
-                            attributesTab.setText(message("Attributes") + "*");
-                        }
                     }
                 });
             }
@@ -147,16 +141,12 @@ public class TreeNodeEditor extends TreeTagsController {
             return;
         }
         nodeChanged = changed;
-        changeNotify.set(!changeNotify.get());
-        if (changed) {
-            if (!treeController.getTitle().endsWith(" *")) {
-                treeController.setTitle(treeController.getTitle() + " *");
-            }
-        } else {
-            if (treeController.getTitle().endsWith(" *")) {
-                treeController.setTitle(treeController.getTitle().substring(0, treeController.getTitle().length() - 2));
-            }
+        if (valueTab != null) {
+            valueTab.setText(treeController.valueMsg + (changed ? "*" : ""));
+        } else if (attributesTab != null) {
+            attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
         }
+        treeController.nodeChanged();
     }
 
     @Override
@@ -170,7 +160,7 @@ public class TreeNodeEditor extends TreeTagsController {
 
     protected synchronized void editNode(TreeNode node) {
         isSettingValues = true;
-        treeController.currentNode = node;
+        currentNode = node;
         if (node != null) {
             treeController.setTitle(treeController.baseTitle + ": " + node.getNodeid() + " - " + node.getTitle());
             idInput.setText(node.getNodeid() + "");
@@ -182,7 +172,7 @@ public class TreeNodeEditor extends TreeTagsController {
                 moreInput.setText(node.getMore());
             }
             timeInput.setText(DateTools.datetimeToString(node.getUpdateTime()));
-            selectButton.setVisible(node.getNodeid() < 0);
+            selectButton.setVisible(node.getNodeid() < 0 || node.getParentid() < 0);
         } else {
             treeController.setTitle(treeController.baseTitle);
             idInput.setText(message("NewData"));
@@ -198,7 +188,7 @@ public class TreeNodeEditor extends TreeTagsController {
         }
         isSettingValues = false;
         nodeChanged(false);
-        updateParentNode();
+        refreshParentNode();
         refreshAction();
         showEditorPane();
         if (attributesTab != null) {
@@ -213,26 +203,37 @@ public class TreeNodeEditor extends TreeTagsController {
         treeController.showRightPane();
     }
 
-    protected void updateParentNode() {
+    protected void checkParentNode(TreeNode node) {
+        if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
+            return;
+        }
+        refreshParentNode();
+    }
+
+    protected void setParentNode(TreeNode node) {
+        parentNode = node;
+        refreshParentNode();
+    }
+
+    protected void refreshParentNode() {
         SingletonTask updateTask = new SingletonTask<Void>(this) {
             private String chainName;
 
             @Override
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
-                    if (treeController.currentNode != null) {
-                        if (treeController.parentNode == null
-                                || treeController.parentNode.getNodeid() != treeController.currentNode.getParentid()) {
-                            treeController.parentNode = tableTreeNode.find(conn, treeController.currentNode.getParentid());
+                    if (currentNode != null) {
+                        if (currentNode.getParentid() >= 0) {
+                            parentNode = tableTreeNode.find(conn, currentNode.getParentid());
+                        } else {
+                            parentNode = tableTreeNode.readData(conn, parentNode);
                         }
                     }
-                    if (treeController.parentNode == null) {
-                        treeController.parentNode = treeController.nodesController.root(conn);
+                    if (parentNode == null) {
+                        chainName = "";
+                    } else {
+                        chainName = treeController.nodesController.chainName(conn, parentNode);
                     }
-                    if (treeController.parentNode == null) {
-                        return false;
-                    }
-                    chainName = treeController.nodesController.chainName(conn, treeController.parentNode);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -252,7 +253,7 @@ public class TreeNodeEditor extends TreeTagsController {
         isSettingValues = true;
         idInput.setText(message("NewData"));
         nameInput.appendText(" " + message("Copy"));
-        treeController.currentNode = null;
+        currentNode = null;
         selectButton.setVisible(true);
         isSettingValues = false;
         nodeChanged(true);
@@ -276,6 +277,106 @@ public class TreeNodeEditor extends TreeTagsController {
             node.setMore(moreInput.getText());
         }
         return node;
+    }
+
+    public void saveNode() {
+        TreeNode node = pickNodeData();
+        if (node == null) {
+            return;
+        }
+        if (parentNode == null) {
+            selectParent();
+            return;
+        }
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            private boolean newData = false;
+
+            @Override
+            protected boolean handle() {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    node.setUpdateTime(new Date());
+                    if (currentNode != null) {
+                        currentNode = tableTreeNode.readData(conn, currentNode);
+                        if (currentNode.getParentid() >= 0) {
+                            parentNode = tableTreeNode.find(conn, currentNode.getParentid());
+                        } else {
+                            parentNode = tableTreeNode.readData(conn, parentNode);
+                        }
+                        if (currentNode == null || parentNode == null) {
+                            currentNode = null;
+                            return true;
+                        } else {
+                            node.setNodeid(currentNode.getNodeid());
+                            node.setParentid(parentNode.getNodeid());
+                            currentNode = tableTreeNode.updateData(conn, node);
+                            newData = false;
+                        }
+                    } else {
+                        node.setParentid(parentNode.getNodeid());
+                        currentNode = tableTreeNode.insertData(conn, node);
+                        newData = true;
+                    }
+                    if (currentNode == null) {
+                        return false;
+                    }
+                    long nodeid = currentNode.getNodeid();
+                    List<String> nodeTags = tableTreeNodeTag.nodeTagNames(nodeid);
+                    List<Tag> selected = tableView.getSelectionModel().getSelectedItems();
+                    if (selected == null || selected.isEmpty()) {
+                        tableTreeNodeTag.removeTags(conn, nodeid);
+                    } else {
+                        List<String> selectedNames = new ArrayList<>();
+                        for (Tag tag : selected) {
+                            selectedNames.add(tag.getTag());
+                        }
+                        List<String> items = new ArrayList<>();
+                        for (String tagName : selectedNames) {
+                            if (!nodeTags.contains(tagName)) {
+                                items.add(tagName);
+                            }
+                        }
+                        tableTreeNodeTag.addTags(conn, nodeid, category, items);
+                        items.clear();
+                        for (String tagName : nodeTags) {
+                            if (!selectedNames.contains(tagName)) {
+                                items.add(tagName);
+                            }
+                        }
+                        tableTreeNodeTag.removeTags(conn, nodeid, category, items);
+                    }
+                    conn.commit();
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.error(e);
+                    return false;
+                }
+                return currentNode != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (parentNode == null) {
+                    selectParent();
+                }
+                if (currentNode == null) {
+                    copyNode();
+                    popError(message("NotExist"));
+                } else {
+                    popSaved();
+                    editNode(currentNode);
+                    if (newData) {
+                        treeController.newNodeSaved();
+                    } else {
+                        treeController.nodeSaved();
+                    }
+                }
+            }
+
+        };
+        start(task, false);
     }
 
     @FXML
@@ -314,6 +415,15 @@ public class TreeNodeEditor extends TreeTagsController {
     @FXML
     public void clearValue() {
         valueInput.clear();
+    }
+
+    public void renamed(String newName) {
+        if (nameInput == null) {
+            return;
+        }
+        isSettingValues = true;
+        nameInput.setText(newName);
+        isSettingValues = false;
     }
 
     @FXML
@@ -361,7 +471,7 @@ public class TreeNodeEditor extends TreeTagsController {
         if (task != null) {
             task.cancel();
         }
-        if (tableData.isEmpty() || treeController.currentNode == null) {
+        if (tableData.isEmpty() || currentNode == null) {
             return;
         }
         task = new SingletonTask<Void>(this) {
@@ -369,7 +479,7 @@ public class TreeNodeEditor extends TreeTagsController {
 
             @Override
             protected boolean handle() {
-                nodeTags = tableTreeNodeTag.nodeTagNames(treeController.currentNode.getNodeid());
+                nodeTags = tableTreeNodeTag.nodeTagNames(currentNode.getNodeid());
                 return true;
             }
 
@@ -403,11 +513,7 @@ public class TreeNodeEditor extends TreeTagsController {
 
     @FXML
     public void selectParent() {
-        if (treeController.currentNode != null && treeController.currentNode.getNodeid() >= 0) {
-            selectButton.setVisible(false);
-            return;
-        }
-        TreeNodeParentController.open(treeController);
+        TreeNodeParentController.open(this);
     }
 
 }

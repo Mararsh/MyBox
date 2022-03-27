@@ -714,25 +714,14 @@ public class HtmlEditorController extends WebAddressController {
         }
         Platform.runLater(() -> {
             try {
+                String md;
                 if (html == null || html.isEmpty()) {
-                    markdownArea.setEditable(false);
-                    markdownArea.setText("");
-                    if (pageLoaded) {
-                        markdownArea.setEditable(true);
-                    }
-                    markdownChanged(changed);
-                    return;
+                    md = html;
+                } else if (StringTools.include(html, "<FRAMESET ", true)) {
+                    md = message("FrameSetAndSelectFrame");
+                } else {
+                    md = htmlConverter.convert(html);
                 }
-                if (StringTools.include(html, "<FRAMESET ", true)) {
-                    markdownArea.setEditable(false);
-                    markdownArea.setText(message("FrameSetAndSelectFrame"));
-                    if (pageLoaded) {
-                        markdownArea.setEditable(true);
-                    }
-                    markdownChanged(changed);
-                    return;
-                }
-                String md = htmlConverter.convert(html);
                 markdownArea.setEditable(false);
                 markdownArea.setText(md);
                 if (pageLoaded) {

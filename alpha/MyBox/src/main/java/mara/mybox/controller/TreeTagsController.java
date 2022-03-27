@@ -14,6 +14,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.TreeNodeTag;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableTag;
@@ -39,6 +40,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     protected TableTag tableTag;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected String category;
+    protected TreeNode currentNode;
 
     @FXML
     protected TableColumn<Tag, String> tagColumn;
@@ -193,9 +195,9 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         tag = tableTag.insertData(conn, new Tag(category, name));
-                        if (forCurrentNode && tag != null && treeController.currentNode != null) {
+                        if (forCurrentNode && tag != null && currentNode != null) {
                             tableTreeNodeTag.insertData(conn,
-                                    new TreeNodeTag(treeController.currentNode.getNodeid(), tag.getTgid()));
+                                    new TreeNodeTag(currentNode.getNodeid(), tag.getTgid()));
                         }
                     } catch (Exception e) {
                         error = e.toString();

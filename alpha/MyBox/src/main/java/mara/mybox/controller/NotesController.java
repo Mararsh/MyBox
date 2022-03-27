@@ -49,6 +49,18 @@ public class NotesController extends TreeManageController {
 
     @FXML
     @Override
+    public void addAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        if (loadedParent != null) {
+            nodeController.parentNode = loadedParent;
+        }
+        editorController.editNote(null);
+    }
+
+    @FXML
+    @Override
     public void editAction() {
         if (!checkBeforeNextAction()) {
             return;
@@ -67,25 +79,19 @@ public class NotesController extends TreeManageController {
 
     @FXML
     @Override
-    protected void copyNode() {
-        editorController.copyNote();
-    }
-
-    @FXML
-    @Override
     protected void recoverNode() {
         editorController.recoverNote();
     }
 
     @Override
-    public boolean nodeChanged() {
+    public boolean isNodeChanged() {
         return editorController.fileChanged || nodeController.nodeChanged;
     }
 
     @Override
-    public void afterSaved() {
+    public void nodeSaved() {
+        super.nodeSaved();
         editorController.updateFileStatus(false);
-        super.afterSaved();
     }
 
     /*

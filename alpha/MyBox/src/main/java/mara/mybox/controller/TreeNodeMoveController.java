@@ -76,10 +76,8 @@ public class TreeNodeMoveController extends TreeNodesController {
                 protected void whenSucceeded() {
                     if (caller == null || !caller.getMyStage().isShowing()) {
                         caller = oneOpen();
-                    } else {
-                        caller.nodeChanged(sourceNode);
-                        caller.nodeChanged(targetNode);
                     }
+                    caller.nodeMoved(targetNode, sourceNode);
                     caller.loadTree(targetNode);
                     caller.popSuccessful();
                     closeStage();

@@ -274,7 +274,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void notifyLoaded() {
-        loadedNotify.set(!loadedNotify.get());
+        if (loadedNotify != null) {
+            loadedNotify.set(!loadedNotify.get());
+        }
     }
 
     public long readDataSize(Connection conn) {

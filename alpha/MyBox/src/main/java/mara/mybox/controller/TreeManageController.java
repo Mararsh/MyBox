@@ -29,7 +29,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
@@ -53,13 +52,12 @@ import mara.mybox.value.UserConfig;
 public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     protected String category;
-    protected TreeNode treeNode, parentNode;
     protected TableTreeNode tableTreeNode;
     protected TableTag tableTag;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected String queryLabel;
-    protected TreeNode currentNode;
     protected String nameMsg, valueMsg, moreMsg, timeMsg;
+    protected TreeNode loadedParent;
 
     @FXML
     protected TreeNodesController nodesController;
@@ -141,24 +139,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             super.initControls();
 
             nodesController.setParameters(this, true);
-            nodesController.selectedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    loadLeaves(nodesController.selectedNode);
-                }
-            });
-            nodesController.changedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    nodeChanged(nodesController.changedNode);
-                }
-            });
 
             subCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
             subCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    if (nodesController.selectedNode != null) {
+                    if (loadedParent != null) {
                         loadTableData();
                     }
                 }
@@ -198,9 +184,185 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     /*
-        nodes
+        synchronize
      */
-    protected void loadTree(TreeNode node) {
+    public void nodeAdded(TreeNode parent, TreeNode newNode) {
+        if (parent == null || newNode == null) {
+            return;
+        }
+        if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
+            loadChildren(parent);
+        }
+    }
+
+    public void nodeRenamed(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+        if (loadedParent != null && id == loadedParent.getNodeid()) {
+            loadedParent = node;
+            makeConditionPane();
+        } else {
+            for (int i = 0; i < tableData.size(); i++) {
+                TreeNode tnode = tableData.get(i);
+                if (tnode.getNodeid() == id) {
+                    tableData.set(i, node);
+                    break;
+                }
+            }
+        }
+        if (nodeController.parentNode != null && id == nodeController.parentNode.getNodeid()) {
+            nodeController.setParentNode(node);
+        }
+        if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
+            nodeController.renamed(node.getTitle());
+        }
+    }
+
+    public void nodeDeleted(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+        if (loadedParent != null && id == loadedParent.getNodeid()) {
+            loadedParent = null;
+            makeConditionPane();
+            tableData.clear();
+        } else {
+            for (int i = 0; i < tableData.size(); i++) {
+                TreeNode tnode = tableData.get(i);
+                if (tnode.getNodeid() == id) {
+                    tableData.remove(tnode);
+                    break;
+                }
+            }
+        }
+        if (nodeController.parentNode != null && id == nodeController.parentNode.getNodeid()) {
+            nodeController.setParentNode(null);
+            nodeController.copyNode();
+        }
+        if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
+            nodeController.copyNode();
+        }
+    }
+
+    public void nodeMoved(TreeNode parent, TreeNode node) {
+        if (parent == null || node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+        if (loadedParent != null) {
+            loadChildren(loadedParent);
+        }
+        if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
+            nodeController.setParentNode(parent);
+        }
+        if (nodeController.parentNode != null && id == nodeController.parentNode.getNodeid()) {
+            nodeController.setParentNode(node);
+        }
+    }
+
+    public void nodesMoved(TreeNode parent, List<TreeNode> nodes) {
+        if (parent == null || nodes == null || nodes.isEmpty()) {
+            return;
+        }
+        if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
+            loadChildren(parent);
+        }
+        for (TreeNode node : nodes) {
+            if (nodeController.currentNode != null && node.getNodeid() == nodeController.currentNode.getNodeid()) {
+                nodeController.setParentNode(parent);
+            }
+            if (nodeController.parentNode != null && node.getNodeid() == nodeController.parentNode.getNodeid()) {
+                nodeController.setParentNode(node);
+            }
+        }
+        nodesController.loadTree(parent);
+    }
+
+    public void nodesCopied(TreeNode parent, List<TreeNode> nodes) {
+        if (parent == null || nodes == null || nodes.isEmpty()) {
+            return;
+        }
+        nodesController.loadChildren(nodesController.find(parent), nodes);
+    }
+
+    public void nodesDeleted() {
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    loadedParent = tableTreeNode.readData(conn, loadedParent);
+                    nodeController.currentNode = tableTreeNode.readData(conn, nodeController.currentNode);
+                    nodeController.parentNode = tableTreeNode.readData(conn, nodeController.parentNode);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                nodeController.editNode(nodeController.currentNode);
+                nodesController.loadTree(loadedParent);
+            }
+        };
+        start(task);
+    }
+
+    public void nodeSaved() {
+        if (nodeController.currentNode == null) {
+            return;
+        }
+        long id = nodeController.currentNode.getNodeid();
+        if (loadedParent != null && id == loadedParent.getNodeid()) {
+            loadedParent = nodeController.currentNode;
+            makeConditionPane();
+        }
+        for (int i = 0; i < tableData.size(); i++) {
+            TreeNode tnode = tableData.get(i);
+            if (tnode.getNodeid() == id) {
+                tableData.set(i, nodeController.currentNode);
+                break;
+            }
+        }
+        nodesController.loadChildren(nodesController.find(nodeController.parentNode));
+    }
+
+    public void newNodeSaved() {
+        if (nodeController.currentNode == null) {
+            return;
+        }
+        if (loadedParent != null && nodeController.parentNode.getNodeid() == loadedParent.getNodeid()) {
+            loadChildren(nodeController.parentNode);
+        }
+        nodesController.addNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
+    }
+
+    public void nodeChanged() {
+        if (isSettingValues) {
+            return;
+        }
+        String currentTitle = getTitle();
+        if (nodeController.nodeChanged) {
+            if (!currentTitle.endsWith(" *")) {
+                setTitle(currentTitle + " *");
+            }
+        } else {
+            if (currentTitle.endsWith(" *")) {
+                setTitle(currentTitle.substring(0, currentTitle.length() - 2));
+            }
+        }
+    }
+
+
+    /*
+        tree
+     */
+    public void loadTree(TreeNode selectedNode) {
         if (!AppVariables.isTesting) {
             File file = TreeNode.exampleFile(category);
             if (file != null && tableTreeNode.size(category) < 1
@@ -209,11 +371,11 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 return;
             }
         }
-        nodesController.loadTree(node);
+        nodesController.loadTree(selectedNode);
     }
 
-    protected void clearQuery() {
-        nodesController.selectedNode = null;
+    public void clearQuery() {
+        loadedParent = null;
         queryConditions = null;
         queryLabel = null;
         tableData.clear();
@@ -222,34 +384,18 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         startRowOfCurrentPage = 0;
     }
 
-    protected void loadLeaves(TreeNode node) {
+    /*
+        table
+     */
+    public void loadChildren(TreeNode parentNode) {
         clearQuery();
-        nodesController.selectedNode = node;
-        if (node != null) {
-            queryConditions = " parentid=" + node.getNodeid();
+        loadedParent = parentNode;
+        if (loadedParent != null) {
+            queryConditions = " parentid=" + loadedParent.getNodeid();
             loadTableData();
         }
     }
 
-    protected void nodeChanged(TreeNode node) {
-        if (node == null) {
-            return;
-        }
-        makeConditionPane();
-        if (parentNode != null && node.getNodeid() == parentNode.getNodeid()) {
-            parentNode = node;
-            nodeController.updateParentNode();
-        }
-        if (nodesController.selectedNode != null && nodesController.selectedNode.getNodeid() == node.getNodeid()) {
-            nodesController.selectedNode = node;
-            makeConditionPane();
-        }
-    }
-
-
-    /*
-        leaves
-     */
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
@@ -258,7 +404,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     public void makeConditionPane() {
         conditionBox.getChildren().clear();
-        if (nodesController.selectedNode == null) {
+        if (loadedParent == null) {
             if (queryConditionsString != null) {
                 conditionLabel.setText(queryConditionsString.length() > 300
                         ? queryConditionsString.substring(0, 300) : queryConditionsString);
@@ -273,7 +419,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
                 @Override
                 protected boolean handle() {
-                    ancestor = tableTreeNode.ancestor(nodesController.selectedNode.getNodeid());
+                    ancestor = tableTreeNode.ancestor(loadedParent.getNodeid());
                     return true;
                 }
 
@@ -288,14 +434,14 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                             link.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
-                                    loadLeaves(node);
+                                    loadChildren(node);
                                 }
                             });
                             nodes.add(link);
                             nodes.add(new Label(">"));
                         }
                     }
-                    Label label = new Label(nodesController.selectedNode.getTitle());
+                    Label label = new Label(loadedParent.getTitle());
                     label.setWrapText(true);
                     label.setMinHeight(Region.USE_PREF_SIZE);
                     nodes.add(label);
@@ -311,8 +457,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public long readDataSize(Connection conn) {
-        if (nodesController.selectedNode != null && subCheck.isSelected()) {
-            return tableTreeNode.withSubSize(conn, nodesController.selectedNode.getNodeid());
+        if (loadedParent != null && subCheck.isSelected()) {
+            return tableTreeNode.withSubSize(conn, loadedParent.getNodeid());
 
         } else if (queryConditions != null) {
             return tableTreeNode.conditionSize(conn, queryConditions);
@@ -325,8 +471,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public List<TreeNode> readPageData(Connection conn) {
-        if (nodesController.selectedNode != null && subCheck.isSelected()) {
-            return tableTreeNode.withSub(conn, nodesController.selectedNode.getNodeid(), startRowOfCurrentPage, pageSize);
+        if (loadedParent != null && subCheck.isSelected()) {
+            return tableTreeNode.withSub(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
             return tableTreeNode.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
@@ -344,6 +490,18 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         } else {
             return -1;
         }
+    }
+
+    @Override
+    protected void afterDeletion() {
+        super.afterDeletion();
+        nodesDeleted();
+    }
+
+    @Override
+    protected void afterClear() {
+        super.afterClear();
+        nodesDeleted();
     }
 
     @Override
@@ -403,7 +561,13 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void addAction() {
-        addNode();
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        if (loadedParent != null) {
+            nodeController.parentNode = loadedParent;
+        }
+        nodeController.editNode(null);
     }
 
     @FXML
@@ -454,137 +618,13 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @FXML
     protected void recoverNode() {
-        nodeController.editNode(currentNode);
+        nodeController.editNode(nodeController.currentNode);
     }
 
     @FXML
     @Override
     public void saveAction() {
-        TreeNode node = nodeController.pickNodeData();
-        if (node == null) {
-            return;
-        }
-        if (task != null && !task.isQuit()) {
-            return;
-        }
-        task = new SingletonTask<Void>(this) {
-            private boolean notExist = false;
-
-            @Override
-            protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
-                    node.setUpdateTime(new Date());
-                    if (currentNode != null) {
-                        currentNode = tableTreeNode.readData(conn, currentNode);
-                        parentNode = tableTreeNode.readData(conn, parentNode);
-                        if (currentNode == null || parentNode == null) {
-                            notExist = true;
-                            currentNode = null;
-                            return true;
-                        } else {
-                            node.setNodeid(currentNode.getNodeid());
-                            node.setParentid(currentNode.getParentid());
-                            currentNode = tableTreeNode.updateData(conn, node);
-                        }
-                    } else {
-                        if (parentNode == null) {
-                            parentNode = nodesController.root(conn);
-                        }
-                        node.setParentid(parentNode.getNodeid());
-                        currentNode = tableTreeNode.insertData(conn, node);
-                    }
-                    if (currentNode == null) {
-                        return false;
-                    }
-                    long nodeid = currentNode.getNodeid();
-                    List<String> nodeTags = tableTreeNodeTag.nodeTagNames(nodeid);
-                    List<Tag> selected = nodeController.tableView.getSelectionModel().getSelectedItems();
-                    if (selected == null || selected.isEmpty()) {
-                        tableTreeNodeTag.removeTags(conn, nodeid);
-                    } else {
-                        List<String> selectedNames = new ArrayList<>();
-                        for (Tag tag : selected) {
-                            selectedNames.add(tag.getTag());
-                        }
-                        List<String> items = new ArrayList<>();
-                        for (String tagName : selectedNames) {
-                            if (!nodeTags.contains(tagName)) {
-                                items.add(tagName);
-                            }
-                        }
-                        tableTreeNodeTag.addTags(conn, nodeid, category, items);
-                        items.clear();
-                        for (String tagName : nodeTags) {
-                            if (!selectedNames.contains(tagName)) {
-                                items.add(tagName);
-                            }
-                        }
-                        tableTreeNodeTag.removeTags(conn, nodeid, category, items);
-                    }
-                    conn.commit();
-                } catch (Exception e) {
-                    error = e.toString();
-                    MyBoxLog.error(e);
-                    return false;
-                }
-                return currentNode != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (notExist) {
-                    copyNode();
-                    popError(message("NotExist"));
-                } else {
-                    popSaved();
-                    afterSaved();
-                }
-            }
-
-        };
-        start(task, false);
-    }
-
-    public void afterSaved() {
-        nodeController.editNode(currentNode);
-        if (nodesController.selectedNode != null
-                && currentNode.getParentid() == nodesController.selectedNode.getNodeid()) {
-            refreshAction();
-        }
-    }
-
-    public boolean nodeChanged() {
-        return nodeController.nodeChanged;
-    }
-
-    @Override
-    public boolean checkBeforeNextAction() {
-        if (!nodeChanged()) {
-            return true;
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(message("DataChanged"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(message("Save"));
-            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent()) {
-                return false;
-            }
-            if (result.get() == buttonSave) {
-                saveAction();
-                return false;
-            } else {
-                return result.get() == buttonNotSave;
-            }
-        }
+        nodeController.saveNode();
     }
 
     @Override
@@ -593,6 +633,10 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         nodeController.loadFile(file);
+    }
+
+    public boolean isNodeChanged() {
+        return nodeController.nodeChanged;
     }
 
     /*
@@ -721,6 +765,36 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     protected void popFindHistories(MouseEvent mouseEvent) {
         PopTools.popStringValues(this, findInput, mouseEvent, baseName + category + "Histories");
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (!isNodeChanged()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("DataChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
+            if (result.get() == buttonSave) {
+                saveAction();
+                return false;
+            } else {
+                return result.get() == buttonNotSave;
+            }
+        }
     }
 
 }

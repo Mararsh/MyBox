@@ -38,9 +38,6 @@ public class TreeNodesMoveController extends TreeNodesController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
             List<TreeNode> nodes = treeController.tableView.getSelectionModel().getSelectedItems();
             if (nodes == null || nodes.isEmpty()) {
                 alertError(message("NoData"));
@@ -56,28 +53,23 @@ public class TreeNodesMoveController extends TreeNodesController {
             if (targetNode == null) {
                 return;
             }
-            if (equal(targetNode, treeController.nodesController.selectedNode)) {
+            if (equal(targetNode, treeController.loadedParent)) {
                 alertError(message("TargetShouldDifferentWithSource"));
                 return;
             }
             long parentid = targetNode.getNodeid();
+            if (task != null) {
+                task.cancel();
+            }
             task = new SingletonTask<Void>(this) {
 
                 private int count;
-                private boolean updateAddress = false;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        long currentid = -1;
-                        if (treeController.currentNode != null) {
-                            currentid = treeController.currentNode.getNodeid();
-                        }
                         for (TreeNode node : nodes) {
                             node.setParentid(parentid);
-                            if (node.getNodeid() == currentid) {
-                                updateAddress = true;
-                            }
                         }
                         count = tableTreeNode.updateList(nodes);
                         return count > 0;
@@ -89,14 +81,8 @@ public class TreeNodesMoveController extends TreeNodesController {
 
                 @Override
                 protected void whenSucceeded() {
-                    treeController.nodesController.nodeChanged(targetNode);
-                    treeController.nodesController.loadTree(targetNode);
                     treeController.popInformation(message("Moved") + ": " + count);
-                    if (updateAddress) {
-                        treeController.currentNode.setParentid(parentid);
-                        treeController.parentNode = targetNode;
-                        treeController.nodeController.updateParentNode();
-                    }
+                    treeController.nodesMoved(targetNode, nodes);
                     closeStage();
                 }
             };

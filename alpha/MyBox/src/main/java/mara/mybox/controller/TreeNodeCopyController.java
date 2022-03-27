@@ -17,18 +17,17 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class TreeNodeCopyController extends TreeNodesController {
-
-    protected TableTreeNode tableTreeNode;
+    
     protected TreeNode sourceNode;
     protected boolean onlyContents;
-
+    
     @FXML
     protected Label sourceLabel;
-
+    
     public TreeNodeCopyController() {
         baseTitle = message("CopyNode");
     }
-
+    
     public void setCaller(TreeNodesController nodesController, TreeNode sourceNode, String name, boolean onlyContents) {
         this.sourceNode = sourceNode;
         this.onlyContents = onlyContents;
@@ -36,16 +35,17 @@ public class TreeNodeCopyController extends TreeNodesController {
         ignoreNode = sourceNode;
         setCaller(nodesController);
     }
-
+    
     @Override
     public TreeNode getIgnoreNode() {
         return sourceNode;
     }
-
+    
     @FXML
     @Override
     public void okAction() {
         if (sourceNode == null || sourceNode.isRoot()) {
+            alertError(message("SelectToHandle"));
             return;
         }
         synchronized (this) {
@@ -59,15 +59,16 @@ public class TreeNodeCopyController extends TreeNodesController {
             }
             TreeNode targetNode = targetItem.getValue();
             if (targetNode == null) {
+                alertError(message("SelectNodeCopyInto"));
                 return;
             }
             task = new SingletonTask<Void>(this) {
-
+                
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         if (!onlyContents) {
-                            TreeNode newNode = new TreeNode(targetNode.getNodeid(), sourceNode.getTitle(), sourceNode.getValue());
+                            TreeNode newNode = new TreeNode(targetNode, sourceNode.getTitle(), sourceNode.getValue());
                             newNode = tableTreeNode.insertData(conn, newNode);
                             if (newNode == null) {
                                 return false;
@@ -82,23 +83,21 @@ public class TreeNodeCopyController extends TreeNodesController {
                     }
                     return ok;
                 }
-
+                
                 protected boolean copyContents(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
                     if (conn == null || sourceNode == null || targetNode == null) {
                         return false;
                     }
                     try {
-                        long sourceid = sourceNode.getNodeid();
-                        long targetid = targetNode.getNodeid();
                         error = copyMembers(conn, sourceNode, targetNode);
                         if (error != null) {
                             return false;
                         }
                         conn.setAutoCommit(true);
-                        List<TreeNode> children = tableTreeNode.children(conn, sourceid);
+                        List<TreeNode> children = tableTreeNode.children(conn, sourceNode.getNodeid());
                         if (children != null) {
                             for (TreeNode child : children) {
-                                TreeNode newBook = new TreeNode(targetid, child.getTitle(), child.getValue());
+                                TreeNode newBook = new TreeNode(targetNode, child.getTitle(), child.getValue());
                                 newBook = tableTreeNode.insertData(conn, newBook);
                                 if (newBook == null) {
                                     continue;
@@ -112,14 +111,13 @@ public class TreeNodeCopyController extends TreeNodesController {
                         return false;
                     }
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     if (caller == null || !caller.getMyStage().isShowing()) {
                         caller = caller.oneOpen();
-                    } else {
-                        caller.nodeChanged(targetNode);
                     }
+                    caller.nodeAdded(targetNode, sourceNode);
                     caller.loadTree(targetNode);
                     caller.popSuccessful();
                     closeStage();
@@ -128,7 +126,7 @@ public class TreeNodeCopyController extends TreeNodesController {
             start(task);
         }
     }
-
+    
     protected String copyMembers(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             return "InvalidData";
@@ -154,5 +152,5 @@ public class TreeNodeCopyController extends TreeNodesController {
             return e.toString();
         }
     }
-
+    
 }

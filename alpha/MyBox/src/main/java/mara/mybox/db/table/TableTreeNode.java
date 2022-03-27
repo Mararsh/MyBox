@@ -234,8 +234,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             TreeNode node = find(conn, parent, title);
             if (node == null) {
                 TreeNode parentNode = find(conn, parent);
-                node = new TreeNode(parent, title);
-                node.setCategory(parentNode.getCategory());
+                node = new TreeNode(parentNode, title, null);
                 node = insertData(conn, node);
                 conn.commit();
             }

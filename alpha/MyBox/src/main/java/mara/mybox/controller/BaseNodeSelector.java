@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -36,12 +35,10 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class BaseNodeSelector<P> extends BaseController {
 
-    protected static final int AutoExpandThreshold = 100;
+    protected static final int AutoExpandThreshold = 1000;
     protected static final String nodeSeparator = " > ";
 
-    protected P ignoreNode = null, selectedNode = null, changedNode = null;
-    protected SimpleBooleanProperty selectedNotify = new SimpleBooleanProperty(false),
-            changedNotify = new SimpleBooleanProperty(false);
+    protected P ignoreNode = null;
     protected boolean expandAll, manageMode;
 
     @FXML
@@ -90,22 +87,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     /*
         methods may need changed
      */
-    protected void itemSelected(TreeItem<P> item) {
-        loadNode(item != null ? item.getValue() : null);
+    public void itemSelected(TreeItem<P> item) {
+
     }
 
     protected void doubleClicked(TreeItem<P> item) {
         okAction();
-    }
-
-    protected void nodeChanged(P node) {
-        changedNode = node;
-        changedNotify.set(!changedNotify.get());
-    }
-
-    protected void loadNode(P node) {
-        selectedNode = node;
-        selectedNotify.set(!selectedNotify.get());
     }
 
     @FXML
@@ -196,8 +183,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     public void loadTree(P selectNode) {
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
                 private boolean expand;
@@ -422,11 +409,10 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            TreeItem<P> selectedItem = currectSelected();
-            if (selectedItem == null) {
+            TreeItem<P> targetItem = currectSelected();
+            if (targetItem == null) {
                 return;
             }
-            TreeItem<P> targetItem = selectedItem;
             P targetNode = targetItem.getValue();
             if (targetNode == null) {
                 return;
@@ -454,7 +440,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     TreeItem<P> newItem = new TreeItem<>(newNode);
                     targetItem.getChildren().add(newItem);
                     targetItem.setExpanded(true);
-                    nodeChanged(targetNode);
+                    nodeAdded(targetNode, newNode);
                     popSuccessful();
                 }
 
@@ -463,17 +449,20 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
+    protected void nodeAdded(P parent, P newNode) {
+
+    }
+
     @FXML
     protected void deleteNode() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            TreeItem<P> selectedItem = currectSelected();
-            if (selectedItem == null) {
+            TreeItem<P> targetItem = currectSelected();
+            if (targetItem == null) {
                 return;
             }
-            TreeItem<P> targetItem = selectedItem;
             P node = targetItem.getValue();
             if (node == null) {
                 return;
@@ -516,13 +505,16 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         treeView.setRoot(rootItem);
                         rootItem.setExpanded(true);
                         itemSelected(rootItem);
+                        nodeDeleted(rootItem.getValue());
                     } else {
                         targetItem.getChildren().clear();
                         if (targetItem.getParent() != null) {
                             targetItem.getParent().getChildren().remove(targetItem);
                         }
                         itemSelected(treeView.getSelectionModel().getSelectedItem());
+                        nodeDeleted(targetItem.getValue());
                     }
+
                     popSuccessful();
                 }
 
@@ -531,22 +523,25 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
+    protected void nodeDeleted(P node) {
+
+    }
+
     @FXML
     protected void renameNode() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            TreeItem<P> selectedItem = treeView.getSelectionModel().getSelectedItem();
-            if (selectedItem == null) {
+            TreeItem<P> item = treeView.getSelectionModel().getSelectedItem();
+            if (item == null) {
                 return;
             }
-            TreeItem<P> node = selectedItem;
-            P nodeValue = node.getValue();
+            P nodeValue = item.getValue();
             if (nodeValue == null || isRoot(nodeValue)) {
                 return;
             }
-            String chainName = chainName(node);
+            String chainName = chainName(item);
             String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), name(nodeValue) + "m");
             if (name == null || name.isBlank()) {
                 return;
@@ -566,8 +561,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    treeView.refresh();
-                    nodeChanged(updatedNode);
+                    item.setValue(updatedNode);
+                    treeView.applyCss();
+                    nodeRenamed(updatedNode);
                     popSuccessful();
                 }
             };
@@ -575,9 +571,19 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
+    protected void nodeRenamed(P node) {
+
+    }
+
     @FXML
     protected void copyNode() {
         copyNode(false);
+    }
+
+    public void nodeMoved(P parent, P node) {
+        if (parent == null || node == null) {
+            return;
+        }
     }
 
     @FXML
@@ -693,24 +699,27 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         if (item == null || nodes == null) {
             return;
         }
-        P dummy = dummy();
         ignoreNode = getIgnoreNode();
         for (P node : nodes) {
             if (ignoreNode != null && equal(node, ignoreNode)) {
                 continue;
             }
-            TreeItem<P> child = new TreeItem(node);
-            item.getChildren().add(child);
-            child.setExpanded(false);
-            child.expandedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                        if (newVal && !child.isLeaf() && !loaded(child)) {
-                            loadChildren(child);
-                        }
-                    });
-            TreeItem<P> dummyItem = new TreeItem(dummy);
-            child.getChildren().add(dummyItem);
+            addNode(item, node);
         }
+    }
+
+    protected void addNode(TreeItem<P> item, P node) {
+        TreeItem<P> child = new TreeItem(node);
+        item.getChildren().add(child);
+        child.setExpanded(false);
+        child.expandedProperty().addListener(
+                (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                    if (newVal && !child.isLeaf() && !loaded(child)) {
+                        loadChildren(child);
+                    }
+                });
+        TreeItem<P> dummyItem = new TreeItem(dummy());
+        child.getChildren().add(dummyItem);
     }
 
     protected boolean loaded(TreeItem<P> item) {
@@ -898,6 +907,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         itemSelected(item);
     }
 
+    public TreeItem<P> find(P node) {
+        if (treeView == null || node == null) {
+            return null;
+        }
+        return find(treeView.getRoot(), node);
+    }
+
     public TreeItem<P> find(TreeItem<P> item, P node) {
         if (item == null || node == null) {
             return null;
@@ -927,11 +943,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     @Override
     public void cleanPane() {
         try {
-            selectedNotify = null;
-            changedNotify = null;
+//            selectedNotify = null;
+//            changedNotify = null;
+//            selectedItem = null;
+//            changedItem = null;
             ignoreNode = null;
-            selectedNode = null;
-            changedNode = null;
+
         } catch (Exception e) {
         }
         super.cleanPane();

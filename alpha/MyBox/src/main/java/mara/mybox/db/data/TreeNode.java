@@ -30,6 +30,7 @@ public class TreeNode extends BaseData {
     private void init() {
         nodeid = -1;
         parentid = -2;
+        category = null;
         title = null;
         value = null;
         more = null;
@@ -40,15 +41,10 @@ public class TreeNode extends BaseData {
         init();
     }
 
-    public TreeNode(long parentid, String title) {
+    public TreeNode(TreeNode parent, String title, String value) {
         init();
-        this.parentid = parentid;
-        this.title = title;
-    }
-
-    public TreeNode(long parentid, String title, String value) {
-        init();
-        this.parentid = parentid;
+        this.parentid = parent.getNodeid();
+        this.category = parent.getCategory();
         this.title = title;
         this.value = value;
     }

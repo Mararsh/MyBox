@@ -216,18 +216,9 @@ public class PaletteTools {
         }
         if (parent instanceof ControlColors) {
             ControlColors controller = (ControlColors) parent;
-            if (paletteName != null && !paletteName.isBlank()) {
-                if (controller.isCurrent(paletteName)) {
-                    controller.refreshPalette();
-                } else {
-                    controller.refreshPalettes();
-                }
-            } else {
-                controller.refreshPalette();
-            }
+            controller.loadPalette(paletteName);
             parent.popSuccessful();
         } else if (parent instanceof ColorSet) {
-
             ColorSet controller = (ColorSet) parent;
             controller.showColorPalette();
         }

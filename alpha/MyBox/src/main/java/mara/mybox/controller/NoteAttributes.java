@@ -24,6 +24,15 @@ public class NoteAttributes extends TreeNodeEditor {
     }
 
     @Override
+    public void nodeChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        super.nodeChanged(changed);
+        editorController.attributesChanged();
+    }
+
+    @Override
     public TreeNode pickNodeData() {
         TreeNode node = super.pickNodeData();
         if (node == null) {

@@ -56,19 +56,20 @@ public class TreeNodesCopyController extends TreeNodesController {
             if (targetNode == null) {
                 return;
             }
-            if (equal(targetNode, treeController.nodesController.selectedNode)) {
+            if (equal(targetNode, treeController.loadedParent)) {
                 alertError(message("TargetShouldDifferentWithSource"));
                 return;
             }
             task = new SingletonTask<Void>(this) {
 
+                private List<TreeNode> newNodes;
                 private int count;
 
                 @Override
                 protected boolean handle() {
                     try {
                         long parentid = targetNode.getNodeid();
-                        List<TreeNode> newNodes = new ArrayList<>();
+                        newNodes = new ArrayList<>();
                         for (TreeNode node : leaves) {
                             TreeNode newNode = TreeNode.create().setParentid(parentid).setCategory(category)
                                     .setTitle(node.getTitle()).setValue(node.getValue()).setMore(node.getMore());
@@ -84,9 +85,8 @@ public class TreeNodesCopyController extends TreeNodesController {
 
                 @Override
                 protected void whenSucceeded() {
-                    treeController.nodesController.nodeChanged(targetNode);
-                    treeController.nodesController.loadTree(targetNode);
                     treeController.popInformation(message("Copied") + ": " + count);
+                    treeController.nodesCopied(targetNode, newNodes);
                     closeStage();
                 }
             };

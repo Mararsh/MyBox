@@ -591,12 +591,16 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         loadTableData();
     }
 
-    protected void loadPaletteLast(ColorPaletteName palette) {
+    public void loadPaletteLast(ColorPaletteName palette) {
+        loadPalette(palette != null ? palette.getName() : null);
+    }
+
+    public void loadPalette(String paletteName) {
         currentPage = Integer.MAX_VALUE;
         currentPalette = palettesController.allColors;
-        if (palette != null) {
+        if (paletteName != null) {
             for (ColorPaletteName p : palettesController.palettesList.getItems()) {
-                if (p.getName().equals(palette.getName())) {
+                if (p.getName().equals(paletteName)) {
                     currentPalette = p;
                     break;
                 }

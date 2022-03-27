@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.data.TreeNode;
@@ -36,15 +34,13 @@ public class NoteEditor extends HtmlEditorController {
 
             attributesController.setEditor(this);
             notesController.nodeController = attributesController;
-            attributesController.changeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    attributesTab.setText(message("Attributes") + (attributesController.nodeChanged ? " *" : ""));;
-                }
-            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void attributesChanged() {
+        attributesTab.setText(message("Attributes") + (attributesController.nodeChanged ? " *" : ""));
     }
 
     protected void editNote(TreeNode note) {
@@ -67,7 +63,7 @@ public class NoteEditor extends HtmlEditorController {
     }
 
     protected void recoverNote() {
-        editNote(notesController.currentNode);
+        editNote(attributesController.currentNode);
     }
 
     /*
