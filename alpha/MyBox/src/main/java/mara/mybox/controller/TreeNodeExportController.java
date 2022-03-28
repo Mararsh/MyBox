@@ -140,7 +140,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    public void setController(TreeManageController treeController) {
+    public void setParamters(TreeManageController treeController, TreeItem<TreeNode> item) {
         this.treeController = treeController;
         this.tableTreeNode = treeController.tableTreeNode;
         if (treeController instanceof WebFavoritesController) {
@@ -153,13 +153,18 @@ public class TreeNodeExportController extends BaseTaskController {
                 }
             });
         } else {
+            if (treeController instanceof NotesController) {
+                jsonCheck.setSelected(false);
+                jsonCheck.setVisible(false);
+            }
             iconCheck.setSelected(false);
             iconCheck.setVisible(false);
         }
-
         nodesController.setCaller(treeController.nodesController);
-        if (treeView.getSelectionModel().getSelectedItem() == null) {
+        if (item == null) {
             treeView.getSelectionModel().select(treeView.getRoot());
+        } else {
+            treeView.getSelectionModel().select(item);
         }
     }
 
@@ -176,8 +181,10 @@ public class TreeNodeExportController extends BaseTaskController {
         level = count = 0;
         if (!textsCheck.isSelected() && !htmlCheck.isSelected()
                 && !framesetCheck.isSelected() && !xmlCheck.isSelected()) {
-            popError(message("NothingSave"));
-            return false;
+            if (treeController instanceof NotesController || !jsonCheck.isSelected()) {
+                popError(message("NothingSave"));
+                return false;
+            }
         }
         selectedNode = treeView.getSelectionModel().getSelectedItem();
         if (selectedNode == null) {
@@ -437,24 +444,43 @@ public class TreeNodeExportController extends BaseTaskController {
         return well;
     }
 
-    public void exportNode(Connection conn, TreeNode node, String parentName) {
+    public void exportNode(Connection conn, TreeNode node, String parentChainName) {
         level++;
         if (conn == null || node == null) {
             return;
         }
         try {
-            String title = node.getTitle() + "_" + node.getNodeid();
-            FileWriter bookWriter = null, bookNavWriter = null;
-            File nodeFile = null;
+            count++;
+            if (textsWriter != null) {
+                writeTexts(conn, parentChainName, node);
+            }
+            if (htmlWriter != null) {
+                writeHtml(conn, parentChainName, node, htmlWriter);
+            }
+            if (xmlWriter != null) {
+                writeXml(conn, parentChainName, node);
+            }
+            if (jsonWriter != null) {
+                writeJson(conn, parentChainName, node);
+            }
+            String nodeChainName;
+            if (parentChainName != null) {
+                nodeChainName = parentChainName + TreeNode.NodeSeparater + node.getTitle();
+            } else {
+                nodeChainName = node.getTitle();
+            }
+            List<TreeNode> children = tableTreeNode.children(conn, node.getNodeid());
+
             if (framesetNavWriter != null) {
-                File bookNavFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(title) + "_nav.html");
-                bookNavWriter = new FileWriter(bookNavFile, charset);
-                writeHtmlHead(bookNavWriter, title);
+                String nodeTitle = node.getTitle() + "_" + node.getNodeid();
+                File bookNavFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(nodeTitle) + "_nav.html");
+                FileWriter bookNavWriter = new FileWriter(bookNavFile, charset);
+                writeHtmlHead(bookNavWriter, nodeTitle);
                 bookNavWriter.write(indent + "<BODY>\n");
 
-                nodeFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(title) + ".html");
-                bookWriter = new FileWriter(nodeFile, charset);
-                writeHtmlHead(bookWriter, title);
+                File nodeFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(nodeTitle) + ".html");
+                FileWriter bookWriter = new FileWriter(nodeFile, charset);
+                writeHtmlHead(bookWriter, nodeTitle);
                 bookWriter.write(indent + "<BODY>\n");
 
                 String prefix = "";
@@ -462,35 +488,25 @@ public class TreeNodeExportController extends BaseTaskController {
                     prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
                 }
                 framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
-            }
-            count++;
-            if (textsWriter != null) {
-                writeTexts(conn, parentName, node);
-            }
-            if (htmlWriter != null) {
-                writeHtml(conn, parentName, node, htmlWriter);
-            }
-            if (xmlWriter != null) {
-                writeXml(conn, parentName, node);
-            }
-            if (jsonWriter != null) {
-                writeJson(conn, parentName, node);
-            }
 
-            if (parentName != null) {
-                title = parentName + TreeNode.NodeSeparater + node.getTitle();
-            } else {
-                title = node.getTitle();
-            }
-            if (bookNavWriter != null && nodeFile != null) {
-                bookNavWriter.write("<A href=\"" + nodeFile.getName()
-                        + "#" + node.getNodeid() + "\"  target=main>" + node.getTitle() + "</A><BR>\n");
-            }
+                writeHtml(conn, nodeChainName, node, bookWriter);
+                try {
+                    bookWriter.write(indent + "\n</BODY>\n</HTML>");
+                    bookWriter.flush();
+                    bookWriter.close();
+                } catch (Exception e) {
+                    updateLogs(e.toString());
+                }
 
-            if (bookWriter != null) {
-                writeHtml(conn, title, node, bookWriter);
-            }
-            if (bookNavWriter != null) {
+                if (children != null && !children.isEmpty()) {
+                    for (TreeNode child : children) {
+                        File childFile = new File(framesetNavFile.getParent() + File.separator
+                                + FileNameTools.filter(child.getTitle() + "_" + child.getNodeid()) + ".html");
+                        bookNavWriter.write("<A href=\"" + childFile.getName() + "\"  target=main>" + child.getTitle() + "</A><BR>\n");
+                    }
+                } else {
+                    bookNavWriter.write("<A href=\"" + nodeFile.getName() + "\"  target=main>" + node.getTitle() + "</A><BR>\n");
+                }
                 try {
                     bookNavWriter.write(indent + "\n</BODY>\n</HTML>");
                     bookNavWriter.flush();
@@ -499,20 +515,10 @@ public class TreeNodeExportController extends BaseTaskController {
                     updateLogs(e.toString());
                 }
             }
-            if (bookWriter != null) {
-                try {
-                    bookWriter.write(indent + "\n</BODY>\n</HTML>");
-                    bookWriter.flush();
-                    bookWriter.close();
-                } catch (Exception e) {
-                    updateLogs(e.toString());
-                }
-            }
 
-            List<TreeNode> children = tableTreeNode.children(conn, node.getNodeid());
             if (children != null) {
                 for (TreeNode child : children) {
-                    exportNode(conn, child, title);
+                    exportNode(conn, child, nodeChainName);
                 }
             }
         } catch (Exception e) {
@@ -569,10 +575,10 @@ public class TreeNodeExportController extends BaseTaskController {
                 if (node.getValue() != null) {
                     if (treeController instanceof NotesController) {
                         writer.write(indent + indent + indent + node.getValue() + "\n"
-                                + indent + indent + "</div><HR>\n\n");
+                                + indent + indent + "</div>\n\n");
                     } else {
                         writer.write(indent + indent + indent + "<PRE><CODE>" + node.getValue() + "</CODE></PRE>\n"
-                                + indent + indent + "</div><HR>\n\n");
+                                + indent + indent + "</div>\n\n");
                     }
                 }
             }
@@ -651,7 +657,7 @@ public class TreeNodeExportController extends BaseTaskController {
                     s.append(",\n");
                     s.append(indent).append(indent)
                             .append("\"").append(treeController.moreMsg).append("\": \"")
-                            .append(node.getValue()).append("\"");
+                            .append(node.getMore().replaceAll("\\\\", "/")).append("\"");
                 }
                 s.append("\n");
             }

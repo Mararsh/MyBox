@@ -68,7 +68,13 @@ public class TreeNodeEditor extends TreeTagsController {
             nameInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     nodeChanged(true);
+                    if (attributesTab != null) {
+                        attributesTab.setText(message("Attributes") + "*");
+                    }
                 }
             });
 
@@ -76,7 +82,15 @@ public class TreeNodeEditor extends TreeTagsController {
                 valueInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
                         nodeChanged(true);
+                        if (valueTab != null) {
+                            valueTab.setText(treeController.valueMsg + "*");
+                        } else if (attributesTab != null) {
+                            attributesTab.setText(message("Attributes") + "*");
+                        }
                     }
                 });
             }
@@ -85,7 +99,13 @@ public class TreeNodeEditor extends TreeTagsController {
                 moreInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue v, String ov, String nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
                         nodeChanged(true);
+                        if (attributesTab != null) {
+                            attributesTab.setText(message("Attributes") + "*");
+                        }
                     }
                 });
             }
@@ -141,11 +161,6 @@ public class TreeNodeEditor extends TreeTagsController {
             return;
         }
         nodeChanged = changed;
-        if (valueTab != null) {
-            valueTab.setText(treeController.valueMsg + (changed ? "*" : ""));
-        } else if (attributesTab != null) {
-            attributesTab.setText(message("Attributes") + (changed ? "*" : ""));
-        }
         treeController.nodeChanged();
     }
 
@@ -155,6 +170,9 @@ public class TreeNodeEditor extends TreeTagsController {
             return;
         }
         nodeChanged(true);
+        if (attributesTab != null) {
+            attributesTab.setText(message("Attributes") + "*");
+        }
         selectedNotify.set(!selectedNotify.get());
     }
 
@@ -256,7 +274,7 @@ public class TreeNodeEditor extends TreeTagsController {
         currentNode = null;
         selectButton.setVisible(true);
         isSettingValues = false;
-        nodeChanged(true);
+        nodeChanged(false);
     }
 
     public TreeNode pickNodeData() {

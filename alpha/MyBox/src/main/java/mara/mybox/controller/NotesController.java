@@ -47,34 +47,12 @@ public class NotesController extends TreeManageController {
         }
     }
 
-    @FXML
     @Override
-    public void addAction() {
+    public void editNode(TreeNode node) {
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (loadedParent != null) {
-            nodeController.parentNode = loadedParent;
-        }
-        editorController.editNote(null);
-    }
-
-    @FXML
-    @Override
-    public void editAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        editorController.editNote(tableView.getSelectionModel().getSelectedItem());
-    }
-
-    @FXML
-    @Override
-    protected void addNode() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        editorController.addNote();
+        editorController.editNote(node);
     }
 
     @FXML

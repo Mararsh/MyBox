@@ -2,12 +2,8 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.fxml.SingletonTask;
@@ -109,21 +105,11 @@ public class TreeNodesMoveController extends TreeNodesController {
             }
         }
         if (controller == null) {
-            controller = (TreeNodesMoveController) WindowTools.openStage(Fxmls.TreeNodesMoveFxml);
+            controller = (TreeNodesMoveController) WindowTools.openChildStage(treeController.getMyWindow(), Fxmls.TreeNodesMoveFxml);
         }
         if (controller != null) {
             controller.setParameters(treeController);
-            Stage cstage = controller.getMyStage();
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        cstage.requestFocus();
-                        cstage.toFront();
-                    });
-                }
-            }, 500);
+            controller.requestMouse();
         }
         return controller;
     }

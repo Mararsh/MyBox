@@ -143,9 +143,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener() {
+            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
                 @Override
-                public void onChanged(ListChangeListener.Change c) {
+                public void changed(ObservableValue ov, Object t, Object t1) {
                     checkSelected();
                     notifySelected();
                 }

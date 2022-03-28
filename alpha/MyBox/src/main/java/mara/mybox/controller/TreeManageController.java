@@ -281,11 +281,11 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         nodesController.loadTree(parent);
     }
 
-    public void nodesCopied(TreeNode parent, List<TreeNode> nodes) {
-        if (parent == null || nodes == null || nodes.isEmpty()) {
+    public void nodesCopied(TreeNode parent) {
+        if (parent == null) {
             return;
         }
-        nodesController.loadChildren(nodesController.find(parent), nodes);
+        nodesController.loadChildren(nodesController.find(parent));
     }
 
     public void nodesDeleted() {
@@ -329,7 +329,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 break;
             }
         }
-        nodesController.loadChildren(nodesController.find(nodeController.parentNode));
+        nodesController.updateChild(nodesController.find(nodeController.parentNode), nodeController.currentNode);
     }
 
     public void newNodeSaved() {
@@ -339,7 +339,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         if (loadedParent != null && nodeController.parentNode.getNodeid() == loadedParent.getNodeid()) {
             loadChildren(nodeController.parentNode);
         }
-        nodesController.addNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
+        nodesController.addNewNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
     }
 
     public void nodeChanged() {
@@ -391,7 +391,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         clearQuery();
         loadedParent = parentNode;
         if (loadedParent != null) {
-            queryConditions = " parentid=" + loadedParent.getNodeid();
+            queryConditions = " parentid=" + loadedParent.getNodeid() + " AND nodeid<>parentid";
             loadTableData();
         }
     }
@@ -526,6 +526,13 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             menu.setDisable(moveDataButton.isDisabled());
             items.add(menu);
 
+            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                copyAction();
+            });
+            menu.setDisable(copyButton.isDisabled());
+            items.add(menu);
+
             items.addAll(super.makeTableContextMenu());
 
             return items;
@@ -547,7 +554,6 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         super.checkButtons();
-
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
         deleteButton.setDisable(none);
@@ -567,16 +573,20 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         if (loadedParent != null) {
             nodeController.parentNode = loadedParent;
         }
-        nodeController.editNode(null);
+        editNode(null);
     }
 
     @FXML
     @Override
     public void editAction() {
+        editNode(tableView.getSelectionModel().getSelectedItem());
+    }
+
+    public void editNode(TreeNode node) {
         if (!checkBeforeNextAction()) {
             return;
         }
-        nodeController.editNode(tableView.getSelectionModel().getSelectedItem());
+        nodeController.editNode(node);
     }
 
     @FXML
@@ -605,10 +615,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
      */
     @FXML
     protected void addNode() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        nodeController.editNode(null);
+        editNode(null);
     }
 
     @FXML

@@ -410,6 +410,9 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int withSubSize(long parentid) {
+        if (parentid < 0) {
+            return 0;
+        }
         int count = 0;
         try ( Connection conn = DerbyBase.getConnection()) {
             count = withSubSize(conn, parentid);
@@ -420,6 +423,9 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int withSubSize(Connection conn, long parentid) {
+        if (conn == null || parentid < 0) {
+            return 0;
+        }
         int count = size(conn, parentid);
         List<TreeNode> children = children(conn, parentid);
         if (children != null) {
@@ -431,6 +437,9 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int size(long parent) {
+        if (parent < 0) {
+            return 0;
+        }
         try ( Connection conn = DerbyBase.getConnection()) {
             return size(conn, parent);
         } catch (Exception e) {
@@ -440,7 +449,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int size(Connection conn, long parent) {
-        if (conn == null) {
+        if (conn == null || parent < 0) {
             return 0;
         }
         int size = 0;

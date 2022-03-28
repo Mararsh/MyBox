@@ -2,12 +2,10 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
-import javafx.stage.Window;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.TreeNodeTag;
 import mara.mybox.db.table.TableTreeNode;
@@ -17,6 +15,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -60,10 +59,21 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         treeController.loadChildren(item.getValue());
     }
 
+    protected void doubleClicked(TreeItem<TreeNode> item) {
+        if (item == null) {
+            return;
+        }
+        if (caller != null) {
+            okAction();
+        } else if (manageMode && treeController != null) {
+            editNode(item);
+        }
+    }
+
     @Override
     protected void nodeAdded(TreeNode parent, TreeNode newNode) {
         if (caller != null) {
-            caller.addNode(caller.find(parent), newNode);
+            caller.addNewNode(caller.find(parent), newNode);
         }
         if (treeController != null) {
             treeController.nodeAdded(parent, newNode);
@@ -127,6 +137,11 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
+    public int childrenCount(Connection conn, TreeNode node) {
+        return tableTreeNode.size(conn, id(node));
+    }
+
+    @Override
     public long id(TreeNode node) {
         if (node == null) {
             return -1;
@@ -175,12 +190,11 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         return node.getTitle();
     }
 
-    @FXML
     @Override
-    protected void exportNode() {
+    protected void exportNode(TreeItem<TreeNode> item) {
         TreeNodeExportController exportController
-                = (TreeNodeExportController) WindowTools.openStage(Fxmls.TreeNodeExportFxml);
-        exportController.setController(treeController);
+                = (TreeNodeExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeExportFxml);
+        exportController.setParamters(treeController, item);
     }
 
     @Override
@@ -206,28 +220,33 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
-    protected void copyNode(Boolean onlyContents) {
-        TreeItem<TreeNode> selectedItem = treeView.getSelectionModel().getSelectedItem();
-        if (selectedItem == null || isRoot(selectedItem.getValue())) {
+    protected void copyNode(TreeItem<TreeNode> item, Boolean onlyContents) {
+        if (item == null || isRoot(item.getValue())) {
             return;
         }
-        String chainName = chainName(selectedItem);
+        String chainName = chainName(item);
         TreeNodeCopyController controller
-                = (TreeNodeCopyController) WindowTools.openStage(Fxmls.TreeNodeCopyFxml);
-        controller.tableTreeNode = treeController.tableTreeNode;
-        controller.setCaller(this, selectedItem.getValue(), chainName, onlyContents);
+                = (TreeNodeCopyController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeCopyFxml);
+
+        controller.setCaller(this, item.getValue(), chainName, onlyContents);
     }
 
-    @FXML
     @Override
-    protected void moveNode() {
-        TreeItem<TreeNode> selectedItem = treeView.getSelectionModel().getSelectedItem();
-        if (selectedItem == null || isRoot(selectedItem.getValue())) {
+    protected void moveNode(TreeItem<TreeNode> item) {
+        if (item == null || isRoot(item.getValue())) {
             return;
         }
-        String chainName = chainName(selectedItem);
-        TreeNodeMoveController controller = (TreeNodeMoveController) WindowTools.openStage(Fxmls.TreeNodeMoveFxml);
-        controller.setCaller(this, selectedItem.getValue(), chainName);
+        String chainName = chainName(item);
+        TreeNodeMoveController controller = (TreeNodeMoveController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeMoveFxml);
+        controller.setCaller(this, item.getValue(), chainName);
+    }
+
+    @Override
+    protected void editNode(TreeItem<TreeNode> item) {
+        if (item == null || treeController == null) {
+            return;
+        }
+        treeController.editNode(item.getValue());
     }
 
     @Override
@@ -313,27 +332,56 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         controller.setManage(treeController);
     }
 
-    public TreeNodesController oneOpen() {
-        TreeNodesController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object.getClass().equals(myController.getClass())) {
-                try {
-                    controller = (TreeNodesController) object;
-                    break;
-                } catch (Exception e) {
+    public boolean copyNode(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+        if (conn == null || sourceNode == null || targetNode == null) {
+            if (task != null) {
+                task.setError(message("InvalidData"));
+            }
+            return false;
+        }
+        try {
+            TreeNode newNode = new TreeNode(targetNode, sourceNode.getTitle(), sourceNode.getValue());
+            newNode = tableTreeNode.insertData(conn, newNode);
+            if (newNode == null) {
+                return false;
+            }
+            conn.commit();
+            return copyChildren(conn, sourceNode, newNode);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+    public boolean copyChildren(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+        if (conn == null || sourceNode == null || targetNode == null) {
+            if (task != null) {
+                task.setError(message("InvalidData"));
+            }
+            return false;
+        }
+        try {
+            long sourceid = sourceNode.getNodeid();
+            long targetid = targetNode.getNodeid();
+            List<TreeNode> children = tableTreeNode.children(conn, sourceid);
+            if (children != null && !children.isEmpty()) {
+                conn.setAutoCommit(true);
+                for (TreeNode child : children) {
+                    TreeNode newNode = TreeNode.create().setParentid(targetid).setCategory(category)
+                            .setTitle(child.getTitle()).setValue(child.getValue()).setMore(child.getMore());
+                    tableTreeNode.insertData(conn, newNode);
+                    copyChildren(conn, child, newNode);
                 }
             }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
         }
-        if (controller == null) {
-            controller = (TreeNodesController) WindowTools.openStage(myFxml);
-        }
-        if (controller != null) {
-            controller.requestMouse();
-        }
-        return controller;
     }
 
 }
