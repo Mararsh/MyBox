@@ -13,8 +13,11 @@ import mara.mybox.value.Languages;
  */
 public class TreeNode extends BaseData {
 
+    public static final String RootIdentify = "MyBoxTreeRoot;;;";
     public static final String NodeSeparater = " > ";
     public static final String TimePrefix = "Time:";
+    public static final String TagsPrefix = "Tags:";
+    public static final String TagsSeparater = ";;;";
     public static final String Root = "Root";
     public static final String WebFavorite = "WebFavorite";
     public static final String Notebook = "Notebook";

@@ -115,7 +115,7 @@ public class PopTools {
                     //                    }
                     return;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
             }
         }

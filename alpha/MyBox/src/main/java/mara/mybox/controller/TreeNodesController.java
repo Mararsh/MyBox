@@ -59,6 +59,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         treeController.loadChildren(item.getValue());
     }
 
+    @Override
     protected void doubleClicked(TreeItem<TreeNode> item) {
         if (item == null) {
             return;

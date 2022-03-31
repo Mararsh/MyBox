@@ -8,7 +8,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
-import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -104,26 +103,25 @@ public class WebFavoriteEditor extends TreeNodeEditor {
         }
     }
 
-    @Override
-    public TreeNode pickNodeData() {
-        TreeNode node = super.pickNodeData();
-        if (node == null) {
-            return null;
-        }
-        String address = node.getValue();
-        if (address == null || address.isBlank()) {
-            popError(message("InvalidParameters") + ": " + message("Address"));
-            return null;
-        }
-        try {
-            URL url = new URL(address);
-        } catch (Exception e) {
-            popError(message("InvalidParemeters") + ": " + message("Address"));
-            return null;
-        }
-        return node;
-    }
-
+//    @Override
+//    public TreeNode pickNodeData() {
+//        TreeNode node = super.pickNodeData();
+//        if (node == null) {
+//            return null;
+//        }
+//        String address = node.getValue();
+//        if (address == null || address.isBlank()) {
+//            popError(message("InvalidParameters") + ": " + message("Address"));
+//            return null;
+//        }
+//        try {
+//            URL url = new URL(address);
+//        } catch (Exception e) {
+//            popError(message("InvalidParemeters") + ": " + message("Address"));
+//            return null;
+//        }
+//        return node;
+//    }
     @FXML
     @Override
     public void goAction() {

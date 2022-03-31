@@ -56,7 +56,11 @@ public class TableTag extends BaseTable<Tag> {
             statement.setString(1, category);
             statement.setString(2, tag);
             ResultSet results = statement.executeQuery();
-            return readData(results);
+            if (results.next()) {
+                return readData(results);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -84,6 +88,24 @@ public class TableTag extends BaseTable<Tag> {
             MyBoxLog.error(e);
         }
         return tags;
+    }
+
+    public Tag findAndCreate(Connection conn, String category, String name) {
+        if (conn == null || category == null || name == null) {
+            return null;
+        }
+        try {
+            Tag tag = queryTag(conn, category, name);
+            if (tag == null) {
+                tag = new Tag(category, name);
+                tag = insertData(conn, tag);
+                conn.commit();
+            }
+            return tag;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

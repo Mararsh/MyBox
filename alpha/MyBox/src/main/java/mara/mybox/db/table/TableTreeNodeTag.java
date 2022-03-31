@@ -54,6 +54,9 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
     public static final String QueryNodeTags
             = "SELECT * FROM Tree_Node_Tag, Tag WHERE tnodeid=? AND tagid=tgid";
 
+    public static final String QueryNodeTag
+            = "SELECT * FROM Tree_Node_Tag, Tag WHERE tnodeid=? AND tagid=?";
+
     public static final String DeleteNodeTags
             = "DELETE FROM Tree_Node_Tag WHERE tnodeid=?";
 
@@ -124,13 +127,43 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
         return tags;
     }
 
+    public TreeNodeTag query(Connection conn, long nodeid, long tagid) {
+        if (conn == null || nodeid < 0 || tagid < 0) {
+            return null;
+        }
+        TreeNodeTag tag = null;
+        try ( PreparedStatement statement = conn.prepareStatement(QueryNodeTag)) {
+            statement.setLong(1, nodeid);
+            statement.setLong(2, tagid);
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                tag = readData(results);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return tag;
+    }
+
     public List<String> nodeTagNames(long nodeid) {
         List<String> tags = new ArrayList<>();
         if (nodeid < 0) {
             return tags;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(QueryNodeTags)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            tags = nodeTagNames(conn, nodeid);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return tags;
+    }
+
+    public List<String> nodeTagNames(Connection conn, long nodeid) {
+        List<String> tags = new ArrayList<>();
+        if (nodeid < 0) {
+            return tags;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(QueryNodeTags)) {
             statement.setLong(1, nodeid);
             ResultSet results = statement.executeQuery();
             while (results.next()) {
@@ -166,6 +199,30 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
             MyBoxLog.error(e);
             return -1;
         }
+    }
+
+    public int writeTags(Connection conn, long nodeid, String category, List<String> tags) {
+        if (conn == null || nodeid < 0 || category == null || category.isBlank()
+                || tags == null || tags.isEmpty()) {
+            return -1;
+        }
+        int count = 0;
+        try {
+            for (String name : tags) {
+                Tag tag = getTableTag().findAndCreate(conn, category, name);
+                if (tag == null) {
+                    continue;
+                }
+                if (query(conn, nodeid, tag.getTgid()) == null) {
+                    TreeNodeTag nodeTag = new TreeNodeTag(nodeid, tag.getTgid());
+                    count += insertData(conn, nodeTag) == null ? 0 : 1;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+        return count;
     }
 
     public int removeTags(Connection conn, long nodeid, String category, List<String> tags) {
