@@ -21,8 +21,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DatabaseSqlEditor">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTableQueryEditor">
     <children>
+        <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
                 <Tab fx:id="valueTab" text="SQL">
@@ -71,16 +72,16 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="listButton" layoutX="845.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popTableNames">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconList.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="tableDefinitionButton" layoutX="883.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popTableDefinition">
+                              <Button fx:id="listButton" mnemonicParsing="false" onMouseEntered="#popColumnNames">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconList.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                        <Button fx:id="tableDefinitionButton" layoutX="883.0" layoutY="10.0" mnemonicParsing="false" onAction="#tableDefinition">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -98,89 +99,10 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/buttons/iconSaveAs.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                     </children>
                                 </HBox>
-                        <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%DatabaseSQLComments" wrapText="true" />
-                                <TextArea fx:id="valueInput" prefHeight="100.0" />
-                                <TabPane fx:id="sqlPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                    <tabs>
-                                        <Tab fx:id="resultsTab" text="%Results">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                    <children>
-                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                            <children>
-                                                                <Label fx:id="tableLabel11" maxWidth="1.7976931348623157E308" text="%Output" HBox.hgrow="ALWAYS" />
-                                                                <CheckBox fx:id="wrapOutputsCheck" mnemonicParsing="false">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/red/iconWrap.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
-                                                                <Button fx:id="clearOuputButton1" mnemonicParsing="false" onAction="#clearOutput">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconClear.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                        </HBox>
-                                                        <TextArea fx:id="outputArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="dataTab" text="%Data">
-                                            <content>
-                                                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                      <children>
-                                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                                              <children>
-                                                                  <Label fx:id="tableLabel1" maxWidth="1.7976931348623157E308" text="%Data" HBox.hgrow="ALWAYS" />
-                                                                  <Label text="%MaxLines" />
-                                                                  <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
-                                                                  <Button fx:id="clearDataButton" mnemonicParsing="false" onAction="#clearDataAction">
-                                                                      <graphic>
-                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                              <image>
-                                                                                  <Image url="@../buttons/Red/iconClear.png" />
-                                                                              </image>
-                                                                          </ImageView>
-                                                                      </graphic>
-                                                                  </Button>
-                                                                  <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
-                                                                      <graphic>
-                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                              <image>
-                                                                                  <Image url="@../buttons/Red/iconData.png" />
-                                                                              </image>
-                                                                          </ImageView>
-                                                                      </graphic>
-                                                                  </Button>
-                                                              </children>
-                                                          </HBox>
-                                                          <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
-                                                      </children>
-                                                  </VBox>
-                                            </content>
-                                        </Tab>
-                                    </tabs>
-                                </TabPane>
+                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%DataQueryComments" wrapText="true" />
+                                <TextArea fx:id="valueInput" VBox.vgrow="ALWAYS" />
 
                             </children>
                         </VBox>
@@ -265,5 +187,15 @@ License:    Apache License Version 2.0
                 </Tab>
             </tabs>
         </TabPane>
+        <HBox fx:id="namesBox" spacing="2.0">
+            <children>
+                <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
+            </children>
+        </HBox>
+        <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+            <children>
+                <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+            </children>
+        </VBox>
     </children>
 </VBox>

@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -477,9 +478,10 @@ public class DataTable extends Data2D {
                 colsSize = names.size();
                 List<String> fileRow = new ArrayList<>();
                 while (results.next()) {
+                    count++;
                     Data2DRow dataRow = tableData2D.readData(results);
                     if (showRowNumber) {
-                        fileRow.add(++count + "");
+                        fileRow.add(count + "");
                     }
                     for (int col : cols) {
                         Data2DColumn column = columns.get(col);
@@ -500,6 +502,76 @@ public class DataTable extends Data2D {
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(colsSize).setRowsNumber(count);
+            return targetData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public DataFileCSV query(String query, boolean showRowNumber) {
+        try {
+            if (query == null || query.isBlank()) {
+                return null;
+            }
+            File csvFile = tmpCSV("query");
+            CSVFormat targetFormat = CSVFormat.DEFAULT
+                    .withIgnoreEmptyLines().withTrim().withNullString("")
+                    .withDelimiter(',');
+            long count = 0;
+            int colsSize;
+            List<Data2DColumn> db2Columns = new ArrayList<>();
+            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat);
+                     Connection conn = DerbyBase.getConnection();
+                     PreparedStatement statement = conn.prepareStatement(query);
+                     ResultSet results = statement.executeQuery()) {
+                List<String> names = new ArrayList<>();
+                if (showRowNumber) {
+                    names.add(message("SourceRowNumber"));
+                }
+                ResultSetMetaData meta = results.getMetaData();
+
+                for (int col = 1; col <= meta.getColumnCount(); col++) {
+                    String name = meta.getColumnName(col);
+                    names.add(name);
+                    Data2DColumn dc = new Data2DColumn(name,
+                            ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
+                            meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
+                    db2Columns.add(dc);
+                }
+                csvPrinter.printRecord(names);
+                colsSize = names.size();
+                List<String> fileRow = new ArrayList<>();
+                while (results.next()) {
+                    count++;
+                    if (showRowNumber) {
+                        fileRow.add(count + "");
+                    }
+                    for (Data2DColumn column : db2Columns) {
+                        Object v = results.getObject(column.getColumnName());
+                        fileRow.add(column.toString(v));
+                    }
+                    csvPrinter.printRecord(fileRow);
+                    fileRow.clear();
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e.toString());
+                return null;
+            }
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(colsSize).setRowsNumber(count);
+            if (showRowNumber) {
+                db2Columns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            targetData.setColumns(db2Columns);
             return targetData;
         } catch (Exception e) {
             if (task != null) {

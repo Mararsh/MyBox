@@ -712,7 +712,8 @@ public class PopTools {
         }
     }
 
-    public static void popSqlExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+    public static void popSqlExamples(BaseController parent, TextInputControl input,
+            String tableName, boolean onlyQuery, MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 
@@ -744,8 +745,10 @@ public class PopTools {
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
+            String tname = tableName == null ? "<table>" : tableName;
             addButtonsPane(controller, input, Arrays.asList(
-                    "SELECT * FROM ", " WHERE ", " ORDER BY ", " DESC ", " ASC ",
+                    "SELECT * FROM " + tname,
+                    " WHERE ", " ORDER BY ", " DESC ", " ASC ",
                     " FETCH FIRST ROW ONLY", " FETCH FIRST <size> ROWS ONLY",
                     " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY"
             ));
@@ -759,10 +762,10 @@ public class PopTools {
                     " LIKE 'a%' ", " LIKE 'a_' ", " BETWEEN <value1> AND <value2>"
             ));
             addButtonsPane(controller, input, Arrays.asList(
-                    " IN ( <value1>, <value2> ) ", " IN (SELECT FROM <table> WHERE <condition>) "
+                    " IN ( <value1>, <value2> ) ", " IN (SELECT FROM " + tname + " WHERE <condition>) "
             ));
             addButtonsPane(controller, input, Arrays.asList(
-                    " EXISTS (SELECT FROM <table> WHERE <condition>) "
+                    " EXISTS (SELECT FROM " + tname + " WHERE <condition>) "
             ));
             addButtonsPane(controller, input, Arrays.asList(
                     " DATE('1998-02-26') ", " TIMESTAMP('1962-09-23 03:23:34.234') "
@@ -773,11 +776,64 @@ public class PopTools {
             addButtonsPane(controller, input, Arrays.asList(
                     " JOIN ", " INNER JOIN ", " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " CROSS JOIN "
             ));
-            addButtonsPane(controller, input, Arrays.asList(
-                    "INSERT INTO <table> (column1, column2) VALUES (value1, value2)",
-                    "UPDATE <table> SET <column1>=<value1>, <column2>=<value2> WHERE <condition>",
-                    "DELETE FROM <table> WHERE <condition>", "TRUNCATE TABLE <table>"
-            ));
+            if (!onlyQuery) {
+                addButtonsPane(controller, input, Arrays.asList(
+                        "INSERT INTO " + tname + " (column1, column2) VALUES (value1, value2)",
+                        "UPDATE " + tname + " SET <column1>=<value1>, <column2>=<value2> WHERE <condition>",
+                        "DELETE FROM " + tname + " WHERE <condition>", "TRUNCATE TABLE <table>"
+                ));
+            }
+
+            Hyperlink link = new Hyperlink("Derby Reference Manual");
+            link.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
+                }
+            });
+            controller.addNode(link);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, List<String> values) {
+        try {
+            if (parent == null || input == null || values == null) {
+                return;
+            }
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            boolean isTextArea = input instanceof TextArea;
+
+            List<Node> topButtons = new ArrayList<>();
+            if (isTextArea) {
+                Button newLineButton = new Button(message("Newline"));
+                newLineButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.replaceText(input.getSelection(), "\n");
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                topButtons.add(newLineButton);
+            }
+            Button clearButton = new Button(message("ClearInputArea"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
+                }
+            });
+            topButtons.add(clearButton);
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
+            addButtonsPane(controller, input, values);
 
             Hyperlink link = new Hyperlink("Derby Reference Manual");
             link.setOnAction(new EventHandler<ActionEvent>() {

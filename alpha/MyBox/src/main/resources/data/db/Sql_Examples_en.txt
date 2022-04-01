@@ -51,12 +51,12 @@ SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEI
 ##MyBox#
 Examples > Query tables of database
 Range of rows
-SELECT * FROM visit_history OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY
+SELECT * FROM visit_history OFFSET 2 ROWS FETCH NEXT 50 ROWS ONLY
 
 ##MyBox#
 Examples > Query tables of database
 Maximum rows
-SELECT * FROM visit_history FETCH FIRST 3000 ROWS ONLY
+SELECT * FROM visit_history FETCH FIRST 300 ROWS ONLY
 
 ##MyBox#
 Examples > Query tables of database

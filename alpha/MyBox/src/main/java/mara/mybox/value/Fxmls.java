@@ -192,6 +192,7 @@ public class Fxmls {
     public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
     public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";
+    public static final String DataTableQueryFxml = "/fxml/DataTableQuery.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";

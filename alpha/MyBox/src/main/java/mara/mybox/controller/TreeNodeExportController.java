@@ -764,6 +764,7 @@ public class TreeNodeExportController extends BaseTaskController {
     @Override
     public void afterSuccess() {
         try {
+            openTarget(null);
             if (framesetFile != null && framesetFile.exists()) {
                 WebBrowserController.oneOpen(framesetFile);
                 return;
@@ -785,7 +786,6 @@ public class TreeNodeExportController extends BaseTaskController {
                 controller.sourceFileChanged(textsFile);
             }
             popInformation(message("Count") + ": " + count);
-            openTarget(null);
         } catch (Exception e) {
             updateLogs(e.toString());
         }

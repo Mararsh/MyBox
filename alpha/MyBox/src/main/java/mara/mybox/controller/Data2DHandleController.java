@@ -8,18 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFile;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -34,8 +28,6 @@ public abstract class Data2DHandleController extends BaseChildController {
     protected Data2D data2D;
     protected List<List<String>> handledData;
     protected List<Data2DColumn> handledColumns;
-    protected DataFileCSV handledCSV;
-    protected DataFile handledFile;
 
     @FXML
     protected ControlData2DSource sourceController;
@@ -155,50 +147,24 @@ public abstract class Data2DHandleController extends BaseChildController {
         }
         task = new SingletonTask<Void>(this) {
 
+            private DataFile handledFile;
+
             @Override
             protected boolean handle() {
-                try {
-                    data2D.setTask(task);
-                    handledCSV = generatedFile();
-                    if (handledCSV == null) {
-                        return false;
-                    }
-                    recordFileWritten(handledCSV.getFile(), VisitHistory.FileType.CSV);
-                    switch (targetController.target) {
-                        case "csv":
-                            handledFile = handledCSV;
-                            break;
-                        case "excel":
-                            handledFile = DataFileExcel.toExcel(task, handledCSV);
-                            recordFileWritten(handledFile.getFile(), VisitHistory.FileType.Excel);
-                            break;
-                        case "texts":
-                            handledFile = DataFileText.toText(handledCSV);
-                            recordFileWritten(handledFile.getFile(), VisitHistory.FileType.Text);
-                            break;
-                        case "systemClipboard":
-                            handledFile = handledCSV;
-                            break;
-                        case "myBoxClipboard":
-                            handledFile = DataClipboard.create(task, handledColumns, handledCSV);
-                            break;
-                        default:
-                            return false;
-                    }
-                    handledFile.setD2did(-1);
-                    Data2D.save(handledFile, handledColumns);
-                    return true;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    error = e.toString();
+                data2D.setTask(task);
+                DataFileCSV handledCSV = generatedFile();
+                if (handledCSV == null) {
                     return false;
                 }
+                handledCSV.setColumns(handledColumns);
+                handledFile = handledCSV.convert(myController, handledCSV, targetController.target);
+                return handledFile != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                outputFile();
+                handledFile.output(myController, handledFile, targetController.target);
             }
 
             @Override
@@ -214,35 +180,6 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public DataFileCSV generatedFile() {
         return null;
-    }
-
-    public void outputFile() {
-        try {
-            if (targetController == null || handledFile == null) {
-                return;
-            }
-            switch (targetController.target) {
-                case "csv":
-                    DataFileCSVController.open(handledFile.getFile(), handledFile.getCharset(),
-                            handledFile.isHasHeader(), handledFile.getDelimiter().charAt(0));
-                    break;
-                case "excel":
-                    DataFileExcelController.open(handledFile.getFile(), handledFile.isHasHeader());
-                    break;
-                case "texts":
-                    DataFileTextController.open(handledFile.getFile(), handledFile.getCharset(),
-                            handledFile.isHasHeader(), handledFile.getDelimiter());
-                    break;
-                case "systemClipboard":
-                    TextClipboardTools.copyToSystemClipboard(this, TextFileTools.readTexts(handledFile.getFile()));
-                    break;
-                case "myBoxClipboard":
-                    DataInMyBoxClipboardController.open(handledFile);
-                    break;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     public synchronized void handleRowsTask() {
@@ -401,8 +338,6 @@ public abstract class Data2DHandleController extends BaseChildController {
             data2D = null;
             handledData = null;
             handledColumns = null;
-            handledCSV = null;
-            handledFile = null;
         } catch (Exception e) {
         }
         super.cleanPane();

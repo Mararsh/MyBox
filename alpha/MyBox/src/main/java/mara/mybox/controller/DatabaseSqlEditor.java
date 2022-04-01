@@ -228,7 +228,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        PopTools.popSqlExamples(this, valueInput, mouseEvent);
+        PopTools.popSqlExamples(this, valueInput, null, false, mouseEvent);
     }
 
     @FXML

@@ -642,6 +642,15 @@ public class ControlData2D extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
+            if (data2D.isTable()) {
+                menu = new MenuItem(message("Query"), StyleTools.getIconImage("iconQuery.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    DataTableQueryController.open(tableController);
+                });
+                menu.setDisable(empty);
+                popMenu.getItems().add(menu);
+            }
+
             menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSetValuesController.open(tableController);
