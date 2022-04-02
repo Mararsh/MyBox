@@ -20,7 +20,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxSetupController">
+<VBox fx:id="thisPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="5.0" 
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxSetupController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -107,10 +108,7 @@ License:    Apache License Version 2.0
         </SplitPane>
         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS">
-                    <padding>
-                        <Insets left="20.0" />
-                    </padding>
+                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"  text="%MyBoxSetupComments" >
                 </Label>
                 <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                     <graphic>

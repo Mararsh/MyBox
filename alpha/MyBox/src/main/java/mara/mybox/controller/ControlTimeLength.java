@@ -5,10 +5,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.value.UserConfig;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -96,7 +92,8 @@ public class ControlTimeLength extends BaseController {
             }
         }
 
-        lengthSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+        lengthSelector.getSelectionModel().selectedItemProperty().addListener(
+                (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                     if (isSettingValues) {
                         return;
                     }

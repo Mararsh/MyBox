@@ -753,7 +753,7 @@ public class PopTools {
                     " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY"
             ));
             addButtonsPane(controller, input, Arrays.asList(
-                    " , ", " (   ) ", " >= ", " > ", " <= ", " < ", " != "
+                    " , ", " (   ) ", " = ", " '' ", " >= ", " > ", " <= ", " < ", " != "
             ));
             addButtonsPane(controller, input, Arrays.asList(
                     " AND ", " OR ", " NOT ", " IS NULL ", " IS NOT NULL "
@@ -780,7 +780,8 @@ public class PopTools {
                 addButtonsPane(controller, input, Arrays.asList(
                         "INSERT INTO " + tname + " (column1, column2) VALUES (value1, value2)",
                         "UPDATE " + tname + " SET <column1>=<value1>, <column2>=<value2> WHERE <condition>",
-                        "DELETE FROM " + tname + " WHERE <condition>", "TRUNCATE TABLE <table>"
+                        "DELETE FROM " + tname + " WHERE <condition>", "TRUNCATE TABLE <table>",
+                        "ALTER TABLE " + tname + " ALTER COLUMN id RESTART WITH 100"
                 ));
             }
 
@@ -853,6 +854,9 @@ public class PopTools {
         try {
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
+                if (value == null) {
+                    continue;
+                }
                 Button button = new Button(value);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -874,11 +878,15 @@ public class PopTools {
         try {
             List<Node> buttons = new ArrayList<>();
             for (String name : values.keySet()) {
+                String value = values.get(name);
+                if (value == null) {
+                    continue;
+                }
                 Button button = new Button(name);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.replaceText(input.getSelection(), values.get(name));
+                        input.replaceText(input.getSelection(), value);
                         controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }

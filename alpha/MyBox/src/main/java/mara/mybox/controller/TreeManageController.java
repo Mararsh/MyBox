@@ -70,7 +70,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     protected VBox conditionBox, timesBox;
     @FXML
-    protected CheckBox subCheck;
+    protected CheckBox descendantsCheck;
     @FXML
     protected FlowPane tagsPane, namesPane;
     @FXML
@@ -140,8 +140,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
             nodesController.setParameters(this, true);
 
-            subCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
-            subCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            descendantsCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
+            descendantsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
                     if (loadedParent != null) {
@@ -391,7 +391,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         clearQuery();
         loadedParent = parentNode;
         if (loadedParent != null) {
-            queryConditions = " parentid=" + loadedParent.getNodeid() + " AND nodeid<>parentid";
+            queryConditions = " category='" + category + "' AND "
+                    + "parentid=" + loadedParent.getNodeid() + " AND nodeid<>parentid";
             loadTableData();
         }
     }
@@ -446,7 +447,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                     label.setMinHeight(Region.USE_PREF_SIZE);
                     nodes.add(label);
                     namesPane.getChildren().setAll(nodes);
-                    conditionBox.getChildren().setAll(namesPane, subCheck);
+                    conditionBox.getChildren().setAll(namesPane, descendantsCheck);
                     conditionBox.applyCss();
                 }
             };
@@ -457,7 +458,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public long readDataSize(Connection conn) {
-        if (loadedParent != null && subCheck.isSelected()) {
+        if (loadedParent != null && descendantsCheck.isSelected()) {
             return tableTreeNode.withSubSize(conn, loadedParent.getNodeid());
 
         } else if (queryConditions != null) {
@@ -471,7 +472,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public List<TreeNode> readPageData(Connection conn) {
-        if (loadedParent != null && subCheck.isSelected()) {
+        if (loadedParent != null && descendantsCheck.isSelected()) {
             return tableTreeNode.withSub(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
@@ -709,9 +710,10 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         clearQuery();
-        queryConditions = c;
+        queryConditions = " category='" + category + "' " + (c.isBlank() ? "" : " AND " + c);
         queryConditionsString = timeController.getFinalTitle();
         loadTableData();
+        showLeftPane();
     }
 
     /*
@@ -749,7 +751,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 } else {
                     queryConditions = " ";
                 }
-                queryConditions += " ( name like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryConditions += " ( title like '%" + DerbyBase.stringValue(v) + "%' ) ";
                 queryConditionsString += " " + v;
             }
 
@@ -766,7 +768,9 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 queryConditionsString += " " + v;
             }
         }
+        queryConditions = " category='" + category + "' AND " + queryConditions;
         loadTableData();
+        showLeftPane();
     }
 
     @FXML

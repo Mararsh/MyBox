@@ -481,6 +481,9 @@ public class TreeNodeEditor extends TreeTagsController {
     }
 
     public void pasteText(String text) {
+        if (valueInput == null || text == null || text.isEmpty()) {
+            return;
+        }
         valueInput.replaceText(valueInput.getSelection(), text);
         valueInput.requestFocus();
     }

@@ -141,6 +141,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
             Date time;
             long parentid, baseTime = new Date().getTime();
             Map<String, TreeNode> parents = new HashMap<>();
+            parents.put(rootNode.getTitle(), rootNode);
+            parents.put(message(rootNode.getTitle()), rootNode);
             boolean isWebFavorite = TreeNode.WebFavorite.equals(category);
             boolean downIcon = iconCheck.isSelected();
             while (line != null) {
@@ -227,6 +229,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
             Date time;
             long parentid, baseTime = new Date().getTime();
             Map<String, TreeNode> parents = new HashMap<>();
+            parents.put(rootNode.getTitle(), rootNode);
+            parents.put(message(rootNode.getTitle()), rootNode);
             while ((line = reader.readLine()) != null && !line.isBlank()) {
                 parentid = getParent(conn, parents, line);
                 if (parentid < -1) {

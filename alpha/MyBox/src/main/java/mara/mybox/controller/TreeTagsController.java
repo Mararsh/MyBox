@@ -255,12 +255,14 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             return;
         }
         treeController.clearQuery();
-        treeController.queryConditions = tableTreeNode.tagsCondition(selected);
+        treeController.queryConditions = " category='" + category + "' AND "
+                + tableTreeNode.tagsCondition(selected);
         treeController.queryConditionsString = message("Tag") + ": ";
         for (Tag tag : selected) {
             treeController.queryConditionsString += " " + tag.getTag();
         }
         treeController.loadTableData();
+        treeController.showLeftPane();
     }
 
     @FXML

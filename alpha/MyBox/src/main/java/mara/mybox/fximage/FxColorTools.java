@@ -106,6 +106,14 @@ public class FxColorTools {
         return new Color(1 - color.getRed(), 1 - color.getGreen(), 1 - color.getBlue(), color.getOpacity());
     }
 
+    public static boolean isLightColor(Color color) {
+        return color.grayscale().getRed() > 0.5;
+    }
+
+    public static Color foreColor(Color backColor) {
+        return isLightColor(backColor) ? Color.BLACK : Color.WHITE;
+    }
+
     public static int color2Value(Color color) {
         return color == null ? AppValues.InvalidInteger : ColorConvertTools.converColor(color).getRGB();
     }

@@ -130,11 +130,11 @@ public class TreeNode extends BaseData {
         String lang = Languages.isChinese() ? "zh" : "en";
         if (WebFavorite.equals(category)) {
             return getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
-                    "data", "WebFavorites_Examples_" + lang + ".txt");
+                    "data", "WebFavorites_Examples_" + lang + ".txt", true);
 
         } else if (Notebook.equals(category)) {
             return getInternalFile("/data/db/Notes_Examples_" + lang + ".txt",
-                    "data", "Notes_Examples_" + lang + ".txt");
+                    "data", "Notes_Examples_" + lang + ".txt", true);
 
         } else if (JShellCode.equals(category)) {
             return getInternalFile("/data/db/JShell_Examples_" + lang + ".txt",

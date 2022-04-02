@@ -174,8 +174,8 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="tagColumn" prefWidth="200.0" text="%Tag" />
                                         <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
+                                        <TableColumn fx:id="tagColumn" prefWidth="200.0" text="%Tag" />
                                     </columns>
                                 </TableView>
                             </children>

@@ -1,13 +1,31 @@
 ##MyBox#
-Notebook > Notebook
+MyBoxTreeRoot;;;
+Notebook
+
+##MyBox#
+Notebook
 Notebook Cover
 Notes are information pieces in html format.<br>
 Notebook is collection of notes and notebooks.<br>
 Notebooks are organized as a tree.
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook
+Notebook
+
+##MyBox#
+Notebook > Notebook
+Note Examples
+Tags:Need supplementary;;;0xfff2dfff
+
+##MyBox#
+Notebook > Notebook > Note Examples
+Web Address
+
+##MyBox#
+Notebook > Notebook > Note Examples > Web Address
 Search
+Tags:To be determined ;;;0xedd1d8ff;;;Like;;;0x0d3928ff;;;Important;;;0x003472ff
 <a href="https://www.wikipedia.org/">wikipedia</a><br>
 <a href="https://www.answers.com/">answers</a><br>
 <a href="https://www.thefreedictionary.com/">thefreedictionary</a><br>
@@ -18,8 +36,9 @@ Search
 <a href="https://www.baidu.com/">baidu</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook > Notebook > Note Examples > Web Address
 Life in Chinese
+Tags:To be determined ;;;0xedd1d8ff;;;Urgent;;;0xc32136ff
 <a href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
 <a href="https://www.boc.cn/">Bank of China</a><br>
 <a href="http://www.icbc.com.cn">Industrial and Commercial Bank of China</a><br>
@@ -27,8 +46,9 @@ Life in Chinese
 <a href="http://www.bankcomm.com">Bank of Communications</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook > Notebook > Note Examples > Web Address
 Articles/Data in English
+Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a href="https://www.cn-ki.net/">iData</a><br>
 <a href="https://sci-hub.se/">sci-hub</a><br>
 <a href="http://www.city-data.com/">city-Data</a><br>
@@ -44,8 +64,9 @@ Articles/Data in English
 <a href="https://www.ieee.org/">IEEE</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook > Notebook > Note Examples > Web Address
 Articles/Data in Chinese
+Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a href="http://www.stats.gov.cn">国家数据</a><br>
 <a href="http://www.pbc.gov.cn/diaochatongjisi/116219/index.html">中国人民银行数据库</a><br>
 <a href="http://www.geodata.cn/index.html">国家地球系统科学数据中心</a><br>
@@ -68,16 +89,18 @@ Articles/Data in Chinese
 <a href="http://www.biftmuseum.com">北京服装学院民族服饰博物馆</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook > Notebook > Note Examples > Web Address
 Study in English
+Tags:Need supplementary;;;0xfff2dfff
 <a href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
 <a href="https://www.bilibili.com/video/BV1Js411n7zv">MIT 18.01 Calculus</a><br>
 <a href="https://www.bilibili.com/video/BV1es411H7YH">MIT 6.042J Discrete Mathematics</a><br>
 <a href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook > Notebook > Note Examples > Web Address
 Study in Chinese
+Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 <a href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
 <a href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
 <a href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>
@@ -85,8 +108,9 @@ Study in Chinese
 <a href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook > Notebook > Note Examples > Web Address
 Novels in Chinese
+Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a href="https://www.kunnu.com">鲲弩小说</a><br>
 <a href="https://www.jjwxc.net">晋江文学城</a><br>
 <a href="http://yunqi.qq.com">云起书院</a><br>
@@ -98,8 +122,9 @@ Novels in Chinese
 <a href="https://www.xxsy.net">潇湘书院</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Web Address
+Notebook > Notebook > Note Examples > Web Address
 Entertainment in Chinese
+Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a href="https://www.qingting.fm">蜻蜓FM</a><br>
 <a href="https://www.bilibili.com">哔哩哔哩</a><br>
 <a href="https://www.youku.com">优酷</a><br>
@@ -114,7 +139,12 @@ Entertainment in Chinese
 <a href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
 
 ##MyBox#
-Notebook > Note Examples > My Data
+Notebook > Notebook > Note Examples
+My Data
+Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
+
+##MyBox#
+Notebook > Notebook > Note Examples > My Data
 My eyes
 <p>Radian: 84</p>
 <table>
@@ -125,7 +155,7 @@ My eyes
 </table>
 
 ##MyBox#
-Notebook > Note Examples > My Data
+Notebook > Notebook > Note Examples > My Data
 My weight
 <table>
     <tr><th> Time </th><th> Weight(kg) </th></tr>
@@ -135,7 +165,7 @@ My weight
 </table>
 
 ##MyBox#
-Notebook > Note Examples > My Data
+Notebook > Notebook > Note Examples > My Data
 My height
 <table>
     <tr><th> Time </th><th> Height(cm) </th></tr>
@@ -145,9 +175,9 @@ My height
 </table>
 
 ##MyBox#
-Notebook > Note Examples > My Data
+Notebook > Notebook > Note Examples > My Data
 My menstruation
-            <table>
+<table>
                 <tbody><tr><td>Year/Month</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
                 <tr><td>2021</td><td>2,30</td><td> </td><td>2</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
                 <tr><td>2020</td><td>28</td><td>27</td><td>23</td><td>21</td><td>19</td><td> </td><td>7,26</td><td>19</td><td>15</td><td>12</td><td>8</td><td>9</td></tr>
@@ -156,7 +186,7 @@ My menstruation
 </table>
 
 ##MyBox#
-Notebook > Note Examples > My Data
+Notebook > Notebook > Note Examples > My Data
 My money
 <table>
     <tr><th> Time </th><th> Total </th><th> Bank A </th><th> Bank B </th><th> Bank C </th></tr>
@@ -166,9 +196,13 @@ My money
 </table>
 
 ##MyBox#
-Notebook > Note Examples > Common knowledge
+Notebook > Notebook > Note Examples
+Common knowledge
+
+##MyBox#
+Notebook > Notebook > Note Examples > Common knowledge
 Size of coat
-            <table>
+<table>
                 <tr><td>Size</td><td>Coat Length</td><td>Shoulder</td><td>Sleeve</td><td>Chest</td><td>Waist</td></tr>
                 <tr><td>160/76A(0)</td><td>69</td><td>37</td><td>80</td><td>88</td><td>86</td></tr>
                 <tr><td>160/84A(2)</td><td>69</td><td>38</td><td>81</td><td>90</td><td>88</td></tr>
@@ -182,17 +216,23 @@ Size of coat
             </table>
 
 ##MyBox#
-Notebook > Note Examples > Contacts
+Notebook > Notebook > Note Examples
+Contacts
+Tags:Need supplementary;;;0xfff2dfff
+
+##MyBox#
+Notebook > Notebook > Note Examples > Contacts
 Relative
+Tags:Important;;;0x003472ff
 <table>
-    <tr><th> Relationship </th><th> Phone </th><th> Email </th><th> Address </th><th> Birthday </th><th> Comments </th></tr>
+    <tbody><tr><th> Relationship </th><th> Phone </th><th> Email </th><th> Address </th><th> Birthday </th><th> Comments </th></tr>
     <tr><td> papa </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1960.1.1 </td><td> </td></tr>
     <tr><td> mama </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1961.3.1 </td><td> </td></tr>
     <tr><td> sister </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1984.3.8 </td><td> </td></tr>
-</table>
+</tbody></table>
 
 ##MyBox#
-Notebook > Note Examples > Contacts
+Notebook > Notebook > Note Examples > Contacts
 Work
 <table>
     <tr><th> Relationship </th><th> Name </th><th> Phone </th><th> Email </th><th> Address </th><th> Comments </th></tr>
@@ -202,8 +242,14 @@ Work
 </table>
 
 ##MyBox#
-Notebook > Note Examples > Coding
+Notebook > Notebook > Note Examples
+Coding
+Tags:Need supplementary;;;0xfff2dfff
+
+##MyBox#
+Notebook > Notebook > Note Examples > Coding
 Coding Address
+Tags:To be determined ;;;0xedd1d8ff
 <a href="https://sourceforge.net">sourceforge</a><br>
 <a href="https://stackoverflow.com">stackoverflow</a><br>
 <a href="https://github.com">github</a><br><br>
@@ -218,7 +264,7 @@ Coding Address
 <a href="https://mvnrepository.com/">mvnrepository</a><br>
 
 ##MyBox#
-Notebook > Note Examples > Coding
+Notebook > Notebook > Note Examples > Coding
 sftp to sourceforge (to upload large files)
 <PRE><CODE>
 C:\Users\mara>sftp mararsh@frs.sourceforge.net
@@ -232,8 +278,13 @@ sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Note Examples > Coding > javafx
+Notebook > Notebook > Note Examples > Coding
+javafx
+
+##MyBox#
+Notebook > Notebook > Note Examples > Coding > javafx
 Items in one sentence about javafx
+Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <ol>
     <li>Always assume user knows nothing about programming.</li>
     <li>Do not expect user will open user guide. Someone, including me, even will not look at nor think about prompts on the screen.</li>
@@ -241,25 +292,29 @@ Items in one sentence about javafx
     <li>Ambiguous prompt is worse than no prompt.</li>
     <li>Always response for user, like pop information, make sound, or update interface.</li>
     <li>Provide most options and set default choice.</li>
-    <li>Remember user&rsquo;s inputs or seletions and fill in or set values automatically in next time.</li>
+    <li>Remember user’s inputs or seletions and fill in or set values automatically in next time.</li>
     <li>Less inputs or selections meanwhile keep interfaces clean.</li>
     <li>Use radio or check buttons instead of drop-down list if there is enough place in interface.</li>
     <li>No more than 3 levels to select.</li>
     <li>When too many controls in interface, consider popular layout:  Left-right areas like curtain, vertical accordion menus, tabs to switch targets</li>
-    <li>User&rsquo; screen resolution may be from 1k to 4k, so the design size of most MyBox interfaces is smaller than 1100 * 720.</li>
+    <li>User’ screen resolution may be from 1k to 4k, so the design size of most MyBox interfaces is smaller than 1100 * 720.</li>
     <li>Make use of auto-wrap container like FlowPane, to work for both small screen and large screen.</li>
     <li>Controls can be updated only in JavaFx thread. Use Platform.runLater to change control when handle event in its listener.</li>
     <li>Progress should be shown when operation costs much time.</li>
     <li>Time-consume operation should not be run in JavaFx thread to avoid blocking interface.</li>
     <li>Backgournd task should always check whether task is canceled, especially in loop or before/after long-run statements.</li>
     <li>When listen mouse events, event.getX() and event.getY() return the coordinate of event.getSource() which is the control owns the events. Example, when listen on ImageView, the coordinate is related to the image.</li>
-    <li>Iterative calls may happen when listen both onMouseEntered and  onMouseExited and change focus in handling of the events(like pop menu) or change control&rsquo;s size.</li>
+    <li>Iterative calls may happen when listen both onMouseEntered and  onMouseExited and change focus in handling of the events(like pop menu) or change control’s size.</li>
     <li>When double click mouse, single-click event is tiggerred at first and then double-click event is triggerred. So need avoid duplicated or conflicted handlings against same event.</li>
     <li>For table's multiple selections, use getSelectedIndices() to listen changes, Some changes may be missed if use selectedItemProperty().</li>
 </ol>
 
 ##MyBox#
-Notebook > Note Examples > Coding > javafx > Examples
+Notebook > Notebook > Note Examples > Coding > javafx
+Examples
+
+##MyBox#
+Notebook > Notebook > Note Examples > Coding > javafx > Examples
 ChangeListener<String>
 <PRE><CODE>
 input.textProperty().addListener(new ChangeListener<String>() {
@@ -271,7 +326,7 @@ input.textProperty().addListener(new ChangeListener<String>() {
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Note Examples > Coding > javafx > Examples
+Notebook > Notebook > Note Examples > Coding > javafx > Examples
 setOnMouseClicked
 <PRE><CODE>
 control.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -283,7 +338,7 @@ control.setOnMouseClicked(new EventHandler<MouseEvent>() {
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Note Examples > Coding > javafx > Examples
+Notebook > Notebook > Note Examples > Coding > javafx > Examples
 disableProperty().bind
 <PRE><CODE>
 startButton.disableProperty().bind(
@@ -294,11 +349,16 @@ startButton.disableProperty().bind(
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Note Examples > Coding > java
+Notebook > Notebook > Note Examples > Coding
+java
+
+##MyBox#
+Notebook > Notebook > Note Examples > Coding > java
 Items in one sentence about java
+Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <ol>
     <li>Always assume most extreme inputs and most weird operations.</li>
-    <li>Assume user&rsquo; hardware configuration(CPU/memory/disk) is lower than average level.</li>
+    <li>Assume user’ hardware configuration(CPU/memory/disk) is lower than average level.</li>
     <li>Use BufferedInputStream and BufferedOutputStream for file I/O.</li>
     <li>Use try-with-resource for file I/O.</li>
     <li>Always consider out of memory when read/write file or data.</li>
@@ -316,13 +376,17 @@ Items in one sentence about java
     <li>Double.MIN_VALUE is the minimum positive double(almost zero). -Double.MAX_VALUE is the minimum double.</li>
     <li>When handle money, store integer number for each unit.</li>
     <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
-    <li>To determine value's broken, write if (abs(x - 7.3) < TOLERANCE) instead of if (x == 7.3).</li></ol>
-    <li>Value of final static constant should be determined at compling time.</li></ol>
+    <li>To determine value's broken, write if (abs(x - 7.3) &lt; TOLERANCE) instead of if (x == 7.3).</li></ol>
+    <li>Value of final static constant should be determined at compling time.</li>
 
 ##MyBox#
-Notebook > Note Examples > Coding > MyBox
+Notebook > Notebook > Note Examples > Coding
+MyBox
+
+##MyBox#
+Notebook > Notebook > Note Examples > Coding > MyBox
 Packing Steps of MyBox on windows
-		<p>On Windows:</p>
+<p>On Windows:</p>
 			<ol  class="inside">
 				<li>Make sure jdk and maven installed.</li>
 				<li>Dowbload source codes of Mybox.</li>
@@ -333,9 +397,9 @@ Packing Steps of MyBox on windows
 			</ol>
 
 ##MyBox#
-Notebook > Note Examples > Coding > MyBox
+Notebook > Notebook > Note Examples > Coding > MyBox
 Packing Steps of MyBox on linux
-		<p>On Linux:</p>
+<p>On Linux:</p>
 			<ul  class="inside">
 			    <li>Make sure jdk and maven installed.</li>
 				<li>Dowbload source codes of Mybox.</li>
@@ -351,9 +415,9 @@ Packing Steps of MyBox on linux
 			</ul>
 
 ##MyBox#
-Notebook > Note Examples > Coding > MyBox
+Notebook > Notebook > Note Examples > Coding > MyBox
 Packing Steps of MyBox on mac
-		<p>On Mac:</p>
+<p>On Mac:</p>
 			<ul  class="inside">
 				<li>Make sure jdk and maven installed.</li>
 				<li>Dowbload source codes of Mybox.</li>
@@ -369,9 +433,9 @@ Packing Steps of MyBox on mac
 			</ul>
 
 ##MyBox#
-Notebook > Note Examples > Coding > MyBox
+Notebook > Notebook > Note Examples > Coding > MyBox
 Colors of MyBox icons
-            <table>
+<table>
                 <tbody><tr style="font-weight:bold; "><th>Color</th><th>Color - RGBA</th><th>Color - RGB</th><th>Name</th><th>Value</th><th>sRGB</th><th>HSB</th></tr>
                 <tr><td align="center"><div style="width: 50px;  background-color:#C32136; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XC32136FF </td><td>#C32136 </td><td>Dark Red</td><td>-3989194</td><td>195 33 54 100%</td><td>352 83% 76%</td></tr>
                 <tr><td align="center"><div style="width: 50px;  background-color:#FBD5CF; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFBD5CFFF </td><td>#FBD5CF </td><td>Light Red</td><td>-272945</td><td>251 213 207 100%</td><td>8 18% 98%</td></tr>
@@ -386,4 +450,3 @@ Colors of MyBox icons
                 <tr><td align="center"><div style="width: 50px;  background-color:#0D3928; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X0D3928FF </td><td>#0D3928 </td><td>Dark Green</td><td>-15910616</td><td>13 57 40 100%</td><td>157 77% 22%</td></tr>
                 <tr><td align="center"><div style="width: 50px;  background-color:#E0F0E9; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XE0F0E9FF </td><td>#E0F0E9 </td><td>Light Green</td><td>-2035479</td><td>224 240 233 100%</td><td>154 7% 94%</td></tr>
             </tbody></table>
-

@@ -195,8 +195,6 @@ public class PaletteTools {
     }
 
     public static void afterPaletteImported(BaseController parent, String paletteName) {
-        UserConfig.setString("ColorPalettePopupPalette", paletteName);
-
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
@@ -210,13 +208,13 @@ public class PaletteTools {
                 }
             }
         }
-
         if (parent == null) {
             return;
         }
         if (parent instanceof ControlColors) {
             ControlColors controller = (ControlColors) parent;
-            controller.loadPalette(paletteName);
+            UserConfig.setString(controller.getBaseName() + "Palette", paletteName);
+            controller.refreshPalettes();
             parent.popSuccessful();
         } else if (parent instanceof ColorSet) {
             ColorSet controller = (ColorSet) parent;

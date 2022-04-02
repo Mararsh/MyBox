@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -85,6 +83,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                         checkAutoSave();
                     }
                 });
+
             }
 
         } catch (Exception e) {
@@ -159,43 +158,6 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    protected void checkAutoSave() {
-        try {
-            if (autoSaveCheck == null) {
-                return;
-            }
-            UserConfig.setBoolean(baseName + "AutoSave", autoSaveCheck.isSelected());
-            autoSaveDurationController.permitInvalid(!autoSaveCheck.isSelected());
-            if (confirmCheck != null) {
-                confirmCheck.setVisible(!autoSaveCheck.isSelected());
-            }
-            if (autoSaveTimer != null) {
-                autoSaveTimer.cancel();
-                autoSaveTimer = null;
-            }
-            if (sourceFile == null || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
-                return;
-            }
-            long interval = autoSaveDurationController.value * 1000;
-            autoSaveTimer = new Timer();
-            autoSaveTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-//                        popInformation(message("Saving"));
-                        if (fileChanged.get()) {
-                            saveAction();
-                        }
-                    });
-                }
-            }, interval, interval);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
     }
 
     protected void initLineBreakGroup() {

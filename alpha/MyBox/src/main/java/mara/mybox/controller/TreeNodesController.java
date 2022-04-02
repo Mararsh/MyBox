@@ -278,7 +278,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                     s.append(indentTag).append(spaceTag)
                             .append("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: ")
                             .append(FxColorTools.color2rgb(color))
-                            .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.invert(color))).append(";\">")
+                            .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.foreColor(color))).append(";\">")
                             .append(nodeTag.getTag().getTag()).append("</SPAN>\n");
                 }
                 s.append(indentTag).append("</SPAN>\n");

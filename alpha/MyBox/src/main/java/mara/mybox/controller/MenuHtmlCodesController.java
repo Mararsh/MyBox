@@ -379,6 +379,9 @@ public class MenuHtmlCodesController extends MenuTextEditController {
     }
 
     protected void insertText(String string) {
+        if (string == null) {
+            return;
+        }
         IndexRange range = textInput.getSelection();
         textInput.insertText(range.getStart(), string);
         parentController.getMyWindow().requestFocus();

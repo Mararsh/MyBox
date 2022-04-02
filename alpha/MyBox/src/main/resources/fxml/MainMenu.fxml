@@ -29,6 +29,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#reload" text="%Reload" />
                                 <MenuItem mnemonicParsing="false" onAction="#fullScreen" text="%FullScreen" />
                                 <MenuItem mnemonicParsing="false" onAction="#resetWindows" text="%ResetWindows" />
+                                <CheckMenuItem fx:id="alwayOnTopCheck" mnemonicParsing="false" onAction="#AlwayOnTop" text="%AlwayOnTop" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="%CloseWindow" />
                                 <MenuItem fx:id="closeOtherMenu" mnemonicParsing="false" onAction="#closeOtherWindows" text="%CloseOtherWindows" />

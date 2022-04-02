@@ -5,15 +5,17 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 
 ## What's New        
-2022-3-6 v6.5.3         
+2022-4-3 v6.5.4         
 
-* Data. Convert data to database table. Manage and edit database tables. Execute database SQL statements.                        
-* Calculation. GUI of JShell(Java interactive coding tool).            
-* Dev. Edit data in MyBox internal tables. Start JConsole(Java Monitoring and Management Console).              
-* Solved. "Extract images/links in html" fails. "File unarchive" makes wrong file-paths. 
-"Synchronize Directory" will loop endlessly when target path is included in source path. Missed input field for "Power of matrix".        
+* Information in tree. Manage nodes of tree. Edit nodes. Export/Import with tags. Output tree view. Examples. 
+Extend as: Notes, Web favoraite addresses,  JShell codes, Javascript codes, SQL codes.                
+* Improve. Execute multiple statements in JShell. Manage and execute queries for data tables. 
+"When left click link or image" of web page has more options. Pop histories for input controls.                      
+* Solved. Options of "Word" and "html" do not work. Error popped when save new html in editor. 
+Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table.  
+“Auto save” not work in File Editor.       
 
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3)             
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
                    
 
 ## Download and Execution
@@ -22,7 +24,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.5.3-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-src.zip)   40M(approximation)        
+[MyBox-6.5.4-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-src.zip)   40M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -33,9 +35,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.5.3-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win10-x64.zip)  | 219MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.3-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac | [MyBox-6.5.3-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac.dmg)  | 232MB  |  MyBox-6.5.3.app   |        
+| win10 x64 | [MyBox-6.5.4-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win10-x64.zip)  | 219MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.4-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac | [MyBox-6.5.4-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac.dmg)  | 232MB  |  MyBox-6.5.4.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -46,16 +48,16 @@ In my Mac env(OS X 10.11.6/Darwin 15.6.0), openJDK 17 fails to start, so MyBox o
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.5.3-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win-jar.zip)  | 156MB | Java 17 or higher |
-| linux | [MyBox-6.5.3-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-linux-jar.zip)  | 186MB  | Java 17 or higher |
-| mac | [MyBox-6.5.3-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac-jar.zip)  |  159MB  | Java 16 |        
+| win | [MyBox-6.5.4-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win-jar.zip)  | 156MB | Java 17 or higher |
+| linux | [MyBox-6.5.4-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-linux-jar.zip)  | 186MB  | Java 17 or higher |
+| mac | [MyBox-6.5.4-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac-jar.zip)  |  159MB  | Java 16 |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.5.3.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.4.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.5.3.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.4.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -65,16 +67,20 @@ Download from sourceforge: [https://sourceforge.net/projects/mara-mybox/files/](
 * MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
 
 ## Migration
-Each version has itself's configuration file. New version can copy parameters from existed versions.        
+1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
+2. Data handled in each vertion are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
+3. MyBox is backward compatibility: Later version can work on data of previous versions.
+While forward compatibility is not supported: Wrong may happen when old version handles data of new version.
+
 
 ## Configuration <a id="Config"></a>
 Configuration file is under "User Home":        
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.5.3.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.5.3.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.5.3.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.5.4.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.5.4.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.5.4.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -94,7 +100,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.5.3 | 2022-3-6 | [html](#devLog) |
+| Development Logs | 6.5.4 | 2022-4-3 | [html](#devLog) |
 | Shortcuts | 6.4.7 | 2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -164,15 +170,18 @@ MyBox is based on following open sources:
 | Book | Materials | https://book.douban.com/subject/10465940/ |
 | PaginatedPdfTable | PDF | https://github.com/eduardohl/Paginated-PDFBox-Table-Sample |
 | jsoup | DOM | https://jsoup.org/ |        
+| WeiBo | Materials | https://weibo.com/2328516855/LhFIHy26O#repost |
+| ZhiHu | Materials | https://www.zhihu.com/question/41580677/answer/1300242801 |             
 
 # Current Version        
-Current version is 6.5.3. Its features are mentioned below in summary:          
+Current version is 6.5.4. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
 *  [Personal](#personal)
 *  [Compatible Data](#dataCompatible)
 *  [Document Tools](#documentTools)         
+    -  [Information in Tree](#infoInTree)
     -  [Notes](#notes)         
     -  [PDF Tools](#pdfTools)         
     -  [Editor Base](#editTextBase)         
@@ -191,6 +200,7 @@ Current version is 6.5.3. Its features are mentioned below in summary:
     -  [Manufacture Image](#imageManufacture)      
     -  [Edit Images](#imagesList)
     -  [Merge Images](#multipleImages)         
+    -  [Part Image](#imagePart)         
     -  [Part Image](#imagePart)         
     -  [Convert Image](#imageConvert)         
     -  [Recognize Texts in Image](#imageOCR)         
@@ -279,7 +289,29 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 4. Imported data are self-contain, that original data can be rebuilt without extra data.       
 
 
-##  Document Tools <a id="documentTools"></a>
+##  Document Tools <a id="documentTools"></a>             
+
+### Information in Tree<a id="infoInTree" />        
+1. Information is organized as a tree. 
+2. Following operations can be done against any node in the tree: 
+Add/Delete/Edit children, rename, move, copy, export, display tree view, unfold, and fold.
+3. Edit node:
+	-  Name should not include string " > "(Blank before and after ">").
+	-  Each node can have multiple tags.
+4. Export:       
+	-  Formats: Text(for import), single html, html frameset, xml.
+	-  Options to export time, or tags.       
+	-  Charset can be set.
+	-  Html style can be set.
+5. Import. Example is provided. 
+6. Query:
+	-  Children or all descendants.
+	-  By tags.
+	-  By times.
+	-  By strings in title/contents.       
+ 
+![Snap-infoInTree](https://mararsh.github.io/MyBox/snap-infoInTree-en.jpg)
+
 
 ### Notes<a id="notes" />
 1. Note is a piece of information in html format:
@@ -289,22 +321,8 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 		-  Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
 		-  Click button "Save"(F2) to save updates in current edit mode and synchronize automatically.
 		-  Note' html code should be contents of "body" and have not tags "html", "head" and "body".
-	-  Tags can be set for note.
 	-  Style can be set for note. Style is only for displaying and not saved in note's codes.
-2. Notebook is collection of some notes and some notebooks:
-	-  Notebooks are organized as a tree, that is notebooks can be children of other notebook.
-	-  Notebook's name should not include string " > "(Blank before and after ">").
-	-  Export/add/delete/rename/copy/move can be done against any notebook in the tree.
-	-  Export notes:
-		-  Formats: Text(for import), single html, html frameset, xml.
-		-  Charset can be set.
-		-  Html style can be set.
-	-  Import notebook. Example is provided.
-3. Query notes:
-	-  By notebooks. Option about whether include sub-notebooks.
-	-  By tags.
-	-  By times.
-	-  By strings in title/contents.  
+2. Notebook is information tree of notes. 
 
 ![Snap-notes](https://mararsh.github.io/MyBox/snap-notes-en.jpg)        
 
@@ -904,48 +922,60 @@ This tool manages following objects:
 ### Database Tables<a id="dataTables" />
 1. Table name and column names should satisfy "Limitations of SQL identifier":
       - Maximum length is 128.
-      - Case-insensitive.
-      - Ordinary identifier:
+      - "Ordinary identifier":
  		- Not surrounded by double quotation marks.
  		- Must begin with a letter.
  		- Contains only letters, underscore characters (_), and digits.
  		- Permits Unicode letters and digits.
  		- Can not be reserved words.
- 		- Invalid characters will be converted as underscore characters.
- 		- If identifier does not start with a letter, character "a" will be added in front of it.
-      - Delimited identifier:
+ 		- It is converted as uppercase when saved in database.
+ 		- It is case-insensitive when referred in SQL statement.
+ 		   Example, AbC is same as abc and aBC.
+      - "Delimited identifier":
  		- Surrounded by double quotation marks.
  		- Can contain any characters.
+ 		- It is saved as string inside the double quotations in database.
+ 		- It should be surrounded by double quotations when referred in SQL statement, except for following:  It only includes upper case letters and underscores.                     
+ 		   Example, "AbC" is different from AbC or "ABC" while "ABC" is same as ABC and abc.
 2. After database table is created:
       - Definition of Primary keys can not be changed and deleted.
       - Definition of  other columns can be added and deleted but can not be changed.
+3. When MyBox create name of table/column:
+      - Invalid characters are converted as underscore characters.
+      - If it does not start with a letter, character "a" is added in front of it.            
 
-![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dataTables-en.jpg)          
-
+![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dataTables-en.jpg)         
 
 ### Database SQL<a id="dbSQL" />
 1. Provide examples of SQL statements.
 2. List names of all user tables automatically.
 3. View table definitions of all user tables.
-4. Display outputs of execution and results of query.       
+4. Display outputs of execution and results of query.     
+5. SQL codes can be organized as information of tree.
+6. Can load or save as external files.       
 
 ![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dbSQL-en.jpg)          
 
 
-### JShell(Java interactive coding tool)<a id="JShell" />
+### JShell(Java interactive coding tool)<a id="JShell" />              
+JShell is one of tools in JDK. This tool helps to run JShell in GUI:              
+    
 1. JShell provides capability to interactively evaluate "snippets", as Read-Eval-Print Loop (REPL). 
 2. "Snippet" is a single expression, statement, or declaration of Java programming language code:
-	- Semicolons should be in the end of statements while expressions need not it.
+	- Semicolons should be in the end of statement while expression need not it.
 	- Except for base classes, most of Java classes should be imported before call them.  
 	- Variables and methods can be defined and called later.
-3. Input a snippet and click button "Start" to evaluate it: 
-	- Results of snippets will affect later snippets, like "an running environment".  
+3. Input several snippets and click button "Start" to run them: 
+	- Snippets are evaluated one by one.
+	- Results of snippets will affect later snippets, like "an execution environment".  
 	- Attributes of all evaluated snippets will be shown in a table.
 	- Click button "Delete" or "Clear" to drop some or all snippets from current environment.
-	- Click button "Recover" to reset JShell and environment becomes blank.
+	- Click button "Reset" to empty JShell and environment becomes blank.
 4. JShell can be used for scientific computation and Java codes debug.
+5. JShell codes can be organized as information of tree.
+6. Can load or save as external files.   
 
-![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-JShell-en.jpg)           
+![snap-JShell](https://mararsh.github.io/MyBox/snap-JShell-en.jpg)           
    
 
 ### Common Data Management<a id="dataManage" />
@@ -977,7 +1007,8 @@ This tool manages following objects:
  	  	   	- Date and Time with Milliseconds, like: 2014-06-11 13:51:33.261
  	  	   	- Date and Time with zone, like: 2020-09-27 12:29:29 +0800
   	  	   	- Date and Time with Milliseconds and zone, like: 2020-09-27 12:29:29.713 +0800
-  	  	   	- "T"	  	- Era:       
+  	  	   	- "T" can be written or omitted between date and time. "2014-06-11T13:51:33" equals to "2014-06-11 13:51:33".
+ 	  	- Era:     
  	  	 	  	 "0 AD" = "1 BC" = "0" = "-0" = "0000" = "-0000"  = "0001-01-01 00:00:00 BC" =  "公元前1" = "公元前0001-01-01 00:00:00"       
  	  	 	  	 "1 AD" =  "1"  = "0001" = "0001-01-01 00:00:00" = "0001-01-01 00:00:00 AD" =  "公元1" = "公元0001-01-01 00:00:00"       
  	  	 	  	 "202 BC" = "-203" = "-0203" = "-0203-01-01 00:00:00"  = "0202-01-01 00:00:00 BC" = "公元前202" =  "公元前0202-01-01 00:00:00"       
@@ -1593,7 +1624,7 @@ Decoding does reverse conversion.
 8. Open data directory.
 
 ## Window <a id="windows"></a>
-1. Refresh/Reset/Full-screen windows.
+1. Refresh/Reset/Full-screen/Top windows.
 2. Close other windows.
 3. Reboot MyBox.
 4. Recent visited tools.
@@ -1609,6 +1640,19 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
+2022-4-3 v6.5.4         
+
+* Information in tree. Manage nodes of tree. Edit nodes. Export/Import with tags. Output tree view. Examples. 
+Extend as: Notes, Web favoraite addresses,  JShell codes, Javascript codes, SQL codes.                
+* Improve. Execute multiple statements in JShell. Manage and execute queries for data tables. 
+"When left click link or image" of web page has more options. Pop histories for input controls.                      
+* Solved. Options of "Word" and "html" do not work. Error popped when save new html in editor. 
+Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table.  
+“Auto save” not work in File Editor.       
+
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
+                   
+
 2022-3-6 v6.5.3         
 
 * Data. Convert data to database table. Manage and edit database tables. Execute database SQL statements.                        

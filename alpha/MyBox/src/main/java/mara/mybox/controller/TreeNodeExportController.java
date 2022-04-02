@@ -625,7 +625,7 @@ public class TreeNodeExportController extends BaseTaskController {
                     }
                     writer.write("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
                             + FxColorTools.color2rgb(color) + "; color: "
-                            + FxColorTools.color2rgb(FxColorTools.invert(color)) + ";\">"
+                            + FxColorTools.color2rgb(FxColorTools.foreColor(color)) + ";\">"
                             + nodeTag.getTag().getTag() + "</SPAN>\n");
                 }
                 writer.write("</H4>\n");
