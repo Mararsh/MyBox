@@ -46,7 +46,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
     protected boolean readOnly;
-    protected SimpleBooleanProperty statusNotify, loadedNotify;
+    protected SimpleBooleanProperty statusNotify;
     protected Label dataLabel;
 
     @FXML
@@ -54,7 +54,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
-        loadedNotify = new SimpleBooleanProperty(false);
         readOnly = true;
     }
 
@@ -427,6 +426,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
+    @Override
     public void notifyLoaded() {
         notifyStatus();
         loadedNotify.set(!loadedNotify.get());
@@ -587,7 +587,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     tableColumn.widthProperty().addListener(new ChangeListener<Number>() {
                         @Override
                         public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
-                            dataController.columnsController.setWidth(col - 1, nv.intValue());
+                            int w = nv.intValue();
+                            dataColumn.setWidth(w);
+                            dataController.columnsController.setWidth(col - 1, w);
                         }
                     });
                 }
@@ -614,13 +616,13 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     @Override
-    public List<List<String>> readPageData() {
+    public List<List<String>> readPageData(Connection conn) {
         data2D.setTask(task);
-        return data2D.readPageData();
+        return data2D.readPageData(conn);
     }
 
     @Override
-    protected void countPagination(long page) {
+    protected void countPagination(Connection conn, long page) {
         if (data2D.isMatrix()) {
             pageSize = Integer.MAX_VALUE;
             dataSize = data2D.getDataSize();
@@ -630,7 +632,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             dataSizeLoaded = true;
         } else {
             pageSize = UserConfig.getInt(baseName + "PageSize", 50);
-            super.countPagination(page);
+            super.countPagination(conn, page);
         }
         data2D.setPageSize(pageSize);
         data2D.setPagesNumber(pagesNumber);
@@ -647,7 +649,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     @Override
-    public long readDataSize() {
+    public long readDataSize(Connection conn) {
         return data2D.getDataSize();
     }
 
@@ -755,7 +757,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     protected void refreshPagination() {
-        countPagination(currentPage);
+        countPagination(null, currentPage);
         setPagination();
         updateStatus();
     }
@@ -833,7 +835,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public void cleanPane() {
         try {
             statusNotify = null;
-            loadedNotify = null;
             dataController = null;
             data2D = null;
         } catch (Exception e) {

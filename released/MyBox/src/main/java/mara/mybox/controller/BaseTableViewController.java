@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -57,7 +59,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     protected long pagesNumber, dataSize;
     protected long currentPage, startRowOfCurrentPage;  // 0-based
     protected boolean dataSizeLoaded, loadInBackground;
-    protected final SimpleBooleanProperty selectNotify;
+    protected SimpleBooleanProperty loadedNotify, selectedNotify;
 
     @FXML
     protected TableView<P> tableView;
@@ -77,7 +79,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public BaseTableViewController() {
         tableName = "";
         TipsLabelKey = "TableTips";
-        selectNotify = new SimpleBooleanProperty(false);
+        selectedNotify = new SimpleBooleanProperty(false);
+        loadedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -140,11 +143,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener() {
+            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
                 @Override
-                public void onChanged(ListChangeListener.Change c) {
+                public void changed(ObservableValue ov, Object t, Object t1) {
                     checkSelected();
-                    notifySelect();
+                    notifySelected();
                 }
             });
 
@@ -180,11 +183,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    public void notifySelect() {
+    public void notifySelected() {
         if (isSettingValues) {
             return;
         }
-        selectNotify.set(!selectNotify.get());
+        selectedNotify.set(!selectedNotify.get());
     }
 
     public boolean checkBeforeLoadingTableData() {
@@ -207,8 +210,13 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected boolean handle() {
-                countPagination(page);
-                data = readPageData();
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    countPagination(conn, page);
+                    data = readPageData(conn);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
                 return true;
             }
 
@@ -233,8 +241,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
         start(task, !loadInBackground, message("LoadingTableData"));
     }
 
-    protected void countPagination(long page) {
-        dataSize = readDataSize();
+    protected void countPagination(Connection conn, long page) {
+        dataSize = readDataSize(conn);
         if (dataSize < 0 || dataSize <= pageSize) {
             pagesNumber = 1;
         } else {
@@ -258,13 +266,20 @@ public abstract class BaseTableViewController<P> extends BaseController {
         editNull();
         viewNull();
         tableChanged(false);
+        notifyLoaded();
         if (!dataSizeLoaded) {
             loadDataSize();
         }
         setPagination();
     }
 
-    public long readDataSize() {
+    public void notifyLoaded() {
+        if (loadedNotify != null) {
+            loadedNotify.set(!loadedNotify.get());
+        }
+    }
+
+    public long readDataSize(Connection conn) {
         return 0;
     }
 
@@ -272,7 +287,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         dataSizeLoaded = true;
     }
 
-    public List<P> readPageData() {
+    public List<P> readPageData(Connection conn) {
         return null;
     }
 
@@ -284,6 +299,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
         updateStatus();
     }
 
@@ -1237,6 +1255,16 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @Override
     public void pageLastAction() {
         loadPage(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            selectedNotify = null;
+            loadedNotify = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

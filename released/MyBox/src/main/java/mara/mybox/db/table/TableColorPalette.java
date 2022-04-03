@@ -188,13 +188,13 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         }
     }
 
-    public List<ColorData> colors(long paletteid, long start, long size) {
+    public List<ColorData> colors(Connection conn, long paletteid, long start, long size) {
         if (start < 0 || size <= 0) {
             return new ArrayList<>();
         }
         String condition = " WHERE paletteid=" + paletteid + " ORDER BY order_number "
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
-        return colors(condition);
+        return colors(conn, condition);
     }
 
     public List<ColorData> colors(long paletteid) {
@@ -509,8 +509,8 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         return true;
     }
 
-    public int size(long paletteid) {
-        return conditionSize("paletteid=" + paletteid);
+    public int size(Connection conn, long paletteid) {
+        return conditionSize(conn, "paletteid=" + paletteid);
     }
 
     /*

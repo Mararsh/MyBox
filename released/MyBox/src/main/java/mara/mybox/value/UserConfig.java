@@ -311,7 +311,7 @@ public class UserConfig {
     }
 
     public static void clear() {
-        new TableUserConf().clear();
+        new TableUserConf().clearData();
         AppVariables.initAppVaribles();
     }
 

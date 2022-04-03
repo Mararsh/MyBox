@@ -133,7 +133,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
             }
             conn.setAutoCommit(false);
             long paletteid = palette.getCpnid();
-            if (getTableColorPalette().size(paletteid) == 0) {
+            if (getTableColorPalette().size(conn, paletteid) == 0) {
                 insert(conn, paletteid, FxColorTools.color2rgba(Color.WHITE), message("White"), 1f);
                 insert(conn, paletteid, FxColorTools.color2rgba(Color.BLACK), message("Black"), 2f);
                 insert(conn, paletteid, FxColorTools.color2rgba(Color.RED), message("Red"), 3f);

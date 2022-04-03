@@ -138,6 +138,9 @@ public class StyleButton {
         if (id.startsWith("random")) {
             return new StyleData(id, message("Random"), "", "iconRandom.png");
         }
+        if (id.startsWith("examplePop")) {
+            return new StyleData(id, "", "", "iconExamples.png");
+        }
         if (id.startsWith("example")) {
             return new StyleData(id, message("Example"), "", "iconExamples.png");
         }
@@ -416,7 +419,7 @@ public class StyleButton {
             return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
         }
         if (id.startsWith("tableDefinition")) {
-            return new StyleData(id, "", message("TableDefinition"), "", "iconSplit.png");
+            return new StyleData(id, "", message("TableDefinition"), "", "iconInfo.png");
         }
         if (id.startsWith("width")) {
             return new StyleData(id, message("Width"), "", "iconXRuler.png");

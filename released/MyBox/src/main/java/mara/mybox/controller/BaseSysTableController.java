@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -69,21 +70,21 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
     }
 
     @Override
-    public List<P> readPageData() {
+    public List<P> readPageData(Connection conn) {
         if (tableDefinition != null) {
-            return tableDefinition.queryConditions(queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
+            return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } else {
             return null;
         }
     }
 
     @Override
-    public long readDataSize() {
+    public long readDataSize(Connection conn) {
         if (tableDefinition != null) {
             if (queryConditions != null) {
-                return tableDefinition.conditionSize(queryConditions);
+                return tableDefinition.conditionSize(conn, queryConditions);
             } else {
-                return tableDefinition.size();
+                return tableDefinition.size(conn);
             }
         } else {
             return 0;

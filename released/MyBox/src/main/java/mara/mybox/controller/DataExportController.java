@@ -23,7 +23,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
@@ -329,8 +329,8 @@ public class DataExportController extends BaseTaskController {
                         }
                         List<String> row = new ArrayList<>();
                         for (ColumnDefinition column : columns) {
-                            Object value = DataFactory.getColumnValue(data, column.getColumnName());
-                            String display = DataFactory.displayColumn(data, column, value);
+                            Object value = BaseDataAdaptor.getColumnValue(data, column.getColumnName());
+                            String display = BaseDataAdaptor.displayColumn(data, column, value);
                             if (display == null || display.isBlank()) {
                                 display = "";
                             }

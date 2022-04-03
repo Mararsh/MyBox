@@ -4,22 +4,21 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2022-3-6 版本6.5.3         
+2022-4-3 版本6.5.4          
 
-* 数据：数据可转换为数据库表；管理和编辑数据库表；执行数据库SQL语句。                      
-* 计算：JShell（Java代码交互执行工具）的图形界面。         
-* 开发：编辑MyBox内部表的数据；启动JConsole（Java监视和管理控制台）。                
-* 解决："提取网页的图片和链接"失效；"文件解档"构建错误的文件路径；当目标目录是源目录的子目录时"目录同步"会无限循环；
-"矩阵的幂"缺少输入框。         
-
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3)             
+* 树形信息：管理树型；编辑节点；带标签的导入、导出；输出树图；提供示例；延展为笔记、收藏的网址、JShell代码、Javascript代码、SQL代码。                
+* 完善：JShell可以执行多行语句；管理和执行数据表的查询语句；网页“左键点击链接或图片时”有更多选项；输入框的历史值用弹出窗口实现。                     
+* 解决：批量图片OCR时信息粒度没有生效；编辑网页时保存新网页会弹出错误；以时间查询树时无返回； 
+数据表定义“定界标识符”后可能出错；文件编辑器“自动保存”失效。        
+ 
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
    
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.3-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-src.zip)   40M（大约值）       
+[MyBox-6.5.4-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-src.zip)   40M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -30,9 +29,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.3-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win10-x64.zip)  | 220MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.3-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.3-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac.dmg)  | 232MB  |  MyBox-6.5.3.app   |
+| win10 x64 | [MyBox-6.5.4-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win10-x64.zip)  | 220MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.4-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.4-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac.dmg)  | 232MB  |  MyBox-6.5.4.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -44,14 +43,14 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.3-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-win-jar.zip)  | 156MB | Java 17或更高版本 |
-| linux | [MyBox-6.5.3-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
-| mac | [MyBox-6.5.3-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.3/MyBox-6.5.3-mac-jar.zip)  |  159MB  | Java 16 |
+| win | [MyBox-6.5.4-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win-jar.zip)  | 156MB | Java 17或更高版本 |
+| linux | [MyBox-6.5.4-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
+| mac | [MyBox-6.5.4-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac-jar.zip)  |  159MB  | Java 16 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.5.3.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.4.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.5.3.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.4.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -62,16 +61,18 @@
 * 在某个输入法运行时，MyBox的窗口经常僵住。解决办法：禁用/卸载此输入法。       
 
 ## 版本迁移
-每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
+1. 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
+2. 每个版本处理的所有数据都在它指向的“数据目录”下。多个版本可以指向同一数据目录。
+3. MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。
 
 ## 配置<a id="Config" />
 配置文件在"用户目录"下:       
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.5.3.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.5.3.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.5.3.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.5.4.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.5.4.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.5.4.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -90,7 +91,7 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.3 | 2022-3-6 | [html](#devLog) |
+| 开发日志 | 6.5.4 | 2022-4-3 | [html](#devLog) |
 | 快捷键 | 6.4.7 |  2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -160,16 +161,19 @@ MyBox基于以下开放资源：
 | sfds | 书法 | http://www.sfds.cn/725B/ |
 | PaginatedPdfTable | PDF | https://github.com/eduardohl/Paginated-PDFBox-Table-Sample |
 | jsoup | DOM | https://jsoup.org/ |       
+| 微博 | 素材 | https://weibo.com/2328516855/LhFIHy26O#repost |
+| 知乎 | 素材 | https://www.zhihu.com/question/41580677/answer/1300242801 |
 
 
 # 当前版本       
-当前是版本6.5.3，已实现的特点概述如下:      
+当前是版本6.5.4，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [个人的](#personal)
 * [数据兼容](#dataCompatible)
 * [文档工具](#documentTools)
+    - [树形信息](#infoInTree)
     - [笔记](#notes)
     - [PDF工具](#pdfTools)
     - [文本编辑基础](#editTextBase)
@@ -271,7 +275,28 @@ MyBox v5.3以前的版本均基于Java 8。
 4. 导入的数据是自包含的，即重建原数据无需辅助数据。       
 
 
-## 文档工具<a id="documentTools" />       
+## 文档工具<a id="documentTools" />        
+
+### 树形信息<a id="infoInTree" />        
+1. 信息被组织为一棵树。
+2. 对任意节点可执行：增删改子节点、重命名、移动、复制、导出、显示树图、展开、折叠。
+3. 编辑节点：
+	-  节点名不应包含字符串“ > ”（“>”前后是空格）。
+	-  一个节点可以设置多个标签。
+4. 导出：       
+	-  格式：文本（用于导入）、单个网页、网页框架、xml。       
+	-  可选择是否导出时间、标签。       
+	-  可选择文件字符集。       
+	-  可设置网页风格。       
+5. 导入。提供示例。  
+6. 查询：
+	-  节点的子节点或所有后代。
+	-  按标签。可选多个标签。
+	-  按更改时间。 可选多个时间。
+	-  按标题或内容包含的字符串。 可输入多个关键字。       
+ 
+![截屏-infoInTree](https://mararsh.github.io/MyBox/snap-infoInTree.jpg)
+
 
 ### 笔记<a id="notes" />       
 1. 笔记是html格式的信息片段：
@@ -281,22 +306,8 @@ MyBox v5.3以前的版本均基于Java 8。
 		-  点击按钮“同步”(F10)，把当前编辑模式中的修改应用到其它模式。
 		-  点击按钮“保存”(F2)，把当前编辑模式的修改保存下来，并将修改自动同步到其它模式。
 		-  笔记的html代码应是"body"的内容，不要包含标签“html”、"head"、和"body"。
-	-  可对笔记设置多个标签。
 	-  可对笔记设置风格，仅用于显示，不会保存在笔记的代码中。
-2. 笔记本是一组笔记和笔记本的集合：
-	-  笔记本形成一棵树，即笔记本可以是其它笔记本的孩子。
-	-  笔记本名不应包含字符串“ > ”（“>”前后是空格）。
-	-  对任意笔记本结点可执行：导出、添加、删除、重命名、移动、复制。
-	-  可导出笔记本：       
-		-  格式：文本（用于导入）、单个网页、网页框架、xml。       
-		-  可选择文件字符集。       
-		-  可设置网页风格。       
-	-  可导入笔记本。提供示例。       
-3. 查询笔记：
-	-  按笔记本。可选是否包含子笔记本。
-	-  按标签。可选多个标签。
-	-  按更改时间。 可选多个时间。
-	-  按标题或内容包含的字符串。 可输入多个关键字。       
+2. 笔记本是由笔记构成的树状信息。
 
 ![截屏-notes](https://mararsh.github.io/MyBox/snap-notes.jpg)
 
@@ -843,7 +854,6 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 可选是否导入数据。
 12. 同步显示数据的文本格式和网页格式。
 
-
 ![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataChart.jpg)         
 
 
@@ -888,20 +898,26 @@ MyBox v5.3以前的版本均基于Java 8。
 
 ### 数据库表<a id="dataTables" />
 1. 表名和列名应当满足“SQL标识符的限制”：
-      - 最大长度为128。
-      - 忽略大小写。
-      - 普通标识符：
- 		- 指未用双引号包围的标识符。
+	- 最大长度为128。
+	- “普通标识符”          
+ 		- 指未用双引号包围的标识符：            
  		- 只能由字母、数字、和下划线(_)构成。
  		- 只能由字母开头。
  		- 字母和数字可以是Unicode（可以是中文）。
  		- 不能是SQL保留字。
- 		- 非法字符将被转换为下划线。
- 		- 若标识符开头不为字母，则字符"a"将被加到前面。
-      - 定界标识符：
+ 		- 当保存在数据库中，它被转换为大写的。
+ 		- 当在SQL语句中引用它时，忽略大小写。              
+                   例如，AbC等同于abc和aBC。
+	- “定界标识符”
  		- 指用双引号包围的标识符。
  		- 可以包含任何字符。
-2. 数据库表被创建以后：
+ 		- 当保存在数据库中时，它只取双引号包围的字串。
+ 		- 当在SQL语句中引用它时，必须用双引号包围它，除了以下情形：它只包含大写字母和下划线。        
+                   例如, "AbC"不同于AbC或"ABC"，而"ABC"等同于ABC和aBc.
+2. 当MyBox创建表名或列名：
+	- 非法字符将被转换为下划线。
+	-  若标识符开头不为字母，则字符"a"将被加到前面。
+3. 数据库表被创建以后：
 	- 不能修改和删除主键的定义。
 	- 可以添加和删除列定义，但是不能修改列定义。      
 
@@ -912,23 +928,30 @@ MyBox v5.3以前的版本均基于Java 8。
 1. 提供常用SQL语句的示例。
 2. 自动生成所有用户数据表名的列表。
 3. 查看所有用户数据表的定义。
-4. 显示执行输出和查询结果。       
+4. 显示执行输出和查询结果。   
+5. SQL代码可以被组织为树状信息。
+6. 可以打开或保存为外部文件。     
 
 ![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-dbSQL.jpg)         
 
 
-### JShell（Java交互编程工具）<a id="JShell" />
+### JShell（Java交互编程工具）<a id="JShell" />             
+JShell是JDK包含的工具之一。此工具帮助图形化运行JShell:         
+    
 1. JShell提供交互执行"snippets"的能力，即"读取-执行-输出"循环 (REPL)。 
 2. "Snippet"是Java编程语言的单个表达式、语句、或声明的代码：
 	- 语句结尾必须有分号，而表达式不需要。
 	- 除了基本类，在调用多数Java类之前需要把它们导入进来。  
 	- 可以定义变量和方法、然后调用它们。  
-3. 输入一个snippet，然后点击 "开始"按钮以执行它： 
+3. 输入若干snippet，然后点击 "开始"按钮以执行它们： 
+	- Snippets被逐个计算。   
 	- Snippets的结果会影响后续的snippets，即如"一个运行环境"。  
 	- 所有已执行过的snippets的属性被显示在一张表中。
 	- 点击按钮"删除"或"清除"以把一些或全部snippets从当前环境中移除出去。
-	- 点击按钮"恢复"以重置JShell，环境将变为空白。
-4. JShell可以用于科学计算、和调试Java代码。
+	- 点击按钮"重置"以清零JShell，环境将变为空白。
+4. JShell可以用于科学计算、和调试Java代码。    
+5. JShell代码可以被组织为树状信息。
+6. 可以打开或保存为外部文件。
 
 ![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-JShell.jpg)         
 
@@ -1589,7 +1612,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 8. 打开数据目录。
 
 ## 窗口<a id="windows" />
-1. 刷新/重置/全屏窗口
+1. 刷新/重置/全屏/置顶窗口
 2. 关闭其它窗口
 3. 重启MyBox
 4. 最近访问的界面
@@ -1605,7 +1628,16 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 5. About
 
 
-# 开发日志<a id="devLog" />            
+# 开发日志<a id="devLog" />             
+2022-4-3 版本6.5.4         
+
+* 树形信息：管理树型；编辑节点；带标签的导入、导出；输出树图；提供示例；延展为笔记、收藏的网址、JShell代码、Javascript代码、SQL代码。                
+* 完善：JShell可以执行多行语句；管理和执行数据表的查询语句；网页“左键点击链接或图片时”有更多选项；输入框的历史值用弹出窗口实现。                     
+* 解决：批量图片OCR时信息粒度没有生效；编辑网页时保存新网页会弹出错误；以时间查询树时无返回； 
+数据表定义“定界标识符”后可能出错；文件编辑器“自动保存”失效。                    
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
+   
 2022-3-6 版本6.5.3         
 
 * 数据：数据可转换为数据库表；管理和编辑数据库表；执行数据库SQL语句。                      

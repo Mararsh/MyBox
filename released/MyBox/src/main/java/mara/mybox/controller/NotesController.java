@@ -2,34 +2,32 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.input.KeyEvent;
+import javafx.fxml.FXML;
 import javafx.stage.Window;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableNote;
-import mara.mybox.db.table.TableNoteTag;
-import mara.mybox.db.table.TableNotebook;
-import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-2-28
  * @License Apache License Version 2.0
- *
- * NotesController < NotesController_Notes < NotesController_Tags <
- * NotesController_Notebooks < NotesController_Base < BaseDataTableController
- *
  */
-public class NotesController extends NotesController_Notes {
+public class NotesController extends TreeManageController {
+
+    @FXML
+    protected NoteEditor editorController;
 
     public NotesController() {
         baseTitle = Languages.message("Notes");
         TipsLabelKey = "NotesComments";
+        category = TreeNode.Notebook;
+        nameMsg = message("Title");
+        valueMsg = message("Html");
     }
 
     @Override
@@ -38,23 +36,9 @@ public class NotesController extends NotesController_Notes {
     }
 
     @Override
-    public void setTableDefinition() {
-        tableNotebook = new TableNotebook();
-        tableNote = new TableNote();
-        tableTag = new TableTag();
-        tableNoteTag = new TableNoteTag();
-        tableDefinition = tableNote;
-        notebooksController.selectedNode = null;
-
-    }
-
-    @Override
     public void initControls() {
         try {
-            initNotebooks();
-            initTimes();
-            initTags();
-            initNotes();
+            editorController.setParameters(this);
 
             super.initControls();
 
@@ -64,28 +48,28 @@ public class NotesController extends NotesController_Notes {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            if (!AppVariables.isTesting && tableNotebook.size() < 2
-                    && PopTools.askSure(this, getBaseTitle(), Languages.message("ImportExamples"))) {
-                notebooksController.importExamples();
-            } else {
-                loadBooks();
-            }
-            refreshTags();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+    public void editNode(TreeNode node) {
+        if (!checkBeforeNextAction()) {
+            return;
         }
+        editorController.editNote(node);
+    }
+
+    @FXML
+    @Override
+    protected void recoverNode() {
+        editorController.recoverNote();
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            return noteEditorController.keyEventsFilter(event);
-        }
-        return true;
+    public boolean isNodeChanged() {
+        return editorController.fileChanged || nodeController.nodeChanged;
+    }
+
+    @Override
+    public void nodeSaved() {
+        super.nodeSaved();
+        editorController.updateFileStatus(false);
     }
 
     /*

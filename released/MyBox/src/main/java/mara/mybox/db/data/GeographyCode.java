@@ -1,7 +1,6 @@
 package mara.mybox.db.data;
 
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
@@ -13,7 +12,7 @@ import mara.mybox.value.Languages;
  */
 public class GeographyCode extends BaseData {
 
-    protected long owner, continent, country, province, city, county, town, village, building,
+    protected long gcid, owner, continent, country, province, city, county, town, village, building,
             area, population;
     protected short level;
     protected GeographyCodeLevel levelCode;
@@ -37,7 +36,7 @@ public class GeographyCode extends BaseData {
     }
 
     public GeographyCode() {
-        id = continent = country = province = city = county = village = town = building
+        gcid = continent = country = province = city = county = village = town = building
                 = area = population = -1;
         level = 10;
         levelCode = null;
@@ -111,7 +110,7 @@ public class GeographyCode extends BaseData {
         try {
             switch (column) {
                 case "gcid":
-                    data.setId(value == null ? -1 : (long) value);
+                    data.setGcid(value == null ? -1 : (long) value);
                     return true;
                 case "level":
                     data.setLevel(value == null ? -1 : (short) value);
@@ -222,7 +221,7 @@ public class GeographyCode extends BaseData {
         }
         switch (column) {
             case "gcid":
-                return data.getId();
+                return data.getGcid();
             case "level":
                 return data.getLevel();
             case "longitude":
@@ -328,7 +327,7 @@ public class GeographyCode extends BaseData {
             case "building":
                 return data.getBuildingName();
         }
-        return DataFactory.displayColumnBase(data, column, value);
+        return BaseDataAdaptor.displayColumnBase(data, column, value);
     }
 
     public static String displayDataMore(GeographyCode data, String lineBreak) {
@@ -641,56 +640,56 @@ public class GeographyCode extends BaseData {
 
     public long getContinent() {
         if (continentCode != null) {
-            continent = continentCode.getId();
+            continent = continentCode.getGcid();
         }
         return continent;
     }
 
     public long getCountry() {
         if (countryCode != null) {
-            country = countryCode.getId();
+            country = countryCode.getGcid();
         }
         return country;
     }
 
     public long getProvince() {
         if (provinceCode != null) {
-            province = provinceCode.getId();
+            province = provinceCode.getGcid();
         }
         return province;
     }
 
     public long getCity() {
         if (cityCode != null) {
-            city = cityCode.getId();
+            city = cityCode.getGcid();
         }
         return city;
     }
 
     public long getCounty() {
         if (countyCode != null) {
-            county = countyCode.getId();
+            county = countyCode.getGcid();
         }
         return county;
     }
 
     public long getVillage() {
         if (villageCode != null) {
-            village = villageCode.getId();
+            village = villageCode.getGcid();
         }
         return village;
     }
 
     public long getTown() {
         if (townCode != null) {
-            town = townCode.getId();
+            town = townCode.getGcid();
         }
         return town;
     }
 
     public long getBuilding() {
         if (buildingCode != null) {
-            building = buildingCode.getId();
+            building = buildingCode.getGcid();
         }
         return building;
     }
@@ -795,10 +794,17 @@ public class GeographyCode extends BaseData {
         return source(source);
     }
 
-
     /*
         get/set
      */
+    public long getGcid() {
+        return gcid;
+    }
+
+    public void setGcid(long gcid) {
+        this.gcid = gcid;
+    }
+
     public String getChineseName() {
         return chineseName;
     }

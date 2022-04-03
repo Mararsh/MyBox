@@ -18,7 +18,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
@@ -200,8 +199,8 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     }
 
     @Override
-    public List<ImageClipboard> readPageData() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+    public List<ImageClipboard> readPageData(Connection conn) {
+        try {
             ((TableImageClipboard) tableDefinition).clearInvalid(conn);
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } catch (Exception e) {

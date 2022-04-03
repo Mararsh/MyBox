@@ -1,0 +1,335 @@
+##MyBox#
+示例 > 表达式 > 数值计算
+e
+Math.E
+
+##MyBox#
+示例 > 表达式 > 数值计算
+pi
+Math.PI
+
+##MyBox#
+示例 > 表达式 > 数值计算
+abs()
+Math.abs( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+exp()
+Math.exp( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+sqrt()
+Math.sqrt( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+cbrt()
+Math.cbrt( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+pow()
+Math.pow( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+cos()
+Math.cos( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+sin()
+Math.sin( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+tan()
+Math.tan( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+atan()
+Math.atan( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+cosh()
+Math.cosh( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+acos()
+Math.acos( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+sinh()
+Math.sinh( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+asin()
+Math.asin( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+tanh()
+Math.tanh( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+atan2()
+Math.atan2( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+log()
+Math.log( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+log10()
+Math.log10( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+log1p()
+Math.log1p( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+ceil()
+Math.ceil( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+floor()
+MMath.floor( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+round()
+Math.round( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+rint()
+Math.rint( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+scalb()
+Math.scalb( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+signum()
+Math.signum( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+random()
+Math.random( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+max()
+Math.max( , )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+min()
+Math.min( , )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+toDegrees()
+Math.toDegrees( )
+
+##MyBox#
+示例 > 表达式 > 数值计算
+toRadians()
+Math.toRadians( )
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+equalsIgnoreCase()
+.equalsIgnoreCase()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+equals()
+.equals()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+startsWith()
+.startsWith()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+endsWith()
+.endsWith()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+split()
+.split()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+substring()
+.substring()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+charAt()
+.charAt()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+concat()
+.concat()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+contains()
+.contains()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+indexOf()
+.indexOf()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+lastIndexOf()
+.lastIndexOf()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+length()
+.length()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+replace()
+.replace(,)
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+replaceAll()
+.replaceAll(,)
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+replaceFirst()
+.replaceFirst()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+substring()
+.substring()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+toLowerCase()
+.toLowerCase()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+toUpperCase()
+.toUpperCase()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+trim()
+.trim()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+strip()
+.strip()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+isBlank()
+.isBlank()
+
+##MyBox#
+示例 > 表达式 > 字符串处理
+isEmpty()
+.isEmpty()
+
+##MyBox#
+示例 > 方法
+圆的面积
+double circleAreaByDiameter(double diameter) {        
+    double radius = diameter / 2;        
+    return   Math.PI *  radius * radius ;        
+}
+circleAreaByDiameter(120) + circleAreaByDiameter(30)  
+
+##MyBox#
+示例 > 方法
+四舍五入
+import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}    
+scale(Math.PI, 3) 
+
+##MyBox#
+示例 > 方法
+格式化数值
+import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}        
+                                     
+import java.text.DecimalFormat;        
+String formatDouble(double data, int scale) {        
+    try {        
+        String format = "#,###";        
+        if (scale > 0) {        
+            format = "." + "#".repeat(scale);        
+        }        
+        DecimalFormat df = new DecimalFormat(format);        
+        return df.format(scale(data, scale));        
+    } catch (Exception e) {        
+        return e.toString();        
+    }        
+}        
+                                     
+double circleAreaByRadius(double radius) {        
+    return   Math.PI *  radius * radius ;        
+}        
+                                     
+formatDouble(circleAreaByRadius(273.4), 4)    
+
+##MyBox#
+示例 > 方法
+格式化时间
+import java.util.Date;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+
+String DatetimeFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
+String datetimeToString(Date theDate, String format, TimeZone theZone) {
+    if (theDate == null || theZone == null) {
+            return null;
+    }
+    SimpleDateFormat formatter = new SimpleDateFormat(format);
+    formatter.setTimeZone(theZone);
+    String dateString = formatter.format(theDate);
+    return dateString;
+}
+
+datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());

@@ -50,7 +50,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -1219,7 +1219,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 String info = mapOptionsController.popInfoCheck.isSelected()
                         ? "<div>" + name + value + "</div></br>"
-                        + DataFactory.displayData(reportsController.tableDefinition, report, displayNames(), true) : "";
+                        + BaseDataAdaptor.displayData(reportsController.tableDefinition, report, displayNames(), true) : "";
                 mapOptionsController.markerSize = markSize(EpidemicReportTools.getNumber(report, orderNames.get(0)).doubleValue());
                 drawPoint(location.getLongitude(), location.getLatitude(),
                         label, circleImage(), info, null);
@@ -1481,7 +1481,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 list.add(report);
             }
-            return DataFactory.htmlDataList(reportsController.tableDefinition, list, displayNames());
+            return BaseDataAdaptor.htmlDataList(reportsController.tableDefinition, list, displayNames());
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;

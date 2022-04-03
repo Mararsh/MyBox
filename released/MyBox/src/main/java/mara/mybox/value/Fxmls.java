@@ -16,12 +16,14 @@ public class Fxmls {
         document
      */
     public static final String NotesFxml = "/fxml/Notes.fxml";
-    public static final String NotesImportFxml = "/fxml/NotesImport.fxml";
-    public static final String NotesExportFxml = "/fxml/NotesExport.fxml";
-    public static final String NotesMoveNotebookFxml = "/fxml/NotesMoveNotebook.fxml";
-    public static final String NotesCopyNotebookFxml = "/fxml/NotesCopyNotebook.fxml";
-    public static final String NotesCopyNotesFxml = "/fxml/NotesCopyNotes.fxml";
-    public static final String NotesMoveNotesFxml = "/fxml/NotesMoveNotes.fxml";
+    public static final String TreeManageFxml = "/fxml/TreeManage.fxml";
+    public static final String TreeNodeMoveFxml = "/fxml/TreeNodeMove.fxml";
+    public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
+    public static final String TreeNodeExportFxml = "/fxml/TreeNodeExport.fxml";
+    public static final String TreeNodeImportFxml = "/fxml/TreeNodeImport.fxml";
+    public static final String TreeNodesCopyFxml = "/fxml/TreeNodesCopy.fxml";
+    public static final String TreeNodesMoveFxml = "/fxml/TreeNodesMove.fxml";
+    public static final String TreeNodeParentFxml = "/fxml/TreeNodeParent.fxml";
 
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
@@ -190,6 +192,7 @@ public class Fxmls {
     public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
     public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";
+    public static final String DataTableQueryFxml = "/fxml/DataTableQuery.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -207,7 +210,7 @@ public class Fxmls {
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
 
-    public static final String DatabaseSQLFxml = "/fxml/DatabaseSQL.fxml";
+    public static final String DatabaseSqlFxml = "/fxml/DatabaseSql.fxml";
     public static final String DataTablesFxml = "/fxml/DataTables.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
@@ -306,11 +309,6 @@ public class Fxmls {
 
     public static final String WebFavoritesFxml = "/fxml/WebFavorites.fxml";
     public static final String WebFavoriteAddFxml = "/fxml/WebFavoriteAdd.fxml";
-    public static final String WebFavoriteNodeCopyFxml = "/fxml/WebFavoriteNodeCopy.fxml";
-    public static final String WebFavoritesCopyFxml = "/fxml/WebFavoritesCopy.fxml";
-    public static final String WebFavoritesMoveFxml = "/fxml/WebFavoritesMove.fxml";
-    public static final String WebFavoritesExportFxml = "/fxml/WebFavoritesExport.fxml";
-    public static final String WebFavoritesImportFxml = "/fxml/WebFavoritesImport.fxml";
 
     public static final String NetworkConvertUrlFxml = "/fxml/NetworkConvertUrl.fxml";
     public static final String NetworkQueryAddressFxml = "/fxml/NetworkQueryAddress.fxml";
@@ -344,7 +342,6 @@ public class Fxmls {
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
     public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
-    public static final String RunJdkCommandFxml = "/fxml/RunJdkCommand.fxml";
     public static final String JShellFxml = "/fxml/JShell.fxml";
 
     /*
@@ -354,7 +351,7 @@ public class Fxmls {
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
     public static final String TextInputFxml = "/fxml/TextInput.fxml";
     public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
-    public static final String HtmlScriptFxml = "/fxml/HtmlScript.fxml";
+    public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";
@@ -372,9 +369,6 @@ public class Fxmls {
     public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";
     public static final String FindPopFxml = "/fxml/FindPop.fxml";
     public static final String ColorsPopFxml = "/fxml/ColorsPop.fxml";
-
-    public static final String TreeNodeMoveFxml = "/fxml/TreeNodeMove.fxml";
-    public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
 

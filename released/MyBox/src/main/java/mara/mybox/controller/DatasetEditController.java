@@ -19,9 +19,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.value.Languages.message;
-import static mara.mybox.value.Languages.tableMessage;
 import mara.mybox.value.Languages;
 
 /**
@@ -136,8 +133,8 @@ public class DatasetEditController extends BaseController {
                 clearData();
                 return;
             }
-            if (loadedDataset.getId() > 0) {
-                idInput.setText(loadedDataset.getId() + "");
+            if (loadedDataset.getDsid() > 0) {
+                idInput.setText(loadedDataset.getDsid() + "");
             } else {
                 idInput.clear();
             }
@@ -238,9 +235,9 @@ public class DatasetEditController extends BaseController {
             }
             Dataset dataset = new Dataset().setDataSet(name);
             if (idInput.getText() == null || idInput.getText().isBlank()) {
-                dataset.setId(-1);
+                dataset.setDsid(-1);
             } else {
-                dataset.setId(Long.valueOf(idInput.getText()));
+                dataset.setDsid(Long.valueOf(idInput.getText()));
             }
             String category = categorySelector.getSelectionModel().getSelectedItem();
             for (String c : TableDataset.dataCategories()) {
@@ -287,9 +284,9 @@ public class DatasetEditController extends BaseController {
                 return;
             }
 
-            if (dataset.getId() > 0) {
+            if (dataset.getDsid() > 0) {
                 popInformation(Languages.message("UpdateSuccessfully"));
-                idInput.setText(dataset.getId() + "");
+                idInput.setText(dataset.getDsid() + "");
             } else {
                 popInformation(Languages.message("InsertSuccessfully"));
             }

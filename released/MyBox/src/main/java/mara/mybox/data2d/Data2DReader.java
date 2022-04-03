@@ -356,7 +356,7 @@ public abstract class Data2DReader {
                     String name = column.getColumnName();
                     Object value = column.fromString(record.get(col));
                     if (value != null) {
-                        data2DRow.setValue(name, value);
+                        data2DRow.setColumnValue(name, value);
                     }
                 }
             }

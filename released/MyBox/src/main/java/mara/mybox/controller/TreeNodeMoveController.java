@@ -5,14 +5,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class TreeNodeMoveController extends BaseTreeNodeSelector {
+public class TreeNodeMoveController extends TreeNodesController {
 
     protected TreeNode sourceNode;
 
@@ -20,14 +20,14 @@ public class TreeNodeMoveController extends BaseTreeNodeSelector {
     protected Label sourceLabel;
 
     public TreeNodeMoveController() {
-        baseTitle = Languages.message("MoveNode");
+        baseTitle = message("MoveNode");
     }
 
-    public void setCaller(BaseTreeNodeSelector treeController, TreeNode sourceNode, String name) {
+    public void setCaller(TreeNodesController nodesController, TreeNode sourceNode, String name) {
         this.sourceNode = sourceNode;
-        sourceLabel.setText(Languages.message("NodeMoved") + ":\n" + name);
+        sourceLabel.setText(message("NodeMoved") + ":\n" + name);
         ignoreNode = sourceNode;
-        setCaller(treeController);
+        setCaller(nodesController);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TreeNodeMoveController extends BaseTreeNodeSelector {
             }
             TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
             if (targetItem == null) {
-                alertError(Languages.message("SelectNodeMoveInto"));
+                alertError(message("SelectNodeMoveInto"));
                 return;
             }
             TreeNode targetNode = targetItem.getValue();
@@ -58,21 +58,18 @@ public class TreeNodeMoveController extends BaseTreeNodeSelector {
 
                 @Override
                 protected boolean handle() {
-                    sourceNode.setParent(targetNode.getNodeid());
-                    tableTree.updateData(sourceNode);
+                    sourceNode.setParentid(targetNode.getNodeid());
+                    tableTreeNode.updateData(sourceNode);
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (treeController == null || !treeController.getMyStage().isShowing()) {
-                        treeController = oneOpen();
-                    } else {
-                        treeController.nodeChanged(sourceNode);
-                        treeController.nodeChanged(targetNode);
+                    if (caller != null && caller.getMyStage() != null && caller.getMyStage().isShowing()) {
+                        caller.loadTree(targetNode);
+                        caller.nodeMoved(targetNode, sourceNode);
+                        caller.popSuccessful();
                     }
-                    treeController.loadTree(targetNode);
-                    treeController.popSuccessful();
                     closeStage();
 
                 }

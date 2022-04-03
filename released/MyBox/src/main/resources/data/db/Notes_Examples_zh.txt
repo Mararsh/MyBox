@@ -1,13 +1,28 @@
 ##MyBox#
-笔记本 > 笔记本
+MyBoxTreeRoot;;;
+笔记本
+
+##MyBox#
+笔记本
 笔记本封面
 笔记是html格式的信息片段<br>
 笔记本是一组笔记和笔记本的集合。<br>
 笔记本形成一棵树。
 
 ##MyBox#
+笔记本
+笔记示例
+
+##MyBox#
+笔记本 > 笔记示例
+网址
+Tags:待补充;;;0xfff2dfff
+
+
+##MyBox#
 笔记本 > 笔记示例 > 网址
 搜索
+Tags:待确定;;;0xedd1d8ff;;;喜欢;;;0x0d3928ff;;;重要;;;0x003472ff
 <a href="https://www.wikipedia.org/">wikipedia</a><br>
 <a href="https://www.answers.com/">answers</a><br>
 <a href="https://www.thefreedictionary.com/">thefreedictionary</a><br>
@@ -20,6 +35,7 @@
 ##MyBox#
 笔记本 > 笔记示例 > 网址
 生活-中文
+Tags:待确定;;;0xedd1d8ff;;;紧急;;;0xc32136ff
 <a href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
 <a href="https://www.boc.cn/">中国银行</a><br>
 <a href="http://www.icbc.com.cn">工商银行</a><br>
@@ -29,6 +45,7 @@
 ##MyBox#
 笔记本 > 笔记示例 > 网址
 论文和数据-英语
+Tags:待补充;;;0xfff2dfff;;;重要;;;0x003472ff
 <a href="https://www.cn-ki.net/">iData</a><br>
 <a href="https://sci-hub.se/">sci-hub</a><br>
 <a href="http://www.city-data.com/">city-Data</a><br>
@@ -46,6 +63,7 @@
 ##MyBox#
 笔记本 > 笔记示例 > 网址
 论文和数据-中文
+Tags:待补充;;;0xfff2dfff;;;重要;;;0x003472ff
 <a href="http://www.stats.gov.cn">国家数据</a><br>
 <a href="http://www.pbc.gov.cn/diaochatongjisi/116219/index.html">中国人民银行数据库</a><br>
 <a href="http://www.geodata.cn/index.html">国家地球系统科学数据中心</a><br>
@@ -70,6 +88,7 @@
 ##MyBox#
 笔记本 > 笔记示例 > 网址
 学习-英语
+Tags:待补充;;;0xfff2dfff
 <a href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
 <a href="https://www.bilibili.com/video/BV1Js411n7zv">MIT 18.01 Calculus</a><br>
 <a href="https://www.bilibili.com/video/BV1es411H7YH">MIT 6.042J Discrete Mathematics</a><br>
@@ -78,6 +97,7 @@
 ##MyBox#
 笔记本 > 笔记示例 > 网址
 学习-中文
+Tags:待补充;;;0xfff2dfff;;;重要;;;0x003472ff
 <a href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
 <a href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
 <a href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>
@@ -87,6 +107,7 @@
 ##MyBox#
 笔记本 > 笔记示例 > 网址
 网文-中文
+Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 <a href="https://www.kunnu.com">鲲弩小说</a><br>
 <a href="https://www.jjwxc.net">晋江文学城</a><br>
 <a href="http://yunqi.qq.com">云起书院</a><br>
@@ -100,6 +121,7 @@
 ##MyBox#
 笔记本 > 笔记示例 > 网址
 娱乐-中文
+Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 <a href="https://www.qingting.fm">蜻蜓FM</a><br>
 <a href="https://www.bilibili.com">哔哩哔哩</a><br>
 <a href="https://www.youku.com">优酷</a><br>
@@ -112,6 +134,12 @@
 <a href="https://www.bilibili.com/video/BV1Px411P761">牡丹亭（1986年）张继青</a><br>
 <a href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br>
 <a href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
+
+##MyBox#
+笔记本 > 笔记示例
+我的数据
+Tags:待补充;;;0xfff2dfff;;;重要;;;0x003472ff
+
 
 ##MyBox#
 笔记本 > 笔记示例 > 我的数据
@@ -167,9 +195,13 @@
 </table>
 
 ##MyBox#
+笔记本 > 笔记示例
+常识
+
+##MyBox#
 笔记本 > 笔记示例 > 常识
 上衣的尺寸
-            <table>
+<table>
                 <tr><td>尺码</td><td>衣长</td><td>肩宽</td><td>袖长</td><td>胸围</td><td>腰围</td></tr>
                 <tr><td>160/76A(0)</td><td>69</td><td>37</td><td>80</td><td>88</td><td>86</td></tr>
                 <tr><td>160/84A(2)</td><td>69</td><td>38</td><td>81</td><td>90</td><td>88</td></tr>
@@ -183,14 +215,21 @@
             </table>
 
 ##MyBox#
+笔记本 > 笔记示例
+通讯录
+Tags:待补充;;;0xfff2dfff
+
+
+##MyBox#
 笔记本 > 笔记示例 > 通讯录
 亲友
+Tags:重要;;;0x003472ff
 <table>
-    <tr><th> 关系 </th><th> 手机 </th><th> 邮箱 </th><th> 地址 </th><th> 生日 </th><th> 备注 </th></tr>
+    <tbody><tr><th> 关系 </th><th> 手机 </th><th> 邮箱 </th><th> 地址 </th><th> 生日 </th><th> 备注 </th></tr>
     <tr><td> 妈妈 </td><td> 123456789 </td><td> 123@aa.com </td><td> 美丽岛 </td><td> 1960.1.1 </td><td> </td></tr>
     <tr><td> 爸爸 </td><td> 123456789 </td><td> 123@aa.com </td><td> 美丽岛 </td><td> 1961.3.1 </td><td> </td></tr>
     <tr><td> 姐姐 </td><td> 123456789 </td><td> 123@aa.com </td><td> 美丽岛 </td><td> 1984.3.8 </td><td> </td></tr>
-</table>
+</tbody></table>
 
 ##MyBox#
 笔记本 > 笔记示例 > 通讯录
@@ -203,8 +242,15 @@
 </table>
 
 ##MyBox#
+笔记本 > 笔记示例
+编程
+Tags:待补充;;;0xfff2dfff
+
+
+##MyBox#
 笔记本 > 笔记示例 > 编程
 编程的网址
+Tags:待确定;;;0xedd1d8ff
 <a href="https://sourceforge.net">sourceforge</a><br>
 <a href="https://stackoverflow.com">stackoverflow</a><br>
 <a href="https://github.com">github</a><br><br>
@@ -233,8 +279,13 @@ sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
 </CODE></PRE>
 
 ##MyBox#
+笔记本 > 笔记示例 > 编程
+javafx
+
+##MyBox#
 笔记本 > 笔记示例 > 编程 > javafx
 关于javafx一句话事项
+Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 <ol>
     <li>总是假设用户对编程一无所知。</li>
     <li>不要指望用户会看用户手册，一些人连屏幕上的提示都不会读或想（包括我）。</li>
@@ -258,6 +309,10 @@ sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
     <li>当双击鼠标时，总是先触发单击事件、然后继续触发双击事件，因此需要注意事件处理中可能重复或冲突的操作。</li>
     <li>对于多选表格，用getSelectedIndices()监听变化。若用selectedItemProperty()监听则可能遗漏状态变化。</li>
 </ol>
+
+##MyBox#
+笔记本 > 笔记示例 > 编程 > javafx
+示例
 
 ##MyBox#
 笔记本 > 笔记示例 > 编程 > javafx > 示例
@@ -295,8 +350,13 @@ startButton.disableProperty().bind(
 </CODE></PRE>
 
 ##MyBox#
+笔记本 > 笔记示例 > 编程
+java
+
+##MyBox#
 笔记本 > 笔记示例 > 编程 > java
 关于java一句话事项
+Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 <ol>
     <li>总是假设最极端的输入和最离奇的错误操作。</li>
     <li>假设用户硬件配置（cpu/内存/硬盘）略低于平均水平。</li>
@@ -320,14 +380,18 @@ startButton.disableProperty().bind(
     <li>Double.MIN_VALUE是最小正double（最接近于零的正数）。-Double.MAX_VALUE 是最小double。</li>
     <li>若处理货币，应当用整型保存各个货币单位。</li>
     <li>BigDecimal比double慢很多。大多数情况下double的精度够用。</li>
-    <li>若是判断数字范围，应当用 if (abs(x - 7.3) < TOLERANCE) 而不是 if (x == 7.3)。</li>
+    <li>若是判断数字范围，应当用 if (abs(x - 7.3) &lt; TOLERANCE) 而不是 if (x == 7.3)。</li>
     <li>final static常量必须在编译时刻可以确定。</li>
 </ol>
 
 ##MyBox#
+笔记本 > 笔记示例 > 编程
+MyBox
+
+##MyBox#
 笔记本 > 笔记示例 > 编程 > MyBox
 MyBox打包步骤-windows
-		<p>在Windows操作系统下：</p>
+<p>在Windows操作系统下：</p>
 			<ol  class="inside">
 				<li>确保jdk和maven已正确安装。</li>
 				<li>下载Mybox源码。</li>
@@ -340,7 +404,7 @@ MyBox打包步骤-windows
 ##MyBox#
 笔记本 > 笔记示例 > 编程 > MyBox
 MyBox打包步骤-linux
-		<p>在Linux操作系统下：</p>
+<p>在Linux操作系统下：</p>
 			<ol  class="inside">
 				<li>确保jdk和maven已正确安装。</li>
 				<li>下载Mybox源码。</li>
@@ -358,7 +422,7 @@ MyBox打包步骤-linux
 ##MyBox#
 笔记本 > 笔记示例 > 编程 > MyBox
 MyBox打包步骤-mac
-		<p>在Mac操作系统下：</p>
+<p>在Mac操作系统下：</p>
 			<ol  class="inside">
 				<li>确保jdk和maven已正确安装。</li>
 				<li>下载Mybox源码。</li>
@@ -376,7 +440,7 @@ MyBox打包步骤-mac
 ##MyBox#
 笔记本 > 笔记示例 > 编程 > MyBox
 MyBox图标的颜色
-            <table>
+<table>
                 <tbody><tr style="font-weight:bold; "><th>色彩</th><th>色彩 - RGBA</th><th>色彩 - RGB</th><th>名字</th><th>值</th><th>sRGB</th><th>HSB</th></tr>
                 <tr><td align="center"><div style="width: 50px;  background-color:#C32136; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XC32136FF </td><td>#C32136 </td><td>枣红</td><td>-3989194</td><td>195 33 54 100%</td><td>352 83% 76%</td></tr>
                 <tr><td align="center"><div style="width: 50px;  background-color:#FBD5CF; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFBD5CFFF </td><td>#FBD5CF </td><td>浅粉</td><td>-272945</td><td>251 213 207 100%</td><td>8 18% 98%</td></tr>
@@ -391,4 +455,3 @@ MyBox图标的颜色
                 <tr><td align="center"><div style="width: 50px;  background-color:#0D3928; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X0D3928FF </td><td>#0D3928 </td><td>墨绿</td><td>-15910616</td><td>13 57 40 100%</td><td>157 77% 22%</td></tr>
                 <tr><td align="center"><div style="width: 50px;  background-color:#E0F0E9; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XE0F0E9FF </td><td>#E0F0E9 </td><td>素</td><td>-2035479</td><td>224 240 233 100%</td><td>154 7% 94%</td></tr>
             </tbody></table>
-

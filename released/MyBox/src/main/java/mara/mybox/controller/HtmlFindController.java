@@ -11,15 +11,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.FindReplaceString;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -40,13 +42,13 @@ public class HtmlFindController extends WebAddressController {
     @FXML
     protected ComboBox<String> findFontSelector, foundItemSelector;
     @FXML
-    protected ControlStringSelector findInputController;
+    protected TextField findInput;
     @FXML
     protected ColorSet findColorController, findBgColorController, currentColorController, currentBgColorController;
     @FXML
     protected Label foundLabel;
     @FXML
-    protected Button goItemButton, queryButton, exampleFindButton;
+    protected Button goItemButton, queryButton, examplePopFindButton;
     @FXML
     protected CheckBox caseCheck, wrapCheck, regCheck;
 
@@ -58,8 +60,6 @@ public class HtmlFindController extends WebAddressController {
     public void initControls() {
         try {
             super.initControls();
-
-            findInputController.init(this, baseName + "Find", "find", 20);
 
             findColorController.init(this, baseName + "FindColor", Color.YELLOW);
             findBgColorController.init(this, baseName + "FindBgColor", Color.BLACK);
@@ -105,7 +105,7 @@ public class HtmlFindController extends WebAddressController {
             nextButton.setDisable(true);
             lastButton.setDisable(true);
 
-            exampleFindButton.disableProperty().bind(regCheck.selectedProperty().not());
+            examplePopFindButton.disableProperty().bind(regCheck.selectedProperty().not());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -183,12 +183,12 @@ public class HtmlFindController extends WebAddressController {
                 popError(message("NoData"));
                 return;
             }
-            String string = findInputController.value();
+            String string = findInput.getText();
             if (string == null || string.isBlank()) {
-                parentController.popError(message("InvalidData"));
+                parentController.popError(message("InvalidParameters") + ": " + message("Find"));
                 return;
             }
-            findInputController.refreshList();
+            TableStringValues.add("HtmlFindHistories", string);
             reset();
             isQuerying = true;
             task = new SingletonTask<Void>(this) {
@@ -394,7 +394,7 @@ public class HtmlFindController extends WebAddressController {
 
     @FXML
     public void popFindExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, findInputController.selector.getEditor(), mouseEvent);
+        PopTools.popRegexExample(this, findInput, mouseEvent);
     }
 
     @FXML
@@ -402,6 +402,11 @@ public class HtmlFindController extends WebAddressController {
     public void recoverAction() {
         reset();
         loadContents(sourceAddress, sourceHtml);
+    }
+
+    @FXML
+    protected void popFindHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, findInput, mouseEvent, "HtmlFindHistories", true);
     }
 
     @Override

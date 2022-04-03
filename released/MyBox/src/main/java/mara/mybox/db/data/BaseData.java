@@ -1,23 +1,54 @@
 package mara.mybox.db.data;
 
+import java.util.HashMap;
+import java.util.Map;
+import mara.mybox.dev.MyBoxLog;
+
 /**
  * @Author Mara
  * @CreateDate 2020-7-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseData implements Cloneable {
+public class BaseData implements Cloneable {
 
-    protected long id;
+    protected Map<String, Object> columnValues;
+    protected int rowIndex;
 
     public BaseData() {
-        id = -1;
+        initValues();
+    }
+
+    private void initValues() {
+        columnValues = new HashMap<>();
+    }
+
+    public boolean setColumnValue(String column, Object value) {
+        columnValues.put(column, value);
+        return true;
+    }
+
+    public Object getColumnValue(String column) {
+        try {
+            return columnValues.get(column);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public boolean isEmpty() {
+        try {
+            return columnValues.keySet().isEmpty();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return true;
+        }
     }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
             BaseData newData = (BaseData) super.clone();
-            newData.setId(-1);
             return newData;
         } catch (Exception e) {
             return null;
@@ -25,14 +56,43 @@ public abstract class BaseData implements Cloneable {
     }
 
     /*
-        get/set
+        static methods
      */
-    public long getId() {
-        return id;
+    public static boolean valid(BaseData data) {
+        return data != null;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public static boolean setValue(BaseData data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setColumnValue(column, value);
+    }
+
+    public static Object getValue(BaseData data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getColumnValue(column);
+    }
+
+    /*
+        get/set
+     */
+    public Map<String, Object> getColumnValues() {
+        return columnValues;
+    }
+
+    public void setColumValues(Map<String, Object> values) {
+        this.columnValues = values;
+    }
+
+    public int getRowIndex() {
+        return rowIndex;
+    }
+
+    public void setRowIndex(int rowIndex) {
+        this.rowIndex = rowIndex;
     }
 
 }

@@ -29,6 +29,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableColor;
@@ -44,6 +45,7 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
@@ -127,6 +129,9 @@ public class DataMigration {
                 if (lastVersion < 6005003) {
                     updateIn653(conn);
                 }
+                if (lastVersion < 6005004) {
+                    updateIn654(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -134,6 +139,56 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn654(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.5.4...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Tag ADD COLUMN category VARCHAR(" + StringMaxLength + ") NOT NULL DEFAULT 'Root'");
+            statement.executeUpdate("ALTER TABLE Tag ADD COLUMN color VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("DROP INDEX Tag_unique_index");
+            statement.executeUpdate("CREATE UNIQUE INDEX Tag_unique_index on Tag (  category, tag )");
+            statement.executeUpdate("UPDATE Tag SET category='" + TreeNode.Notebook + "'");
+
+            TableTreeNode tableTreeNode = new TableTreeNode();
+            tableTreeNode.checkBase(conn);
+            statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldNodeid BIGINT");
+            statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldParentid BIGINT");
+            statement.executeUpdate("INSERT INTO tree_node (category, title, value, oldNodeid, oldParentid) "
+                    + "SELECT '" + TreeNode.WebFavorite + "', title, attribute, nodeid, parent FROM tree WHERE nodeid > 1");
+            statement.executeUpdate("INSERT INTO tree_node ( category, title, value, more, oldParentid) "
+                    + "SELECT '" + TreeNode.WebFavorite + "', title, address, icon, owner FROM Web_Favorite");
+            statement.executeUpdate("Update tree_node AS A set parentid="
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='" + TreeNode.WebFavorite + "')  "
+                    + "WHERE A.category='" + TreeNode.WebFavorite + "'");
+
+            statement.executeUpdate("INSERT INTO tree_node (category, title, value, oldNodeid, oldParentid)  "
+                    + "SELECT '" + TreeNode.Notebook + "', name , description, nbid, owner FROM notebook");
+            statement.executeUpdate("Update tree_node AS A set parentid="
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='" + TreeNode.Notebook + "' AND A.category='" + TreeNode.Notebook + "') "
+                    + " WHERE A.category='" + TreeNode.Notebook + "'");
+            statement.executeUpdate("INSERT INTO tree_node (category, title, value, update_time, oldNodeid, oldParentid) "
+                    + "SELECT 'Note', title, html, update_time, ntid, notebook FROM note");
+            statement.executeUpdate("Update tree_node AS A set parentid="
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='Notebook' AND A.category='Note')  "
+                    + "WHERE A.category='Note'");
+            statement.executeUpdate("INSERT INTO tree_node_tag (tnodeid, tagid)  "
+                    + "SELECT tree_node.nodeid, note_tag.tagid FROM tree_node, note_tag where tree_node.oldNodeid=note_tag.noteid AND tree_node.category='Note'");
+            statement.executeUpdate("Update tree_node set category='" + TreeNode.Notebook + "' WHERE category='Note'");
+
+            statement.executeUpdate("ALTER TABLE tree_node DROP COLUMN oldNodeid");
+            statement.executeUpdate("ALTER TABLE tree_node DROP COLUMN oldParentid");
+            statement.executeUpdate("DROP TABLE Web_Favorite");
+            statement.executeUpdate("DROP TABLE Note_tag");
+            statement.executeUpdate("DROP TABLE Note");
+            statement.executeUpdate("DROP TABLE Notebook");
+            statement.executeUpdate("DROP TABLE tree");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn653(Connection conn) {
@@ -950,7 +1005,7 @@ public class DataMigration {
                     if (exist == null) {
                         MyBoxLog.debug(code.getLevelName() + " " + code.getCountryName()
                                 + " " + code.getProvinceName() + " " + code.getCityName()
-                                + " " + code.getId() + " " + code.getOwner());
+                                + " " + code.getGcid() + " " + code.getOwner());
                         continue;
                     }
                     EpidemicReport report = new EpidemicReport();
@@ -967,7 +1022,7 @@ public class DataMigration {
                     }
                     report.setSource("Filled".equals(results.getString("comments")) ? (short) 3 : (short) 2);
                     report.setLocation(exist);
-                    report.setLocationid(exist.getId());
+                    report.setLocationid(exist.getGcid());
                     reports.add(report);
                 } catch (Exception e) {
                     MyBoxLog.debug(e.toString());
@@ -1002,8 +1057,8 @@ public class DataMigration {
                 MyBoxLog.info("Updating tables in 4.2...");
                 List<ConvolutionKernel> records = TableConvolutionKernel.read();
                 TableConvolutionKernel t = new TableConvolutionKernel();
-                t.drop();
-                t.init();
+                t.dropTable(conn);
+                t.createTable(conn);
                 if (TableConvolutionKernel.write(records)) {
                     SystemConfig.setBoolean("UpdatedTables4.2", true);
                 }

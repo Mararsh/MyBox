@@ -1,0 +1,86 @@
+##MyBox#
+示例 > 查看数据库元数据
+用户表名
+SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'
+
+##MyBox#
+示例 > 查看数据库元数据
+用户表信息
+SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='T'
+
+##MyBox#
+示例 > 查看数据库元数据
+系统表名
+SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='S'
+
+##MyBox#
+示例 > 查看数据库元数据
+系统表信息
+SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='S'
+
+##MyBox#
+示例 > 查看数据库元数据
+视图名
+SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'
+
+##MyBox#
+示例 > 查看数据库元数据
+视图信息
+SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='V'
+
+##MyBox#
+示例 > 查看数据库元数据
+表的列名和类型
+SELECT columnname, columndatatype FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber
+
+##MyBox#
+示例 > 查看数据库元数据
+表的列信息
+SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber
+
+##MyBox#
+示例 > 查看数据库元数据
+表的索引名
+SELECT CONGLOMERATENAME FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE'
+
+##MyBox#
+示例 > 查看数据库元数据
+表的索引信息
+SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE'
+
+##MyBox#
+示例 > 查询数据库表
+行范围
+SELECT * FROM visit_history OFFSET 2 ROWS FETCH NEXT 50 ROWS ONLY
+
+##MyBox#
+示例 > 查询数据库表
+最多行数
+SELECT * FROM visit_history FETCH FIRST 300 ROWS ONLY
+
+##MyBox#
+示例 > 查询数据库表
+首行
+SELECT * FROM visit_history FETCH FIRST ROW ONLY
+
+##MyBox#
+示例 > 查询数据库表
+查询条件
+SELECT * FROM visit_history WHERE file_type > 1 OR data_more like '%fxml%'
+
+##MyBox#
+示例 > 查询数据库表
+计数
+SELECT count(file_type) as count FROM visit_history WHERE file_type > 0 AND last_visit_time BETWEEN '2022-03-11 00:00:00.000' AND '2022-03-18 13:09:41.000' 
+
+##MyBox#
+示例 > 查询数据库表
+众数
+SELECT file_type, count(file_type) AS mode FROM visit_history GROUP BY file_type ORDER BY mode DESC FETCH FIRST ROW ONLY
+
+
+
+
+
+
+

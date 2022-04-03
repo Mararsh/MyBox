@@ -17,12 +17,7 @@ import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -98,12 +93,12 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 coordinateSystemSelector.getItems().add(Languages.message(item.name()));
             }
             coordinateSystemSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null || newValue.isEmpty()) {
-                            return;
-                        }
-                        coordinateSystem = new CoordinateSystem(newValue);
-                        UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
-                    });
+                if (newValue == null || newValue.isEmpty()) {
+                    return;
+                }
+                coordinateSystem = new CoordinateSystem(newValue);
+                UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
+            });
             coordinateSystemSelector.getSelectionModel().select(UserConfig.getString("GeographyCodeCoordinateSystem", Languages.message("CGCS2000")));
 
             areaInput.textProperty().addListener(
@@ -273,7 +268,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             if (code == null) {
                 return;
             }
-            if (loadedCode != null && loadedCode.getId() > 0
+            if (loadedCode != null && loadedCode.getGcid() > 0
                     && !gcidInput.getText().isBlank()) {
                 if (code.getLongitude() >= -180 && code.getLongitude() <= 180) {
                     longitudeInput.setText(code.getLongitude() + "");
@@ -288,10 +283,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 return;
             }
 
-            if (loadedCode != null && loadedCode.getId() > 0) {
-                gcidInput.setText(loadedCode.getId() + "");
-            } else if (code.getId() > 0) {
-                gcidInput.setText(code.getId() + "");
+            if (loadedCode != null && loadedCode.getGcid() > 0) {
+                gcidInput.setText(loadedCode.getGcid() + "");
+            } else if (code.getGcid() > 0) {
+                gcidInput.setText(code.getGcid() + "");
             } else {
                 gcidInput.clear();
             }
@@ -474,9 +469,9 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             GeographyCode newCode = new GeographyCode();
 
             if (gcidInput.getText() == null || gcidInput.getText().isBlank()) {
-                newCode.setId(-1);
+                newCode.setGcid(-1);
             } else {
-                newCode.setId(Long.valueOf(gcidInput.getText()));
+                newCode.setGcid(Long.valueOf(gcidInput.getText()));
             }
             if (predefinedCheck.isSelected()) {
                 newCode.setSource(GeographyCode.AddressSource.PredefinedData);
@@ -509,7 +504,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             newCode.setAlias4(alias4Input.getText().trim());
             newCode.setAlias5(alias5Input.getText().trim());
             if (selectedCode != null) {
-                newCode.setOwner(selectedCode.getId());
+                newCode.setOwner(selectedCode.getGcid());
                 newCode.setContinent(selectedCode.getContinent());
                 newCode.setCountry(selectedCode.getCountry());
                 newCode.setProvince(selectedCode.getProvince());
@@ -550,7 +545,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
         gcidInput.setText("");
         popInformation(Languages.message("DataCopyComments"));
         if (loadedCode != null) {
-            loadedCode.setId(-1);
+            loadedCode.setGcid(-1);
         }
     }
 

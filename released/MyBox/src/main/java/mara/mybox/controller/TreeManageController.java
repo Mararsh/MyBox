@@ -1,0 +1,811 @@
+package mara.mybox.controller;
+
+import java.io.File;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.table.TableTag;
+import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
+
+/**
+ * @Author Mara
+ * @CreateDate 2022-3-9
+ * @License Apache License Version 2.0
+ */
+public class TreeManageController extends BaseSysTableController<TreeNode> {
+
+    protected String category;
+    protected TableTreeNode tableTreeNode;
+    protected TableTag tableTag;
+    protected TableTreeNodeTag tableTreeNodeTag;
+    protected String queryLabel;
+    protected String nameMsg, valueMsg, moreMsg, timeMsg;
+    protected TreeNode loadedParent;
+
+    @FXML
+    protected TreeNodesController nodesController;
+    @FXML
+    protected TableColumn<TreeNode, Long> nodeidColumn;
+    @FXML
+    protected TableColumn<TreeNode, String> nameColumn, valueColumn, moreColumn;
+    @FXML
+    protected TableColumn<TreeNode, Date> timeColumn;
+    @FXML
+    protected VBox conditionBox, timesBox;
+    @FXML
+    protected CheckBox descendantsCheck;
+    @FXML
+    protected FlowPane tagsPane, namesPane;
+    @FXML
+    protected Label conditionLabel;
+    @FXML
+    protected TreeNodeEditor nodeController;
+    @FXML
+    protected Button refreshTimesButton, queryTimesButton;
+    @FXML
+    protected TreeTagsController tagsController;
+    @FXML
+    protected ControlTimeTree timeController;
+    @FXML
+    protected TextField findInput;
+    @FXML
+    protected RadioButton findNameRadio, findValueRadio;
+
+    public TreeManageController() {
+        baseTitle = message("InformationInTree");
+        category = TreeNode.InformationInTree;
+        nameMsg = message("Title");
+        valueMsg = message("Value");
+        moreMsg = message("More");
+        timeMsg = message("UpdateTime");
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
+    }
+
+    @Override
+    public void setTableDefinition() {
+        tableTreeNode = new TableTreeNode();
+        tableTag = new TableTag();
+        tableTreeNodeTag = new TableTreeNodeTag();
+        tableDefinition = tableTreeNode;
+    }
+
+    @Override
+    protected void initColumns() {
+        try {
+            super.initColumns();
+            nodeidColumn.setCellValueFactory(new PropertyValueFactory<>("nodeid"));
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+            nameColumn.setText(nameMsg);
+            if (valueColumn != null) {
+                valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
+                valueColumn.setText(valueMsg);
+            }
+            if (moreColumn != null) {
+                moreColumn.setCellValueFactory(new PropertyValueFactory<>("more"));
+                moreColumn.setText(moreMsg);
+            }
+            timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
+            timeColumn.setText(timeMsg);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            nodesController.setParameters(this, true);
+
+            descendantsCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
+            descendantsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
+                    if (loadedParent != null) {
+                        loadTableData();
+                    }
+                }
+            });
+
+            nodeController.setParameters(this);
+            tagsController.setParameters(this);
+            tagsController.loadTableData();
+
+            initTimes();
+            initFind();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+
+            loadTree(null);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public boolean controlAltG() {
+        if (nodeController.valueInput.isFocused()) {
+            nodeController.clearValue();
+        } else {
+            clearAction();
+        }
+        return true;
+    }
+
+    /*
+        synchronize
+     */
+    public void nodeAdded(TreeNode parent, TreeNode newNode) {
+        if (parent == null || newNode == null) {
+            return;
+        }
+        if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
+            loadChildren(parent);
+        }
+    }
+
+    public void nodeRenamed(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+        if (loadedParent != null && id == loadedParent.getNodeid()) {
+            loadedParent = node;
+            makeConditionPane();
+        } else {
+            for (int i = 0; i < tableData.size(); i++) {
+                TreeNode tnode = tableData.get(i);
+                if (tnode.getNodeid() == id) {
+                    tableData.set(i, node);
+                    break;
+                }
+            }
+        }
+        if (nodeController.parentNode != null && id == nodeController.parentNode.getNodeid()) {
+            nodeController.setParentNode(node);
+        }
+        if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
+            nodeController.renamed(node.getTitle());
+        }
+    }
+
+    public void nodeDeleted(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+        if (loadedParent != null && id == loadedParent.getNodeid()) {
+            loadedParent = null;
+            makeConditionPane();
+            tableData.clear();
+        } else {
+            for (int i = 0; i < tableData.size(); i++) {
+                TreeNode tnode = tableData.get(i);
+                if (tnode.getNodeid() == id) {
+                    tableData.remove(tnode);
+                    break;
+                }
+            }
+        }
+        if (nodeController.parentNode != null && id == nodeController.parentNode.getNodeid()) {
+            nodeController.setParentNode(null);
+            nodeController.copyNode();
+        }
+        if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
+            nodeController.copyNode();
+        }
+    }
+
+    public void nodeMoved(TreeNode parent, TreeNode node) {
+        if (parent == null || node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+        if (loadedParent != null) {
+            loadChildren(loadedParent);
+        }
+        if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
+            nodeController.setParentNode(parent);
+        }
+        if (nodeController.parentNode != null && id == nodeController.parentNode.getNodeid()) {
+            nodeController.setParentNode(node);
+        }
+    }
+
+    public void nodesMoved(TreeNode parent, List<TreeNode> nodes) {
+        if (parent == null || nodes == null || nodes.isEmpty()) {
+            return;
+        }
+        if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
+            loadChildren(parent);
+        }
+        for (TreeNode node : nodes) {
+            if (nodeController.currentNode != null && node.getNodeid() == nodeController.currentNode.getNodeid()) {
+                nodeController.setParentNode(parent);
+            }
+            if (nodeController.parentNode != null && node.getNodeid() == nodeController.parentNode.getNodeid()) {
+                nodeController.setParentNode(node);
+            }
+        }
+        nodesController.loadTree(parent);
+    }
+
+    public void nodesCopied(TreeNode parent) {
+        if (parent == null) {
+            return;
+        }
+        nodesController.loadChildren(nodesController.find(parent));
+    }
+
+    public void nodesDeleted() {
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    loadedParent = tableTreeNode.readData(conn, loadedParent);
+                    nodeController.currentNode = tableTreeNode.readData(conn, nodeController.currentNode);
+                    nodeController.parentNode = tableTreeNode.readData(conn, nodeController.parentNode);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                nodeController.editNode(nodeController.currentNode);
+                nodesController.loadTree(loadedParent);
+            }
+        };
+        start(task);
+    }
+
+    public void nodeSaved() {
+        if (nodeController.currentNode == null) {
+            return;
+        }
+        long id = nodeController.currentNode.getNodeid();
+        if (loadedParent != null && id == loadedParent.getNodeid()) {
+            loadedParent = nodeController.currentNode;
+            makeConditionPane();
+        }
+        for (int i = 0; i < tableData.size(); i++) {
+            TreeNode tnode = tableData.get(i);
+            if (tnode.getNodeid() == id) {
+                tableData.set(i, nodeController.currentNode);
+                break;
+            }
+        }
+        nodesController.updateChild(nodesController.find(nodeController.parentNode), nodeController.currentNode);
+    }
+
+    public void newNodeSaved() {
+        if (nodeController.currentNode == null) {
+            return;
+        }
+        if (loadedParent != null && nodeController.parentNode.getNodeid() == loadedParent.getNodeid()) {
+            loadChildren(nodeController.parentNode);
+        }
+        nodesController.addNewNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
+    }
+
+    public void nodeChanged() {
+        if (isSettingValues) {
+            return;
+        }
+        String currentTitle = getTitle();
+        if (nodeController.nodeChanged) {
+            if (!currentTitle.endsWith(" *")) {
+                setTitle(currentTitle + " *");
+            }
+        } else {
+            if (currentTitle.endsWith(" *")) {
+                setTitle(currentTitle.substring(0, currentTitle.length() - 2));
+            }
+        }
+    }
+
+
+    /*
+        tree
+     */
+    public void loadTree(TreeNode selectedNode) {
+        if (!AppVariables.isTesting) {
+            File file = TreeNode.exampleFile(category);
+            if (file != null && tableTreeNode.size(category) < 1
+                    && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
+                nodesController.importExamples();
+                return;
+            }
+        }
+        nodesController.loadTree(selectedNode);
+    }
+
+    public void clearQuery() {
+        loadedParent = null;
+        queryConditions = null;
+        queryLabel = null;
+        tableData.clear();
+        conditionBox.getChildren().clear();
+        namesPane.getChildren().clear();
+        startRowOfCurrentPage = 0;
+    }
+
+    /*
+        table
+     */
+    public void loadChildren(TreeNode parentNode) {
+        clearQuery();
+        loadedParent = parentNode;
+        if (loadedParent != null) {
+            queryConditions = " category='" + category + "' AND "
+                    + "parentid=" + loadedParent.getNodeid() + " AND nodeid<>parentid";
+            loadTableData();
+        }
+    }
+
+    @Override
+    public void postLoadedTableData() {
+        super.postLoadedTableData();
+        makeConditionPane();
+    }
+
+    public void makeConditionPane() {
+        conditionBox.getChildren().clear();
+        if (loadedParent == null) {
+            if (queryConditionsString != null) {
+                conditionLabel.setText(queryConditionsString.length() > 300
+                        ? queryConditionsString.substring(0, 300) : queryConditionsString);
+                conditionBox.getChildren().add(conditionLabel);
+            }
+            conditionBox.applyCss();
+            return;
+        }
+        synchronized (this) {
+            SingletonTask bookTask = new SingletonTask<Void>(this) {
+                private List<TreeNode> ancestor;
+
+                @Override
+                protected boolean handle() {
+                    ancestor = tableTreeNode.ancestor(loadedParent.getNodeid());
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    List<Node> nodes = new ArrayList<>();
+                    if (ancestor != null) {
+                        for (TreeNode node : ancestor) {
+                            Hyperlink link = new Hyperlink(node.getTitle());
+                            link.setWrapText(true);
+                            link.setMinHeight(Region.USE_PREF_SIZE);
+                            link.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    loadChildren(node);
+                                }
+                            });
+                            nodes.add(link);
+                            nodes.add(new Label(">"));
+                        }
+                    }
+                    Label label = new Label(loadedParent.getTitle());
+                    label.setWrapText(true);
+                    label.setMinHeight(Region.USE_PREF_SIZE);
+                    nodes.add(label);
+                    namesPane.getChildren().setAll(nodes);
+                    conditionBox.getChildren().setAll(namesPane, descendantsCheck);
+                    conditionBox.applyCss();
+                }
+            };
+            start(bookTask, false);
+        }
+
+    }
+
+    @Override
+    public long readDataSize(Connection conn) {
+        if (loadedParent != null && descendantsCheck.isSelected()) {
+            return tableTreeNode.withSubSize(conn, loadedParent.getNodeid());
+
+        } else if (queryConditions != null) {
+            return tableTreeNode.conditionSize(conn, queryConditions);
+
+        } else {
+            return 0;
+        }
+
+    }
+
+    @Override
+    public List<TreeNode> readPageData(Connection conn) {
+        if (loadedParent != null && descendantsCheck.isSelected()) {
+            return tableTreeNode.withSub(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
+
+        } else if (queryConditions != null) {
+            return tableTreeNode.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
+
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    protected long clearData() {
+        if (queryConditions != null) {
+            return tableTreeNode.deleteCondition(queryConditions);
+
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    protected void afterDeletion() {
+        super.afterDeletion();
+        nodesDeleted();
+    }
+
+    @Override
+    protected void afterClear() {
+        super.afterClear();
+        nodesDeleted();
+    }
+
+    @Override
+    protected List<MenuItem> makeTableContextMenu() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (pasteButton != null) {
+                menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    pasteAction();
+                });
+                menu.setDisable(pasteButton.isDisabled());
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                moveAction();
+            });
+            menu.setDisable(moveDataButton.isDisabled());
+            items.add(menu);
+
+            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                copyAction();
+            });
+            menu.setDisable(copyButton.isDisabled());
+            items.add(menu);
+
+            items.addAll(super.makeTableContextMenu());
+
+            return items;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    @Override
+    public void itemClicked() {
+        editAction();
+    }
+
+    @Override
+    protected void checkButtons() {
+        if (isSettingValues) {
+            return;
+        }
+        super.checkButtons();
+        boolean isEmpty = tableData == null || tableData.isEmpty();
+        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        deleteButton.setDisable(none);
+        copyButton.setDisable(none);
+        moveDataButton.setDisable(none);
+        if (pasteButton != null) {
+            pasteButton.setDisable(none);
+        }
+    }
+
+    @FXML
+    @Override
+    public void addAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        if (loadedParent != null) {
+            nodeController.parentNode = loadedParent;
+        }
+        editNode(null);
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        editNode(tableView.getSelectionModel().getSelectedItem());
+    }
+
+    public void editNode(TreeNode node) {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        nodeController.editNode(node);
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        TreeNodesCopyController.oneOpen(this);
+    }
+
+    @FXML
+    protected void moveAction() {
+        TreeNodesMoveController.oneOpen(this);
+    }
+
+    @FXML
+    @Override
+    public void pasteAction() {
+        TreeNode selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        nodeController.pasteText(selected.getValue());
+    }
+
+    /*
+        node
+     */
+    @FXML
+    protected void addNode() {
+        editNode(null);
+    }
+
+    @FXML
+    protected void copyNode() {
+        nodeController.copyNode();
+    }
+
+    @FXML
+    protected void recoverNode() {
+        nodeController.editNode(nodeController.currentNode);
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        nodeController.saveNode();
+    }
+
+    @Override
+    public void sourceFileChanged(File file) {
+        if (file == null || !file.exists() || !checkBeforeNextAction()) {
+            return;
+        }
+        nodeController.loadFile(file);
+    }
+
+    public boolean isNodeChanged() {
+        return nodeController.nodeChanged;
+    }
+
+    /*
+        Times
+     */
+    public void initTimes() {
+        try {
+            timeController.setParent(this, false);
+
+            timeController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    queryTimes();
+                }
+            });
+            timeController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    refreshTimes();
+                }
+            });
+
+            refreshTimes();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void refreshTimes() {
+        synchronized (this) {
+            timeController.clearTree();
+            timesBox.setDisable(true);
+            SingletonTask timesTask = new SingletonTask<Void>(this) {
+                private List<Date> times;
+
+                @Override
+                protected boolean handle() {
+                    times = tableTreeNode.times(category);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    timeController.loadTree("update_time", times, false);
+                }
+
+                @Override
+                protected void finalAction() {
+                    timesBox.setDisable(false);
+                }
+
+            };
+            start(timesTask, false);
+        }
+    }
+
+    @FXML
+    protected void queryTimes() {
+        String c = timeController.check();
+        if (c == null) {
+            popError(message("MissTime"));
+            return;
+        }
+        clearQuery();
+        queryConditions = " category='" + category + "' " + (c.isBlank() ? "" : " AND " + c);
+        queryConditionsString = timeController.getFinalTitle();
+        loadTableData();
+        showLeftPane();
+    }
+
+    /*
+        find
+     */
+    public void initFind() {
+        try {
+            findNameRadio.setText(nameMsg);
+            findValueRadio.setText(valueMsg);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void find() {
+        String s = findInput.getText();
+        if (s == null || s.isBlank()) {
+            popError(message("InvalidParameters") + ": " + message("Find"));
+            return;
+        }
+        String[] values = StringTools.splitBySpace(s);
+        if (values == null || values.length == 0) {
+            popError(message("InvalidParameters") + ": " + message("Find"));
+            return;
+        }
+        TableStringValues.add(baseName + category + "Histories", s);
+        clearQuery();
+        if (findNameRadio.isSelected()) {
+            queryConditions = null;
+            queryConditionsString = message("Title") + ":";
+            for (String v : values) {
+                if (queryConditions != null) {
+                    queryConditions += " OR ";
+                } else {
+                    queryConditions = " ";
+                }
+                queryConditions += " ( title like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryConditionsString += " " + v;
+            }
+
+        } else {
+            queryConditions = null;
+            queryConditionsString = message("Contents") + ":";
+            for (String v : values) {
+                if (queryConditions != null) {
+                    queryConditions += " OR ";
+                } else {
+                    queryConditions = " ";
+                }
+                queryConditions += " ( value like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryConditionsString += " " + v;
+            }
+        }
+        queryConditions = " category='" + category + "' AND " + queryConditions;
+        loadTableData();
+        showLeftPane();
+    }
+
+    @FXML
+    protected void popFindHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, findInput, mouseEvent, baseName + category + "Histories");
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (!isNodeChanged()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("DataChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
+            if (result.get() == buttonSave) {
+                saveAction();
+                return false;
+            } else {
+                return result.get() == buttonNotSave;
+            }
+        }
+    }
+
+}

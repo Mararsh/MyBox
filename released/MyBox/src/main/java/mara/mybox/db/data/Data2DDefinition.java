@@ -210,7 +210,7 @@ public class Data2DDefinition extends BaseData {
                     data.setD2did(value == null ? -1 : (long) value);
                     return true;
                 case "data_type":
-                    data.setType(type((short) value));
+                    data.setType(value == null ? Type.Texts : type((short) value));
                     return true;
                 case "data_name":
                     data.setDataName(value == null ? null : (String) value);
@@ -228,7 +228,7 @@ public class Data2DDefinition extends BaseData {
                     data.setDelimiter(value == null ? null : (String) value);
                     return true;
                 case "has_header":
-                    data.setHasHeader((boolean) value);
+                    data.setHasHeader(value == null ? false : (boolean) value);
                     return true;
                 case "columns_number":
                     data.setColsNumber(value == null ? -1 : (long) value);
@@ -250,7 +250,7 @@ public class Data2DDefinition extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e.toString(), column + " " + value);
         }
         return false;
     }

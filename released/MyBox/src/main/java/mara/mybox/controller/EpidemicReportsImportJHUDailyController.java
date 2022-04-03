@@ -17,8 +17,6 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -207,7 +205,7 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
                     if (FIPS != null && locationCode.getCode5() == null) {
                         locationCode.setCode5(FIPS);
                     }
-                    long locationid = locationCode.getId();
+                    long locationid = locationCode.getGcid();
                     String dateSting = DateTools.datetimeToString(date.getTime());
                     equalQuery.setString(1, EpidemicReport.COVID19JHU);
                     equalQuery.setString(2, dateSting);

@@ -189,10 +189,10 @@ public class TableLocationData extends BaseTable<Location> {
             if (datasetValue == null) {
                 return false;
             }
-            String sql = "DELETE FROM Location_Data WHERE datasetid=" + datasetValue.getId();
+            String sql = "DELETE FROM Location_Data WHERE datasetid=" + datasetValue.getDsid();
             DerbyBase.update(conn, sql);
             if (deleteDataset) {
-                sql = "DELETE FROM Dataset WHERE dsid=" + datasetValue.getId();
+                sql = "DELETE FROM Dataset WHERE dsid=" + datasetValue.getDsid();
                 return DerbyBase.update(conn, sql) > 0;
             }
             return true;

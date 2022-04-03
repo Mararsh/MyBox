@@ -30,12 +30,13 @@ public class DataTablesController extends BaseData2DController {
     @Override
     public void checkButtons() {
         super.checkButtons();
-        tableDefinitionButton.setDisable(false);
+        tableDefinitionButton.setDisable(loadController.data2D == null || loadController.data2D.getSheet() == null);
     }
 
     @FXML
     protected void tableDefinition() {
-        if (loadController.data2D == null) {
+        if (loadController.data2D == null || loadController.data2D.getSheet() == null) {
+            popError(message("NotFound"));
             return;
         }
         String html = TableData2D.tableDefinition(loadController.data2D.getSheet());
@@ -48,7 +49,7 @@ public class DataTablesController extends BaseData2DController {
 
     @FXML
     public void sql() {
-        DatabaseSQLController.open(this instanceof MyBoxTablesController);
+        DatabaseSqlController.open(this instanceof MyBoxTablesController);
     }
 
     /*

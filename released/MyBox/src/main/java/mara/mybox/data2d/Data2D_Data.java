@@ -489,22 +489,4 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public Data2DColumn idColumn() {
-        try {
-            String idname = (sheet != null ? sheet : "t") + "_id";
-            List<String> names = columnNames();
-            if (names != null) {
-                while (names.contains(idname)) {
-                    idname += "m";
-                }
-            }
-            Data2DColumn idcolumn = new Data2DColumn(idname, ColumnType.Long);
-            idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
-            return idcolumn;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
 }

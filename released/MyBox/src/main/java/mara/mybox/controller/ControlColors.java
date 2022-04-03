@@ -57,11 +57,11 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -591,12 +591,16 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         loadTableData();
     }
 
-    protected void loadPaletteLast(ColorPaletteName palette) {
+    public void loadPaletteLast(ColorPaletteName palette) {
+        loadPalette(palette != null ? palette.getName() : null);
+    }
+
+    public void loadPalette(String paletteName) {
         currentPage = Integer.MAX_VALUE;
         currentPalette = palettesController.allColors;
-        if (palette != null) {
+        if (paletteName != null) {
             for (ColorPaletteName p : palettesController.palettesList.getItems()) {
-                if (p.getName().equals(palette.getName())) {
+                if (p.getName().equals(paletteName)) {
                     currentPalette = p;
                     break;
                 }
@@ -964,20 +968,20 @@ public class ControlColors extends BaseSysTableController<ColorData> {
        Data
      */
     @Override
-    public long readDataSize() {
+    public long readDataSize(Connection conn) {
         if (isAllColors()) {
-            return tableColor.size();
+            return tableColor.size(conn);
         } else {
-            return tableColorPalette.size(currentPalette.getCpnid());
+            return tableColorPalette.size(conn, currentPalette.getCpnid());
         }
     }
 
     @Override
-    public List<ColorData> readPageData() {
+    public List<ColorData> readPageData(Connection conn) {
         if (isAllColors()) {
-            return tableColor.query(startRowOfCurrentPage, pageSize);
+            return tableColor.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
         } else {
-            return tableColorPalette.colors(currentPalette.getCpnid(), startRowOfCurrentPage, pageSize);
+            return tableColorPalette.colors(conn, currentPalette.getCpnid(), startRowOfCurrentPage, pageSize);
         }
     }
 

@@ -3,9 +3,10 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Map;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.StringValue;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppValues;
@@ -15,7 +16,26 @@ import mara.mybox.value.AppValues;
  * @CreateDate 2018-10-15 9:31:28
  * @License Apache License Version 2.0
  */
-public class TableUserConf extends DerbyBase {
+public class TableUserConf extends BaseTable<StringValue> {
+
+    public TableUserConf() {
+        tableName = "User_Conf";
+        defineColumns();
+    }
+
+    public TableUserConf(boolean defineColumns) {
+        tableName = "User_Conf";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableUserConf defineColumns() {
+        addColumn(new ColumnDefinition("key_name", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("string_value", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("int_Value", ColumnDefinition.ColumnType.Integer));
+        return this;
+    }
 
     final static String QueryString = "SELECT string_Value FROM User_Conf WHERE key_Name=?";
     final static String QueryInt = " SELECT int_Value FROM User_Conf WHERE key_Name=?";
@@ -26,28 +46,12 @@ public class TableUserConf extends DerbyBase {
     final static String Delete = "DELETE FROM User_Conf WHERE key_Name=?";
     final static String DeleteLike = "DELETE FROM User_Conf WHERE key_Name like ?";
 
-    public TableUserConf() {
-        Table_Name = "User_Conf";
-        Keys = new ArrayList<>() {
-            {
-                add("key_Name");
-            }
-        };
-        Create_Table_Statement
-                = " CREATE TABLE User_Conf ( "
-                + "  key_Name  VARCHAR(32672) NOT NULL PRIMARY KEY, "
-                + "  int_Value INTEGER, "
-                + "  string_Value VARCHAR(32672) "
-                + " )";
-    }
-
-    @Override
     public boolean init(Connection conn) {
         try {
             if (conn == null) {
                 return false;
             }
-            conn.prepareStatement(Create_Table_Statement).executeUpdate();
+            conn.prepareStatement(createTableStatement()).executeUpdate();
             Map<String, String> values = ConfigTools.readValues();
             if (values == null || values.isEmpty()) {
                 return false;

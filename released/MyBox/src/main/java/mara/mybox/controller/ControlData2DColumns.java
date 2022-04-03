@@ -321,28 +321,14 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                             if (isSettingValues || color == null || index < 0 || index >= tableData.size()) {
                                 return;
                             }
+                            if (color.equals(tableData.get(index).getColor())) {
+                                return;
+                            }
                             tableData.get(index).setColor(color);
                             status(Status.Modified);
                         }
                     };
                     return cell;
-                }
-            });
-            colorColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Color>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<Data2DColumn, Color> t) {
-                    MyBoxLog.console("here");
-                    if (isSettingValues || t == null) {
-                        return;
-                    }
-                    Data2DColumn column = t.getRowValue();
-                    Color v = t.getNewValue();
-                    if (column == null || v == null || v.equals(column.getColor())) {
-                        return;
-                    }
-                    MyBoxLog.console(v);
-                    column.setColor(v);
-                    status(Status.Modified);
                 }
             });
             colorColumn.setEditable(true);
@@ -508,6 +494,9 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
     @Override
     public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
         if (changed) {
             status(Status.Modified);
         } else {
@@ -704,7 +693,15 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         }
         Data2DColumn column = tableData.get(index);
         column.setWidth(width);
+        MyBoxLog.console(width);
+        isSettingValues = true;
         tableData.set(index, column);
+        isSettingValues = false;
+        MyBoxLog.console(status);
+        if (status == null || status == Status.Loaded) {
+            status(Status.Applied);
+        }
+
     }
 
     @FXML

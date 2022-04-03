@@ -95,6 +95,7 @@ public class WebBrowserController extends BaseController {
             tab.setContent(pane);
             tabPane.getTabs().add(tabPane.getTabs().size() - 1, tab);
             if (focus) {
+                getMyStage().setIconified(false);
                 tabPane.getSelectionModel().select(tab);
             }
             refreshStyle(pane);
@@ -239,12 +240,12 @@ public class WebBrowserController extends BaseController {
         return controller;
     }
 
-    public static WebBrowserController oneLoad(String contents, boolean focus) {
+    public static WebAddressController oneLoad(String contents, boolean focus) {
         WebBrowserController controller = oneOpen();
         if (controller != null && contents != null) {
-            controller.loadContents(contents, focus);
+            return controller.loadContents(contents, focus);
         }
-        return controller;
+        return null;
     }
 
 }

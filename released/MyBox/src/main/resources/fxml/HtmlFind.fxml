@@ -13,6 +13,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -45,7 +46,16 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <ComboBox fx:id="urlSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popAddressHistories">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconHistory.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <TextField fx:id="addressInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -83,7 +93,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
                                                                 <CheckBox fx:id="regCheck" mnemonicParsing="false" text="%RegularExpression" />
-                                                                <Button fx:id="exampleFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
+                                                                <Button fx:id="examplePopFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -96,29 +106,42 @@ License:    Apache License Version 2.0
                                                         </HBox>
                                                         <CheckBox fx:id="caseCheck" mnemonicParsing="false" text="%CaseInsensitive" />
                                                         <Label minHeight="-Infinity" text="%String" wrapText="true" />
-                                                        <fx:include fx:id="findInput" source="ControlStringSelector.fxml" />
                                           <HBox alignment="CENTER_LEFT" spacing="2.0">
                                              <children>
-                                                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                                <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
                                                    <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
-                                                            <Image url="@../buttons/Red/iconRecover.png" />
+                                                            <Image url="@../buttons/Red/iconHistory.png" />
                                                          </image>
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
-                                                              <Button fx:id="queryButton" mnemonicParsing="false" onAction="#queryAction">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconQuery.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
+                                                <TextField fx:id="findInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
+                                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                            <children>
+                                                                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconRecover.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="queryButton" mnemonicParsing="false" onAction="#queryAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconQuery.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
                                                     </children>
                                                 </VBox>
                                             </content>

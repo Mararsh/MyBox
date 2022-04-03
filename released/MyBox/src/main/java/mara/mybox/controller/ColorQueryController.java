@@ -8,10 +8,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -25,7 +26,7 @@ public class ColorQueryController extends BaseController {
     protected ColorData color;
 
     @FXML
-    protected ControlStringSelector valueController;
+    protected TextField colorInput;
     @FXML
     protected ColorPicker colorPicker;
     @FXML
@@ -42,19 +43,20 @@ public class ColorQueryController extends BaseController {
     @Override
     public void initControls() {
         try {
-            valueController.init(this, baseName, "#552288", 20);
+            colorInput.setText("#552288");
+
             colorPicker.valueProperty().addListener((ObservableValue<? extends Color> ov, Color oldVal, Color newVal) -> {
                 if (isSettingValues || newVal == null) {
                     return;
                 }
-                valueController.set(FxColorTools.color2rgba(newVal));
+                colorInput.setText(FxColorTools.color2rgba(newVal));
                 queryAction();
             });
 
             separatorInput.setText(UserConfig.getString(baseName + "Separator", ", "));
 
-            queryButton.disableProperty().bind(valueController.selector.getEditor().textProperty().isEmpty());
-            refreshButton.disableProperty().bind(valueController.selector.getEditor().textProperty().isEmpty()
+            queryButton.disableProperty().bind(colorInput.textProperty().isEmpty());
+            refreshButton.disableProperty().bind(colorInput.textProperty().isEmpty()
                     .or(separatorInput.textProperty().isEmpty())
             );
             paletteButton.disableProperty().bind(queryButton.disableProperty());
@@ -78,12 +80,17 @@ public class ColorQueryController extends BaseController {
     @FXML
     public void queryAction() {
         try {
-            ColorData c = new ColorData(valueController.value()).calculate();
-            if (c.getSrgb() == null) {
-                popError(message("InvalidValue"));
+            String value = colorInput.getText();
+            if (value == null || value.isBlank()) {
+                popError(message("InvalidParameters") + ": " + message("Color"));
                 return;
             }
-            valueController.refreshList();
+            ColorData c = new ColorData(value).calculate();
+            if (c.getSrgb() == null) {
+                popError(message("InvalidParameters") + ": " + message("Color"));
+                return;
+            }
+            TableStringValues.add("ColorQueryColorHistories", value);
             color = c;
             String separator = separatorInput.getText();
             if (separator == null || separator.isEmpty()) {
@@ -120,7 +127,12 @@ public class ColorQueryController extends BaseController {
 
     @FXML
     public void popExamples(MouseEvent mouseEvent) {
-        PopTools.popColorExamples(this, valueController.selector.getEditor(), mouseEvent);
+        PopTools.popColorExamples(this, colorInput, mouseEvent);
+    }
+
+    @FXML
+    protected void popColorHistories(MouseEvent mouseEvent) {
+        PopTools.popStringValues(this, colorInput, mouseEvent, "ColorQueryColorHistories", true);
     }
 
     @FXML

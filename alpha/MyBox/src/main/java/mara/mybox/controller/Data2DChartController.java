@@ -90,7 +90,7 @@ public class Data2DChartController extends Data2DHandleController {
     protected Chart chart;
     protected XYChart xyChart;
     protected CategoryAxis categoryAxis;
-    protected NumberAxis numberAxis;
+    protected NumberAxis numberAxis, numberAxisX;
     protected List<Integer> checkedColsIndices;
     protected Map<String, String> palette;
     protected List<String> paletteList;
@@ -1000,6 +1000,10 @@ public class Data2DChartController extends Data2DHandleController {
         return sourceController.checkedColsNames().toString();
     }
 
+    public boolean isXY() {
+        return !xyReverseCheck.isSelected();
+    }
+
     @Override
     public boolean checkOptions() {
         if (isSettingValues) {
@@ -1037,6 +1041,7 @@ public class Data2DChartController extends Data2DHandleController {
             pieChart = null;
             categoryAxis = null;
             numberAxis = null;
+            numberAxisX = null;
             palette = null;
             paletteList = null;
 
@@ -1212,14 +1217,18 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void makeBubbleChart() {
         try {
-            NumberAxis numberAxisX = new NumberAxis();
+            numberAxisX = new NumberAxis();
             numberAxisX.setLabel(categoryLabel.getText());
             numberAxisX.setSide(categorySide);
             numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
             numberAxisX.setTickLabelRotation(categoryTickRotation);
             numberAxisX.setAnimated(categoryAxisAnimatedCheck.isSelected());
             ChartTools.setChartCoordinate(numberAxisX, chartCoordinate);
-            bubbleChart = new LabeledBubbleChart(numberAxisX, numberAxis);
+            if (xyReverseCheck.isSelected()) {
+                bubbleChart = new LabeledBubbleChart(numberAxis, numberAxisX);
+            } else {
+                bubbleChart = new LabeledBubbleChart(numberAxisX, numberAxis);
+            }
             bubbleChart.setChartController(this);
             xyChart = bubbleChart;
         } catch (Exception e) {
@@ -1501,13 +1510,36 @@ public class Data2DChartController extends Data2DHandleController {
     }
 
     @FXML
+    public void goTitle() {
+        if (chart != null) {
+            chart.setTitle(titleInput.getText());
+        }
+    }
+
+    @FXML
     public void defaultCategoryLabel() {
         categoryLabel.setText(categoryName());
     }
 
     @FXML
+    public void goCategoryLabel() {
+        if (numberAxisX != null) {
+            numberAxisX.setLabel(categoryLabel.getText());
+        } else if (categoryAxis != null) {
+            categoryAxis.setLabel(categoryLabel.getText());
+        }
+    }
+
+    @FXML
     public void defaultValueLabel() {
         numberLabel.setText(valuesNames());
+    }
+
+    @FXML
+    public void goValueLabel() {
+        if (numberAxis != null) {
+            numberAxis.setLabel(numberLabel.getText());
+        }
     }
 
     @FXML

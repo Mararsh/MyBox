@@ -38,18 +38,16 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -76,8 +74,6 @@ public class HtmlEditorController extends WebAddressController {
     protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
     protected final ButtonType buttonCancel = new ButtonType(message("Cancel"));
 
-    @FXML
-    protected HBox addressBox;
     @FXML
     protected Tab viewTab, codesTab, editorTab, markdownTab, textsTab, backupTab;
     @FXML
@@ -353,10 +349,9 @@ public class HtmlEditorController extends WebAddressController {
                 @Override
                 protected void whenSucceeded() {
                     popSaved();
-                    if (sourceFile == null) {
-                        setSourceFile(sourceFile);
-                    }
-                    recordFileWritten(sourceFile);
+                    recordFileWritten(targetFile);
+                    setSourceFile(targetFile);
+                    addressChanged();
                     updateFileStatus(false);
                 }
             };
@@ -367,43 +362,7 @@ public class HtmlEditorController extends WebAddressController {
     @FXML
     @Override
     public void saveAsAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            File file = chooseSaveFile();
-            if (file == null) {
-                return;
-            }
-            String html = currentHtml(true);
-            if (html == null || html.isBlank()) {
-                popError(message("NoData"));
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    try {
-                        File tmpFile = HtmlWriteTools.writeHtml(html);
-                        if (tmpFile == null || !tmpFile.exists()) {
-                            return false;
-                        }
-                        return FileTools.rename(tmpFile, file);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(file);
-                    ControllerTools.openHtmlEditor(null, file);
-                }
-            };
-            start(task);
-        }
+        webViewController.saveAs(currentHtml(true));
     }
 
     public String currentHtml() {
@@ -479,7 +438,7 @@ public class HtmlEditorController extends WebAddressController {
                 return;
             }
             addressChanged = false;
-            urlSelector.getEditor().setText("");
+            addressInput.setText("");
             loadContents(HtmlWriteTools.emptyHmtl());
 //            loadRichEditor("", false);
 //            loadHtmlCodes("", false);
@@ -755,25 +714,14 @@ public class HtmlEditorController extends WebAddressController {
         }
         Platform.runLater(() -> {
             try {
+                String md;
                 if (html == null || html.isEmpty()) {
-                    markdownArea.setEditable(false);
-                    markdownArea.setText("");
-                    if (pageLoaded) {
-                        markdownArea.setEditable(true);
-                    }
-                    markdownChanged(changed);
-                    return;
+                    md = html;
+                } else if (StringTools.include(html, "<FRAMESET ", true)) {
+                    md = message("FrameSetAndSelectFrame");
+                } else {
+                    md = htmlConverter.convert(html);
                 }
-                if (StringTools.include(html, "<FRAMESET ", true)) {
-                    markdownArea.setEditable(false);
-                    markdownArea.setText(message("FrameSetAndSelectFrame"));
-                    if (pageLoaded) {
-                        markdownArea.setEditable(true);
-                    }
-                    markdownChanged(changed);
-                    return;
-                }
-                String md = htmlConverter.convert(html);
                 markdownArea.setEditable(false);
                 markdownArea.setText(md);
                 if (pageLoaded) {

@@ -14,6 +14,7 @@ import javafx.stage.DirectoryChooser;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
@@ -216,10 +217,13 @@ public class ControlFileSelecter extends BaseController {
                 selectedfile = chooser.showDialog(getMyStage());
 
             } else {
-                selectedfile = chooseSaveFile(path, defaultFile != null ? defaultFile.getName() : null,
-                        isSource ? sourceExtensionFilter : targetExtensionFilter);
+                if (isSource) {
+                    selectedfile = FxFileTools.selectFile(this, path, sourceExtensionFilter);
+                } else {
+                    selectedfile = chooseSaveFile(path, defaultFile != null ? defaultFile.getName() : null,
+                            targetExtensionFilter);
+                }
             }
-
             if (selectedfile == null || (mustExist && !selectedfile.exists())) {
                 return;
             }

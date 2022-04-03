@@ -3,12 +3,10 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -19,15 +17,15 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.value.Languages;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.HtmlWriteTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @param <P>
@@ -37,35 +35,27 @@ import mara.mybox.value.Languages;
  */
 public abstract class BaseNodeSelector<P> extends BaseController {
 
-    protected static final int AutoExpandThreshold = 100;
+    protected static final int AutoExpandThreshold = 1000;
     protected static final String nodeSeparator = " > ";
 
-    protected P ignoreNode = null, selectedNode = null, changedNode = null;
-    protected SimpleBooleanProperty selectedNotify, changedNotify;
+    protected P ignoreNode = null;
     protected boolean expandAll, manageMode;
 
     @FXML
     protected TreeView<P> treeView;
     @FXML
     protected Label titleLabel;
-    @FXML
-    protected FlowPane buttonsPane;
-    @FXML
-    protected Button importButton, deleteNodeButton, addNodeButton, moveDataNodeButton, copyNodeButton, renameNodeButton;
-
-    public BaseNodeSelector() {
-    }
 
     /*
         abstract methods
      */
     protected abstract String name(P node);
 
+    protected abstract long id(P node);
+
     protected abstract String display(P node);
 
     protected abstract String tooltip(P node);
-
-    protected abstract long id(P node);
 
     protected abstract P dummy();
 
@@ -73,7 +63,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract P root(Connection conn);
 
-    protected abstract int size(Connection conn, P root);
+    protected abstract int totalCount(Connection conn);
+
+    protected abstract int childrenCount(Connection conn, P node);
 
     protected abstract List<P> children(Connection conn, P node);
 
@@ -87,86 +79,36 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract P rename(P node, String name);
 
-    protected abstract void copyNode(Boolean onlyContents);
+    protected abstract void itemSelected(TreeItem<P> item);
 
-    @FXML
-    protected abstract void moveNode();
+    protected abstract void doubleClicked(TreeItem<P> item);
 
-    /*
-        methods may need changed
-     */
-    protected void itemSelected(TreeItem<P> item) {
-        if (isSettingValues) {
-            return;
-        }
-        loadNode(item != null ? item.getValue() : null);
-        if (moveDataNodeButton != null) {
-            boolean isRoot = item == null || isRoot(item.getValue());
-            moveDataNodeButton.setDisable(isRoot);
-            copyNodeButton.setDisable(isRoot);
-            renameNodeButton.setDisable(isRoot);
-        }
-    }
+    protected abstract void copyNode(TreeItem<P> item, Boolean onlyContents);
 
-    protected void nodeChanged(P node) {
-        changedNode = node;
-        changedNotify.set(!changedNotify.get());
-    }
+    protected abstract void moveNode(TreeItem<P> item);
 
-    protected void loadNode(P node) {
-        selectedNode = node;
-        selectedNotify.set(!selectedNotify.get());
-    }
+    protected abstract void editNode(TreeItem<P> item);
 
-    @FXML
-    protected void popImportMenu(MouseEvent mouseEvent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
+    protected abstract void exportNode(TreeItem<P> item);
 
-            items.add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
+    protected abstract void importAction();
 
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+    protected abstract void importExamples();
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
+    protected abstract void nodeAdded(P parent, P newNode);
 
-    @FXML
-    protected void exportNode() {
+    protected abstract void nodeDeleted(P node);
 
-    }
+    protected abstract void nodeRenamed(P node);
+
+    protected abstract void nodeMoved(P parent, P node);
+
+    protected abstract void treeView(Connection conn, P node, int indent, StringBuilder s);
+
 
     /*
         Common methods may need not changed
      */
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            selectedNotify = new SimpleBooleanProperty(false);
-            changedNotify = new SimpleBooleanProperty(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     @Override
     public void initControls() {
         try {
@@ -174,11 +116,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
             initTree();
 
-            if (moveDataNodeButton != null) {
-                moveDataNodeButton.setDisable(true);
-                copyNodeButton.setDisable(true);
-                renameNodeButton.setDisable(true);
-            }
             if (okButton != null) {
                 okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
             }
@@ -199,8 +136,10 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 }
                 setText(display(item));
                 String tips = tooltip(item);
-                if (tips != null) {
+                if (tips != null && !tips.isBlank()) {
                     NodeStyleTools.setTooltip(this, tips);
+                } else {
+                    NodeStyleTools.removeTooltip(this);
                 }
             }
         });
@@ -213,24 +152,25 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 }
                 TreeItem<P> item = treeView.getSelectionModel().getSelectedItem();
                 if (event.getButton() == MouseButton.SECONDARY) {
-                    popNodeMenu(event, item);
+                    popFunctionsMenu(event, item);
                 } else {
-                    itemSelected(item);
+                    if (event.getClickCount() > 1) {
+                        doubleClicked(item);
+                    } else {
+                        itemSelected(item);
+                    }
                 }
             }
         });
     }
 
-    public void setParent(BaseController parent, boolean manageMode) {
+    public void setManager(BaseController parent, boolean manageMode) {
         this.parentController = parent;
         if (parent != null) {
             this.baseName = parent.baseName;
         }
         this.ignoreNode = getIgnoreNode();
         this.manageMode = manageMode;
-        if (!manageMode && buttonsPane != null) {
-            thisPane.getChildren().remove(buttonsPane);
-        }
     }
 
     public void loadTree() {
@@ -239,8 +179,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     public void loadTree(P selectNode) {
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
                 private boolean expand;
@@ -253,7 +193,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         P rootNode = root(conn);
                         rootItem = new TreeItem(rootNode);
                         ignoreNode = getIgnoreNode();
-                        int size = size(conn, rootNode);
+                        int size = totalCount(conn);
                         if (size < 1) {
                             return true;
                         }
@@ -261,8 +201,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         if (expand) {
                             expandChildren(conn, rootItem);
                         } else {
-                            List<P> nodes = children(conn, rootNode);
-                            loadChildren(rootItem, nodes);
+                            loadChildren(conn, rootItem);
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -275,7 +214,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 protected void whenSucceeded() {
                     treeView.setRoot(rootItem);
                     rootItem.setExpanded(true);
-                    select(selectNode == null ? rootItem.getValue() : selectNode);
+                    TreeItem<P> selecItem = find(selectNode);
+                    if (selecItem != null) {
+                        select(selecItem);
+                    } else {
+                        select(rootItem);
+                    }
                 }
             };
             start(task);
@@ -312,91 +256,34 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         return chainName;
     }
 
-    protected void popNodeMenu(MouseEvent event, TreeItem<P> selected) {
+    public String chainName(TreeItem<P> node) {
+        if (node == null) {
+            return null;
+        }
+        String chainName = "";
+        List<TreeItem<P>> ancestor = ancestor(node);
+        if (ancestor != null) {
+            for (TreeItem<P> a : ancestor) {
+                chainName += name(a.getValue()) + nodeSeparator;
+            }
+        }
+        chainName += name(node.getValue());
+        return chainName;
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent event) {
         if (isSettingValues) {
             return;
         }
-        TreeItem<P> node = selected == null ? treeView.getRoot() : selected;
+        popFunctionsMenu(event, currectSelected());
+    }
 
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(display(node.getValue()));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
+    public void popFunctionsMenu(MouseEvent event, TreeItem<P> node) {
+        List<MenuItem> items = makeNodeMenu(node);
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(Languages.message("Add"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addNode();
-        });
-        items.add(menu);
-
-        if (manageMode) {
-            menu = new MenuItem(Languages.message("Delete"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                deleteNode();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("Move"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                moveNode();
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("CopyNodeAndContents"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                copyNode(false);
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("CopyNodeContents"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                copyNode(true);
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("Rename"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                renameNode();
-            });
-            menu.setDisable(isRoot(node.getValue()));
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("Export"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                exportNode();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-        }
-
-        menu = new MenuItem(Languages.message("Unfold"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodes();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(Languages.message("Fold"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodes();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(Languages.message("Refresh"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        items.add(menu);
-
-        items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(Languages.message("PopupClose"));
+        MenuItem menu = new MenuItem(message("PopupClose"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
@@ -413,35 +300,137 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
         popMenu.show(treeView, event.getScreenX(), event.getScreenY());
-
     }
 
-    @FXML
-    protected void addNode() {
+    protected List<MenuItem> makeNodeMenu(TreeItem<P> item) {
+        TreeItem<P> targetItem = item == null ? treeView.getRoot() : item;
+        boolean isRoot = targetItem == null || isRoot(targetItem.getValue());
+
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu = new MenuItem(chainName(targetItem));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            addNode(targetItem);
+        });
+        items.add(menu);
+
+        if (manageMode) {
+            menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                editNode(targetItem);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteNode(targetItem);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                renameNode(targetItem);
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            menu = new MenuItem(message("CopyNodeAndContents"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                copyNode(targetItem, false);
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            menu = new MenuItem(message("CopyNodeContents"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                copyNode(targetItem, true);
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                moveNode(targetItem);
+            });
+            menu.setDisable(isRoot);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                exportNode(targetItem);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("TreeView"), StyleTools.getIconImage("iconTree.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                treeView();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Import"), StyleTools.getIconImage("iconImport.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                importAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                importExamples();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+        }
+
+        menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            unfoldNodes();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNodes();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
+        });
+        items.add(menu);
+
+        return items;
+    }
+
+    protected void addNode(TreeItem<P> targetItem) {
+        if (targetItem == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        P targetNode = targetItem.getValue();
+        if (targetNode == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        String chainName = chainName(targetItem);
+        String name = PopTools.askValue(getBaseTitle(), chainName, message("Add"), message("Node") + "m");
+        if (name == null || name.isBlank()) {
+            return;
+        }
+        if (name.contains(nodeSeparator)) {
+            popError(message("NameShouldNotInclude") + " \"" + nodeSeparator + "\"");
+            return;
+        }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            TreeItem<P> selectedItem = treeView.getSelectionModel().getSelectedItem();
-            if (selectedItem == null) {
-                selectedItem = treeView.getRoot();
-                if (selectedItem == null) {
-                    return;
-                }
-            }
-            TreeItem<P> targetItem = selectedItem;
-            P targetNode = targetItem.getValue();
-            if (targetNode == null) {
-                return;
-            }
-            String chainName = chainName(targetItem);
-            String name = PopTools.askValue(getBaseTitle(), chainName, Languages.message("Add"), Languages.message("Node") + "m");
-            if (name == null || name.isBlank()) {
-                return;
-            }
-            if (name.contains(nodeSeparator)) {
-                popError(Languages.message("NameShouldNotInclude") + " \"" + nodeSeparator + "\"");
-                return;
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
                 private P newNode;
@@ -457,7 +446,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     TreeItem<P> newItem = new TreeItem<>(newNode);
                     targetItem.getChildren().add(newItem);
                     targetItem.setExpanded(true);
-                    nodeChanged(targetNode);
+                    nodeAdded(targetNode, newNode);
                     popSuccessful();
                 }
 
@@ -466,34 +455,30 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
-    @FXML
-    protected void deleteNode() {
+    protected void deleteNode(TreeItem<P> targetItem) {
+        if (targetItem == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        P node = targetItem.getValue();
+        if (node == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        boolean isRoot = isRoot(node);
+        if (isRoot) {
+            if (!PopTools.askSure(this, getBaseTitle(), message("Delete"), message("SureDeleteAll"))) {
+                return;
+            }
+        } else {
+            String chainName = chainName(targetItem);
+            if (!PopTools.askSure(this, getBaseTitle(), chainName, message("Delete"))) {
+                return;
+            }
+        }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            TreeItem<P> selectedItem = treeView.getSelectionModel().getSelectedItem();
-            if (selectedItem == null) {
-                selectedItem = treeView.getRoot();
-                if (selectedItem == null) {
-                    return;
-                }
-            }
-            TreeItem<P> targetItem = selectedItem;
-            P node = targetItem.getValue();
-            if (node == null) {
-                return;
-            }
-            boolean isRoot = isRoot(node);
-            if (isRoot) {
-                if (!PopTools.askSure(this, getBaseTitle(), Languages.message("Delete"), Languages.message("SureDeleteAll"))) {
-                    return;
-                }
-            } else {
-                String chainName = chainName(targetItem);
-                if (!PopTools.askSure(this, getBaseTitle(), chainName, Languages.message("Delete"))) {
-                    return;
-                }
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
 
@@ -522,13 +507,16 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         treeView.setRoot(rootItem);
                         rootItem.setExpanded(true);
                         itemSelected(rootItem);
+                        nodeDeleted(rootItem.getValue());
                     } else {
                         targetItem.getChildren().clear();
                         if (targetItem.getParent() != null) {
                             targetItem.getParent().getChildren().remove(targetItem);
                         }
                         itemSelected(treeView.getSelectionModel().getSelectedItem());
+                        nodeDeleted(targetItem.getValue());
                     }
+
                     popSuccessful();
                 }
 
@@ -537,43 +525,43 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
-    @FXML
-    protected void renameNode() {
+    protected void renameNode(TreeItem<P> item) {
+        if (item == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        P nodeValue = item.getValue();
+        if (nodeValue == null || isRoot(nodeValue)) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        String chainName = chainName(item);
+        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), name(nodeValue) + "m");
+        if (name == null || name.isBlank()) {
+            return;
+        }
+        if (name.contains(nodeSeparator)) {
+            popError(message("NodeNameNotInclude") + " \"" + nodeSeparator + "\"");
+            return;
+        }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            TreeItem<P> selectedItem = treeView.getSelectionModel().getSelectedItem();
-            if (selectedItem == null) {
-                return;
-            }
-            TreeItem<P> node = selectedItem;
-            P book = node.getValue();
-            if (book == null || isRoot(book)) {
-                return;
-            }
-            String chainName = chainName(node);
-            String name = PopTools.askValue(getBaseTitle(), chainName, Languages.message("RenameNode"), name(book) + "m");
-            if (name == null || name.isBlank()) {
-                return;
-            }
-            if (name.contains(nodeSeparator)) {
-                popError(Languages.message("NodeNameNotInclude") + " \"" + nodeSeparator + "\"");
-                return;
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
                 private P updatedNode;
 
                 @Override
                 protected boolean handle() {
-                    updatedNode = rename(book, name);
+                    updatedNode = rename(nodeValue, name);
                     return updatedNode != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    treeView.refresh();
-                    nodeChanged(updatedNode);
+                    item.setValue(updatedNode);
+                    item.getParent().getChildren().set(item.getParent().getChildren().indexOf(item), item); // force item refreshed
+                    nodeRenamed(updatedNode);
                     popSuccessful();
                 }
             };
@@ -581,52 +569,18 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
-    @FXML
-    protected void copyNode() {
-        copyNode(false);
+    protected void copyNode(TreeItem<P> item) {
+        copyNode(item, false);
     }
 
     @FXML
     protected void foldNodes() {
-        TreeItem<P> selecteItem = treeView.getSelectionModel().getSelectedItem();
-        if (selecteItem == null) {
-            selecteItem = treeView.getRoot();
-        }
-        fold(selecteItem);
+        fold(currectSelected());
     }
 
     @FXML
     protected void unfoldNodes() {
-        TreeItem<P> selecteItem = treeView.getSelectionModel().getSelectedItem();
-        if (selecteItem == null) {
-            selecteItem = treeView.getRoot();
-        }
-        expandChildren(selecteItem);
-    }
-
-    protected void expandChildren(Connection conn, TreeItem<P> item) {
-        if (conn == null || item == null) {
-            return;
-        }
-        item.getChildren().clear();
-        P node = item.getValue();
-        if (node == null) {
-            return;
-        }
-        ignoreNode = getIgnoreNode();
-        List<P> children = children(conn, node);
-        if (children != null) {
-            for (P child : children) {
-                if (ignoreNode != null && equal(child, ignoreNode)) {
-                    continue;
-                }
-                TreeItem<P> childNode = new TreeItem(child);
-                expandChildren(conn, childNode);
-                childNode.setExpanded(true);
-                item.getChildren().add(childNode);
-            }
-        }
-        item.setExpanded(true);
+        expandChildren(currectSelected());
     }
 
     protected void expandChildren(TreeItem<P> item) {
@@ -663,11 +617,35 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
+    protected void expandChildren(Connection conn, TreeItem<P> item) {
+        if (conn == null || item == null) {
+            return;
+        }
+        item.getChildren().clear();
+        P node = item.getValue();
+        if (node == null) {
+            return;
+        }
+        ignoreNode = getIgnoreNode();
+        List<P> children = children(conn, node);
+        if (children != null) {
+            for (P child : children) {
+                if (ignoreNode != null && equal(child, ignoreNode)) {
+                    continue;
+                }
+                TreeItem<P> childNode = new TreeItem(child);
+                expandChildren(conn, childNode);
+                childNode.setExpanded(true);
+                item.getChildren().add(childNode);
+            }
+        }
+        item.setExpanded(true);
+    }
+
     protected void loadChildren(TreeItem<P> item) {
         if (item == null) {
             return;
         }
-        item.getChildren().clear();
         P node = item.getValue();
         if (node == null) {
             return;
@@ -677,12 +655,11 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 return;
             }
             task = new SingletonTask<Void>(this) {
-                private List<P> nodes;
 
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
-                        nodes = children(conn, node);
+                        loadChildren(conn, item);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -692,39 +669,71 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (nodes == null) {
-                        return;
-                    }
-                    loadChildren(item, nodes);
                     treeView.refresh();
+                    select(item);
                 }
             };
             start(task);
+
         }
     }
 
-    protected void loadChildren(TreeItem<P> item, List<P> nodes) {
-        if (item == null || nodes == null) {
+    protected void loadChildren(Connection conn, TreeItem<P> item) {
+        if (conn == null || item == null) {
             return;
         }
-        P dummy = dummy();
-        ignoreNode = getIgnoreNode();
-        for (P node : nodes) {
-            if (ignoreNode != null && equal(node, ignoreNode)) {
-                continue;
-            }
-            TreeItem<P> child = new TreeItem(node);
-            item.getChildren().add(child);
-            child.setExpanded(false);
-            child.expandedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                        if (newVal && !child.isLeaf() && !loaded(child)) {
-                            loadChildren(child);
-                        }
-                    });
-            TreeItem<P> dummyItem = new TreeItem(dummy);
-            child.getChildren().add(dummyItem);
+        item.getChildren().clear();
+        P node = item.getValue();
+        if (node == null) {
+            return;
         }
+        ignoreNode = getIgnoreNode();
+        List<P> children = children(conn, node);
+        if (children != null) {
+            for (P child : children) {
+                if (ignoreNode != null && equal(child, ignoreNode)) {
+                    continue;
+                }
+                TreeItem<P> childItem = new TreeItem(child);
+                item.getChildren().add(childItem);
+                childItem.setExpanded(false);
+                if (childrenCount(conn, child) > 0) {
+                    childItem.expandedProperty().addListener(
+                            (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                                if (newVal && !childItem.isLeaf() && !loaded(childItem)) {
+                                    loadChildren(childItem);
+                                }
+                            });
+                    TreeItem<P> dummyItem = new TreeItem(dummy());
+                    childItem.getChildren().add(dummyItem);
+                }
+            }
+        }
+        item.setExpanded(true);
+    }
+
+    protected void addNewNode(TreeItem<P> item, P node) {
+        if (item == null || node == null) {
+            return;
+        }
+        TreeItem<P> child = new TreeItem(node);
+        item.getChildren().add(child);
+        child.setExpanded(false);
+        select(item);
+    }
+
+    protected void updateChild(TreeItem<P> item, P node) {
+        if (item == null || node == null) {
+            return;
+        }
+        for (TreeItem<P> child : item.getChildren()) {
+            P value = child.getValue();
+            if (value != null && equal(node, value)) {
+                child.setValue(node);
+                return;
+            }
+        }
+        loadChildren(item);
     }
 
     protected boolean loaded(TreeItem<P> item) {
@@ -758,6 +767,83 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         loadTree();
     }
 
+    @FXML
+    public void treeView() {
+        treeView(currectSelected());
+    }
+
+    public void treeView(TreeItem<P> node) {
+        if (node == null) {
+            return;
+        }
+        P nodeValue = node.getValue();
+        if (nodeValue == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>(this) {
+                private StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    s = new StringBuilder();
+                    // https://www.jb51.net/article/116957.htm
+                    s.append(" <script>\n"
+                            + "    function nodeClicked(id) {\n"
+                            + "      var obj = document.getElementById(id);\n"
+                            + "      var objv = obj.style.display;\n"
+                            + "      if (objv == 'none') {\n"
+                            + "        obj.style.display = 'block';\n"
+                            + "      } else {\n"
+                            + "        obj.style.display = 'none';\n"
+                            + "      }\n"
+                            + "    }\n"
+                            + "    function showClass(className, show) {\n"
+                            + "      var nodes = document.getElementsByClassName(className);  　\n"
+                            + "      if ( show) {\n"
+                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                            + "              nodes[i].style.display = '';\n"
+                            + "           }\n"
+                            + "       } else {\n"
+                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                            + "              nodes[i].style.display = 'none';\n"
+                            + "           }\n"
+                            + "       }\n"
+                            + "    }\n"
+                            + "  </script>\n\n");
+                    s.append("<DIV>\n")
+                            .append("<DIV>\n")
+                            .append("    <SPAN style=\"font-size:0.8em\">").append(message("HtmlEditableComments")).append("</SPANE><BR>\n")
+                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
+                            .append(message("Unfold")).append("</INPUT>\n")
+                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('NodeTag', this.checked);\">")
+                            .append(message("Tags")).append("</INPUT>\n")
+                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('nodeValue', this.checked);\">")
+                            .append(message("Values")).append("</INPUT>\n")
+                            .append("    <HR>\n")
+                            .append("</DIV>\n");
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        treeView(conn, nodeValue, 4, s);
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    WebAddressController c = WebBrowserController.oneLoad(
+                            HtmlWriteTools.html(chainName(node), HtmlStyles.styleValue("Default"), s.toString()), true);
+                }
+            };
+            start(task);
+        }
+    }
+
     public List<TreeItem<P>> ancestor(TreeItem<P> node) {
         if (node == null) {
             return null;
@@ -772,21 +858,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             ancestor.add(parent);
         }
         return ancestor;
-    }
-
-    public String chainName(TreeItem<P> node) {
-        if (node == null) {
-            return null;
-        }
-        String chainName = "";
-        List<TreeItem<P>> ancestor = ancestor(node);
-        if (ancestor != null) {
-            for (TreeItem<P> a : ancestor) {
-                chainName += name(a.getValue()) + nodeSeparator;
-            }
-        }
-        chainName += name(node.getValue());
-        return chainName;
     }
 
     public void cloneTree(TreeView<P> sourceTreeView, TreeView<P> targetTreeView, P ignore) {
@@ -829,6 +900,14 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
+    public TreeItem<P> currectSelected() {
+        TreeItem<P> selecteItem = treeView.getSelectionModel().getSelectedItem();
+        if (selecteItem == null) {
+            selecteItem = treeView.getRoot();
+        }
+        return selecteItem;
+    }
+
     public void select(P node) {
         select(treeView, node);
     }
@@ -837,11 +916,25 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         if (treeView == null || node == null) {
             return;
         }
-        TreeItem<P> item = find(treeView.getRoot(), node);
+        select(find(treeView.getRoot(), node));
+    }
+
+    public void select(TreeItem<P> nodeitem) {
+        if (treeView == null || nodeitem == null) {
+            return;
+        }
         isSettingValues = true;
-        treeView.getSelectionModel().select(item);
+        treeView.getSelectionModel().select(nodeitem);
         isSettingValues = false;
-        itemSelected(item);
+        treeView.scrollTo(treeView.getRow(nodeitem));
+        itemSelected(nodeitem);
+    }
+
+    public TreeItem<P> find(P node) {
+        if (treeView == null || node == null) {
+            return null;
+        }
+        return find(treeView.getRoot(), node);
     }
 
     public TreeItem<P> find(TreeItem<P> item, P node) {
@@ -873,11 +966,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     @Override
     public void cleanPane() {
         try {
-            selectedNotify = null;
-            changedNotify = null;
+//            selectedNotify = null;
+//            changedNotify = null;
+//            selectedItem = null;
+//            changedItem = null;
             ignoreNode = null;
-            selectedNode = null;
-            changedNode = null;
+
         } catch (Exception e) {
         }
         super.cleanPane();

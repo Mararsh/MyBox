@@ -84,7 +84,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public List<List<String>> readPageData() {
+    public List<List<String>> readPageData(Connection conn) {
         if (startRowOfCurrentPage < 0) {
             startRowOfCurrentPage = 0;
         }
@@ -92,8 +92,7 @@ public class DataMatrix extends Data2D {
         List<List<String>> rows = new ArrayList<>();
         if (d2did >= 0 && rowsNumber > 0 && colsNumber > 0) {
             double[][] matrix = new double[(int) rowsNumber][(int) colsNumber];
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
+            try ( PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
                 query.setLong(1, d2did);
                 ResultSet results = query.executeQuery();
                 while (results.next()) {

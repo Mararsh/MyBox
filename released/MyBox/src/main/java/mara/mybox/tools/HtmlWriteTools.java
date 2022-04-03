@@ -172,7 +172,11 @@ public class HtmlWriteTools {
 
     public static String htmlToText(String html) {
         try {
-            return Jsoup.parse(html).wholeText();
+            if (html == null || html.isBlank()) {
+                return html;
+            } else {
+                return Jsoup.parse(html).wholeText();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

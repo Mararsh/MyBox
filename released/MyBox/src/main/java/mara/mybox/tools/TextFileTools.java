@@ -111,7 +111,7 @@ public class TextFileTools {
             for (int c = 0; c <= end; c++) {
                 String value = values.get(c);
                 if (value != null) {
-                    line += values.get(c);
+                    line += value;
                 }
                 if (c < end) {
                     line += delimiter;

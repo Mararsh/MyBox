@@ -275,7 +275,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-     public long clearData() {
+    public long clearData() {
         File tmpFile = TmpFileTools.getTempFile();
         CSVFormat cvsFormat = cvsFormat();
         checkForLoad();

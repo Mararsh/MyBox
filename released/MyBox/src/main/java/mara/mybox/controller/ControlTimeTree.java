@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
+import mara.mybox.value.TimeFormats;
 
 /**
  * @Author Mara
@@ -43,7 +43,7 @@ public class ControlTimeTree extends ControlConditionTree {
             super.initControls();
 
             List<String> s = new ArrayList();
-            s.add(Languages.message("AllTime"));
+            s.add(message("AllTime"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -68,8 +68,8 @@ public class ControlTimeTree extends ControlConditionTree {
     @Override
     public void loadTree() {
         CheckBoxTreeItem<ConditionNode> allItem = new CheckBoxTreeItem(
-                ConditionNode.create(Languages.message("AllTime"))
-                        .setTitle(Languages.message("AllTime"))
+                ConditionNode.create(message("AllTime"))
+                        .setTitle(message("AllTime"))
                         .setCondition("")
         );
         allItem.setExpanded(true);
@@ -246,11 +246,12 @@ public class ControlTimeTree extends ControlConditionTree {
                 newDayItem.expandedProperty().addListener(
                         (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                             if (newVal && !loaded(newDayItem)) {
-                                if (times.size() < 1000) {
-                                    loadTimes(newDayItem, false);
-                                } else {
-                                    loadHours(newDayItem);
-                                }
+//                                if (times.size() < 1000) {
+//                                    loadTimes(newDayItem, false);
+//                                } else {
+//                                    loadHours(newDayItem);
+//                                }
+                                loadHours(newDayItem);
                             }
                         });
             }
@@ -310,51 +311,100 @@ public class ControlTimeTree extends ControlConditionTree {
                 newHourItem.expandedProperty().addListener(
                         (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                             if (newVal && !loaded(newHourItem)) {
-                                loadTimes(newHourItem, true);
+                                loadMinutes(newHourItem);
                             }
                         });
             }
         }
     }
 
-    protected void loadTimes(CheckBoxTreeItem<ConditionNode> parentItem, boolean fromHour) {
-        if (parentItem == null || times == null || times.isEmpty()) {
+    protected void loadMinutes(CheckBoxTreeItem<ConditionNode> hourItem) {
+        if (hourItem == null || times == null || times.isEmpty()) {
             return;
         }
-        parentItem.getChildren().clear();
-        String parent = parentItem.getValue().getTitle();
-        String parentTime;
-        if (fromHour) {
-            if (parent.length() < 13) {
-                return;
-            }
-            parentTime = parent.substring(0, 13);
-        } else {
-            if (parent.length() < 10) {
-                return;
-            }
-            parentTime = parent.substring(0, 10);
+        hourItem.getChildren().clear();
+        String hour = hourItem.getValue().getTitle();
+        if (hour.length() < 13) {
+            return;
         }
-        String timeEra;
+        String hourTime = hour.substring(0, 13);
+        String minute, minuteEra;
         boolean isBC = false;
         for (Date time : times) {
             String timeString = DateTools.datetimeToString(time);
-            if (!timeString.startsWith(parentTime)) {
+            minute = timeString.substring(0, 16);
+            if (!minute.startsWith(hourTime)) {
+                continue;
+            }
+            minuteEra = minute;
+            if (isEra) {
+                isBC = DateTools.isBC(time.getTime());
+                if (isBC) {
+                    if (!minute.endsWith(" BC")) {
+                        continue;
+                    }
+                    minuteEra += " BC";
+                }
+            }
+            CheckBoxTreeItem<ConditionNode> minuteItem = null;
+            if (!hourItem.isLeaf()) {
+                for (TreeItem<ConditionNode> hourChild : hourItem.getChildren()) {
+                    if (minuteEra.equals(hourChild.getValue().getTitle())) {
+                        minuteItem = (CheckBoxTreeItem<ConditionNode>) hourChild;
+                        break;
+                    }
+                }
+            }
+            if (minuteItem == null) {
+                String start = minute + ":00" + (isBC ? " BC" : "");
+                String end = minute + ":59" + (isBC ? " BC" : "");
+                CheckBoxTreeItem<ConditionNode> newMinuteItem = new CheckBoxTreeItem(
+                        ConditionNode.create(minuteEra)
+                                .setTitle(minuteEra)
+                                .setCondition(condition(start, end))
+                );
+                hourItem.getChildren().add(newMinuteItem);
+                newMinuteItem.setExpanded(false);
+
+                TreeItem<ConditionNode> dummyItem = new TreeItem("Loading");
+                newMinuteItem.getChildren().add(dummyItem);
+                newMinuteItem.expandedProperty().addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                            if (newVal && !loaded(newMinuteItem)) {
+                                loadTimes(newMinuteItem);
+                            }
+                        });
+            }
+        }
+    }
+
+    protected void loadTimes(CheckBoxTreeItem<ConditionNode> minuteItem) {
+        if (minuteItem == null || times == null || times.isEmpty()) {
+            return;
+        }
+        minuteItem.getChildren().clear();
+        String minute = minuteItem.getValue().getTitle();
+        String minuteTime = minute.substring(0, 16);
+        String timeEra;
+        boolean isBC;
+        for (Date time : times) {
+            String timeString = DateTools.datetimeToString(time, TimeFormats.DatetimeMs);
+            if (!timeString.startsWith(minuteTime)) {
                 continue;
             }
             timeEra = timeString;
             if (isEra) {
                 isBC = DateTools.isBC(time.getTime());
                 if (isBC) {
-                    if (!parent.endsWith(" BC")) {
+                    if (!minute.endsWith(" BC")) {
                         continue;
                     }
                     timeEra += " BC";
                 }
             }
             CheckBoxTreeItem<ConditionNode> timeItem = null;
-            if (!parentItem.isLeaf()) {
-                for (TreeItem<ConditionNode> node : parentItem.getChildren()) {
+            if (!minuteItem.isLeaf()) {
+                for (TreeItem<ConditionNode> node : minuteItem.getChildren()) {
                     if (timeEra.equals(node.getValue().getTitle())) {
                         timeItem = (CheckBoxTreeItem<ConditionNode>) node;
                         break;
@@ -365,9 +415,9 @@ public class ControlTimeTree extends ControlConditionTree {
                 timeItem = new CheckBoxTreeItem(
                         ConditionNode.create(timeEra)
                                 .setTitle(timeEra)
-                                .setCondition(condition(timeString + (isBC ? " BC" : "")))
+                                .setCondition(condition(time))
                 );
-                parentItem.getChildren().add(timeItem);
+                minuteItem.getChildren().add(timeItem);
             }
         }
     }
@@ -390,12 +440,11 @@ public class ControlTimeTree extends ControlConditionTree {
         }
     }
 
-    protected String condition(String time) {
-        if (!isEra) {
-            return " " + fieldName + "= '" + time + "'";
+    protected String condition(Date time) {
+        if (isEra) {
+            return " " + fieldName + "=" + time.getTime();
         } else {
-            long timeValue = DateTools.encodeEra(time).getTime();
-            return " " + fieldName + "=" + timeValue;
+            return " " + fieldName + "='" + time + "'";
         }
     }
 

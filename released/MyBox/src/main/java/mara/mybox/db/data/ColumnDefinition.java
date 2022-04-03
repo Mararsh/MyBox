@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.data.Era;
+import mara.mybox.db.table.BaseTable;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -39,7 +40,7 @@ public class ColumnDefinition extends BaseData {
     protected Era.Format timeFormat;
     protected Object value;
     protected Number maxValue, minValue;
-    protected Map<Object, String> values;  // value, displayString
+    protected Map<Object, String> data;  // value, displayString
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -141,7 +142,7 @@ public class ColumnDefinition extends BaseData {
             value = c.value;
             maxValue = c.maxValue;
             minValue = c.minValue;
-            values = c.values;
+            columnValues = c.columnValues;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -389,39 +390,40 @@ public class ColumnDefinition extends BaseData {
             if (results == null || type == null || columnName == null) {
                 return null;
             }
+            String savedName = BaseTable.savedName(columnName);
             switch (type) {
                 case String:
                 case Text:
                 case Color:
                 case File:
                 case Image:
-                    return results.getString(columnName);
+                    return results.getString(savedName);
                 case Double:
-                    return results.getDouble(columnName);
+                    return results.getDouble(savedName);
                 case Float:
-                    return results.getFloat(columnName);
+                    return results.getFloat(savedName);
                 case Long:
                 case Era:
-                    return results.getLong(columnName);
+                    return results.getLong(savedName);
                 case Integer:
-                    return results.getInt(columnName);
+                    return results.getInt(savedName);
                 case Boolean:
-                    return results.getBoolean(columnName);
+                    return results.getBoolean(savedName);
                 case Short:
-                    return results.getShort(columnName);
+                    return results.getShort(savedName);
                 case Datetime:
-                    return results.getTimestamp(columnName);
+                    return results.getTimestamp(savedName);
                 case Date:
-                    return results.getDate(columnName);
+                    return results.getDate(savedName);
                 case Blob:
-                    return results.getBlob(columnName);
+                    return results.getBlob(savedName);
                 case Clob:
-                    return results.getClob(columnName);
+                    return results.getClob(savedName);
                 default:
-                    MyBoxLog.debug(columnName + " " + type);
+                    MyBoxLog.debug(savedName + " " + type);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), columnName + " " + type);
+            MyBoxLog.error(e.toString(), tableName + " " + columnName + " " + type);
         }
         return null;
     }
@@ -574,7 +576,6 @@ public class ColumnDefinition extends BaseData {
                 return null;
         }
     }
-
 
     /*
         static methods
@@ -747,13 +748,13 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public String getColumnName() {
-        return columnName;
-    }
-
     public ColumnDefinition setColumnName(String name) {
         this.columnName = name;
         return this;
+    }
+
+    public String getColumnName() {
+        return columnName;
     }
 
     public ColumnType getType() {
@@ -891,12 +892,12 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public Map<Object, String> getValues() {
-        return values;
+    public Map<Object, String> getData() {
+        return data;
     }
 
-    public ColumnDefinition setValues(Map<Object, String> values) {
-        this.values = values;
+    public ColumnDefinition setData(Map<Object, String> data) {
+        this.data = data;
         return this;
     }
 

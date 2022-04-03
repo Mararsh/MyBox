@@ -42,7 +42,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "AllPages", allPagesCheck.isSelected());
-                    notifySelect();
+                    notifySelected();
                 }
             });
 
@@ -146,7 +146,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        notifySelect();
+                        notifySelected();
                     }
                 });
                 tableColumn.setGraphic(cb);
@@ -219,7 +219,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 tableView.getSelectionModel().clearSelection();
             }
             isSettingValues = false;
-            notifySelect();
+            notifySelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -235,7 +235,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 cb.setSelected(true);
             }
             isSettingValues = false;
-            notifySelect();
+            notifySelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -251,7 +251,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 cb.setSelected(false);
             }
             isSettingValues = false;
-            notifySelect();
+            notifySelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -423,7 +423,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 selectNoneCols();
             }
             isSettingValues = false;
-            notifySelect();
+            notifySelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

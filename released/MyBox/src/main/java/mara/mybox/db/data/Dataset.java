@@ -58,7 +58,7 @@ public class Dataset extends BaseData {
         try {
             switch (column) {
                 case "dsid":
-                    data.setId(value == null ? -1 : (long) value);
+                    data.setDsid(value == null ? -1 : (long) value);
                     return true;
                 case "data_category":
                     data.setDataCategory(value == null ? null : (String) value);
@@ -107,7 +107,7 @@ public class Dataset extends BaseData {
         try {
             switch (column) {
                 case "dsid":
-                    return data.getId();
+                    return data.getDsid();
                 case "data_category":
                     return data.getDataCategory();
                 case "data_set":

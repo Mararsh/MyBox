@@ -6,7 +6,6 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BubbleChart;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -79,7 +78,7 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
         }
         try {
             setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
-            boolean isXY = getXAxis() instanceof CategoryAxis;
+            boolean isXY = chartController.isXY();
             for (int s = 0; s < series.getData().size(); s++) {
                 Data<X, Y> item = series.getData().get(s);
                 Node label = ChartTools.makeLabel(item, isXY, labelType, popLabel, chartCoordinate, scale);

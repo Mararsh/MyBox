@@ -93,6 +93,9 @@ public abstract class Data2DHandleController extends BaseChildController {
     }
 
     public boolean checkOptions() {
+        if (tableController == null) {
+            return false;
+        }
         data2D = tableController.data2D;
         getMyStage().setTitle(tableController.getTitle());
 

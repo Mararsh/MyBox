@@ -1,45 +1,49 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.tools.DateTools;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 
 /**
  * @Author Mara
  * @CreateDate 2019-12-8
  * @License Apache License Version 2.0
  */
-public class TableMedia extends DerbyBase {
+public class TableMedia extends BaseTable<MediaInformation> {
 
     public TableMedia() {
-        Table_Name = "media";
-        Keys = new ArrayList<>() {
-            {
-                add("address");
-            }
-        };
-        Create_Table_Statement
-                = " CREATE TABLE media ( "
-                + "  address VARCHAR(32672)  NOT NULL, "
-                + "  video_encoding VARCHAR(1024)  , "
-                + "  audio_encoding VARCHAR(1024)  , "
-                + "  duration BIGINT, "
-                + "  size BIGINT, "
-                + "  width INT, "
-                + "  height INT, "
-                + "  info VARCHAR(32672), "
-                + "  html CLOB, "
-                + "  modify_time TIMESTAMP NOT NULL, "
-                + "  PRIMARY KEY (address)"
-                + " )";
+        tableName = "media";
+        defineColumns();
+    }
+
+    public TableMedia(boolean defineColumns) {
+        tableName = "media";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableMedia defineColumns() {
+        addColumn(new ColumnDefinition("address", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("video_encoding", ColumnDefinition.ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("audio_encoding", ColumnDefinition.ColumnType.String).setLength(1024));
+        addColumn(new ColumnDefinition("duration", ColumnDefinition.ColumnType.Long));
+        addColumn(new ColumnDefinition("size", ColumnDefinition.ColumnType.Long));
+        addColumn(new ColumnDefinition("width", ColumnDefinition.ColumnType.Integer));
+        addColumn(new ColumnDefinition("height", ColumnDefinition.ColumnType.Integer));
+        addColumn(new ColumnDefinition("info", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("html", ColumnDefinition.ColumnType.Clob));
+        addColumn(new ColumnDefinition("modify_time", ColumnDefinition.ColumnType.Datetime, true));
+        return this;
     }
 
     public static MediaInformation read(String address) {
@@ -50,7 +54,7 @@ public class TableMedia extends DerbyBase {
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             statement.setMaxRows(1);
-            String sql = " SELECT * FROM media WHERE address='" + stringValue(address) + "'";
+            String sql = " SELECT * FROM media WHERE address='" + DerbyBase.stringValue(address) + "'";
             try ( ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     MediaInformation media = new MediaInformation(address);
@@ -126,12 +130,12 @@ public class TableMedia extends DerbyBase {
         }
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM media WHERE address='" + stringValue(media.getAddress()) + "'";
+            String sql = "DELETE FROM media WHERE address='" + DerbyBase.stringValue(media.getAddress()) + "'";
             statement.executeUpdate(sql);
             sql = "INSERT INTO media(address,video_encoding,audio_encoding,duration,size,width,height,info,html,modify_time) VALUES('"
-                    + stringValue(media.getAddress()) + "', '" + media.getVideoEncoding() + "', '" + media.getAudioEncoding() + "', "
+                    + DerbyBase.stringValue(media.getAddress()) + "', '" + media.getVideoEncoding() + "', '" + media.getAudioEncoding() + "', "
                     + media.getDuration() + ", " + media.getFileSize() + ", " + media.getWidth() + ", "
-                    + media.getHeight() + ", '" + stringValue(media.getInfo()) + "', '" + stringValue(media.getHtml()) + "', '"
+                    + media.getHeight() + ", '" + DerbyBase.stringValue(media.getInfo()) + "', '" + DerbyBase.stringValue(media.getHtml()) + "', '"
                     + DateTools.datetimeToString(new Date()) + "')";
             statement.executeUpdate(sql);
             return true;
@@ -166,9 +170,9 @@ public class TableMedia extends DerbyBase {
                 sql = "DELETE FROM media WHERE address='" + media.getAddress() + "'";
                 statement.executeUpdate(sql);
                 sql = "INSERT INTO media(address,video_encoding,audio_encoding,duration,size,width,height,info,html,modify_time) VALUES('"
-                        + stringValue(media.getAddress()) + "', '" + media.getVideoEncoding() + "', '" + media.getAudioEncoding() + "', "
+                        + DerbyBase.stringValue(media.getAddress()) + "', '" + media.getVideoEncoding() + "', '" + media.getAudioEncoding() + "', "
                         + media.getDuration() + ", " + media.getFileSize() + ", " + media.getWidth() + ", "
-                        + media.getHeight() + ", '" + stringValue(media.getInfo()) + "', '" + stringValue(media.getHtml()) + "', '"
+                        + media.getHeight() + ", '" + DerbyBase.stringValue(media.getInfo()) + "', '" + DerbyBase.stringValue(media.getHtml()) + "', '"
                         + DateTools.datetimeToString(new Date()) + "')";
                 statement.executeUpdate(sql);
             }
@@ -198,9 +202,9 @@ public class TableMedia extends DerbyBase {
             return true;
         }
         try ( Statement statement = conn.createStatement()) {
-            String inStr = "( '" + stringValue(addresses.get(0)) + "'";
+            String inStr = "( '" + DerbyBase.stringValue(addresses.get(0)) + "'";
             for (int i = 1; i < addresses.size(); ++i) {
-                inStr += ", '" + stringValue(addresses.get(i)) + "'";
+                inStr += ", '" + DerbyBase.stringValue(addresses.get(i)) + "'";
             }
             inStr += " )";
             String sql = "DELETE FROM media WHERE address IN " + inStr;
@@ -216,7 +220,7 @@ public class TableMedia extends DerbyBase {
     public static boolean delete(String address) {
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM media WHERE address='" + stringValue(address) + "'";
+            String sql = "DELETE FROM media WHERE address='" + DerbyBase.stringValue(address) + "'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {

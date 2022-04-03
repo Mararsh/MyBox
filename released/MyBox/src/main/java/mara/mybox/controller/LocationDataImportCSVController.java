@@ -13,8 +13,6 @@ import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVRecord;
 
@@ -78,7 +76,7 @@ public class LocationDataImportCSVController extends BaseImportCsvController<Loc
                 datasets.put(datasetName, dataset);
             }
             data.setDataset(dataset);
-            data.setDatasetid(dataset.getId());
+            data.setDatasetid(dataset.getDsid());
             if (names.contains(Languages.message(lang, "Label"))) {
                 data.setLabel(record.get(Languages.message(lang, "Label")));
             }

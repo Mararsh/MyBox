@@ -300,7 +300,7 @@ public class MenuWebviewController extends MenuController {
         if (webViewController == null) {
             return;
         }
-        HtmlScriptController.open(webViewController);
+        JavaScriptController.open(webViewController);
     }
 
     @Override

@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.data.FileEditInformation;
 import static mara.mybox.data.FileEditInformation.defaultCharset;
@@ -167,11 +170,47 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             }
 
             updatePanes();
+            checkAutoSave();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         isSettingValues = false;
+    }
+
+    protected void checkAutoSave() {
+        try {
+            if (autoSaveCheck == null) {
+                return;
+            }
+            autoSaveDurationController.permitInvalid(!autoSaveCheck.isSelected());
+            if (confirmCheck != null) {
+                confirmCheck.setVisible(!autoSaveCheck.isSelected());
+            }
+            if (autoSaveTimer != null) {
+                autoSaveTimer.cancel();
+                autoSaveTimer = null;
+            }
+            if (sourceFile == null || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
+                return;
+            }
+            long interval = autoSaveDurationController.value * 1000;
+            autoSaveTimer = new Timer();
+            autoSaveTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        if (fileChanged.get()) {
+                            saveAction();
+                        }
+                    });
+                }
+            }, interval, interval);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
     }
 
     protected void loadTotalNumbers() {

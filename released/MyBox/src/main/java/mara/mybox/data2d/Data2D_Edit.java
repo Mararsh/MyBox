@@ -144,7 +144,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         return dataSize;
     }
 
-    public List<List<String>> readPageData() {
+    public List<List<String>> readPageData(Connection conn) {
         if (!isColumnsValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
@@ -154,7 +154,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
         Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(task).start(Operation.ReadPage);
+                .setConn(conn).setReaderTask(task)
+                .start(Operation.ReadPage);
         if (reader == null) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;

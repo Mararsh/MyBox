@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.db.DerbyBase;
+import static mara.mybox.db.DerbyBase.stringValue;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.StringValue;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 
@@ -17,7 +19,27 @@ import mara.mybox.tools.DateTools;
  * @CreateDate 2019-8-21
  * @License Apache License Version 2.0
  */
-public class TableStringValue extends DerbyBase {
+public class TableStringValue extends BaseTable<StringValue> {
+
+    public TableStringValue() {
+        tableName = "String_Value";
+        defineColumns();
+    }
+
+    public TableStringValue(boolean defineColumns) {
+        tableName = "String_Value";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableStringValue defineColumns() {
+        addColumn(new ColumnDefinition("key_name", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("string_value", ColumnDefinition.ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("create_time", ColumnDefinition.ColumnType.Datetime, true));
+        orderColumns = "create_time DESC";
+        return this;
+    }
 
     public static final String Query
             = "SELECT * FROM String_Value WHERE key_name=?";
@@ -30,22 +52,6 @@ public class TableStringValue extends DerbyBase {
 
     public static final String Delete
             = "DELETE FROM String_Value WHERE key_name=?";
-
-    public TableStringValue() {
-        Table_Name = "String_Value";
-        Keys = new ArrayList<>() {
-            {
-                add("key_name");
-            }
-        };
-        Create_Table_Statement
-                = " CREATE TABLE String_Value ( "
-                + "  key_name  VARCHAR(32672) NOT NULL, "
-                + "  string_value VARCHAR(32672)  NOT NULL, "
-                + "  create_time TIMESTAMP NOT NULL, "
-                + "  PRIMARY KEY (key_name)"
-                + " )";
-    }
 
     public static String read(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -67,7 +73,7 @@ public class TableStringValue extends DerbyBase {
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query)) {
             statement.setMaxRows(1);
-            statement.setString(1, DerbyBase.stringValue(name));
+            statement.setString(1, stringValue(name));
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     return results.getString("string_value");

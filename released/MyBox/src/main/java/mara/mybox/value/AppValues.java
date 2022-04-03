@@ -7,8 +7,8 @@ package mara.mybox.value;
  */
 public class AppValues {
 
-    public static final String AppVersion = "6.5.3";
-    public static final String AppVersionDate = "2022-3-6";
+    public static final String AppVersion = "6.5.4";
+    public static final String AppVersionDate = "2022-4-3";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 
@@ -16,9 +16,6 @@ public class AppValues {
     public static final String MyBoxStyle = "/styles/MyBox.css";
     public static final String MyBoxInternetDataPath = "https://github.com/Mararsh/MyBox_data";
 
-    public static final String DataIgnoreChars
-            = "\\$|\\(|\\)|\\*|\\?|\\/|\\^|\\{|\\}|\\||\\[|\\]|\"|"
-            + "[`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
     public static final String FileNameSpecialChars
             = "[:<>/&%]|\\*|\\?|\\\\|\n|\"|\\s+|\\||&nbsp;|&lt;|&gt;|&amp;|&quot;";
 

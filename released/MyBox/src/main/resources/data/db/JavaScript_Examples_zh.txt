@@ -1,0 +1,107 @@
+##MyBox#
+示例 > 选择
+全选
+window.getSelection().removeAllRanges();     
+var selection = window.getSelection();        
+var range = document.createRange();        
+range.selectNode(document.documentElement);        
+selection.addRange(range);
+
+##MyBox#
+示例 > 选择
+都不选
+window.getSelection().removeAllRanges();
+
+##MyBox#
+示例 > 选择
+选择结点
+function selectNode(id) {
+    window.getSelection().removeAllRanges();     
+    var selection = window.getSelection();        
+    var range = document.createRange();        
+    range.selectNode(document.getElementById(id));        
+    selection.addRange(range);
+};
+selectNode("someid");
+
+##MyBox#
+示例 > 选择
+当前选择的字串
+window.getSelection().toString();
+
+
+##MyBox#
+示例 > 选择
+当前选择的网页代码
+var selectionObj = window.getSelection();        
+var rangeObj = selectionObj.getRangeAt(0);        
+var docFragment = rangeObj.cloneContents();        
+var div = document.createElement("div");        
+div.appendChild(docFragment);        
+div.innerHTML;
+
+##MyBox#
+示例 > 方法
+添加风格
+function addStyle(style) {
+    var node = document.createElement("style");        
+    node.id = "mystyleid";        
+    node.type = "text/css";        
+    node.innerHTML = style.replace(/\n/g,"  ");        
+    document.getElementsByTagName("HEAD").item(0).appendChild(node);
+};
+addStyle("body { background-color:black; color:#CCFF99; }");
+    
+##MyBox#
+示例 > 方法
+删除结点
+function removeNode(id) {
+    var node = document.getElementById(id);
+    if ( node != null ) 
+        node.parentNode.removeChild(node);
+};
+removeNode("mystyleid");
+    
+##MyBox#
+示例 > 值
+读取Cookie
+document.cookie;
+    
+##MyBox#
+示例 > 值
+页面高度
+document.documentElement.scrollHeight || document.body.scrollHeight;
+    
+##MyBox#
+示例 > 值
+页面宽度
+document.documentElement.scrollWidth || document.body.scrollWidth;
+   
+##MyBox#
+示例 > 值
+替换首个
+"Hello World! World is yourself.".replace("World", "Feeling");
+   
+##MyBox#
+示例 > 值
+替换所有
+"Hello World! World is yourself.".replace(/World/g, "Feeling");
+   
+##MyBox#
+示例 > 操作
+滚动
+window.scrollTo(50,70 );
+   
+##MyBox#
+示例 > 操作
+设置网页可编辑
+document.body.contentEditable=true;
+   
+##MyBox#
+示例 > 操作
+弹出信息
+alert("Hello");
+   
+
+
+

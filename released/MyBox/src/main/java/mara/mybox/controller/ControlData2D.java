@@ -149,15 +149,19 @@ public class ControlData2D extends BaseController {
                 case CSV:
                 case MyBoxClipboard:
                     setFileType(VisitHistory.FileType.CSV);
+                    tableController.setFileType(VisitHistory.FileType.CSV);
                     break;
                 case Excel:
                     setFileType(VisitHistory.FileType.Excel);
+                    tableController.setFileType(VisitHistory.FileType.Excel);
                     break;
                 case Texts:
                     setFileType(VisitHistory.FileType.Text);
+                    tableController.setFileType(VisitHistory.FileType.Text);
                     break;
                 default:
                     setFileType(VisitHistory.FileType.CSV);
+                    tableController.setFileType(VisitHistory.FileType.CSV);
             }
 
         } catch (Exception e) {
@@ -637,6 +641,15 @@ public class ControlData2D extends BaseController {
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
+
+            if (data2D.isTable()) {
+                menu = new MenuItem(message("Query"), StyleTools.getIconImage("iconQuery.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    DataTableQueryController.open(tableController);
+                });
+                menu.setDisable(empty);
+                popMenu.getItems().add(menu);
+            }
 
             menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
             menu.setOnAction((ActionEvent event) -> {

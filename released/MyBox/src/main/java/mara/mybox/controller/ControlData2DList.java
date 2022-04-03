@@ -164,12 +164,12 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                     try ( Connection conn = DerbyBase.getConnection()) {
                         List<String> tables = DerbyBase.allTables(conn);
                         DataTable dataTable = new DataTable();
-                        for (String name : tables) {
-                            if (DataInternalTable.InternalTables.contains(name)) {
+                        for (String referredName : tables) {
+                            if (DataInternalTable.InternalTables.contains(referredName.toUpperCase())) {
                                 continue;
                             }
-                            if (tableData2DDefinition.queryTable(conn, name, Data2DDefinition.Type.DatabaseTable) == null) {
-                                dataTable.readDefinitionFromDB(conn, name);
+                            if (tableData2DDefinition.queryTable(conn, referredName, Data2DDefinition.Type.DatabaseTable) == null) {
+                                dataTable.readDefinitionFromDB(conn, referredName);
                             }
                         }
                     } catch (Exception e) {
@@ -285,7 +285,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                             statement.executeUpdate("DROP TABLE " + item.getSheet());
                             changed = true;
                         } catch (Exception e) {
-                            MyBoxLog.debug(e);
+                            MyBoxLog.debug(e, item.getSheet());
                         }
                         if (data2DController.loadController.data2D != null
                                 && item.getD2did() == data2DController.loadController.data2D.getD2did()) {
@@ -323,37 +323,35 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                 || data2DController instanceof DataTablesController) {
             String sql = "SELECT d2did, sheet FROM " + tableData2DDefinition.getTableName()
                     + " WHERE  data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable);
+            boolean isCurrent = false;
             try ( Connection conn = DerbyBase.getConnection();
                      Statement query = conn.createStatement();
                      Statement delete = conn.createStatement();
                      ResultSet results = query.executeQuery(sql)) {
+                List<String> names = new ArrayList<>();
                 while (results.next()) {
-                    String sheet = results.getString("sheet");
-                    if (sheet != null) {
-                        try {
-                            delete.executeUpdate("DROP TABLE " + sheet);
-                        } catch (Exception e) {
-                            MyBoxLog.debug(e);
-                        }
-                        long id = results.getLong("d2did");
-                        if (data2DController.loadController.data2D != null
-                                && id == data2DController.loadController.data2D.getD2did()) {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    data2DController.loadDef(null);
-                                }
-                            });
-                        }
+                    names.add(results.getString("sheet"));
+                    isCurrent = data2DController.loadController.data2D != null
+                            && results.getLong("d2did") == data2DController.loadController.data2D.getD2did();
+                }
+                for (String name : names) {
+                    try {
+                        delete.executeUpdate("DROP TABLE " + name);
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e, name);
                     }
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);
                 return -1;
             }
+            boolean loadNull = isCurrent;
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
+                    if (loadNull) {
+                        data2DController.loadDef(null);
+                    }
                     if (data2DController instanceof Data2DManageController) {
                         DataTablesController.updateList();
                     } else if (data2DController instanceof DataTablesController) {

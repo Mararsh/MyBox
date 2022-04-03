@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -198,13 +199,13 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryTable(Connection conn, String tableName, Type type) {
-        if (conn == null || tableName == null) {
+    public Data2DDefinition queryTable(Connection conn, String referredName, Type type) {
+        if (conn == null || referredName == null) {
             return null;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_Table)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(tableName.toLowerCase()));
+            statement.setString(2, referredName);
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -303,6 +304,23 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             }
             count = invalid.size();
             deleteData(conn, invalid);
+            conn.setAutoCommit(true);
+
+            sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
+                    + Data2D.type(Data2DDefinition.Type.DatabaseTable);
+            invalid.clear();
+            try ( PreparedStatement statement = conn.prepareStatement(sql);
+                     ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    Data2DDefinition data = readData(results);
+                    if (!exist(conn, data.getSheet())) {
+                        invalid.add(data);
+                    }
+                }
+            }
+            count += invalid.size();
+            deleteData(conn, invalid);
+
             conn.setAutoCommit(true);
         } catch (Exception e) {
             MyBoxLog.error(e);

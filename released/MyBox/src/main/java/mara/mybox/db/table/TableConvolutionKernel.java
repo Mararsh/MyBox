@@ -1,45 +1,49 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.tools.DateTools;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 
 /**
  * @Author Mara
  * @CreateDate 2018-11-6 20:54:43
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
-public class TableConvolutionKernel extends DerbyBase {
+public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
 
     public TableConvolutionKernel() {
-        Table_Name = "Convolution_Kernel";
-        Keys = new ArrayList<>() {
-            {
-                add("name");
-            }
-        };
-        Create_Table_Statement
-                = " CREATE TABLE Convolution_Kernel ( "
-                + "  name  VARCHAR(32672) NOT NULL PRIMARY KEY, "
-                + "  width  INT  NOT NULL,  "
-                + "  height  INT  NOT NULL,  "
-                + "  type SMALLINT, "
-                + "  edge SMALLINT, "
-                + "  is_gray BOOLEAN, "
-                + "  is_invert BOOLEAN, "
-                + "  modify_time TIMESTAMP, "
-                + "  create_time TIMESTAMP, "
-                + "  description VARCHAR(32672)  "
-                + " )";
+        tableName = "Convolution_Kernel";
+        defineColumns();
+    }
+
+    public TableConvolutionKernel(boolean defineColumns) {
+        tableName = "Convolution_Kernel";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableConvolutionKernel defineColumns() {
+        addColumn(new ColumnDefinition("name", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("width", ColumnDefinition.ColumnType.Integer, true));
+        addColumn(new ColumnDefinition("height", ColumnDefinition.ColumnType.Integer, true));
+        addColumn(new ColumnDefinition("type", ColumnDefinition.ColumnType.Short));
+        addColumn(new ColumnDefinition("edge", ColumnDefinition.ColumnType.Short));
+        addColumn(new ColumnDefinition("is_gray", ColumnDefinition.ColumnType.Boolean));
+        addColumn(new ColumnDefinition("is_invert", ColumnDefinition.ColumnType.Boolean));
+        addColumn(new ColumnDefinition("modify_time", ColumnDefinition.ColumnType.Datetime));
+        addColumn(new ColumnDefinition("create_time", ColumnDefinition.ColumnType.Datetime));
+        addColumn(new ColumnDefinition("description", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
+        return this;
     }
 
     public static List<ConvolutionKernel> read() {
@@ -128,20 +132,20 @@ public class TableConvolutionKernel extends DerbyBase {
         }
     }
 
-    public static boolean exist(String name) {
+    public static boolean existData(String name) {
         if (name == null) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
-            return exist(conn, name);
+            return existData(conn, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    public static boolean exist(Connection conn, String name) {
+    public static boolean existData(Connection conn, String name) {
         if (conn == null || name == null) {
             return false;
         }
@@ -210,7 +214,7 @@ public class TableConvolutionKernel extends DerbyBase {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            if (exist(conn, record.getName())) {
+            if (existData(conn, record.getName())) {
                 return update(conn, record);
             } else {
                 return insert(conn, record);
@@ -231,7 +235,7 @@ public class TableConvolutionKernel extends DerbyBase {
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             for (ConvolutionKernel k : records) {
-                if (exist(conn, k.getName())) {
+                if (existData(conn, k.getName())) {
                     update(conn, k);
                 } else {
                     insert(conn, k);

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVRecord;
 
@@ -286,7 +285,7 @@ public class EpidemicReportTools {
                 return ret;
             }
             GeographyCode code = (GeographyCode) codeRet.get("code");
-            report.setLocationid(code.getId());
+            report.setLocationid(code.getGcid());
             report.setLocation(code);
             ret.put("report", report);
             return ret;

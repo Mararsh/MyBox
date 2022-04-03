@@ -1,28 +1,19 @@
 package mara.mybox.db.data;
 
 import java.util.Date;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
  * @CreateDate 2019-4-5
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
-public class VisitHistory {
+public class VisitHistory extends BaseData {
 
-    private int resourceType, fileType, operationType;
+    private short resourceType, fileType, operationType;
     private String resourceValue, dataMore;
     private Date lastVisitTime;
     private int visitCount;
-
-    public VisitHistory() {
-
-    }
-
-    public VisitHistory(String value) {
-        resourceValue = value;
-    }
 
     public static class ResourceType {
 
@@ -110,30 +101,105 @@ public class VisitHistory {
 
     }
 
+    public VisitHistory() {
+    }
+
+    public VisitHistory(String value) {
+        resourceValue = value;
+    }
+
+    /*
+        Static methods
+     */
+    public static VisitHistory create() {
+        return new VisitHistory();
+    }
+
+    public static boolean setValue(VisitHistory data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "resource_type":
+                    data.setResourceType(value == null ? null : (short) value);
+                    return true;
+                case "file_type":
+                    data.setFileType(value == null ? null : (short) value);
+                    return true;
+                case "operation_type":
+                    data.setOperationType(value == null ? null : (short) value);
+                    return true;
+                case "resource_value":
+                    data.setResourceValue(value == null ? null : (String) value);
+                    return true;
+                case "last_visit_time":
+                    data.setLastVisitTime(value == null ? null : (Date) value);
+                    return true;
+                case "data_more":
+                    data.setDataMore(value == null ? null : (String) value);
+                    return true;
+                case "visit_count":
+                    data.setVisitCount(value == null ? null : (int) value);
+                    return true;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        return false;
+    }
+
+    public static Object getValue(VisitHistory data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        switch (column) {
+            case "resource_type":
+                return data.getResourceType();
+            case "file_type":
+                return data.getFileType();
+            case "operation_type":
+                return data.getOperationType();
+            case "resource_value":
+                return data.getResourceValue();
+            case "last_visit_time":
+                return data.getLastVisitTime();
+            case "data_more":
+                return data.getDataMore();
+            case "visit_count":
+                return data.getVisitCount();
+        }
+        return null;
+    }
+
+    public static boolean valid(VisitHistory data) {
+        return data != null;
+    }
+
     /*
         get/set
      */
-    public int getResourceType() {
+    public short getResourceType() {
         return resourceType;
     }
 
-    public void setResourceType(int resourceType) {
+    public void setResourceType(short resourceType) {
         this.resourceType = resourceType;
     }
 
-    public int getFileType() {
+    public short getFileType() {
         return fileType;
     }
 
-    public void setFileType(int fileType) {
+    public void setFileType(short fileType) {
         this.fileType = fileType;
     }
 
-    public int getOperationType() {
+    public short getOperationType() {
         return operationType;
     }
 
-    public void setOperationType(int operationType) {
+    public void setOperationType(short operationType) {
         this.operationType = operationType;
     }
 

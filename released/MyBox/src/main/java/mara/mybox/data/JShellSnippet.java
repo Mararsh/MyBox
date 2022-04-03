@@ -7,6 +7,7 @@ import jdk.jshell.JShell;
 import jdk.jshell.MethodSnippet;
 import jdk.jshell.Snippet;
 import jdk.jshell.VarSnippet;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -26,7 +27,27 @@ public class JShellSnippet {
         id = snippet.id();
         type = snippet.kind().name();
         subType = snippet.subKind().name();
-        status = jShell.status(snippet).name();
+        switch (jShell.status(snippet)) {
+            case DROPPED:
+                status = message("Dropped");
+                break;
+            case NONEXISTENT:
+                status = message("Nonexistent");
+                break;
+            case OVERWRITTEN:
+                status = message("Overwritten");
+                break;
+            case RECOVERABLE_DEFINED:
+            case RECOVERABLE_NOT_DEFINED:
+                status = message("RecoverableUnresolved");
+                break;
+            case REJECTED:
+                status = message("Rejected");
+                break;
+            case VALID:
+                status = message("Valid");
+                break;
+        }
         source = snippet.source();
         if (snippet instanceof VarSnippet) {
             makeVar(jShell, (VarSnippet) snippet);

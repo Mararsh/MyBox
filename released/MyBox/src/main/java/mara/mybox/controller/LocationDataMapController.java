@@ -29,7 +29,7 @@ import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
@@ -254,7 +254,7 @@ public class LocationDataMapController extends BaseMapController {
                                     Location location = locations.get(index);
                                     drawPoint(location.getLongitude(), location.getLatitude(),
                                             markerLabel(location), markerImage(location),
-                                            DataFactory.displayData(dataController.tableDefinition, location, null, true),
+                                            BaseDataAdaptor.displayData(dataController.tableDefinition, location, null, true),
                                             textColor(location));
                                     if (!centered) {
                                         webEngine.executeScript("setCenter(" + location.getLongitude() + ", " + location.getLatitude() + ");");
@@ -306,7 +306,7 @@ public class LocationDataMapController extends BaseMapController {
             }
             list.add(location);
         }
-        return DataFactory.htmlDataList(dataController.tableDefinition, list, null);
+        return BaseDataAdaptor.htmlDataList(dataController.tableDefinition, list, null);
     }
 
     public String markerImage(Location location) {
@@ -667,7 +667,7 @@ public class LocationDataMapController extends BaseMapController {
             Color color = textColor(location);
             drawPoint(longitude, latitude,
                     markerLabel(location), markerImage(location),
-                    DataFactory.displayData(dataController.tableDefinition, location, null, true),
+                    BaseDataAdaptor.displayData(dataController.tableDefinition, location, null, true),
                     color);
             if (linkCheck.isSelected() && lastPointIndex >= 0) {
                 Location lastPoint = locations.get(lastPointIndex);

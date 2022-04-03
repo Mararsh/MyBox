@@ -67,7 +67,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
     public static List<ImageScope> read(String imageLocation) {
         List<ImageScope> records = new ArrayList<>();
         if (imageLocation == null || imageLocation.trim().isEmpty()) {
-            return records;
+            imageLocation = "Unknown";
         }
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
@@ -95,8 +95,11 @@ public class TableImageScope extends BaseTable<ImageScope> {
     }
 
     public static ImageScope read(String imageLocation, String name) {
-        if (imageLocation == null || name == null) {
+        if (name == null) {
             return null;
+        }
+        if (imageLocation == null || imageLocation.trim().isEmpty()) {
+            imageLocation = "Unknown";
         }
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
@@ -186,6 +189,9 @@ public class TableImageScope extends BaseTable<ImageScope> {
     public static int write(ImageScope scope) {
         if (scope == null || scope.getFile() == null || scope.getName() == null) {
             return -1;
+        }
+        if (scope.getFile() == null || scope.getFile().trim().isEmpty()) {
+            scope.setFile("Unknown");
         }
         int count = 0;
         try ( Connection conn = DerbyBase.getConnection();

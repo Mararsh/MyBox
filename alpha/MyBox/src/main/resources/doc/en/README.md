@@ -13,7 +13,7 @@ Extend as: Notes, Web favoraite addresses,  JShell codes, Javascript codes, SQL 
 "When left click link or image" of web page has more options. Pop histories for input controls.                      
 * Solved. Options of "Word" and "html" do not work. Error popped when save new html in editor. 
 Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table.  
-“Auto save” not work in File Editor.       
+"Auto save" not work in File Editor.       
 
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
                    
@@ -1648,7 +1648,7 @@ Extend as: Notes, Web favoraite addresses,  JShell codes, Javascript codes, SQL 
 "When left click link or image" of web page has more options. Pop histories for input controls.                      
 * Solved. Options of "Word" and "html" do not work. Error popped when save new html in editor. 
 Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table.  
-“Auto save” not work in File Editor.       
+"Auto save" not work in File Editor.       
 
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
                    

@@ -518,8 +518,8 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
 
                 @Override
                 protected boolean handle() {
-                    new TableConvolutionKernel().clear();
-                    new TableFloatMatrix().clear();
+                    new TableConvolutionKernel().clearData();
+                    new TableFloatMatrix().clearData();
                     return true;
                 }
 

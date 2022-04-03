@@ -30,11 +30,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.EpidemicReportTools;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
@@ -52,7 +52,7 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -101,7 +101,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     protected Label timeOrderLabel;
 
     public EpidemicReportsController() {
-        baseTitle = Languages.message("EpidemicReport");
+        baseTitle = message("EpidemicReport");
         TipsLabelKey = "EpidemicReportTips";
 
         prefixEditable = false;
@@ -228,12 +228,12 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         try {
             super.initOrder();
             topNumber = 10;
-            chartMaxSelector.getItems().addAll(Arrays.asList("10", Languages.message("EpidemicReportsTopUnlimit"),
+            chartMaxSelector.getItems().addAll(Arrays.asList("10", message("EpidemicReportsTopUnlimit"),
                     "20", "30", "50", "8", "15", "25", "60", "5", "100", "200", "360"
             ));
             chartMaxSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                 try {
-                    if (Languages.message("EpidemicReportsTopUnlimit").equals(newValue)) {
+                    if (message("EpidemicReportsTopUnlimit").equals(newValue)) {
                         topNumber = -1;
                         ValidationTools.setEditorNormal(chartMaxSelector);
                         UserConfig.setString("EpidemicReportMaxChart", newValue);
@@ -261,20 +261,20 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
 
     protected void adjustOrderList() {
         if (topNumber > 0) {
-            timeOrderLabel.setText(Languages.message("Time") + " " + Languages.message("Descending"));
-            orderByList.getItems().removeAll(Languages.message("Time") + " " + Languages.message("Descending"),
-                    Languages.message("Time") + " " + Languages.message("Ascending"));
+            timeOrderLabel.setText(message("Time") + " " + message("Descending"));
+            orderByList.getItems().removeAll(message("Time") + " " + message("Descending"),
+                    message("Time") + " " + message("Ascending"));
             orderByList.getSelectionModel().clearSelection();
-            orderByList.getSelectionModel().select(Languages.message("Confirmed") + " " + Languages.message("Descending"));
+            orderByList.getSelectionModel().select(message("Confirmed") + " " + message("Descending"));
         } else {
             timeOrderLabel.setText("");
-            if (!orderByList.getItems().contains(Languages.message("Time") + " " + Languages.message("Descending"))) {
-                orderByList.getItems().add(0, Languages.message("Time") + " " + Languages.message("Ascending"));
-                orderByList.getItems().add(0, Languages.message("Time") + " " + Languages.message("Descending"));
+            if (!orderByList.getItems().contains(message("Time") + " " + message("Descending"))) {
+                orderByList.getItems().add(0, message("Time") + " " + message("Ascending"));
+                orderByList.getItems().add(0, message("Time") + " " + message("Descending"));
             }
             orderByList.getSelectionModel().clearSelection();
-            orderByList.getSelectionModel().select(Languages.message("Time") + " " + Languages.message("Ascending"));
-            orderByList.getSelectionModel().select(Languages.message("Confirmed") + " " + Languages.message("Descending"));
+            orderByList.getSelectionModel().select(message("Time") + " " + message("Ascending"));
+            orderByList.getSelectionModel().select(message("Confirmed") + " " + message("Descending"));
         }
     }
 
@@ -298,8 +298,8 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         try {
             super.setControlsStyle();
 
-            NodeStyleTools.setTooltip(chinaButton, Languages.message("ChineseProvincesEpidemicReports"));
-            NodeStyleTools.setTooltip(globalButton, Languages.message("GlobalEpidemicReports"));
+            NodeStyleTools.setTooltip(chinaButton, message("ChineseProvincesEpidemicReports"));
+            NodeStyleTools.setTooltip(globalButton, message("GlobalEpidemicReports"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -353,7 +353,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     if (datasets == null || datasets.isEmpty()) {
                         if (!AppVariables.isTesting
                                 && PopTools.askSure(myController, getBaseTitle(),
-                                        Languages.message("ImportEpidemicReportJHUPredefined") + " ?")) {
+                                        message("ImportEpidemicReportJHUPredefined") + " ?")) {
                             predefined();
                         }
 
@@ -372,15 +372,15 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         String geoConditions = geoController.check();
         String timeConditions = timeController.check();
         if (sourceConditions == null) {
-            popError(Languages.message("MissDataset") + "\n" + Languages.message("SetConditionsComments"));
+            popError(message("MissDataset") + "\n" + message("SetConditionsComments"));
             return null;
         }
         if (geoConditions == null) {
-            popError(Languages.message("MissLocation") + "\n" + Languages.message("SetConditionsComments"));
+            popError(message("MissLocation") + "\n" + message("SetConditionsComments"));
             return null;
         }
         if (timeConditions == null) {
-            popError(Languages.message("MissTime") + "\n" + Languages.message("SetConditionsComments"));
+            popError(message("MissTime") + "\n" + message("SetConditionsComments"));
             return null;
         }
         sourceConditions = sourceConditions.trim();
@@ -419,7 +419,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             super.checkOrderBy();
             if (topNumber > 0) {
                 queryOrder = queryOrder.isBlank() ? "time DESC" : "time DESC, " + queryOrder;
-                String t = Languages.message("Time") + " " + Languages.message("Descending");
+                String t = message("Time") + " " + message("Descending");
                 orderTitle = orderTitle.isBlank() ? "\"" + t + "\"" : orderTitle + " \"" + t + "\"";
             }
 
@@ -435,7 +435,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         }
         String order = queryCondition.getOrder();
         if (order == null || order.isBlank()) {
-            popError(Languages.message("OrderValuesShouldSet"));
+            popError(message("OrderValuesShouldSet"));
             queryCondition = null;
             return;
         }
@@ -453,7 +453,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         }
         if (orderNames.isEmpty()
                 || (orderNames.size() == 1 && orderNames.contains("time"))) {
-            popError(Languages.message("OrderValuesShouldSet"));
+            popError(message("OrderValuesShouldSet"));
             queryCondition = null;
             orderNames.clear();
         }
@@ -488,7 +488,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         }
         checkOrderValues();
         if (!validTopOrder(queryCondition)) {
-            alertError(Languages.message("TimeAsOrderWhenSetTop"));
+            alertError(message("TimeAsOrderWhenSetTop"));
             return false;
         }
         tabsPane.getTabs().clear();
@@ -507,26 +507,26 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     }
 
     @Override
-    public long readDataSize() {
+    public long readDataSize(Connection conn) {
         if (topNumber > 0) {
-            readTopData();
+            readTopData(conn);
             return dataSize;
         } else {
-            return DerbyBase.size(sizeQuerySQL);
+            return DerbyBase.size(conn, sizeQuerySQL);
         }
     }
 
     @Override
-    public List<EpidemicReport> readPageData() {
+    public List<EpidemicReport> readPageData(Connection conn) {
         setPageSQL();
         if (topNumber <= 0) {
-            return TableEpidemicReport.dataQuery(pageQuerySQL, true);
+            return TableEpidemicReport.dataQuery(conn, pageQuerySQL, true);
         } else {
             return readTopPageData();
         }
     }
 
-    protected boolean readTopData() {
+    protected boolean readTopData(Connection conn) {
         datasets.clear();
         dataTimes.clear();
         dataLocations.clear();
@@ -537,11 +537,11 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         if (topNumber <= 0 || !dataQuerySQL.contains("time DESC")) {
             return false;
         }
-        dataQueryString = dataQuerySQL + "</br>" + Languages.message("NumberTopDataDaily") + ": " + topNumber;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        dataQueryString = dataQuerySQL + "</br>" + message("NumberTopDataDaily") + ": " + topNumber;
+        try {
             conn.setReadOnly(true);
             if (loading != null) {
-                loading.setInfo(Languages.message("LoadingChartData") + "\n" + dataQuerySQL);
+                loading.setInfo(message("LoadingChartData") + "\n" + dataQuerySQL);
             }
             List<Long> validLocationids = new ArrayList<>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -556,7 +556,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     boolean existed = false;
                     if (lastDate == null || !date.equals(lastDate)) {
                         if (timeReports.size() > 0 && loading != null) {
-                            loading.setInfo(MessageFormat.format(Languages.message("ReadTopDateData"), timeReports.size(), lastDate));
+                            loading.setInfo(MessageFormat.format(message("ReadTopDateData"), timeReports.size(), lastDate));
                         }
                         dataTimes.add(date);
                         timeReports = new ArrayList();
@@ -601,7 +601,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             locationsReports.clear();
             try ( PreparedStatement statement = conn.prepareStatement(TableEpidemicReport.LocationidQuery)) {
                 for (GeographyCode location : dataLocations) {
-                    statement.setLong(1, location.getId());
+                    statement.setLong(1, location.getGcid());
                     try ( ResultSet results = statement.executeQuery()) {
                         while (results.next()) {
                             EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, false);
@@ -624,8 +624,8 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             }
 
             if (loading != null) {
-                loading.setInfo(Languages.message("DateNumber") + ": " + dataTimes.size()
-                        + " " + Languages.message("TotalSize") + ": " + dataSize);
+                loading.setInfo(message("DateNumber") + ": " + dataTimes.size()
+                        + " " + message("TotalSize") + ": " + dataSize);
             }
             Platform.runLater(() -> {
                 chartController.loadCharts();
@@ -647,7 +647,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                 || timesReports == null || timesReports.isEmpty()) {
             return null;
         }
-        pageQueryString = pageQueryString + "</br>" + Languages.message("NumberTopDataDaily") + ": " + topNumber;
+        pageQueryString = pageQueryString + "</br>" + message("NumberTopDataDaily") + ": " + topNumber;
         List<EpidemicReport> data = new ArrayList();
         long start = 0;
         long targetStart = startRowOfCurrentPage;
@@ -675,11 +675,11 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     @Override
     protected String loadMoreInfo() {
         if (queryCondition != null && queryCondition.getTop() > 0) {
-            String info = "<SPAN class=\"boldText\">" + Languages.message("DateNumber") + ": </SPAN>";
+            String info = "<SPAN class=\"boldText\">" + message("DateNumber") + ": </SPAN>";
             info += "<SPAN class=\"valueText\">" + dataTimes.size() + "</SPAN></br>";
-            info += "<SPAN class=\"boldText\">" + Languages.message("LocationsNumber") + ": </SPAN>";
+            info += "<SPAN class=\"boldText\">" + message("LocationsNumber") + ": </SPAN>";
             info += "<SPAN class=\"valueText\">" + dataLocations.size() + "</SPAN></br>";
-            info += "<SPAN class=\"boldText\">" + Languages.message("DataNumber") + ": </SPAN>";
+            info += "<SPAN class=\"boldText\">" + message("DataNumber") + ": </SPAN>";
             info += "<SPAN class=\"valueText\">" + dataSize + "</SPAN></br></br>";
             return info;
         } else {
@@ -719,7 +719,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(baseTitle, DataFactory.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(baseTitle, BaseDataAdaptor.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML
@@ -784,34 +784,34 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            MenuItem menu = new MenuItem(Languages.message("SetAsInputtedData"));
+            MenuItem menu = new MenuItem(message("SetAsInputtedData"));
             menu.setOnAction((ActionEvent event) -> {
                 setSelectedData(EpidemicReport.SourceType.InputtedData);
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("SetAsPredefinedData"));
+            menu = new MenuItem(message("SetAsPredefinedData"));
             menu.setOnAction((ActionEvent event) -> {
                 setSelectedData(EpidemicReport.SourceType.PredefinedData);
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("SetAsStatisticData"));
+            menu = new MenuItem(message("SetAsStatisticData"));
             menu.setOnAction((ActionEvent event) -> {
                 setSelectedData(EpidemicReport.SourceType.StatisticData);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(Languages.message("SetAsFilledData"));
+            menu = new MenuItem(message("SetAsFilledData"));
             menu.setOnAction((ActionEvent event) -> {
                 setSelectedData(EpidemicReport.SourceType.FilledData);
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -894,7 +894,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
 
             MenuItem menu;
 
-            menu = new MenuItem(Languages.message("ImportEpidemicReportExternalCSVFormat"));
+            menu = new MenuItem(message("ImportEpidemicReportExternalCSVFormat"));
             menu.setOnAction((ActionEvent event) -> {
                 EpidemicReportsImportExternalCSVController controller
                         = (EpidemicReportsImportExternalCSVController) openStage(Fxmls.EpidemicReportsImportExternalCSVFxml);
@@ -903,7 +903,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("ImportEpidemicReportJHUTimes"));
+            menu = new MenuItem(message("ImportEpidemicReportJHUTimes"));
             menu.setOnAction((ActionEvent event) -> {
                 EpidemicReportsImportJHUTimesSeriesController controller
                         = (EpidemicReportsImportJHUTimesSeriesController) openStage(Fxmls.EpidemicReportsImportJHUTimeSeriesFxml);
@@ -911,7 +911,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(Languages.message("ImportEpidemicReportJHUDaily"));
+            menu = new MenuItem(message("ImportEpidemicReportJHUDaily"));
             menu.setOnAction((ActionEvent event) -> {
                 EpidemicReportsImportJHUDailyController controller
                         = (EpidemicReportsImportJHUDailyController) openStage(Fxmls.EpidemicReportsImportJHUDailyFxml);
@@ -920,14 +920,14 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("ImportEpidemicReportJHUPredefined"));
+            menu = new MenuItem(message("ImportEpidemicReportJHUPredefined"));
             menu.setOnAction((ActionEvent event) -> {
                 predefined();
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
