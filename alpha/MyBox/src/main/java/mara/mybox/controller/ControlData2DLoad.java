@@ -269,86 +269,61 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     public synchronized void loadTmpData(List<Data2DColumn> cols, List<List<String>> data) {
-        if (data2D == null) {
-            return;
+        try {
+            if (data2D == null) {
+                return;
+            }
+            if (dataController != null) {
+                dataController.resetStatus();
+            } else {
+                resetStatus();
+            }
+            data2D.resetData();
+            List<Data2DColumn> columns = new ArrayList<>();
+            if (cols == null || cols.isEmpty()) {
+                data2D.setHasHeader(false);
+                if (data != null && !data.isEmpty()) {
+                    for (int i = 0; i < data.get(0).size(); i++) {
+                        Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
+                        columns.add(column);
+                    }
+                }
+            } else {
+                data2D.setHasHeader(true);
+                for (Data2DColumn col : cols) {
+                    columns.add(col.cloneAll());
+                }
+            }
+            for (Data2DColumn column : columns) {
+                column.setIndex(data2D.newColumnIndex());
+            }
+            data2D.setColumns(columns);
+            StringTable validateTable = Data2DColumn.validate(columns);
+            List<List<String>> rows = new ArrayList<>();
+            if (data != null) {
+                for (int i = 0; i < data.size(); i++) {
+                    List<String> row = new ArrayList<>();
+                    row.add("-1");
+                    row.addAll(data.get(i));
+                    rows.add(row);
+                }
+            }
+            data2D.checkForLoad();
+            resetView(false);
+            if (dataController != null) {
+                dataController.setData(data2D);
+            }
+            displayTmpData(rows);
+            if (dataController != null) {
+                dataController.attributesController.loadData();
+                dataController.columnsController.loadData();
+            }
+            if (validateTable != null && !validateTable.isEmpty()) {
+                validateTable.htmlTable();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        if (dataController != null) {
-            dataController.resetStatus();
-        } else {
-            resetStatus();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            private StringTable validateTable;
-            private List<List<String>> rows;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.resetData();
-                    data2D.setTask(task);
-                    List<Data2DColumn> columns = new ArrayList<>();
-                    if (cols == null || cols.isEmpty()) {
-                        data2D.setHasHeader(false);
-                        if (data == null || data.isEmpty()) {
-                            return true;
-                        }
-                        for (int i = 0; i < data.get(0).size(); i++) {
-                            Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
-                            columns.add(column);
-                        }
-                    } else {
-                        data2D.setHasHeader(true);
-                        columns.addAll(cols);
-                    }
-                    for (Data2DColumn column : columns) {
-                        column.setIndex(data2D.newColumnIndex());
-                    }
-                    data2D.setColumns(columns);
-                    validateTable = Data2DColumn.validate(columns);
-                    rows = new ArrayList<>();
-                    if (data != null) {
-                        for (int i = 0; i < data.size(); i++) {
-                            List<String> row = new ArrayList<>();
-                            row.add("-1");
-                            row.addAll(data.get(i));
-                            rows.add(row);
-                        }
-                    }
-                    data2D.checkForLoad();
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    MyBoxLog.console(e);
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-                resetView(false);
-                if (dataController != null) {
-                    dataController.setData(data2D);
-                }
-                displayTmpData(rows);
-                if (dataController != null) {
-                    dataController.attributesController.loadData();
-                    dataController.columnsController.loadData();
-                }
-                if (validateTable != null && !validateTable.isEmpty()) {
-                    validateTable.htmlTable();
-                }
-            }
-
-        };
-        start(task);
     }
 
     public synchronized boolean displayTmpData(List<List<String>> newData) {

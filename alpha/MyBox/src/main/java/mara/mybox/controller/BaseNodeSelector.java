@@ -89,6 +89,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract void editNode(TreeItem<P> item);
 
+    protected abstract void pasteNode(TreeItem<P> item);
+
     protected abstract void exportNode(TreeItem<P> item);
 
     protected abstract void importAction();

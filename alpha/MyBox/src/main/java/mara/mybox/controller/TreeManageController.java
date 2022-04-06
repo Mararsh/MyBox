@@ -604,11 +604,15 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void pasteAction() {
-        TreeNode selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+        pasteNode(tableView.getSelectionModel().getSelectedItem());
+    }
+
+    public void pasteNode(TreeNode node) {
+        if (node == null) {
+            popError(message("NoData"));
             return;
         }
-        nodeController.pasteText(selected.getValue());
+        nodeController.pasteText(node.getValue());
     }
 
     /*

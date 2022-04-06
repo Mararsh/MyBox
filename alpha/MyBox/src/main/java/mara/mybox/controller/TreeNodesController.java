@@ -3,7 +3,9 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.TreeNode;
@@ -13,6 +15,7 @@ import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -251,6 +254,14 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
+    protected void pasteNode(TreeItem<TreeNode> item) {
+        if (item == null || treeController == null) {
+            return;
+        }
+        treeController.pasteNode(item.getValue());
+    }
+
+    @Override
     protected void treeView(Connection conn, TreeNode node, int indent, StringBuilder s) {
         try {
             if (conn == null || node == null) {
@@ -383,6 +394,20 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             }
             return false;
         }
+    }
+
+    @Override
+    protected List<MenuItem> makeNodeMenu(TreeItem<TreeNode> item) {
+        List<MenuItem> items = super.makeNodeMenu(item);
+        if (manageMode && !category.equals(TreeNode.Notebook)) {
+            TreeItem<TreeNode> targetItem = item == null ? treeView.getRoot() : item;
+            MenuItem menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                pasteNode(targetItem);
+            });
+            items.add(3, menu);
+        }
+        return items;
     }
 
 }

@@ -54,6 +54,7 @@ public class ControlData2D extends BaseController {
     protected ControlData2DEditText textController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
+    protected boolean isManufacture;
 
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
@@ -78,6 +79,7 @@ public class ControlData2D extends BaseController {
         statusNotify = new SimpleBooleanProperty(false);
         loadedNotify = new SimpleBooleanProperty(false);
         savedNotify = new SimpleBooleanProperty(false);
+        isManufacture = false;
     }
 
     @Override
@@ -408,8 +410,12 @@ public class ControlData2D extends BaseController {
         if (checkBeforeSave() < 0) {
             return;
         }
+        if (isManufacture) {
+            DataManufactureSaveController.open(tableController);
+            return;
+        }
         if (data2D.isTable() && data2D.getSheet() == null) {
-            saveNewTable();
+            Data2DTableCreateController.open(tableController);
             return;
         }
         Data2D targetData = data2D.cloneAll();
@@ -463,10 +469,6 @@ public class ControlData2D extends BaseController {
             }
         };
         start(task);
-    }
-
-    public void saveNewTable() {
-        Data2DTableCreateController.open(tableController);
     }
 
     public synchronized void saveAs(Data2D targetData, SaveAsType saveAsType) {

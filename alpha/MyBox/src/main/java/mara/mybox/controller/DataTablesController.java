@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Window;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.fxml.WindowTools;
@@ -81,6 +82,12 @@ public class DataTablesController extends BaseData2DController {
         if (def != null) {
             controller.loadDef(def);
         }
+        return controller;
+    }
+
+    public static DataTablesController open(List<Data2DColumn> cols, List<List<String>> data) {
+        DataTablesController controller = oneOpen();
+        controller.dataController.loadTmpData(cols, data);
         return controller;
     }
 

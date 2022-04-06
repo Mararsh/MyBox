@@ -22,6 +22,12 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
     protected void showDataMenu(MouseEvent event) {
         hideMenu(event);
 
+        MenuItem DataManufacture = new MenuItem(message("DataManufacture"));
+        DataManufacture.setOnAction((ActionEvent event1) -> {
+            DataManufactureController c = (DataManufactureController) loadScene(Fxmls.DataManufactureFxml);
+            c.createAction();
+        });
+
         MenuItem ManageData = new MenuItem(message("ManageData"));
         ManageData.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.Data2DManageFxml);
@@ -212,7 +218,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                ManageData, new SeparatorMenuItem(),
+                DataManufacture, ManageData, new SeparatorMenuItem(),
                 DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, new SeparatorMenuItem(),
                 Location, new SeparatorMenuItem(),

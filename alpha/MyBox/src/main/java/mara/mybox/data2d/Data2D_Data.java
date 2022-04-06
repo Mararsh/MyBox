@@ -231,6 +231,18 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public List<List<String>> tableRowsWithoutNumber() {
+        try {
+            List<List<String>> rows = new ArrayList<>();
+            for (List<String> row : tableData()) {
+                rows.add(row.subList(1, row.size()));
+            }
+            return rows;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public List<String> newRow() {
         try {
             List<String> newRow = new ArrayList<>();

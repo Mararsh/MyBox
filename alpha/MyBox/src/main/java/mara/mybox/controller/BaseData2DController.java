@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-2-21
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DController extends BaseController {
+public class BaseData2DController extends BaseController {
 
     protected Data2D.Type type;
 
