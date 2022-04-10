@@ -5,8 +5,8 @@ import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -180,8 +180,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         sourceFile = null;
         imageInformation = null;
         image = inImage;
+        MyBoxLog.console("here");
         afterImageLoaded();
-        setImageChanged(true);
     }
 
     public void loadImage(File sourceFile, ImageInformation imageInformation,
@@ -199,7 +199,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         image = ScaleTools.scaleImage(inImage, maxWidth);
         loadWidth = maxWidth;
         afterImageLoaded();
-        setImageChanged(true);
     }
 
     public void loadFrame(int index) {

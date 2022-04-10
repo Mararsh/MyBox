@@ -91,7 +91,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         }
     }
 
-    protected Image scopeImage() {
+    private Image scopeImage() {
         Image inImage = imageView.getImage();
 
         if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
@@ -99,7 +99,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     && maskRectangleData.getSmallY() == 0
                     && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
                     && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
-                return null;
+                return inImage;
             }
             return CropTools.cropOutsideFx(inImage, maskRectangleData, Color.WHITE);
 
@@ -113,7 +113,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             return CropTools.cropOutsideFx(inImage, maskPolygonData, Color.WHITE);
 
         } else {
-            return null;
+            return inImage;
         }
     }
 
@@ -155,11 +155,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     @Override
     public boolean popAction() {
-        if (handleSelectCheck == null || handleSelectCheck.isSelected()) {
-            ImagePopController.openImage(this, scopeImage());
-        } else {
-            ImagePopController.openView(this, imageView);
-        }
+        ImagePopController.openImage(this, imageToHandle());
         return true;
     }
 
@@ -313,7 +309,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView == null || imageView.getImage() == null || controller == null) {
             return;
         }
-        controller.toFront();
+        controller.requestMouse();
         if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
             if (imageChanged) {
                 controller.loadImage(imageView.getImage());
@@ -332,22 +328,22 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
 
-                private Image areaImage;
+                private Image targetImage;
 
                 @Override
                 protected boolean handle() {
-                    areaImage = imageToHandle();
-                    return areaImage != null;
+                    targetImage = imageToHandle();
+                    return targetImage != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    controller.loadImage(areaImage);
+                    controller.loadImage(targetImage);
                 }
             };
             start(task);

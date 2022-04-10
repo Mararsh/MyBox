@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
@@ -17,18 +18,18 @@ import static mara.mybox.value.Languages.message;
 public class TreeNodeCopyController extends TreeNodesController {
 
     protected TreeNode sourceNode;
-    protected boolean onlyContents;
 
     @FXML
     protected Label sourceLabel;
+    @FXML
+    protected RadioButton nodeAndDescendantsRadio, descendantsRadio, nodeRadio;
 
     public TreeNodeCopyController() {
         baseTitle = message("CopyNode");
     }
 
-    public void setCaller(TreeNodesController nodesController, TreeNode sourceNode, String name, boolean onlyContents) {
+    public void setCaller(TreeNodesController nodesController, TreeNode sourceNode, String name) {
         this.sourceNode = sourceNode;
-        this.onlyContents = onlyContents;
         sourceLabel.setText(message("NodeCopyed") + ":\n" + name);
         ignoreNode = sourceNode;
         setCaller(nodesController);
@@ -65,10 +66,12 @@ public class TreeNodeCopyController extends TreeNodesController {
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
-                        if (!onlyContents) {
-                            ok = copyNode(conn, sourceNode, targetNode);
+                        if (nodeAndDescendantsRadio.isSelected()) {
+                            ok = copyNodeAndDescendants(conn, sourceNode, targetNode);
+                        } else if (descendantsRadio.isSelected()) {
+                            ok = copyDescendants(conn, sourceNode, targetNode);
                         } else {
-                            ok = copyChildren(conn, sourceNode, targetNode);
+                            ok = copyNode(conn, sourceNode, targetNode) != null;
                         }
                     } catch (Exception e) {
                         error = e.toString();

@@ -660,6 +660,13 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSetStylesController.open(tableController);
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
             menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
                 tableController.copyAction();

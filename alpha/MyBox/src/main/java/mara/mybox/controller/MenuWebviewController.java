@@ -35,12 +35,12 @@ import org.w3c.dom.Element;
  * @License Apache License Version 2.0
  */
 public class MenuWebviewController extends MenuController {
-
+    
     protected WebView webView;
     protected Element element;
     protected ControlWebView webViewController;
     protected EventHandler<MouseEvent> mouseReleasedHandler;
-
+    
     @FXML
     protected Button copyToMyBoxClipboardTextButton, copyToMyBoxClipboardHtmlButton,
             copyToSystemClipboardTextButton, copyToSystemClipboardHtmlButton;
@@ -48,16 +48,16 @@ public class MenuWebviewController extends MenuController {
     protected Label tagLabel, htmlLabel, textLabel;
     @FXML
     protected CheckBox editableCheck;
-
+    
     public MenuWebviewController() {
         baseTitle = message("Html");
     }
-
+    
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Html);
     }
-
+    
     public void setParameters(ControlWebView webViewController, Element element, double x, double y) {
         try {
             if (webViewController == null) {
@@ -70,7 +70,7 @@ public class MenuWebviewController extends MenuController {
             if (webView == null) {
                 return;
             }
-
+            
             mouseReleasedHandler = new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -78,15 +78,15 @@ public class MenuWebviewController extends MenuController {
                 }
             };
             webView.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler);
-
+            
             checkWebviewPane();
-
+            
             if (webViewController instanceof ControlHtmlEditor) {
                 setTitleid(((ControlHtmlEditor) webViewController).htmlEditor.getId());
             } else {
                 setTitleid(webView.getId());
             }
-
+            
             if (webViewController instanceof ControlHtmlEditor) {
                 editableCheck.setVisible(false);
             } else {
@@ -95,19 +95,18 @@ public class MenuWebviewController extends MenuController {
                 editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                        UserConfig.setBoolean("WebViewEditable", editableCheck.isSelected());
-                        webView.getEngine().executeScript("document.body.contentEditable=" + editableCheck.isSelected());
+                        webViewController.setEditable(editableCheck.isSelected());
                     }
                 });
             }
-
+            
             super.setParameters(webViewController, webView, x, y);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void checkWebviewPane() {
         if (webView == null) {
             return;
@@ -131,29 +130,29 @@ public class MenuWebviewController extends MenuController {
                 }
                 NodeStyleTools.setTooltip(selectButton, new Tooltip(message("SelectNode") + "\nCTRL+u / ALT+u"));
                 selectButton.setDisable(element == null);
-
+                
                 String html = WebViewTools.getHtml(webView);
                 bottomLabel.setText(message("Count") + ": " + (html == null ? "0" : StringTools.format(html.length())));
-
+                
                 String htmlSelection = WebViewTools.selectedHtml(webView.getEngine());
                 htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : StringTools.format(htmlSelection.length())));
                 copyToSystemClipboardHtmlButton.setDisable(htmlSelection == null || htmlSelection.isBlank());
                 copyToMyBoxClipboardHtmlButton.setDisable(copyToSystemClipboardHtmlButton.isDisable());
-
+                
                 String textSelection = WebViewTools.selectedText(webView.getEngine());
                 textLabel.setText(message("Selection") + ": " + (textSelection == null ? "0" : StringTools.format(textSelection.length())));
                 copyToSystemClipboardTextButton.setDisable(textSelection == null || textSelection.isBlank());
                 copyToMyBoxClipboardTextButton.setDisable(copyToSystemClipboardTextButton.isDisable());
-
+                
             }
         });
     }
-
+    
     public void setElement(Element element) {
         this.element = element;
         checkWebviewPane();
     }
-
+    
     @FXML
     @Override
     public void selectAction() {
@@ -163,7 +162,7 @@ public class MenuWebviewController extends MenuController {
         WebViewTools.selectElement(webView, element);
         checkWebviewPane();
     }
-
+    
     @FXML
     @Override
     public void selectAllAction() {
@@ -173,7 +172,7 @@ public class MenuWebviewController extends MenuController {
         WebViewTools.selectAll(webView.getEngine());
         checkWebviewPane();
     }
-
+    
     @FXML
     @Override
     public void selectNoneAction() {
@@ -183,7 +182,7 @@ public class MenuWebviewController extends MenuController {
         WebViewTools.selectNone(webView.getEngine());
         checkWebviewPane();
     }
-
+    
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
@@ -191,102 +190,102 @@ public class MenuWebviewController extends MenuController {
         }
         return true;
     }
-
+    
     @Override
     public boolean controlAltT() {
         copyTextToSystemClipboard();
         return true;
     }
-
+    
     @FXML
     public void copyTextToSystemClipboard() {
         if (webViewController.copyTextToSystemClipboard()) {
             checkWebviewPane();
         }
     }
-
+    
     @FXML
     public void copyTextToMyboxClipboard() {
         if (webViewController.copyTextToMyboxClipboard()) {
             checkWebviewPane();
         }
     }
-
+    
     @Override
     public boolean controlAltH() {
         copyHtmlToSystemClipboard();
         return true;
     }
-
+    
     @FXML
     public void copyHtmlToSystemClipboard() {
         if (webViewController.copyHtmlToSystemClipboard()) {
             checkWebviewPane();
         }
     }
-
+    
     @FXML
     public void copyHtmlToMyboxClipboard() {
         if (webViewController.copyHtmlToMyboxClipboard()) {
             checkWebviewPane();
         }
     }
-
+    
     @FXML
     @Override
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         webViewController.popFunctionsMenu(mouseEvent);
     }
-
+    
     @FXML
     @Override
     public void findAction() {
         webViewController.findAction();
     }
-
+    
     @FXML
     @Override
     public void saveAsAction() {
         webViewController.saveAsAction();
     }
-
+    
     @FXML
     public void editAction() {
         webViewController.editAction();
     }
-
+    
     @FXML
     public void popHtmlStyle(MouseEvent mouseEvent) {
         PopTools.popHtmlStyle(mouseEvent, webViewController);
     }
-
+    
     @FXML
     @Override
     public boolean popAction() {
         webViewController.popAction();
         return true;
     }
-
+    
     public void zoomIn() {
         webViewController.zoomIn();
     }
-
+    
     public void zoomOut() {
         webViewController.zoomOut();
     }
-
+    
     public void refreshAction() {
         webViewController.refresh();
     }
-
+    
     public void backAction() {
         webViewController.backAction();
     }
-
+    
     public void forwardAction() {
         webViewController.forwardAction();
     }
-
+    
     @FXML
     public void snapAction() {
         if (webView == null) {
@@ -294,7 +293,7 @@ public class MenuWebviewController extends MenuController {
         }
         ImageViewerController.load(NodeTools.snap(webView));
     }
-
+    
     @FXML
     public void scriptAction() {
         if (webViewController == null) {
@@ -302,7 +301,7 @@ public class MenuWebviewController extends MenuController {
         }
         JavaScriptController.open(webViewController);
     }
-
+    
     @Override
     public void cleanPane() {
         try {
@@ -348,7 +347,7 @@ public class MenuWebviewController extends MenuController {
             return null;
         }
     }
-
+    
     public static MenuWebviewController running(WebView webview) {
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
@@ -363,5 +362,5 @@ public class MenuWebviewController extends MenuController {
         }
         return null;
     }
-
+    
 }

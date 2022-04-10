@@ -1271,20 +1271,12 @@ public class DataMigration {
             public void run() {
                 try {
                     MyBoxLog.info("Reloading internal data...");
-//                    List<String> names = Arrays.asList(
-//                            "ColorsChinese.csv", "ColorsColorhexa.csv", "ColorsJapanese.csv", "ColorsWeb.csv",
-//                            "Geography_Code_china_cities_internal.csv",
-//                            "Geography_Code_china_counties_internal.csv", "Geography_Code_china_provinces_internal.csv",
-//                            "Geography_Code_countries_internal.csv", "Geography_Code_global_internal.csv",
-//                            "Location_Data_ChineseHistoricalCapitals_en.csv", "Location_Data_ChineseHistoricalCapitals_zh.csv",
-//                            "Location_Data_EuropeanGadwalls_en.csv", "Location_Data_EuropeanGadwalls_zh.csv",
-//                            "Location_Data_SpermWhales_en.csv", "Location_Data_SpermWhales_zh.csv",
-//                            "Notes_Examples_en.txt", "Notes_Examples_zh.txt",
-//                            "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt",
-//                            "Epidemic_Report_examples.csv"
-//                    );
                     List<String> names = Arrays.asList(
                             "Notes_Examples_en.txt", "Notes_Examples_zh.txt",
+                            "Sql_Examples_en.txt", "Sql_Examples_zh.txt",
+                            "Tree_Examples_en.txt", "Tree_Examples_zh.txt",
+                            "JavaScript_Examples_en.txt", "JavaScript_Examples_zh.txt",
+                            "JShell_Examples_en.txt", "JShell_Examples_zh.txt",
                             "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt"
                     );
                     for (String name : names) {

@@ -1076,8 +1076,7 @@ public class ControlWebView extends BaseController {
                 editableMenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("WebViewEditable", editableMenu.isSelected());
-                        webEngine.executeScript("document.body.contentEditable=" + editableMenu.isSelected());
+                        setEditable(editableMenu.isSelected());
                     }
                 });
                 items.add(editableMenu);
@@ -1306,6 +1305,14 @@ public class ControlWebView extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setEditable(boolean e) {
+        UserConfig.setBoolean("WebViewEditable", e);
+        webEngine.executeScript("document.body.contentEditable=" + e);
+        if (e) {
+            popInformation(message("HtmlEditableComments"));
         }
     }
 

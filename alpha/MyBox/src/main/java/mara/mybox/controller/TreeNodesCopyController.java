@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
@@ -19,6 +20,9 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class TreeNodesCopyController extends TreeNodesController {
+
+    @FXML
+    protected RadioButton nodeAndDescendantsRadio, descendantsRadio, nodeRadio;
 
     public TreeNodesCopyController() {
         baseTitle = message("Copy");
@@ -64,7 +68,13 @@ public class TreeNodesCopyController extends TreeNodesController {
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         for (TreeNode sourceNode : nodes) {
-                            copyNode(conn, sourceNode, targetNode);
+                            if (nodeAndDescendantsRadio.isSelected()) {
+                                ok = copyNodeAndDescendants(conn, sourceNode, targetNode);
+                            } else if (descendantsRadio.isSelected()) {
+                                ok = copyDescendants(conn, sourceNode, targetNode);
+                            } else {
+                                ok = copyNode(conn, sourceNode, targetNode) != null;
+                            }
                         }
                     } catch (Exception e) {
                         error = e.toString();

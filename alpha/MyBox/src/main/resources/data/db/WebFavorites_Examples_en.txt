@@ -24,7 +24,7 @@ https://www.google.com
 
 Examples > Search
 yahoo
-https://www.google.com
+https://www.yahoo.com
 
 Examples > Search
 baidu

@@ -24,7 +24,7 @@ https://www.google.com
 
 示例 > 搜索
 yahoo
-https://www.google.com
+https://www.yahoo.com
 
 示例 > 搜索
 baidu

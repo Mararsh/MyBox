@@ -186,9 +186,6 @@ public abstract class Data2DHandleController extends BaseChildController {
     }
 
     public synchronized void handleRowsTask() {
-        if (targetController == null) {
-            return;
-        }
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -204,7 +201,7 @@ public abstract class Data2DHandleController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                if (targetController.inTable()) {
+                if (targetController == null || targetController.inTable()) {
                     updateTable();
                 } else {
                     outputExternal();

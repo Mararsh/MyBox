@@ -91,7 +91,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
             @Override
             public void run() {
                 try {
-                    Image selected = scopeImage();
+                    Image selected = imageToHandle();
                     if (selected == null) {
                         selected = imageView.getImage();
                     }
@@ -216,7 +216,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                         if (ocrOptionsController.selectedLanguages != null) {
                             instance.setLanguage(ocrOptionsController.selectedLanguages);
                         }
-                        Image selected = scopeImage();
+                        Image selected = imageToHandle();
                         if (selected == null) {
                             selected = imageView.getImage();
                         }

@@ -3,7 +3,9 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -29,6 +31,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -48,12 +51,14 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected boolean readOnly;
     protected SimpleBooleanProperty statusNotify;
     protected Label dataLabel;
+    protected Map<String, String> styles;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
 
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
+        styles = new HashMap<>();
         readOnly = true;
     }
 
@@ -509,13 +514,39 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     }
                 });
 
-                if (!readOnly) {
+                if (tableColumn.isEditable()) {
                     tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
                         @Override
                         public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
                             try {
                                 TableAutoCommitCell<List<String>, String> cell
                                         = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
+                                    @Override
+                                    public void updateItem(String item, boolean empty) {
+                                        setStyle(null);
+                                        try {
+                                            if (getTableRow().isSelected()) {
+                                                setStyle(NodeStyleTools.selectedRow);
+                                            } else {
+                                                int row = -1;
+                                                if (dataRowColumn != null) {
+                                                    row = Integer.valueOf(getTableRow().getItem().get(0));
+                                                }
+                                                if (row < 0) {
+                                                    row = getTableRow().getIndex();
+                                                }
+                                                setStyle(styles.get(row + "," + (col - 1)));
+                                            }
+                                        } catch (Exception e) {
+                                        }
+                                        super.updateItem(item, empty);
+                                        if (empty || item == null) {
+                                            setText(null);
+                                            setGraphic(null);
+                                            return;
+                                        }
+                                    }
+
                                     @Override
                                     public boolean valid(String value) {
                                         return dataColumn.validValue(value);
@@ -547,15 +578,55 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                     }
 
                                 };
+
                                 return cell;
                             } catch (Exception e) {
                                 return null;
                             }
                         }
                     });
-                    if (tableColumn.isEditable()) {
-                        tableColumn.getStyleClass().add("editable-column");
-                    }
+                    tableColumn.getStyleClass().add("editable-column");
+                } else {
+                    tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
+                        @Override
+                        public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
+                            try {
+                                TableCell<List<String>, String> cell = new TableCell<List<String>, String>() {
+                                    @Override
+                                    public void updateItem(String item, boolean empty) {
+                                        setStyle(null);
+                                        try {
+                                            if (getTableRow().isSelected()) {
+                                                setStyle(NodeStyleTools.selectedRow);
+                                            } else {
+                                                int row = -1;
+                                                if (dataRowColumn != null) {
+                                                    row = Integer.valueOf(getTableRow().getItem().get(0));
+                                                }
+                                                if (row < 0) {
+                                                    row = getTableRow().getIndex();
+                                                }
+                                                setStyle(styles.get(row + "," + (col - 1)));
+                                            }
+                                        } catch (Exception e) {
+                                        }
+                                        super.updateItem(item, empty);
+                                        if (empty || item == null) {
+                                            setText(null);
+                                            setGraphic(null);
+                                            return;
+                                        }
+                                        setText(item);
+                                    }
+                                };
+
+                                return cell;
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        }
+                    });
+
                 }
 
                 if (dataController != null) {

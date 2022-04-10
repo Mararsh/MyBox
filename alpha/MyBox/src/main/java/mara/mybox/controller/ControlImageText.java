@@ -100,7 +100,6 @@ public class ControlImageText extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     public void initBase() {

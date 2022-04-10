@@ -82,7 +82,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     protected TreeTagsController tagsController;
     @FXML
-    protected ControlTimeTree timeController;
+    protected ControlTimesTree timesController;
     @FXML
     protected TextField findInput;
     @FXML
@@ -400,6 +400,9 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
+        if (loadedParent != null) {
+            tableData.add(0, loadedParent);
+        }
         makeConditionPane();
     }
 
@@ -656,15 +659,15 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
      */
     public void initTimes() {
         try {
-            timeController.setParent(this, false);
+            timesController.setParent(this, " category='" + category + "' ", "Tree_Node", "update_time");
 
-            timeController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            timesController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     queryTimes();
                 }
             });
-            timeController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            timesController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     refreshTimes();
@@ -679,43 +682,19 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @FXML
     protected void refreshTimes() {
-        synchronized (this) {
-            timeController.clearTree();
-            timesBox.setDisable(true);
-            SingletonTask timesTask = new SingletonTask<Void>(this) {
-                private List<Date> times;
-
-                @Override
-                protected boolean handle() {
-                    times = tableTreeNode.times(category);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    timeController.loadTree("update_time", times, false);
-                }
-
-                @Override
-                protected void finalAction() {
-                    timesBox.setDisable(false);
-                }
-
-            };
-            start(timesTask, false);
-        }
+        timesController.loadTree();
     }
 
     @FXML
     protected void queryTimes() {
-        String c = timeController.check();
+        String c = timesController.check();
         if (c == null) {
             popError(message("MissTime"));
             return;
         }
         clearQuery();
         queryConditions = " category='" + category + "' " + (c.isBlank() ? "" : " AND " + c);
-        queryConditionsString = timeController.getFinalTitle();
+        queryConditionsString = timesController.getFinalTitle();
         loadTableData();
         showLeftPane();
     }

@@ -225,7 +225,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 protected boolean handle() {
                     Image aImage = null;
                     if (selectAreaCheck.isSelected()) {
-                        aImage = scopeImage();
+                        aImage = imageToHandle();
                     }
                     if (aImage == null) {
                         aImage = image;

@@ -37,7 +37,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected static final int AutoExpandThreshold = 1000;
     protected static final String nodeSeparator = " > ";
-
     protected P ignoreNode = null;
     protected boolean expandAll, manageMode;
 
@@ -83,7 +82,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract void doubleClicked(TreeItem<P> item);
 
-    protected abstract void copyNode(TreeItem<P> item, Boolean onlyContents);
+    protected abstract void copyNode(TreeItem<P> item);
 
     protected abstract void moveNode(TreeItem<P> item);
 
@@ -340,16 +339,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             menu.setDisable(isRoot);
             items.add(menu);
 
-            menu = new MenuItem(message("CopyNodeAndContents"), StyleTools.getIconImage("iconCopy.png"));
+            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                copyNode(targetItem, false);
-            });
-            menu.setDisable(isRoot);
-            items.add(menu);
-
-            menu = new MenuItem(message("CopyNodeContents"), StyleTools.getIconImage("iconCopy.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                copyNode(targetItem, true);
+                copyNode(targetItem);
             });
             menu.setDisable(isRoot);
             items.add(menu);
@@ -569,10 +561,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             };
             start(task);
         }
-    }
-
-    protected void copyNode(TreeItem<P> item) {
-        copyNode(item, false);
     }
 
     @FXML
@@ -818,7 +806,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             + "  </script>\n\n");
                     s.append("<DIV>\n")
                             .append("<DIV>\n")
-                            .append("    <SPAN style=\"font-size:0.8em\">").append(message("HtmlEditableComments")).append("</SPANE><BR>\n")
+                            .append("    <SPAN style=\"font-size:0.8em\">").append("*")
+                            .append(message("HtmlEditableComments")).append("</SPANE><BR>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('NodeTag', this.checked);\">")

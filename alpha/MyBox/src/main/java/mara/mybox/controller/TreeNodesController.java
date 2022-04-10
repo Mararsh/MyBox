@@ -224,7 +224,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
-    protected void copyNode(TreeItem<TreeNode> item, Boolean onlyContents) {
+    protected void copyNode(TreeItem<TreeNode> item) {
         if (item == null || isRoot(item.getValue())) {
             return;
         }
@@ -232,7 +232,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         TreeNodeCopyController controller
                 = (TreeNodeCopyController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeCopyFxml);
 
-        controller.setCaller(this, item.getValue(), chainName, onlyContents);
+        controller.setCaller(this, item.getValue(), chainName);
     }
 
     @Override
@@ -344,30 +344,34 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         controller.setManage(treeController);
     }
 
-    public boolean copyNode(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+    public TreeNode copyNode(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));
             }
-            return false;
+            return null;
         }
         try {
             TreeNode newNode = new TreeNode(targetNode, sourceNode.getTitle(), sourceNode.getValue());
             newNode = tableTreeNode.insertData(conn, newNode);
             if (newNode == null) {
-                return false;
+                return null;
             }
             conn.commit();
-            return copyChildren(conn, sourceNode, newNode);
+            return newNode;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
-            return false;
+            return null;
         }
     }
 
-    public boolean copyChildren(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+    public boolean copyNodeAndDescendants(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+        return copyDescendants(conn, sourceNode, copyNode(conn, sourceNode, targetNode));
+    }
+
+    public boolean copyDescendants(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));
@@ -384,7 +388,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                     TreeNode newNode = TreeNode.create().setParentid(targetid).setCategory(category)
                             .setTitle(child.getTitle()).setValue(child.getValue()).setMore(child.getMore());
                     tableTreeNode.insertData(conn, newNode);
-                    copyChildren(conn, child, newNode);
+                    copyDescendants(conn, child, newNode);
                 }
             }
             return true;

@@ -13,13 +13,16 @@ public class DataInternalTable extends DataTable {
 
     public static List<String> InternalTables = new ArrayList<String>() {
         {
-            addAll(Arrays.asList("ALARM_CLOCK", "BLOB_VALUE", "COLOR", "COLOR_PALETTE", "COLOR_PALETTE_NAME",
-                    "CONVOLUTION_KERNEL", "DATA2D_CELL", "DATA2D_COLUMN", "DATA2D_DEFINITION", "DATASET",
-                    "EPIDEMIC_REPORT", "FILE_BACKUP", "FLOAT_MATRIX", "GEOGRAPHY_CODE", "IMAGE_CLIPBOARD",
-                    "IMAGE_EDIT_HISTORY", "IMAGE_SCOPE", "LOCATION_DATA", "MEDIA", "MEDIA_LIST", "MYBOX_LOG",
-                    "QUERY_CONDITION", "STRING_VALUE", "STRING_VALUES", "SYSTEM_CONF",
-                    "TEXT_CLIPBOARD", "TREE", "USER_CONF", "VISIT_HISTORY", "WEB_HISTORY",
-                    "TREE_NODE", "TAG", "TREE_NODE_TAG", "NAMED_VALUES"
+            addAll(Arrays.asList(
+                    "COLOR", "COLOR_PALETTE", "COLOR_PALETTE_NAME",
+                    "IMAGE_EDIT_HISTORY", "IMAGE_SCOPE", "IMAGE_CLIPBOARD", "CONVOLUTION_KERNEL",
+                    "GEOGRAPHY_CODE", "EPIDEMIC_REPORT", "LOCATION_DATA", "DATASET", "QUERY_CONDITION",
+                    "FILE_BACKUP", "TEXT_CLIPBOARD", "WEB_HISTORY",
+                    "MEDIA", "MEDIA_LIST", "ALARM_CLOCK",
+                    "DATA2D_DEFINITION", "DATA2D_COLUMN", "DATA2D_CELL", "DATA2D_STYLE",
+                    "TREE", "TREE_NODE", "TAG", "TREE_NODE_TAG",
+                    "MYBOX_LOG", "VISIT_HISTORY", "SYSTEM_CONF", "USER_CONF",
+                    "STRING_VALUE", "STRING_VALUES", "FLOAT_MATRIX", "NAMED_VALUES", "BLOB_VALUE"
             ));
         }
     };

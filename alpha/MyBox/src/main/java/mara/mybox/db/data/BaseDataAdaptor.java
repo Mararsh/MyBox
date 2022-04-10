@@ -15,6 +15,7 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
@@ -123,6 +124,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof NamedValues) {
             return new TableNamedValues();
 
+        } else if (data instanceof Data2DStyle) {
+            return new TableData2DStyle();
+
         }
         return null;
     }
@@ -209,6 +213,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof NamedValues) {
             return NamedValues.valid((NamedValues) data);
 
+        } else if (data instanceof Data2DStyle) {
+            return Data2DStyle.valid((Data2DStyle) data);
+
         }
 
         return false;
@@ -293,6 +300,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof NamedValues) {
             return NamedValues.getValue((NamedValues) data, name);
 
+        } else if (data instanceof Data2DStyle) {
+            return Data2DStyle.getValue((Data2DStyle) data, name);
+
         }
 
         return null;
@@ -370,6 +380,9 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof NamedValues) {
             return NamedValues.setValue((NamedValues) data, name, value);
+
+        } else if (data instanceof Data2DStyle) {
+            return Data2DStyle.setValue((Data2DStyle) data, name, value);
 
         }
         return false;
