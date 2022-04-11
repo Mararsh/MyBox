@@ -2,7 +2,9 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -498,6 +500,101 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    /*
+        styles
+     */
+    public String styleKey(long row, String colName) {
+        if (colName == null || row < 0) {
+            return null;
+        }
+        return row + "," + colName;
+    }
+
+    public String styleKey(long row, int col) {
+        return styleKey(row, colName(col));
+    }
+
+    public boolean setStyle(long row, int col, String style) {
+        return setStyle(row, colName(col), style);
+    }
+
+    public boolean setStyle(long row, String colName, String style) {
+        String key = styleKey(row, colName);
+        if (key == null) {
+            return false;
+        }
+        if (style == null || style.isBlank()) {
+            styles.remove(key);
+        } else {
+            styles.put(key, style);
+        }
+        return true;
+    }
+
+    public String getStyle(long row, int col) {
+        return getStyle(row, colName(col));
+    }
+
+    public String getStyle(long row, String colName) {
+        String key = styleKey(row, colName);
+        if (key == null) {
+            return null;
+        }
+        return styles.get(key);
+    }
+
+    public boolean moveDownStyles(int index, int number) {
+        if (styles.isEmpty() || number < 1 || index < 0) {
+            return false;
+        }
+        try {
+            Map<String, String> tStyles = new HashMap<>();
+            for (String key : styles.keySet()) {
+                int pos = key.indexOf(",");
+                int row = Integer.valueOf(key.substring(0, pos));
+                String colName = key.substring(pos + 1);
+                String style = styles.get(key);
+                if (row < index) {
+                    tStyles.put(key, style);
+                } else {
+                    row += number;
+                    tStyles.put(row + "," + colName, style);
+                }
+            }
+            styles = tStyles;
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean moveUpStyles(int index) {
+        if (styles.isEmpty() || index < 0) {
+            return false;
+        }
+        try {
+            Map<String, String> tStyles = new HashMap<>();
+            for (String key : styles.keySet()) {
+                int pos = key.indexOf(",");
+                int row = Integer.valueOf(key.substring(0, pos));
+                String colName = key.substring(pos + 1);
+                String style = styles.get(key);
+                if (row < index) {
+                    tStyles.put(key, style);
+                } else {
+                    row--;
+                    tStyles.put(row + "," + colName, style);
+                }
+            }
+            styles = tStyles;
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 

@@ -9,13 +9,14 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class Data2DStyle extends BaseData {
 
-    protected long d2sid, d2id, rowFrom, rowTo;
+    protected Data2DDefinition data2DDefinition;
+    protected long d2sid, d2id, row;
     protected String colName, style;
 
     private void init() {
         d2sid = -1;
         d2id = -1;
-        rowFrom = rowTo = -1;
+        row = -1;
         colName = null;
         style = null;
     }
@@ -24,12 +25,23 @@ public class Data2DStyle extends BaseData {
         init();
     }
 
-    public Data2DStyle(long d2id, long rowFrom, long rowTo, String colName) {
+    public Data2DStyle(long d2id, long row, String colName, String style) {
         init();
         this.d2id = d2id;
-        this.rowFrom = rowFrom;
-        this.rowTo = rowTo;
+        this.row = row;
         this.colName = colName;
+        this.style = style;
+    }
+
+    public Data2DStyle(String key, String style) {
+        init();
+        try {
+            int pos = key.indexOf(",");
+            row = Integer.valueOf(key.substring(0, pos));
+            colName = key.substring(pos + 1);
+            this.style = style;
+        } catch (Exception e) {
+        }
     }
 
 
@@ -60,11 +72,8 @@ public class Data2DStyle extends BaseData {
                 case "colName":
                     data.setColName(value == null ? null : (String) value);
                     return true;
-                case "rowFrom":
-                    data.setRowFrom(value == null ? -1 : (long) value);
-                    return true;
-                case "rowTo":
-                    data.setRowTo(value == null ? -1 : (long) value);
+                case "row":
+                    data.setRow(value == null ? -1 : (long) value);
                     return true;
                 case "style":
                     data.setStyle(value == null ? null : (String) value);
@@ -88,10 +97,8 @@ public class Data2DStyle extends BaseData {
                     return data.getD2id();
                 case "colName":
                     return data.getColName();
-                case "rowFrom":
-                    return data.getRowFrom();
-                case "rowTo":
-                    return data.getRowTo();
+                case "row":
+                    return data.getRow();
                 case "style":
                     return data.getStyle();
             }
@@ -122,20 +129,12 @@ public class Data2DStyle extends BaseData {
         return this;
     }
 
-    public long getRowFrom() {
-        return rowFrom;
+    public long getRow() {
+        return row;
     }
 
-    public void setRowFrom(long rowFrom) {
-        this.rowFrom = rowFrom;
-    }
-
-    public long getRowTo() {
-        return rowTo;
-    }
-
-    public void setRowTo(long rowTo) {
-        this.rowTo = rowTo;
+    public void setRow(long row) {
+        this.row = row;
     }
 
     public String getColName() {
@@ -153,6 +152,14 @@ public class Data2DStyle extends BaseData {
     public Data2DStyle setStyle(String style) {
         this.style = style;
         return this;
+    }
+
+    public Data2DDefinition getData2DDefinition() {
+        return data2DDefinition;
+    }
+
+    public void setData2DDefinition(Data2DDefinition data2DDefinition) {
+        this.data2DDefinition = data2DDefinition;
     }
 
 }

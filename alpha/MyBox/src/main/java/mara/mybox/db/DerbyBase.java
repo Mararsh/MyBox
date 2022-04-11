@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
@@ -595,6 +596,10 @@ public class DerbyBase {
                 new TableTreeNodeTag().createTable(conn);
                 loadingController.info("Tree_Node_Tag");
             }
+            if (!tables.contains("Data2D_Style".toLowerCase())) {
+                new TableData2DStyle().createTable(conn);
+                loadingController.info("Data2D_Style");
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -721,6 +726,13 @@ public class DerbyBase {
             if (!indexes.contains("Tree_Node_Tag_unique_index".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTreeNodeTag.Create_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Data2D_Style_unique_index".toLowerCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableData2DStyle.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

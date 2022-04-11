@@ -144,19 +144,14 @@
 }
 
 .row-number {
-    -fx-background-color: -fx-table-cell-border-color, #f7f7f7;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
     -fx-text-fill: grey;
 }
-.row-number:selected {
-    -fx-background-color: lightgray;
-    -fx-text-fill: -fx-selection-bar-text;
-}
 
-.row-number:odd {
-    -fx-background-color: -fx-table-cell-border-color, #f5f5f5;
-    -fx-background-insets: 0, 0 0 1 0;
+.row-number:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled > .tree-table-cell:hover:selected {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+    -fx-text-fill: -fx-selection-bar-text;
+    -fx-background-insets: 0 0 1 0;
 }
 
 

@@ -77,7 +77,7 @@ public abstract class DataFile extends Data2D {
                     return null;
             }
             dataFile.setD2did(-1);
-            Data2D.save(dataFile, dataSource.getColumns());
+            Data2D.saveAttributes(dataSource, dataFile);
             return dataFile;
         } catch (Exception e) {
             if (controller.getTask() != null) {

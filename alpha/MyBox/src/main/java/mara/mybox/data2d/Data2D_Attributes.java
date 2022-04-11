@@ -1,5 +1,6 @@
 package mara.mybox.data2d;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.controller.ControlData2DLoad;
@@ -7,6 +8,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 
@@ -19,11 +21,13 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
+    protected TableData2DStyle tableData2DStyle;
     protected List<Data2DColumn> columns, savedColumns;
     protected Map<String, Object> options;
     protected int pageSize, newColumnIndex;
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
+    protected Map<String, String> styles;
     protected ControlData2DLoad loadController;
     protected boolean tableChanged;
     protected SingletonTask task, backgroundTask;
@@ -32,7 +36,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
+        tableData2DStyle = new TableData2DStyle();
         pageSize = 50;
+        styles = new HashMap<>();
         initData();
     }
 
@@ -46,6 +52,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         newColumnIndex = -1;
         tableChanged = false;
         options = null;
+        styles.clear();
         error = null;
     }
 
@@ -70,6 +77,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             currentPage = d.currentPage;
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
+            styles = d.styles;
             loadController = d.loadController;
             tableChanged = d.tableChanged;
             task = d.task;
@@ -98,6 +106,14 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void setTableData2DColumn(TableData2DColumn tableData2DColumn) {
         this.tableData2DColumn = tableData2DColumn;
+    }
+
+    public TableData2DStyle getTableData2DStyle() {
+        return tableData2DStyle;
+    }
+
+    public void setTableData2DStyle(TableData2DStyle tableData2DStyle) {
+        this.tableData2DStyle = tableData2DStyle;
     }
 
     public List<Data2DColumn> getColumns() {
@@ -190,6 +206,14 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void setSavedColumns(List<Data2DColumn> savedColumns) {
         this.savedColumns = savedColumns;
+    }
+
+    public Map<String, String> getStyles() {
+        return styles;
+    }
+
+    public void setStyles(Map<String, String> styles) {
+        this.styles = styles;
     }
 
     public SingletonTask getTask() {

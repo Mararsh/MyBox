@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -25,7 +24,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -448,7 +446,7 @@ public class ControlData2D extends BaseController {
                     data2D.savePageData(targetData);
                     data2D.cloneAll(targetData);
                     data2D.setTask(task);
-                    data2D.saveDefinition();
+                    data2D.saveAttributes();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -483,10 +481,10 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
-                    Data2D.save(conn, targetData, data2D.getColumns());
+                    Data2D.saveAttributes(data2D, targetData);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

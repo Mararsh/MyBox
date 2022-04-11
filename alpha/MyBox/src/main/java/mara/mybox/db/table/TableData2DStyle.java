@@ -3,11 +3,9 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
 
@@ -17,6 +15,8 @@ import mara.mybox.dev.MyBoxLog;
  * @License Apache License Version 2.0
  */
 public class TableData2DStyle extends BaseTable<Data2DStyle> {
+
+    protected TableData2DDefinition tableData2DDefinition;
 
     public TableData2DStyle() {
         tableName = "Data2D_Style";
@@ -32,63 +32,117 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
 
     public final TableData2DStyle defineColumns() {
         addColumn(new ColumnDefinition("d2sid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("did", ColumnType.Long, true)
-                .setReferName("Data2D_Style_def_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
+        addColumn(new ColumnDefinition("d2id", ColumnType.Long, true)
+                .setReferName("Data2D_Style_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade));
-        addColumn(new ColumnDefinition("rowFrom", ColumnType.Long, true));
-        addColumn(new ColumnDefinition("rowTo", ColumnType.Long, true));
+        addColumn(new ColumnDefinition("row", ColumnType.Long, true));
         addColumn(new ColumnDefinition("colName", ColumnType.String, true));
         addColumn(new ColumnDefinition("style", ColumnType.String, true).setLength(StringMaxLength));
         return this;
     }
 
-    public static final String QueryDataStyle
-            = "SELECT * FROM Data2D_Style WHERE d2id=?";
+    public static final String Create_Unique_Index
+            = "CREATE UNIQUE INDEX Data2D_Style_unique_index on Data2D_Style ( d2id , row, colName  )";
 
-    public static final String DeleteStyle
-            = "DELETE FROM Data2D_Style WHERE d2id=? AND col=? AND row=?";
+    public static final String ClearStyle
+            = "DELETE FROM Data2D_Style WHERE d2id=?";
 
-    public List<Data2DStyle> queryDataStyles(long d2id) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            return queryDataStyles(conn, d2id);
+    public static final String QueryStyle
+            = "SELECT * FROM Data2D_Style WHERE d2id=? AND row=? AND colName=? FETCH FIRST ROW ONLY";
+
+    public static final String QueryPageStyles
+            = "SELECT * FROM Data2D_Style WHERE d2id=? AND row>=? AND row<?";
+
+    @Override
+    public Object readForeignValue(ResultSet results, String column) {
+        if (results == null || column == null) {
+            return null;
+        }
+        try {
+            if ("d2id".equals(column) && results.findColumn("d2did") > 0) {
+                return getTableData2DDefinition().readData(results);
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    @Override
+    public boolean setForeignValue(Data2DStyle data, String column, Object value) {
+        if (data == null || column == null || value == null) {
+            return true;
+        }
+        if ("d2id".equals(column) && value instanceof Data2DDefinition) {
+            data.setData2DDefinition((Data2DDefinition) value);
+        }
+        return true;
+    }
+
+    public boolean clear(Connection conn, long d2id) {
+        if (conn == null || d2id < 0) {
+            return false;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(ClearStyle)) {
+            statement.setLong(1, d2id);
+            statement.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public Data2DStyle query(Connection conn, Data2DStyle d2Style) {
+        if (conn == null || d2Style == null) {
+            return null;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(QueryStyle)) {
+            statement.setLong(1, d2Style.getD2id());
+            statement.setLong(2, d2Style.getRow());
+            statement.setString(3, d2Style.getColName());
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                return readData(results);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public List<Data2DStyle> queryDataStyles(Connection conn, long d2id) {
-        List<Data2DStyle> styles = new ArrayList<>();
-        try ( PreparedStatement statement = conn.prepareStatement(QueryDataStyle)) {
-            statement.setLong(1, d2id);
-            ResultSet results = statement.executeQuery();
-            while (results.next()) {
-                Data2DStyle s = readData(results);
-                if (s != null) {
-                    styles.add(s);
-                }
+    public Data2DStyle write(Connection conn, Data2DStyle d2Style) {
+        if (conn == null || d2Style == null) {
+            return null;
+        }
+        try {
+            Data2DStyle exist = query(d2Style);
+            if (exist == null) {
+                return insertData(conn, d2Style);
+            } else {
+                d2Style.setD2sid(exist.getD2sid());
+                return updateData(conn, d2Style);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
-        return styles;
     }
 
-    public int deleteStyle(Connection conn, long d2id, long row, long col) {
-        int ret;
-        try ( PreparedStatement statement = conn.prepareStatement(DeleteStyle)) {
-            statement.setLong(1, d2id);
-            statement.setLong(2, row);
-            statement.setLong(3, col);
-            ret = statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            ret = -1;
+
+    /*
+        get/set
+     */
+    public TableData2DDefinition getTableData2DDefinition() {
+        if (tableData2DDefinition == null) {
+            tableData2DDefinition = new TableData2DDefinition();
         }
-        return ret;
+        return tableData2DDefinition;
     }
 
-//    public Data2DStyle setStyle(Connection conn, long d2id, long row, long col, String style) {
-//        return writeData(conn, new Data2DStyle(d2id, row, col));
-//    }
+    public void setTableData2DDefinition(TableData2DDefinition tableData2DDefinition) {
+        this.tableData2DDefinition = tableData2DDefinition;
+    }
+
 }

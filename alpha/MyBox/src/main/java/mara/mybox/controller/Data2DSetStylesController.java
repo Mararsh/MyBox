@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -16,7 +15,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -168,40 +166,22 @@ public class Data2DSetStylesController extends Data2DHandleController {
     }
 
     @Override
-    public boolean handleRows() {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            conn.setAutoCommit(false);
+    public void handleRowsTask() {
+        try {
+            tableController.isSettingValues = true;
             for (int row : sourceController.checkedRowsIndices) {
                 for (int col : sourceController.checkedColsIndices) {
-                    if (style == null || style.isBlank()) {
-                        tableController.styles.remove(row + "," + col);
-                    } else {
-                        tableController.styles.put(row + "," + col, style);
-                    }
+                    data2D.setStyle(row, col, style);
                 }
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            popError(message(e.toString()));
-            return false;
-        }
-    }
-
-    @Override
-    public boolean updateTable() {
-        try {
-            sourceController.styles = tableController.styles;
-            for (int row : sourceController.checkedRowsIndices) {
                 tableController.tableData.set(row, tableController.tableData.get(row));
                 sourceController.tableData.set(row, sourceController.tableData.get(row));
             }
+            tableController.isSettingValues = false;
+            tableController.tableChanged(true);
             popDone();
-            return true;
         } catch (Exception e) {
-            popError(e.toString());
             MyBoxLog.error(e.toString());
-            return false;
+            popError(message(e.toString()));
         }
     }
 

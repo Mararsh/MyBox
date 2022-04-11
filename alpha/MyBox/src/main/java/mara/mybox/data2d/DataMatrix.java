@@ -112,6 +112,7 @@ public class DataMatrix extends Data2D {
         rowsNumber = rows.size();
         dataSize = rowsNumber;
         endRowOfCurrentPage = startRowOfCurrentPage + rowsNumber;
+        readPageStyles(conn);
         return rows;
     }
 
@@ -121,7 +122,7 @@ public class DataMatrix extends Data2D {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            targetData.saveDefinition(conn);
+            Data2D.saveColumns(conn, targetData, columns);
             long did = targetData.getD2did();
             if (did < 0) {
                 return false;
@@ -216,6 +217,7 @@ public class DataMatrix extends Data2D {
         return rows;
     }
 
+    @Override
     public boolean setValue(List<Integer> cols, String value) {
         return false;
     }

@@ -3,9 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -31,7 +29,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -51,14 +48,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected boolean readOnly;
     protected SimpleBooleanProperty statusNotify;
     protected Label dataLabel;
-    protected Map<String, String> styles;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
 
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
-        styles = new HashMap<>();
         readOnly = true;
     }
 
@@ -525,25 +520,13 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                     public void updateItem(String item, boolean empty) {
                                         setStyle(null);
                                         try {
-                                            if (getTableRow().isSelected()) {
-                                                setStyle(NodeStyleTools.selectedRow);
-                                            } else {
-                                                int row = -1;
-                                                if (dataRowColumn != null) {
-                                                    row = Integer.valueOf(getTableRow().getItem().get(0));
-                                                }
-                                                if (row < 0) {
-                                                    row = getTableRow().getIndex();
-                                                }
-                                                setStyle(styles.get(row + "," + (col - 1)));
-                                            }
+                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
                                         } catch (Exception e) {
                                         }
                                         super.updateItem(item, empty);
                                         if (empty || item == null) {
                                             setText(null);
                                             setGraphic(null);
-                                            return;
                                         }
                                     }
 
@@ -596,18 +579,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                     public void updateItem(String item, boolean empty) {
                                         setStyle(null);
                                         try {
-                                            if (getTableRow().isSelected()) {
-                                                setStyle(NodeStyleTools.selectedRow);
-                                            } else {
-                                                int row = -1;
-                                                if (dataRowColumn != null) {
-                                                    row = Integer.valueOf(getTableRow().getItem().get(0));
-                                                }
-                                                if (row < 0) {
-                                                    row = getTableRow().getIndex();
-                                                }
-                                                setStyle(styles.get(row + "," + (col - 1)));
-                                            }
+                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
                                         } catch (Exception e) {
                                         }
                                         super.updateItem(item, empty);
@@ -710,7 +682,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
                     @Override
                     protected boolean handle() {
-                        return data2D.saveDefinition();
+                        return data2D.saveAttributes();
                     }
 
                     @Override
@@ -850,6 +822,35 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
+    @Override
+    public void addRows(int index, int number) {
+        data2D.moveDownStyles(index, number);
+        super.addRows(index, number);
+    }
+
+    @FXML
+    @Override
+    public void deleteRowsAction() {
+        List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+        if (selected == null || selected.isEmpty()) {
+            data2D.getStyles().clear();
+            return;
+        }
+        for (Integer index : selected) {
+            data2D.moveUpStyles(index);
+        }
+        super.deleteRowsAction();
+    }
+
+    @Override
+    protected void afterClear() {
+        data2D.getStyles().clear();
+        super.afterClear();
+    }
+
+    /*
+        interface
+     */
     @Override
     public void updateStatus() {
         super.updateStatus();

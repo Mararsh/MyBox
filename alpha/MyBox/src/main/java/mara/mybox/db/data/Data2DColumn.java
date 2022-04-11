@@ -25,6 +25,7 @@ public class Data2DColumn extends ColumnDefinition {
         initColumnDefinition();
         d2cid = -1;
         d2id = -1;
+        data2DDefinition = null;
     }
 
     public Data2DColumn() {
