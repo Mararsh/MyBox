@@ -43,6 +43,7 @@ import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.EpidemicReportTools;
 import mara.mybox.db.data.GeographyCode;
@@ -50,17 +51,16 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
 import mara.mybox.fxml.chart.LabeledBarChart;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
@@ -988,10 +988,11 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         chartBox.getChildren().clear();
 //        boolean intValue = !message("HealedRatio").equals(valueName)
 //                && !message("DeadRatio").equals(valueName);
-        LabeledBarChart barChart = new LabeledBarChart(new CategoryAxis(), new NumberAxis());
+        NumberAxis numberAxis = new NumberAxis();
+        LabeledBarChart barChart = new LabeledBarChart(new CategoryAxis(), numberAxis);
         barChart.setLabelType(labelType)
-                .setTextSize(mapOptionsController.textSize)
-                .setChartCoordinate(chartCoordinate);
+                .setLabelFontSize(mapOptionsController.textSize);
+        ChartTools.setChartCoordinate(numberAxis, chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
         barChart.setBarGap(0.0);
@@ -1017,10 +1018,11 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
     protected LabeledBarChart addHorizontalBarChart() {
         chartBox.getChildren().clear();
-        LabeledBarChart barChart = new LabeledBarChart(new NumberAxis(), new CategoryAxis());
+        NumberAxis numberAxis = new NumberAxis();
+        LabeledBarChart barChart = new LabeledBarChart(numberAxis, new CategoryAxis());
         barChart.setLabelType(labelType)
-                .setTextSize(mapOptionsController.textSize)
-                .setChartCoordinate(chartCoordinate);
+                .setLabelFontSize(mapOptionsController.textSize);
+        ChartTools.setChartCoordinate(numberAxis, chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
         barChart.setBarGap(0.0);

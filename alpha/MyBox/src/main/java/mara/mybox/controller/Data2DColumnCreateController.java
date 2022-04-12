@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -39,6 +40,8 @@ public class Data2DColumnCreateController extends BaseChildController {
     protected CheckBox notNullCheck, editableCheck;
     @FXML
     protected ColorSet colorController;
+    @FXML
+    protected Label buttomLabel;
 
     public Data2DColumnCreateController() {
         TipsLabelKey = message("SqlIdentifierComments");
@@ -73,6 +76,9 @@ public class Data2DColumnCreateController extends BaseChildController {
                     }
                 }
             });
+
+            buttomLabel.setVisible(columnsController.data2D.isTable() && columnsController.data2D.getSheet() != null);
+            rightTipsView.setVisible(columnsController.data2D.isTable());
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());

@@ -436,6 +436,24 @@ License:    Apache License Version 2.0
                                                                         <Label text="px" />
                                                                     </children>
                                                                 </HBox>
+                                                <VBox fx:id="categoryNumbersBox" spacing="10.0">
+                                                   <children>
+                                                      <CheckBox fx:id="categoryNumbersCheck" mnemonicParsing="false" selected="true" text="%ValuesAreNumbers" />
+                                                      <FlowPane fx:id="categoryCoordinatePane" hgap="2.0" vgap="2.0">
+                                                         <children>
+                                                            <Label maxWidth="1.7976931348623157E308" text="%Coordinate" />
+                                                            <RadioButton fx:id="categoryCartesianRadio" mnemonicParsing="false" selected="true" text="%CartesianCoordinate">
+                                                               <toggleGroup>
+                                                                  <ToggleGroup fx:id="categoryCoordinateGroup" />
+                                                               </toggleGroup>
+                                                            </RadioButton>
+                                                            <RadioButton fx:id="categorySquareRootRadio" mnemonicParsing="false" text="%SquareRootCoordinate" toggleGroup="$categoryCoordinateGroup" />
+                                                            <RadioButton fx:id="categoryLogarithmicERadio" mnemonicParsing="false" text="%LogarithmicECoordinate" toggleGroup="$categoryCoordinateGroup" />
+                                                            <RadioButton fx:id="categoryLogarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$categoryCoordinateGroup" />
+                                                         </children>
+                                                      </FlowPane>
+                                                   </children>
+                                                </VBox>
                                                             </children>
                                                         </VBox>
                                                     </content>

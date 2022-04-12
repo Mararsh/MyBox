@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
+import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
@@ -41,7 +42,6 @@ import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartTools;
-import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.chart.ChartTools.LabelLocation;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
 import mara.mybox.fxml.chart.LabeledAreaChart;
@@ -73,7 +73,7 @@ public class Data2DChartController extends Data2DHandleController {
     protected String selectedCategory, selectedValue;
     protected LabelType labelType;
     protected LabelLocation labelLocation;
-    protected ChartTools.ChartCoordinate chartCoordinate;
+    protected ChartTools.ChartCoordinate nCoordinate, cCoordinate, xCoordinate, yCoordinate;
     protected int scale, titleFontSize, labelFontSize, tickFontSize, lineWidth,
             categoryFontSize, categoryMargin, categoryTickRotation,
             numberFontSize, numberTickRotation;
@@ -89,8 +89,9 @@ public class Data2DChartController extends Data2DHandleController {
     protected PieChart pieChart;
     protected Chart chart;
     protected XYChart xyChart;
-    protected CategoryAxis categoryAxis;
-    protected NumberAxis numberAxis, numberAxisX;
+    protected Axis xAxis, yAxis, categoryAxis;
+    protected CategoryAxis stringAxis;
+    protected NumberAxis numberAxisY, numberAxisX;
     protected List<Integer> checkedColsIndices;
     protected Map<String, String> palette;
     protected List<String> paletteList;
@@ -101,27 +102,28 @@ public class Data2DChartController extends Data2DHandleController {
     @FXML
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
             pieRadio, bubbleChartRadio, areaChartRadio, stackedAreaChartRadio,
-            cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio;
+            cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio,
+            categoryCartesianRadio, categorySquareRootRadio, categoryLogarithmicERadio, categoryLogarithmic10Radio;
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector, scaleSelector,
             titleFontSizeSelector, labelFontSizeSelector, lineWdithSelector, tickFontSizeSelector,
             barGapSelector, categoryGapSelector, categoryFontSizeSelector, categoryTickRotationSelector,
             categoryMarginSelector, numberFontSizeSelector, numberTickRotationSelector;
     @FXML
-    protected VBox columnsBox, snapBox, chartBox, xyPlotBox;
+    protected VBox columnsBox, snapBox, chartBox, xyPlotBox, categoryNumbersBox;
     @FXML
     protected HBox barGapBox, categoryGapBox, lineWidthBox, bubbleBox;
     @FXML
-    protected FlowPane valueColumnPane, categoryColumnsPane;
+    protected FlowPane valueColumnPane, categoryColumnsPane, categoryCoordinatePane;
     @FXML
     protected TextField titleInput, categoryLabel, numberLabel, bubbleStyleInput;
     @FXML
-    protected CheckBox categoryTickCheck, numberTickCheck, categoryMarkCheck, numberMarkCheck,
+    protected CheckBox categoryTickCheck, numberTickCheck, categoryMarkCheck, numberMarkCheck, categoryNumbersCheck,
             hlinesCheck, vlinesCheck, xyReverseCheck, autoTitleCheck, clockwiseCheck, popLabelCheck,
             hZeroCheck, vZeroCheck, animatedCheck, categoryAxisAnimatedCheck, numberAxisAnimatedCheck;
     @FXML
     protected ToggleGroup chartGroup, titleSideGroup, labelGroup, legendGroup, numberCoordinateGroup,
-            categorySideGroup, numberSideGroup, labelLocaionGroup;
+            categorySideGroup, numberSideGroup, labelLocaionGroup, categoryCoordinateGroup;
 
     public Data2DChartController() {
         TipsLabelKey = "DataChartTips";
@@ -613,9 +615,9 @@ public class Data2DChartController extends Data2DHandleController {
                             categoryMargin = Integer.parseInt(newValue);
                             categoryMarginSelector.getEditor().setStyle(null);
                             UserConfig.setInt(baseName + "CategoryMargin", categoryMargin);
-                            if (categoryAxis != null) {
-                                categoryAxis.setStartMargin(categoryMargin);
-                                categoryAxis.setEndMargin(categoryMargin);
+                            if (stringAxis != null) {
+                                stringAxis.setStartMargin(categoryMargin);
+                                stringAxis.setEndMargin(categoryMargin);
                             }
                         } catch (Exception e) {
                             categoryMarginSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -715,6 +717,36 @@ public class Data2DChartController extends Data2DHandleController {
                     categoryAxis.setAnimated(categoryAxisAnimatedCheck.isSelected());
                 }
             });
+
+            categoryNumbersCheck.setSelected(UserConfig.getBoolean(baseName + "CategoryNumbers", false));
+            categoryNumbersCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setBoolean(baseName + "CategoryNumbers", categoryNumbersCheck.isSelected());
+                okAction();
+            });
+
+            cCoordinate = ChartTools.ChartCoordinate.Cartesian;
+            categoryCoordinateGroup.selectedToggleProperty().addListener(
+                    (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
+                        if (isSettingValues || newValue == null) {
+                            return;
+                        }
+                        if (categoryLogarithmicERadio.isSelected()) {
+                            cCoordinate = ChartTools.ChartCoordinate.LogarithmicE;
+                        } else if (categoryLogarithmic10Radio.isSelected()) {
+                            cCoordinate = ChartTools.ChartCoordinate.Logarithmic10;
+                        } else if (categorySquareRootRadio.isSelected()) {
+                            cCoordinate = ChartTools.ChartCoordinate.SquareRoot;
+                        } else {
+                            cCoordinate = ChartTools.ChartCoordinate.Cartesian;
+                        }
+                        okAction();
+                    });
+
+            categoryCoordinatePane.disableProperty().bind(categoryNumbersCheck.selectedProperty().not());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -728,8 +760,8 @@ public class Data2DChartController extends Data2DHandleController {
                     return;
                 }
                 UserConfig.setBoolean(baseName + "DisplayNumberAxis", numberTickCheck.isSelected());
-                if (numberAxis != null) {
-                    numberAxis.setTickLabelsVisible(numberTickCheck.isSelected());
+                if (numberAxisY != null) {
+                    numberAxisY.setTickLabelsVisible(numberTickCheck.isSelected());
                     chart.requestLayout();
                 }
             });
@@ -740,8 +772,8 @@ public class Data2DChartController extends Data2DHandleController {
                     return;
                 }
                 UserConfig.setBoolean(baseName + "DisplayNumberMark", numberMarkCheck.isSelected());
-                if (numberAxis != null) {
-                    numberAxis.setTickMarkVisible(numberMarkCheck.isSelected());
+                if (numberAxisY != null) {
+                    numberAxisY.setTickMarkVisible(numberMarkCheck.isSelected());
                     chart.requestLayout();
                 }
             });
@@ -754,21 +786,20 @@ public class Data2DChartController extends Data2DHandleController {
                     "0", "90", "45", "30", "15", "60", "135", "120", "105", "150"
             ));
             numberTickRotationSelector.getSelectionModel().select(numberTickRotation + "");
-            numberTickRotationSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> v, String ov, String nv) -> {
-                        try {
-                            int d = Integer.valueOf(nv);
-                            numberTickRotation = d;
-                            numberTickRotationSelector.getEditor().setStyle(null);
-                            UserConfig.setInt(baseName + "NumberTickRotation", numberTickRotation);
-                            if (numberAxis != null) {
-                                numberAxis.setTickLabelRotation(numberTickRotation);
-                                chart.requestLayout();
-                            }
-                        } catch (Exception e) {
-                            numberTickRotationSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    });
+            numberTickRotationSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> v, String ov, String nv) -> {
+                try {
+                    int d = Integer.valueOf(nv);
+                    numberTickRotation = d;
+                    numberTickRotationSelector.getEditor().setStyle(null);
+                    UserConfig.setInt(baseName + "NumberTickRotation", numberTickRotation);
+                    if (numberAxisY != null) {
+                        numberAxisY.setTickLabelRotation(numberTickRotation);
+                        chart.requestLayout();
+                    }
+                } catch (Exception e) {
+                    numberTickRotationSelector.getEditor().setStyle(UserConfig.badStyle());
+                }
+            });
 
             numberFontSize = UserConfig.getInt(baseName + "NumberAxisFontSize", 12);
             if (numberFontSize < 0) {
@@ -778,24 +809,23 @@ public class Data2DChartController extends Data2DHandleController {
                     "12", "14", "10", "8", "15", "16", "18", "9", "6", "4", "20", "24"
             ));
             numberFontSizeSelector.getSelectionModel().select(numberFontSize + "");
-            numberFontSizeSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                numberFontSize = v;
-                                numberFontSizeSelector.getEditor().setStyle(null);
-                                UserConfig.setInt(baseName + "NumberAxisFontSize", numberFontSize);
-                                if (numberAxis != null) {
-                                    numberAxis.setStyle("-fx-font-size: " + numberFontSize + "px;");
-                                }
-                            } else {
-                                numberFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            numberFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+            numberFontSizeSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        numberFontSize = v;
+                        numberFontSizeSelector.getEditor().setStyle(null);
+                        UserConfig.setInt(baseName + "NumberAxisFontSize", numberFontSize);
+                        if (numberAxisY != null) {
+                            numberAxisY.setStyle("-fx-font-size: " + numberFontSize + "px;");
                         }
-                    });
+                    } else {
+                        numberFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                } catch (Exception e) {
+                    numberFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                }
+            });
 
             numberSide = Side.LEFT;
             numberSideGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -814,27 +844,27 @@ public class Data2DChartController extends Data2DHandleController {
                     } else if (message("Right").equals(value)) {
                         numberSide = Side.RIGHT;
                     }
-                    if (numberAxis != null) {
-                        numberAxis.setSide(numberSide);
+                    if (numberAxisY != null) {
+                        numberAxisY.setSide(numberSide);
                         chart.requestLayout();
                     }
                 }
             });
 
-            chartCoordinate = ChartTools.ChartCoordinate.Cartesian;
+            nCoordinate = ChartTools.ChartCoordinate.Cartesian;
             numberCoordinateGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         if (isSettingValues || newValue == null) {
                             return;
                         }
                         if (logarithmicERadio.isSelected()) {
-                            chartCoordinate = ChartTools.ChartCoordinate.LogarithmicE;
+                            nCoordinate = ChartTools.ChartCoordinate.LogarithmicE;
                         } else if (logarithmic10Radio.isSelected()) {
-                            chartCoordinate = ChartTools.ChartCoordinate.Logarithmic10;
+                            nCoordinate = ChartTools.ChartCoordinate.Logarithmic10;
                         } else if (squareRootRadio.isSelected()) {
-                            chartCoordinate = ChartTools.ChartCoordinate.SquareRoot;
+                            nCoordinate = ChartTools.ChartCoordinate.SquareRoot;
                         } else {
-                            chartCoordinate = ChartTools.ChartCoordinate.Cartesian;
+                            nCoordinate = ChartTools.ChartCoordinate.Cartesian;
                         }
                         okAction();
                     });
@@ -845,8 +875,8 @@ public class Data2DChartController extends Data2DHandleController {
                     return;
                 }
                 UserConfig.setBoolean(baseName + "NumberAxisAnimated", numberAxisAnimatedCheck.isSelected());
-                if (numberAxis != null) {
-                    numberAxis.setAnimated(numberAxisAnimatedCheck.isSelected());
+                if (numberAxisY != null) {
+                    numberAxisY.setAnimated(numberAxisAnimatedCheck.isSelected());
                 }
             });
 
@@ -883,6 +913,7 @@ public class Data2DChartController extends Data2DHandleController {
 
             bubbleBox.setDisable(!bubbleChartRadio.isSelected());
 
+            categoryNumbersBox.setDisable(barChartRadio.isSelected() || stackedBarChartRadio.isSelected());
             checkAutoTitle();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1004,6 +1035,14 @@ public class Data2DChartController extends Data2DHandleController {
         return !xyReverseCheck.isSelected();
     }
 
+    public boolean isCategoryNumbers() {
+        return categoryNumbersCheck.isSelected() && !barChartRadio.isSelected() && !stackedBarChartRadio.isSelected();
+    }
+
+    public boolean displayLabel() {
+        return labelType != null && labelType != LabelType.NotDisplay;
+    }
+
     @Override
     public boolean checkOptions() {
         if (isSettingValues) {
@@ -1039,37 +1078,67 @@ public class Data2DChartController extends Data2DHandleController {
             bubbleChart = null;
             scatterChart​ = null;
             pieChart = null;
+            xAxis = null;
+            yAxis = null;
             categoryAxis = null;
-            numberAxis = null;
+            numberAxisY = null;
             numberAxisX = null;
             palette = null;
             paletteList = null;
+            xCoordinate = null;
+            yCoordinate = null;
 
             chartBox.getChildren().clear();
             if (pieRadio.isSelected()) {
                 makePieChart();
             } else {
-                categoryAxis = new CategoryAxis();
-                categoryAxis.setLabel(categoryLabel.getText());
-                categoryAxis.setSide(categorySide);
-                categoryAxis.setTickLabelsVisible(categoryTickCheck.isSelected());
-                categoryAxis.setTickMarkVisible(categoryMarkCheck.isSelected());
-                categoryAxis.setTickLabelRotation(categoryTickRotation);
-                categoryAxis.setGapStartAndEnd(true);
-                categoryAxis.setAnimated(categoryAxisAnimatedCheck.isSelected());
-                if (xyReverseCheck.isSelected()) {
-                    categoryAxis.setEndMargin(100);
+                if (isCategoryNumbers()) {
+                    numberAxisX = new NumberAxis();
+                    numberAxisX.setLabel(categoryLabel.getText());
+                    numberAxisX.setSide(categorySide);
+                    numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
+                    numberAxisX.setTickMarkVisible(numberMarkCheck.isSelected());
+                    numberAxisX.setTickLabelRotation(categoryTickRotation);
+                    numberAxisX.setAnimated(categoryAxisAnimatedCheck.isSelected());
+                    ChartTools.setChartCoordinate(numberAxisX, cCoordinate);
+                    categoryAxis = numberAxisX;
                 } else {
-                    categoryAxis.setEndMargin(20);
+                    stringAxis = new CategoryAxis();
+                    stringAxis.setLabel(categoryLabel.getText());
+                    stringAxis.setSide(categorySide);
+                    stringAxis.setTickLabelsVisible(categoryTickCheck.isSelected());
+                    stringAxis.setTickMarkVisible(categoryMarkCheck.isSelected());
+                    stringAxis.setTickLabelRotation(categoryTickRotation);
+                    stringAxis.setGapStartAndEnd(true);
+                    stringAxis.setAnimated(categoryAxisAnimatedCheck.isSelected());
+                    if (xyReverseCheck.isSelected()) {
+                        stringAxis.setEndMargin(100);
+                    } else {
+                        stringAxis.setEndMargin(20);
+                    }
+                    categoryAxis = stringAxis;
                 }
 
-                numberAxis = new NumberAxis();
-                numberAxis.setLabel(numberLabel.getText());
-                numberAxis.setSide(numberSide);
-                numberAxis.setTickLabelsVisible(numberTickCheck.isSelected());
-                numberAxis.setTickMarkVisible(numberMarkCheck.isSelected());
-                numberAxis.setTickLabelRotation(numberTickRotation);
-                numberAxis.setAnimated(numberAxisAnimatedCheck.isSelected());
+                numberAxisY = new NumberAxis();
+                numberAxisY.setLabel(numberLabel.getText());
+                numberAxisY.setSide(numberSide);
+                numberAxisY.setTickLabelsVisible(numberTickCheck.isSelected());
+                numberAxisY.setTickMarkVisible(numberMarkCheck.isSelected());
+                numberAxisY.setTickLabelRotation(numberTickRotation);
+                numberAxisY.setAnimated(numberAxisAnimatedCheck.isSelected());
+                ChartTools.setChartCoordinate(numberAxisY, nCoordinate);
+
+                if (xyReverseCheck.isSelected()) {
+                    xAxis = numberAxisY;
+                    yAxis = categoryAxis;
+                    xCoordinate = nCoordinate;
+                    yCoordinate = cCoordinate;
+                } else {
+                    xAxis = categoryAxis;
+                    yAxis = numberAxisY;
+                    xCoordinate = cCoordinate;
+                    yCoordinate = nCoordinate;
+                }
 
                 if (barChartRadio.isSelected()) {
                     makeBarChart();
@@ -1111,8 +1180,8 @@ public class Data2DChartController extends Data2DHandleController {
                 if (categoryAxis != null) {
                     categoryAxis.setStyle("-fx-font-size: " + categoryFontSize + "px;");
                 }
-                if (numberAxis != null) {
-                    numberAxis.setStyle("-fx-font-size: " + numberFontSize + "px;");
+                if (numberAxisY != null) {
+                    numberAxisY.setStyle("-fx-font-size: " + numberFontSize + "px;");
                 }
                 chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                 VBox.setVgrow(chart, Priority.ALWAYS);
@@ -1130,15 +1199,11 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void makeBarChart() {
         try {
-            if (xyReverseCheck.isSelected()) {
-                barChart = new LabeledBarChart(numberAxis, categoryAxis);
-            } else {
-                barChart = new LabeledBarChart(categoryAxis, numberAxis);
-            }
-            barChart.setChartController(this);
+            barChart = new LabeledBarChart(xAxis, yAxis);
             barChart.setBarGap(barGap);
             barChart.setCategoryGap(categoryGap);
             xyChart = barChart;
+            barChart.setChartController(this);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -1146,14 +1211,10 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void makeStackedBarChart() {
         try {
-            if (xyReverseCheck.isSelected()) {
-                stackedBarChart = new LabeledStackedBarChart(numberAxis, categoryAxis);
-            } else {
-                stackedBarChart = new LabeledStackedBarChart(categoryAxis, numberAxis);
-            }
-            stackedBarChart.setChartController(this);
+            stackedBarChart = new LabeledStackedBarChart(xAxis, yAxis);
             stackedBarChart.setCategoryGap(categoryGap);
             xyChart = stackedBarChart;
+            stackedBarChart.setChartController(this);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -1161,13 +1222,9 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void makeLineChart() {
         try {
-            if (xyReverseCheck.isSelected()) {
-                lineChart = new LabeledLineChart(numberAxis, categoryAxis);
-            } else {
-                lineChart = new LabeledLineChart(categoryAxis, numberAxis);
-            }
-            lineChart.setChartController(this);
+            lineChart = new LabeledLineChart(xAxis, yAxis);
             xyChart = lineChart;
+            lineChart.setChartController(this);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -1175,13 +1232,9 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void makeScatterChart​() {
         try {
-            if (xyReverseCheck.isSelected()) {
-                scatterChart = new LabeledScatterChart​(numberAxis, categoryAxis);
-            } else {
-                scatterChart = new LabeledScatterChart​(categoryAxis, numberAxis);
-            }
-            scatterChart.setChartController(this);
+            scatterChart = new LabeledScatterChart​(xAxis, yAxis);
             xyChart = scatterChart;
+            scatterChart.setChartController(this);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -1189,13 +1242,9 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void makeAreaChart() {
         try {
-            if (xyReverseCheck.isSelected()) {
-                areaChart = new LabeledAreaChart(numberAxis, categoryAxis);
-            } else {
-                areaChart = new LabeledAreaChart(categoryAxis, numberAxis);
-            }
-            areaChart.setChartController(this);
+            areaChart = new LabeledAreaChart(xAxis, yAxis);
             xyChart = areaChart;
+            areaChart.setChartController(this);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -1203,13 +1252,9 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void makeStackedAreaChart() {
         try {
-            if (xyReverseCheck.isSelected()) {
-                stackedAreaChart = new LabeledStackedAreaChart(numberAxis, categoryAxis);
-            } else {
-                stackedAreaChart = new LabeledStackedAreaChart(categoryAxis, numberAxis);
-            }
-            stackedAreaChart.setChartController(this);
+            stackedAreaChart = new LabeledStackedAreaChart(xAxis, yAxis);
             xyChart = stackedAreaChart;
+            stackedAreaChart.setChartController(this);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -1223,14 +1268,14 @@ public class Data2DChartController extends Data2DHandleController {
             numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
             numberAxisX.setTickLabelRotation(categoryTickRotation);
             numberAxisX.setAnimated(categoryAxisAnimatedCheck.isSelected());
-            ChartTools.setChartCoordinate(numberAxisX, chartCoordinate);
+            ChartTools.setChartCoordinate(numberAxisX, xCoordinate);
             if (xyReverseCheck.isSelected()) {
-                bubbleChart = new LabeledBubbleChart(numberAxis, numberAxisX);
+                bubbleChart = new LabeledBubbleChart(numberAxisY, numberAxisX);
             } else {
-                bubbleChart = new LabeledBubbleChart(numberAxisX, numberAxis);
+                bubbleChart = new LabeledBubbleChart(numberAxisX, numberAxisY);
             }
-            bubbleChart.setChartController(this);
             xyChart = bubbleChart;
+            bubbleChart.setChartController(this);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -1346,25 +1391,31 @@ public class Data2DChartController extends Data2DHandleController {
                 }
                 String rgb = FxColorTools.color2rgb(color);
                 palette.put(colName, rgb);
+                double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue;
                 for (List<String> rowData : handledData) {
                     String category = rowData.get(0);
-                    double numberValue = data2D.doubleValue(rowData.get(i + 1));
-                    double numberCoordinateValue = ChartTools.coordinateValue(chartCoordinate, numberValue);
-                    if (bubbleChartRadio.isSelected()) {
-                        double categoryValue = data2D.doubleValue(category);
-                        double categoryCoordinateValue = ChartTools.coordinateValue(chartCoordinate, categoryValue);
-
-                        xyData = xyReverseCheck.isSelected()
-                                ? new XYChart.Data(numberCoordinateValue, categoryCoordinateValue)
-                                : new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
+                    numberValue = data2D.doubleValue(rowData.get(i + 1));
+                    numberCoordinateValue = ChartTools.coordinateValue(nCoordinate, numberValue);
+                    categoryValue = data2D.doubleValue(category);
+                    categoryCoordinateValue = ChartTools.coordinateValue(cCoordinate, categoryValue);
+                    if (xyReverseCheck.isSelected()) {
+                        if (xyChart.getYAxis() instanceof NumberAxis) {
+                            xyData = new XYChart.Data(numberCoordinateValue, categoryCoordinateValue);
+                        } else {
+                            xyData = new XYChart.Data(numberCoordinateValue, category);
+                        }
                     } else {
-                        xyData = xyReverseCheck.isSelected()
-                                ? new XYChart.Data(numberCoordinateValue, category)
-                                : new XYChart.Data(category, numberCoordinateValue);
+                        if (xyChart.getXAxis() instanceof NumberAxis) {
+                            xyData = new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
+                        } else {
+                            xyData = new XYChart.Data(category, numberCoordinateValue);
+                        }
                     }
                     series.getData().add(xyData);
                 }
+
                 xyChart.getData().add(i, series);
+
             }
 
         } catch (Exception e) {
@@ -1397,15 +1448,15 @@ public class Data2DChartController extends Data2DHandleController {
             double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue, sizeValue, sizeCoordinateValue;
             for (List<String> rowData : handledData) {
                 categoryValue = data2D.doubleValue(rowData.get(0));
-                categoryCoordinateValue = ChartTools.coordinateValue(chartCoordinate, categoryValue);
+                categoryCoordinateValue = ChartTools.coordinateValue(cCoordinate, categoryValue);
                 numberValue = data2D.doubleValue(rowData.get(1));
-                numberCoordinateValue = ChartTools.coordinateValue(chartCoordinate, numberValue);
+                numberCoordinateValue = ChartTools.coordinateValue(nCoordinate, numberValue);
                 for (int i = 0; i < sizeNum; i++) {
                     sizeValue = data2D.doubleValue(rowData.get(i + 2));
                     if (sizeValue <= 0) {
                         continue;
                     }
-                    sizeCoordinateValue = ChartTools.coordinateValue(chartCoordinate, sizeValue);
+                    sizeCoordinateValue = ChartTools.coordinateValue(nCoordinate, sizeValue);
                     xyData = xyReverseCheck.isSelected()
                             ? new XYChart.Data(numberCoordinateValue, categoryCoordinateValue)
                             : new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
@@ -1537,8 +1588,8 @@ public class Data2DChartController extends Data2DHandleController {
 
     @FXML
     public void goValueLabel() {
-        if (numberAxis != null) {
-            numberAxis.setLabel(numberLabel.getText());
+        if (numberAxisY != null) {
+            numberAxisY.setLabel(numberLabel.getText());
         }
     }
 
@@ -1643,16 +1694,24 @@ public class Data2DChartController extends Data2DHandleController {
         return labelFontSize;
     }
 
-    public ChartCoordinate getChartCoordinate() {
-        return chartCoordinate;
-    }
-
     public int getScale() {
         return scale;
     }
 
     public LabelLocation getLabelLocation() {
         return labelLocation;
+    }
+
+    public ChartTools.ChartCoordinate getxCoordinate() {
+        return xCoordinate;
+    }
+
+    public ChartTools.ChartCoordinate getyCoordinate() {
+        return yCoordinate;
+    }
+
+    public XYChart getXyChart() {
+        return xyChart;
     }
 
 }

@@ -26,17 +26,17 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public abstract class Data2D_Edit extends Data2D_Data {
-    
+
     public abstract Data2DDefinition queryDefinition(Connection conn);
-    
+
     public abstract void applyOptions();
-    
+
     public abstract List<String> readColumnNames();
-    
+
     public abstract boolean savePageData(Data2D targetData);
-    
+
     public abstract boolean setValue(List<Integer> cols, String value);
-    
+
     public abstract long clearData();
 
     /*
@@ -45,7 +45,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
     public boolean checkForLoad() {
         return true;
     }
-    
+
     public long readDataDefinition(Connection conn) {
         if (isTmpData()) {
             checkForLoad();
@@ -78,7 +78,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
         return d2did;
     }
-    
+
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
@@ -136,7 +136,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public long readTotal() {
         dataSize = 0;
         Data2DReader reader = Data2DReader.create(this)
@@ -148,7 +148,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         tableData2DDefinition.updateData(this);
         return dataSize;
     }
-    
+
     public List<List<String>> readPageData(Connection conn) {
         if (!isColumnsValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
@@ -172,7 +172,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         readPageStyles(conn);
         return rows;
     }
-    
+
     public void readPageStyles(Connection conn) {
         styles.clear();
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
@@ -194,7 +194,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             MyBoxLog.error(e);
         }
     }
-    
+
     public void countSize() {
         try {
             rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
@@ -219,7 +219,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
         return true;
     }
-    
+
     public boolean saveAttributes() {
         countSize();
         try ( Connection conn = DerbyBase.getConnection()) {
@@ -233,12 +233,18 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public boolean saveStyles(Connection conn) {
         if (conn == null || d2did < 0) {
             return false;
         }
         try ( Statement statement = conn.createStatement()) {
+            if (endRowOfCurrentPage > startRowOfCurrentPage) {
+                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
+                        + " AND row>=" + startRowOfCurrentPage + " AND row<" + endRowOfCurrentPage;
+                statement.executeUpdate(sql);
+                conn.commit();
+            }
             if (isMutiplePages()) {
                 long offset = tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage);
                 if (offset != 0) {
@@ -247,12 +253,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     statement.executeUpdate(sql);
                     conn.commit();
                 }
-            }
-            if (endRowOfCurrentPage > startRowOfCurrentPage) {
-                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
-                        + " AND row>=" + startRowOfCurrentPage + " AND row<" + endRowOfCurrentPage;
-                statement.executeUpdate(sql);
-                conn.commit();
             }
             if (styles.isEmpty()) {
                 return true;
@@ -274,7 +274,62 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
+    public boolean saveStyles(List<String> cols, String style) {
+        if (cols == null || cols.isEmpty() || tableChanged || d2did < 0) {
+            return false;
+        }
+        try ( Connection conn = DerbyBase.getConnection();
+                 Statement statement = conn.createStatement()) {
+            if (dataSize <= 0) {
+                String in = null;
+                for (String col : cols) {
+                    if (in == null) {
+                        in = col;
+                    } else {
+                        in += "," + col;
+                    }
+                }
+                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did;
+                statement.executeUpdate(sql);
+                conn.commit();
+            } else if (style == null || style.isBlank()) {
+                String in = null;
+                for (String col : cols) {
+                    if (in == null) {
+                        in = col;
+                    } else {
+                        in += "," + col;
+                    }
+                }
+                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
+                        + " AND colName IN (" + in + ")";
+                statement.executeUpdate(sql);
+                conn.commit();
+            } else {
+                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
+                        + " AND (row < 0 OR row >= " + dataSize + ")";
+                statement.executeUpdate(sql);
+                conn.commit();
+                conn.setAutoCommit(false);
+                for (int row = 0; row < dataSize; row++) {
+                    for (String colName : cols) {
+                        Data2DStyle d2Style = new Data2DStyle(d2did, row, colName, style);
+                        tableData2DStyle.write(conn, d2Style);
+                    }
+                }
+                conn.commit();
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
             target.setStyles(source.getStyles());
@@ -288,7 +343,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public static boolean saveColumns(Data2D d, List<Data2DColumn> cols) {
         if (d == null) {
             return false;
@@ -303,7 +358,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public static boolean saveColumns(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
@@ -372,5 +427,5 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
 }

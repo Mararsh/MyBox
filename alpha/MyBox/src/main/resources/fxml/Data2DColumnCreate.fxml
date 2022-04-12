@@ -108,7 +108,7 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-      <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%NewColumnComments" wrapText="true" />
+      <Label fx:id="buttomLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%NewColumnComments" wrapText="true" />
     </children>
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
