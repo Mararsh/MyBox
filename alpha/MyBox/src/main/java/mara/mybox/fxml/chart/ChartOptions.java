@@ -14,6 +14,7 @@ import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,15 +23,18 @@ import mara.mybox.tools.DoubleTools;
  */
 public class ChartOptions<X, Y> {
 
+    protected Data2DChartController chartController;
     protected XYChart xyChart;
     protected LabelType labelType;
-    protected ChartCoordinate xCoordinate, yCoordinate;
+    protected ChartCoordinate xCoordinate, yCoordinate, sCoordinate;
     protected int labelFontSize, scale;
     protected boolean popLabel, isXY, isCategoryNumbers;
     protected ChartTools.LabelLocation labelLocation;
     protected Map<Node, Node> nodeMap = new HashMap<>();
+    protected String categoryName;
 
-    public ChartOptions() {
+    public ChartOptions(XYChart xyChart) {
+        this.xyChart = xyChart;
         labelType = LabelType.NameAndValue;
         xCoordinate = ChartCoordinate.Cartesian;
         yCoordinate = ChartCoordinate.Cartesian;
@@ -43,6 +47,7 @@ public class ChartOptions<X, Y> {
     }
 
     public ChartOptions(Data2DChartController chartController) {
+        this.chartController = chartController;
         xyChart = chartController.getXyChart();
         labelFontSize = chartController.getLabelFontSize();
         labelType = chartController.getLabelType();
@@ -52,18 +57,24 @@ public class ChartOptions<X, Y> {
         isCategoryNumbers = chartController.isCategoryNumbers();
         xCoordinate = chartController.getxCoordinate();
         yCoordinate = chartController.getyCoordinate();
+        sCoordinate = chartController.getsCoordinate();
         labelLocation = chartController.getLabelLocation();
     }
 
+    public String categoryName() {
+        return xyChart.getXAxis().getLabel();
+    }
+
     protected void makeLabels(XYChart.Series<X, Y> series, ObservableList<Node> nodes) {
-        if (labelType == null) {
+        if (labelType == null || xyChart == null) {
             return;
         }
         try {
+            categoryName = xyChart.getXAxis().getLabel();
             xyChart.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
             for (int s = 0; s < series.getData().size(); s++) {
                 XYChart.Data<X, Y> item = series.getData().get(s);
-                Node label = makeLabel(item);
+                Node label = makeLabel(series.getName(), item);
                 if (label != null) {
                     label.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
                     nodeMap.put(item.getNode(), label);
@@ -75,39 +86,44 @@ public class ChartOptions<X, Y> {
         }
     }
 
-    public Node makeLabel(XYChart.Data item) {
+    public Node makeLabel(String numberName, XYChart.Data item) {
         if (item == null || item.getNode() == null) {
             return null;
         }
         try {
-            String name, value, extra, nameLabel, valueLabel;
+            String category, number, extra, categoryDis, numberDis, extraDis;
             if (isXY) {
-                name = item.getXValue().toString();
+                category = item.getXValue().toString();
                 if (isCategoryNumbers) {
-                    nameLabel = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(name)), scale);
+                    categoryDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(category)), scale);
                 } else {
-                    nameLabel = name;
+                    categoryDis = category;
                 }
-                value = item.getYValue().toString();
-                valueLabel = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(value)), scale);
+                number = item.getYValue().toString();
+                numberDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(number)), scale);
             } else {
-                name = item.getYValue().toString();
+                category = item.getYValue().toString();
                 if (isCategoryNumbers) {
-                    nameLabel = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(name)), scale);
+                    categoryDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(category)), scale);
                 } else {
-                    nameLabel = name;
+                    categoryDis = category;
                 }
-                value = item.getXValue().toString();
-                valueLabel = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(value)), scale);
+                number = item.getXValue().toString();
+                numberDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(number)), scale);
             }
 
             if (item.getExtraValue() != null) {
-                extra = " - " + DoubleTools.format((double) item.getExtraValue(), scale);
+                double d = (double) item.getExtraValue();
+                extra = "\n" + message("Size") + ": " + DoubleTools.format(d, scale);
+                extraDis = "\n" + message("Size") + ": " + DoubleTools.format(ChartTools.realValue(sCoordinate, d), scale);
             } else {
                 extra = "";
+                extraDis = "";
             }
             if (popLabel || labelType == LabelType.Pop) {
-                NodeStyleTools.setTooltip(item.getNode(), name + " - " + value + extra);
+                NodeStyleTools.setTooltip(item.getNode(),
+                        categoryName + ": " + categoryDis + "\n"
+                        + numberName + ": " + numberDis + extraDis);
             }
             if (labelType == null || labelType == LabelType.NotDisplay) {
                 return null;
@@ -116,13 +132,14 @@ public class ChartOptions<X, Y> {
 
             switch (labelType) {
                 case Name:
-                    display = nameLabel;
+                    display = categoryName + ": " + categoryDis;
                     break;
                 case Value:
-                    display = valueLabel + extra;
+                    display = numberName + ": " + numberDis + extraDis;
                     break;
                 case NameAndValue:
-                    display = nameLabel + " - " + valueLabel + extra;
+                    display = categoryName + ": " + categoryDis + "\n"
+                            + numberName + ": " + numberDis + extraDis;
                     break;
             }
             if (display != null && !display.isBlank()) {

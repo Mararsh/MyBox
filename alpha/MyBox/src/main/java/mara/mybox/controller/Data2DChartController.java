@@ -73,7 +73,7 @@ public class Data2DChartController extends Data2DHandleController {
     protected String selectedCategory, selectedValue;
     protected LabelType labelType;
     protected LabelLocation labelLocation;
-    protected ChartTools.ChartCoordinate nCoordinate, cCoordinate, xCoordinate, yCoordinate;
+    protected ChartTools.ChartCoordinate nCoordinate, cCoordinate, sCoordinate, xCoordinate, yCoordinate;
     protected int scale, titleFontSize, labelFontSize, tickFontSize, lineWidth,
             categoryFontSize, categoryMargin, categoryTickRotation,
             numberFontSize, numberTickRotation;
@@ -103,16 +103,17 @@ public class Data2DChartController extends Data2DHandleController {
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
             pieRadio, bubbleChartRadio, areaChartRadio, stackedAreaChartRadio,
             cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio,
-            categoryCartesianRadio, categorySquareRootRadio, categoryLogarithmicERadio, categoryLogarithmic10Radio;
+            categoryCartesianRadio, categorySquareRootRadio, categoryLogarithmicERadio, categoryLogarithmic10Radio,
+            sizeCartesianRadio, sizeSquareRootRadio, sizeLogarithmicERadio, sizeLogarithmic10Radio;
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector, scaleSelector,
             titleFontSizeSelector, labelFontSizeSelector, lineWdithSelector, tickFontSizeSelector,
             barGapSelector, categoryGapSelector, categoryFontSizeSelector, categoryTickRotationSelector,
             categoryMarginSelector, numberFontSizeSelector, numberTickRotationSelector;
     @FXML
-    protected VBox columnsBox, snapBox, chartBox, xyPlotBox, categoryNumbersBox;
+    protected VBox columnsBox, snapBox, chartBox, xyPlotBox, categoryNumbersBox, bubbleBox;
     @FXML
-    protected HBox barGapBox, categoryGapBox, lineWidthBox, bubbleBox;
+    protected HBox barGapBox, categoryGapBox, lineWidthBox;
     @FXML
     protected FlowPane valueColumnPane, categoryColumnsPane, categoryCoordinatePane;
     @FXML
@@ -123,7 +124,7 @@ public class Data2DChartController extends Data2DHandleController {
             hZeroCheck, vZeroCheck, animatedCheck, categoryAxisAnimatedCheck, numberAxisAnimatedCheck;
     @FXML
     protected ToggleGroup chartGroup, titleSideGroup, labelGroup, legendGroup, numberCoordinateGroup,
-            categorySideGroup, numberSideGroup, labelLocaionGroup, categoryCoordinateGroup;
+            categorySideGroup, numberSideGroup, labelLocaionGroup, categoryCoordinateGroup, sizeCoordinateGroup;
 
     public Data2DChartController() {
         TipsLabelKey = "DataChartTips";
@@ -521,6 +522,26 @@ public class Data2DChartController extends Data2DHandleController {
             });
 
             bubbleStyleInput.setText(UserConfig.getString(baseName + "BubbleStyle", ChartTools.DefaultBubbleStyle));
+
+            sCoordinate = ChartTools.ChartCoordinate.Cartesian;
+            sizeCoordinateGroup.selectedToggleProperty().addListener(
+                    (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
+                        if (isSettingValues || newValue == null) {
+                            return;
+                        }
+                        if (sizeLogarithmicERadio.isSelected()) {
+                            sCoordinate = ChartTools.ChartCoordinate.LogarithmicE;
+                        } else if (sizeLogarithmic10Radio.isSelected()) {
+                            sCoordinate = ChartTools.ChartCoordinate.Logarithmic10;
+                        } else if (sizeSquareRootRadio.isSelected()) {
+                            sCoordinate = ChartTools.ChartCoordinate.SquareRoot;
+                        } else {
+                            sCoordinate = ChartTools.ChartCoordinate.Cartesian;
+                        }
+                        if (bubbleChartRadio.isSelected()) {
+                            okAction();
+                        }
+                    });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1031,6 +1052,14 @@ public class Data2DChartController extends Data2DHandleController {
         return sourceController.checkedColsNames().toString();
     }
 
+    public String numberName(int index) {
+        try {
+            return sourceController.checkedColsNames().get(index);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public boolean isXY() {
         return !xyReverseCheck.isSelected();
     }
@@ -1066,6 +1095,67 @@ public class Data2DChartController extends Data2DHandleController {
         return ok;
     }
 
+    @FXML
+    @Override
+    public void okAction() {
+        if (!checkOptions()) {
+            return;
+        }
+        colsIndices = new ArrayList<>();
+        int categoryCol = data2D.colOrder(selectedCategory);
+        if (categoryCol < 0) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        colsIndices.add(categoryCol);
+        if (pieRadio.isSelected() || bubbleChartRadio.isSelected()) {
+            int valueCol = data2D.colOrder(selectedValue);
+            if (valueCol < 0) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            colsIndices.add(valueCol);
+        }
+        if (!pieRadio.isSelected()) {
+            checkedColsIndices = sourceController.checkedColsIndices();
+            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            colsIndices.addAll(checkedColsIndices);
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    if (sourceController.allPages()) {
+                        handledData = data2D.allRows(colsIndices, false);
+                    } else {
+                        handledData = sourceController.selectedData(
+                                sourceController.checkedRowsIndices(), colsIndices, false);
+                    }
+                    return handledData != null && !handledData.isEmpty();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                drawChart();
+            }
+
+        };
+        start(task);
+    }
+
     public void makeChart() {
         try {
             chart = null;
@@ -1094,7 +1184,7 @@ public class Data2DChartController extends Data2DHandleController {
             } else {
                 if (isCategoryNumbers()) {
                     numberAxisX = new NumberAxis();
-                    numberAxisX.setLabel(categoryLabel.getText());
+                    numberAxisX.setLabel(categoryName());
                     numberAxisX.setSide(categorySide);
                     numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
                     numberAxisX.setTickMarkVisible(numberMarkCheck.isSelected());
@@ -1292,67 +1382,6 @@ public class Data2DChartController extends Data2DHandleController {
         }
     }
 
-    @FXML
-    @Override
-    public void okAction() {
-        if (!checkOptions()) {
-            return;
-        }
-        colsIndices = new ArrayList<>();
-        int categoryCol = data2D.colOrder(selectedCategory);
-        if (categoryCol < 0) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        colsIndices.add(categoryCol);
-        if (pieRadio.isSelected() || bubbleChartRadio.isSelected()) {
-            int valueCol = data2D.colOrder(selectedValue);
-            if (valueCol < 0) {
-                popError(message("SelectToHandle"));
-                return;
-            }
-            colsIndices.add(valueCol);
-        }
-        if (!pieRadio.isSelected()) {
-            checkedColsIndices = sourceController.checkedColsIndices();
-            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                popError(message("SelectToHandle"));
-                return;
-            }
-            colsIndices.addAll(checkedColsIndices);
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.setTask(task);
-                    if (sourceController.allPages()) {
-                        handledData = data2D.allRows(colsIndices, false);
-                    } else {
-                        handledData = sourceController.selectedData(
-                                sourceController.checkedRowsIndices(), colsIndices, false);
-                    }
-                    return handledData != null && !handledData.isEmpty();
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                drawChart();
-            }
-
-        };
-        start(task);
-    }
-
     public void drawChart() {
         try {
             if (handledData == null || handledData.isEmpty()) {
@@ -1456,7 +1485,7 @@ public class Data2DChartController extends Data2DHandleController {
                     if (sizeValue <= 0) {
                         continue;
                     }
-                    sizeCoordinateValue = ChartTools.coordinateValue(nCoordinate, sizeValue);
+                    sizeCoordinateValue = ChartTools.coordinateValue(sCoordinate, sizeValue);
                     xyData = xyReverseCheck.isSelected()
                             ? new XYChart.Data(numberCoordinateValue, categoryCoordinateValue)
                             : new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
@@ -1495,16 +1524,17 @@ public class Data2DChartController extends Data2DHandleController {
                     continue;
                 }
                 double percent = DoubleTools.scale(d * 100 / total, scale);
-                String labelValue = DoubleTools.format(d, scale);
+                String value = DoubleTools.format(d, scale);
                 switch (labelType) {
                     case Name:
-                        label = name;
+                        label = selectedCategory + ": " + name;
                         break;
                     case Value:
-                        label = labelValue + "=" + percent + "%";
+                        label = selectedValue + ": " + value + "=" + percent + "%";
                         break;
                     case NameAndValue:
-                        label = name + " - " + labelValue + "=" + percent + "%";
+                        label = selectedCategory + ": " + name + "\n"
+                                + selectedValue + ": " + value + "=" + percent + "%";
                         break;
                     case NotDisplay:
                     case Point:
@@ -1516,7 +1546,9 @@ public class Data2DChartController extends Data2DHandleController {
                 PieChart.Data item = new PieChart.Data(label, d);
                 pieData.add(item);
                 if (popLabelCheck.isSelected() || labelType == LabelType.Pop) {
-                    NodeStyleTools.setTooltip(item.getNode(), name + " - " + labelValue + "=" + percent + "%");
+                    NodeStyleTools.setTooltip(item.getNode(),
+                            selectedCategory + ": " + name + "\n"
+                            + selectedValue + ": " + value + "=" + percent + "%");
                 }
                 paletteList.add(FxColorTools.randomRGB(random));
             }
@@ -1708,6 +1740,10 @@ public class Data2DChartController extends Data2DHandleController {
 
     public ChartTools.ChartCoordinate getyCoordinate() {
         return yCoordinate;
+    }
+
+    public ChartTools.ChartCoordinate getsCoordinate() {
+        return sCoordinate;
     }
 
     public XYChart getXyChart() {

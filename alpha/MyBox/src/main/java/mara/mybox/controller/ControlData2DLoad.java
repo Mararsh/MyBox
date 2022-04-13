@@ -129,7 +129,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
             }
             data2D.setLoadController(this);
-            dataSizeLoaded = true;
             validateData();
 
         } catch (Exception e) {

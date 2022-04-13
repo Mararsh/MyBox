@@ -33,7 +33,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new ChartOptions<>();
+        options = new ChartOptions<>(this);
     }
 
     public LabeledScatterChart setChartController(Data2DChartController chartController) {

@@ -33,7 +33,7 @@ public class LabeledStackedAreaChart<X, Y> extends StackedAreaChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new ChartOptions<>();
+        options = new ChartOptions<>(this);
     }
 
     public LabeledStackedAreaChart setChartController(Data2DChartController chartController) {

@@ -33,7 +33,7 @@ public class LabeledStackedBarChart<X, Y> extends StackedBarChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new ChartOptions<>();
+        options = new ChartOptions<>(this);
     }
 
     public LabeledStackedBarChart setChartController(Data2DChartController chartController) {

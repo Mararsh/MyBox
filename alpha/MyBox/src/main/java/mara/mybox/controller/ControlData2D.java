@@ -120,7 +120,7 @@ public class ControlData2D extends BaseController {
             attributesController.setParameters(this);
             columnsController.setParameters(this);
 
-            setData(Data2D.create(type));
+            loadNull();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -444,9 +444,8 @@ public class ControlData2D extends BaseController {
                     }
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
+                    Data2D.saveAttributes(data2D, targetData);
                     data2D.cloneAll(targetData);
-                    data2D.setTask(task);
-                    data2D.saveAttributes();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -484,6 +483,7 @@ public class ControlData2D extends BaseController {
                 try {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
+                    data2D.setTask(task);
                     Data2D.saveAttributes(data2D, targetData);
                     return true;
                 } catch (Exception e) {
@@ -658,7 +658,7 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
+            menu = new MenuItem(message("Style"), StyleTools.getIconImage("iconColor.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSetStylesController.open(tableController);
             });

@@ -54,25 +54,44 @@ public class Data2DDefinition extends BaseData {
 
     public void cloneAll(Data2DDefinition d) {
         try {
+            cloneBase(d);
+            cloneAttributes(d);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void cloneBase(Data2DDefinition d) {
+        try {
             if (d == null) {
                 return;
             }
             d2did = d.getD2did();
             type = d.getType();
             dataName = d.getDataName();
-            delimiter = d.getDelimiter();
             file = d.getFile();
             sheet = d.getSheet();
+            modifyTime = d.getModifyTime();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void cloneAttributes(Data2DDefinition d) {
+        try {
+            if (d == null) {
+                return;
+            }
+            delimiter = d.getDelimiter();
             charset = d.getCharset();
             hasHeader = d.isHasHeader();
             colsNumber = d.getColsNumber();
             rowsNumber = d.getRowsNumber();
             scale = d.getScale();
             maxRandom = d.getMaxRandom();
-            modifyTime = d.getModifyTime();
             comments = d.getComments();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

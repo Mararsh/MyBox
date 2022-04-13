@@ -286,7 +286,9 @@ public abstract class Data2DHandleController extends BaseChildController {
                     }
                     newRows.add(newRow);
                 }
-                tableController.tableData.addAll(targetController.insertRadio.isSelected() ? row : row + 1, newRows);
+                int index = targetController.insertRadio.isSelected() ? row : row + 1;
+                tableController.data2D.moveDownStyles(index, newRows.size());
+                tableController.tableData.addAll(index, newRows);
             }
             tableController.tableView.refresh();
             tableController.isSettingValues = false;

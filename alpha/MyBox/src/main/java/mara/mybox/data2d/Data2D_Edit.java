@@ -85,11 +85,10 @@ public abstract class Data2D_Edit extends Data2D_Data {
             List<String> colNames = readColumnNames();
             if (colNames == null || colNames.isEmpty()) {
                 hasHeader = false;
-                tableData2DColumn.clear(conn, d2did);
+                columns = savedColumns;
             } else {
                 List<String> validNames = new ArrayList<>();
                 columns = new ArrayList<>();
-                Random random = new Random();
                 for (int i = 0; i < colNames.size(); i++) {
                     String name = colNames.get(i);
                     Data2DColumn column;
@@ -107,6 +106,14 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     }
                     validNames.add(vname);
                     column.setColumnName(vname);
+                    columns.add(column);
+                }
+            }
+            if (columns != null && !columns.isEmpty()) {
+                Random random = new Random();
+                List<String> names = new ArrayList<>();
+                for (int i = 0; i < columns.size(); i++) {
+                    Data2DColumn column = columns.get(i);
                     column.setD2id(d2did);
                     column.setIndex(i);
                     if (column.getColor() == null) {
@@ -119,13 +126,21 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     if (isMatrix()) {
                         column.setType(ColumnDefinition.ColumnType.Double);
                     }
-                    columns.add(column);
-                }
-                if (!isTmpData()) {
-                    tableData2DColumn.save(conn, d2did, columns);
+                    names.add(column.getColumnName());
                 }
                 colsNumber = columns.size();
-                tableData2DDefinition.updateData(conn, this);
+                if (d2did >= 0) {
+                    tableData2DColumn.save(conn, d2did, columns);
+                    tableData2DDefinition.updateData(conn, this);
+                    tableData2DStyle.checkColumns(conn, d2did, names);
+                }
+            } else {
+                colsNumber = 0;
+                if (d2did >= 0) {
+                    tableData2DColumn.clear(conn, d2did);
+                    tableData2DDefinition.updateData(conn, this);
+                    tableData2DStyle.clear(conn, d2did);
+                }
             }
             return true;
         } catch (Exception e) {
@@ -145,7 +160,15 @@ public abstract class Data2D_Edit extends Data2D_Data {
             dataSize = reader.getRowIndex();
         }
         rowsNumber = dataSize;
-        tableData2DDefinition.updateData(this);
+        try ( Connection conn = DerbyBase.getConnection()) {
+            tableData2DDefinition.updateData(conn, this);
+            tableData2DStyle.checkRows(conn, d2did, dataSize);
+        } catch (Exception e) {
+            if (backgroundTask != null) {
+                backgroundTask.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+        }
         return dataSize;
     }
 
@@ -297,9 +320,9 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 String in = null;
                 for (String col : cols) {
                     if (in == null) {
-                        in = col;
+                        in = "'" + col + "'";
                     } else {
-                        in += "," + col;
+                        in += ", '" + col + "'";
                     }
                 }
                 String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
@@ -332,7 +355,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            target.setStyles(source.getStyles());
+            source.countSize();
+            target.cloneAttributes(source);
             return saveColumns(conn, target, source.getColumns())
                     && target.saveStyles(conn);
         } catch (Exception e) {
@@ -370,6 +394,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             Data2DDefinition def;
             long did = d.getD2did();
             d.setModifyTime(new Date());
+            d.setColsNumber(inColumns == null ? 0 : inColumns.size());
             if (did >= 0) {
                 def = d.getTableData2DDefinition().updateData(conn, d);
             } else {

@@ -231,8 +231,10 @@ public abstract class Data2DReader {
                 names.addAll(record);
             } else {
                 readerHasHeader = false;
-                for (int i = 1; i <= record.size(); i++) {
-                    names.add(data2D.colPrefix() + i);
+                if (record != null) {
+                    for (int i = 1; i <= record.size(); i++) {
+                        names.add(data2D.colPrefix() + i);
+                    }
                 }
             }
             data2D.setHasHeader(readerHasHeader);

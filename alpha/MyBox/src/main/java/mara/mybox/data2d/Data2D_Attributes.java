@@ -62,27 +62,47 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void cloneAll(Data2D_Attributes d) {
         try {
+            cloneBase(d);
+            cloneAttributes(d);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void cloneBase(Data2D_Attributes d) {
+        try {
             if (d == null) {
                 return;
             }
-            super.cloneAll(d);
+            super.cloneBase(d);
+            loadController = d.loadController;
+            task = d.task;
+            backgroundTask = d.backgroundTask;
+            error = d.error;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void cloneAttributes(Data2D_Attributes d) {
+        try {
+            if (d == null) {
+                return;
+            }
+            super.cloneAttributes(d);
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;
             columns = d.columns;
             savedColumns = d.savedColumns;
-            pageSize = d.pageSize;
             newColumnIndex = d.newColumnIndex;
             dataSize = d.dataSize;
+            styles = d.styles;
+            pageSize = d.pageSize;
             pagesNumber = d.pagesNumber;
             currentPage = d.currentPage;
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
-            styles = d.styles;
-            loadController = d.loadController;
             tableChanged = d.tableChanged;
-            task = d.task;
-            backgroundTask = d.backgroundTask;
-            error = d.error;
             options = d.options;
         } catch (Exception e) {
             MyBoxLog.debug(e);

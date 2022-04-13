@@ -323,30 +323,47 @@ License:    Apache License Version 2.0
                                                                     </children>
                                                                 </HBox>
                                                                 <CheckBox fx:id="clockwiseCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Clockwise" wrapText="true" />
-                                                                <HBox fx:id="bubbleBox" alignment="CENTER_LEFT" layoutX="15.0" layoutY="46.0" spacing="2.0">
-                                                                    <children>
-                                                                        <Label minWidth="-Infinity" text="%BubbleStyle" />
-                                                                        <TextField fx:id="bubbleStyleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="defaultBubbleButton" mnemonicParsing="false" onAction="#defaultBubbleStyle">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconDefault.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="goBubbleButton" layoutX="455.0" layoutY="10.0" mnemonicParsing="false" onAction="#applyBubbleStyle">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconGo.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
+                                                <VBox fx:id="bubbleBox" spacing="10.0">
+                                                   <children>
+                                                                      <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                                          <children>
+                                                                              <Label minWidth="-Infinity" text="%BubbleStyle" />
+                                                                              <TextField fx:id="bubbleStyleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                              <Button fx:id="defaultBubbleButton" mnemonicParsing="false" onAction="#defaultBubbleStyle">
+                                                                                  <graphic>
+                                                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                          <image>
+                                                                                              <Image url="@../buttons/Red/iconDefault.png" />
+                                                                                          </image>
+                                                                                      </ImageView>
+                                                                                  </graphic>
+                                                                              </Button>
+                                                                              <Button fx:id="goBubbleButton" layoutX="455.0" layoutY="10.0" mnemonicParsing="false" onAction="#applyBubbleStyle">
+                                                                                  <graphic>
+                                                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                          <image>
+                                                                                              <Image url="@../buttons/Red/iconGo.png" />
+                                                                                          </image>
+                                                                                      </ImageView>
+                                                                                  </graphic>
+                                                                              </Button>
+                                                                          </children>
+                                                                      </HBox>
+                                                      <FlowPane fx:id="categoryCoordinatePane1" hgap="2.0" vgap="2.0">
+                                                         <children>
+                                                            <Label maxWidth="1.7976931348623157E308" text="%Coordinate" />
+                                                            <RadioButton fx:id="sizeCartesianRadio" mnemonicParsing="false" selected="true" text="%CartesianCoordinate">
+                                                               <toggleGroup>
+                                                                  <ToggleGroup fx:id="sizeCoordinateGroup" />
+                                                               </toggleGroup>
+                                                            </RadioButton>
+                                                            <RadioButton fx:id="sizeSquareRootRadio" mnemonicParsing="false" text="%SquareRootCoordinate" toggleGroup="$sizeCoordinateGroup" />
+                                                            <RadioButton fx:id="sizeLogarithmicERadio" mnemonicParsing="false" text="%LogarithmicECoordinate" toggleGroup="$sizeCoordinateGroup" />
+                                                            <RadioButton fx:id="sizeLogarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$sizeCoordinateGroup" />
+                                                         </children>
+                                                      </FlowPane>
+                                                   </children>
+                                                </VBox>
                                                             </children>
                                                         </VBox>
                                                     </content>

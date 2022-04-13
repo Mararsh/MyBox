@@ -3,6 +3,8 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.List;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DDefinition;
@@ -44,14 +46,20 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
     public static final String Create_Unique_Index
             = "CREATE UNIQUE INDEX Data2D_Style_unique_index on Data2D_Style ( d2id , row, colName  )";
 
-    public static final String ClearStyle
-            = "DELETE FROM Data2D_Style WHERE d2id=?";
-
     public static final String QueryStyle
             = "SELECT * FROM Data2D_Style WHERE d2id=? AND row=? AND colName=? FETCH FIRST ROW ONLY";
 
     public static final String QueryPageStyles
             = "SELECT * FROM Data2D_Style WHERE d2id=? AND row>=? AND row<?";
+
+    public static final String ClearStyle
+            = "DELETE FROM Data2D_Style WHERE d2id=?";
+
+    public static final String CheckColumns
+            = "DELETE FROM Data2D_Style WHERE d2id=? AND colName NOT IN ( ? )";
+
+    public static final String CheckRows
+            = "DELETE FROM Data2D_Style WHERE d2id=? AND (row < 0 OR row >= ?)";
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
@@ -76,20 +84,6 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
             data.setData2DDefinition((Data2DDefinition) value);
         }
         return true;
-    }
-
-    public boolean clear(Connection conn, long d2id) {
-        if (conn == null || d2id < 0) {
-            return false;
-        }
-        try ( PreparedStatement statement = conn.prepareStatement(ClearStyle)) {
-            statement.setLong(1, d2id);
-            statement.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
     }
 
     public Data2DStyle query(Connection conn, Data2DStyle d2Style) {
@@ -117,7 +111,7 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
             return null;
         }
         try {
-            Data2DStyle exist = query(d2Style);
+            Data2DStyle exist = query(conn, d2Style);
             if (exist == null) {
                 return insertData(conn, d2Style);
             } else {
@@ -130,6 +124,59 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         }
     }
 
+    public boolean clear(Connection conn, long d2id) {
+        if (conn == null || d2id < 0) {
+            return false;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(ClearStyle)) {
+            statement.setLong(1, d2id);
+            statement.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean checkColumns(Connection conn, long d2id, List<String> colNames) {
+        if (conn == null || d2id < 0 || colNames == null || colNames.isEmpty()) {
+            return false;
+        }
+        String in = null;
+        for (String col : colNames) {
+            if (in == null) {
+                in = "'" + col + "'";
+            } else {
+                in += ", '" + col + "'";
+            }
+        }
+        String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2id
+                + "  AND colName NOT IN ( " + in + " )";
+        try ( Statement statement = conn.createStatement()) {
+            statement.executeUpdate(sql);
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean checkRows(Connection conn, long d2id, long maxRow) {
+        if (conn == null || d2id < 0 || maxRow < 0) {
+            return false;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(CheckRows)) {
+            statement.setLong(1, d2id);
+            statement.setLong(2, maxRow);
+            statement.executeUpdate();
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
 
     /*
         get/set

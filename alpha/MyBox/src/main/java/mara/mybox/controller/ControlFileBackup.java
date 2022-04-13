@@ -247,7 +247,6 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     public synchronized FileBackup addBackup(SingletonTask task) {
-        MyBoxLog.console(sourceFile != null);
         if (sourceFile == null || !sourceFile.exists()) {
             return null;
         }
