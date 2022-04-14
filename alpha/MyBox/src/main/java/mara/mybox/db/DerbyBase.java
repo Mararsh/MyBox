@@ -76,7 +76,7 @@ public class DerbyBase {
             + AppValues.AppDerbyPassword + ";create=false";
     public static DerbyStatus status;
     public static long lastRetry = 0;
-    public static long BatchSize = 5;
+    public static long BatchSize = 500;
 
     public enum DerbyStatus {
         Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed

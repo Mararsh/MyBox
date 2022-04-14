@@ -24,6 +24,14 @@ public class DoubleStatistic {
     }
 
     public DoubleStatistic(double[] values) {
+        calculate(values, true, true);
+    }
+
+    public DoubleStatistic(double[] values, boolean calMode, boolean calMedian) {
+        calculate(values, calMode, calMedian);
+    }
+
+    public final void calculate(double[] values, boolean calMode, boolean calMedian) {
         if (values == null || values.length == 0) {
             return;
         }
@@ -44,8 +52,8 @@ public class DoubleStatistic {
         mean = sum / count;
         variance = 0;
         skewness = 0;
-        mode = mode(values);
-        median = median(values);
+        mode = calMode ? mode(values) : Double.NaN;
+        median = calMedian ? median(values) : Double.NaN;
         for (int i = 0; i < values.length; ++i) {
             double v = values[i];
             variance += Math.pow(v - mean, 2);

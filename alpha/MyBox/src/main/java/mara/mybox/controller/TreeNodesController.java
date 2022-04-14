@@ -126,6 +126,11 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         }
     }
 
+    @Override
+    protected String serialNumber(TreeNode node) {
+        return node.getSerialNumber();
+    }
+
     public TreeNode root() {
         return tableTreeNode.findAndCreateRoot(category);
     }
@@ -262,7 +267,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
-    protected void treeView(Connection conn, TreeNode node, int indent, StringBuilder s) {
+    protected void treeView(Connection conn, TreeNode node, int indent, String serialNumber, StringBuilder s) {
         try {
             if (conn == null || node == null) {
                 return;
@@ -272,10 +277,12 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             String spaceNode = "&nbsp;".repeat(indent);
             String nodePageid = "item" + node.getNodeid();
             String nodeName = node.getTitle();
+            String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
             if (children != null && !children.isEmpty()) {
-                nodeName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + nodeName + "</a>";
+                displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
             }
-            s.append(indentNode).append("<DIV style=\"padding: 2px;\">").append(spaceNode).append(nodeName).append("\n");
+            s.append(indentNode).append("<DIV style=\"padding: 2px;\">").append(spaceNode)
+                    .append(displayName).append("\n");
             List<TreeNodeTag> tags = tableTreeNodeTag.nodeTags(conn, node.getNodeid());
             if (tags != null && !tags.isEmpty()) {
                 String indentTag = " ".repeat(indent + 8);
@@ -320,8 +327,10 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             }
             if (children != null && !children.isEmpty()) {
                 s.append(indentNode).append("<DIV class=\"TreeNode\" id='").append(nodePageid).append("'>\n");
-                for (TreeNode child : children) {
-                    treeView(conn, child, indent + 4, s);
+                for (int i = 0; i < children.size(); i++) {
+                    TreeNode child = children.get(i);
+                    String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
+                    treeView(conn, child, indent + 4, ps + (i + 1), s);
                 }
                 s.append(indentNode).append("</DIV>\n");
             }

@@ -215,12 +215,27 @@ public class ControlData2DView extends BaseController {
             StringTable table = new StringTable(names, title);
 
             for (int i = 0; i < rNumber; i++) {
-                List<String> row = new ArrayList<>();
+                List<String> htmlRow = new ArrayList<>();
                 if (rowCheck.isSelected()) {
-                    row.add(data2D.rowName(i));
+                    htmlRow.add(data2D.rowName(i));
                 }
-                row.addAll(data2D.tableRowWithoutNumber(i));
-                table.add(row);
+                List<String> dataRow = data2D.tableData().get(i);
+                for (int col = 0; col < cNumber; col++) {
+                    String value = dataRow.get(col + 1);
+                    if (value == null) {
+                        value = "";
+                    }
+                    String style = data2D.getStyle(i, data2D.colName(col));
+                    if (style != null && !style.isBlank()) {
+                        style = style.replace("-fx-font-size:", "font-size:")
+                                .replace("-fx-text-fill:", "color:")
+                                .replace("-fx-background-color:", "background-color:")
+                                .replace("-fx-font-weight: bolder", "font-weight:bold");
+                        value = "<SPAN style=\"" + style + "\">" + value + "</SPAN>";
+                    }
+                    htmlRow.add(value);
+                }
+                table.add(htmlRow);
             }
             htmlController.loadContents(table.html());
         } catch (Exception e) {
@@ -230,11 +245,17 @@ public class ControlData2DView extends BaseController {
 
     protected void htmlInForm() {
         try {
+            int rNumber = data2D.tableRowsNumber();
+            int cNumber = data2D.tableColsNumber();
+            if (rNumber <= 0 || cNumber <= 0) {
+                htmlController.loadContents("");
+                return;
+            }
             StringBuilder s = new StringBuilder();
             if (titleCheck.isSelected()) {
                 s.append("<H2>").append(data2D.titleName()).append("</H2>\n");
             }
-            for (int r = 0; r < data2D.tableRowsNumber(); r++) {
+            for (int r = 0; r < rNumber; r++) {
                 StringTable table = new StringTable();
                 if (rowCheck.isSelected()) {
                     List<String> row = new ArrayList<>();
@@ -244,14 +265,26 @@ public class ControlData2DView extends BaseController {
                     }
                     table.add(row);
                 }
-                List<String> drow = data2D.tableRowWithoutNumber(r);
-                for (int col = 0; col < data2D.columnsNumber(); col++) {
-                    List<String> row = new ArrayList<>();
+                List<String> dataRow = data2D.tableData().get(r);
+                for (int col = 0; col < cNumber; col++) {
+                    List<String> htmlRow = new ArrayList<>();
                     if (columnCheck.isSelected()) {
-                        row.add(data2D.colName(col));
+                        htmlRow.add(data2D.colName(col));
                     }
-                    row.add(drow.get(col));
-                    table.add(row);
+                    String value = dataRow.get(col + 1);
+                    if (value == null) {
+                        value = "";
+                    }
+                    String style = data2D.getStyle(r, data2D.colName(col));
+                    if (style != null && !style.isBlank()) {
+                        style = style.replace("-fx-font-size:", "font-size:")
+                                .replace("-fx-text-fill:", "color:")
+                                .replace("-fx-background-color:", "background-color:")
+                                .replace("-fx-font-weight: bolder", "font-weight:bold");
+                        value = "<SPAN style=\"" + style + "\">" + value + "</SPAN>";
+                    }
+                    htmlRow.add(value);
+                    table.add(htmlRow);
                 }
                 s.append(table.div()).append("\n<BR><BR>\n");
             }

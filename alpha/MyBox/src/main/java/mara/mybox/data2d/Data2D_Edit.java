@@ -280,6 +280,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
             if (styles.isEmpty()) {
                 return true;
             }
+            conn.setAutoCommit(false);
+            long count = 0;
             for (String key : styles.keySet()) {
                 String style = styles.get(key);
                 int pos = key.indexOf(",");
@@ -287,7 +289,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 String colName = key.substring(pos + 1);
                 Data2DStyle d2Style = new Data2DStyle(d2did, row + startRowOfCurrentPage, colName, style);
                 tableData2DStyle.write(conn, d2Style);
+                if (++count >= DerbyBase.BatchSize) {
+                    conn.commit();
+                }
             }
+            conn.commit();
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -330,15 +336,15 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 statement.executeUpdate(sql);
                 conn.commit();
             } else {
-                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
-                        + " AND (row < 0 OR row >= " + dataSize + ")";
-                statement.executeUpdate(sql);
-                conn.commit();
                 conn.setAutoCommit(false);
+                long count = 0;
                 for (int row = 0; row < dataSize; row++) {
                     for (String colName : cols) {
                         Data2DStyle d2Style = new Data2DStyle(d2did, row, colName, style);
                         tableData2DStyle.write(conn, d2Style);
+                    }
+                    if (++count >= DerbyBase.BatchSize) {
+                        conn.commit();
                     }
                 }
                 conn.commit();

@@ -33,6 +33,21 @@ License:    Apache License Version 2.0
                             </children>
                         </VBox>    
                     </content>
+               <graphic>
+                        <HBox nodeOrientation="LEFT_TO_RIGHT">
+                            <children> 
+                                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconFunction.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+               </graphic>
                 </Tab>
                 <Tab fx:id="viewTab" text="%View">
                     <content>
@@ -69,23 +84,6 @@ License:    Apache License Version 2.0
                             </padding>
                         </VBox>
                     </content>
-                </Tab>
-                <Tab>
-                    <graphic>
-                        <HBox nodeOrientation="LEFT_TO_RIGHT">
-                            <children> 
-                                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconFunction.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </HBox>                       
-                    </graphic>
                 </Tab>
             </tabs>
         </TabPane>

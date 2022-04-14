@@ -500,35 +500,38 @@ public class ControlWebView extends BaseController {
             setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
             setWebViewLabel(message("Loaded"));
 
-            try {
-                if (null == scrollType) {
-                    webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
-                } else {
-                    switch (scrollType) {
-                        case Bottom:
-                            webEngine.executeScript("window.scrollTo(0, document.documentElement.scrollHeight || document.body.scrollHeight);");
-                            break;
-                        case Top:
-                            webEngine.executeScript("window.scrollTo(0, 0);");
-                            break;
-                        default:
-                            webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
-                            break;
-                    }
-                }
-            } catch (Exception e) {
-            }
+            Document doc = webEngine.getDocument();
+            charset = HtmlReadTools.charset(doc);
+            framesDoc.clear();
+            addDocListener(doc);
+            pageLoadedNotify.set(!pageLoadedNotify.get());
+
             if (!(this instanceof ControlHtmlEditor)) {
                 try {
                     webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
                 } catch (Exception e) {
                 }
             }
-            Document doc = webEngine.getDocument();
-            charset = HtmlReadTools.charset(doc);
-            framesDoc.clear();
-            addDocListener(doc);
-            pageLoadedNotify.set(!pageLoadedNotify.get());
+
+            try {
+                if (null == scrollType) {
+                    webEngine.executeScript("setTimeout(window.scrollTo(" + scrollLeft + "," + scrollTop + "), 1000);");
+                } else {
+                    switch (scrollType) {
+                        case Bottom:
+                            webEngine.executeScript("setTimeout(window.scrollTo(0, document.documentElement.scrollHeight || document.body.scrollHeight), 1000);");
+                            break;
+                        case Top:
+                            webEngine.executeScript("window.scrollTo(0, 0);");
+                            break;
+                        default:
+                            webEngine.executeScript("setTimeout(window.scrollTo(" + scrollLeft + "," + scrollTop + "), 1000);");
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+//                MyBoxLog.debug(e);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

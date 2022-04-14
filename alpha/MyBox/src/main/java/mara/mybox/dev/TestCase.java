@@ -65,6 +65,7 @@ public class TestCase {
         List<TestCase> cases = new ArrayList<>();
         try {
             int index = 1;
+            cases.add(new TestCase(index++, message("InformationInTree"), Fxmls.TreeManageFxml));
             cases.add(new TestCase(index++, message("Notes"), Fxmls.NotesFxml));
             cases.add(new TestCase(index++, message("PdfView"), Fxmls.PdfViewFxml));
             cases.add(new TestCase(index++, message("PdfConvertImagesBatch"), Fxmls.PdfConvertImagesBatchFxml));
@@ -158,6 +159,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ConvolutionKernelManager"), Fxmls.ConvolutionKernelManagerFxml));
             cases.add(new TestCase(index++, message("PixelsCalculator"), Fxmls.PixelsCalculatorFxml));
 
+            cases.add(new TestCase(index++, message("DataManufacture"), Fxmls.DataManufactureFxml));
             cases.add(new TestCase(index++, message("ManageData"), Fxmls.Data2DManageFxml));
             cases.add(new TestCase(index++, message("EditCSV"), Fxmls.DataFileCSVFxml));
             cases.add(new TestCase(index++, message("CsvConvert"), Fxmls.DataFileCSVConvertFxml));
@@ -175,6 +177,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("MatricesBinaryCalculation"), Fxmls.MatricesBinaryCalculationFxml));
             cases.add(new TestCase(index++, message("DatabaseTable"), Fxmls.DataTablesFxml));
             cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DatabaseSqlFxml));
+            cases.add(new TestCase(index++, message("JShell"), Fxmls.JShellFxml));
             cases.add(new TestCase(index++, message("GeographyCode"), Fxmls.GeographyCodeFxml));
             cases.add(new TestCase(index++, message("LocationInMap"), Fxmls.LocationInMapFxml));
             cases.add(new TestCase(index++, message("LocationData"), Fxmls.LocationDataFxml));
@@ -236,7 +239,6 @@ public class TestCase {
             cases.add(new TestCase(index++, message("MakeIcons"), Fxmls.MyBoxIconsFxml));
             cases.add(new TestCase(index++, message("AutoTesting"), Fxmls.AutoTestingCasesFxml));
             cases.add(new TestCase(index++, message("MessageAuthor"), Fxmls.MessageAuthorFxml));
-            cases.add(new TestCase(index++, message("JShell"), Fxmls.JShellFxml));
 
             cases.add(new TestCase(index++, message("Shortcuts"), Fxmls.ShortcutsFxml));
             cases.add(new TestCase(index++, message("FunctionsList"), Fxmls.FunctionsListFxml));

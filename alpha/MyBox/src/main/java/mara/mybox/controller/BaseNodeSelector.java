@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -17,6 +18,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -26,6 +28,7 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @param <P>
@@ -39,6 +42,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected static final String nodeSeparator = " > ";
     protected P ignoreNode = null;
     protected boolean expandAll, manageMode;
+    protected int serialStartLevel = 1;
 
     @FXML
     protected TreeView<P> treeView;
@@ -55,6 +59,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected abstract String display(P node);
 
     protected abstract String tooltip(P node);
+
+    protected abstract String serialNumber(P node);
 
     protected abstract P dummy();
 
@@ -104,7 +110,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract void nodeMoved(P parent, P node);
 
-    protected abstract void treeView(Connection conn, P node, int indent, StringBuilder s);
+    protected abstract void treeView(Connection conn, P node, int indent, String parentNumber, StringBuilder s);
 
 
     /*
@@ -125,23 +131,46 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
     }
 
+    public String serialNumber(TreeItem<P> item) {
+        if (treeView.getTreeItemLevel(item) < serialStartLevel) {
+            return "";
+        }
+        TreeItem<P> parent = item.getParent();
+        if (parent == null) {
+            return "";
+        }
+        String p = serialNumber(parent);
+        return (p == null || p.isBlank() ? "" : p + ".") + (parent.getChildren().indexOf(item) + 1);
+    }
+
     public void initTree() {
-        treeView.setCellFactory(p -> new TreeCell<P>() {
+        treeView.setCellFactory(new Callback<TreeView<P>, TreeCell<P>>() {
             @Override
-            public void updateItem(P item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                    return;
-                }
-                setText(display(item));
-                String tips = tooltip(item);
-                if (tips != null && !tips.isBlank()) {
-                    NodeStyleTools.setTooltip(this, tips);
-                } else {
-                    NodeStyleTools.removeTooltip(this);
-                }
+            public TreeCell<P> call(TreeView<P> param) {
+                TreeCell<P> cell = new TreeCell<P>() {
+                    @Override
+                    public void updateItem(P item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                            return;
+                        }
+                        if (UserConfig.getBoolean("TreeDisplaySerialNumbers", true)) {
+                            String serialNumber = serialNumber(getTreeItem());
+                            setText(serialNumber + "  " + display(item));
+                        } else {
+                            setText(display(item));
+                        }
+                        String tips = tooltip(item);
+                        if (tips != null && !tips.isBlank()) {
+                            NodeStyleTools.setTooltip(this, tips);
+                        } else {
+                            NodeStyleTools.removeTooltip(this);
+                        }
+                    }
+                };
+                return cell;
             }
         });
         treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -311,6 +340,18 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         MenuItem menu = new MenuItem(chainName(targetItem));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem editableMenu = new CheckMenuItem(message("SerialNumbers"), StyleTools.getIconImage("iconNumber.png"));
+        editableMenu.setSelected(UserConfig.getBoolean("TreeDisplaySerialNumbers", true));
+        editableMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("TreeDisplaySerialNumbers", editableMenu.isSelected());
+                treeView.refresh();
+            }
+        });
+        items.add(editableMenu);
         items.add(new SeparatorMenuItem());
 
         menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
@@ -619,7 +660,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         ignoreNode = getIgnoreNode();
         List<P> children = children(conn, node);
         if (children != null) {
-            for (P child : children) {
+            for (int i = 0; i < children.size(); i++) {
+                P child = children.get(i);
                 if (ignoreNode != null && equal(child, ignoreNode)) {
                     continue;
                 }
@@ -810,6 +852,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append(message("HtmlEditableComments")).append("</SPANE><BR>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
+                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('SerialNumber', this.checked);\">")
+                            .append(message("SerialNumbers")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('NodeTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('nodeValue', this.checked);\">")
@@ -817,7 +861,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append("    <HR>\n")
                             .append("</DIV>\n");
                     try ( Connection conn = DerbyBase.getConnection()) {
-                        treeView(conn, nodeValue, 4, s);
+                        treeView(conn, nodeValue, 4, "", s);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;

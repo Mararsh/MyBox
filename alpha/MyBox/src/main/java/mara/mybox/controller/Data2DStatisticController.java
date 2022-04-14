@@ -336,7 +336,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 for (int r = 0; r < rowsNumber; r++) {
                     colData[r] = data2D.doubleValue(rows.get(r).get(c));
                 }
-                DoubleStatistic statistic = new DoubleStatistic(colData);
+                DoubleStatistic statistic = new DoubleStatistic(colData, modeCheck.isSelected(), medianCheck.isSelected());
                 if (countRow != null) {
                     countRow.add(StringTools.format(statistic.getCount()));
                 }

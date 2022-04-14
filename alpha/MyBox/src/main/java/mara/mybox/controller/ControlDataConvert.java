@@ -244,6 +244,32 @@ public class ControlDataConvert extends BaseController {
         }
     }
 
+    @FXML
+    @Override
+    public void selectAllAction() {
+        csvCheck.setSelected(true);
+        textsCheck.setSelected(true);
+        pdfCheck.setSelected(true);
+        htmlCheck.setSelected(true);
+        xmlCheck.setSelected(true);
+        jsonCheck.setSelected(true);
+        excelCheck.setSelected(true);
+        myBoxClipboardCheck.setSelected(true);
+    }
+
+    @FXML
+    @Override
+    public void selectNoneAction() {
+        csvCheck.setSelected(false);
+        textsCheck.setSelected(false);
+        pdfCheck.setSelected(false);
+        htmlCheck.setSelected(false);
+        xmlCheck.setSelected(false);
+        jsonCheck.setSelected(false);
+        excelCheck.setSelected(false);
+        myBoxClipboardCheck.setSelected(false);
+    }
+
     /*
         run task
      */

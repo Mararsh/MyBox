@@ -27,7 +27,7 @@ public class TreeNode extends BaseData {
     public static final String InformationInTree = "InformationInTree";
 
     protected long nodeid, parentid;
-    protected String category, title, value, more;
+    protected String category, title, value, more, serialNumber;
     protected Date updateTime;
 
     private void init() {
@@ -38,6 +38,7 @@ public class TreeNode extends BaseData {
         value = null;
         more = null;
         updateTime = new Date();
+        serialNumber = "";
     }
 
     public TreeNode() {
@@ -221,6 +222,14 @@ public class TreeNode extends BaseData {
     public TreeNode setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
         return this;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
 }
