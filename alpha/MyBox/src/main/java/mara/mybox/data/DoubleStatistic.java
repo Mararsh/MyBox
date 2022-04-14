@@ -2,8 +2,10 @@ package mara.mybox.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.value.AppValues;
+import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 /**
  * @Author Mara
@@ -14,53 +16,97 @@ public class DoubleStatistic {
 
     public String name;
     public int count;
-    public double sum;
-    public double mean, variance, skewness, minimum, maximum, mode, median;
+    public double sum, mean, geometricMean, minimum, maximum, sumSquares,
+            populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation,
+            skewness, mode, median, vTmp;
 
     public DoubleStatistic() {
-        sum = count = 0;
-        minimum = Double.MAX_VALUE;
+        init();
+    }
+
+    public final void init() {
+        count = 0;
+        sum = 0;
+        mean = 0;
         maximum = -Double.MAX_VALUE;
+        minimum = Double.MAX_VALUE;
+        geometricMean = 1;
+        sumSquares = 0;
+        populationVariance = 0;
+        sampleVariance = 0;
+        populationStandardDeviation = 0;
+        sampleStandardDeviation = 0;
+        skewness = 0;
+        mode = 0;
+        median = 0;
+        vTmp = 0;
     }
 
     public DoubleStatistic(double[] values) {
-        calculate(values, true, true);
+        calculate(values, StatisticSelection.all(true));
     }
 
-    public DoubleStatistic(double[] values, boolean calMode, boolean calMedian) {
-        calculate(values, calMode, calMedian);
+    public DoubleStatistic(double[] values, StatisticSelection selections) {
+        calculate(values, selections);
     }
 
-    public final void calculate(double[] values, boolean calMode, boolean calMedian) {
-        if (values == null || values.length == 0) {
-            return;
-        }
-        count = values.length;
-        sum = 0;
-        minimum = Double.MAX_VALUE;
-        maximum = -Double.MAX_VALUE;
-        for (int i = 0; i < count; ++i) {
-            double v = values[i];
-            sum += v;
-            if (v > maximum) {
-                maximum = v;
+    public final void calculate(double[] values, StatisticSelection selections) {
+        try {
+            init();
+            if (values == null || values.length == 0 || selections == null) {
+                return;
             }
-            if (v < minimum) {
-                minimum = v;
+            sum = 0;
+            count = values.length;
+            for (int i = 0; i < count; ++i) {
+                double v = values[i];
+                sum += v;
+                if (selections.isMaximum() && v > maximum) {
+                    maximum = v;
+                }
+                if (selections.isMinimum() && v < minimum) {
+                    minimum = v;
+                }
+                if (selections.isGeometricMean()) {
+                    geometricMean = geometricMean * v;
+                }
+                if (selections.isSumSquares()) {
+                    sumSquares += v * v;
+                }
             }
+            mean = sum / count;
+            if (selections.isGeometricMean()) {
+                geometricMean = Math.pow(geometricMean, 1d / count);
+            }
+            if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
+                    || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
+                vTmp = 0;
+                for (int i = 0; i < count; ++i) {
+                    double p = values[i] - mean;
+                    double p2 = p * p;
+                    vTmp += p2;
+                }
+                populationVariance = vTmp / count;
+                sampleVariance = vTmp / (count - 1);
+                if (selections.populationStandardDeviation) {
+                    populationStandardDeviation = Math.sqrt(populationVariance);
+                }
+                if (selections.isSampleStandardDeviation()) {
+                    sampleStandardDeviation = Math.sqrt(sampleVariance);
+                }
+            }
+            if (selections.isSkewness()) {
+                skewness = new Skewness().evaluate(values);
+            }
+            if (selections.isMode()) {
+                mode = mode(values);
+            }
+            if (selections.isMedian()) {
+                median = median(values);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        mean = sum / count;
-        variance = 0;
-        skewness = 0;
-        mode = calMode ? mode(values) : Double.NaN;
-        median = calMedian ? median(values) : Double.NaN;
-        for (int i = 0; i < values.length; ++i) {
-            double v = values[i];
-            variance += Math.pow(v - mean, 2);
-            skewness += Math.pow(v - mean, 3);
-        }
-        variance = Math.sqrt(variance / count);
-        skewness = Math.cbrt(skewness / count);
     }
 
 
@@ -215,12 +261,12 @@ public class DoubleStatistic {
         this.mean = mean;
     }
 
-    public double getVariance() {
-        return variance;
+    public double getPopulationVariance() {
+        return populationVariance;
     }
 
-    public void setVariance(double variance) {
-        this.variance = variance;
+    public void setPopulationVariance(double populationVariance) {
+        this.populationVariance = populationVariance;
     }
 
     public double getSkewness() {
@@ -269,6 +315,46 @@ public class DoubleStatistic {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public double getGeometricMean() {
+        return geometricMean;
+    }
+
+    public void setGeometricMean(double geometricMean) {
+        this.geometricMean = geometricMean;
+    }
+
+    public double getSumSquares() {
+        return sumSquares;
+    }
+
+    public void setSumSquares(double sumSquares) {
+        this.sumSquares = sumSquares;
+    }
+
+    public double getSampleVariance() {
+        return sampleVariance;
+    }
+
+    public void setSampleVariance(double sampleVariance) {
+        this.sampleVariance = sampleVariance;
+    }
+
+    public double getPopulationStandardDeviation() {
+        return populationStandardDeviation;
+    }
+
+    public void setPopulationStandardDeviation(double populationStandardDeviation) {
+        this.populationStandardDeviation = populationStandardDeviation;
+    }
+
+    public double getSampleStandardDeviation() {
+        return sampleStandardDeviation;
+    }
+
+    public void setSampleStandardDeviation(double sampleStandardDeviation) {
+        this.sampleStandardDeviation = sampleStandardDeviation;
     }
 
 }

@@ -12,6 +12,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
+import mara.mybox.data.StatisticSelection;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -32,13 +33,18 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DStatisticController extends Data2DHandleController {
 
-    protected List<String> countRow, summationRow, meanRow, varianceRow, skewnessRow,
-            maximumRow, minimumRow, modeRow, medianRow;
+    protected List<String> countRow, summationRow, meanRow, maximumRow, minimumRow,
+            geometricMeanRow, sumOfSquaresRow,
+            populationVarianceRow, sampleVarianceRow, populationStandardDeviationRow, sampleStandardDeviationRow,
+            skewnessRow, modeRow, medianRow;
     protected List<String> handledNames;
+    protected StatisticSelection selections;
 
     @FXML
-    protected CheckBox countCheck, summationCheck, meanCheck, varianceCheck, skewnessCheck,
-            maximumCheck, minimumCheck, modeCheck, medianCheck;
+    protected CheckBox countCheck, summationCheck, meanCheck, maximumCheck, minimumCheck,
+            geometricMeanCheck, sumOfSquaresCheck,
+            populationVarianceCheck, sampleVarianceCheck, populationStandardDeviationCheck, sampleStandardDeviationCheck,
+            skewnessCheck, modeCheck, medianCheck;
     @FXML
     protected Label memoryNoticeLabel;
     @FXML
@@ -73,11 +79,51 @@ public class Data2DStatisticController extends Data2DHandleController {
                 }
             });
 
-            varianceCheck.setSelected(UserConfig.getBoolean(baseName + "Variance", false));
-            varianceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            geometricMeanCheck.setSelected(UserConfig.getBoolean(baseName + "GeometricMean", false));
+            geometricMeanCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Variance", varianceCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "GeometricMean", geometricMeanCheck.isSelected());
+                }
+            });
+
+            sumOfSquaresCheck.setSelected(UserConfig.getBoolean(baseName + "SumOfSquares", false));
+            sumOfSquaresCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "SumOfSquares", sumOfSquaresCheck.isSelected());
+                }
+            });
+
+            populationVarianceCheck.setSelected(UserConfig.getBoolean(baseName + "PopulationVariance", false));
+            populationVarianceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "PopulationVariance", populationVarianceCheck.isSelected());
+                }
+            });
+
+            sampleVarianceCheck.setSelected(UserConfig.getBoolean(baseName + "SampleVariance", false));
+            sampleVarianceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "SampleVariance", sampleVarianceCheck.isSelected());
+                }
+            });
+
+            populationStandardDeviationCheck.setSelected(UserConfig.getBoolean(baseName + "PopulationStandardDeviation", false));
+            populationStandardDeviationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "PopulationStandardDeviation", populationStandardDeviationCheck.isSelected());
+                }
+            });
+
+            sampleStandardDeviationCheck.setSelected(UserConfig.getBoolean(baseName + "SampleStandardDeviation", false));
+            sampleStandardDeviationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "SampleStandardDeviation", sampleStandardDeviationCheck.isSelected());
                 }
             });
 
@@ -154,12 +200,17 @@ public class Data2DStatisticController extends Data2DHandleController {
         countCheck.setSelected(true);
         summationCheck.setSelected(true);
         meanCheck.setSelected(true);
-        varianceCheck.setSelected(true);
+        sumOfSquaresCheck.setSelected(true);
         skewnessCheck.setSelected(true);
         maximumCheck.setSelected(true);
         minimumCheck.setSelected(true);
         modeCheck.setSelected(true);
         medianCheck.setSelected(true);
+        geometricMeanCheck.setSelected(true);
+        populationVarianceCheck.setSelected(true);
+        sampleVarianceCheck.setSelected(true);
+        populationStandardDeviationCheck.setSelected(true);
+        sampleStandardDeviationCheck.setSelected(true);
     }
 
     @FXML
@@ -168,12 +219,17 @@ public class Data2DStatisticController extends Data2DHandleController {
         countCheck.setSelected(false);
         summationCheck.setSelected(false);
         meanCheck.setSelected(false);
-        varianceCheck.setSelected(false);
+        sumOfSquaresCheck.setSelected(false);
         skewnessCheck.setSelected(false);
         maximumCheck.setSelected(false);
         minimumCheck.setSelected(false);
         modeCheck.setSelected(false);
         medianCheck.setSelected(false);
+        geometricMeanCheck.setSelected(false);
+        populationVarianceCheck.setSelected(false);
+        sampleVarianceCheck.setSelected(false);
+        populationStandardDeviationCheck.setSelected(false);
+        sampleStandardDeviationCheck.setSelected(false);
     }
 
     @FXML
@@ -183,6 +239,21 @@ public class Data2DStatisticController extends Data2DHandleController {
                 || !checkOptions() || !prepareRows()) {
             return;
         }
+        selections = new StatisticSelection()
+                .setCount(countCheck.isSelected())
+                .setSum(summationCheck.isSelected())
+                .setMaximum(maximumCheck.isSelected())
+                .setMinimum(minimumCheck.isSelected())
+                .setMean(meanCheck.isSelected())
+                .setPopulationStandardDeviation(populationStandardDeviationCheck.isSelected())
+                .setPopulationVariance(populationVarianceCheck.isSelected())
+                .setSampleStandardDeviation(sampleStandardDeviationCheck.isSelected())
+                .setSampleVariance(sampleVarianceCheck.isSelected())
+                .setSkewness(skewnessCheck.isSelected())
+                .setSumSquares(sumOfSquaresCheck.isSelected())
+                .setMode(modeCheck.isSelected())
+                .setMedian(medianCheck.isSelected())
+                .setGeometricMean(geometricMeanCheck.isSelected());
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -271,18 +342,6 @@ public class Data2DStatisticController extends Data2DHandleController {
                 meanRow.add(message("Mean"));
                 handledData.add(meanRow);
             }
-            varianceRow = null;
-            if (varianceCheck.isSelected()) {
-                varianceRow = new ArrayList<>();
-                varianceRow.add(message("Variance"));
-                handledData.add(varianceRow);
-            }
-            skewnessRow = null;
-            if (skewnessCheck.isSelected()) {
-                skewnessRow = new ArrayList<>();
-                skewnessRow.add(message("Skewness"));
-                handledData.add(skewnessRow);
-            }
             maximumRow = null;
             if (maximumCheck.isSelected()) {
                 maximumRow = new ArrayList<>();
@@ -295,6 +354,56 @@ public class Data2DStatisticController extends Data2DHandleController {
                 minimumRow.add(message("Minimum"));
                 handledData.add(minimumRow);
             }
+
+            geometricMeanRow = null;
+            if (geometricMeanCheck.isSelected()) {
+                geometricMeanRow = new ArrayList<>();
+                geometricMeanRow.add(message("GeometricMean"));
+                handledData.add(geometricMeanRow);
+            }
+
+            sumOfSquaresRow = null;
+            if (sumOfSquaresCheck.isSelected()) {
+                sumOfSquaresRow = new ArrayList<>();
+                sumOfSquaresRow.add(message("SumOfSquares"));
+                handledData.add(sumOfSquaresRow);
+            }
+
+            populationVarianceRow = null;
+            if (populationVarianceCheck.isSelected()) {
+                populationVarianceRow = new ArrayList<>();
+                populationVarianceRow.add(message("PopulationVariance"));
+                handledData.add(populationVarianceRow);
+            }
+
+            sampleVarianceRow = null;
+            if (sampleVarianceCheck.isSelected()) {
+                sampleVarianceRow = new ArrayList<>();
+                sampleVarianceRow.add(message("SampleVariance"));
+                handledData.add(sampleVarianceRow);
+            }
+
+            populationStandardDeviationRow = null;
+            if (populationStandardDeviationCheck.isSelected()) {
+                populationStandardDeviationRow = new ArrayList<>();
+                populationStandardDeviationRow.add(message("PopulationStandardDeviation"));
+                handledData.add(populationStandardDeviationRow);
+            }
+
+            sampleStandardDeviationRow = null;
+            if (sampleStandardDeviationCheck.isSelected()) {
+                sampleStandardDeviationRow = new ArrayList<>();
+                sampleStandardDeviationRow.add(message("SampleStandardDeviation"));
+                handledData.add(sampleStandardDeviationRow);
+            }
+
+            skewnessRow = null;
+            if (skewnessCheck.isSelected()) {
+                skewnessRow = new ArrayList<>();
+                skewnessRow.add(message("Skewness"));
+                handledData.add(skewnessRow);
+            }
+
             modeRow = null;
             if (modeCheck.isSelected()) {
                 modeRow = new ArrayList<>();
@@ -307,7 +416,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 medianRow.add(message("Median"));
                 handledData.add(medianRow);
             }
-            if (handledData.size() < 2) {
+            if (handledData.size() < 1) {
                 popError(message("SelectToHandle"));
                 return false;
             }
@@ -318,6 +427,52 @@ public class Data2DStatisticController extends Data2DHandleController {
             MyBoxLog.error(e);
             return false;
         }
+    }
+
+    public boolean writeRows(DoubleStatistic statistic, int scale) {
+        if (statistic == null) {
+            return false;
+        }
+        if (countRow != null) {
+            countRow.add(StringTools.format(statistic.getCount()));
+        }
+        if (summationRow != null) {
+            summationRow.add(DoubleTools.format(statistic.getSum(), scale));
+        }
+        if (meanRow != null) {
+            meanRow.add(DoubleTools.format(statistic.getMean(), scale));
+        }
+        if (maximumRow != null) {
+            maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
+        }
+        if (minimumRow != null) {
+            minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
+        }
+        if (geometricMeanRow != null) {
+            geometricMeanRow.add(DoubleTools.format(statistic.getGeometricMean(), scale));
+        }
+        if (sumOfSquaresRow != null) {
+            sumOfSquaresRow.add(DoubleTools.format(statistic.getSumSquares(), scale));
+        }
+        if (populationVarianceRow != null) {
+            populationVarianceRow.add(DoubleTools.format(statistic.getPopulationVariance(), scale));
+        }
+        if (sampleVarianceRow != null) {
+            sampleVarianceRow.add(DoubleTools.format(statistic.getSampleVariance(), scale));
+        }
+        if (populationStandardDeviationRow != null) {
+            populationStandardDeviationRow.add(DoubleTools.format(statistic.getPopulationStandardDeviation(), scale));
+        }
+        if (sampleStandardDeviationRow != null) {
+            sampleStandardDeviationRow.add(DoubleTools.format(statistic.getSampleStandardDeviation(), scale));
+        }
+        if (skewnessRow != null) {
+            skewnessRow.add(DoubleTools.format(statistic.getSkewness(), scale));
+        }
+        if (medianRow != null) {
+            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
+        }
+        return true;
     }
 
     public boolean statisticRows(List<List<String>> rows) {
@@ -336,28 +491,8 @@ public class Data2DStatisticController extends Data2DHandleController {
                 for (int r = 0; r < rowsNumber; r++) {
                     colData[r] = data2D.doubleValue(rows.get(r).get(c));
                 }
-                DoubleStatistic statistic = new DoubleStatistic(colData, modeCheck.isSelected(), medianCheck.isSelected());
-                if (countRow != null) {
-                    countRow.add(StringTools.format(statistic.getCount()));
-                }
-                if (summationRow != null) {
-                    summationRow.add(DoubleTools.format(statistic.getSum(), scale));
-                }
-                if (meanRow != null) {
-                    meanRow.add(DoubleTools.format(statistic.getMean(), scale));
-                }
-                if (varianceRow != null) {
-                    varianceRow.add(DoubleTools.format(statistic.getVariance(), scale));
-                }
-                if (skewnessRow != null) {
-                    skewnessRow.add(DoubleTools.format(statistic.getSkewness(), scale));
-                }
-                if (maximumRow != null) {
-                    maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
-                }
-                if (minimumRow != null) {
-                    minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
-                }
+                DoubleStatistic statistic = new DoubleStatistic(colData, selections);
+                writeRows(statistic, scale);
                 if (modeRow != null) {
                     if (statistic.getMode() == 0) {
                         String[] colStrings = new String[rowsNumber];
@@ -369,9 +504,6 @@ public class Data2DStatisticController extends Data2DHandleController {
                     } else {
                         modeRow.add(DoubleTools.format(statistic.getMode(), scale));
                     }
-                }
-                if (medianRow != null) {
-                    medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
                 }
             }
             return true;
@@ -410,39 +542,19 @@ public class Data2DStatisticController extends Data2DHandleController {
     }
 
     public boolean statisticAllWithoutModeMedian() {
-        DoubleStatistic[] statisticData = data2D.statisticData(sourceController.checkedColsIndices);
+        DoubleStatistic[] statisticData = data2D.statisticData(sourceController.checkedColsIndices, selections);
         if (statisticData == null) {
             return false;
         }
         int scale = data2D.getScale();
-        for (DoubleStatistic sData : statisticData) {
-            if (countRow != null) {
-                countRow.add(StringTools.format(sData.count));
-            }
-            if (summationRow != null) {
-                summationRow.add(DoubleTools.format(sData.sum, scale));
-            }
-            if (meanRow != null) {
-                meanRow.add(DoubleTools.format(sData.mean, scale));
-            }
-            if (varianceRow != null) {
-                varianceRow.add(DoubleTools.format(sData.variance, scale));
-            }
-            if (skewnessRow != null) {
-                skewnessRow.add(DoubleTools.format(sData.skewness, scale));
-            }
-            if (maximumRow != null) {
-                maximumRow.add(DoubleTools.format(sData.maximum, scale));
-            }
-            if (minimumRow != null) {
-                minimumRow.add(DoubleTools.format(sData.minimum, scale));
-            }
+        for (DoubleStatistic statistic : statisticData) {
+            writeRows(statistic, scale);
         }
         return true;
     }
 
     public boolean statisticAllInTable() {
-        if (!statisticAllWithoutModeMedian()) {
+        if (!statisticAllWithoutModeMedian() || !(data2D instanceof DataTable)) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {

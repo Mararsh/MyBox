@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DoubleStatistic;
+import mara.mybox.data.StatisticSelection;
 import mara.mybox.data2d.Data2DReader.Operation;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
@@ -60,7 +61,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         return reader.getRows();
     }
 
-    public DoubleStatistic[] statisticData(List<Integer> cols) {
+    public DoubleStatistic[] statisticData(List<Integer> cols, StatisticSelection selections) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -71,15 +72,20 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         Data2DReader reader = Data2DReader.create(this)
                 .setStatisticData(sData).setCols(cols)
-                .setReaderTask(task).start(Data2DReader.Operation.CountSumMinMax);
+                .setScanPass(1).setStatisticSelection(selections)
+                .setReaderTask(task).start(Data2DReader.Operation.Statistic);
         if (reader == null) {
             return null;
         }
-        reader = Data2DReader.create(this)
-                .setStatisticData(sData).setCols(cols).setCountKewness(true)
-                .setReaderTask(task).start(Data2DReader.Operation.CountVariancesKewness);
-        if (reader == null) {
-            return null;
+        if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
+                || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
+            reader = Data2DReader.create(this)
+                    .setStatisticData(sData).setCols(cols)
+                    .setScanPass(2).setStatisticSelection(selections)
+                    .setReaderTask(task).start(Data2DReader.Operation.Statistic);
+            if (reader == null) {
+                return null;
+            }
         }
         return sData;
     }
@@ -136,8 +142,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         Data2DReader reader = Data2DReader.create(this)
-                .setCols(cols).setSumAbs(abs)
-                .setReaderTask(task).start(Data2DReader.Operation.PercentageSum);
+                .setCols(cols).setSumAbs(abs).setScanPass(1)
+                .setReaderTask(task).start(Data2DReader.Operation.Percentage);
         if (reader == null) {
             return null;
         }
@@ -160,7 +166,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
 
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setColValues(colsSum).setCols(cols)
-                    .setWithValues(withValues).setSumAbs(abs)
+                    .setWithValues(withValues).setSumAbs(abs).setScanPass(2)
                     .setReaderTask(task).start(Data2DReader.Operation.Percentage);
 
         } catch (Exception e) {
@@ -191,15 +197,17 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        Data2DReader reader = Data2DReader.create(this)
-                .setStatisticData(sData).setCols(cols)
-                .setReaderTask(task).start(Data2DReader.Operation.CountSumMinMax);
+        StatisticSelection selections = StatisticSelection.all(false)
+                .setSum(true).setMaximum(true).setMinimum(true);
+        Data2DReader reader = Data2DReader.create(this).setCols(cols)
+                .setStatisticData(sData).setStatisticSelection(selections).setScanPass(1)
+                .setReaderTask(task).start(Data2DReader.Operation.Statistic);
         if (reader == null) {
             return null;
         }
         for (int c = 0; c < colLen; c++) {
             double d = sData[c].maximum - sData[c].minimum;
-            sData[c].mean = (to - from) / (d == 0 ? Float.MIN_VALUE : d);
+            sData[c].vTmp = (to - from) / (d == 0 ? Float.MIN_VALUE : d);
         }
         File csvFile = tmpCSV("normalizeMinMax");
         CSVFormat targetFormat = CSVFormat.DEFAULT
@@ -249,18 +257,23 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         int colLen = cols.size();
-        Data2DReader reader = Data2DReader.create(this)
-                .setCols(cols).setSumAbs(true)
-                .setReaderTask(task).start(Data2DReader.Operation.CountSum);
+        DoubleStatistic[] sData = new DoubleStatistic[colLen];
+        for (int c = 0; c < colLen; c++) {
+            sData[c] = new DoubleStatistic();
+        }
+        StatisticSelection selections = StatisticSelection.all(false);
+        Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
+                .setStatisticData(sData).setStatisticSelection(selections).setScanPass(1)
+                .setReaderTask(task).start(Data2DReader.Operation.Statistic);
         if (reader == null) {
             return null;
         }
-        double[] colValues = reader.getColValues();
+        double[] colValues = new double[colLen];
         for (int c = 0; c < colLen; c++) {
-            if (colValues[c] == 0) {
+            if (sData[c].sum == 0) {
                 colValues[c] = 1d / Float.MIN_VALUE;
             } else {
-                colValues[c] = 1d / colValues[c];
+                colValues[c] = 1d / sData[c].sum;
             }
         }
         File csvFile = tmpCSV("normalizeSum");
@@ -316,15 +329,17 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        Data2DReader reader = Data2DReader.create(this)
-                .setStatisticData(sData).setCols(cols)
-                .setReaderTask(task).start(Data2DReader.Operation.CountSumMinMax);
+        StatisticSelection selections = StatisticSelection.all(false)
+                .setPopulationStandardDeviation(true);
+        Data2DReader reader = Data2DReader.create(this).setCols(cols)
+                .setStatisticData(sData).setStatisticSelection(selections).setScanPass(1)
+                .setReaderTask(task).start(Data2DReader.Operation.Statistic);
         if (reader == null) {
             return null;
         }
-        reader = Data2DReader.create(this)
-                .setStatisticData(sData).setCols(cols).setCountKewness(false)
-                .setReaderTask(task).start(Data2DReader.Operation.CountVariancesKewness);
+        reader = Data2DReader.create(this).setCols(cols)
+                .setStatisticData(sData).setStatisticSelection(selections).setScanPass(2)
+                .setReaderTask(task).start(Data2DReader.Operation.Statistic);
         if (reader == null) {
             return null;
         }

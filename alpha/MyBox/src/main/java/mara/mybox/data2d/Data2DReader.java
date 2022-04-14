@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DoubleStatistic;
+import mara.mybox.data.StatisticSelection;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
@@ -15,6 +16,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 /**
  * @Author Mara
@@ -27,25 +29,27 @@ public abstract class Data2DReader {
     protected File readerFile;
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
-    protected int columnsNumber, colsLen, scale;
+    protected int columnsNumber, colsLen, scale, scanPass;
     protected List<String> record, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
-    protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs, countKewness;
+    protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs;
     protected double from;
     protected double[] colValues;
     protected ControlDataConvert convertController;
     protected Connection conn;
     protected TableData2D tableData2D;
     protected DoubleStatistic[] statisticData;
+    protected List<Skewness> skewnessList;
+    protected StatisticSelection statisticSelection;
     protected CSVPrinter csvPrinter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
     protected SingletonTask readerTask;
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, Export, WriteTable, Copy, CountSum, CountSumMinMax, CountVariancesKewness,
-        PercentageSum, Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
+        ReadCols, Export, WriteTable, Copy, Statistic,
+        Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
     }
 
     public abstract void scanData();
@@ -128,31 +132,36 @@ public abstract class Data2DReader {
                     return null;
                 }
                 break;
-            case CountSum:
-                if (cols == null || cols.isEmpty()) {
-                    failed = true;
-                    return null;
-                }
-                colValues = new double[colsLen];
-                break;
-            case PercentageSum:
-                if (cols == null || cols.isEmpty()) {
-                    failed = true;
-                    return null;
-                }
-                colValues = new double[colsLen];
-                break;
             case Percentage:
-                if (cols == null || cols.isEmpty() || colValues == null || csvPrinter == null) {
+                if (cols == null || cols.isEmpty()) {
+                    failed = true;
+                    return null;
+                }
+                if (scanPass == 1) {
+                    colValues = new double[colsLen];
+                } else if (colValues == null || csvPrinter == null) {
                     failed = true;
                     return null;
                 }
                 break;
-            case CountSumMinMax:
-            case CountVariancesKewness:
-                if (cols == null || cols.isEmpty() || statisticData == null) {
+            case Statistic:
+                if (cols == null || cols.isEmpty() || scanPass < 1
+                        || statisticData == null || statisticSelection == null) {
                     failed = true;
                     return null;
+                }
+                if (scanPass == 1) {
+                    colValues = new double[colsLen];
+                    if (statisticSelection.isSkewness()) {
+                        skewnessList = new ArrayList<>();
+                        for (int i = 0; i < cols.size(); i++) {
+                            skewnessList.add(new Skewness());
+                        }
+                    }
+                } else if (scanPass == 2) {
+                    for (int i = 0; i < cols.size(); i++) {
+                        statisticData[i].vTmp = 0;
+                    }
                 }
                 break;
             case NormalizeMinMax:
@@ -274,20 +283,19 @@ public abstract class Data2DReader {
                 case Copy:
                     handleCopy();
                     break;
-                case CountSumMinMax:
-                    handleSumMinMax();
-                    break;
-                case CountVariancesKewness:
-                    handleVariancesKewness();
-                    break;
-                case CountSum:
-                    handleSum();
-                    break;
-                case PercentageSum:
-                    handlePecentageSum();
+                case Statistic:
+                    if (scanPass == 1) {
+                        handleStatisticPass1();
+                    } else if (scanPass == 2) {
+                        handleStatisticPass2();
+                    }
                     break;
                 case Percentage:
-                    handlePercentage();
+                    if (scanPass == 1) {
+                        handlePecentageSum();
+                    } else if (scanPass == 2) {
+                        handlePercentage();
+                    }
                     break;
                 case NormalizeMinMax:
                     handleNormalizeMinMax();
@@ -395,7 +403,15 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handleSumMinMax() {
+    public void handleStatistic() {
+        if (scanPass == 1) {
+            handleStatisticPass1();
+        } else if (scanPass == 2) {
+            handleStatisticPass2();
+        }
+    }
+
+    public void handleStatisticPass1() {
         try {
             for (int c = 0; c < colsLen; c++) {
                 statisticData[c].count++;
@@ -404,12 +420,22 @@ public abstract class Data2DReader {
                     continue;
                 }
                 double v = data2D.doubleValue(record.get(col));
-                statisticData[c].sum += v;
-                if (v > statisticData[c].maximum) {
+                if (sumAbs) {
+                    statisticData[c].sum += Math.abs(v);
+                } else {
+                    statisticData[c].sum += v;
+                }
+                if (statisticSelection.isMaximum() && v > statisticData[c].maximum) {
                     statisticData[c].maximum = v;
                 }
-                if (v < statisticData[c].minimum) {
+                if (statisticSelection.isMinimum() && v < statisticData[c].minimum) {
                     statisticData[c].minimum = v;
+                }
+                if (statisticSelection.isGeometricMean()) {
+                    statisticData[c].geometricMean = statisticData[c].geometricMean * v;
+                }
+                if (statisticSelection.isSumSquares()) {
+                    statisticData[c].sumSquares += v * v;
                 }
             }
         } catch (Exception e) {
@@ -417,7 +443,7 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handleVariancesKewness() {
+    public void handleStatisticPass2() {
         try {
             for (int c = 0; c < colsLen; c++) {
                 if (statisticData[c].count == 0) {
@@ -427,28 +453,10 @@ public abstract class Data2DReader {
                 if (col < 0 || col >= record.size()) {
                     continue;
                 }
-                double v = data2D.doubleValue(record.get(col));
-                statisticData[c].variance += Math.pow(v - statisticData[c].mean, 2);
-                if (countKewness) {
-                    statisticData[c].skewness += Math.pow(v - statisticData[c].mean, 3);
-                }
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    public void handleSum() {
-        try {
-            for (int c = 0; c < colsLen; c++) {
-                int col = cols.get(c);
-                if (col < 0 || col >= record.size()) {
-                    continue;
-                }
-                double v = data2D.doubleValue(record.get(col));
-                if (sumAbs) {
-                    colValues[c] += Math.abs(v);
-                } else {
-                    colValues[c] += v;
+                double v = data2D.doubleValue(record.get(col)) - statisticData[c].mean;
+                statisticData[c].vTmp += v * v;
+                if (statisticSelection.isSkewness()) {
+                    skewnessList.get(c).increment(v);
                 }
             }
         } catch (Exception e) {
@@ -519,7 +527,7 @@ public abstract class Data2DReader {
                     row.add(null);
                 } else {
                     double v = data2D.doubleValue(record.get(col));
-                    v = from + statisticData[c].mean * (v - statisticData[c].minimum);
+                    v = from + statisticData[c].vTmp * (v - statisticData[c].minimum);
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
             }
@@ -561,7 +569,7 @@ public abstract class Data2DReader {
                     row.add(null);
                 } else {
                     double v = data2D.doubleValue(record.get(col));
-                    double k = statisticData[c].variance;
+                    double k = statisticData[c].getSampleStandardDeviation();
                     if (k == 0) {
                         k = Float.MIN_VALUE;
                     }
@@ -577,19 +585,30 @@ public abstract class Data2DReader {
     public void afterScanned() {
         try {
             switch (operation) {
-                case CountSumMinMax:
-                    for (int c = 0; c < colsLen; c++) {
-                        if (statisticData[c].count > 0) {
-                            statisticData[c].mean = statisticData[c].sum / statisticData[c].count;
+                case Statistic:
+                    if (scanPass == 1) {
+                        for (int c = 0; c < colsLen; c++) {
+                            if (statisticData[c].count > 0) {
+                                statisticData[c].mean = statisticData[c].sum / statisticData[c].count;
+                                if (statisticSelection.isGeometricMean()) {
+                                    statisticData[c].geometricMean = Math.pow(statisticData[c].geometricMean, 1d / statisticData[c].count);
+                                }
+                            }
+                            if (statisticSelection.isSkewness()) {
+                                statisticData[c].skewness = skewnessList.get(c).evaluate();
+                            }
                         }
-                    }
-                    break;
-                case CountVariancesKewness:
-                    for (int c = 0; c < colsLen; c++) {
-                        if (statisticData[c].count > 0) {
-                            statisticData[c].variance = Math.sqrt(statisticData[c].variance / statisticData[c].count);
-                            if (countKewness) {
-                                statisticData[c].skewness = Math.cbrt(statisticData[c].skewness / statisticData[c].count);
+                    } else if (scanPass == 2) {
+                        for (int c = 0; c < colsLen; c++) {
+                            if (statisticData[c].count > 0) {
+                                statisticData[c].populationVariance = statisticData[c].vTmp / statisticData[c].count;
+                                statisticData[c].sampleVariance = statisticData[c].vTmp / (statisticData[c].count - 1);
+                                if (statisticSelection.isPopulationStandardDeviation()) {
+                                    statisticData[c].populationStandardDeviation = Math.sqrt(statisticData[c].populationVariance);
+                                }
+                                if (statisticSelection.isSampleStandardDeviation()) {
+                                    statisticData[c].sampleStandardDeviation = Math.sqrt(statisticData[c].sampleVariance);
+                                }
                             }
                         }
                     }
@@ -720,8 +739,13 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public Data2DReader setCountKewness(boolean countKewness) {
-        this.countKewness = countKewness;
+    public Data2DReader setStatisticSelection(StatisticSelection statisticSelection) {
+        this.statisticSelection = statisticSelection;
+        return this;
+    }
+
+    public Data2DReader setScanPass(int scanPass) {
+        this.scanPass = scanPass;
         return this;
     }
 

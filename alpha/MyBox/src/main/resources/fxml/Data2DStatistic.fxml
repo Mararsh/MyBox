@@ -55,10 +55,15 @@ License:    Apache License Version 2.0
                         <CheckBox fx:id="countCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Count" />
                         <CheckBox fx:id="summationCheck" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Summation" />
                         <CheckBox fx:id="meanCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Mean" />
-                        <CheckBox fx:id="varianceCheck" layoutX="136.0" layoutY="10.0" mnemonicParsing="false" text="%Variance" />
-                        <CheckBox fx:id="skewnessCheck" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" text="%Skewness" />
                         <CheckBox fx:id="maximumCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" text="%Maximum" />
                         <CheckBox fx:id="minimumCheck" layoutX="89.0" layoutY="29.0" mnemonicParsing="false" text="%Minimum" />
+                  <CheckBox fx:id="geometricMeanCheck" layoutX="181.0" layoutY="10.0" mnemonicParsing="false" text="%GeometricMean" />
+                  <CheckBox fx:id="sumOfSquaresCheck" layoutX="358.0" layoutY="10.0" mnemonicParsing="false" text="%SumOfSquares" />
+                        <CheckBox fx:id="populationVarianceCheck" layoutX="136.0" layoutY="10.0" mnemonicParsing="false" text="%PopulationVariance" />
+                  <CheckBox fx:id="sampleVarianceCheck" layoutX="238.0" layoutY="10.0" mnemonicParsing="false" text="%SampleVariance" />
+                  <CheckBox fx:id="populationStandardDeviationCheck" layoutX="238.0" layoutY="10.0" mnemonicParsing="false" text="%PopulationStandardDeviation" />
+                  <CheckBox fx:id="sampleStandardDeviationCheck" layoutX="286.0" layoutY="10.0" mnemonicParsing="false" text="%SampleStandardDeviation" />
+                        <CheckBox fx:id="skewnessCheck" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" text="%Skewness" />
                         <CheckBox fx:id="modeCheck" layoutX="372.0" layoutY="10.0" mnemonicParsing="false" text="%Mode" />
                         <CheckBox fx:id="medianCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Median" />
                     </children>

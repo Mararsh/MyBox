@@ -16,7 +16,7 @@ public class IntStatistic {
     private int count;
     private long sum;
     private int minimum, maximum, mode, median;
-    private double mean, variance, skewness;
+    private double mean, standardDeviation, skewness;
 
     public IntStatistic() {
     }
@@ -40,16 +40,17 @@ public class IntStatistic {
             }
         }
         mean = sum / values.length;
-        variance = 0;
+        standardDeviation = 0;
         skewness = 0;
         mode = mode(values);
         median = median(values);
         for (int i = 0; i < values.length; ++i) {
-            int v = values[i];
-            variance += Math.pow(v - mean, 2);
-            skewness += Math.pow(v - mean, 3);
+            double v = values[i] - mean;
+            double v2 = v * v;
+            standardDeviation += v2;
+            skewness += v2 * v;
         }
-        variance = Math.sqrt(variance / count);
+        standardDeviation = Math.sqrt(standardDeviation / count);
         skewness = Math.cbrt(skewness / count);
     }
 
@@ -58,7 +59,7 @@ public class IntStatistic {
         this.name = name;
         this.sum = sum;
         this.mean = mean;
-        this.variance = variance;
+        this.standardDeviation = variance;
         this.skewness = skewness;
         this.minimum = minimum;
         this.maximum = maximum;
@@ -239,12 +240,12 @@ public class IntStatistic {
         this.mean = mean;
     }
 
-    public double getVariance() {
-        return variance;
+    public double getStandardDeviation() {
+        return standardDeviation;
     }
 
-    public void setVariance(double variance) {
-        this.variance = variance;
+    public void setStandardDeviation(double standardDeviation) {
+        this.standardDeviation = standardDeviation;
     }
 
     public double getSkewness() {
