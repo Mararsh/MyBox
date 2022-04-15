@@ -7,26 +7,40 @@ package mara.mybox.data;
  */
 public class StatisticSelection {
 
-    public boolean count, sum, mean, geometricMean, minimum, maximum, sumSquares,
-            populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation,
-            skewness, mode, median;
+    public boolean count, sum, mean, geometricMean, sumSquares,
+            populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
+            minimum, maximum, median, upperQuartile, lowerQuartile, mode;
 
     public static StatisticSelection all(boolean select) {
         return new StatisticSelection()
                 .setCount(select)
                 .setSum(select)
-                .setMaximum(select)
-                .setMinimum(select)
                 .setMean(select)
+                .setGeometricMean(select)
+                .setSumSquares(select)
                 .setPopulationStandardDeviation(select)
                 .setPopulationVariance(select)
                 .setSampleStandardDeviation(select)
                 .setSampleVariance(select)
                 .setSkewness(select)
-                .setSumSquares(select)
-                .setMode(select)
+                .setMaximum(select)
+                .setMinimum(select)
                 .setMedian(select)
-                .setGeometricMean(select);
+                .setUpperQuartile(select)
+                .setLowerQuartile(select)
+                .setMode(select);
+    }
+
+    public boolean needVariance() {
+        return populationVariance || sampleVariance || populationStandardDeviation || sampleStandardDeviation;
+    }
+
+    public boolean needPercentile() {
+        return median || upperQuartile || lowerQuartile;
+    }
+
+    public boolean needStored() {
+        return needPercentile() || mode;
     }
 
     /*
@@ -155,6 +169,24 @@ public class StatisticSelection {
 
     public StatisticSelection setMedian(boolean median) {
         this.median = median;
+        return this;
+    }
+
+    public boolean isUpperQuartile() {
+        return upperQuartile;
+    }
+
+    public StatisticSelection setUpperQuartile(boolean upperQuartile) {
+        this.upperQuartile = upperQuartile;
+        return this;
+    }
+
+    public boolean isLowerQuartile() {
+        return lowerQuartile;
+    }
+
+    public StatisticSelection setLowerQuartile(boolean lowerQuartile) {
+        this.lowerQuartile = lowerQuartile;
         return this;
     }
 

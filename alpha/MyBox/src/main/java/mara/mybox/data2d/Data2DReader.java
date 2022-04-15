@@ -437,6 +437,9 @@ public abstract class Data2DReader {
                 if (statisticSelection.isSumSquares()) {
                     statisticData[c].sumSquares += v * v;
                 }
+                if (statisticSelection.isSkewness()) {
+                    skewnessList.get(c).increment(v);
+                }
             }
         } catch (Exception e) {
 
@@ -455,9 +458,6 @@ public abstract class Data2DReader {
                 }
                 double v = data2D.doubleValue(record.get(col)) - statisticData[c].mean;
                 statisticData[c].vTmp += v * v;
-                if (statisticSelection.isSkewness()) {
-                    skewnessList.get(c).increment(v);
-                }
             }
         } catch (Exception e) {
         }
@@ -595,7 +595,7 @@ public abstract class Data2DReader {
                                 }
                             }
                             if (statisticSelection.isSkewness()) {
-                                statisticData[c].skewness = skewnessList.get(c).evaluate();
+                                statisticData[c].skewness = skewnessList.get(c).getResult();
                             }
                         }
                     } else if (scanPass == 2) {

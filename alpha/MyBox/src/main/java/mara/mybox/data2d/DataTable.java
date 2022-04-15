@@ -603,41 +603,59 @@ public class DataTable extends Data2D {
         return mode;
     }
 
-    public Object median(Connection conn, Data2DColumn column) {
-        if (column == null) {
+    // https://commons.apache.org/proper/commons-math/apidocs/org/apache/commons/math4/stat/descriptive/rank/Percentile.html
+    public Object percentile(Connection conn, Data2DColumn column, int p) {
+        if (column == null || p <= 0 || p > 100) {
             return null;
         }
-        Object median = null;
-        int size = tableData2D.size(conn);
+        Object percentile = null;
+        int n = tableData2D.size(conn);
+        if (n == 0) {
+            return null;
+        }
         int offset, num;
-        if (size == 2) {
+        double d = 0;
+        if (n == 1) {
             offset = 0;
-            num = 2;
-        } else if (size % 2 == 0) {
-            offset = size / 2;
-            num = 2;
-        } else {
-            offset = size / 2;
             num = 1;
+        } else {
+            double pos = p * (n + 1) / 100d;
+            if (pos < 1) {
+                offset = 0;
+                num = 1;
+            } else if (pos >= n) {
+                offset = n - 1;
+                num = 1;
+            } else {
+                offset = (int) Math.floor(pos);
+                d = pos - offset;
+                num = 2;
+            }
         }
         String colName = column.getColumnName();
-        if (!column.isNumberType()) {
-            num = 1;
-        }
         String sql = "SELECT " + colName + " FROM " + sheet + " ORDER BY " + colName
                 + " OFFSET " + offset + " ROWS FETCH NEXT " + num + " ROWS ONLY";
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
-            double plus = 0d;
-            while (results.next()) {
-                median = results.getObject(colName);
-                if (num == 1) {
-                    break;
-                }
-                plus += Double.valueOf(median + "");
+            Object first = null;
+            if (results.next()) {
+                first = results.getObject(colName);
             }
-            if (num == 2) {
-                median = plus / 2;
+            if (num == 1) {
+                percentile = first;
+            } else if (num == 2) {
+                if (results.next()) {
+                    Object second = results.getObject(colName);
+                    try {
+                        double lower = Double.valueOf(first + "");
+                        double upper = Double.valueOf(second + "");
+                        percentile = lower + d * (upper - lower);
+                    } catch (Exception e) {
+                        percentile = first;
+                    }
+                } else {
+                    percentile = first;
+                }
             }
         } catch (Exception e) {
             if (task != null) {
@@ -645,7 +663,7 @@ public class DataTable extends Data2D {
             }
             MyBoxLog.error(e.toString());
         }
-        return median;
+        return percentile;
     }
 
     /*

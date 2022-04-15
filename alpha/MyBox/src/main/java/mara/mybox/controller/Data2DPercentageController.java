@@ -155,7 +155,7 @@ public class Data2DPercentageController extends Data2DHandleController {
             handledData = new ArrayList<>();
             int scale = data2D.getScale();
             List<String> row = new ArrayList<>();
-            row.add(message("Count"));
+            row.add(message("Summation"));
             for (int c = 0; c < colsLen; c++) {
                 row.add(DoubleTools.format(sum[c], scale));
                 if (valuesCheck.isSelected()) {

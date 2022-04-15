@@ -9,39 +9,24 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSortController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DFrequencyController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Sort" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%FrequencyDistributions" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
       <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
-          <HBox fx:id="namesBox" spacing="2.0">
-              <children>
-                  <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
-                  <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />
-              </children>
-          </HBox>
-          <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
         <VBox fx:id="operationBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
-                <Label minHeight="-Infinity" minWidth="-Infinity" text="%DataSortLabel" />
-                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                    <children>
-                        <Label minWidth="-Infinity" text="%Column" />
-                        <ComboBox fx:id="colSelector" prefWidth="200.0" />
-                        <CheckBox fx:id="descendCheck" mnemonicParsing="false" text="%Descending" />
-                    </children>
-                </FlowPane>
+                  <CheckBox fx:id="caseInsensitiveCheck" mnemonicParsing="false" selected="true" text="%CaseInsensitive" />
+                <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
             </children>
         </VBox>
         <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

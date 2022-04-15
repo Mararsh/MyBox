@@ -13,6 +13,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -686,44 +687,58 @@ public class ControlData2D extends BaseController {
             menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            Menu cmenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
+            popMenu.getItems().add(cmenu);
+
             menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSortController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            cmenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Charts"), StyleTools.getIconImage("iconCharts.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
+            menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DStatisticController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            cmenu.getItems().add(menu);
+
+            menu = new MenuItem(message("FrequencyDistributions"), StyleTools.getIconImage("iconDistribution.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DFrequencyController.open(tableController);
+            });
+            menu.setDisable(empty);
+            cmenu.getItems().add(menu);
 
             menu = new MenuItem(message("Percentage"), StyleTools.getIconImage("iconPercentage.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DPercentageController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            cmenu.getItems().add(menu);
 
             menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DNormalizeController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            cmenu.getItems().add(menu);
 
             menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DTransposeController.open(tableController);
+            });
+            menu.setDisable(empty);
+            cmenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Charts"), StyleTools.getIconImage("iconCharts.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartController.open(tableController);
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);

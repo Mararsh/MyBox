@@ -25,7 +25,7 @@ public class AppValues {
 
     public static final short InvalidShort = Short.MAX_VALUE;
     public static final long InvalidLong = Long.MAX_VALUE;
-    public static final double InvalidDouble = Double.MAX_VALUE;
+    public static final double InvalidDouble = Double.NaN;
     public static final float InvalidFloat = Float.MAX_VALUE;
     public static final int InvalidInteger = Integer.MAX_VALUE;
 
