@@ -195,6 +195,7 @@ public class PaletteTools {
     }
 
     public static void afterPaletteImported(BaseController parent, String paletteName) {
+        UserConfig.setString("ColorPalettePopupPalette", paletteName);
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {

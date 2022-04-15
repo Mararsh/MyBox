@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.StatisticSelection;
@@ -20,6 +21,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
@@ -48,6 +50,26 @@ public class Data2DStatisticController extends Data2DHandleController {
     protected Label memoryNoticeLabel;
     @FXML
     protected VBox operationBox;
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(summationCheck, new Tooltip("sum(V1, V2, ..., Vn) \n= V1 + V2 + ... + Vn \n= Σ(Vi)"));
+            NodeStyleTools.setTooltip(meanCheck, new Tooltip("mean(V1, V2, ..., Vn) \n= (V1 + V2 + ... + Vn) / n \n= Σ(Vi) / n"));
+            NodeStyleTools.setTooltip(geometricMeanCheck, new Tooltip("geometricMean(V1, V2, ..., Vn) \n= (V1 * V2 * ... * Vn)^(1/n)"));
+            NodeStyleTools.setTooltip(sumOfSquaresCheck, new Tooltip("sumOfSquares(V1, V2, ..., Vn) \n= V1^2 + V2^2 + ... + Vn^2 \n= Σ(Vi^2)"));
+            NodeStyleTools.setTooltip(populationVarianceCheck, new Tooltip("populationVariance(V1, V2, ..., Vn) \n= Σ((Vi-mean)^2) / n"));
+            NodeStyleTools.setTooltip(sampleVarianceCheck, new Tooltip("sampleVariance(V1, V2, ..., Vn) \n= Σ((Vi-mean)^2) / (n-1)"));
+            NodeStyleTools.setTooltip(populationStandardDeviationCheck, new Tooltip("populationStandardDeviation(V1, V2, ..., Vn) \n= √(populationVariance) \n= populationVariance^(1/2)"));
+            NodeStyleTools.setTooltip(sampleStandardDeviationCheck, new Tooltip("sampleStandardDeviation(V1, V2, ..., Vn) \n= √(sampleVariance) \n= sampleVariance^(1/2)"));
+            NodeStyleTools.setTooltip(medianCheck, new Tooltip("50%"));
+            NodeStyleTools.setTooltip(upperQuartileCheck, new Tooltip("25%"));
+            NodeStyleTools.setTooltip(lowerQuartileCheck, new Tooltip("75%"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
 
     @Override
     public void initControls() {

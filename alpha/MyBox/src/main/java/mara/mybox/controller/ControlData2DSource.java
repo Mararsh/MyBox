@@ -22,7 +22,7 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     protected ControlData2DEditTable tableController;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
-    protected boolean idExclude = false;
+    protected boolean idExclude = false, noColumnSelection = false;
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
@@ -80,6 +80,11 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void idExclude(boolean idExclude) {
         this.idExclude = idExclude;
+    }
+
+    public void noColumnSelection(boolean noColumnSelection) {
+        this.noColumnSelection = noColumnSelection;
+        columnsCheck.setVisible(!noColumnSelection);
     }
 
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
@@ -140,6 +145,9 @@ public class ControlData2DSource extends ControlData2DLoad {
                 return;
             }
             super.makeColumns();
+            if (noColumnSelection) {
+                return;
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = new CheckBox(tableColumn.getText());
@@ -260,6 +268,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     // If none selected then select all
     public List<Integer> checkedColsIndices() {
         try {
+            if (noColumnSelection) {
+                return null;
+            }
             checkedColsIndices = new ArrayList<>();
             List<Integer> all = new ArrayList<>();
             int idOrder = -1;
@@ -398,7 +409,7 @@ public class ControlData2DSource extends ControlData2DLoad {
         checkedRowsIndices = checkedRowsIndices();
         checkedColsIndices = checkedColsIndices();
         return checkedRowsIndices != null && !checkedRowsIndices.isEmpty()
-                && checkedColsIndices != null && !checkedColsIndices.isEmpty();
+                && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()));
     }
 
     public boolean isSquare() {

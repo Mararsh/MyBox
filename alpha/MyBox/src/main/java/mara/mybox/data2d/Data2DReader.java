@@ -3,6 +3,7 @@ package mara.mybox.data2d;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DoubleStatistic;
@@ -16,6 +17,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 /**
@@ -29,7 +31,7 @@ public abstract class Data2DReader {
     protected File readerFile;
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
-    protected int columnsNumber, colsLen, scale, scanPass;
+    protected int columnsNumber, colsLen, scale, scanPass, col;
     protected List<String> record, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
@@ -42,14 +44,15 @@ public abstract class Data2DReader {
     protected DoubleStatistic[] statisticData;
     protected List<Skewness> skewnessList;
     protected StatisticSelection statisticSelection;
+    protected Frequency frequency;
     protected CSVPrinter csvPrinter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
     protected SingletonTask readerTask;
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, Export, WriteTable, Copy, Statistic,
-        Percentage, NormalizeMinMax, NormalizeSum, NormalizeZscore
+        ReadCols, Export, WriteTable, Copy, Statistic, Percentage, Frequency,
+        NormalizeMinMax, NormalizeSum, NormalizeZscore
     }
 
     public abstract void scanData();
@@ -140,6 +143,12 @@ public abstract class Data2DReader {
                 if (scanPass == 1) {
                     colValues = new double[colsLen];
                 } else if (colValues == null || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case Frequency:
+                if (frequency == null || csvPrinter == null) {
                     failed = true;
                     return null;
                 }
@@ -296,6 +305,9 @@ public abstract class Data2DReader {
                     } else if (scanPass == 2) {
                         handlePercentage();
                     }
+                    break;
+                case Frequency:
+                    handleFrequency();
                     break;
                 case NormalizeMinMax:
                     handleNormalizeMinMax();
@@ -515,6 +527,13 @@ public abstract class Data2DReader {
         }
     }
 
+    public void handleFrequency() {
+        try {
+            frequency.addValue(record.get(col));
+        } catch (Exception e) {
+        }
+    }
+
     public void handleNormalizeMinMax() {
         try {
             List<String> row = new ArrayList<>();
@@ -613,6 +632,23 @@ public abstract class Data2DReader {
                         }
                     }
                     break;
+                case Frequency:
+                    count = 0;
+                    Iterator iterator = frequency.valuesIterator();
+                    if (iterator != null) {
+                        while (iterator.hasNext()) {
+                            List<String> row = new ArrayList<>();
+                            String value = (String) iterator.next();
+                            row.add(value);
+                            row.add(frequency.getCount(value) + "");
+                            row.add(DoubleTools.format(frequency.getPct(value) * 100, scale));
+                            csvPrinter.printRecord(row);
+                            count++;
+                        }
+                    }
+                    frequency.clear();
+                    break;
+
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -755,6 +791,24 @@ public abstract class Data2DReader {
 
     public void setCount(long count) {
         this.count = count;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public Data2DReader setCol(int col) {
+        this.col = col;
+        return this;
+    }
+
+    public Frequency getFrequency() {
+        return frequency;
+    }
+
+    public Data2DReader setFrequency(Frequency frequency) {
+        this.frequency = frequency;
+        return this;
     }
 
 }

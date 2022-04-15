@@ -67,7 +67,7 @@ Download from sourceforge: [https://sourceforge.net/projects/mara-mybox/files/](
 
 ## Migration
 1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
-2. Data handled in each vertion are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
+2. Data handled in each version are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
 3. MyBox is backward compatibility: Later version can work on data of previous versions.
 While forward compatibility is not supported: Wrong may happen when old version handles data of new version.
 

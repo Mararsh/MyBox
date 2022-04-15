@@ -76,7 +76,6 @@ public class Data2DPercentageController extends Data2DHandleController {
         return ok;
     }
 
-    @FXML
     public boolean prepareRows() {
         try {
             List<Data2DColumn> cols = sourceController.checkedCols();
@@ -96,7 +95,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                     handledColumns.add(column.cloneAll());
                     handledNames.add(column.getColumnName());
                 }
-                cName = column.getColumnName() + "%";
+                cName = column.getColumnName() + "_" + message("ValuePercentage");
                 while (handledNames.contains(cName)) {
                     cName += "m";
                 }

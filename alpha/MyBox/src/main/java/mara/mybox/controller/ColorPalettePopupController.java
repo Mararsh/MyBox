@@ -147,7 +147,7 @@ public class ColorPalettePopupController extends BaseChildController {
                         if (defaultPalette == null) {
                             return false;
                         }
-                        String paletteName = UserConfig.getString(baseName + "Palette", defaultPalette.getName());
+                        String paletteName = UserConfig.getString("ColorPalettePopupPalette", defaultPalette.getName());
                         currentPalette = tableColorPaletteName.find(conn, paletteName);
                         if (currentPalette == null) {
                             currentPalette = defaultPalette;
@@ -156,7 +156,7 @@ public class ColorPalettePopupController extends BaseChildController {
                             return false;
                         }
                         paletteName = currentPalette.getName();
-                        UserConfig.setString(baseName + "Palette", paletteName);
+                        UserConfig.setString("ColorPalettePopupPalette", paletteName);
                         colors = tableColorPalette.colors(conn, currentPalette.getCpnid());
                         palettes = tableColorPaletteName.readAll(conn);
                     } catch (Exception e) {

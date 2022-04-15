@@ -16,6 +16,7 @@ import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.math3.stat.Frequency;
 
 /**
  * @Author Mara
@@ -155,7 +156,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
-            row.add(message("Count"));
+            row.add(message("Summation"));
             for (int c = 0; c < cols.size(); c++) {
                 row.add(DoubleTools.scale(colsSum[c], scale) + "");
                 if (withValues) {
@@ -181,6 +182,44 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(names.size()).setRowsNumber(reader.getRowIndex() + 1);
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
+    public DataFileCSV frequency(Frequency frequency, String colName, int col) {
+        if (frequency == null || colName == null || col < 0) {
+            return null;
+        }
+        File csvFile = tmpCSV("frequency");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(',');
+        Data2DReader reader = null;
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+            List<String> row = new ArrayList<>();
+            row.add(colName);
+            row.add(colName + "_" + message("Count"));
+            row.add(colName + "_" + message("CountPercentage"));
+            csvPrinter.printRecord(row);
+
+            reader = Data2DReader.create(this)
+                    .setCsvPrinter(csvPrinter).setFrequency(frequency).setCol(col)
+                    .setReaderTask(task).start(Data2DReader.Operation.Frequency);
+
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (reader != null && csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(3).setRowsNumber(reader.getCount());
             return targetData;
         } else {
             return null;
